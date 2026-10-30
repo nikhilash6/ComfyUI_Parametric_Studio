@@ -8,8 +8,11 @@ version = "0.1.0"
 description = "A local studio for open-weights image, video and music models on ComfyUI, plus the PSN custom nodes."
 readme = "README.md"
 requires-python = ">=3.12"
-license = "AGPL-3.0-or-later"
-license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md"]
+license = { file = "LICENSE" }
+classifiers = [
+    "Operating System :: OS Independent",
+    "Environment :: GPU :: NVIDIA CUDA",
+]
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
@@ -28,6 +31,10 @@ sdk = ["comfy-sdk>=0.5"]
 nodes = ["torch", "cryptography"]
 
 [project.urls]
+Repository = "https://github.com/parametricparadigm/ComfyUI_Parametric_Studio"
+Documentation = "https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/blob/main/INSTALL.md"
+"Bug Tracker" = "https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/issues"
+Homepage = "https://parametricparadigm.github.io/ComfyUI_Parametric_Studio/"
 Licence = "https://www.gnu.org/licenses/agpl-3.0.html"
 
 # This repository runs from a checkout (python -m studio.server, or as a ComfyUI custom node folder).
@@ -36,7 +43,10 @@ Licence = "https://www.gnu.org/licenses/agpl-3.0.html"
 packages = []
 
 [tool.comfy]
+PublisherId = "parametricparadigm"
 DisplayName = "Parametric Studio"
+Icon = "https://raw.githubusercontent.com/parametricparadigm/ComfyUI_Parametric_Studio/main/docs/img/registry-icon.png"
+Banner = "https://raw.githubusercontent.com/parametricparadigm/ComfyUI_Parametric_Studio/main/docs/img/registry-banner.jpg"
 
 [tool.uv]
 package = false

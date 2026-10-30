@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = Path.home() / "public_release" / "ComfyUI_Parametric_Studio"
-ALLOW_FILES = ("LICENSE", "NOTICE", "README.md", "INSTALL.md", "MODELS.md", "CONTRIBUTING.md", "SECURITY.md", "EDITIONS.md", "PROVENANCE.md", "THIRD_PARTY_NOTICES.md", "__init__.py", "install.py", "channels.json", "pyproject.toml", "uv.lock", "requirements.txt", "pytest.ini", ".gitignore")
+ALLOW_FILES = (".comfyignore", "LICENSE", "NOTICE", "README.md", "INSTALL.md", "MODELS.md", "CONTRIBUTING.md", "SECURITY.md", "EDITIONS.md", "PROVENANCE.md", "THIRD_PARTY_NOTICES.md", "__init__.py", "install.py", "channels.json", "pyproject.toml", "uv.lock", "requirements.txt", "pytest.ini", ".gitignore")
 ALLOW_DIRS = (".github/", "docs/", "psn/", "psn_nodes/", "scripts/", "studio/", "tests/", "workflows/")
 NEUTRAL = ["-c", "user.name=Parametric Studio release", "-c", "user.email=release@parametric-studio.invalid"]
 NEVER_IN_ALLOWED_DIRS = re.compile(r"(^|/)(__pycache__|\.pytest_cache)(/|$)|\.pyc$|\.log$|\.pid$|\.orig$|\.rej$|~$")

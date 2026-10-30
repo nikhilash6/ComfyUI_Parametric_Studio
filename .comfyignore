@@ -1,0 +1,4 @@
+# Left out of the Comfy Registry archive. Everything else ships.
+tests/
+.github/
+uv.lock
