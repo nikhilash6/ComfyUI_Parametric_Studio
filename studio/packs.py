@@ -3,6 +3,7 @@ compose() turns the user's picks into one clear prompt (originals only: no brand
 import json, os, re
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from studio import sfw
 FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "packs", "packs.json")
 TAIL = "Original design: no real brand names, logos, badges or watermarks, and no readable text except the exact words given."
 APPAREL = {"tshirt", "mug", "printify"}
@@ -50,6 +51,7 @@ def packs_get(pack_id: str):
     return p
 @router.post("/api/packs/{pack_id}/compose")
 def packs_compose(pack_id: str, b: Compose):
+    sfw.check(b.choices, b.idea, b.view, b.words)
     try: return {"prompt": compose(pack_id, b.choices, b.idea, b.view, b.words)}
     except KeyError: raise HTTPException(404, "no such designer") from None
     except ValueError as e: raise HTTPException(400, str(e)) from None

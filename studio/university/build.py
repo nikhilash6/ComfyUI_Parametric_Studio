@@ -49,7 +49,7 @@ def check_course(c, codes, sources):
     for s in REQUIRED:
         if s not in md: pr.append("lesson lacks " + s)
     if re.search(r"\$[^$\n]{1,80}\$|\\frac|\\sigma|\\epsilon", md): pr.append("LaTeX in lesson: the page has no maths renderer, write Unicode")
-    prose = re.sub(r"```.*?```", "", md, flags=re.S); prose = prose.replace("**", "")
+    prose = re.sub(r"```.*?```", "", md, flags=re.S); prose = re.sub(r"`[^`\n]*`", "", prose); prose = prose.replace("**", "")
     if "*" in prose: pr.append("stray * in prose: the page's markdown would turn it into emphasis")
     for w in ("UNVERIFIED", "Qwen3.8", "/" + "mnt/fast", "/" + "home/"):
         if w in md: pr.append("banned text in lesson: " + w)

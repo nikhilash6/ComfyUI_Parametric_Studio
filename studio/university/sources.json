@@ -790,7 +790,7 @@
   "published": "2026",
   "checked": "fetched, text of the mov/mp4 muxer section read and title confirmed 2026-10-30"
  },
- "https://www.w3.org/TR/png-3/": {
+ "https://www.w3.org/TR/png-3": {
   "title": "Portable Network Graphics (PNG) Specification (Third Edition)",
   "published": "2025",
   "checked": "fetched, chunk layout, CRC, IHDR, tEXt and chunk naming sections read and title confirmed 2026-10-30"
@@ -1313,7 +1313,7 @@
   "published": "2026",
   "checked": "read locally at tag v0.43.0, commit 426f5eea, same hash on GitHub 2026-10-30"
  },
- "https://www.w3.org/TR/css-color-4/": {
+ "https://www.w3.org/TR/css-color-4": {
   "title": "CSS Color Module Level 4 (W3C Candidate Recommendation Draft, 29 October 2026)",
   "authors": [
    "W3C CSS Working Group"
@@ -1599,5 +1599,10 @@
  "https://huggingface.co/blog/stable_diffusion": {
   "title": "Stable Diffusion with 🧨 Diffusers",
   "checked": "opened 2026-10-30"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/distributions/distributions.py": {
+  "title": "ComfyUI v0.43.0 source: distributions.py",
+  "published": "2026",
+  "checked": "fetched from GitHub at tag v0.43.0 2026-10-30; DiagonalGaussianDistribution, torch.chunk and sample() read"
  }
 }

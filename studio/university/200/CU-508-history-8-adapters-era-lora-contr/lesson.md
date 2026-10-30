@@ -48,7 +48,7 @@ rank r   LoRA numbers   share of the full update   reduction
 64       163,840        0.1000                     10x
 ```
 
-Next, how well can rank r follow a change? For inputs of unit variance the squared error of BA against the wanted change ΔW* is proportional to |BA − ΔW*|², so training a LoRA is a rank-r approximation of ΔW*. The best possible rank-r matrix is the truncated SVD, whose error is the part of ΔW*'s singular values beyond r (the Eckart–Young–Mirsky theorem). The lab trains B and A with Adam from the paper's start and compares.
+Next, how well can rank r follow a change? For inputs of unit variance the squared error of BA against the wanted change `ΔW*` is proportional to `|BA − ΔW*|²`, so training a LoRA is a rank-r approximation of `ΔW*`. The best possible rank-r matrix is the truncated SVD, whose error is the part of the singular values of `ΔW*` beyond r (the Eckart–Young–Mirsky theorem). The lab trains B and A with Adam from the paper's start and compares.
 
 ```text
 relative error |BA - DW*| / |DW*| of a trained LoRA, against the best rank-r matrix

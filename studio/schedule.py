@@ -1,6 +1,6 @@
 """Set-and-forget schedules: 'every day at 8, make me a lofi track', 'every Friday, a new wallpaper'. Cron-style timing (APScheduler), stored in ~/.config/parametric-studio/schedules.json, and safe on a shared box:
 a job only fires when ComfyUI is idle (never queues behind or on top of your own work), obeys a daily cap, only uses the studio's own goals, and keeps prompts SFW. Results land in the Library like any render."""
-import json, os, re, time, uuid, urllib.request
+import datetime, json, os, re, time, uuid, urllib.request
 from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -19,25 +19,30 @@ def trigger(cron):
     return CronTrigger.from_crontab(cron)                          # raises ValueError on a bad expression
 def validate(d):
     cron = PRESETS.get(str(d.get("cron", "")).strip().lower(), str(d.get("cron", "")).strip())
-    try: trigger(cron)
+    try: t = trigger(cron)
+    except ImportError: raise ValueError("schedules need the apscheduler package: pip install apscheduler") from None
     except Exception: raise ValueError("that schedule is not valid; use a preset or five cron fields like '0 8 * * *'") from None
+    if t.get_next_fire_time(None, datetime.datetime.now(t.timezone)) is None: raise ValueError("that schedule never comes round: that date does not exist")
     if d.get("goal") not in GOALS: raise ValueError("unknown goal")
     if GOALS[d["goal"]]["needs_image"]: raise ValueError("scheduled jobs cannot need an input image")
     prompt = str(d.get("prompt", "")).strip()
     if not 3 <= len(prompt) <= 600: raise ValueError("the prompt needs 3 to 600 characters")
     if BAD.search(prompt) or BAD.search(str(d.get("lyrics", ""))): raise ValueError(MESSAGE)
-    return {"name": str(d.get("name") or prompt[:40])[:60], "cron": cron, "goal": d["goal"], "prompt": prompt, "options": d.get("options") or {}, "lyrics": str(d.get("lyrics", ""))[:2000], "max_per_day": max(1, min(int(d.get("max_per_day", 3)), 24)), "enabled": bool(d.get("enabled", True))}
+    opts = d.get("options") or {}
+    if not isinstance(opts, dict): raise ValueError("options must be a set of choices")
+    known = GOALS[d["goal"]]["options"]; opts = {k: v for k, v in opts.items() if k in known and v in known[k]}          # the same rule /api/generate applies, so what is stored is what runs
+    return {"name": str(d.get("name") or prompt[:40])[:60], "cron": cron, "goal": d["goal"], "prompt": prompt, "options": opts, "lyrics": str(d.get("lyrics", ""))[:2000], "max_per_day": max(1, min(int(d.get("max_per_day", 3)), 24)), "enabled": bool(d.get("enabled", True))}
 def comfy_idle(base=None):
     try:
         q = json.load(urllib.request.urlopen((base or os.environ.get("COMFYUI_URL", "http://127.0.0.1:8200")) + "/queue", timeout=4)); return not (q.get("queue_running") or q.get("queue_pending"))
-    except Exception: return False
+    except Exception: return None          # None is 'could not ask': offline, not busy
 def fire(job_id, post=None, idle=None, now=None):
     """Run one scheduled job if allowed. Returns a status string and records it. `post(path, body)` and `idle()` are injectable for tests."""
     jobs = load(); j = next((x for x in jobs if x["id"] == job_id), None)
     if not j: return "missing"
     day = time.strftime("%Y-%m-%d", time.localtime(now or time.time()))
     if j.get("day") != day: j["day"], j["runs_today"] = day, 0
-    status = "skipped: not safe-for-work" if BAD.search(str(j.get("prompt", ""))) or BAD.search(str(j.get("lyrics", ""))) else "skipped: paused" if not j["enabled"] else "skipped: daily cap reached" if j["runs_today"] >= j["max_per_day"] else "skipped: busy" if not (idle or comfy_idle)() else None
+    status = "skipped: not safe-for-work" if BAD.search(str(j.get("prompt", ""))) or BAD.search(str(j.get("lyrics", ""))) else "skipped: paused" if not j["enabled"] else "skipped: daily cap reached" if j["runs_today"] >= j["max_per_day"] else {None: "skipped: ComfyUI is offline", False: "skipped: busy"}.get((idle or comfy_idle)())
     if status is None:
         body = {"goal": j["goal"], "prompt": j["prompt"], "options": j["options"], "lyrics": j.get("lyrics", ""), "seed": None}
         try: (post or _post)("/api/generate", body); j["runs_today"] += 1; status = "started"
@@ -50,12 +55,16 @@ def start():
     from apscheduler.schedulers.background import BackgroundScheduler
     if _sched["s"] is None: _sched["s"] = BackgroundScheduler(timezone=time.tzname[0] if False else None); _sched["s"].start()
     sync()
+def stop():
+    if _sched["s"] is not None: _sched["s"].shutdown(wait=False); _sched["s"] = None
 def sync():
     s = _sched["s"]
     if s is None: return
     for j in s.get_jobs(): j.remove()
     for j in load():
-        if j["enabled"]: s.add_job(fire, trigger(j["cron"]), args=[j["id"]], id=j["id"], coalesce=True, max_instances=1, misfire_grace_time=600)
+        if not j["enabled"]: continue
+        try: s.add_job(fire, trigger(j["cron"]), args=[j["id"]], id=j["id"], coalesce=True, max_instances=1, misfire_grace_time=600)
+        except Exception as e: print(f"[studio] schedule {j['id']} not started: {e}")                            # one bad line in the file must not stop the others
 router = APIRouter()
 class New(BaseModel):
     name: str = ""; cron: str; goal: str; prompt: str; options: dict = {}; lyrics: str = ""; max_per_day: int = 3; enabled: bool = True

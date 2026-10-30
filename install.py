@@ -26,7 +26,7 @@ sys.path.insert(0, str(REPO))
 from studio.boxcheck import describe, detect, plan  # noqa: E402  (standard library only)
 
 EXIT_OK, EXIT_CANCELLED, EXIT_NOTHING, EXIT_FAILED = 0, 2, 3, 4
-STUDIO_PACKAGES = ["fastapi", "uvicorn", "python-multipart", "pydantic", "numpy", "pillow"]
+STUDIO_PACKAGES = ["fastapi", "uvicorn", "python-multipart", "pydantic", "numpy", "pillow", "apscheduler"]
 
 # Peak VRAM in GiB per goal: the highest figure from the studio's showcase renders on one 96 GB NVIDIA card,
 # at small sizes and short lengths. Treat them as estimates on any other card.

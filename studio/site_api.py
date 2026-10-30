@@ -55,7 +55,7 @@ class BuildRequest(BaseModel):
 
 
 @router.post("/api/site/build")
-async def build_site_endpoint(req: BuildRequest):
+def build_site_endpoint(req: BuildRequest):
     brief = req.brief
     problems = brief_problems(brief)
     if problems:

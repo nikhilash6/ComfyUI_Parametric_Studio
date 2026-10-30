@@ -52,14 +52,16 @@ def _http(path, body=None):
     r = urllib.request.Request(base + path, json.dumps(body).encode() if body is not None else None, {"Content-Type": "application/json"}); return json.loads(urllib.request.urlopen(r, timeout=30).read())
 def comfy_idle():
     try: q = json.load(urllib.request.urlopen(os.environ.get("COMFYUI_URL", "http://127.0.0.1:8200") + "/queue", timeout=4)); return not (q.get("queue_running") or q.get("queue_pending"))
-    except Exception: return False
+    except Exception: return None          # None is 'could not ask': offline, not busy
 router = APIRouter()
 class Go(BaseModel): confirm: bool = False
 @router.post("/api/calibrate")
 def calibrate_start(b: Go):
     if not b.confirm: raise HTTPException(400, "calibration renders a few small jobs on your GPU: confirm to start")
     if _st["running"]: raise HTTPException(409, "already running")
-    if not comfy_idle(): raise HTTPException(409, "ComfyUI is busy: try again when your queue is empty")
+    idle = comfy_idle()
+    if idle is None: raise HTTPException(503, "ComfyUI is not reachable: start it, then try again")
+    if not idle: raise HTTPException(409, "ComfyUI is busy: try again when your queue is empty")
     installed = {g for g in SAMPLES if g in GOALS}
     def work():
         _st.update(running=True, cancel=False)

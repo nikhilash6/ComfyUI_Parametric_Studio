@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 
 def client(host="1.2.3.4"):
     import studio.server as s
-    return TestClient(s.app, client=(host, 5000), follow_redirects=False)
+    return TestClient(s.app, client=(host, 5000), base_url="http://127.0.0.1:8310", follow_redirects=False)
 
 def test_no_token_means_no_guard(monkeypatch):
     monkeypatch.delenv("STUDIO_TOKEN", raising=False); assert client().get("/api/goals").status_code == 200

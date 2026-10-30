@@ -1,9 +1,11 @@
 """Parametric Studio API + web app. One small FastAPI app between the browser (desktop or phone over Tailscale) and a plain ComfyUI.
 Run:  python -m studio.server   (env: COMFYUI_URL=http://127.0.0.1:8200, STUDIO_PORT=8310, STUDIO_HOST=127.0.0.1)
 Open edition: everything generates locally; the only outside calls are the model-catalogue lookups, and downloads happen only after an explicit confirm."""
-import os, re, json, secrets, time, uuid, glob, hashlib, tempfile, urllib.request, urllib.parse, urllib.error
+import ipaddress, os, re, json, secrets, socket, time, uuid, glob, hashlib, tempfile, urllib.request, urllib.parse, urllib.error
+from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, UploadFile, File, Request
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from studio.goals import GOALS, WF, values_for
@@ -17,7 +19,15 @@ ROOT = Path(__file__).resolve().parent; WEB = ROOT / "web"
 UNI = Path(os.environ.get("STUDIO_UNIVERSITY") or ROOT / "university")
 MODELS = Path(paths.models_root())
 STAGING = Path(os.environ.get("STUDIO_STAGING", Path.home() / "studio_downloads"))
-app = FastAPI(title="Parametric Studio", docs_url="/api/docs", openapi_url="/api/openapi.json")
+@asynccontextmanager
+async def _lifespan(app):
+    """Schedules only fire while something runs them. A missing apscheduler leaves the studio up; the Schedules page says what to install."""
+    from studio import schedule
+    try: schedule.start()
+    except ImportError as e: print(f"[studio] schedules are off: {e}")
+    yield
+    schedule.stop()
+app = FastAPI(title="Parametric Studio", docs_url="/api/docs", openapi_url="/api/openapi.json", lifespan=_lifespan)
 CLIENT_ID = "studio-" + uuid.uuid4().hex[:8]; JOBS: dict = {}
 
 def comfy(path, payload=None, timeout=30, raw=False):
@@ -59,8 +69,26 @@ def recipe_graphs(rid: str):
 @app.get("/api/goals")
 def goals(): return {k: {kk: vv for kk, vv in v.items() if kk not in ("template",)} | {"id": k} for k, v in GOALS.items()}
 
+async def _body(req):
+    try: b = await req.json()
+    except ValueError: raise HTTPException(400, "send a JSON object") from None
+    if not isinstance(b, dict): raise HTTPException(400, "send a JSON object")
+    return b
+
+def _goal(b):
+    goal = b.get("goal", "image")
+    if not isinstance(goal, str) or goal not in GOALS: raise HTTPException(400, "unknown goal")
+    return goal
+
 def _graph(goal, req, image_name=None):
     sfw.check(*(req.get(k) for k in ("prompt", "lyrics", "target", "scene")))
+    for k in ("prompt", "lyrics", "target", "scene", "negative"):
+        if req.get(k) is not None and not isinstance(req[k], str): raise HTTPException(400, f"{k} must be text")
+    if req.get("options") is not None and not isinstance(req["options"], dict): raise HTTPException(400, "options must be a set of choices")
+    if req.get("seed") not in (None, ""):
+        try: int(req["seed"])
+        except (TypeError, ValueError, OverflowError): raise HTTPException(400, "seed must be a whole number") from None
+    req = {**req, "prompt": req.get("prompt") or ""}
     g = GOALS[goal]; tpl = json.load(open(os.path.join(WF, g["template"]))); vals, opts = values_for(goal, req, image_name)
     if not vals["prompt"]: raise HTTPException(400, "write a prompt first")
     if g["needs_image"] and not image_name: raise HTTPException(400, "add an image to animate")
@@ -75,17 +103,20 @@ def _graph(goal, req, image_name=None):
 
 @app.post("/api/graph")
 async def graph_only(req: Request):
-    b = await req.json()
+    return await run_in_threadpool(_graph_only, await _body(req))
+
+def _graph_only(b):
     if b.get("family_job"):
         from studio import families_api
         return families_api.job_graph(b["family_job"])
-    g, vals, opts = _graph(b.get("goal", "image"), b, b.get("image")); return {"graph": g, "values": vals}
+    g, vals, opts = _graph(_goal(b), b, b.get("image")); return {"graph": g, "values": vals}
 
 @app.post("/api/generate")
 async def generate(req: Request):
-    b = await req.json(); goal = b.get("goal", "image")
-    if goal not in GOALS: raise HTTPException(400, "unknown goal")
-    g, vals, opts = _graph(goal, b, b.get("image"))
+    return await run_in_threadpool(_generate, await _body(req))
+
+def _generate(b):
+    goal = _goal(b); g, vals, opts = _graph(goal, b, b.get("image"))
     if backends.use_sdk():
         from studio.goals import COMFY_INPUT
         meta = {"goal": goal, "prompt": vals["prompt"], "seed": vals["seed"], "options": opts, "graph_hash": hashlib.sha256(json.dumps(g, sort_keys=True).encode()).hexdigest()[:12]}
@@ -95,10 +126,22 @@ async def generate(req: Request):
     if not comfy_up(): raise HTTPException(503, f"ComfyUI is not reachable at {COMFY}")
     try: res = comfy("/prompt", {"prompt": g, "client_id": CLIENT_ID})
     except urllib.error.HTTPError as e:
-        body = json.loads(e.read() or b"{}"); ne = body.get("node_errors") or {}
-        raise HTTPException(400, "ComfyUI rejected the graph: " + ((body.get("error") or {}).get("message", "") + " " + "; ".join(f"{k}: " + ", ".join(x.get("message", "") for x in v.get("errors", [])) for k, v in list(ne.items())[:3]))) from None
+        raise _rejected(e) from None
+    except OSError: raise HTTPException(503, f"ComfyUI is not reachable at {COMFY}") from None
+    except ValueError: raise HTTPException(502, "ComfyUI sent back something that is not JSON") from None
+    if not isinstance(res, dict) or not res.get("prompt_id"): raise HTTPException(502, "ComfyUI did not return a job")
     jid = res["prompt_id"]; JOBS[jid] = {"goal": goal, "prompt": vals["prompt"], "seed": vals["seed"], "options": opts, "started": time.time(), "graph_hash": hashlib.sha256(json.dumps(g, sort_keys=True).encode()).hexdigest()[:12]}
     return {"job": jid, "seed": vals["seed"], "options": opts, "graph_hash": JOBS[jid]["graph_hash"]}
+
+def _rejected(e):
+    """The HTTPException for a refused /prompt. A proxy's HTML page or a plain-text error is an answer too, not a reason to fall over."""
+    try: body = json.loads(e.read() or b"{}")
+    except ValueError: return HTTPException(502, f"ComfyUI answered HTTP {e.code} with something that is not JSON")
+    if not isinstance(body, dict): body = {}
+    err, ne = body.get("error"), body.get("node_errors")
+    msg = err.get("message", "") if isinstance(err, dict) else str(err or "")
+    nodes = "; ".join(f"{k}: " + ", ".join(str(x.get("message", "")) for x in v.get("errors", []) if isinstance(x, dict)) for k, v in list(ne.items())[:3] if isinstance(v, dict)) if isinstance(ne, dict) else ""
+    return HTTPException(400, "ComfyUI rejected the graph: " + msg + " " + nodes)
 
 def _files(hist):
     out = []
@@ -125,12 +168,14 @@ def job(jid: str):
     try:
         q = comfy("/queue", timeout=5); running = any(len(e) > 1 and e[1] == jid for e in q.get("queue_running", [])); pending = [i for i, e in enumerate(q.get("queue_pending", [])) if len(e) > 1 and e[1] == jid]
         return {"status": "running" if running else "queued", "position": (pending[0] + 1) if pending else 0, "elapsed": round(time.time() - meta.get("started", time.time()), 1), **meta}
-    except Exception: return {"status": "unknown", **meta}
+    except Exception: return {"status": "unknown", "detail": "ComfyUI is not reachable, so this job's state is unknown", **meta}          # the page keeps polling on 'unknown' and recovers when ComfyUI is back
 
 @app.post("/api/jobs/{jid}/cancel")
 def cancel(jid: str):
     if jid in backends.JOBS: backends.cancel(jid); return {"ok": True}
-    try: comfy("/queue", {"delete": [jid]}); comfy("/interrupt", {})
+    try:
+        comfy("/queue", {"delete": [jid]})
+        if any(len(e) > 1 and e[1] == jid for e in comfy("/queue", timeout=5).get("queue_running", [])): comfy("/interrupt", {"prompt_id": jid})     # only this job: other people's renders keep going
     except Exception: pass
     return {"ok": True}
 
@@ -139,16 +184,20 @@ def view(filename: str, subfolder: str = "", type: str = "output"):
     if type not in ("output", "input", "temp") or ".." in filename or ".." in subfolder: raise HTTPException(400, "bad path")
     try:
         r = urllib.request.urlopen(COMFY + "/view?" + urllib.parse.urlencode({"filename": filename, "subfolder": subfolder, "type": type}), timeout=60)
-    except Exception: raise HTTPException(404, "file not found") from None
+    except urllib.error.HTTPError as e: raise HTTPException(404 if e.code == 404 else 502, "file not found" if e.code == 404 else f"ComfyUI answered HTTP {e.code}") from None
+    except Exception: raise HTTPException(503, "ComfyUI is not reachable") from None
     return StreamingResponse(r, media_type=r.headers.get("Content-Type", "application/octet-stream"), headers={"Cache-Control": "public, max-age=3600"})
 
 @app.post("/api/upload")
 async def upload(file: UploadFile = File(...)):
     data = await file.read()
+    return await run_in_threadpool(_upload, data, file.filename or "", file.content_type)
+
+def _upload(data, fn, ctype):
     if len(data) > 300 * 2**20: raise HTTPException(413, "file over 300 MB")
-    if not re.search(r"\.(png|jpe?g|webp|mp4|webm|mov|mkv|wav|mp3|flac)$", file.filename or "", re.I): raise HTTPException(400, "png, jpg, webp, mp4, webm, mov, mkv, wav, mp3 or flac only")
-    fn = file.filename or ""; name = "studio_" + hashlib.sha256(data).hexdigest()[:10] + os.path.splitext(fn)[1].lower()
-    b = uuid.uuid4().hex; head = (f'--{b}\r\nContent-Disposition: form-data; name="image"; filename="{name}"\r\nContent-Type: {file.content_type or "image/png"}\r\n\r\n').encode()
+    if not re.search(r"\.(png|jpe?g|webp|mp4|webm|mov|mkv|wav|mp3|flac)$", fn, re.I): raise HTTPException(400, "png, jpg, webp, mp4, webm, mov, mkv, wav, mp3 or flac only")
+    name = "studio_" + hashlib.sha256(data).hexdigest()[:10] + os.path.splitext(fn)[1].lower()
+    b = uuid.uuid4().hex; head = (f'--{b}\r\nContent-Disposition: form-data; name="image"; filename="{name}"\r\nContent-Type: {ctype or "image/png"}\r\n\r\n').encode()
     tail = (f'\r\n--{b}\r\nContent-Disposition: form-data; name="overwrite"\r\n\r\ntrue\r\n--{b}--\r\n').encode()
     try: r = urllib.request.urlopen(urllib.request.Request(COMFY + "/upload/image", data=head + data + tail, headers={"Content-Type": f"multipart/form-data; boundary={b}"}), timeout=60)
     except Exception: raise HTTPException(503, "ComfyUI is not reachable") from None
@@ -162,6 +211,7 @@ def _family_history(limit):
 
 @app.get("/api/history")
 def history(limit: int = 40):
+    limit = max(1, min(limit, 500))
     try: h = comfy(f"/history?max_items={int(limit)}", timeout=10)
     except Exception: return (_family_history(limit) + backends.history()[-limit:][::-1])[:limit]
     rows = []
@@ -228,14 +278,20 @@ def browse(source: str, q: str = "", kind: str = "", limit: int = 20):
 @app.post("/api/browse/download")
 async def browse_download(req: Request):
     """Needs {"source", "confirm": true, ...}. Civitai: a file dict from search. Hugging Face: repo_id + filename. Lands in the staging folder; the model sorter files it later."""
-    b = await req.json()
+    return await run_in_threadpool(_browse_download, await _body(req))
+
+def _browse_download(b):
     if not b.get("confirm"): raise HTTPException(400, "tick the confirm box: downloads only happen when you ask")
     if os.environ.get("STUDIO_ALLOW_DOWNLOAD", "1") != "1": raise HTTPException(403, "downloads are switched off on this server")
     from psn.connectors import civitai, hf
     from psn.connectors.net import ConnectorError
     try:
-        if b.get("source") == "civitai": p = civitai.fetch(b["file"], str(STAGING), confirm=True)
-        elif b.get("source") == "huggingface": p = hf.fetch(b["repo_id"], filename=b["filename"], dest_dir=str(STAGING), confirm=True, dry_run=False)
+        if b.get("source") == "civitai":
+            if not isinstance(b.get("file"), dict): raise HTTPException(400, "civitai needs a file from the search results")
+            p = civitai.fetch(b["file"], str(STAGING), confirm=True)
+        elif b.get("source") == "huggingface":
+            if not (isinstance(b.get("repo_id"), str) and b["repo_id"] and isinstance(b.get("filename"), str) and b["filename"]): raise HTTPException(400, "huggingface needs repo_id and filename")
+            p = hf.fetch(b["repo_id"], filename=b["filename"], dest_dir=str(STAGING), confirm=True, dry_run=False)
         else: raise HTTPException(400, "unknown source")
     except ConnectorError as e: raise HTTPException(502, str(e)) from None
     return {"saved": str(p)}
@@ -290,8 +346,11 @@ def probe(path: str):
 
 @app.post("/api/timeline/render")
 async def timeline_render_start(req: Request):
+    return await run_in_threadpool(_timeline_render_start, await _body(req))
+
+def _timeline_render_start(b):
     from studio import timeline_render as TR
-    b = await req.json(); edl = b.get("edl") or {}
+    edl = b.get("edl") or {}
     probs = TR.edl_problems(edl, str(OUTPUT))
     if probs: raise HTTPException(400, "; ".join(probs[:4]))
     rid = uuid.uuid4().hex[:10]; out = EDITS / f"edit_{rid}.mp4"; EDITS.mkdir(parents=True, exist_ok=True); RENDERS[rid] = {"status": "running", "started": time.time()}
@@ -331,6 +390,27 @@ async def lan_guard(request, call_next):
     r = await call_next(request)
     if request.query_params.get("t"): r.set_cookie("studio_token", token, max_age=60 * 60 * 24 * 90, httponly=True, samesite="lax")
     return r
+
+def _trusted_host(host):
+    """Names a browser can honestly use to reach this machine. A web page that re-points its own name at 127.0.0.1 (DNS rebinding) fails here. Other names go in STUDIO_ALLOWED_HOSTS."""
+    try: name = (urllib.parse.urlsplit("//" + host).hostname or "").lower()
+    except ValueError: return False
+    if not name: return False
+    try: ipaddress.ip_address(name); return True
+    except ValueError: pass
+    me = socket.gethostname().lower()
+    return name in ("localhost", me, me + ".local") or name.endswith((".localhost", ".ts.net")) or name in [h.strip().lower() for h in os.environ.get("STUDIO_ALLOWED_HOSTS", "").split(",")]
+
+@app.middleware("http")
+async def same_origin_guard(request, call_next):
+    """This server runs graphs on the GPU and has no login on localhost, so a page on another site must not be able to drive it. The studio's own pages, Tailscale Serve and scripts that send no Origin are unaffected."""
+    host, origin = request.headers.get("host", ""), request.headers.get("origin")
+    local = request.client is not None and request.client.host in ("127.0.0.1", "::1")
+    if local and not _trusted_host(host): return JSONResponse({"detail": "This address is not one the studio answers on. Add it to STUDIO_ALLOWED_HOSTS if it is yours."}, status_code=403)
+    if origin is not None and request.method not in ("GET", "HEAD", "OPTIONS"):
+        seen = urllib.parse.urlsplit(origin).netloc.lower(); forwarded = request.headers.get("x-forwarded-host", "") if local else ""
+        if seen not in (host.lower(), forwarded.lower()) or not seen: return JSONResponse({"detail": "Requests from other sites are refused."}, status_code=403)
+    return await call_next(request)
 
 @app.middleware("http")
 async def no_cache_static(request, call_next):

@@ -1,9 +1,11 @@
+import ipaddress
 import json
 import os
 import re
 import tempfile
 import urllib.request
 import urllib.error
+import urllib.parse
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -16,48 +18,42 @@ CONFIG_DIR = Path(os.environ.get("STUDIO_CONFIG_DIR", Path.home() / ".config" / 
 CONFIG_FILE = CONFIG_DIR / "attach.json"
 APPS_DIR = Path.home() / "comfy_apps"
 
+PRIVATE_NETS = [ipaddress.ip_network(n) for n in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "fc00::/7", "fe80::/10")]
+
 NSFW_WORDS = {
     "nsfw", "nude", "naked", "lingerie", "porn", "hentai",
     "explicit", "erotic", "topless", "fetish", "onlyfans", "sex"
 }
 
 def _is_loopback_or_private(host: str) -> bool:
-    if host in ["localhost", "127.0.0.1", "::1"]:
+    if host == "localhost":
         return True
-    # Check for private IP ranges (IPv4)
-    if host.count(".") == 3:
-        parts = host.split(".")
-        if len(parts) == 4:
-            try:
-                o1, o2 = int(parts[0]), int(parts[1])
-                if o1 == 10:
-                    return True
-                if o1 == 172 and 16 <= o2 <= 31:
-                    return True
-                if o1 == 192 and o2 == 168:
-                    return True
-            except ValueError:
-                pass
-    # Check for private IPv6 ranges (simplified)
-    if ":" in host:
-        if host.startswith("fc") or host.startswith("fd"):
-            return True
-        if host.startswith("fe80"):
-            return True
-    return False
+    try:
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        return False  # a name is only as private as its owner says, so 10.1.example.com is not private
+    return ip.is_loopback or any(ip in net for net in PRIVATE_NETS)
+
+def _url_host(url: str) -> str:
+    """The host a client will really connect to. http://127.0.0.1:80@evil.example/ connects to evil.example."""
+    if re.search(r"[\s\\]", url):
+        raise ValueError("URL contains characters a URL cannot have")
+    try:
+        parts = urllib.parse.urlsplit(url)
+        host = parts.hostname
+        parts.port
+    except ValueError:
+        raise ValueError("URL could not be read") from None
+    if parts.scheme not in ("http", "https"):
+        raise ValueError("URL must be http or https")
+    if "@" in parts.netloc:
+        raise ValueError("URL must not contain a user name or password")
+    if not host:
+        raise ValueError("URL has no host")
+    return host.lower()
 
 def _validate_url(url: str) -> None:
-    if not url.startswith("http://") and not url.startswith("https://"):
-        raise ValueError("URL must be http or https")
-    
-    # Simple parse to get host
-    rest = url.split("://", 1)[1]
-    host_part = rest.split("/", 1)[0]
-    if ":" in host_part:
-        host = host_part.split(":", 1)[0]
-    else:
-        host = host_part
-        
+    host = _url_host(url)
     if not _is_loopback_or_private(host):
         if os.environ.get("STUDIO_ALLOW_REMOTE") != "1":
             raise ValueError("Host must be loopback or private LAN unless STUDIO_ALLOW_REMOTE=1")
@@ -261,8 +257,11 @@ def import_workflow(file: str, dest_dir: str, inputs: List[List[Any]], outputs: 
     if not src.is_file():
         raise ValueError("File not found")
         
-    with open(src, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    try:
+        with open(src, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        raise ValueError("That file is not a JSON workflow") from None
         
     problems = sfw_problems(data)
     if problems:
@@ -280,6 +279,12 @@ def import_workflow(file: str, dest_dir: str, inputs: List[List[Any]], outputs: 
         json.dump(app_data, f, indent=2)
         
     return str(out_path)
+
+def _inside(file: str, root: str) -> bool:
+    try:
+        return Path(file).resolve().is_relative_to(Path(root).resolve())
+    except (OSError, ValueError):
+        return False
 
 class AttachSettings(BaseModel):
     comfy_url: Optional[str] = None
@@ -306,6 +311,10 @@ def post_attach(settings: AttachSettings):
 
 @router.post("/api/attach/test")
 def post_test(req: TestRequest):
+    try:
+        _validate_url(req.url)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     return test_connection(req.url)
 
 @router.get("/api/attach/workflows")
@@ -318,6 +327,9 @@ def get_workflows():
 
 @router.post("/api/attach/import")
 def post_import(req: ImportRequest):
+    root = load().get("workflows_dir")
+    if not root or not _inside(req.file, root):
+        raise HTTPException(status_code=400, detail="That file is not in your workflows folder")
     try:
         path = import_workflow(req.file, str(APPS_DIR), req.inputs, req.outputs)
         return {"path": path}

@@ -1,3 +1,4 @@
+import math
 import os
 import subprocess
 import json
@@ -21,6 +22,10 @@ def _safe_resolve(root, rel):
     return target, None
 
 
+def _is_number(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
 def edl_problems(edl, root):
     problems = []
     if not isinstance(edl, dict):
@@ -30,11 +35,11 @@ def edl_problems(edl, root):
     duration = edl.get('duration')
     tracks = edl.get('tracks', [])
 
-    if not isinstance(fps, (int, float)) or fps <= 0:
+    if not _is_number(fps) or fps <= 0:
         problems.append("invalid fps")
-    if not isinstance(duration, (int, float)) or duration <= 0:
+    if not _is_number(duration) or duration <= 0:
         problems.append("invalid duration")
-    if duration > 600:
+    elif duration > 600:
         problems.append("duration exceeds 600s")
 
     if not isinstance(tracks, list):
@@ -62,8 +67,13 @@ def edl_problems(edl, root):
                 continue
 
             src = clip.get('src')
-            if not src:
+            if not src or not isinstance(src, str):
                 problems.append(f"track {i} clip {j} missing src")
+                continue
+
+            bad = [k for k in ('start', 'dur', 'in') if k in clip and not (_is_number(clip[k]) and clip[k] >= 0)]
+            if bad:  # these go straight into ffmpeg's filter string
+                problems.append(f"track {i} clip {j}: {', '.join(bad)} must be a number")
                 continue
 
             target, err = _safe_resolve(root, src)

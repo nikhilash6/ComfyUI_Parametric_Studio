@@ -8,7 +8,9 @@ DEFAULT_PAGES = ["Home", "About", "Services", "Contact"]
 
 def brief_problems(b):
     p = []
-    if not isinstance(b, dict) or not str(b.get("name", "")).strip(): return ["brief needs a name"]
+    if not isinstance(b, dict) or not isinstance(b.get("name"), str) or not b["name"].strip(): return ["brief needs a name"]
+    if not isinstance(b.get("facts") or {}, dict): return ["facts must be a set of named texts"]
+    if not (isinstance(b.get("pages") or [], list) and all(isinstance(x, str) for x in b.get("pages") or [])): return ["pages must be a list of page names"]
     if len(json.dumps(b)) > 8000: p.append("brief is too long (8000 characters)")
     if SFW_BLOCK.search(json.dumps(b)): p.append("brief contains non-SFW wording: this studio builds SFW sites only")
     for k, v in (b.get("facts") or {}).items():

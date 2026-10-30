@@ -4,17 +4,20 @@ Usage: build_pages.py [--from http://127.0.0.1:8310] [--out site] [--repo https:
 import argparse, json, os, re, shutil, urllib.parse, urllib.request
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 SHIM = """<script>/* read-only demo: GET /api/x comes from saved files, POST explains how to run it for real */
-(() => { const real = window.fetch.bind(window), base = new URL("demo-api/", location.href).href, json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "Content-Type": "application/json" } });
+(() => { window.STUDIO_DEMO = true; const real = window.fetch.bind(window), base = new URL("demo-api/", location.href).href, json = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { "Content-Type": "application/json" } }), saved = real(base + "_index.json").then((r) => r.json()).then((a) => new Set(a)).catch(() => null);
+  const answer = async (k) => { const have = await saved; if (have && !have.has(k)) return json({ detail: "Not available in the read-only demo." }, 404); const r = await real(base + k + ".json"); return r.ok ? r : json({ detail: "Not available in the read-only demo." }, 404); };
   window.fetch = async (u, o = {}) => { const m = String(u && u.url || u).match(/(?:^|\\/)api\\/(.*)$/); if (!m) return real(u, o);
-    if ((o.method || "GET").toUpperCase() !== "GET") return json({ detail: "This is the read-only demo. Install Parametric Studio to run this on your own GPU." }, 403);
-    const k = decodeURIComponent(m[1]).split("?")[0].replace(/[^\\w.-]+/g, "__"); const r = await real(base + k + ".json"); return r.ok ? r : json({ detail: "Not available in the read-only demo." }, 404); }; })();</script>"""
+    if ((o.method || "GET").toUpperCase() !== "GET") { if (m[1].split("?")[0] === "graph") { let g = ""; try { g = JSON.parse(o.body).goal; } catch {} const r = await answer("graphs__" + String(g).replace(/[^\\w.-]+/g, "__")); if (r.ok) return r; } return json({ detail: "This is the read-only demo. Install Parametric Studio to run this on your own GPU." }, 403); }
+    return answer(decodeURIComponent(m[1]).split("?")[0].replace(/[^\\w.-]+/g, "__")); }; })();</script>"""
 BANNER = """<a href="%s" style="position:fixed;left:50%%;bottom:10px;transform:translateX(-50%%);z-index:60;background:#f5c518;color:#141006;font:600 13px Inter,system-ui;padding:8px 14px;border-radius:10px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.5);max-width:92vw;text-align:center">Read-only demo: real UI, real renders from one GPU. Get it and generate your own</a>"""
 
+AUTHOR_FIGURES = ("free_gb", "disk_free_gb", "vram_free_gb")
+
 def clean(o):
-    """No box paths in the published answers."""
-    if isinstance(o, str): return re.sub(r"(?:~|/home/[^/\s]+|/mnt/[^/\s]+)/\S*", "your models folder", o)
+    """No box paths or disk figures from the machine that built the demo in the published answers."""
+    if isinstance(o, str): return re.sub(r"(?:~|/home/[^/\s]+|/mnt/[^/\s]+|/tmp/[^/\s]+)/\S*", "your models folder", o)
     if isinstance(o, list): return [clean(x) for x in o]
-    return {k: clean(v) for k, v in o.items()} if isinstance(o, dict) else o
+    return {k: clean(v) for k, v in o.items() if k not in AUTHOR_FIGURES} if isinstance(o, dict) else o
 
 def get(base, path):
     with urllib.request.urlopen(base + path, timeout=60) as r: return json.load(r)
@@ -49,6 +52,7 @@ def main():
     import sys; sys.path.insert(0, ROOT)
     from studio.glb import knot_glb
     open(os.path.join(d, "sample.glb.json"), "wb").write(knot_glb())
+    json.dump(sorted(f[:-5] for f in os.listdir(d) if f.endswith(".json")), open(os.path.join(d, "_index.json"), "w"))
     p = os.path.join(a.out, "index.html"); h = open(p).read(); h = h.replace('<script type="importmap">', SHIM + '\n<script type="importmap">', 1); h = re.sub(r'<script>if \("serviceWorker".*?</script>', "", h, flags=re.S); h = h.replace("</body>", (BANNER % a.repo) + "\n</body>", 1); open(p, "w").write(h)
     size = sum(os.path.getsize(os.path.join(r, f)) for r, _, fs in os.walk(a.out) for f in fs); print(f"site: {saved} saved answers, {size >> 20} MB at {a.out}")
 main()

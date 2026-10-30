@@ -596,10 +596,10 @@ def recipe_run(rid: str, b: RunReq):
     bad = [k for k in b.uploads if k not in {s["id"] for s in rec["steps"] if s.get("swappable")}]
     if bad: raise HTTPException(400, f"step {bad[0]} does not take an upload")
     vals = {**field_defaults(rec), **{k: str(v)[:1500] for k, v in b.values.items() if k in field_defaults(rec)}}; rid2 = uuid.uuid4().hex[:12]
-    sfw.check(*vals.values())
+    sfw.check(*vals.values(), b.plan)
     run = {"run": rid2, "recipe": rid, "title": rec["title"], "status": "queued", "created": time.time(), "values": vals, "uploads": b.uploads, "seed_add": b.seed_add, "steps": [_step_state(s) for s in rec["steps"]]}
     if rec.get("dynamic") == "film":
-        if b.plan: run["plan"] = normalize_plan(b.plan, vals.get("sentence", ""), b.plan.get("writer") or "edited by you"); run["specs"] = film_specs(run["plan"], 4242 + b.seed_add); run["steps"] = [_step_state(s) for s in run["specs"]]
+        if b.plan: run["plan"] = normalize_plan(b.plan, vals.get("sentence", ""), str(b.plan.get("writer") or "edited by you")[:80]); run["specs"] = film_specs(run["plan"], 4242 + b.seed_add); run["steps"] = [_step_state(s) for s in run["specs"]]
         else: run["steps"] = [{"id": "plan", "label": "Write the shot list", "type": "plan", "status": "pending", "final": False, "model": "local language model"}]
     with _LOCK: RUNS[rid2] = run
     _save(run); _ensure_worker(); QUEUE.put(rid2); return {"run": rid2, "position": position(run), "status": "queued"}

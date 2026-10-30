@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List, Union
 from psn.camera import camera_moves, one_move_problems
+from studio import sfw
 
 router = APIRouter()
 
@@ -136,6 +137,7 @@ def get_presets():
 
 @router.post("/api/presets/apply")
 def apply_presets(req: ApplyRequest):
+    sfw.check(req.prompt)
     result = apply(req.prompt, req.camera, req.look, req.kind or 'video')
     if isinstance(result, tuple):
         text, notes = result

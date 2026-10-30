@@ -3,6 +3,7 @@ Facts shipped with the repo live in family_status.json (scripts/build_family_art
 import json, os, random, re, shutil, threading, time, urllib.error, urllib.parse, urllib.request, uuid
 from pathlib import Path
 from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 from psn import instances as I
 from studio import apps as A
@@ -406,7 +407,7 @@ async def upload(slug: str, file: UploadFile = File(...)):
     if len(data) > 300 * 2**20: raise HTTPException(413, "file over 300 MB")
     if not re.search(r"\.(png|jpe?g|webp|mp4|webm|mov|mkv|wav|mp3|flac)$", file.filename or "", re.I): raise HTTPException(400, "png, jpg, webp, mp4, webm, mov, mkv, wav, mp3 or flac only")
     import hashlib
-    name = "studio_" + hashlib.sha256(data).hexdigest()[:10] + os.path.splitext(file.filename)[1].lower(); info = _ensure(f); d = Path(I.INSTANCES) / info["slug"] / "input"; d.mkdir(parents=True, exist_ok=True); (d / name).write_bytes(data); return {"name": name}
+    name = "studio_" + hashlib.sha256(data).hexdigest()[:10] + os.path.splitext(file.filename)[1].lower(); info = await run_in_threadpool(_ensure, f); d = Path(I.INSTANCES) / info["slug"] / "input"; d.mkdir(parents=True, exist_ok=True); (d / name).write_bytes(data); return {"name": name}
 @router.get("/api/family-graphs")
 def family_graphs():
     """Every graph a family page offers, flat, for the Apps page."""
@@ -418,7 +419,7 @@ def family_graphs():
 
 @router.get("/api/family-graphs/{slug}/{tid}")
 def family_graph(slug: str, tid: str):
-    """One family graph as real JSON: API format when a ComfyUI is reachable to convert it, the workflow as shipped otherwise."""
+    """One family graph as real JSON: API format when a ComfyUI is reachable to convert it, the workflow as shipped otherwise. Both need ComfyUI's template package in this Python; without it the answer is a 503 that says so."""
     f = _family(slug); t, p = _tpl(f, tid); ui = json.load(open(p, encoding="utf-8")); out = {"family": f, "slug": slug, "name": tid, "title": t.get("title")}
     try:
         oi = A.object_info(); g, probs = ui_to_api(ui, oi); g, _ = A.resolve(g, oi)

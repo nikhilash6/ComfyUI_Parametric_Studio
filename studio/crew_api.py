@@ -1,4 +1,4 @@
-import os
+import os, re
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
@@ -32,8 +32,16 @@ def _find_member(members: List[Dict[str, Any]], member_id: str) -> Optional[Dict
     return None
 
 
+INTERNAL_PATH = re.compile(r"`?(?:(?:~|\.{1,2})?/(?:home|mnt|tmp)/\S+|earlier-studio/\S*|(?:[\w.-]+/)+[\w.-]+\.(?:md|py|jsonl?|txt|ya?ml|sh|js|ts|safetensors|gguf))`?")
+def public_text(t: Any) -> Any:
+    """What a user reads: no paths from the machine the notes were written on, no markdown symbols."""
+    if not isinstance(t, str): return t
+    t = INTERNAL_PATH.sub(lambda m: m.group(0) if "://" in t[max(0, m.start() - 8):m.end()] else "", t)
+    t = re.sub(r"(?m)^\s*(?:#{1,6}\s+|[-*+]\s+|>\s?|\|)", "", t); t = re.sub(r"\*\*|__|`|\s\|\s?|\|$", lambda m: " " if "|" in m.group(0) else "", t)
+    return re.sub(r"[ \t]{2,}", " ", t).strip()
+
 def _from_notes(member: Dict[str, Any], question: str) -> Dict[str, Any]:
-    hits = crew.retrieve(member.get("files") or [], question, k=2)
+    hits = [h for h in crew.retrieve(member.get("files") or [], question, k=2) if h["score"] >= 2]          # one shared word is not an answer
     if not hits: return {"answer": "I can't back that up from my notes.", "quotes": [], "supported": False, "problems": ["No relevant chunks found"], "member": member.get("id")}
     return {"answer": hits[0]["text"], "quotes": [{"file": os.path.basename(h["file"]), "quote": h["text"]} for h in hits], "supported": True, "problems": [], "from_notes_only": True, "member": member.get("id")}
 
@@ -73,6 +81,7 @@ async def ask_crew(req: AskRequest) -> Dict[str, Any]:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+    result = {**result, "answer": public_text(result.get("answer")), "quotes": [{**q, "quote": public_text(q.get("quote"))} if isinstance(q, dict) else q for q in result.get("quotes") or []]}
     return {
         "result": result,
         "member": {
