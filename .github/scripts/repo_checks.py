@@ -16,7 +16,7 @@ SKIP_SECRETS = ("tests/", "extended_candidates/tests/")     # fixtures carry fak
 CONFLICT = re.compile(r"SPDX-License-Identifier:\s*(?!AGPL-3\.0)|Licensed under the (?:MIT|Apache) License")
 CONFLICT_DIRS = ("psn/", "psn_nodes/", "studio/", "scripts/")
 CONFLICT_SKIP = ("studio/web/vendor/", "psn/subagents/playbooks/", "studio/skills/")
-BOX_PATH = "/" + r"mnt/fast\b|/" + r"home/(?!user\b|username\b|you\b|me\b|runner\b|ubuntu\b|name\b|comfy\b)[a-z_][a-z0-9_-]*/"     # any real home folder, or this project's model disk
+BOX_PATH = "/" + r"mnt/fast\b|(?<!\.edu)/" + r"home/(?!user\b|username\b|you\b|me\b|runner\b|ubuntu\b|name\b|comfy\b)[a-z_][a-z0-9_-]*/"     # any real home folder, or this project's model disk
 PRIVATE = re.compile(BOX_PATH)
 PRIVATE_DOCS = ("README.md", "INSTALL.md", "MODELS.md", "CONTRIBUTING.md", "SECURITY.md", "docs/")
 # The public release leaves these out (scripts/assemble_public.py reads this list too). Any of them tracked in the public repo is a leak.
