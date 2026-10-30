@@ -4,7 +4,7 @@ env = {**os.environ, "STUDIO_PORT": "8399", "PYTHONUTF8": "1"}
 p = subprocess.Popen([sys.executable, "-m", "studio.server"], env=env)
 try:
     for _ in range(90):
-        try: urllib.request.urlopen("http://127.0.0.1:8399/api/health", timeout=2); break
+        try: urllib.request.urlopen("http://127.0.0.1:8399/api/goals", timeout=5); break
         except Exception:
             if p.poll() is not None: sys.exit("the studio exited early")
             time.sleep(1)
