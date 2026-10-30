@@ -1,0 +1,32 @@
+int8, one scale: step 7.336e-04   predicted RMS error step/sqrt(12) 2.118e-04   measured 2.117e-04
+
+weights: Gaussian std 0.02, 512x1024.  outliers: 524 entries (0.1%) multiplied by 30, largest |w| 0.093 -> 1.768
+format                bits/weight   weight error: clean   with outliers   output error with outliers
+int8, one scale       8.00          0.0106                 0.1476          0.1457
+int8, scale per row   8.03          0.0079                 0.0451          0.0446
+int8, scale per 32    8.50          0.0053                 0.0094          0.0094
+GGUF Q8_0             8.50          0.0053                 0.0094          0.0094
+int4, one scale       4.00          0.1920                 0.7393          0.7413
+int4, scale per row   4.03          0.1427                 0.4703          0.4733
+int4, scale per 32    4.50          0.0970                 0.1157          0.1135
+GGUF Q4_0             4.50          0.0859                 0.1074          0.1054
+FP8 E4M3, one scale   8.00          0.0265                 0.0265          0.0265
+FP8 E5M2, one scale   8.00          0.0526                 0.0520          0.0519
+
+clean data, scale per 32: int4 error / int8 error = 18.2   the step ratio 127/7 = 18.1
+Q4_0: largest-magnitude weight of each block, worst relative error after the round trip 4.79e-04
+
+FP8 E4M3 error by weight size    std:   0.1000   0.0200   0.0040   0.0008
+  scale 1 (plain cast)                0.0265   0.0330   0.1410   0.6905
+  scale = amax/448                    0.0265   0.0265   0.0265   0.0265
+
+int8 matmul with int64 accumulation, then rescaled, against dequantize-then-multiply: largest difference 8.9e-07 on outputs of size 0.516
+
+layout                                       bits/weight   GiB per billion weights
+fp16 or bf16                                 16.00         1.86
+ComfyUI float8_e4m3fn, scalar scale          8.00          0.93
+ComfyUI mxfp8, 8-bit scale per 32            8.25          0.96
+ComfyUI nvfp4, 8-bit scale per 16            4.50          0.52
+GGUF Q8_0, fp16 scale per 32                 8.50          0.99
+GGUF Q4_0, fp16 scale per 32                 4.50          0.52
+GGUF Q4_K, 144 bytes per 256                 4.50          0.52

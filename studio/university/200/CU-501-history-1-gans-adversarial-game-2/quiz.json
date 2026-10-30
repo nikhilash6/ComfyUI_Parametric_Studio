@@ -1,0 +1,62 @@
+{
+ "code": "CU-501",
+ "title": "History 1: GANs, the adversarial game (2014)",
+ "level": "200",
+ "questions": [
+  {
+   "q": "For a fixed generator, what is the best discriminator at a point x?",
+   "options": [
+    "D*(x) = p_data(x) / ( p_data(x) + p_g(x) )",
+    "D*(x) = p_g(x) / ( p_data(x) + p_g(x) )",
+    "D*(x) = 1/2 at every x, whatever the generator",
+    "D*(x) = p_data(x) − p_g(x)"
+   ],
+   "answer": "D*(x) = p_data(x) / ( p_data(x) + p_g(x) )",
+   "why": "Proposition 1 of Goodfellow et al.: at each x the function a·log y + b·log(1−y) peaks at y = a/(a+b), with a = p_data(x) and b = p_g(x). In the lab no random nudge of this discriminator scored higher."
+  },
+  {
+   "q": "What is the best value the generator can reach against a best-playing discriminator, and when?",
+   "options": [
+    "−log 4, and only when p_g equals p_data",
+    "−log 2, whenever the discriminator outputs 1/2",
+    "+log 4, whenever the discriminator is fooled",
+    "There is no best value, because the generator can always score lower"
+   ],
+   "answer": "−log 4, and only when p_g equals p_data",
+   "why": "max over D of V is −log 4 + 2·JSD(p_data ‖ p_g), and JSD is zero only for equal distributions. The lab row for the data itself prints −1.386294, which is −log 4."
+  },
+  {
+   "q": "In the lab a confident discriminator (mean D(G(z)) = 0.0154) judges the same samples under two generator losses. What happens to the generator's gradient norm?",
+   "options": [
+    "It is 0.4386 with log(1 − D) and 13.0146 with −log D, about 30 times larger",
+    "It is the same for both losses, because both have the same fixed point",
+    "It is 13.0146 with log(1 − D) and 0.4386 with −log D",
+    "It is zero for both losses once the discriminator is confident"
+   ],
+   "answer": "It is 0.4386 with log(1 − D) and 13.0146 with −log D, about 30 times larger",
+   "why": "With respect to the logit, log(1−D) has gradient D, which is near 0 here, and −log D has gradient 1−D, near 1. The paper says the two losses share a fixed point but the second gives much stronger gradients early in learning."
+  },
+  {
+   "q": "All four lab seeds ended with discriminator accuracy between 0.461 and 0.515. What does the lab conclude from that?",
+   "options": [
+    "Chance accuracy is not proof of a good generator: W1 was still 7 to 21 times the 0.016 floor",
+    "The generators match the data exactly, because the discriminator cannot tell them apart",
+    "The discriminators failed to train, so the runs say nothing about the generators",
+    "An accuracy below 0.5 means the generator is better than the real data"
+   ],
+   "answer": "Chance accuracy is not proof of a good generator: W1 was still 7 to 21 times the 0.016 floor",
+   "why": "W1 to the data ran from 0.113 to 0.338 while two real samples differ by 0.016. A small discriminator trained for 2000 steps may not see what is left."
+  },
+  {
+   "q": "How do Rombach et al. train the autoencoder that their latent diffusion models rely on?",
+   "options": [
+    "With a perceptual loss and a patch-based adversarial objective",
+    "With a diffusion loss on the pixels",
+    "With a CLIP contrastive loss",
+    "With a causal mask and next-pixel prediction"
+   ],
+   "answer": "With a perceptual loss and a patch-based adversarial objective",
+   "why": "Section 3.1 and appendix G of the latent diffusion paper. The patch-based discriminator exists only during that training, which is how a GAN idea ends up inside the VAE you run in ComfyUI."
+  }
+ ]
+}

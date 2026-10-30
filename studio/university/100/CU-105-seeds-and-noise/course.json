@@ -1,0 +1,16 @@
+{
+ "code": "CU-105",
+ "title": "Seeds, noise and determinism",
+ "level": "100",
+ "prereq": [],
+ "char": "denoise",
+ "hook": "A seed is the starting noise and nothing more. A toy sampler with an exact denoiser shows what that does and does not fix when you change steps, samplers or hardware.",
+ "code_refs": [
+  "comfy/sample.py:def prepare_noise",
+  "comfy/k_diffusion/sampling.py:def default_noise_sampler",
+  "comfy/k_diffusion/sampling.py:def sample_euler_ancestral",
+  "comfy/model_sampling.py:def noise_scaling",
+  "nodes.py:def common_ksampler",
+  "comfy_extras/nodes_custom_sampler.py:class Noise_RandomNoise"
+ ]
+}

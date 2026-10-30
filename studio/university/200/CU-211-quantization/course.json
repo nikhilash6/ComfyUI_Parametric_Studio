@@ -1,0 +1,18 @@
+{
+ "code": "CU-211",
+ "title": "Quantization: int8, FP8, 4-bit and GGUF",
+ "level": "200",
+ "prereq": [
+  "CU-210"
+ ],
+ "char": "bits",
+ "hook": "Plant a few large weights and watch int8 with one scale fall apart, while a scale per 32 weights and FP8 shrug it off.",
+ "code_refs": [
+  "QUANTIZATION.md",
+  "comfy/quant_ops.py:QUANT_ALGOS",
+  "comfy/quant_ops.py:TensorCoreFP8E4M3Layout",
+  "comfy/ops.py:get_disabled_quant_formats",
+  "comfy/ops.py:pick_operations",
+  "comfy/ops.py:cast_bias_weight"
+ ]
+}

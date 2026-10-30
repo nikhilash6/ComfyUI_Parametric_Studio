@@ -1,0 +1,73 @@
+{
+ "code": "CU-502",
+ "title": "History 2: Variational autoencoders and the latent idea (2013)",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What is the gap between log p(x) and the lower bound L of the 2013 paper?",
+   "options": [
+    "KL( q(z|x) ‖ p(z|x) ), the divergence from the true posterior",
+    "KL( q(z|x) ‖ p(z) ), the divergence from the prior",
+    "The reconstruction error of the decoder",
+    "Zero, whenever the decoder is Gaussian"
+   ],
+   "answer": "KL( q(z|x) ‖ p(z|x) ), the divergence from the true posterior",
+   "why": "log p(x) = L + KL( q(z|x) ‖ p(z|x) ). In the lab the gap equals this KL in every row (0.7650 for the q shifted by 0.3) and is 0.0000 when q is the true posterior."
+  },
+  {
+   "q": "The paper replaces the naive Monte Carlo gradient estimator with the reparameterised one. What is wrong with the naive one?",
+   "options": [
+    "It averages to the right gradient but has very high variance",
+    "It is biased towards the prior",
+    "It cannot be computed unless z is discrete",
+    "It needs the true posterior in closed form"
+   ],
+   "answer": "It averages to the right gradient but has very high variance",
+   "why": "The paper says the estimator \"exhibits very high variance\". In the lab both estimators average to the exact −5.1000, but the score-function one has 4.2 to 238.6 times the variance."
+  },
+  {
+   "q": "In the lab, the encoder that may use x ends with a mean gap of 0.0002 nats and the one that ignores x with 7.9758. Why?",
+   "options": [
+    "The true posterior mean moves with x, so a single fixed q cannot match it",
+    "The second encoder was trained for fewer steps",
+    "The second encoder used a different prior",
+    "Using x makes the decoder deterministic"
+   ],
+   "answer": "The true posterior mean moves with x, so a single fixed q cannot match it",
+   "why": "The posterior mean is 2(x−1)/4.25. One function of x, trained only by the reparameterised bound, recovers it; this is the amortised recognition model of the paper."
+  },
+  {
+   "q": "What does ComfyUI's VAE Encode return for an AutoencoderKL VAE such as the one in SD 1.x?",
+   "options": [
+    "The mean of q(z|x); the log-variance half is computed and dropped",
+    "A fresh sample, mean + std times noise, on every run",
+    "The log-variance channels",
+    "The prior N(0, I)"
+   ],
+   "answer": "The mean of q(z|x); the log-variance half is computed and dropped",
+   "why": "DiagonalGaussianRegularizer is built with sample=False, so its forward returns posterior.mode(), which is the mean. The sample() method exists but this path does not call it."
+  },
+  {
+   "q": "In the lab a decoder trained on squared error faces two equally likely sharp images. What does its best output look like?",
+   "options": [
+    "The average of the two, with a 0.50 plateau where they disagree",
+    "One of the two images, chosen at random",
+    "The sharper of the two images",
+    "Pure noise"
+   ],
+   "answer": "The average of the two, with a 0.50 plateau where they disagree",
+   "why": "The best output has expected squared error 0.75, against 1.50 for a sharp image picked at random. Its largest jump between neighbouring pixels is 0.50, where either real image has 1.00."
+  },
+  {
+   "q": "Which paper developed stochastic backpropagation for deep generative models at about the same time as Kingma and Welling, and when was it posted?",
+   "options": [
+    "Rezende, Mohamed and Wierstra, 16 January 2014",
+    "Goodfellow et al., 10 June 2014",
+    "Ho, Jain and Abbeel, 19 June 2020",
+    "Rombach et al., 20 December 2021"
+   ],
+   "answer": "Rezende, Mohamed and Wierstra, 16 January 2014",
+   "why": "Kingma and Welling call it independent work, and Rezende et al. write that the approaches were developed simultaneously. The other dates belong to the GAN, DDPM and latent diffusion papers."
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+seconds x fps = frames:   5 s at 16 fps = 80,  at 24 fps = 120,  at 30 fps = 150
+
+frames asked for -> latent frames -> frames after decoding
+asked   k=4 (Wan, Hunyuan)   k=6 (Mochi)    k=8 (LTXV, Cosmos)
+80      20 ->  77            14 ->  79     10 ->  73
+81      21 ->  81            14 ->  79     11 ->  81
+97      25 ->  97            17 ->  97     13 ->  97
+120     30 -> 117            20 -> 115     15 -> 113
+121     31 -> 121            21 -> 121     16 -> 121
+122     31 -> 121            21 -> 121     16 -> 121
+125     32 -> 125            21 -> 121     16 -> 121
+lengths that come back unchanged below 130:  k=4 has 33 of them, k=6 has 22, k=8 has 17;  121 is in all three
+
+model                                    k  s   ch   default size      latent shape (ch, T, H, W)   RGB values / latent values   long-clip limit
+Wan 2.1 (WanImageToVideo)                4  8   16   832x480x81    (16, 21, 60, 104)            46.29                        48
+HunyuanVideo (EmptyHunyuanLatentVideo)   4  8   16   848x480x25    (16, 7, 60, 106)             42.86                        48
+Mochi (EmptyMochiLatentVideo)            6  8   12   848x480x25    (12, 5, 60, 106)             80.00                        96
+Cosmos (EmptyCosmosLatentVideo)          8  8   16   1280x704x121   (16, 16, 88, 160)            90.75                        96
+LTXV (EmptyLTXVLatentVideo)              8  32  128  768x512x97    (128, 13, 16, 24)            179.08                       192
+
+Wan, 832x480: 81 frames -> 21 latent frames -> 32,760 tokens.  161 frames -> 41 latent frames -> 63,960 tokens
+doubling the frames (81 -> 161) multiplies the tokens by 1.95 and the number of attention pairs by 3.81
+LTXV, 768x512, 97 frames: 4,992 tokens
+
+attention share of a block's operations, width d = 3072 (HunyuanVideo, feed-forward factor 4, patch 2x2x1 as listed in the LTX-Video paper), 848x480
+frames  latent frames  tokens    attention share n/(n+6d)
+25      7              11,130    0.376
+49      13             20,670    0.529
+97      25             39,750    0.683
+121     31             49,290    0.728

@@ -1,0 +1,23 @@
+Sobel x stencil = outer([1, 2, 1], [-1, 0, 1]): True
+ramp of slope 0.1 per pixel: Gx = 0.800 (8 x slope = 0.800);  unit step: Gx = 4.0 and 4.0 at the two pixels beside the edge
+rising edge with the stencil as it is: +4.0, with the stencil flipped (a true convolution): -4.0
+unit step after the 5x5 Gaussian blur with sigma 1 (the Canny node's default): Sobel magnitude 2.59, against 4.00 without the blur
+
+noise std through Sobel 3.462 (sqrt(12) = 3.464), through the plain difference 1.414 (sqrt(2) = 1.414)
+signal to noise for a step of height h: Sobel 1.155 h, plain difference 0.707 h, ratio 1.63
+
+noise std   blur first   true edge pixels found   false edge pixels (of the pixels far from the circle)
+0.0         no           0.851                    0.0000
+0.0         yes          1.000                    0.0000
+0.05        no           0.846                    0.0000
+0.05        yes          1.000                    0.0000
+0.1         no           0.827                    0.0514
+0.1         yes          0.989                    0.0000
+0.2         no           0.843                    0.3547
+0.2         yes          0.987                    0.0024
+
+scene depth ramps from 2 m to 10 m; a share of the pixels is far away (500 m, like sky). Grey value, 1 = near, at 2 m, 6 m and 10 m
+far pixels   min_max               v2_style
+0.000        1.000 0.495 0.000     1.000 0.495 0.000
+0.005        1.000 0.992 0.984     1.000 0.500 0.000
+0.020        1.000 0.992 0.984     1.000 0.992 0.984

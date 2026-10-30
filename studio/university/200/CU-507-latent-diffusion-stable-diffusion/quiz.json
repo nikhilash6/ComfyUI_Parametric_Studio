@@ -1,0 +1,73 @@
+{
+ "code": "CU-507",
+ "title": "History 7: Latent diffusion and Stable Diffusion (2022)",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Why does the latent diffusion paper run diffusion in an autoencoder's latent space?",
+   "options": [
+    "A pixel-space network is evaluated on all pixels, though most bits of an image describe imperceptible detail",
+    "Diffusion cannot be trained on images with three channels",
+    "The autoencoder replaces the U-Net",
+    "It makes sampling a single step"
+   ],
+   "answer": "A pixel-space network is evaluated on all pixels, though most bits of an image describe imperceptible detail",
+   "why": "Figure 2 of the paper: \"Most bits of a digital image correspond to imperceptible details\", yet the backbone must still be evaluated on all pixels. The first stage removes that detail, and the diffusion model handles the semantic composition."
+  },
+  {
+   "q": "In the lab, from the 512×512 pixel grid to the 64×64 latent grid, how much does the self-attention matrix shrink?",
+   "options": [
+    "A factor of 4096, because positions fall by 64 and the matrix is positions squared",
+    "A factor of 64",
+    "A factor of 48",
+    "A factor of 8"
+   ],
+   "answer": "A factor of 4096, because positions fall by 64 and the matrix is positions squared",
+   "why": "The ratio row prints 262,144 against 4,096 positions, and 68,719,476,736 against 16,777,216 matrix entries. The convolution shrinks 64 times and the number of values 48 times."
+  },
+  {
+   "q": "In the lab, what happens to the cost of the latent attention layer when the image side doubles from 512 to 1024?",
+   "options": [
+    "It grows 16 times",
+    "It doubles",
+    "It quadruples",
+    "It stays the same"
+   ],
+   "answer": "It grows 16 times",
+   "why": "Positions go from 4,096 to 16,384, which is four times as many, and the attention cost goes with their square: 21.5 to 343.6 GFLOPs. The convolution grows only 4.00 times."
+  },
+  {
+   "q": "The paper compares the pixel-space LDM-1 with LDM-4. What speed-up in training throughput does it report?",
+   "options": [
+    "About 2.9 times, from 0.11 to 0.32 samples per second",
+    "64 times",
+    "4096 times",
+    "None, the two train at the same speed"
+   ],
+   "answer": "About 2.9 times, from 0.11 to 0.32 samples per second",
+   "why": "Table 6 of the paper, measured on its inpainting setup. Sampling is 3.7 times faster at 256 and 4.9 times at 512. Per-layer arithmetic like the lab's does not predict an end-to-end number."
+  },
+  {
+   "q": "What does ComfyUI's CheckpointLoaderSimple return, and which parts of latent diffusion do they correspond to?",
+   "options": [
+    "MODEL, CLIP and VAE: the denoising U-Net, the text encoder and the autoencoder",
+    "MODEL, SAMPLER and LATENT",
+    "MODEL, VAE and SCHEDULER",
+    "CLIP, VAE and LORA"
+   ],
+   "answer": "MODEL, CLIP and VAE: the denoising U-Net, the text encoder and the autoencoder",
+   "why": "RETURN_TYPES is (\"MODEL\", \"CLIP\", \"VAE\"), with tooltips naming the model for denoising latents, the CLIP model for encoding prompts, and the VAE for moving between pixels and latent space."
+  },
+  {
+   "q": "When did Stability AI announce the public release of Stable Diffusion, and under what licence?",
+   "options": [
+    "22 August 2022, Creative ML OpenRAIL-M",
+    "20 December 2021, MIT",
+    "22 August 2022, CC0 public domain",
+    "26 February 2021, Apache 2.0"
+   ],
+   "answer": "22 August 2022, Creative ML OpenRAIL-M",
+   "why": "Stability AI's page is dated Aug 22 and says the model is released under a Creative ML OpenRAIL-M licence; the Hugging Face post of the same day is dated 22 August 2022. The latent diffusion paper itself was posted on 20 December 2021."
+  }
+ ]
+}

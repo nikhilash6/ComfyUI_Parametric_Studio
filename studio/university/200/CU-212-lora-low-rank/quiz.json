@@ -1,0 +1,84 @@
+{
+ "code": "CU-212",
+ "title": "LoRA: low-rank adaptation",
+ "level": "200",
+ "questions": [
+  {
+   "q": "In h = W0 x + (α/r) B (A x), with W0 of size d × k, what are the shapes of B and A?",
+   "options": [
+    "B is r × k and A is d × r",
+    "B is d × r and A is r × k",
+    "Both are d × k",
+    "B is r × r and A is d × k"
+   ],
+   "answer": "B is d × r and A is r × k",
+   "why": "A takes the k inputs down to r numbers and B takes them back up to d outputs, so BA is d × k. In ComfyUI files B is lora_up with shape [out, r] and A is lora_down with shape [r, in]."
+  },
+  {
+   "q": "How many numbers does a rank-16 LoRA store for a 4096 × 4096 layer, and what share of the layer's 16,777,216 is that?",
+   "options": [
+    "1,048,576, which is 6.25%",
+    "32,768, which is 0.2%",
+    "131,072, which is about 0.8%",
+    "16,777,216, the same as the layer"
+   ],
+   "answer": "131,072, which is about 0.8%",
+   "why": "r · (d + k) = 16 · 8192 = 131,072, and the lab prints the ratio 0.0078."
+  },
+  {
+   "q": "In the lab, the product of a 256 × 8 and an 8 × 256 matrix is a 256 × 256 matrix. How many nonzero singular values does it have, and why?",
+   "options": [
+    "256, because the result is 256 × 256",
+    "16, the sum of the two small dimensions",
+    "8, because a product cannot have rank above the inner dimension",
+    "2048, the number of entries in the small matrices"
+   ],
+   "answer": "8, because a product cannot have rank above the inner dimension",
+   "why": "Every column of BA is a combination of the 8 columns of B, so the rank is at most 8, and the lab counts exactly 8 singular values above 1e-10 of the largest."
+  },
+  {
+   "q": "A LoRA file has no alpha tensor. What scale does ComfyUI's LoRAAdapter.calculate_weight use for it?",
+   "options": [
+    "1 / rank",
+    "0, so the LoRA is ignored",
+    "The rank itself",
+    "1.0, whatever the rank"
+   ],
+   "answer": "1.0, whatever the rank",
+   "why": "The code uses alpha / rank only when the file supplies alpha, and 1.0 otherwise. A new adapter made by Train LoRA gets alpha 1.0, so its scale is 1/rank."
+  },
+  {
+   "q": "Why does the error fall from 0.6190 at rank 2 to 0.0192 at rank 4 for one target, but only slowly for the other?",
+   "options": [
+    "The first target is rank 4 plus noise, so rank 4 covers it. The second is full rank and not compressible",
+    "Rank 4 trains faster than rank 2",
+    "The second target was trained for fewer steps",
+    "Rank 4 is a special value for every update"
+   ],
+   "answer": "The first target is rank 4 plus noise, so rank 4 covers it. The second is full rank and not compressible",
+   "why": "The trained error matches the truncated SVD, the best any rank-r matrix can do, so the curve is set by the target. This is why LoRA needs the update to be low-rank, which the paper hypothesises for adaptation and the lab builds by hand."
+  },
+  {
+   "q": "Base weights are stored in FP8 and a LoRA update 0.5% the size of the weights is merged and stored again. What did the lab find for rounding to nearest?",
+   "options": [
+    "It kept all of the update",
+    "It kept 0.200 of the update, because 0.928 of the weights returned to the same 8-bit code",
+    "It kept 0.987 of the update, like bf16",
+    "It kept none of the update and raised an error"
+   ],
+   "answer": "It kept 0.200 of the update, because 0.928 of the weights returned to the same 8-bit code",
+   "why": "The update is far smaller than the gap between FP8 values, so rounding sends most weights back where they were. Stochastic rounding, which ComfyUI uses for FP8, keeps the mean (1.005) but adds noise 3.36 times as large as the update."
+  },
+  {
+   "q": "Which way does the standard Load LoRA node in ComfyUI apply a LoRA?",
+   "options": [
+    "By weight patches: merged into the weight when the module is fully loaded, or applied on every forward pass for modules that do not fit in VRAM",
+    "Always in bypass mode, to avoid touching the weights",
+    "By retraining the base model for a few steps",
+    "By editing the checkpoint file on disk"
+   ],
+   "answer": "By weight patches: merged into the weight when the module is fully loaded, or applied on every forward pass for modules that do not fit in VRAM",
+   "why": "LoraLoader calls load_lora_for_models, which registers patches. ModelPatcher.load then merges them or attaches LowVramPatch objects. The bypass loader is a separate experimental node."
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "code": "CU-111",
+ "title": "Files and formats: PNG metadata, MP4, WAV, safetensors",
+ "level": "100",
+ "questions": [
+  {
+   "q": "What are the first eight bytes of every PNG file?",
+   "options": [
+    "89 50 4E 47 0D 0A 1A 0A",
+    "50 4E 47 0D 0A 1A 0A 89",
+    "00 00 00 0D 49 48 44 52",
+    "49 45 4E 44 AE 42 60 82"
+   ],
+   "answer": "89 50 4E 47 0D 0A 1A 0A",
+   "why": "The PNG specification fixes the signature as hexadecimal 89 50 4E 47 0D 0A 1A 0A, and the lab prints it. The IHDR chunk follows, and IEND with its CRC ends the file."
+  },
+  {
+   "q": "A PNG chunk type begins with a lowercase letter, as in tEXt. What does that tell a decoder?",
+   "options": [
+    "The chunk is critical and decoding must stop if it is unknown",
+    "The chunk is ancillary, so a decoder may skip it and still show the image",
+    "The chunk holds compressed data",
+    "The chunk is private to one program"
+   ],
+   "answer": "The chunk is ancillary, so a decoder may skip it and still show the image",
+   "why": "The first letter's case is the ancillary bit: capital means critical, lowercase means ancillary. The lab keeps only the capital-letter chunks, IHDR, IDAT and IEND, and the pixels come out identical while the workflow text is gone."
+  },
+  {
+   "q": "In the lab, one bit inside the prompt text is flipped. Which chunks fail their CRC?",
+   "options": [
+    "Every chunk in the file",
+    "Only the tEXt chunk whose keyword is prompt",
+    "Only the IDAT chunk",
+    "None, because the CRC covers only the length field"
+   ],
+   "answer": "Only the tEXt chunk whose keyword is prompt",
+   "why": "Each chunk's CRC covers its own type and data, not its length and not other chunks. The lab prints chunks failing their crc: ['tEXt prompt']."
+  },
+  {
+   "q": "Why must a WAV reader walk the chunk list instead of reading the audio at byte 44?",
+   "options": [
+    "Because WAV files are compressed after byte 44",
+    "Because other chunks can sit before data, and an odd-sized chunk is followed by a pad byte, which in the lab moves the data to byte 56",
+    "Because the data chunk is always last",
+    "Because byte 44 holds the file's checksum"
+   ],
+   "answer": "Because other chunks can sit before data, and an odd-sized chunk is followed by a pad byte, which in the lab moves the data to byte 56",
+   "why": "The WAVE form requires fmt before data and says readers must expect and ignore chunks they do not know. The lab puts a 3-byte note chunk before the data, and only the chunk walk finds it."
+  },
+  {
+   "q": "How does ComfyUI's LoadAudio turn 16-bit integer samples into floats?",
+   "options": [
+    "It multiplies them by 255",
+    "It divides them by 2^15, which puts them between -1.0 and just under 1.0",
+    "It converts them to 8-bit offset binary",
+    "It leaves them as integers"
+   ],
+   "answer": "It divides them by 2^15, which puts them between -1.0 and just under 1.0",
+   "why": "f32_pcm in nodes_audio.py divides int16 by 2**15 and int32 by 2**31. The lab shows the extremes -1.0 and 0.99997 for 16-bit values."
+  },
+  {
+   "q": "Why does the lab's MP4-style stream with the moov box first need only 232 bytes before the index is complete?",
+   "options": [
+    "Because the media data is compressed away",
+    "Because the index is stored before the 1,000,008-byte mdat box, so a reader finds it at the start",
+    "Because moov is always smaller than ftyp",
+    "Because mdat is optional"
+   ],
+   "answer": "Because the index is stored before the 1,000,008-byte mdat box, so a reader finds it at the start",
+   "why": "Boxes are read by size and type from the start. With the index last the reader must pass the whole mdat box first. FFmpeg's faststart pass moves the moov box to the front, and ComfyUI's video writer sets it for MP4 files written to a path."
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "code": "CU-502",
+ "title": "History 2: Variational autoencoders and the latent idea (2013)",
+ "level": "200",
+ "prereq": [
+  "CU-101"
+ ],
+ "char": "latent",
+ "hook": "The 2013 paper in three checks on a model with a known answer: the exact gap in the lower bound, a gradient estimator with far lower variance, and an encoder that learns the posterior.",
+ "code_refs": [
+  "nodes.py:class VAEEncode",
+  "comfy/sd.py:class VAE",
+  "comfy/ldm/models/autoencoder.py:class DiagonalGaussianRegularizer",
+  "comfy/ldm/models/autoencoder.py:class AutoencoderKL",
+  "comfy/ldm/modules/distributions/distributions.py:class DiagonalGaussianDistribution"
+ ]
+}

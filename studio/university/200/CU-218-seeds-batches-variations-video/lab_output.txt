@@ -1,0 +1,19 @@
+latent [1, 16, 21, 60, 104]: 2,096,640 numbers, mean -0.0003, std 0.9999
+
+seed 5 against seed 5 + 2^32: identical noise True;  against 5 + 2^63: True;  against 6: False
+
+batch of 4, same seed 7:   item 0 equals the noise of a batch of 1   item 1 equals the second draw   one item redone with batch_index [2] equals item 2
+  [4, 4, 64, 64]      16384 numbers per item   True                                      True                          True
+  [4, 16, 5, 8, 8]     5120 numbers per item   True                                      True                          True
+  [4, 3, 5, 7, 7]       735 numbers per item   False                                     False                         False
+  [4, 4, 9, 9]          324 numbers per item   False                                     False                         False
+LatentBatchSeedBehavior 'fixed' sets batch_index to [0, 0, 0, 0]: all four items identical: True
+
+same seed, 21 latent frames against 41: share of the 21-frame noise found unchanged in the 41-frame noise 0.0625  (channel 0 alone: 1.0000)
+same seed, width 104 against 112: share unchanged 0.0000
+correlation between the noise of adjacent frames, 20 pairs: mean -0.0004, largest in size 0.0065
+
+angle between the two noises 89.9 degrees.   t      lerp: std  corr with a      slerp: std  corr with a
+                                          0.1    0.908      0.994            1.003       0.988
+                                          0.25   0.793      0.949            1.002       0.925
+                                          0.5    0.708      0.709            1.000       0.709

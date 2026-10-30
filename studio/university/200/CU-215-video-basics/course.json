@@ -1,0 +1,21 @@
+{
+ "code": "CU-215",
+ "title": "Video basics: frames, fps and temporal latents",
+ "level": "200",
+ "prereq": [
+  "CU-201"
+ ],
+ "char": "frame",
+ "hook": "Why five seconds at 24 fps comes back as 117 frames, how a video VAE counts, and how attention cost climbs with duration.",
+ "code_refs": [
+  "comfy_extras/nodes_wan.py:class WanImageToVideo",
+  "comfy_extras/nodes_hunyuan.py:class EmptyHunyuanLatentVideo",
+  "comfy_extras/nodes_mochi.py:class EmptyMochiLatentVideo",
+  "comfy_extras/nodes_cosmos.py:class EmptyCosmosLatentVideo",
+  "comfy_extras/nodes_lt.py:class EmptyLTXVLatentVideo",
+  "comfy_extras/nodes_lt.py:class LTXVConditioning",
+  "comfy_extras/nodes_video.py:class CreateVideo",
+  "comfy/sd.py:class VAE",
+  "comfy/ldm/wan/model.py:patch_size"
+ ]
+}

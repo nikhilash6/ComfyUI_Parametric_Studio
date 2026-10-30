@@ -1,0 +1,17 @@
+{
+ "code": "CU-503",
+ "title": "History 3: Pixel by pixel, autoregressive image models",
+ "level": "200",
+ "prereq": [
+  "CU-101"
+ ],
+ "char": "attn",
+ "hook": "An image as a product of conditionals: check the chain rule exactly, watch a causal mask make the future invisible, and count what sampling one pixel at a time costs.",
+ "code_refs": [
+  "comfy/text_encoders/llama.py:def sample_token",
+  "comfy/text_encoders/llama.py:triu_(1)",
+  "comfy_extras/nodes_ar_video.py:class SamplerARVideo",
+  "comfy/k_diffusion/sampling.py:def sample_ar_video",
+  "comfy/ldm/wan/ar_model.py:class CausalWanSelfAttention"
+ ]
+}

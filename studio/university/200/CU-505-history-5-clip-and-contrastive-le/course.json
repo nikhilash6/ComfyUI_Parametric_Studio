@@ -1,0 +1,18 @@
+{
+ "code": "CU-505",
+ "title": "History 5: CLIP and contrastive learning",
+ "level": "200",
+ "prereq": [
+  "CU-104"
+ ],
+ "char": "attn",
+ "hook": "CLIP's loss as a table of similarities: what chance scores, how the temperature caps confidence, why more captions help, and zero-shot use on pairs never seen in training.",
+ "code_refs": [
+  "comfy/clip_model.py:class CLIPTextModel_",
+  "comfy/clip_model.py:text_projection",
+  "comfy/clip_model.py:class CLIPVisionModelProjection",
+  "comfy/sd1_clip.py:class SD1CheckpointClipModel",
+  "comfy/sdxl_clip.py:class SDXLClipG",
+  "comfy/model_base.py:def encode_adm"
+ ]
+}

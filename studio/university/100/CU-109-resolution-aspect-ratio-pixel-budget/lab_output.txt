@@ -1,0 +1,36 @@
+requested   latent [1, 4, h, w]   decoded size   pixels lost
+1024x1024   [1, 4, 128, 128]      1024x1024      0
+1333x750    [1, 4, 93, 166]       1328x744       11,718
+1920x1080   [1, 4, 135, 240]      1920x1080      0
+
+input        steps   result       pixels / budget   ratio error
+1920x1080    1       1365x768     0.9998            -0.0002
+1920x1080    8       1368x768     1.0020            +0.0020
+1920x1080    64      1344x768     0.9844            -0.0156
+3000x2000    1       1254x836     0.9998            +0.0000
+3000x2000    8       1256x840     1.0062            -0.0032
+3000x2000    64      1280x832     1.0156            +0.0256
+1000x1000    1       1024x1024    1.0000            +0.0000
+1000x1000    8       1024x1024    1.0000            +0.0000
+1000x1000    64      1024x1024    1.0000            +0.0000
+1080x1920    1       768x1365     0.9998            +0.0002
+1080x1920    8       768x1368     1.0020            -0.0019
+1080x1920    64      768x1344     0.9844            +0.0159
+
+SDXL sizes: 40, all sides multiples of 64: True, pixels between 0.9023 and 1.0000 of 1024 x 1024
+a rule 'multiples of 64, between 90% and 100% of the budget, closest ratio' finds 40 of the 40 sizes from their rounded ratios
+(the 90% floor was read off this same table, so this checks the rule's consistency, not the paper's method)
+
+wanted ratio    multiples of 64     multiples of 8      the 64 result is in the SDXL list
+1:1             1024x1024           1024x1024           yes
+4:3             1152x896            1152x864            yes
+3:2             1216x832            1248x832            yes
+16:9            1344x768            1352x760            yes
+9:16            768x1344            760x1352            yes
+
+side   pixels / 512x512   tokens N   N^2 entries        full matrix in fp16   VAE decode estimate (fp32)
+512    1.00               4,096      16,777,216              0.03 GiB           2.13 GiB
+768    2.25               9,216      84,934,656              0.16 GiB           4.79 GiB
+1024   4.00               16,384     268,435,456             0.50 GiB           8.51 GiB
+1536   9.00               36,864     1,358,954,496           2.53 GiB          19.14 GiB
+2048   16.00              65,536     4,294,967,296           8.00 GiB          34.03 GiB

@@ -1,0 +1,17 @@
+{
+ "code": "CU-102",
+ "title": "Anatomy of a ComfyUI graph",
+ "level": "100",
+ "prereq": [],
+ "char": "graph",
+ "hook": "A small engine that follows ComfyUI's rules shows which nodes run, which come from the cache, and why changing the checkpoint re-runs six nodes, not seven.",
+ "code_refs": [
+  "execution.py:def validate_prompt",
+  "execution.py:class PromptExecutor",
+  "comfy_execution/graph.py:class TopologicalSort",
+  "comfy_execution/graph.py:class ExecutionList",
+  "comfy_execution/caching.py:class CacheKeySetInputSignature",
+  "nodes.py:class SaveImage",
+  "nodes.py:class LoadImage"
+ ]
+}

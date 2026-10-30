@@ -1,0 +1,15 @@
+{
+ "code": "CU-111",
+ "title": "Files and formats: PNG metadata, MP4, WAV, safetensors",
+ "level": "100",
+ "prereq": [],
+ "char": "bits",
+ "hook": "Build a PNG that carries a workflow, a WAV file and an MP4-style box stream by hand, and see why a reader walks chunks and boxes, why a flipped bit is caught, and what dropping metadata really removes.",
+ "code_refs": [
+  "nodes.py:class SaveImage",
+  "comfy_extras/nodes_audio.py:def f32_pcm",
+  "comfy_extras/nodes_audio.py:class SaveAudio",
+  "comfy_extras/nodes_video.py:class SaveVideo",
+  "comfy_api/latest/_input_impl/video_types.py:use_metadata_tags+faststart"
+ ]
+}

@@ -1,0 +1,26 @@
+save format, version 0.4: 7 nodes, 9 links
+id  type                    inputs wired (name<-link id)                        widgets_values
+4   CheckpointLoaderSimple  -                                                   ['model_a.safetensors']
+5   EmptyLatentImage        -                                                   [512, 512, 1]
+6   CLIPTextEncode          clip<-1                                             ['a red fox in snow']
+7   CLIPTextEncode          clip<-2                                             ['blurry']
+3   KSampler                model<-3, positive<-4, negative<-5, latent_image<-6 [156680208700286, 'randomize', 20, 8, 'euler', 'normal', 1]
+8   VAEDecode               samples<-7, vae<-8                                  []
+9   SaveImage               images<-9                                           ['ComfyUI']
+
+wiring written twice agrees: True
+link 4 deleted from links     1 found: node 3 input 'positive' says link 4, which is not in links
+link 6 re-pointed to slot 2   2 found: node 3 input 'negative' says link 5, but link 6 ends there
+link 9 typed MODEL            1 found: link 9 is typed MODEL, but joins an output of type IMAGE to an input of type IMAGE
+link 1 joins node 42          1 found: link 1 joins node 42 to node 6, and one of them does not exist
+
+save format -> API format: 7 entries, keys ['3', '4', '5', '6', '7', '8', '9']
+KSampler has 7 widget values but 6 widget inputs in the API format
+API entry 3: {"inputs":{"model":["4",0],"positive":["6",0],"negative":["7",0],"latent_image":["5",0],"seed":156680208700286,"steps":20,"cfg":8,"sampler_name":"euler","scheduler":"normal","denoise":1},"class_type":"KSampler"}
+
+positive text and seed from the save format: ('a red fox in snow', 156680208700286)
+positive text and seed from the API format:  ('a red fox in snow', 156680208700286)
+nodes the SaveImage depends on: ['3', '4', '5', '6', '7', '8']
+model files named in the graph: ['model_a.safetensors']
+
+source id written as 3 instead of '3': looking up the node gives KeyError 3

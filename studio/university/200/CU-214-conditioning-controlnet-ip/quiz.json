@@ -1,0 +1,73 @@
+{
+ "code": "CU-214",
+ "title": "Conditioning: img2img, inpaint, ControlNet, IP-Adapter",
+ "level": "200",
+ "questions": [
+  {
+   "q": "In ComfyUI, what does the denoise value of an img2img KSampler change?",
+   "options": [
+    "It adds that fraction of noise to the encoded image",
+    "It picks where on a longer noise schedule the sampler starts, so the first noise level depends on denoise",
+    "It sets how many steps run",
+    "It blends the output with the input image afterwards"
+   ],
+   "answer": "It picks where on a longer noise schedule the sampler starts, so the first noise level depends on denoise",
+   "why": "KSampler.set_steps builds a schedule of int(steps / denoise) steps and keeps the last steps + 1 values. The number of steps run stays 20 in the lab, and the first sigma is 0.552, 1.548 or 4.904 for denoise 0.2, 0.5 or 0.8."
+  },
+  {
+   "q": "In the lab, denoise 0.5 starts at sigma 1.548. How much of the clean latent's signal does the starting latent keep, for unit-variance latents?",
+   "options": [
+    "0.5, because denoise is 0.5",
+    "About 0.54, which is 1 / √(1 + 1.548²)",
+    "About 0.2",
+    "1.548 / 2"
+   ],
+   "answer": "About 0.54, which is 1 / √(1 + 1.548²)",
+   "why": "The start is L + σ n, so its correlation with L is 1 / √(1 + σ²). The lab measures 0.542 against the formula's 0.543."
+  },
+  {
+   "q": "A ControlNet has start_percent 0 and end_percent 0.5 on an SD 1.x model. What window does that set?",
+   "options": [
+    "The first half of the steps, whatever the scheduler",
+    "The steps where the noise level is at or above the level at timestep 499.5, which is 10 of 20 steps on the normal scheduler and 9 on Karras",
+    "Half of the strength",
+    "The steps after the noise level drops below 1"
+   ],
+   "answer": "The steps where the noise level is at or above the level at timestep 499.5, which is 10 of 20 steps on the normal scheduler and 9 on Karras",
+   "why": "pre_run_control maps the percents through percent_to_sigma, which reads the noise level at timestep (1 − percent) · 999. The lab prints a stop level of 1.616 and 10 and 9 steps."
+  },
+  {
+   "q": "Why can a ControlNet with zero-initialised output convolutions still learn, even though its output starts at zero?",
+   "options": [
+    "The gradient of the zero convolution's own weights is not zero, and once they move the trainable copy and the input convolution get gradients",
+    "Zero convolutions are replaced by random ones after the first step",
+    "The locked model supplies the gradient",
+    "Zero convolutions are never trained"
+   ],
+   "answer": "The gradient of the zero convolution's own weights is not zero, and once they move the trainable copy and the input convolution get gradients",
+   "why": "The weight gradient depends on the convolution's input, not on its weights. The gradient to the copy passes through the zero weights, so it is 0.0000 at step 0 and 0.0019 after one step in the lab."
+  },
+  {
+   "q": "Is IP-Adapter part of ComfyUI core v0.43.0?",
+   "options": [
+    "Yes, as the IPAdapterApply node",
+    "No: a search of the core sources finds no mention of it, so it comes from custom nodes. Core has StyleModelApply and unCLIPConditioning for image prompts",
+    "Yes, but only for SDXL",
+    "No, and ComfyUI has no way to use an image as a prompt"
+   ],
+   "answer": "No: a search of the core sources finds no mention of it, so it comes from custom nodes. Core has StyleModelApply and unCLIPConditioning for image prompts",
+   "why": "A case-insensitive search of comfy/, comfy_extras/, comfy_api/ and nodes.py finds nothing. StyleModelApply and unCLIPConditioning are in nodes.py."
+  },
+  {
+   "q": "In the lab's attention test, what happens when appended image tokens are multiplied by a strength of 0, as StyleModelApply does in multiply mode?",
+   "options": [
+    "The result equals a layer with no image, difference 0.0",
+    "The tokens remain in the attention and change the result, by 0.34 in the lab",
+    "The layer raises an error",
+    "The result equals the decoupled form with lambda 1"
+   ],
+   "answer": "The tokens remain in the attention and change the result, by 0.34 in the lab",
+   "why": "A zero token still takes attention weight, so it dilutes the text tokens. Decoupled cross-attention with lambda 0 matches the no-image layer exactly, and attn_bias mode, which adds log(0) = -inf, does too (2.4e-07)."
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "code": "CU-215",
+ "title": "Video basics: frames, fps and temporal latents",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Five seconds at 24 fps is 120 frames. By the lab's formulas, how many frames come back after encoding and decoding with a temporal factor of 4?",
+   "options": [
+    "120, nothing is lost",
+    "117, from 30 latent frames",
+    "121, the length is rounded up",
+    "30, one frame per latent frame"
+   ],
+   "answer": "117, from 30 latent frames",
+   "why": "Latent frames = (120 − 1) // 4 + 1 = 30, and decoding gives 4 · 30 − 3 = 117. Only lengths of the form 1 + 4m come back unchanged."
+  },
+  {
+   "q": "Why is a length of 121 frames valid for temporal factors 4, 6 and 8 at the same time?",
+   "options": [
+    "Because 121 is a prime number",
+    "Because 121 = 1 + 120, and 120 is a multiple of 4, 6 and 8",
+    "Because every model uses 121 frames",
+    "Because 121 is the square of 11, so it divides evenly"
+   ],
+   "answer": "Because 121 = 1 + 120, and 120 is a multiple of 4, 6 and 8",
+   "why": "A length survives the round trip when it is 1 + k · m. The lab shows 121 coming back as 121 for k = 4, 6 and 8, while 120 comes back as 117, 115 and 113."
+  },
+  {
+   "q": "What is the latent shape that WanImageToVideo creates at its defaults of 832 × 480 and 81 frames?",
+   "options": [
+    "[16, 81, 60, 104]",
+    "[4, 21, 60, 104]",
+    "[16, 21, 60, 104]",
+    "[16, 21, 480, 832]"
+   ],
+   "answer": "[16, 21, 60, 104]",
+   "why": "16 channels, (81 − 1) // 4 + 1 = 21 latent frames, and 480 / 8 = 60 by 832 / 8 = 104 in space."
+  },
+  {
+   "q": "Why is the Wan 2.1 default clip compressed by 46.29 and not by the long-clip limit of 48?",
+   "options": [
+    "The VAE loses 4% of the frames",
+    "The first frame has a latent frame to itself, so 21 latent frames stand for 81 frames and not 84",
+    "The width is not a multiple of 16",
+    "Because 48 only applies to fp8 models"
+   ],
+   "answer": "The first frame has a latent frame to itself, so 21 latent frames stand for 81 frames and not 84",
+   "why": "The limit 3 · 4 · 8 · 8 / 16 = 48 assumes every latent frame covers 4 frames. 48 · 81 / 84 = 46.29, the lab's figure. The Wan paper says the first frame is only spatially compressed."
+  },
+  {
+   "q": "Doubling Wan's clip from 81 to 161 frames multiplied the tokens by 1.95 and the attention pairs by 3.81 in the lab. Why not 2 and 4?",
+   "options": [
+    "Attention is cheaper than quadratic",
+    "161 frames is 41 latent frames, and 41 / 21 = 1.95. Squaring that gives 3.81",
+    "The lab rounds all numbers down",
+    "Tokens are only counted for the first half of the clip"
+   ],
+   "answer": "161 frames is 41 latent frames, and 41 / 21 = 1.95. Squaring that gives 3.81",
+   "why": "Latent frames are (n − 1) // 4 + 1, so the lone first frame makes 81 → 21 and 161 → 41. Tokens scale with latent frames and attention pairs with their square."
+  },
+  {
+   "q": "What does the fps value of CreateVideo do?",
+   "options": [
+    "It changes how many frames the model generates",
+    "It sets the playback rate of the frames you give it, so the duration is frames divided by fps",
+    "It sets the temporal factor of the VAE",
+    "It is the model's temporal conditioning for every video family"
+   ],
+   "answer": "It sets the playback rate of the frames you give it, so the duration is frames divided by fps",
+   "why": "CreateVideo takes images and an fps. The latent shape does not depend on it. Some models, such as LTXV through LTXVConditioning, are also given a separate frame_rate in the conditioning."
+  }
+ ]
+}

@@ -1,0 +1,28 @@
+node                       output       shape                numbers
+CLIPTextEncode             CONDITIONING [1, 77, 768]         59,136
+EmptyLatentImage           LATENT       [1, 4, 64, 64]       16,384
+KSampler                   LATENT       [1, 4, 64, 64]       16,384
+VAEDecode                  IMAGE        [1, 512, 512, 3]     786,432
+the sampler works on 16,384 numbers, the picture has 786,432: 48x more
+
+sigma_max 14.6146, sigma_min 0.0292
+20-step normal schedule: 14.6146 10.7468 8.0815 6.2049 4.8557 3.8654 3.1238 2.5572 2.1157 1.7648 1.4806 1.2458 1.0481 0.8784 0.7297 0.5964 0.4736 0.3555 0.2322 0.0292 0.0000
+same as the 20-step list in the documentation to four decimals: True
+
+denoise   steps run   list built with   first sigma
+1.0       20          20 steps          14.6146
+0.75      20          26 steps          4.2650
+0.5       20          40 steps          1.5482
+0.25      20          80 steps          0.6708
+
+step  sigma     x to final   denoised estimate to final
+0     14.6146   38.975       2.065
+2     8.0815    20.889       1.891
+4     4.8557    12.021       1.651
+6     3.1238    7.327        1.364
+8     2.1157    4.657        1.071
+12    1.0481    1.948        0.627
+16    0.4736    0.642        0.240
+19    0.0292    0.004        0.000
+
+network evaluations for 20 steps: Euler 20, Heun 39

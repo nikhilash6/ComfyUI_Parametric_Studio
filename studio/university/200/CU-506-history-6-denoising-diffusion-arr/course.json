@@ -1,0 +1,17 @@
+{
+ "code": "CU-506",
+ "title": "History 6: Denoising diffusion arrives (DDPM, 2020)",
+ "level": "200",
+ "prereq": [
+  "CU-202"
+ ],
+ "char": "denoise",
+ "hook": "The DDPM paper checked against exact answers: the posterior of a forward step, the weights the simplified loss drops, and why the two reverse variances barely differ. Plus which one ComfyUI's ddpm sampler uses.",
+ "code_refs": [
+  "comfy/k_diffusion/sampling.py:def DDPMSampler_step",
+  "comfy/k_diffusion/sampling.py:def sample_ddpm",
+  "comfy/samplers.py:ddpm",
+  "comfy/ldm/modules/diffusionmodules/util.py:sqrt_linear",
+  "comfy/model_sampling.py:class ModelSamplingDiscrete"
+ ]
+}

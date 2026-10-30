@@ -1,0 +1,73 @@
+{
+ "code": "CU-503",
+ "title": "History 3: Pixel by pixel, autoregressive image models",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does the chain rule let an autoregressive image model do?",
+   "options": [
+    "Write p(x) exactly as a product of p(x_i | x_1 ... x_(i−1)) over the pixels",
+    "Replace the product with an average, which is cheaper",
+    "Drop the conditioning, because the pixels of an image are independent",
+    "Sample every pixel at once, in a single network pass"
+   ],
+   "answer": "Write p(x) exactly as a product of p(x_i | x_1 ... x_(i−1)) over the pixels",
+   "why": "The factorisation is exact for any order. In the lab the 64 exact conditionals multiply to the joint probability to within 9.2e-14 on 20000 images. Sampling is the part that cannot be done in one pass."
+  },
+  {
+   "q": "In the lab, what happens to the derivative of output logit i with respect to input pixel j for j ≥ i in the masked network?",
+   "options": [
+    "It is exactly zero, so no output sees its own pixel or any later one",
+    "It is small but not zero, about 0.07",
+    "It is zero only after training",
+    "It equals the derivative for j < i"
+   ],
+   "answer": "It is exactly zero, so no output sees its own pixel or any later one",
+   "why": "The MADE masks remove every path from x_j to the prediction of x_i unless j < i. The masked network prints 0.00e+00 there, while the unmasked network prints 1.19e-01."
+  },
+  {
+   "q": "Why is training an autoregressive image model fast but sampling slow, according to the PixelRNN paper?",
+   "options": [
+    "Training computes all the conditionals in parallel, while generation must go pixel by pixel",
+    "Training skips the colour channels",
+    "Sampling needs a larger network than training",
+    "Training uses fewer pixels than sampling"
+   ],
+   "answer": "Training computes all the conditionals in parallel, while generation must go pixel by pixel",
+   "why": "\"During training and evaluation the distributions over the pixel values are computed in parallel, while the generation of an image is sequential.\" The lab uses 1 pass to score an image and 64 to draw one."
+  },
+  {
+   "q": "In the lab the independent-pixel model gets every pixel's marginal right but costs 0.8371 bits per pixel against 0.3300 for the truth. Why?",
+   "options": [
+    "It cannot see that pixels depend on each other, so it cannot know where the bar is",
+    "It was trained for fewer steps",
+    "Its marginals were wrong",
+    "It used a causal mask"
+   ],
+   "answer": "It cannot see that pixels depend on each other, so it cannot know where the bar is",
+   "why": "A product of marginals ignores the dependence between pixels. Only 0.001 of its samples are well-formed bars, against 0.988 of real images."
+  },
+  {
+   "q": "What reasons do the DALL·E authors give for replacing pixels with image tokens?",
+   "options": [
+    "Pixels as tokens would need an inordinate amount of memory, and likelihood training spends capacity on short-range detail",
+    "Pixels cannot be fed to a transformer at all",
+    "Tokens make sampling parallel",
+    "Tokens remove the need for a causal mask"
+   ],
+   "answer": "Pixels as tokens would need an inordinate amount of memory, and likelihood training spends capacity on short-range detail",
+   "why": "They compress each 256×256 RGB image to a 32×32 grid of tokens, which \"reduces the context size of the transformer by a factor of 192\". The lab prints 196,608 values against 1,024 tokens, ratio 192."
+  },
+  {
+   "q": "What does ComfyUI's Sampler AR Video do with num_frame_per_block?",
+   "options": [
+    "Denoises the latent video one block of frames at a time, each block attending to a cache of the earlier blocks",
+    "Sets how many frames the VAE decodes in parallel",
+    "Chooses how many frames are dropped from the output",
+    "Splits the prompt into one sentence per block"
+   ],
+   "answer": "Denoises the latent video one block of frames at a time, each block attending to a cache of the earlier blocks",
+   "why": "sample_ar_video in comfy/k_diffusion/sampling.py loops over blocks and runs the sigma loop on each; CausalWanSelfAttention stores keys and values in a KV cache. The widget text reads \"1 = framewise, 3 = chunkwise\"."
+  }
+ ]
+}

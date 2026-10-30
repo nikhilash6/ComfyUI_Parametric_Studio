@@ -1,0 +1,73 @@
+{
+ "code": "CU-110",
+ "title": "Reading a workflow JSON like a map",
+ "level": "100",
+ "questions": [
+  {
+   "q": "Which export is the one meant for submitting a graph to a ComfyUI server?",
+   "options": [
+    "File, Save, which keeps positions, sizes and colours",
+    "File, Export Workflow (API), which keeps node ids, classes and inputs but no layout",
+    "A screenshot of the canvas",
+    "The PNG's thumbnail"
+   ],
+   "answer": "File, Export Workflow (API), which keeps node ids, classes and inputs but no layout",
+   "why": "The documentation says the API format omits UI metadata such as positions, colors, groups and node sizes. The server's /prompt route takes that dictionary under the key prompt."
+  },
+  {
+   "q": "In the save-format link row [4, 6, 0, 3, 1, \"CONDITIONING\"], what does the 3 mean?",
+   "options": [
+    "The id of the link",
+    "The slot the link starts from",
+    "The id of the node where the link ends",
+    "The slot the link ends at"
+   ],
+   "answer": "The id of the node where the link ends",
+   "why": "A link row is [link id, origin node, origin slot, target node, target slot, type]. This row is link 4, from output 0 of node 6 to input 1 of node 3, which is the KSampler's positive input in the lab."
+  },
+  {
+   "q": "The lab's KSampler has 7 widget values but 6 widget inputs in the API format. Which value is missing from the API format?",
+   "options": [
+    "The seed",
+    "The \"control after generate\" choice, which the editor keeps and the server never sees",
+    "The sampler name",
+    "The denoise value"
+   ],
+   "answer": "The \"control after generate\" choice, which the editor keeps and the server never sees",
+   "why": "widgets_values is a positional list: seed, control after generate, steps, cfg, sampler_name, scheduler, denoise. The API format has no entry for the second item, as the documented example and the lab's translation show."
+  },
+  {
+   "q": "Why does the lab check the `links` list against each node's own sockets?",
+   "options": [
+    "Because JSON cannot store links",
+    "Because the wiring is written twice, so a damaged or hand-edited file can disagree with itself",
+    "Because the server requires both lists to be sorted",
+    "Because the sockets hold the node positions"
+   ],
+   "answer": "Because the wiring is written twice, so a damaged or hand-edited file can disagree with itself",
+   "why": "Each link appears in the links table and again in the origin node's output socket and the target node's input socket. The lab finds all four planted faults: a deleted row, a wrong slot, a wrong type and a missing node."
+  },
+  {
+   "q": "How does the API format write a wire?",
+   "options": [
+    "As the id of a row in a links table",
+    "As a list of two items: the source node's id as a string and the output slot",
+    "As the title of the source node",
+    "As a row of six items"
+   ],
+   "answer": "As a list of two items: the source node's id as a string and the output slot",
+   "why": "In the documentation's example the KSampler has \"model\": [\"4\", 0]. The save format is the one with link rows of six."
+  },
+  {
+   "q": "A hand-written API prompt says \"samples\": [3, 0] where the node id should be the string \"3\". What does ComfyUI make of it?",
+   "options": [
+    "It converts the number silently",
+    "It runs, using output 0 of whatever node comes first",
+    "It does not count as a link, and looking up node 3 fails during validation",
+    "It treats it as a LATENT constant"
+   ],
+   "answer": "It does not count as a link, and looking up node 3 fails during validation",
+   "why": "is_link requires a list of two items whose first item is a string. JSON object keys are strings, so the lookup with the number 3 raises a KeyError in validate_inputs, which validate_prompt reports as a failed validation."
+  }
+ ]
+}

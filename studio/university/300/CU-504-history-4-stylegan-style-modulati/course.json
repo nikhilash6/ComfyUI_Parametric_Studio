@@ -1,0 +1,17 @@
+{
+ "code": "CU-504",
+ "title": "History 4: StyleGAN and style modulation",
+ "level": "300",
+ "prereq": [
+  "CU-501"
+ ],
+ "char": "latent",
+ "hook": "How a style vector controls a feature map in StyleGAN, AdaIN then weight demodulation, checked with numbers, and where the same scale-and-shift idea lives in ComfyUI today.",
+ "code_refs": [
+  "comfy/ldm/wan/model_animate.py:class EqualConv2d",
+  "comfy/ldm/wan/model_animate.py:class EqualLinear",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:def modulate",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:class DismantledBlock",
+  "comfy/ldm/modules/diffusionmodules/openaimodel.py:use_scale_shift_norm"
+ ]
+}

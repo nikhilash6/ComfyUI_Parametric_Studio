@@ -1,0 +1,73 @@
+{
+ "code": "CU-211",
+ "title": "Quantization: int8, FP8, 4-bit and GGUF",
+ "level": "200",
+ "questions": [
+  {
+   "q": "In the lab, 0.1% of the weights are made 30 times larger. What does that do to int8 with one scale for the whole matrix, and to int8 with a scale per 32 weights?",
+   "options": [
+    "Both stay near 0.01, because int8 has enough levels",
+    "Both error figures rise by the same factor of about 14",
+    "One scale: error 0.0106 to 0.1476. Scale per 32: 0.0053 to 0.0094",
+    "One scale improves, because the largest weight sets a finer grid"
+   ],
+   "answer": "One scale: error 0.0106 to 0.1476. Scale per 32: 0.0053 to 0.0094",
+   "why": "The largest weight sets the step for every weight that shares its scale, so one outlier coarsens the whole matrix. A block confines it to 32 weights. See the table in the Lab section."
+  },
+  {
+   "q": "Why does FP8 E4M3 with one scale keep the same error, 0.0265, with and without the planted outliers?",
+   "options": [
+    "FP8 stores a separate scale for every weight",
+    "Its spacing grows with the value, so small weights keep their relative precision",
+    "It clips the outliers away before rounding",
+    "E4M3 has more mantissa bits than int8"
+   ],
+   "answer": "Its spacing grows with the value, so small weights keep their relative precision",
+   "why": "A float's gap between neighbours scales with the number itself (CU-210). The scale puts the largest weight at 448, so nothing is clipped, and the price is precision: E4M3 has only 3 mantissa bits."
+  },
+  {
+   "q": "How many bits per weight does GGUF Q4_0 use, and where does the half bit above 4 come from?",
+   "options": [
+    "4.0, because the scale is kept in a separate file",
+    "4.25, from an 8-bit scale per 32 weights",
+    "5.0, because each weight carries its own scale",
+    "4.5, from one fp16 scale shared by each block of 32 four-bit codes"
+   ],
+   "answer": "4.5, from one fp16 scale shared by each block of 32 four-bit codes",
+   "why": "block_q4_0 in ggml-common.h is one ggml_half (16 bits) plus 16 bytes of nibbles for 32 weights: (32 · 4 + 16) / 32 = 4.5."
+  },
+  {
+   "q": "Going from int8 to int4 at a scale per 32 weights multiplied the clean-data error by 18.2 in the lab. What predicts that figure?",
+   "options": [
+    "The ratio of the bit counts, 8 / 4",
+    "The ratio of the grid steps, 127 / 7 = 18.1",
+    "The square root of 12",
+    "The block size, 32"
+   ],
+   "answer": "The ratio of the grid steps, 127 / 7 = 18.1",
+   "why": "The step is max|w| / qmax and the RMS rounding error is step / √12, so for the same weights the error scales as 1 / qmax."
+  },
+  {
+   "q": "A card has no native kernel for a quantized format in a checkpoint. What does ComfyUI do with those layers?",
+   "options": [
+    "It refuses to load the checkpoint",
+    "It keeps the weights quantized and dequantizes them to the compute dtype for the matrix multiply",
+    "It rewrites the checkpoint as fp32 on disk",
+    "It switches the layers to GGUF"
+   ],
+   "answer": "It keeps the weights quantized and dequantizes them to the compute dtype for the matrix multiply",
+   "why": "get_disabled_quant_formats lists the formats the device cannot compute natively, pick_operations logs them as emulated ops, and QUANTIZATION.md describes dequantizing for compute-dtype execution when the fast path is disabled."
+  },
+  {
+   "q": "What does this lab tell you about which format gives the best pictures?",
+   "options": [
+    "That GGUF Q4_0 does, because it has the lowest 4-bit error",
+    "That FP8 always beats int8",
+    "That a scale per row is enough for every model",
+    "Nothing: it measures weight and matmul error on synthetic Gaussian weights, not images"
+   ],
+   "answer": "Nothing: it measures weight and matmul error on synthetic Gaussian weights, not images",
+   "why": "The What is contested section says the same: real weight distributions differ, the outliers were planted by us, and the effect on pictures and speed is an empirical question per model and card."
+  }
+ ]
+}

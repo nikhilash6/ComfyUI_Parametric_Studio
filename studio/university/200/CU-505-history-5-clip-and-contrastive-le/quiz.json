@@ -1,0 +1,73 @@
+{
+ "code": "CU-505",
+ "title": "History 5: CLIP and contrastive learning",
+ "level": "200",
+ "questions": [
+  {
+   "q": "In CLIP's N×N table of image-caption similarities, which entries are right answers?",
+   "options": [
+    "The N diagonal entries, with N² − N wrong ones",
+    "All N² entries, since every image matches every caption of its class",
+    "One per row but none per column",
+    "N right answers and N wrong ones"
+   ],
+   "answer": "The N diagonal entries, with N² − N wrong ones",
+   "why": "The paper trains the model to pick the N real pairs among N² possible pairings, and the loss is a cross-entropy over rows (image finds caption) and over columns (caption finds image), averaged."
+  },
+  {
+   "q": "A model gives all 32 captions in the batch the same score. What is its CLIP loss?",
+   "options": [
+    "ln 32 = 3.4657",
+    "32",
+    "0",
+    "ln 2 = 0.6931"
+   ],
+   "answer": "ln 32 = 3.4657",
+   "why": "A cross-entropy with probability 1/N on the right answer is ln N. The lab prints 2.0794, 3.4657 and 4.6052 for N = 8, 32 and 100."
+  },
+  {
+   "q": "In the lab, with τ = 1 and N = 32, the loss cannot go below 2.4884 even for a perfect arrangement. Why?",
+   "options": [
+    "Cosines lie in [−1, 1], so with a scale of 1/τ = 1 the softmax cannot become confident",
+    "A τ of 1 switches off the normalisation",
+    "The batch is too small",
+    "The learning rate is too high"
+   ],
+   "answer": "Cosines lie in [−1, 1], so with a scale of 1/τ = 1 the softmax cannot become confident",
+   "why": "Even with each image on its caption (cosine 1) and the other captions at cosine −1/31, the wrong answers keep weight. The trained loss, 2.7143, sits above that, and the zero-shot score of 0.760 is the lowest of the four temperatures."
+  },
+  {
+   "q": "What does the lab find for the 20 combinations never used in training?",
+   "options": [
+    "0.845 zero-shot accuracy against 0.900 for the used ones, with chance at 0.008",
+    "Chance level, 0.008",
+    "Perfect accuracy, 1.000",
+    "They cannot be scored, because no caption exists for them"
+   ],
+   "answer": "0.845 zero-shot accuracy against 0.900 for the used ones, with chance at 0.008",
+   "why": "The captions are built from a shape word and a colour word, so a caption for an unseen pair exists, and in this toy the images are a sum of shape and colour parts, which two linear encoders can use. Real images are less tidy."
+  },
+  {
+   "q": "Besides per-token hidden states, what CLIP output enters the SDXL denoiser in ComfyUI?",
+   "options": [
+    "CLIP-G's projected pooled embedding, joined with size, crop and target-size embeddings by encode_adm",
+    "The value of the contrastive loss",
+    "The output of CLIP-L's vision tower",
+    "The learned temperature t"
+   ],
+   "answer": "CLIP-G's projected pooled embedding, joined with size, crop and target-size embeddings by encode_adm",
+   "why": "SDXLClipG sets return_projected_pooled=True, SDXLClipModel returns that pooled vector, and SDXL.encode_adm concatenates it with the embeddings. SD 1.x instead uses return_projected_pooled=False and only the per-token states."
+  },
+  {
+   "q": "According to the CLIP paper, who popularised the objective as the InfoNCE loss?",
+   "options": [
+    "Oord et al. (2018)",
+    "Sohn (2016)",
+    "Zhang et al. (2020)",
+    "Radford et al. (2021)"
+   ],
+   "answer": "Oord et al. (2018)",
+   "why": "The paper says the objective was introduced in deep metric learning as the multi-class N-pair loss (Sohn, 2016), popularised as InfoNCE by Oord et al. (2018), and adapted to text and images in medical imaging by Zhang et al. (2020). CLIP's own contribution was the data, the scale and the zero-shot use."
+  }
+ ]
+}

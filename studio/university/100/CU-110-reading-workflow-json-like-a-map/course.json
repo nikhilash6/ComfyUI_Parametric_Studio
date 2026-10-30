@@ -1,0 +1,17 @@
+{
+ "code": "CU-110",
+ "title": "Reading a workflow JSON like a map",
+ "level": "100",
+ "prereq": [
+  "CU-102"
+ ],
+ "char": "graph",
+ "hook": "The same seven-node graph in the editor's save format and the server's API format, read with one recipe: follow the wire back, check the wiring, and translate between the two.",
+ "code_refs": [
+  "nodes.py:class SaveImage",
+  "execution.py:def validate_prompt",
+  "comfy_execution/graph_utils.py:def is_link",
+  "script_examples/basic_api_example.py:def queue_prompt",
+  "server.py:json_data[\"prompt\"]"
+ ]
+}

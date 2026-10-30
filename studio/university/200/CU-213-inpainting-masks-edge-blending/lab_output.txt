@@ -1,0 +1,27 @@
+FeatherMask, left=8, all-ones mask, first 10 columns:  0.125 0.250 0.375 0.500 0.625 0.750 0.875 1.000 1.000 1.000
+ImagePadForOutpaint, feathering=8, rows from the padded edge:  1.000 0.766 0.562 0.391 0.250 0.141 0.062 0.016 0.000 0.000
+
+mask                                          largest step in the output   pixels with mask strictly between 0.1 and 0.9 (both seams)
+hard edge                                     0.600                        0
+patch feathered with left=8 right=8           0.075                        14
+ImageBlur radius 8 sigma 1.0                  0.042                        24
+ImageBlur radius 8 sigma 0.3                  0.100                        12
+ImageBlur radius 16 sigma 0.3                 0.050                        24
+
+growing one masked pixel at column 20:  grow_mask_by 4: 19..22   grow_mask_by 5: 18..22   grow_mask_by 6: 18..23   grow_mask_by 7: 17..23
+GrowMask expand 3 on the same pixel: columns 17..23, pixels set 25 with tapered corners, 49 without
+
+latent mask (8 cells of 8 pixels) for a hard pixel mask that is 1 from column e on
+  e = 24 0.00 0.00 0.00 1.00 1.00 1.00 1.00 1.00
+  e = 21 0.00 0.00 0.00 1.00 1.00 1.00 1.00 1.00
+  e = 20 0.00 0.00 0.50 1.00 1.00 1.00 1.00 1.00
+  e = 28 0.00 0.00 0.00 0.50 1.00 1.00 1.00 1.00
+a stripe 3 pixels wide, starting at offset s inside one latent cell: largest latent mask value
+  s =              0    1    2    3    4    5    6    7
+  stripe as drawn  0.00 0.50 1.00 1.00 0.50 0.00 0.00 0.00
+  after grow_mask_by 6 1.00 1.00 1.00 1.00 1.00 1.00 0.50 1.00
+
+sampler bookkeeping, 12 Euler steps, stand-in model, mask 0 / 0.5 / 1
+  mask 0:   largest |final - original latent|                          0.0e+00
+  mask 1:   largest |final - last model output|                        0.0e+00
+  mask 0.5: largest |final - (0.5 last model output + 0.5 original)|   0.0e+00

@@ -1,0 +1,20 @@
+{
+ "code": "CU-508",
+ "title": "History 8: Adapters era: LoRA and ControlNet",
+ "level": "200",
+ "prereq": [
+  "CU-212"
+ ],
+ "char": "tune",
+ "hook": "What a rank can and cannot follow, measured against the best possible matrix, and how LoRA and ControlNet both start as the base model and then begin to learn. With the matching ComfyUI code.",
+ "code_refs": [
+  "comfy/weight_adapter/lora.py:class LoRAAdapter",
+  "comfy/weight_adapter/lora.py:def create_train",
+  "comfy/weight_adapter/bypass.py:bypass(f)(x)",
+  "comfy/cldm/cldm.py:def make_zero_conv",
+  "comfy/cldm/cldm.py:middle_block_out",
+  "comfy/ldm/modules/diffusionmodules/openaimodel.py:def apply_control",
+  "comfy/controlnet.py:def control_merge",
+  "comfy/t2i_adapter/adapter.py:class Adapter"
+ ]
+}

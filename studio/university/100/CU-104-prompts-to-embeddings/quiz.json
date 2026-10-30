@@ -1,0 +1,73 @@
+{
+ "code": "CU-104",
+ "title": "Prompts become numbers: tokens and embeddings",
+ "level": "100",
+ "questions": [
+  {
+   "q": "What does CLIPTextEncode hand to the sampler for an SD 1.x prompt?",
+   "options": [
+    "The prompt string, which the denoiser reads word by word",
+    "One vector per token position, shaped [1, 77, 768] for a short prompt, plus a pooled vector",
+    "A single 768-number vector averaged over all the words",
+    "A list of token ids"
+   ],
+   "answer": "One vector per token position, shaped [1, 77, 768] for a short prompt, plus a pooled vector",
+   "why": "CONDITIONING is a list of pairs: a tensor with one vector per position and a dictionary holding pooled_output, the encoder's output at the end marker. Lab part three prints [1, 77, 768] for short prompts."
+  },
+  {
+   "q": "A prompt of 100 one-token words goes through an SD 1.x text encoder in ComfyUI. What shape is the conditioning tensor?",
+   "options": [
+    "[1, 77, 768], because ComfyUI truncates at 77",
+    "[1, 100, 768]",
+    "[1, 154, 768]",
+    "[1, 100, 77]"
+   ],
+   "answer": "[1, 154, 768]",
+   "why": "ComfyUI does not truncate. A chunk holds up to 75 tokens plus a start and an end marker, so 100 tokens need two chunks of 77 positions, joined along the sequence axis. The lab row for 100 tokens shows 2 chunks and [1, 154, 768]."
+  },
+  {
+   "q": "The word \"lowest\" never occurred in the toy training words. How does the lab tokenise it?",
+   "options": [
+    "As one unknown token",
+    "As the pieces low and est</w>, using merges learned from other words",
+    "As six single letters",
+    "It refuses to tokenise it"
+   ],
+   "answer": "As the pieces low and est</w>, using merges learned from other words",
+   "why": "Byte-pair merges are applied in the order they were learned, so any word made of known symbols splits into known pieces. The lab prints low est</w>."
+  },
+  {
+   "q": "In the lab, the table row plus position for \"bank\" is identical after \"river\" and after \"money\". What differs?",
+   "options": [
+    "Nothing, because a token always has the same meaning",
+    "The output of the attention layer, because it mixes in the earlier tokens",
+    "The vocabulary size",
+    "The row of the embedding table"
+   ],
+   "answer": "The output of the attention layer, because it mixes in the earlier tokens",
+   "why": "The lab prints a largest difference of 0.000000 before attention and 0.998983 after one attention layer. The table row cannot know its neighbours, and attention can."
+  },
+  {
+   "q": "With the causal mask on, the output at \"river\" did not change when the next word changed. Why?",
+   "options": [
+    "Position i can attend only to positions up to i, so later tokens cannot reach it",
+    "The word river is stored in the vocabulary twice",
+    "The mask makes every output equal to its input",
+    "Softmax removes the influence of later words in every model"
+   ],
+   "answer": "Position i can attend only to positions up to i, so later tokens cannot reach it",
+   "why": "Masked self-attention sets the scores of later positions to minus infinity before the softmax. The lab prints 0.000000 with the mask and 0.933489 without it. This is also why the end marker is the natural place to read a summary."
+  },
+  {
+   "q": "How many numbers does each token position carry in the conditioning that SDXL's text encoders produce?",
+   "options": [
+    "768",
+    "1280",
+    "2048",
+    "77"
+   ],
+   "answer": "2048",
+   "why": "SDXL concatenates the penultimate-layer outputs of CLIP ViT-L (768) and OpenCLIP ViT-bigG (1280) along the channel axis so 768 + 1280 = 2048 (SDXL paper, Table 1 and Section 2.1; sdxl_clip.py does the torch.cat)."
+  }
+ ]
+}

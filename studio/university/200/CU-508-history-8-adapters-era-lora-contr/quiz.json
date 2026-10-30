@@ -1,0 +1,73 @@
+{
+ "code": "CU-508",
+ "title": "History 8: Adapters era: LoRA and ControlNet",
+ "level": "200",
+ "questions": [
+  {
+   "q": "In the LoRA paper's update W0 + BA, which factor starts at zero, and what does that guarantee?",
+   "options": [
+    "B starts at zero, so ΔW = BA is zero and the adapted layer equals the base layer at the start",
+    "A starts at zero, so the adapted layer is random at the start",
+    "Both start at zero, so nothing can ever be learned",
+    "Neither starts at zero, so the base weights are overwritten"
+   ],
+   "answer": "B starts at zero, so ΔW = BA is zero and the adapted layer equals the base layer at the start",
+   "why": "The paper starts A random Gaussian and B at zero. In the lab the adapted layer differs from the base layer by 0.0 at step 0, and the gradient of A is exactly zero then while B's is 0.1637."
+  },
+  {
+   "q": "In the lab, a LoRA is trained to follow a change that has rank 4. What does it leave behind at r = 2 and at r = 4?",
+   "options": [
+    "A relative error of 0.4082 at r = 2 and 0.0000 at r = 4",
+    "0.0000 at both ranks",
+    "0.4082 at both ranks",
+    "0.6831 at r = 2 and 0.4082 at r = 4"
+   ],
+   "answer": "A relative error of 0.4082 at r = 2 and 0.0000 at r = 4",
+   "why": "The best possible rank-r matrix is the truncated SVD (the Eckart–Young–Mirsky theorem), and the trained LoRA matches it in every cell. A rank-4 change has nothing beyond its fourth singular value."
+  },
+  {
+   "q": "In the ControlNet lab at step 0, which parameters receive a non-zero gradient?",
+   "options": [
+    "Only the zero convolution Z2; the trainable copy and Z1 receive gradient from the next step",
+    "All of them",
+    "None, so training cannot start",
+    "Only the trainable copy"
+   ],
+   "answer": "Only the zero convolution Z2; the trainable copy and Z1 receive gradient from the next step",
+   "why": "The copy and Z1 sit behind Z2, which is zero, so their gradient is 0.0000 at step 0 (0.0003 and 0.0022 at step 1). Z2's own gradient depends on the copy's output, which is not zero."
+  },
+  {
+   "q": "What scale does ComfyUI apply to a LoRA file that has no alpha entry?",
+   "options": [
+    "1.0, since α/r is used only when an alpha entry exists",
+    "1/rank",
+    "0.5",
+    "The file is rejected"
+   ],
+   "answer": "1.0, since α/r is used only when an alpha entry exists",
+   "why": "calculate_weight in comfy/weight_adapter/lora.py sets alpha = v[2] / mat2.shape[0] if the entry exists and alpha = 1.0 otherwise, and then multiplies by strength."
+  },
+  {
+   "q": "How does a ControlNet's output reach the Stable Diffusion U-Net, in the paper and in ComfyUI's apply_control?",
+   "options": [
+    "It is added to the U-Net's middle block and to its skip connections",
+    "It replaces the U-Net's encoder",
+    "It is concatenated to the prompt tokens",
+    "It rescales the noise schedule"
+   ],
+   "answer": "It is added to the U-Net's middle block and to its skip connections",
+   "why": "The paper says the outputs are added to the 12 skip-connections and 1 middle block, and apply_control does h += ctrl for the 'middle' and 'output' entries. control_merge scales by strength and adds a previous ControlNet's output."
+  },
+  {
+   "q": "Who posted the LoRA paper, and when?",
+   "options": [
+    "Hu et al., 17 June 2021",
+    "Zhang, Rao and Agrawala, 10 February 2023",
+    "Mou et al., 16 February 2023",
+    "Houlsby et al., 2 February 2019"
+   ],
+   "answer": "Hu et al., 17 June 2021",
+   "why": "arXiv lists \"LoRA: Low-Rank Adaptation of Large Language Models\" as posted on 17 June 2021. ControlNet followed on 10 February 2023 and T2I-Adapter on 16 February 2023."
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+decode at 0.04045: linear piece 0.0031308, power piece 0.0031308;  encode at 0.0031308: linear piece 0.040450, power piece 0.040450
+round trip decode then encode over the 256 codes: largest error 1.1e-16
+code   sRGB linear   plain power 2.2   ratio
+1      0.000304      0.000005          59.78
+5      0.001518      0.000175          8.67
+20     0.006995      0.003697          1.89
+50     0.031896      0.027755          1.15
+128    0.215861      0.219520          0.98
+255    1.000000      1.000000          1.00
+
+luminance weights R, G, B: 0.2126 0.7152 0.0722
+black and white, half and half: on stored values 0.5000, in linear light then encoded 0.7354   (8-bit code 127.5 against 187.5)
+red and green, half and half: stored-value blend [0.5, 0.5, 0.0], light blend [0.7354, 0.7354, 0.0]
+  luminance of the light that reaches the eye: stored-value blend 0.1986, light blend 0.4639, the average of the two lights 0.4639
+2x area downscale of a black and white checkerboard (the ImageScale 'area' method): pixel 0.5000; averaging the same four pixels in linear light: 0.7354
+
+codes whose light is below 1% of white: sRGB 26, if the codes were linear in light 3
+codes whose light is at least half of white: sRGB 68, if the codes were linear in light 128
+
+load then save, all 256 codes: codes that come back changed: 0
+random values in [0, 1], error of the saved code in codes: truncation mean -0.500, largest 1.000;  rounding mean +0.000, largest 0.500
+a value of 0.999 is saved as code 254 by truncation and 255 by rounding

@@ -1,0 +1,28 @@
+IMAGE [2, 6, 8, 3] strides (144, 24, 3, 1)   after movedim(-1, 1): [2, 3, 6, 8] strides (144, 1, 24, 3)
+movedim shares memory with the IMAGE: True   contiguous: False
+share of channel 0 that is red:  movedim 1.000   reshape 0.333
+Conv2d(3, 4, 3) on the [B, C, H, W] tensor gives [2, 4, 4, 6]
+Conv2d on the [B, H, W, C] tensor: RuntimeError
+Conv2d on the reshaped tensor: accepted, gives [2, 4, 4, 6], computed from scrambled pixels
+
+requested   after crop  latent shape       numbers in image / latent
+512x512     512x512     [1, 4, 64, 64]     786432 / 16384 = 48x
+515x333     512x328     [1, 4, 41, 64]     503808 / 10496 = 48x
+1000x563    1000x560    [1, 4, 70, 125]    1680000 / 35000 = 48x
+1024x1024   1024x1024   [1, 4, 128, 128]   3145728 / 65536 = 48x
+
+decoder output  -1.20 -1.00  0.00  0.50  1.00  1.30
+(x + 1) / 2      -0.10  0.00  0.50  0.75  1.00  1.15
+after clamp       0.00  0.00  0.50  0.75  1.00  1.00
+
+IMAGE tensor size in float32
+batch 1    512x512        3,145,728 bytes =       3.0 MiB   (as uint8:      0.8 MiB)
+batch 4    1024x1024      50,331,648 bytes =      48.0 MiB   (as uint8:     12.0 MiB)
+batch 100  1920x1080   2,488,320,000 bytes =    2373.0 MiB   (as uint8:    593.3 MiB)
+
+an 8-bit image has 127 levels between 0.5 and 1.0
+add 0.1, subtract 0.1, then save (worst error in 8-bit levels; kept = how many of the 256 levels come back unchanged)
+dtype     eps             values in [0.5, 1)   worst error   kept by rounding   kept by truncating
+float32   1.1920929e-07   8388608              0.0000        256                237
+float16   0.0009765625    1024                 0.1250        256                189
+bfloat16  0.0078125       128                  1.0000        243                237

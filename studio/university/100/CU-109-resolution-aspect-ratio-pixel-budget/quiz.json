@@ -1,0 +1,73 @@
+{
+ "code": "CU-109",
+ "title": "Resolution, aspect ratio and the pixel budget",
+ "level": "100",
+ "questions": [
+  {
+   "q": "You type a width of 1333 and a height of 750 into Empty Latent Image. What size does the decoded picture have?",
+   "options": [
+    "1333 by 750",
+    "1336 by 752",
+    "1328 by 744",
+    "1328 by 750"
+   ],
+   "answer": "1328 by 744",
+   "why": "The latent is made with height // 8 and width // 8, which is 93 by 166, and the VAE decodes that to 8 times as much. The lab prints 1328x744 and 11,718 pixels lost."
+  },
+  {
+   "q": "A picture has aspect ratio r = W / H and the budget is P pixels. What is the width before rounding?",
+   "options": [
+    "P multiplied by r",
+    "√(P / r)",
+    "√(P × r)",
+    "P divided by √r"
+   ],
+   "answer": "√(P × r)",
+   "why": "W × H = P and W / H = r give W² = P × r. The height is √(P / r). The Scale Image to Total Pixels node applies the same square root through its scale factor."
+  },
+  {
+   "q": "Scale Image to Total Pixels with a budget of 1 megapixel and resolution_steps 64 turns a 3000 by 2000 image into 1280 by 832. What is notable about that result?",
+   "options": [
+    "It is exactly on the budget",
+    "It is 1.0156 times the budget, because rounding to the nearest multiple of 64 can overshoot",
+    "It is below the budget by 1.56%",
+    "Its sides are not multiples of 64"
+   ],
+   "answer": "It is 1.0156 times the budget, because rounding to the nearest multiple of 64 can overshoot",
+   "why": "The node rounds each side to the nearest multiple, not down. The lab row for 3000x2000 at step 64 shows 1.0156 and a ratio error of +0.0256, and 1280x832 is not on SDXL's list of 40 sizes."
+  },
+  {
+   "q": "Doubling both sides of a square image multiplies its pixel count by 4. By how much does the N × N attention matrix grow if every latent position attends to every other?",
+   "options": [
+    "2 times",
+    "4 times",
+    "8 times",
+    "16 times"
+   ],
+   "answer": "16 times",
+   "why": "N = (side / 8)², so doubling the side multiplies N by 4 and N × N by 16. The lab shows 16,777,216 entries at 512 and 268,435,456 at 1024."
+  },
+  {
+   "q": "What does FlashAttention change about self-attention?",
+   "options": [
+    "It computes the same exact attention with memory that grows linearly with sequence length, while the number of comparisons still grows as N squared",
+    "It approximates attention so that the N squared comparisons disappear",
+    "It removes the need for a GPU",
+    "It shrinks the latent before attention"
+   ],
+   "answer": "It computes the same exact attention with memory that grows linearly with sequence length, while the number of comparisons still grows as N squared",
+   "why": "The FlashAttention paper describes an IO-aware exact algorithm and reports a memory footprint that grows linearly with sequence length, with runtime that still grows quadratically."
+  },
+  {
+   "q": "A 1920 by 1080 image goes through Scale Image to Total Pixels with megapixels 1.0 and resolution_steps 64. What comes out?",
+   "options": [
+    "1365 by 768",
+    "1920 by 1080",
+    "1344 by 768, one of the 40 sizes SDXL was fine-tuned on",
+    "1024 by 576"
+   ],
+   "answer": "1344 by 768, one of the 40 sizes SDXL was fine-tuned on",
+   "why": "The scale factor is √(1048576 / 2073600), about 0.711, which gives 1365.3 by 768 before rounding. Rounding to multiples of 64 gives 1344 by 768, whose height 768 and width 1344 appear in the paper's Appendix I."
+  }
+ ]
+}

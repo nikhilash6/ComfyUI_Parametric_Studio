@@ -1,0 +1,73 @@
+{
+ "code": "CU-219",
+ "title": "Depth and edge preprocessors: Sobel by hand",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does the unscaled 3 × 3 Sobel x stencil answer for an image ramp of slope s per pixel, and for a step of height 1?",
+   "options": [
+    "s and 1",
+    "2s and 2",
+    "8s and 4",
+    "4s and 8"
+   ],
+   "answer": "8s and 4",
+   "why": "The smoothing column [1, 2, 1] adds up to 4 and the difference row [−1, 0, 1] spans two pixels, so a slope gives 4 · 2 · s. A step is seen over one difference, 4 · 1. The lab prints 0.800 for slope 0.1 and 4.0 for the step."
+  },
+  {
+   "q": "In PyTorch, F.conv2d with the Sobel x stencil is applied to a rising edge and gives +4. What happens with the stencil flipped, which is a true convolution?",
+   "options": [
+    "It gives −4: the sign changes and the magnitude does not",
+    "It gives +4 again",
+    "It gives 0",
+    "It gives +8"
+   ],
+   "answer": "It gives −4: the sign changes and the magnitude does not",
+   "why": "F.conv2d is a cross-correlation, which does not flip the kernel. Flipping the stencil by 180 degrees reverses the sign of an antisymmetric stencil. Edge magnitude, √(Gx² + Gy²), is unaffected."
+  },
+  {
+   "q": "In the lab at a noise level of 0.2, what share of the pixels far from the circle pass the threshold of 0.8 without the blur, and with it?",
+   "options": [
+    "0.3547 without, 0.0024 with: the blur averages the noise before the stencil magnifies it",
+    "0.0024 without, 0.3547 with",
+    "About 0.99 for both",
+    "0.0000 for both"
+   ],
+   "answer": "0.3547 without, 0.0024 with: the blur averages the noise before the stencil magnifies it",
+   "why": "White noise of standard deviation σ comes out of the Sobel stencil with standard deviation σ√12, which the lab measures as 3.462 for σ = 1. A 5 × 5 Gaussian blur of sigma 1 cuts the noise first. The price is a wider edge."
+  },
+  {
+   "q": "The Canny node's thresholds default to 0.4 and 0.8. What are they compared with?",
+   "options": [
+    "The image values, which run from 0 to 1",
+    "A magnitude normalised to the range 0 to 1",
+    "The unnormalised Sobel magnitude of the blurred grey image, where a unit step gives about 2.59",
+    "The percentage of the image that is edges"
+   ],
+   "answer": "The unnormalised Sobel magnitude of the blurred grey image, where a unit step gives about 2.59",
+   "why": "Kornia 0.9.0 documents that the magnitude is not bounded by 1: a unit step reaches 4 without the blur and about 2.59 with the default one, which the lab reproduces."
+  },
+  {
+   "q": "A depth map runs from 2 m to 10 m, and 0.5% of its pixels are at 500 m. What grey value does a pixel at 6 m get under min_max and under v2_style?",
+   "options": [
+    "0.992 and 0.500: min_max squeezes the scene because its range ends at 500 m, v2_style ignores the top 1%",
+    "0.500 and 0.992",
+    "0.500 for both",
+    "0.992 for both"
+   ],
+   "answer": "0.992 and 0.500: min_max squeezes the scene because its range ends at 500 m, v2_style ignores the top 1%",
+   "why": "min_max uses the smallest and largest depth. v2_style uses the 1st and 99th percentiles, and 0.5% of outliers sit above the 99th. At 2% far pixels the 99th percentile is 500 m too, and v2_style collapses to 0.992 as well."
+  },
+  {
+   "q": "What does ComfyUI's DA3Render say about its default v2_style normalisation, and what does the code do?",
+   "options": [
+    "The tooltip says mean/std normalisation, and the code uses the 1st and 99th percentiles of the depth",
+    "The tooltip and the code both use min and max",
+    "The tooltip says percentiles, and the code uses mean and std",
+    "Both use the sky mask only"
+   ],
+   "answer": "The tooltip says mean/std normalisation, and the code uses the 1st and 99th percentiles of the depth",
+   "why": "normalize_depth_v2_style in comfy/ldm/depth_anything_3/preprocess.py computes torch.quantile bounds at 0.01 and 0.99, maps the depth into 0 to 1 with near as white, and sets sky to black. The lesson follows the code."
+  }
+ ]
+}

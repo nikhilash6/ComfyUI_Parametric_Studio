@@ -1,0 +1,24 @@
+{
+ "code": "CU-213",
+ "title": "Inpainting masks and edge blending",
+ "level": "200",
+ "prereq": [
+  "CU-201",
+  "CU-214"
+ ],
+ "char": "graph",
+ "hook": "The sampler sees your mask on a grid eight times coarser than the picture: where a 3-pixel line vanishes, what grow and feather really do, and how the per-step blend works.",
+ "code_refs": [
+  "nodes.py:VAEEncodeForInpaint",
+  "nodes.py:InpaintModelConditioning",
+  "nodes.py:SetLatentNoiseMask",
+  "nodes.py:ImagePadForOutpaint",
+  "comfy/samplers.py:KSamplerX0Inpaint",
+  "comfy/utils.py:reshape_mask",
+  "comfy/sampler_helpers.py:prepare_mask",
+  "comfy_extras/nodes_mask.py:composite",
+  "comfy_extras/nodes_mask.py:FeatherMask",
+  "comfy_extras/nodes_mask.py:GrowMask",
+  "comfy_extras/nodes_post_processing.py:Blur"
+ ]
+}

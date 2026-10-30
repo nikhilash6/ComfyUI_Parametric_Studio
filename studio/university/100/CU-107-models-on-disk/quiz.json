@@ -1,0 +1,73 @@
+{
+ "code": "CU-107",
+ "title": "Models on disk: safetensors and families",
+ "level": "100",
+ "questions": [
+  {
+   "q": "The first 8 bytes of a safetensors file are e0 00 00 00 00 00 00 00. What do they say?",
+   "options": [
+    "The file holds 224 tensors",
+    "The JSON header is 224 bytes long",
+    "The first tensor starts at byte 224 of the file",
+    "The file is 224 bytes long"
+   ],
+   "answer": "The JSON header is 224 bytes long",
+   "why": "The first 8 bytes are N, an unsigned little-endian 64-bit integer giving the size of the header. Little-endian puts the least significant byte first, so e0 followed by zeros is 224. The lab file is 304 bytes in all."
+  },
+  {
+   "q": "The lab's three tensors have offsets [0, 24], [24, 32] and [32, 72]. What rule do they show?",
+   "options": [
+    "Each range starts where the previous one ends, and the ranges together cover the whole byte buffer",
+    "Offsets count from the first byte of the file",
+    "Tensors must be stored in alphabetical order",
+    "Every tensor must be 8 bytes long"
+   ],
+   "answer": "Each range starts where the previous one ends, and the ranges together cover the whole byte buffer",
+   "why": "The README says the byte buffer must be entirely indexed and cannot contain holes, and that offsets are relative to the start of the buffer, not of the file. The lab's validate function refuses a hole or an overlap."
+  },
+  {
+   "q": "Why can the lab refuse its damaged copies without reading a single weight value?",
+   "options": [
+    "It decrypts the file first",
+    "The header states each tensor's dtype, shape and byte range, so sizes and gaps can be checked against the header and the file length",
+    "It loads the whole file into the GPU",
+    "It compares the file with a known good copy"
+   ],
+   "answer": "The header states each tensor's dtype, shape and byte range, so sizes and gaps can be checked against the header and the file length",
+   "why": "A byte range must equal product(shape) times the bytes per value, and the ranges must tile the buffer. A shifted offset, a wrong shape, a cut file and an absurd header length each break one of those facts."
+  },
+  {
+   "q": "What does it mean that a safetensors file is safe to load?",
+   "options": [
+    "The weights are guaranteed harmless",
+    "Loading it runs no code from the file, but that says nothing about whether the weights are what the label claims",
+    "The file is encrypted",
+    "The model cannot produce unwanted images"
+   ],
+   "answer": "Loading it runs no code from the file, but that says nothing about whether the weights are what the label claims",
+   "why": "The format holds data and no instructions, so the load step only parses JSON and slices bytes. A pickle names a callable that unpickling calls, which is what the lab's payload shows."
+  },
+  {
+   "q": "What does the lab's pickle payload demonstrate?",
+   "options": [
+    "Pickles are always smaller than safetensors files",
+    "Unpickling calls a function that the file names, so loading can run code",
+    "Pickles cannot store tensors",
+    "Python refuses to unpickle objects with a __reduce__ method"
+   ],
+   "answer": "Unpickling calls a function that the file names, so loading can run code",
+   "why": "__reduce__ returns a callable and its arguments, and pickle.loads calls it. The payload only appended a string to a list, but it could have called any function."
+  },
+  {
+   "q": "In the lab's family test, which values separate the SD 1.x file from the SDXL file?",
+   "options": [
+    "The channel count 320, which is 320 in one and 640 in the other",
+    "The text context width, 768 against 2048, and the extra vector size, none against 2816",
+    "The file name",
+    "The dtype of the weights"
+   ],
+   "answer": "The text context width, 768 against 2048, and the extra vector size, none against 2816",
+   "why": "Both files give 320 for the first dimension of input_blocks.0.0.weight. context_dim comes from attn2.to_k.weight and adm_in_channels from label_emb.0.0.weight, as in ComfyUI's SD15 and SDXL classes."
+  }
+ ]
+}

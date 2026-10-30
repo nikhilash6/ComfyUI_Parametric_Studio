@@ -1,0 +1,73 @@
+{
+ "code": "CU-506",
+ "title": "History 6: Denoising diffusion arrives (DDPM, 2020)",
+ "level": "200",
+ "questions": [
+  {
+   "q": "In the DDPM paper, which expression is the mean of one reverse step when the network predicts the noise ε_θ?",
+   "options": [
+    "(x_t − β_t / √(1−ᾱ_t) · ε_θ) / √α_t",
+    "(x_t + β_t / √(1−ᾱ_t) · ε_θ) / √α_t",
+    "√ᾱ_t · x_t − √(1−ᾱ_t) · ε_θ",
+    "x_t − ε_θ"
+   ],
+   "answer": "(x_t − β_t / √(1−ᾱ_t) · ε_θ) / √α_t",
+   "why": "Eq. 11. It is the posterior mean of eq. 10 with the true ε replaced by the network's. The lab checks the eq. 10 form against Bayes' rule on a grid, and the two agree to six decimals."
+  },
+  {
+   "q": "What does the simplified loss L_simple do to the factor β_t² / (2σ_t² α_t (1−ᾱ_t)) in eq. 12?",
+   "options": [
+    "It drops the factor, which relatively down-weights the small-t terms",
+    "It squares the factor",
+    "It replaces the factor with the signal-to-noise ratio",
+    "It keeps the factor but clips it at 1"
+   ],
+   "answer": "It drops the factor, which relatively down-weights the small-t terms",
+   "why": "The bound's weight is 0.50005 at t = 1 and 0.0102 at t = 1000, so L_simple, which weighs every step by 1, multiplies the t = 1 term by 2.0 and the t = 1000 term by 98.0 relative to the bound."
+  },
+  {
+   "q": "In the lab, for which data does the exact reverse variance equal β_t, and for which does it equal β̃_t?",
+   "options": [
+    "β_t for unit-variance Gaussian data, β̃_t for a single point",
+    "β̃_t for unit-variance Gaussian data, β_t for a single point",
+    "β_t for both",
+    "β̃_t for both"
+   ],
+   "answer": "β_t for unit-variance Gaussian data, β̃_t for a single point",
+   "why": "The table prints 1.0000 for std 1 at every t and the same numbers as β̃_t/β_t for a point. This matches the paper, which calls the two choices optimal for x_0 ~ N(0, I) and for a point."
+  },
+  {
+   "q": "Which noise variance does ComfyUI's ddpm sampler add at each step?",
+   "options": [
+    "β̃_t = (1−ᾱ_prev)/(1−ᾱ) · β_t, the posterior variance",
+    "β_t",
+    "None, the sampler is deterministic",
+    "A fixed σ_t² = 1"
+   ],
+   "answer": "β̃_t = (1−ᾱ_prev)/(1−ᾱ) · β_t, the posterior variance",
+   "why": "DDPMSampler_step adds sqrt((1−α)(1−ᾱ_prev)/(1−ᾱ)) times noise, with α = ᾱ/ᾱ_prev and ᾱ = 1/(1+σ²). With 1−α = β this is β̃_t, the paper's second choice."
+  },
+  {
+   "q": "What does the DDPM paper report next to its FID of 3.17 on CIFAR10?",
+   "options": [
+    "At most 3.75 bits/dim, worse than Gated PixelCNN's 3.03, which it blames on bits spent on imperceptible detail",
+    "2.80 bits/dim, the best in its table",
+    "8.00 bits/dim, the same as a uniform guess",
+    "No likelihood at all"
+   ],
+   "answer": "At most 3.75 bits/dim, worse than Gated PixelCNN's 3.03, which it blames on bits spent on imperceptible detail",
+   "why": "The paper says its models do not have competitive log likelihoods and that the majority of the lossless codelength describes imperceptible image details. The 2.80 belongs to Sparse Transformer and the 8.00 to the uniform baseline of the PixelRNN paper."
+  },
+  {
+   "q": "Who posted \"Deep Unsupervised Learning using Nonequilibrium Thermodynamics\", and when?",
+   "options": [
+    "Sohl-Dickstein, Weiss, Maheswaranathan and Ganguli, March 2015",
+    "Song and Ermon, July 2019",
+    "Ho, Jain and Abbeel, June 2020",
+    "Rombach et al., December 2021"
+   ],
+   "answer": "Sohl-Dickstein, Weiss, Maheswaranathan and Ganguli, March 2015",
+   "why": "arXiv lists it as posted on 12 March 2015. Song and Ermon followed on 12 July 2019 and Ho, Jain and Abbeel on 19 June 2020; the latent diffusion paper came in December 2021."
+  }
+ ]
+}

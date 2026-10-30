@@ -1,0 +1,22 @@
+log p(x) = -1.9071 for x = 2.5
+q(z|x)            bound    Monte Carlo  gap      KL(q || p(z|x))
+true posterior    -1.9071  -1.9071      0.0000   0.0000
+shifted by 0.3    -2.6721  -2.6737      0.7650   0.7650
+too wide          -8.4905  -8.5109      6.5834   6.5834
+the prior        -12.7258 -12.7200     10.8187  10.8187
+
+std of q   exact gradient   reparameterised: mean    std     score function: mean    std     variance ratio
+0.5000     -5.1000          -5.0981                8.498  -5.1038               17.451       4.2
+0.2425     -5.1000          -5.1003                4.120  -5.0938               13.174      10.2
+0.1000     -5.1000          -5.0976                1.701  -5.0480               26.284     238.6
+
+encoder q(z|x) = N(a x + b, sigma^2)    a        b        sigma    mean gap log p(x) - bound
+exact posterior                 +0.4706  -0.4706  0.2425   0.0000
+learned, may use x              +0.4681  -0.4686  0.2432   0.0002
+learned, ignores x              +0.0000  +0.0021  0.2428   7.9758
+
+image A       0.00 0.00 0.00 1.00 1.00 1.00 1.00 1.00 1.00
+image B       0.00 0.00 0.00 0.00 0.00 0.00 1.00 1.00 1.00
+best output   0.00 0.00 0.00 0.50 0.50 0.50 1.00 1.00 1.00
+largest jump between neighbouring pixels: best output 0.50, either real image 1.00
+expected squared error: best output 0.75, a sharp image picked at random 1.50

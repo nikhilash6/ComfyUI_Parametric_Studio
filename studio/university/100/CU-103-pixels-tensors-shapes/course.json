@@ -1,0 +1,16 @@
+{
+ "code": "CU-103",
+ "title": "Pixels, tensors and shapes",
+ "level": "100",
+ "prereq": [],
+ "char": "bits",
+ "hook": "Why IMAGE is [B, H, W, C] and LATENT is [B, C, H/8, W/8], what the VAE nodes do to cross between them, and where truncating 8-bit levels bites.",
+ "code_refs": [
+  "nodes.py:class LoadImage",
+  "nodes.py:class SaveImage",
+  "nodes.py:class EmptyLatentImage",
+  "comfy/sd.py:def vae_encode_crop_pixels",
+  "comfy/sd.py:self.process_output",
+  "comfy/model_management.py:def intermediate_dtype"
+ ]
+}

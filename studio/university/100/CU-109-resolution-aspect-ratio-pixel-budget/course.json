@@ -1,0 +1,18 @@
+{
+ "code": "CU-109",
+ "title": "Resolution, aspect ratio and the pixel budget",
+ "level": "100",
+ "prereq": [
+  "CU-103"
+ ],
+ "char": "graph",
+ "hook": "From an aspect ratio and a pixel budget to a size the VAE accepts: the square-root formula, what ComfyUI's size nodes round to, and how fast attention and VAE costs grow.",
+ "code_refs": [
+  "nodes.py:class EmptyLatentImage",
+  "comfy_extras/nodes_post_processing.py:class ImageScaleToTotalPixels",
+  "comfy/ldm/hidream_o1/utils.py:def calculate_dimensions",
+  "comfy/sd.py:self.memory_used_decode",
+  "comfy/ldm/modules/attention.py:def optimized_attention_for_device",
+  "execution.py:value_bigger_than_max"
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "code": "CU-504",
+ "title": "History 4: StyleGAN and style modulation",
+ "level": "300",
+ "questions": [
+  {
+   "q": "After StyleGAN's AdaIN, what are the mean and standard deviation of feature map i?",
+   "options": [
+    "The style's y_b,i and y_s,i, whatever the input had",
+    "The input's own mean and standard deviation, multiplied by (1 + y_s,i)",
+    "Zero and one",
+    "Those of the learned constant input"
+   ],
+   "answer": "The style's y_b,i and y_s,i, whatever the input had",
+   "why": "AdaIN(x_i, y) = y_s,i (x_i − μ(x_i)) / σ(x_i) + y_b,i. In the lab a map with mean 40.136 and standard deviation 0.950 comes out with mean 4.000 and standard deviation 3.000, the style's values."
+  },
+  {
+   "q": "In the lab two inputs have the same pattern and differ only by a per-channel scale and offset. What happens?",
+   "options": [
+    "AdaIN gives the same output for both, shift + x(1 + scale) does not",
+    "Both give the same output",
+    "Neither gives the same output",
+    "Only shift + x(1 + scale) gives the same output"
+   ],
+   "answer": "AdaIN gives the same output for both, shift + x(1 + scale) does not",
+   "why": "The largest output difference is 3.6e-15 for AdaIN, which normalises the statistics away, and 42.1 for shift + x(1 + scale), which keeps them."
+  },
+  {
+   "q": "What does StyleGAN2 blame for the water-droplet artifacts, and what does it do instead?",
+   "options": [
+    "AdaIN's separate normalisation of each feature map; it modulates and then demodulates the convolution weights",
+    "The mapping network; it removes the mapping network",
+    "The learned constant input; it feeds the latent in at the first layer",
+    "The discriminator; it trains a larger one"
+   ],
+   "answer": "AdaIN's separate normalisation of each feature map; it modulates and then demodulates the convolution weights",
+   "why": "The paper pinpoints AdaIN and supports the hypothesis by showing the artifacts vanish when normalisation is removed. Equations 1 to 3 scale the weights by the style and then divide by their L2 norm."
+  },
+  {
+   "q": "Why does demodulation give output standard deviations of 0.661 to 1.326 for blurred inputs in the lab, but 1.000 to 1.003 for independent ones?",
+   "options": [
+    "It assumes independent unit-variance inputs, and blurred inputs are correlated",
+    "The weights were random in one case and fixed in the other",
+    "Blurring changes the number of channels",
+    "The style entries were larger for blurred inputs"
+   ],
+   "answer": "It assumes independent unit-variance inputs, and blurred inputs are correlated",
+   "why": "The formula for the output standard deviation is derived for independent inputs. StyleGAN2 calls demodulation weaker than instance normalisation because it rests on statistical assumptions rather than on the actual feature maps."
+  },
+  {
+   "q": "Where does the (1 + scale) pattern appear in ComfyUI's source?",
+   "options": [
+    "In modulate() in mmdit.py and in the use_scale_shift_norm path of the U-Net ResBlock",
+    "Only inside StyleGAN checkpoints that ComfyUI loads",
+    "In the tokenizer's merge table",
+    "In the VAE's tiling code"
+   ],
+   "answer": "In modulate() in mmdit.py and in the use_scale_shift_norm path of the U-Net ResBlock",
+   "why": "modulate returns shift + x(1 + scale), and ResBlock multiplies by (1 + scale) and adds shift when use_scale_shift_norm is set. ComfyUI has no StyleGAN generator; model_animate.py only borrows some StyleGAN2 layers."
+  },
+  {
+   "q": "Which paper introduced AdaIN, and for what?",
+   "options": [
+    "Huang and Belongie, 2017, for arbitrary style transfer in real time",
+    "Karras, Laine and Aila, 2018, for face generation",
+    "Perez et al., 2017, for visual reasoning",
+    "Goodfellow et al., 2014, for adversarial training"
+   ],
+   "answer": "Huang and Belongie, 2017, for arbitrary style transfer in real time",
+   "why": "Their AdaIN layer aligns the mean and variance of content features with those of style features and has no learned affine parameters. StyleGAN, posted in December 2018, borrowed it and computes the scale and shift from a learned affine map of w."
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+batch size N   loss of a model with no idea, ln N
+8              2.0794
+32             3.4657
+100            4.6052
+
+learned temperature: tau started at 0.0700 and ended at 0.0579; loss over the last 100 steps 0.1380
+zero-shot, 1 correct caption among 120: images of the 100 combinations used in training 0.900, of the 20 never used 0.845, chance 0.008
+
+tau     best case at N = 32   loss after 600 steps   zero-shot on the 20 unused combinations
+1.00    2.4884                2.7143                 0.760
+0.30    0.6897                1.4099                 0.876
+0.07    0.0000                0.1597                 0.862
+0.01    0.0000                0.4510                 0.799
+
+batch N   chance loss ln N   loss after 600 steps   zero-shot on the 20 unused combinations
+8         2.0794             0.1050                 0.741
+32        3.4657             0.1346                 0.863
+100       4.6052             0.2405                 0.902

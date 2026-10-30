@@ -1,0 +1,73 @@
+{
+ "code": "CU-218",
+ "title": "Seeds, batches and variations in video",
+ "level": "200",
+ "questions": [
+  {
+   "q": "How does ComfyUI turn a seed into the starting noise for a latent?",
+   "options": [
+    "It seeds the sampling device's generator and draws noise frame by frame",
+    "It seeds the CPU generator with torch.manual_seed and draws one Gaussian block for the whole latent, in float32",
+    "It hashes the seed into a different seed for every frame",
+    "It stores a noise image for each seed"
+   ],
+   "answer": "It seeds the CPU generator with torch.manual_seed and draws one Gaussian block for the whole latent, in float32",
+   "why": "prepare_noise in comfy/sample.py calls torch.manual_seed(seed) and then torch.randn with that generator on the CPU, once for the whole latent, and converts to the latent's dtype."
+  },
+  {
+   "q": "A video is generated with the same seed at 21 latent frames and again at 41. How much of the first noise reappears unchanged in the second?",
+   "options": [
+    "All of it, the first 21 frames are the same",
+    "None of it",
+    "1/16 of it: channel 0 only, because the noise is laid out channel by channel",
+    "Half of it"
+   ],
+   "answer": "1/16 of it: channel 0 only, because the noise is laid out channel by channel",
+   "why": "The lab prints 0.0625 for the whole latent and 1.0000 for channel 0 alone. Channel 1 starts after all of channel 0's frames, so it shifts when the frame count changes."
+  },
+  {
+   "q": "In the lab, the seeds 5 and 5 + 2^32 give what noise?",
+   "options": [
+    "Different noise, as the seed widget allows 64 bits",
+    "Identical noise on this PyTorch build, so the seed has only 2^32 distinct noises",
+    "A noise shifted by 2^32 positions",
+    "An error"
+   ],
+   "answer": "Identical noise on this PyTorch build, so the seed has only 2^32 distinct noises",
+   "why": "The lab prints True for seed 5 against 5 + 2^32 and against 5 + 2^63, and False against 6. It is an observation about this build's CPU generator."
+  },
+  {
+   "q": "What does LatentBatchSeedBehavior do in its default mode, fixed?",
+   "options": [
+    "It gives every item of the batch the same starting noise",
+    "It gives every item independent noise",
+    "It freezes the sampler",
+    "It repeats the latent four times"
+   ],
+   "answer": "It gives every item of the batch the same starting noise",
+   "why": "It sets batch_index to the first item's index repeated for every item. prepare_noise then uses the same draw for each, and the lab finds all four items identical. In random mode it removes the field."
+  },
+  {
+   "q": "Two nearly orthogonal noises are blended halfway. What is the standard deviation of the result for linear interpolation and for slerp?",
+   "options": [
+    "1.000 for both",
+    "0.708 for linear interpolation, 1.000 for slerp",
+    "1.000 for linear interpolation, 0.708 for slerp",
+    "0.500 for both"
+   ],
+   "answer": "0.708 for linear interpolation, 1.000 for slerp",
+   "why": "A linear blend of two orthogonal vectors of equal length shortens them by √((1 − t)² + t²), 0.707 at t = 0.5. Slerp keeps the length. The sampler expects unit-variance noise."
+  },
+  {
+   "q": "What does the lab say about the correlation between the starting noise of adjacent frames in a ComfyUI video latent?",
+   "options": [
+    "Strong: neighbouring frames share most of their noise",
+    "Negative, so frames alternate",
+    "None beyond chance: the mean over 20 pairs is -0.0004 and the largest is 0.0065 in size",
+    "It depends on the seed"
+   ],
+   "answer": "None beyond chance: the mean over 20 pairs is -0.0004 and the largest is 0.0065 in size",
+   "why": "The whole latent is one block of independent Gaussian numbers. Any coherence between frames in the finished video has to be created by the model."
+  }
+ ]
+}

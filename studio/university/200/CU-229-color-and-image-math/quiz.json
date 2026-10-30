@@ -1,0 +1,73 @@
+{
+ "code": "CU-229",
+ "title": "Color spaces, gamma and image math",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Black (0) and white (1) are mixed half and half in linear light, and the result is encoded back to a stored sRGB value. What is it?",
+   "options": [
+    "0.5000",
+    "0.7354",
+    "0.2140",
+    "1.0000"
+   ],
+   "answer": "0.7354",
+   "why": "Half the light of white is 0.5 in linear light, and the encode formula 1.055 · 0.5^(1/2.4) − 0.055 gives 0.7354, which is 8-bit code 187.5. The lab prints it."
+  },
+  {
+   "q": "ComfyUI's ImageBlend node mixes a black image and a white image with blend_factor 0.5. Which stored value comes out, and why?",
+   "options": [
+    "0.7354, because it blends in linear light",
+    "0.5, because it does arithmetic on the stored values as they are",
+    "0.2140, because it works in HLG",
+    "0, because normal mode takes the first image"
+   ],
+   "answer": "0.5, because it does arithmetic on the stored values as they are",
+   "why": "ImageBlend computes image1 · (1 − blend_factor) + blended · blend_factor on the stored values and clamps. To mix light, convert to linear first (ImageColorSpace), blend, and convert back."
+  },
+  {
+   "q": "Red and green are mixed half and half. What does the lab find for the luminance of the stored-value blend, against the average of the two lights?",
+   "options": [
+    "0.1986 against 0.4639, less than half",
+    "0.4639 against 0.1986, more than double",
+    "Both 0.4639",
+    "Both 0.1986"
+   ],
+   "answer": "0.1986 against 0.4639, less than half",
+   "why": "The stored blend is (0.5, 0.5, 0), which decodes to a little over a fifth of full light in each of R and G. With luminance weights 0.2126, 0.7152 and 0.0722 that is 0.1986. A mix of the two lights gives 0.4639."
+  },
+  {
+   "q": "How does SaveImage turn a float image into 8-bit codes, and what does 0.999 become?",
+   "options": [
+    "It rounds: 255",
+    "It truncates after multiplying by 255: 254",
+    "It multiplies by 256: 255",
+    "It applies the sRGB curve: 254"
+   ],
+   "answer": "It truncates after multiplying by 255: 254",
+   "why": "SaveImage computes np.clip(255. * image, 0, 255).astype(np.uint8), and NumPy's cast truncates toward zero. 255 · 0.999 = 254.745 becomes 254. For evenly spread values this lowers the mean code by half a code."
+  },
+  {
+   "q": "Compared with 8-bit codes that were linear in light, how many codes does sRGB give to light below 1% of white?",
+   "options": [
+    "3 for sRGB, 26 for linear",
+    "26 for sRGB, 3 for linear",
+    "128 for both",
+    "68 for sRGB, 128 for linear"
+   ],
+   "answer": "26 for sRGB, 3 for linear",
+   "why": "Decoding the 256 codes, 26 of them have light below 1% of white. With a linear coding only the codes 0, 1 and 2 would. In the other direction, 68 sRGB codes cover the brighter half of the light, against 128 linear ones."
+  },
+  {
+   "q": "Which description of the sRGB transfer function is right?",
+   "options": [
+    "A pure power law with exponent 2.4",
+    "A pure power law with exponent 2.2",
+    "A straight piece with slope 12.92 near black and a power piece with exponent 2.4, which together behave like a gamma of about 2.2",
+    "A logarithm"
+   ],
+   "answer": "A straight piece with slope 12.92 near black and a power piece with exponent 2.4, which together behave like a gamma of about 2.2",
+   "why": "The W3C text gives the two pieces with thresholds 0.04045 and 0.0031308. The 1996 proposal speaks of an equivalent gamma of 2.2, and the lab's table shows the two agree to 2% at code 128 but differ by a factor of nearly 9 at code 5."
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+{
+ "code": "CU-214",
+ "title": "Conditioning: img2img, inpaint, ControlNet, IP-Adapter",
+ "level": "200",
+ "prereq": [
+  "CU-106"
+ ],
+ "char": "graph",
+ "hook": "Every way of telling the model more than a prompt, placed at the point where it enters: what denoise really sets, what a ControlNet window covers, and why zero is not the same as absent.",
+ "code_refs": [
+  "comfy/samplers.py:KSampler.set_steps",
+  "comfy/samplers.py:pre_run_control",
+  "comfy/model_sampling.py:ModelSamplingDiscrete.percent_to_sigma",
+  "nodes.py:class ControlNetApplyAdvanced",
+  "comfy/controlnet.py:ControlBase.control_merge",
+  "comfy/cldm/cldm.py:ControlNet.make_zero_conv",
+  "comfy/ldm/modules/diffusionmodules/openaimodel.py:apply_control",
+  "nodes.py:class StyleModelApply",
+  "nodes.py:class unCLIPConditioning"
+ ]
+}

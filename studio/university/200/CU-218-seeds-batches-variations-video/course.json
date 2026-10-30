@@ -1,0 +1,20 @@
+{
+ "code": "CU-218",
+ "title": "Seeds, batches and variations in video",
+ "level": "200",
+ "prereq": [
+  "CU-105",
+  "CU-215"
+ ],
+ "char": "frame",
+ "hook": "The seed fills one block of noise in memory order: why a different frame count is a different video, why batch items can be redone alone, and why a blended noise must be rescaled.",
+ "code_refs": [
+  "comfy/sample.py:prepare_noise",
+  "comfy/sample.py:prepare_noise_inner",
+  "nodes.py:common_ksampler",
+  "nodes.py:class LatentFromBatch",
+  "comfy_extras/nodes_latent.py:class LatentBatchSeedBehavior",
+  "comfy_extras/nodes_custom_sampler.py:class RandomNoise",
+  "comfy/k_diffusion/sampling.py:default_noise_sampler"
+ ]
+}

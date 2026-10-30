@@ -1,0 +1,16 @@
+channel  input mean  input std   style y_b  style y_s   output mean  output std  correlation with input
+0          -0.029      0.288      +1.00       0.50       +1.000       0.500      +1.0000
+1          +6.910      1.872      -1.00       2.00       -1.000       2.000      +1.0000
+2          -1.983      0.070      +0.00       1.00       +0.000       1.000      +1.0000
+3         +40.136      0.950      +4.00       3.00       +4.000       3.000      +1.0000
+
+inputs that differ only by a per-channel scale and offset: largest output difference  AdaIN 3.6e-15   shift + x(1 + scale) 42.1
+style set to 'do nothing' (scale 0, shift 0, or y_s 1, y_b 0): largest change to the input  shift + x(1 + scale) 0.0   AdaIN 40.3
+
+modulating activations against modulating weights: largest difference 2.8e-14
+output map j          0       1       2       3       4       5       6       7
+predicted std       30.59   27.31   29.88   27.60   24.83   32.39   22.46   23.68
+measured std        30.61   27.33   29.89   27.62   24.84   32.41   22.53   23.71
+after demodulation  1.001   1.001   1.000   1.001   1.001   1.001   1.003   1.002
+
+demodulated outputs for smooth inputs: smallest std 0.661, largest 1.326  (independent inputs gave 1.000 to 1.003)

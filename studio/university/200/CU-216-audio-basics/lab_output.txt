@@ -1,0 +1,38 @@
+sample rate 10000 Hz, Nyquist 5000 Hz.  tone in -> peak found -> predicted |f - sr * round(f / sr)|
+  1000 Hz ->   1000 Hz    1000 Hz
+  4000 Hz ->   4000 Hz    4000 Hz
+  6000 Hz ->   4000 Hz    4000 Hz
+  8000 Hz ->   2000 Hz    2000 Hz
+  9000 Hz ->   1000 Hz    1000 Hz
+ 11000 Hz ->   1000 Hz    1000 Hz
+
+n_fft 1024, sample rate 44100: bin width 43.07 Hz, a 440 Hz sine, estimates from a parabola through the three bins around the peak
+  rectangular window  peak bin 10 = 430.66 Hz, estimate 434.00 Hz, level 20 bins from the peak -37.4 dB
+  Hann window         peak bin 10 = 430.66 Hz, estimate 440.63 Hz, level 20 bins from the peak -91.2 dB
+
+n_fft   bin width    window length   dip between tones at 440 and 460 Hz
+1024    43.07  Hz   23.2     ms     -0.9 dB
+2048    21.53  Hz   46.4     ms     -1.7 dB
+4096    10.77  Hz   92.9     ms     -4.5 dB
+8192    5.38   Hz   185.8    ms     -28.1 dB
+16384   2.69   Hz   371.5    ms     -44.1 dB
+
+Hz        100     500    1000    2000    4000    8000   16000
+mel      1.50    7.50   15.00   25.08   35.16   45.25   55.33
+linear part: one mel is 66.67 Hz.  log part: one mel multiplies the frequency by 6.4 ** (1 / 27) = 1.0711703
+128 mel bands up to 22050 Hz, n_fft 2048 (21.53 Hz per bin): spacing of band centres 31.0 Hz at the bottom, 672.0 Hz at the top, which is 1.4 and 31.2 bins
+
+seconds   latent length   duration of that length
+1.0       22              1.022 s
+10.0      216             10.031 s
+30.0      646             30.000 s
+47.6      1024            47.554 s
+latent frames per second 21.53; stereo samples per second 88200, latent values per second 1378.1: 64 to 1
+
+sine amplitude   std before   std after
+0.05             0.0354       0.0354
+0.2              0.1414       0.1414
+0.3              0.2121       0.2000
+0.9              0.6364       0.2000
+
+6 kHz tone, 16 kHz -> 8 kHz: amplitude of what remains, taking every second sample 1.0000 (at 2000 Hz), with a low-pass first 0.0000

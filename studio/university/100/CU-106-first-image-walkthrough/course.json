@@ -1,0 +1,19 @@
+{
+ "code": "CU-106",
+ "title": "Your first image: checkpoint, sampler, VAE",
+ "level": "100",
+ "prereq": [
+  "CU-102"
+ ],
+ "char": "graph",
+ "hook": "Follow one prompt through checkpoint, text encoder, sampler and VAE: the shape of every hand-off, and the 20 sigma values that the sampler walks down, checked against the ComfyUI documentation.",
+ "code_refs": [
+  "nodes.py:class CheckpointLoaderSimple",
+  "nodes.py:def common_ksampler",
+  "comfy/sd.py:def load_checkpoint_guess_config",
+  "comfy/samplers.py:def normal_scheduler",
+  "comfy/samplers.py:def set_steps",
+  "comfy/samplers.py:def cfg_function",
+  "latent_preview.py:def prepare_callback"
+ ]
+}

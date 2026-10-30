@@ -1,0 +1,73 @@
+{
+ "code": "CU-105",
+ "title": "Seeds, noise and determinism",
+ "level": "100",
+ "questions": [
+  {
+   "q": "What does the seed of a ComfyUI KSampler control?",
+   "options": [
+    "The starting noise, and for ancestral samplers the extra noise added at each step",
+    "The text embedding of the prompt",
+    "The number of sampling steps",
+    "Which checkpoint is loaded"
+   ],
+   "answer": "The starting noise, and for ancestral samplers the extra noise added at each step",
+   "why": "prepare_noise turns the seed into the starting noise, and sample_euler_ancestral builds its per-step noise source from the same seed. The prompt, the steps and the checkpoint are separate inputs."
+  },
+  {
+   "q": "The lab compares the noise from seed 42 with the noise from seed 43. What does it find?",
+   "options": [
+    "They are nearly identical and differ only in the last digits",
+    "They are almost uncorrelated, a correlation of 0.0058, so a neighbouring seed is an unrelated starting point",
+    "One is the other shifted by a single value",
+    "They are mirror images of each other"
+   ],
+   "answer": "They are almost uncorrelated, a correlation of 0.0058, so a neighbouring seed is an unrelated starting point",
+   "why": "The lab prints a correlation of 0.0058 over 16384 values. Seeds do not form a smooth scale, so seed plus one is not a small variation."
+  },
+  {
+   "q": "In the toy, a deterministic Euler run from the same noise is finished with 5, 10, 20 and 40 steps. What happens?",
+   "options": [
+    "The sample lands in a random blob each time",
+    "The sample lands in the same blob every time, and only its distance to the 80-step result shrinks",
+    "The sample always lands in the positive blob",
+    "The result depends on the GPU"
+   ],
+   "answer": "The sample lands in the same blob every time, and only its distance to the 80-step result shrinks",
+   "why": "The Euler column reads 1.000 for the blob agreement at every step count, and the mean distance falls from 0.707 to 0.044. This matches the consistency that Song, Meng and Ermon report for deterministic sampling."
+  },
+  {
+   "q": "Why does an ancestral sampler give a different picture when you change the number of steps, even with the same seed?",
+   "options": [
+    "Ancestral samplers ignore the seed",
+    "Fresh noise is drawn at every step, so another step count means another sequence of draws and another path",
+    "Ancestral samplers run only on the CPU",
+    "They load a different model for each step count"
+   ],
+   "answer": "Fresh noise is drawn at every step, so another step count means another sequence of draws and another path",
+   "why": "In the toy the ancestral runs agree with the 80-step run only 0.554 to 0.711 of the time, not far above the 0.498 of unrelated noise, while the same seed and the same step count repeat exactly."
+  },
+  {
+   "q": "Why can the same seed give slightly different pixels on another GPU?",
+   "options": [
+    "The starting noise is the same CPU float32 draw, but other chips and libraries round the network's arithmetic differently",
+    "The seed is converted differently on each GPU",
+    "ComfyUI picks a new seed when the GPU changes",
+    "The noise is generated on the GPU, and vendors differ"
+   ],
+   "answer": "The starting noise is the same CPU float32 draw, but other chips and libraries round the network's arithmetic differently",
+   "why": "prepare_noise draws on the CPU. Floating-point sums depend on the order of addition, as the lab shows with three sums of the same 16384 numbers, and PyTorch does not promise identical results across platforms."
+  },
+  {
+   "q": "In the lab, a CPU generator seeded with 42 supplies the extra noise as well as the starting noise. What would the first extra noise be?",
+   "options": [
+    "An exact copy of the starting noise",
+    "Uncorrelated with the starting noise",
+    "Half the size of the starting noise",
+    "All zeros"
+   ],
+   "answer": "An exact copy of the starting noise",
+   "why": "The lab prints True for that comparison. ComfyUI seeds the CPU generator with the seed plus one in default_noise_sampler, and the lab shows that seed 43 is uncorrelated with seed 42."
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "code": "CU-102",
+ "title": "Anatomy of a ComfyUI graph",
+ "level": "100",
+ "questions": [
+  {
+   "q": "In the lab graph you change only the KSampler's seed. Which nodes run again?",
+   "options": [
+    "All seven, because the whole graph is queued again",
+    "KSampler, VAEDecode and SaveImage; the other four come from the cache",
+    "Only the KSampler, because it is the only node whose input changed",
+    "Only SaveImage, because it is the output node"
+   ],
+   "answer": "KSampler, VAEDecode and SaveImage; the other four come from the cache",
+   "why": "The KSampler's key changed, and VAEDecode and SaveImage have the KSampler upstream, so their keys changed too. The lab row shows 5 6 7 running and 1 2 3 4 found in the cache."
+  },
+  {
+   "q": "Changing the checkpoint file name re-runs six nodes in the lab, not seven. Why?",
+   "options": [
+    "The empty latent node has no wire from the checkpoint loader, so its key is unchanged",
+    "SaveImage is never cached",
+    "The checkpoint loader is skipped because its file name is a constant",
+    "ComfyUI always keeps the last node of the previous run"
+   ],
+   "answer": "The empty latent node has no wire from the checkpoint loader, so its key is unchanged",
+   "why": "A key covers a node and its ancestors only. Node 4 has no ancestor, so its key stayed and it was found in the cache, while 1 3 2 5 6 7 ran."
+  },
+  {
+   "q": "Node 8 in the lab is an empty latent wired to nothing. What happens to it?",
+   "options": [
+    "It runs first, because it has no inputs",
+    "It never runs, because no output node depends on it",
+    "It runs last, after the output node",
+    "Validation fails with prompt_no_outputs"
+   ],
+   "answer": "It never runs, because no output node depends on it",
+   "why": "The engine starts from the output nodes and walks upstream, so a branch that leads to none is never started. Node 8 sits in the \"not needed\" column on every row."
+  },
+  {
+   "q": "The lab finds 8 valid execution orders for its 7 nodes. What does that tell you?",
+   "options": [
+    "The graph contains a cycle",
+    "Seven of the orders are wrong and only one is accepted",
+    "Nodes that do not depend on each other can run in either order, so the wires fix only part of the order",
+    "ComfyUI draws one of the orders at random on every run"
+   ],
+   "answer": "Nodes that do not depend on each other can run in either order, so the wires fix only part of the order",
+   "why": "Any order that places each node after the nodes wired into it is valid. The checkpoint loader and the empty latent, for example, are independent. ComfyUI picks among ready nodes with a fixed rule that favours output nodes."
+  },
+  {
+   "q": "Editing an image file on disk makes LoadImage run again, but swapping a checkpoint file under the same name does not by itself change the CheckpointLoaderSimple key. Why?",
+   "options": [
+    "Images are cached in VRAM and checkpoints are not",
+    "ComfyUI hashes every file it opens",
+    "LoadImage defines IS_CHANGED, which returns a hash of the file and enters its key, while the checkpoint loader's key holds only the file name",
+    "Checkpoint files cannot be edited"
+   ],
+   "answer": "LoadImage defines IS_CHANGED, which returns a hash of the file and enters its key, while the checkpoint loader's key holds only the file name",
+   "why": "In nodes.py LoadImage.IS_CHANGED returns a SHA-256 of the file bytes, and CacheKeySetInputSignature puts that value in the key. CheckpointLoaderSimple has no IS_CHANGED, so only ckpt_name is in its key."
+  },
+  {
+   "q": "In v0.43.0, what happens to a graph whose wires form a cycle?",
+   "options": [
+    "validate_loops removes the cycle before the graph runs",
+    "Validation rejects it with a dependency_cycle error that names the nodes in the loop",
+    "The loop is silently cut at the last wire",
+    "It runs until the cache is full"
+   ],
+   "answer": "Validation rejects it with a dependency_cycle error that names the nodes in the loop",
+   "why": "validate_inputs tracks the nodes it is visiting and reports \"Dependency cycle detected\" with the path. validate_loops belongs to the loop-start and loop-end nodes, not to accidental cycles."
+  }
+ ]
+}

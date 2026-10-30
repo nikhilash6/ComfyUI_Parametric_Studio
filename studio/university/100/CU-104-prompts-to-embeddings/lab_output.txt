@@ -1,0 +1,25 @@
+merges learned, in order: e+s, es+t, est+</w>, l+o, lo+w, n+e, ne+w, new+est</w>, low+</w>, w+i
+
+word      pieces
+low       low</w>
+newest    newest</w>
+lowest    low est</w>
+wider     wi d e r </w>
+newer     new e r </w>
+slow      s low</w>
+
+lookup: one-hot vector times the table, against reading the row; largest difference over all ids: 0.0
+'bank' after 'river' against 'bank' after 'money':
+  table row plus position, before attention: largest difference 0.000000
+  output of one causal attention layer:      largest difference 0.998983
+'river' in 'river bank' against 'river sat' (only the next word differs):
+  with the causal mask:    largest difference 0.000000
+  without the mask:        largest difference 0.933489
+output at the end marker, 'river bank' against 'money bank': largest difference 0.711494
+
+tokens in prompt  chunks   SD 1.x conditioning     SDXL conditioning (768 + 1280 wide)
+5                 1        [1, 77, 768]            [1, 77, 2048]
+75                1        [1, 77, 768]            [1, 77, 2048]
+76                2        [1, 154, 768]           [1, 154, 2048]
+100               2        [1, 154, 768]           [1, 154, 2048]
+150               2        [1, 154, 768]           [1, 154, 2048]

@@ -1,0 +1,73 @@
+{
+ "code": "CU-103",
+ "title": "Pixels, tensors and shapes",
+ "level": "100",
+ "questions": [
+  {
+   "q": "Which shape does ComfyUI use for an IMAGE tensor?",
+   "options": [
+    "[B, C, H, W], channels first",
+    "[B, H, W, C], channels last",
+    "[H, W, C] with no batch axis",
+    "[C, B, H, W]"
+   ],
+   "answer": "[B, H, W, C], channels last",
+   "why": "The ComfyUI datatype documentation gives [B, H, W, C], and LoadImage builds exactly that. The LATENT samples use [B, C, H/8, W/8], which is why the VAE nodes call movedim."
+  },
+  {
+   "q": "On an IMAGE tensor, why is reshape(B, C, H, W) not the same as movedim(-1, 1)?",
+   "options": [
+    "reshape always makes a copy and movedim never does",
+    "reshape keeps the memory order and only relabels the axes, so the shape is right but the pixels are mixed",
+    "reshape drops the batch axis",
+    "movedim changes the values and reshape does not"
+   ],
+   "answer": "reshape keeps the memory order and only relabels the axes, so the shape is right but the pixels are mixed",
+   "why": "In the lab, channel 0 of an all-red image is 100% red after movedim and 33.3% red after reshape, and Conv2d accepts both without an error."
+  },
+  {
+   "q": "What does VAEEncode do with a 515 by 333 image?",
+   "options": [
+    "It scales it to 512 by 333",
+    "It pads it to 520 by 336",
+    "It crops it to 512 by 328",
+    "It raises an error"
+   ],
+   "answer": "It crops it to 512 by 328",
+   "why": "vae_encode_crop_pixels cuts each side down to a multiple of 8, taking the extra pixels from both ends. The lab prints 515x333 -> 512x328 and a latent of [1, 4, 41, 64]."
+  },
+  {
+   "q": "After the decoder, ComfyUI computes (x + 1) / 2 and then clamps. What does the clamp do for a decoder output of -1.2?",
+   "options": [
+    "It maps it to 0.0 after (x + 1) / 2 gave -0.1",
+    "It leaves it at -0.1",
+    "It maps it to 1.0",
+    "It raises an error"
+   ],
+   "answer": "It maps it to 0.0 after (x + 1) / 2 gave -0.1",
+   "why": "process_output adds 1, divides by 2 and clamps to 0..1. The lab row shows -1.20 -> -0.10 -> 0.00."
+  },
+  {
+   "q": "How many bytes does a float32 IMAGE batch of 4 images at 1024 by 1024 occupy?",
+   "options": [
+    "12,582,912 bytes",
+    "50,331,648 bytes",
+    "3,145,728 bytes",
+    "201,326,592 bytes"
+   ],
+   "answer": "50,331,648 bytes",
+   "why": "4 x 1024 x 1024 x 3 values x 4 bytes = 50,331,648 bytes, which is 48 MiB. The lab prints it, and the same batch as uint8 would be 12 MiB."
+  },
+  {
+   "q": "The lab adds 0.1 to the 256 eight-bit levels in float32, subtracts it again, and saves the way SaveImage does. How many levels come back unchanged?",
+   "options": [
+    "All 256 when the cast truncates, and fewer when it rounds",
+    "237 when the cast truncates and all 256 when it rounds",
+    "128 in both cases",
+    "All 256 in both cases because float32 is exact"
+   ],
+   "answer": "237 when the cast truncates and all 256 when it rounds",
+   "why": "Some results land a hair below a whole number, and a truncating cast takes them down one level. SaveImage uses astype(np.uint8), which truncates; the lab prints 237 for truncation and 256 for rounding."
+  }
+ ]
+}

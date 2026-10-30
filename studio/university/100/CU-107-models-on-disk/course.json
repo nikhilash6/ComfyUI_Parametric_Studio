@@ -1,0 +1,17 @@
+{
+ "code": "CU-107",
+ "title": "Models on disk: safetensors and families",
+ "level": "100",
+ "prereq": [],
+ "char": "bits",
+ "hook": "Build and damage a safetensors file by hand, watch a pickle run code, and see how ComfyUI tells SD 1.x from SDXL by reading three shapes from a header.",
+ "code_refs": [
+  "comfy/utils.py:def load_torch_file",
+  "comfy/sd.py:def load_state_dict_guess_config",
+  "comfy/model_detection.py:def detect_unet_config",
+  "comfy/model_detection.py:def model_config_from_unet",
+  "comfy/supported_models.py:class SD15",
+  "comfy/supported_models.py:class SDXL",
+  "comfy/supported_models_base.py:def matches"
+ ]
+}

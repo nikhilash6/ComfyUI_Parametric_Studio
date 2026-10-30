@@ -1,0 +1,17 @@
+same seed twice: identical True
+seed 42 against seed 43: correlation 0.0058 over 16384 values
+noise from seed 42: mean 0.0091, std 1.0040
+batch of 4 from seed 42: image 0 equals the single-image noise True, correlation of images 0 and 1: 0.0042
+
+a CPU generator seeded 42 repeats the starting noise: True; seeded 43, which ComfyUI does on the CPU: correlation 0.0058
+sum of the 16384 numbers in float32: forward 149.764481, reverse 149.764572, torch.sum 149.764816; exact 149.764800
+
+the same 4000 starting noises, finished with different step counts, compared with an 80-step run
+steps           Euler: same blob   mean distance   ancestral: same blob  mean distance
+5               1.000              0.707           0.554                 3.048
+10              1.000              0.317           0.573                 3.200
+20              1.000              0.132           0.608                 3.162
+40              1.000              0.044           0.711                 2.573
+unrelated noise 0.504              3.723           0.498                 3.682
+same seed, same steps, run twice: identical for Euler and for ancestral
+starting noise scaled by 1 + 1e-6 (Euler, 20 steps): samples that change blob 0 of 4000, largest change of any number 0.000002

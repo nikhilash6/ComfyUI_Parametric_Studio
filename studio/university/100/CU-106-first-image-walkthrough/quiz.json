@@ -1,0 +1,73 @@
+{
+ "code": "CU-106",
+ "title": "Your first image: checkpoint, sampler, VAE",
+ "level": "100",
+ "questions": [
+  {
+   "q": "Which three networks does Load Checkpoint hand to the rest of an SD 1.x graph?",
+   "options": [
+    "The sampler, the scheduler and the VAE",
+    "The denoiser (a UNet), the text encoder (CLIP) and the VAE",
+    "Two text encoders and a UNet",
+    "The denoiser, the VAE and an upscaler"
+   ],
+   "answer": "The denoiser (a UNet), the text encoder (CLIP) and the VAE",
+   "why": "CheckpointLoaderSimple returns MODEL, CLIP and VAE. The sampler is not a network but the loop that calls the denoiser, and its schedule is a list of numbers."
+  },
+  {
+   "q": "For a 512 by 512 image the lab compares what the sampler works on with the picture. What does it find?",
+   "options": [
+    "786,432 numbers for the sampler against 16,384 for the picture",
+    "16,384 numbers for the sampler against 786,432 for the picture, 48 times more in the picture",
+    "The same number for both",
+    "65,536 numbers for the sampler against 3,145,728 for the picture"
+   ],
+   "answer": "16,384 numbers for the sampler against 786,432 for the picture, 48 times more in the picture",
+   "why": "The latent is [1, 4, 64, 64], which is 16,384 numbers. The IMAGE is [1, 512, 512, 3], which is 786,432. The ratio is 48, as CU-103 found for every size."
+  },
+  {
+   "q": "With 20 steps and denoise 0.5, what is the first sigma in the lab, and why?",
+   "options": [
+    "7.3073, half of the first sigma of the full list",
+    "14.6146, because the number of steps is unchanged",
+    "1.5482, because a 40-step list is built and its last 21 values are kept",
+    "0.6708, because the list is built with 80 steps"
+   ],
+   "answer": "1.5482, because a 40-step list is built and its last 21 values are kept",
+   "why": "KSampler.set_steps builds a list with int(steps / denoise) steps and keeps the last steps + 1 values. The lab prints 1.5482 for denoise 0.5 and 0.6708 for denoise 0.25."
+  },
+  {
+   "q": "In the toy run, x starts 38.975 from its final value and the denoised estimate 2.065. Which of the two does the sampling preview in ComfyUI show?",
+   "options": [
+    "The noisy x",
+    "The denoised estimate",
+    "The average of the two",
+    "Neither, it renders the final image early"
+   ],
+   "answer": "The denoised estimate",
+   "why": "The sampler passes the denoised latent to the preview callback, and latent_preview.py decodes that value. In the toy the estimate is far closer to the end result at the first step."
+  },
+  {
+   "q": "How many network evaluations do 20 Euler steps and 20 Heun steps need in the lab?",
+   "options": [
+    "20 and 20",
+    "20 and 40",
+    "20 and 39",
+    "40 and 80"
+   ],
+   "answer": "20 and 39",
+   "why": "Heun makes a second evaluation per step except on the last step, where the next sigma is 0 and it falls back to an Euler step. That gives 2 x 20 - 1 = 39."
+  },
+  {
+   "q": "What happens to the negative prompt when the KSampler's cfg is exactly 1.0?",
+   "options": [
+    "It is evaluated and then ignored",
+    "It is not evaluated, so each step needs one network call instead of two",
+    "It is added to the positive prompt",
+    "It raises an error"
+   ],
+   "answer": "It is not evaluated, so each step needs one network call instead of two",
+   "why": "In sampling_function, a cond_scale close to 1.0 sets the unconditional input to None. With any other cfg the result is uncond + (cond - uncond) x cfg, which needs both predictions."
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "code": "CU-217",
+ "title": "Upscaling and tiling math",
+ "level": "200",
+ "questions": [
+  {
+   "q": "A side of 1024 pixels is tiled with tiles of 512 and an overlap of 64. Where do the tiles start, and how long is the last one?",
+   "options": [
+    "Starts 0, 512; both 512 long",
+    "Starts 0, 448, 896; the last is 128 long, cut off at the border",
+    "Starts 0, 448, 896; all three are 512 long, the last one hangs over the edge",
+    "Starts 0, 448; the second is 576 long"
+   ],
+   "answer": "Starts 0, 448, 896; the last is 128 long, cut off at the border",
+   "why": "Starts are range(0, D − O, S − O) = range(0, 960, 448), and each tile is cut off at the border: min(512, 1024 − 896) = 128."
+  },
+  {
+   "q": "How many tiles does a side of 960 need with tiles of 512 and an overlap of 64?",
+   "options": [
+    "3, because 960 / 448 rounds up",
+    "2, starting at 0 and 448, because ceil((960 − 64) / (512 − 64)) = 2",
+    "1, because 960 is under 1024",
+    "4, one per 256 pixels"
+   ],
+   "answer": "2, starting at 0 and 448, because ceil((960 − 64) / (512 − 64)) = 2",
+   "why": "The count is ceil((D − O) / (S − O)) for D > S. The second tile, 448 to 960, ends exactly at the border. The lab prints this case."
+  },
+  {
+   "q": "What does the ramp on each tile's weight mask do?",
+   "options": [
+    "It makes the image brighter near the seams",
+    "It gives the pixels next to a tile's edge, where the model lacks context, the least weight, and the weighted sum is divided by the sum of weights",
+    "It blurs the tile",
+    "It removes the overlap"
+   ],
+   "answer": "It gives the pixels next to a tile's edge, where the model lacks context, the least weight, and the weighted sum is divided by the sum of weights",
+   "why": "The mask rises as (t + 1) / f from each end, so a pixel near one tile's edge is mostly taken from the other tile, where it sits deep inside. A pixel covered by one tile is returned unchanged."
+  },
+  {
+   "q": "In the lab's toy decoder with tiles of 32 and an overlap of 8, a plain average of the overlapping tiles leaves a largest error of 1.51 times the output's spread. What does ComfyUI's feathered mask give?",
+   "options": [
+    "Also 1.51, the mask changes nothing",
+    "0.39, because the unreliable edge pixels get little weight",
+    "0.00, the seams vanish",
+    "2.76, the same as no overlap"
+   ],
+   "answer": "0.39, because the unreliable edge pixels get little weight",
+   "why": "The lab prints 1.51 for the plain average and 0.39 for the feathered mask at an overlap of 8. Averaging three tilings brings it to 0.29."
+  },
+  {
+   "q": "VAEDecodeTiled at its defaults on a 1024 × 1024 image makes 19 decoder calls, 5 + 5 + 9. What does that say about tiled decoding?",
+   "options": [
+    "It is faster than untiled decoding, because the tiles are small",
+    "It saves memory but not time: the lab counts 3.77 times the work of one untiled pass",
+    "It decodes each tile three times in a row",
+    "It needs a GPU with 19 times the memory"
+   ],
+   "answer": "It saves memory but not time: the lab counts 3.77 times the work of one untiled pass",
+   "why": "Three tilings, (32, 128), (128, 32) and (64, 64), are averaged, and the tiles overlap. If the decoder's cost grows with the number of latent positions, 61,696 positions are decoded for 16,384 in the latent."
+  },
+  {
+   "q": "What does ImageUpscaleWithModel do if a tile of 512 pixels runs out of memory?",
+   "options": [
+    "It stops with an error at once",
+    "It switches to the CPU",
+    "It halves the tile and tries again, and raises the error only when the tile would fall below 128",
+    "It doubles the overlap"
+   ],
+   "answer": "It halves the tile and tries again, and raises the error only when the tile would fall below 128",
+   "why": "The node loops with tile //= 2 after an out-of-memory error, and raises when tile < 128. Its starting values are a tile of 512 and an overlap of 32."
+  }
+ ]
+}

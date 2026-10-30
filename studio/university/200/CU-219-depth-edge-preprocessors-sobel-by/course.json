@@ -1,0 +1,17 @@
+{
+ "code": "CU-219",
+ "title": "Depth and edge preprocessors: Sobel by hand",
+ "level": "200",
+ "prereq": [
+  "CU-103"
+ ],
+ "char": "latent",
+ "hook": "Compute Sobel by hand, see why Canny blurs first and what its thresholds are measured in, and learn how a depth map becomes a grey hint.",
+ "code_refs": [
+  "comfy_extras/nodes_canny.py:class Canny",
+  "comfy_extras/nodes_depth_anything_3.py:class DA3Render",
+  "comfy/ldm/depth_anything_3/preprocess.py:normalize_depth_v2_style",
+  "comfy/ldm/depth_anything_3/preprocess.py:normalize_depth_min_max",
+  "comfy_extras/nodes_moge.py:class MoGeInference"
+ ]
+}

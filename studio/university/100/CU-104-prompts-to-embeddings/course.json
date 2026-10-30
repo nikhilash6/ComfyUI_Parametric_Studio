@@ -1,0 +1,16 @@
+{
+ "code": "CU-104",
+ "title": "Prompts become numbers: tokens and embeddings",
+ "level": "100",
+ "prereq": [],
+ "char": "attn",
+ "hook": "Follow a prompt to the tensor the sampler gets: byte-pair splitting, an embedding table that does not know its neighbours, and causal attention that does.",
+ "code_refs": [
+  "nodes.py:class CLIPTextEncode",
+  "comfy/sd1_clip.py:class SDTokenizer",
+  "comfy/sd1_clip.py:def token_weights",
+  "comfy/clip_model.py:class CLIPTextModel_",
+  "comfy/sdxl_clip.py:class SDXLClipModel",
+  "comfy/text_encoders/flux.py:class FluxClipModel"
+ ]
+}

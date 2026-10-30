@@ -1,0 +1,19 @@
+{
+ "code": "CU-229",
+ "title": "Color spaces, gamma and image math",
+ "level": "200",
+ "prereq": [
+  "CU-103"
+ ],
+ "char": "bits",
+ "hook": "Half black and half white is not 0.5 in light: what blending and shrinking do to sRGB codes, and why SaveImage truncates.",
+ "code_refs": [
+  "nodes.py:class LoadImage",
+  "nodes.py:class SaveImage",
+  "nodes.py:class ImageScale",
+  "comfy/sd.py:class VAE",
+  "comfy_extras/nodes_post_processing.py:class Blend",
+  "comfy_extras/nodes_images.py:srgb_to_linear",
+  "comfy_extras/nodes_images.py:class ImageColorSpace"
+ ]
+}

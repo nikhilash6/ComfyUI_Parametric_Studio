@@ -1,0 +1,19 @@
+{
+ "code": "CU-217",
+ "title": "Upscaling and tiling math",
+ "level": "200",
+ "prereq": [
+  "CU-201"
+ ],
+ "char": "latent",
+ "hook": "How ComfyUI cuts an image into tiles, why a ramp hides the seam, and why tiled decoding saves memory but costs 3.77 times the work.",
+ "code_refs": [
+  "comfy/utils.py:tiled_scale_multidim",
+  "comfy/utils.py:get_tiled_scale_steps",
+  "comfy/sd.py:VAE.decode_tiled_",
+  "nodes.py:class VAEDecodeTiled",
+  "nodes.py:class LatentUpscale",
+  "nodes.py:class LatentUpscaleBy",
+  "comfy_extras/nodes_upscale_model.py:class ImageUpscaleWithModel"
+ ]
+}

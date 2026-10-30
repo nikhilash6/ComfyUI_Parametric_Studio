@@ -1,0 +1,22 @@
+t      mean by Bayes   closed-form mean   mean from eps (eq. 10)   variance by Bayes   beta-tilde_t
+2      0.804680        0.804680           0.804680                 5.4532e-05          5.4532e-05
+50     0.903556        0.903556           0.903556                 1.0372e-03          1.0372e-03
+500    0.893374        0.893374           0.893374                 1.0031e-02          1.0031e-02
+1000   0.698084        0.698084           0.698084                 2.0000e-02          2.0000e-02
+
+largest difference between the two sides of eq. 12 over 10000 random cases: 4.3e-11, while the terms reach 3.3
+
+t       weight in the bound   weight in L_simple   L_simple / bound
+1       0.50005               1                    2.0
+10      0.07372               1                    13.6
+100     0.01008               1                    99.2
+500     0.00550               1                    181.7
+1000    0.01020               1                    98.0
+
+t       beta_tilde / beta   exact reverse variance / beta_t if the data have std 0 (a point), 0.5, 1
+2       0.4547              0.4547  0.9996  1.0000
+5       0.7431              0.7431  0.9995  1.0000
+10      0.8528              0.8528  0.9992  1.0000
+50      0.9639              0.9639  0.9971  1.0000
+500     0.9991              0.9991  0.9994  1.0000
+1000    1.0000              1.0000  1.0000  1.0000

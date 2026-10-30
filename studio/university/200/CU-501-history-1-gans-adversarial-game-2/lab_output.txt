@@ -1,0 +1,32 @@
+generator           JSD      V(D*, G)   -log4 + 2 JSD   V(D=1/2, G)
+uniform             0.0529   -1.280510  -1.280510        -1.386294
+shifted by one      0.0516   -1.283000  -1.283000        -1.386294
+two middle points   0.1639   -1.058501  -1.058501        -1.386294
+the data itself     0.0000   -1.386294  -1.386294        -1.386294
+D* for the data itself: 0.50 0.50 0.50 0.50 0.50 0.50   -log 4 = -1.386294
+
+logit a   D = sigmoid(a)   |d log(1-D) / da|   |d (-log D) / da|
+ -8.0     0.00034          0.00034              0.99966
+ -4.0     0.01799          0.01799              0.98201
+ -2.0     0.11920          0.11920              0.88080
+ +0.0     0.50000          0.50000              0.50000
+
+after 300 discriminator steps against an untrained generator, mean D(G(z)) = 0.0154
+generator gradient norm with loss log(1 - D): 0.4386
+generator gradient norm with loss -log D    : 13.0146
+ratio 29.7
+
+seed 0 while it trains (the real data has 0.700 of its mass in the right hump)
+step   D(real)  D(fake)  W1     right hump
+500    0.517    0.517    0.432  0.715
+1000   0.503    0.498    0.328  0.702
+1500   0.494    0.491    0.194  0.693
+2000   0.507    0.502    0.117  0.698
+
+after 2000 steps, four seeds
+seed  W1      right hump  share in the gap  discriminator accuracy
+0     0.113   0.694       0.022             0.501
+1     0.338   0.705       0.029             0.461
+2     0.234   0.718       0.019             0.515
+3     0.161   0.710       0.021             0.493
+two real samples of this size differ by W1 0.016; the gap holds 0.016 of the real data; 0.500 is a discriminator that cannot tell

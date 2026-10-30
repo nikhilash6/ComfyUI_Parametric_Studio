@@ -1,0 +1,18 @@
+{
+ "code": "CU-216",
+ "title": "Audio and music basics: waveforms to spectrograms",
+ "level": "200",
+ "prereq": [],
+ "char": "sound",
+ "hook": "Why a 6 kHz tone sampled at 10 kHz is heard at 4 kHz, what a longer frame buys and costs, and how ComfyUI turns seconds into audio latents.",
+ "code_refs": [
+  "comfy_extras/nodes_audio.py:class EmptyLatentAudio",
+  "comfy_extras/nodes_audio.py:vae_decode_audio",
+  "comfy_extras/nodes_audio.py:class VAEEncodeAudio",
+  "comfy/audio.py:resample",
+  "comfy/audio.py:MelScale",
+  "comfy/ldm/audio/autoencoder.py:class AudioOobleckVAE",
+  "comfy/ldm/ace/vae/music_log_mel.py:class LogMelSpectrogram",
+  "comfy/ldm/ace/vae/music_dcae_pipeline.py:class MusicDCAE"
+ ]
+}

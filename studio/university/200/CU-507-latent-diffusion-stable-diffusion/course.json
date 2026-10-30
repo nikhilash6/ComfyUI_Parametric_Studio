@@ -1,0 +1,16 @@
+{
+ "code": "CU-507",
+ "title": "History 7: Latent diffusion and Stable Diffusion (2022)",
+ "level": "200",
+ "prereq": [
+  "CU-201"
+ ],
+ "char": "latent",
+ "hook": "What a factor-8 latent grid does to the cost of a layer, counted by PyTorch's FLOP counter, what the paper measured end to end, and the price it admits. Plus the three parts of a checkpoint in ComfyUI.",
+ "code_refs": [
+  "nodes.py:class CheckpointLoaderSimple",
+  "nodes.py:class EmptyLatentImage",
+  "comfy/ldm/modules/attention.py:class BasicTransformerBlock",
+  "comfy/ldm/modules/attention.py:class CrossAttention"
+ ]
+}

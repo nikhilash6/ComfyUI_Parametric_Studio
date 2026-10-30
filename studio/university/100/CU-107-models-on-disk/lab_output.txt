@@ -1,0 +1,28 @@
+file: 304 bytes = 8 (header length) + 224 (JSON header) + 72 (tensor bytes);  first 8 bytes: e0 00 00 00 00 00 00 00
+
+name           dtype  shape   offsets    bytes
+layer1.weight  F32    [2, 3]  [0, 24]    24
+layer1.bias    F16    [4]     [24, 32]   8
+ids            I64    [5]     [32, 72]   40
+__metadata__: {'format': 'pt'}
+
+one 1000 x 1000 float16 tensor: file 2,000,080 bytes, and 8 + 72 = 80 bytes are enough to learn its name, dtype and shape
+
+checks on damaged copies
+offsets shifted by 4               refused: hole or overlap before layer1.bias
+shape no longer fits the bytes     refused: layer1.weight: byte range does not match shape and dtype
+file cut short by 10 bytes         refused: the buffer is not the size the header says
+header length claims 10^12 bytes   refused: header larger than the 100 MB limit
+metadata value is a number         refused: __metadata__ values must be strings
+
+after pickle.loads on a harmless payload: ran = ['a function the loader never meant to call']
+
+file               read from the shapes                                                        family
+SD 1.5 style file  {'model_channels': 320, 'context_dim': 768, 'adm_in_channels': None}        SD 1.x
+SDXL style file    {'model_channels': 320, 'context_dim': 2048, 'adm_in_channels': 2816}       SDXL
+VAE-only file      None                                                                        no match
+
+1,000,000,000 values stored as   bytes            GiB
+F32                              4,000,000,000     3.73
+F16                              2,000,000,000     1.86
+BF16                             2,000,000,000     1.86

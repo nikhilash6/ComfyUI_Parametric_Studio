@@ -1,0 +1,22 @@
+img2img, 20 steps, normal scheduler, SD 1.x noise levels
+denoise  steps run   first sigma   signal share 1/sqrt(1+sigma^2)   measured correlation with the clean latent
+0.2      20         0.552         0.875                            0.875
+0.5      20         1.548         0.543                            0.542
+0.8      20         4.904         0.200                            0.199
+denoise 1.0 starts from sigma_max = 14.615
+
+ControlNet start_percent 0: steps (of 20) that run with the ControlNet on
+end_percent   sigma where it stops   normal scheduler   karras scheduler
+0.25          4.086                  5                  6
+0.5           1.616                  10                 9
+0.75          0.695                  15                 12
+
+zero convolution            max |y_c - y|   grad of Z2   grad of trainable copy   grad of Z1
+step 0                      0.0e+00         0.1596       0.0000                  0.0000
+after one step on Z2        1.3e-02         0.1567       0.0019                  0.0004
+
+image strength 0 against a layer with no image at all, largest difference, and a linearity test of the image's effect
+design                                      strength 0 vs no image   relative error of (f(2) - f(0)) against 2 (f(1) - f(0))
+decoupled cross-attention                   0.0e+00                  0.000
+appended tokens, multiply                   3.4e-01                  1.596
+appended tokens, attn_bias                  2.4e-07                  0.489

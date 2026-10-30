@@ -1,0 +1,21 @@
+{
+ "code": "CU-212",
+ "title": "LoRA: low-rank adaptation",
+ "level": "200",
+ "prereq": [
+  "CU-210"
+ ],
+ "char": "tune",
+ "hook": "Why two skinny matrices can change a giant one, when they cannot, and what rounding does to a small update.",
+ "code_refs": [
+  "nodes.py:class LoraLoader",
+  "comfy/sd.py:load_lora_for_models",
+  "comfy/lora.py:load_lora",
+  "comfy/weight_adapter/lora.py:LoRAAdapter",
+  "comfy/model_patcher.py:ModelPatcher.add_patches",
+  "comfy/model_patcher.py:ModelPatcher.patch_weight_to_device",
+  "comfy/model_patcher.py:LowVramPatch",
+  "comfy/float.py:stochastic_rounding",
+  "comfy_extras/nodes_lora_debug.py:LoraLoaderBypass"
+ ]
+}

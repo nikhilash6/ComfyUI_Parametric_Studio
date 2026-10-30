@@ -1,0 +1,16 @@
+{
+ "code": "CU-501",
+ "title": "History 1: GANs, the adversarial game (2014)",
+ "level": "200",
+ "prereq": [
+  "CU-101"
+ ],
+ "char": "denoise",
+ "hook": "Two networks play a game whose exact answer is a density ratio and a value of minus log 4. Then a real GAN trained on a CPU shows how far training gets from the theory.",
+ "code_refs": [
+  "comfy/ldm/lightricks/vocoders/vocoder.py:class Vocoder",
+  "comfy/ldm/ace/vae/music_vocoder.py:class HiFiGANGenerator",
+  "comfy_extras/nodes_upscale_model.py:class UpscaleModelLoader",
+  "comfy/ldm/cascade/stage_a.py:class Discriminator"
+ ]
+}

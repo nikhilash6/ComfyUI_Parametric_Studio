@@ -1,0 +1,73 @@
+{
+ "code": "CU-213",
+ "title": "Inpainting masks and edge blending",
+ "level": "200",
+ "questions": [
+  {
+   "q": "In ImageCompositeMasked, what does a mask value of 1 at a pixel give?",
+   "options": [
+    "The destination pixel",
+    "The average of source and destination",
+    "The source pixel",
+    "Black"
+   ],
+   "answer": "The source pixel",
+   "why": "The node computes mask · source + (1 − mask) · destination. In every ComfyUI inpainting node a mask value of 1 means new content."
+  },
+  {
+   "q": "A flat 0.8 image is composited over a flat 0.2 image. What is the largest step between neighbouring output pixels with a hard mask edge, and with an 8-pixel FeatherMask ramp?",
+   "options": [
+    "0.600 and 0.075, because the step is 0.6 divided by the ramp width",
+    "0.600 and 0.600, because a feather only changes the colour",
+    "0.075 and 0.600, because a hard edge is smoother",
+    "0.800 and 0.100, because the step is the new value divided by the width"
+   ],
+   "answer": "0.600 and 0.075, because the step is 0.6 divided by the ramp width",
+   "why": "Neighbouring outputs differ by |new − old| times the difference of their mask values: 0.6 for a hard edge and 0.6 / 8 = 0.075 for a ramp that rises by 1/8 per pixel."
+  },
+  {
+   "q": "What does the FeatherMask node do?",
+   "options": [
+    "It blurs the edge of any shape inside the mask",
+    "It grows the mask by a few pixels",
+    "It thresholds the mask to 0 and 1",
+    "It multiplies the columns and rows next to the borders of the mask image by a linear ramp"
+   ],
+   "answer": "It multiplies the columns and rows next to the borders of the mask image by a linear ramp",
+   "why": "The ramp runs (x + 1) / n over the n pixels at each border. To soften an edge inside the image, blur the mask (ImageBlur through MaskToImage and ImageToMask), and note that VAEEncodeForInpaint rounds the mask again."
+  },
+  {
+   "q": "A hard pixel mask starts at column 21 and goes to an 8x latent. What mask does the sampler effectively see in the lab?",
+   "options": [
+    "A half-strength cell at column 21",
+    "The same edge at column 24: cells 0 0 0 1 1 1 1 1",
+    "An edge at column 16",
+    "A smooth ramp across all 8 cells"
+   ],
+   "answer": "The same edge at column 24: cells 0 0 0 1 1 1 1 1",
+   "why": "Bilinear interpolation without antialiasing reads only pixels 3 and 4 of each 8-pixel cell. Pixels 19 and 20 are both 0, so cell 2 is 0 and the edge lands on the cell boundary at 24."
+  },
+  {
+   "q": "Why can a mask stripe 3 pixels wide be invisible to the sampler, and what does grow_mask_by do about it?",
+   "options": [
+    "The sampler ignores any mask thinner than 8 pixels, and growing turns the sampler off",
+    "The stripe is blurred away by the VAE, and growing sharpens it",
+    "The downscale reads only two pixels per axis per latent cell, which the stripe can miss. Growing widens it to 8 pixels so it never vanishes",
+    "The mask is rounded to 0, and growing rounds it to 1"
+   ],
+   "answer": "The downscale reads only two pixels per axis per latent cell, which the stripe can miss. Growing widens it to 8 pixels so it never vanishes",
+   "why": "In the lab the stripe has largest latent value 0.00 at 4 of 8 offsets. After grow_mask_by 6, a 3-pixel stripe becomes 8 pixels wide and the smallest value over the offsets is 0.50."
+  },
+  {
+   "q": "In the lab's sampler bookkeeping with a stand-in model, what is the final latent where the mask is 0, and where it is 0.5?",
+   "options": [
+    "The model's output in both places",
+    "The original latent where 0, and the model's output where 0.5",
+    "Noise where 0, and the original where 0.5",
+    "The original latent where 0, and half the model's last output plus half the original where 0.5"
+   ],
+   "answer": "The original latent where 0, and half the model's last output plus half the original where 0.5",
+   "why": "KSamplerX0Inpaint replaces the prediction with m · D + (1 − m) · L at every step, and the last step lands on it. The lab's largest differences from those expressions are 0.0."
+  }
+ ]
+}

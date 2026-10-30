@@ -1,0 +1,46 @@
+layer (out x in)   rank   full weights   LoRA weights   LoRA / full
+320 x 320          4      102,400        2,560          0.0250
+320 x 320          16     102,400        10,240         0.1000
+320 x 320          128    102,400        81,920         0.8000
+1024 x 1024         4      1,048,576      8,192          0.0078
+1024 x 1024         16     1,048,576      32,768         0.0312
+1024 x 1024         128    1,048,576      262,144        0.2500
+4096 x 4096         4      16,777,216     32,768         0.0020
+4096 x 4096         16     16,777,216     131,072        0.0078
+4096 x 4096         128    16,777,216     1,048,576      0.0625
+
+B (256x8) times A (8x256) is a 256x256 matrix; singular values above 1e-10 of the largest: 8
+
+merged W x against W x + strength * scale * up (down x), largest absolute difference over the outputs
+torch.float32  strength 0.5, 1, 2: 8.3e-07 8.3e-07 9.5e-07   doubling the strength doubles the change: 4.8e-07   two LoRAs in either order: 1.5e-08
+torch.float64  strength 0.5, 1, 2: 1.8e-15 1.6e-15 2.2e-15   doubling the strength doubles the change: 6.7e-16   two LoRAs in either order: 2.8e-17
+scale alpha/r: alpha 8, r 8 -> 1.0   alpha 1, r 8 -> 0.125   file with no alpha -> 1.0 whatever the rank
+
+init                    |B A| at start   |grad up|   |grad down|   relative error after 300 Adam steps
+B = 0, A Gaussian       0.0000           0.0648     0.0000       0.8391
+up random, down = 0     0.0000           0.0000     0.1170       0.8390
+
+relative error |B A - T| / |T| for a 96 x 64 update T
+rank   T = rank 4 + noise: trained   best possible     T = full rank: trained   best possible
+1      0.8179                      0.8179            0.9735                  0.9735
+2      0.6190                      0.6190            0.9483                  0.9483
+4      0.0192                      0.0192            0.9027                  0.9027
+8      0.0175                      0.0174            0.8168                  0.8168
+16     0.0143                      0.0141            0.6648                  0.6648
+32     0.0087                      0.0085            0.4058                  0.4058
+
+update std   stored as   rounding     share of the update kept   RMS error / update RMS   output correlation
+1e-05        fp16        nearest      0.969                      0.38                     0.933
+1e-05        bf16        nearest      0.306                      0.89                     0.497
+1e-05        FP8         nearest      0.020                      0.99                     0.117
+1e-05        FP8         stochastic   1.012                      10.24                    0.084
+0.0001       fp16        nearest      1.000                      0.04                     0.999
+0.0001       bf16        nearest      0.987                      0.32                     0.953
+0.0001       FP8         nearest      0.200                      1.00                     0.325
+0.0001       FP8         stochastic   1.005                      3.36                     0.293
+0.001        fp16        nearest      1.000                      0.00                     1.000
+0.001        bf16        nearest      1.000                      0.03                     0.999
+0.001        FP8         nearest      0.937                      0.46                     0.901
+0.001        FP8         stochastic   1.000                      0.69                     0.827
+
+FP8, rounding to nearest: share of weights whose 8-bit code is unchanged by the merge, for update std 1e-05, 0.0001, 0.001: 0.993 0.928 0.476
