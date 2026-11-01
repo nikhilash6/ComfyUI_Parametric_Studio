@@ -1,5 +1,7 @@
+import html
 import os
 import re
+import urllib.parse
 import secrets
 import mimetypes
 from pathlib import Path
@@ -9,7 +11,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
-from psn.sitebuilder.build import brief_problems, build_site
+from psn.sitebuilder import style
+from psn.sitebuilder.build import brief_problems, build_site, css as site_css, placeholder_svg
 
 router = APIRouter()
 
@@ -52,6 +55,31 @@ def _safe_resolve(site_id: str, rel_path: str) -> Path | None:
 
 class BuildRequest(BaseModel):
     brief: Dict[str, Any]
+
+
+def preview_html(brief: Dict[str, Any]) -> str:
+    """The page as it stands while the brief is being typed: the real stylesheet and colour rules, the brief's own name, pages and facts, no written copy. No model runs."""
+    e = html.escape
+    colour = brief.get("brand") if re.fullmatch(r"#[0-9a-fA-F]{6}", str(brief.get("brand") or "")) else "#3b6ea5"
+    tokens = style.make_tokens(colour)
+    name = str(brief.get("name") or "").strip() or "Your site"
+    pages = [str(x).strip() for x in (brief.get("pages") or []) if str(x).strip()][:6] or ["Home"]
+    facts = [(str(k).strip(), str(v).strip()) for k, v in (brief.get("facts") or {}).items() if str(k).strip() and str(v).strip()]
+    voice = str(brief.get("voice") or "").strip()
+    pic = "data:image/svg+xml," + urllib.parse.quote(placeholder_svg(tokens, name, "Picture to come"))
+    nav = "".join(f"<a{' aria-current=page' if i == 0 else ''}>{e(x.title())}</a>" for i, x in enumerate(pages))
+    fact_html = "".join(f"<p><b>{e(k)}.</b> {e(v)}</p>" for k, v in facts) or "<p>Your facts appear here as you add them.</p>"
+    rest = "".join(f'<section><div><h2>{e(x.title())}</h2><p>The words for this page are written when you press Build.</p></div><img src="{pic}" alt=""></section>' for x in pages[1:])
+    return (f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{e(name)}</title><style>{site_css(tokens)}</style></head><body>'
+            f'<header><a class="brand">{e(name)}</a><nav aria-label="Main">{nav}</nav></header><main><section><div><h2>{e(name)}</h2><p>{e(voice) or "Add a brand voice and it shapes the words."}</p>{fact_html}</div><img src="{pic}" alt=""></section>{rest}</main><footer><p>{e(name)}</p></footer></body></html>')
+
+
+@router.post("/api/site/preview")
+def site_preview(req: BuildRequest):
+    problems = brief_problems({**req.brief, "name": req.brief.get("name") or "x"})
+    if problems:
+        return JSONResponse(status_code=400, content={"problems": problems})
+    return {"html": preview_html(req.brief)}
 
 
 @router.post("/api/site/build")

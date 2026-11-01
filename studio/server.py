@@ -364,7 +364,33 @@ if os.environ.get("PSN_EDITION") == "extended":
 @app.get("/api/models3d")
 def models3d():
     from studio import glb
-    return {"items": [{**m, "url": "/api/file3d?" + urllib.parse.urlencode({"path": m["path"]})} for m in glb.list_glb(str(OUTPUT))], "sample": "/api/sample.glb"}
+    return {"items": [{**m, "url": "/api/file3d?" + urllib.parse.urlencode({"path": m["path"]})} for m in glb.list_glb(str(OUTPUT))], "family_items": _family_glbs(), "sample": "/api/sample.glb"}
+
+def _family_output(family):
+    from psn import instances as I
+    if not re.fullmatch(r"[\w.+-]+", family or ""): return None
+    p = Path(I.INSTANCES) / family / "output"
+    return p if p.is_dir() else None
+
+def _family_glbs():
+    """Meshes made by the family instances' own ComfyUIs, which do not write to the studio's output folder."""
+    from psn import instances as I
+    from studio import glb
+    try: names = sorted(os.listdir(I.INSTANCES))
+    except OSError: return []
+    out = []
+    for f in names:
+        d = _family_output(f)
+        if d: out += [{**m, "family": f, "url": "/api/family3d?" + urllib.parse.urlencode({"family": f, "path": m["path"]})} for m in glb.list_glb(str(d))]
+    return out[:60]
+
+@app.get("/api/family3d")
+def family3d(family: str, path: str):
+    d = _family_output(family)
+    if not d: raise HTTPException(404, "no such model")
+    p = (d / path).resolve()
+    if d.resolve() not in p.parents or p.suffix.lower() != ".glb" or not p.is_file(): raise HTTPException(404, "no such model")
+    return FileResponse(p, media_type="model/gltf-binary")
 
 @app.get("/api/file3d")
 def file3d(path: str):

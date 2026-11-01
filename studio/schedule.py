@@ -14,11 +14,18 @@ def load():
     except Exception: return []
 def save(jobs):
     CONF.mkdir(parents=True, exist_ok=True); tmp = FILE().with_suffix(".tmp"); tmp.write_text(json.dumps(jobs, indent=1)); os.replace(tmp, FILE())
+def _named_days(cron):
+    """APScheduler counts weekdays from Monday = 0, but cron counts from Sunday = 0, so '0 9 * * 1' would fire on Tuesday. Spell the days out and there is nothing to get wrong."""
+    f = cron.split()
+    if len(f) != 5: return cron
+    name = lambda m: ["sun", "mon", "tue", "wed", "thu", "fri", "sat", "sun"][int(m.group(0))] if int(m.group(0)) <= 7 else m.group(0)
+    f[4] = ",".join("/".join([re.sub(r"\d+", name, bits[0]), *bits[1:]]) for bits in (x.split("/") for x in f[4].split(",")))
+    return " ".join(f)
 def trigger(cron):
     from apscheduler.triggers.cron import CronTrigger
-    return CronTrigger.from_crontab(cron)                          # raises ValueError on a bad expression
+    return CronTrigger.from_crontab(_named_days(cron))             # raises ValueError on a bad expression
 def validate(d):
-    cron = PRESETS.get(str(d.get("cron", "")).strip().lower(), str(d.get("cron", "")).strip())
+    given = str(d.get("cron", "")).strip(); cron = next((v for k, v in PRESETS.items() if k.lower() == given.lower()), given)      # any capitals: 'every Friday at 5' is a preset
     try: t = trigger(cron)
     except ImportError: raise ValueError("schedules need the apscheduler package: pip install apscheduler") from None
     except Exception: raise ValueError("that schedule is not valid; use a preset or five cron fields like '0 8 * * *'") from None
@@ -70,6 +77,19 @@ class New(BaseModel):
     name: str = ""; cron: str; goal: str; prompt: str; options: dict = {}; lyrics: str = ""; max_per_day: int = 3; enabled: bool = True
 @router.get("/api/schedules")
 def sched_list(): return {"jobs": load(), "presets": PRESETS}
+def fires(cron, now=None, days=7, cap=200):
+    """The real times a cron expression fires in the coming days, as unix seconds, in this machine's time zone. Computed from the rule; none of it is history."""
+    t = trigger(PRESETS.get(cron, cron)); cur = datetime.datetime.fromtimestamp(now or time.time(), t.timezone); end = cur + datetime.timedelta(days=days); out = []; prev = None
+    while len(out) < cap:
+        nxt = t.get_next_fire_time(prev, cur)
+        if nxt is None or nxt >= end: break
+        out.append(int(nxt.timestamp())); prev = nxt; cur = nxt + datetime.timedelta(seconds=1)
+    return out
+@router.get("/api/schedules/week")
+def sched_week():
+    now = time.time()
+    try: return {"now": int(now), "jobs": {j["id"]: fires(j["cron"], now) for j in load() if j.get("enabled")}, "presets": {k: fires(k, now) for k in PRESETS}}
+    except ImportError: raise HTTPException(503, "schedules need the apscheduler package: pip install apscheduler") from None
 @router.post("/api/schedules")
 def sched_add(b: New):
     try: d = validate(b.model_dump())
