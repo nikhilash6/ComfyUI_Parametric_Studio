@@ -59,9 +59,20 @@ def _find(tid):
 def edits_list():
     try: return {"categories": CAT, "tools": catalogue(A.object_info())}
     except Exception: raise HTTPException(503, "ComfyUI is not reachable") from None
+@router.get("/api/edits/catalogue")
+def edits_catalogue():
+    """The list alone, from the studio's own table, for when ComfyUI is away. It says nothing about whether a tool can run."""
+    rows = []
+    for tid, cat, label, tpl, blurb in TOOLS:
+        p = _path(tpl)
+        if not _hidden(tid, p, {}): rows.append({"id": tid, "category": cat, "category_label": CAT[cat], "label": label, "blurb": blurb, "installed": bool(p)})
+    return {"categories": CAT, "tools": rows}
 @router.get("/api/edits/{tid}")
 def edits_get(tid: str):
-    t, p = _find(tid); d = A.describe(tid, p, A.object_info()); d["title"] = t[2]; d["blurb"] = t[4]; return d
+    t, p = _find(tid)
+    try: oi = A.object_info()
+    except Exception: raise HTTPException(503, "ComfyUI is not reachable") from None
+    d = A.describe(tid, p, oi); d["title"] = t[2]; d["blurb"] = t[4]; return d
 @router.post("/api/edits/{tid}/run")
 def edits_run(tid: str, b: Run):
     t, p = _find(tid); sfw.check(*b.values.values())
