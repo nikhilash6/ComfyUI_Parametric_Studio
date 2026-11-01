@@ -7065,6 +7065,20 @@
 "h": 346,
 "model": "qwen_image_edit_2511_fp8mixed.safetensors",
 "seed": 1188350218
+},
+{
+"id": "fam_qwen-image-2-1_12",
+"prompt": "Qwen Image Edit 2509 Lightning: Image Edit",
+"seconds": 25.2,
+"tpl": "qwen_image_edit_2509_lightning",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_12.webp",
+"poster": "families/qwen-image-2-1_12.webp",
+"w": 640,
+"h": 346,
+"model": "qwen_image_edit_2509_int8_convrot.safetensors",
+"seed": 1352649774
 }
 ],
 "templates": [
@@ -11720,6 +11734,46 @@
 ]
 }
 ]
+},
+"AniGen": {
+"slug": "anigen",
+"kind": "3d",
+"era": 2026,
+"licence": null,
+"crew": "3d-trellis-hunyuan3d-sam3d-mesh",
+"repos": [
+"VAST-AI/AniGen"
+],
+"what": "One picture to a coloured mesh that already has a skeleton and skin weights. No ComfyUI graph: it runs as a tool from the 3D page.",
+"what_source": "model card",
+"level": "render",
+"test": {
+"tpl": "tool:anigen",
+"render": "ok",
+"tested": "2026-11-01",
+"secs": 190.7,
+"peak_gib": 10.9,
+"note": "Ran on this box 2026-11-01 and was looked at in a turntable. 33 bones with weights on every vertex. A hard test pose stretches it badly: looked at, not a finished rig."
+},
+"media": [
+{
+"id": "fam_anigen_turn",
+"prompt": "Turntable, Blender, CPU: bear cut-out",
+"seconds": 190.7,
+"tpl": "tool:anigen",
+"own": true,
+"kind": "image",
+"src": "families/anigen_turn.webp",
+"poster": "families/anigen_turn.webp",
+"w": 1280,
+"h": 213,
+"model": "ss_flow_solo + slat_flow_auto",
+"seed": 42,
+"note": "33 bones with weights on every vertex. A hard test pose stretches it badly: looked at, not a finished rig.",
+"peak_vram_gib": 10.9
+}
+],
+"templates": []
 }
 }
 }

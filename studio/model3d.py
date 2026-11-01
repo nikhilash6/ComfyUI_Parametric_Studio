@@ -7,7 +7,7 @@ from psn import paths
 
 ROOT = Path(__file__).resolve().parent; RUNNERS = ROOT / "worldkit" / "runners"; PROOF = ROOT / "model3d_proof.json"
 router = APIRouter(); JOBS: dict = {}
-#: job: mesh_from_image, mesh_from_text, relief_from_image, splat_from_image, rig, motion. via: family (template), runner (studio/worldkit/runners), tool (studio/worldkit/tools.py). need: a key of worldkit.capabilities.NEEDS. peak_gb is measured where proof exists.
+#: job: mesh_from_image, mesh_from_text, relief_from_image, splat_from_image, rigged_from_image, rig, motion. via: family (template), runner (studio/worldkit/runners), tool (studio/worldkit/tools.py). need: a key of worldkit.capabilities.NEEDS. peak_gb is measured where proof exists.
 MODELS = [
     {"id": "trellis2", "label": "TRELLIS.2", "job": "mesh_from_image", "via": "family", "family": "TRELLIS-2-4B", "template": "trellis2_image_to_mesh", "need": "trellis2", "licence": "MIT", "note": "Textured mesh with a baked PBR atlas."},
     {"id": "hunyuan3d", "label": "Hunyuan3D 2", "job": "mesh_from_image", "via": "family", "family": "Hunyuan3D-2.1", "template": "3d_hunyuan3d_image_to_model", "need": "hunyuan3d", "licence": "Tencent Hunyuan community licence", "note": "Shape only, no colour."},
@@ -17,9 +17,10 @@ MODELS = [
     {"id": "moge", "label": "MoGe 2", "job": "relief_from_image", "via": "family", "family": "MoGe", "template": "3d_moge_perspective_to_mesh", "need": "moge", "licence": "see the model page", "note": "Only the side the camera sees: a relief for sets, not a whole object."},
     {"id": "shap_e", "label": "Shap-E", "job": "mesh_from_text", "via": "runner", "runner": "shap_e_text.py", "need": "shap_e", "peak_gb": 4.0, "licence": "MIT", "note": "Words to a small rough mesh, no picture step."},
     {"id": "skintokens", "label": "SkinTokens", "job": "rig", "via": "tool", "need": "skintokens", "licence": "MIT", "note": "A mesh to a rigged GLB."},
+    {"id": "anigen", "label": "AniGen", "job": "rigged_from_image", "via": "tool", "need": "anigen", "licence": "see the repo's licence file", "note": "A coloured mesh with a skeleton and skin, straight from a picture. Give it a cut-out."},
     {"id": "kimodo", "label": "Kimodo", "job": "motion", "via": "tool", "need": "kimodo", "licence": "NVIDIA Open Model License", "note": "Words to a BVH motion on a human skeleton."},
 ]
-TEXT_JOBS = ("mesh_from_text", "motion"); IMAGE_JOBS = ("mesh_from_image", "relief_from_image", "splat_from_image")
+TEXT_JOBS = ("mesh_from_text", "motion"); IMAGE_JOBS = ("mesh_from_image", "relief_from_image", "rigged_from_image", "splat_from_image")
 
 
 def proof():
@@ -106,6 +107,7 @@ def execute(m, body, work, *, runner=None, family=None, tool=None):
         return (runner or _run_runner)(m, args, out, log)
     t = tool or T
     if m["id"] == "sam3d_objects": made = t.sam3d_objects(_cutout_or_refuse(body), work, seed=seed)
+    elif m["id"] == "anigen": made = t.anigen(_input_picture(body.get("image") or ""), work, seed=seed)
     elif m["id"] == "skintokens": made = t.skintokens(_input_mesh(body.get("mesh") or ""), work)
     elif m["id"] == "kimodo": made = t.kimodo(text, work, seconds=int(body.get("seconds") or 5), seed=seed)
     else: raise ValueError(f"{m['id']} has no way to run here")

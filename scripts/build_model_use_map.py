@@ -17,10 +17,11 @@ RUNNERS = [("_complete_pipelines/SAM-3D-Objects/", "tool sam3d-objects, World Ki
            ("motion/text-encoders/", "tool kimodo text encoder, World Kit motion step (worldkit/tools.py kimodo)"),
            ("_complete_pipelines/TripoSR/", "runner triposr_image.py, 3D page and World Kit prop route"),
            ("3d/shap-e/", "runner shap_e_text.py, 3D page and World Kit prop route"),
+           ("AniGen/ckpts/anigen/ss_flow_solo", "tool anigen, 3D page"), ("AniGen/ckpts/anigen/slat_flow_auto", "tool anigen, 3D page"), ("AniGen/ckpts/anigen/ss_dae", "tool anigen, 3D page"), ("AniGen/ckpts/anigen/slat_dae", "tool anigen, 3D page"), ("AniGen/ckpts/dsine/", "tool anigen, 3D page"), ("AniGen/ckpts/vgg/", "tool anigen, 3D page"),
            ("3d/moge-vitl/", "tool sam3d-objects (reads MoGe for its depth), World Kit prop route"),
            ("AniGen/ckpts/dinov2/", "tool sam3d-objects (reads this DINOv2), World Kit prop route")]
 #: Why a file is still not used, written after trying it. A pattern on the path decides the row's next step.
-WHY_UNUSED = [("AniGen/", "AniGen: the launcher wants dsine.pt, which is not on disk (only its .sha256-ok marker). Needs a fetch and a pickle scan, founder's call."),
+WHY_UNUSED = [("AniGen/ckpts/anigen/ss_flow_duet", "AniGen duet variant: the runner uses ss_flow_solo, this one is not run."), ("AniGen/ckpts/anigen/ss_flow_epic", "AniGen epic variant: the runner uses ss_flow_solo, this one is not run."), ("AniGen/ckpts/anigen/slat_flow_control", "AniGen control variant: the runner uses slat_flow_auto, this one is not run."),
               ("Pixal3D/", "Pixal3D: the ComfyUI file pixal3d_int8_convrot is not on disk and the standalone tool lacks its shape and texture decoders. Needs a fetch."),
               ("TRELLIS-2-4B/", "TRELLIS.2 raw per-stage weights: ComfyUI uses its single file trellis_2_int8_convrot, which is proven. These are only for a standalone runner, none exists here."),
               ("microsoft/ckpts/", "TRELLIS v1 weights: no runner here."), ("TRELLIS-image-large/", "TRELLIS v1 weights: no runner here."),

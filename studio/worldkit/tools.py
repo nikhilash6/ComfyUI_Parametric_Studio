@@ -12,8 +12,8 @@ from studio.worldkit import capabilities as C
 from studio.worldkit import blender as B
 from studio.worldkit.steps import StepError
 
-PEAK_GB = {"sam3d_objects": 32.0, "skintokens": 6.0, "kimodo": 17.0}
-TIMEOUT_S = {"sam3d_objects": 1800, "skintokens": 900, "autoremesher": 1800, "kimodo": 2400, "retarget": 900}
+PEAK_GB = {"anigen": 11.0, "sam3d_objects": 32.0, "skintokens": 6.0, "kimodo": 17.0}
+TIMEOUT_S = {"anigen": 1500, "sam3d_objects": 1800, "skintokens": 900, "autoremesher": 1800, "kimodo": 2400, "retarget": 900}
 AR_LODS = (20000, 5000, 1500)
 
 
@@ -87,6 +87,30 @@ def sam3d_objects(image, work: Path, *, seed: int = 42, run=None) -> Path:
     runner = C.tool_home("sam3d_objects") / "run_sam3d.sh"
     rc = (run or call)([runner, "--image", image, "--mask", mask, "--out-dir", out, "--name", "object", "--seed", seed], log, TIMEOUT_S["sam3d_objects"])
     return _made(out / "object.glb", rc, "SAM 3D Objects", log)
+
+
+def _borrowed_rtree(work: Path) -> list:
+    """AniGen's venv has no rtree, which its trimesh step needs, and nothing here pips into a venv: lend it this Python's copy, alone, for one run. -> an env prefix for the command, or nothing when the studio has none either."""
+    try:
+        import rtree
+    except (ImportError, OSError):
+        return []
+    pkg = Path(rtree.__file__).parent; libs = sorted((pkg.parent / "rtree.libs").glob("libspatialindex*.so*"))
+    if not libs:
+        return []
+    only = Path(work) / "rtree_only"; only.mkdir(parents=True, exist_ok=True)
+    if not (only / "rtree").exists():
+        (only / "rtree").symlink_to(pkg)
+    return ["/usr/bin/env", f"PYTHONPATH={only}", f"SPATIALINDEX_C_LIBRARY={libs[0]}"]
+
+
+def anigen(image, work: Path, *, seed: int = 42, run=None) -> Path:
+    """One picture -> one GLB with a skeleton and skin weights."""
+    require("anigen")
+    vram_gate("anigen")
+    work = Path(work); out = work / "anigen"; out.mkdir(parents=True, exist_ok=True); log = work / "anigen.log"; image = Path(image)
+    rc = (run or call)([*_borrowed_rtree(work), C.tool_home("anigen") / "run_anigen.sh", "--image_path", image, "--output_dir", out, "--seed", seed], log, TIMEOUT_S["anigen"])
+    return _made(out / image.stem / "mesh.glb", rc, "AniGen", log)
 
 
 def skintokens(mesh, work: Path, *, run=None) -> Path:

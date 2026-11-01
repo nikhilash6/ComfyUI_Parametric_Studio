@@ -88,5 +88,15 @@
   "sheet": null,
   "note": "150 frames, 78 joints; the hips travel about 6 m and the hand comes up. Looked at as a stick figure.",
   "when": "2026-11-01"
+ },
+ "anigen": {
+  "status": "ran",
+  "seconds": 190.7,
+  "peak_gib": 10.9,
+  "seed": 42,
+  "input": "bear cut-out",
+  "sheet": "families/anigen_turn.webp",
+  "note": "33 bones with weights on every vertex. A hard test pose stretches it badly: looked at, not a finished rig.",
+  "when": "2026-11-01"
  }
 }

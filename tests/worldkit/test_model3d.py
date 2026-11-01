@@ -16,7 +16,7 @@ def _need(state="ready"):
 
 def test_every_model_names_a_real_need_and_a_known_way_to_run():
     for m in M.MODELS:
-        assert m["need"] in C.NEEDS and m["via"] in ("family", "runner", "tool") and m["job"] in ("mesh_from_image", "mesh_from_text", "relief_from_image", "splat_from_image", "rig", "motion")
+        assert m["need"] in C.NEEDS and m["via"] in ("family", "runner", "tool") and m["job"] in ("mesh_from_image", "mesh_from_text", "relief_from_image", "splat_from_image", "rigged_from_image", "rig", "motion")
         if m["via"] == "runner": assert (M.RUNNERS / m["runner"]).is_file()
 
 
@@ -81,3 +81,13 @@ def test_a_cut_out_goes_to_a_family_on_white_and_a_plain_picture_as_it_is(tmp_pa
     a = tmp_path / "a.png"; Image.new("RGBA", (2, 2), (9, 9, 9, 0)).save(a); b = tmp_path / "b.png"; Image.new("RGB", (2, 2)).save(b)
     assert jobs._matte_on_white(a, tmp_path / "o.png") and Image.open(tmp_path / "o.png").getpixel((0, 0)) == (255, 255, 255)
     assert not jobs._matte_on_white(b, tmp_path / "p.png")
+
+
+def test_anigen_lends_only_rtree_and_reads_the_file_it_made(tmp_path, monkeypatch):
+    from studio.worldkit import tools as T
+    monkeypatch.setattr(T, "require", lambda k: None); monkeypatch.setattr(T, "vram_gate", lambda k: None); pic = tmp_path / "bear.png"; pic.write_bytes(b"x"); seen = {}
+    def run(cmd, log, timeout):
+        seen["cmd"] = [str(c) for c in cmd]; d = tmp_path / "w" / "anigen" / "bear"; d.mkdir(parents=True); (d / "mesh.glb").write_bytes(b"glb"); return 0
+    out = T.anigen(pic, tmp_path / "w", seed=3, run=run)
+    assert out.name == "mesh.glb" and "--seed" in seen["cmd"] and str(pic) in seen["cmd"] and seen["cmd"][seen["cmd"].index("--seed") + 1] == "3"
+    assert not [c for c in seen["cmd"] if c.startswith("PYTHONPATH=") and "rtree_only" not in c]

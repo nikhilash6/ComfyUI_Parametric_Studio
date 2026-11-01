@@ -34,6 +34,7 @@ NEEDS: dict[str, dict] = {
     "hunyuan3d": {"label": "Hunyuan3D 2", "family": ("Hunyuan3D-2.1", "3d_hunyuan3d_image_to_model")},
     "trellis2": {"label": "TRELLIS.2", "family": ("TRELLIS-2-4B", "trellis2_image_to_mesh")},
     "triposplat": {"label": "TripoSplat", "family": ("TripoSplat", "3d_triposplat_image_to_gaussian_splat")},
+    "anigen": {"label": "AniGen (a rigged mesh from a picture)", "tool": "anigen", "files": [("_libraries/models-legacy-layout/3d/AniGen/ckpts/anigen/ss_flow_solo/ckpts/denoiser.pt", 2 * GB), ("_libraries/models-legacy-layout/3d/AniGen/ckpts/anigen/slat_flow_auto/ckpts/denoiser.pt", 2 * GB), ("_libraries/models-legacy-layout/3d/AniGen/ckpts/dsine/dsine.pt", 250_000_000)]},
     "moge": {"label": "MoGe 2", "family": ("MoGe", "3d_moge_perspective_to_mesh")},
     "triposr": {"label": "TripoSR", "tool": "triposr", "files": [("_complete_pipelines/TripoSR/checkpoints/model.ckpt", GB)]},
     "shap_e": {"label": "Shap-E (words to mesh)", "files": [("3d/shap-e/prior/diffusion_pytorch_model.fp16.safetensors", 500_000_000), ("3d/shap-e/shap_e_renderer/diffusion_pytorch_model.bin", 700_000_000), ("text_encoders/clip-vit-large-patch14.safetensors", 1_000_000_000)]},
@@ -90,12 +91,12 @@ def tool_home(tool: str) -> Path:
     """A tool's folder: STUDIO_TOOL_<NAME>, or under the home folder where the earlier studio's installers put it."""
     default = {"sam3d_objects": paths.home("tools", "sam3d-objects"), "skintokens": paths.home("tools", "skintokens"), "autoremesher": paths.home("tools", "autoremesher"),
                "kimodo": paths.home("tools", "kimodo"), "retarget": paths.home("tools", "blender-retarget"), "unirig": paths.home("ai", "UniRig"), "picturecheck": paths.home("tools", "picturecheck"),
-               "triposr": os.path.join(paths.setting("PSN_REPO_LIB", default=paths.home("nodepack_library", "repos")), "MixLabPro__comfyui-mixlab-nodes", "nodes", "tsr")}[tool]
+               "anigen": paths.home("tools", "anigen"), "triposr": os.path.join(paths.setting("PSN_REPO_LIB", default=paths.home("nodepack_library", "repos")), "MixLabPro__comfyui-mixlab-nodes", "nodes", "tsr")}[tool]
     return Path(os.path.expanduser(paths.setting(f"STUDIO_TOOL_{tool.upper()}", default=default)))
 
 
 TOOL_FILES = {"sam3d_objects": ("run_sam3d.sh", ".venv/bin/python"), "skintokens": ("run_skintokens.sh", ".venv/bin/python"), "autoremesher": ("run_autoremesher.sh", "build/autoremesher"),
-              "kimodo": ("run_kimodo.sh", ".venv/bin/kimodo_gen"), "retarget": ("retarget.py",), "unirig": ("pp_run.py", ".venv/bin/python"), "picturecheck": ("run_picturecheck.sh",), "triposr": ("system.py", "config.yaml")}
+              "kimodo": ("run_kimodo.sh", ".venv/bin/kimodo_gen"), "retarget": ("retarget.py",), "unirig": ("pp_run.py", ".venv/bin/python"), "picturecheck": ("run_picturecheck.sh",), "triposr": ("system.py", "config.yaml"), "anigen": ("run_anigen.sh", ".venv/bin/python")}
 #: Files in a tool's folder that name where it reads its weights from. A launcher that points at a folder that is gone will fail, whatever is on disk elsewhere.
 TOOL_ENV = {"sam3d_objects": ("env.sh",), "skintokens": ("run_skintokens.sh",), "kimodo": ("env.sh",)}
 _ENV_PATH = re.compile(r"""(?:^|[\s;])(?:export\s+)?(?:\w*(?:WEIGHTS|MOGE|DINOV2_REPO|CHECKPOINT_DIR|TEXT_ENCODERS_DIR)\w*|W)=["']?(/[^\s"';]+)""", re.M)
