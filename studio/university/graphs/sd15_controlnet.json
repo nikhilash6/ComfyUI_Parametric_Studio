@@ -1,0 +1,149 @@
+{
+ "meta": {
+  "title": "ControlNet from a Canny edge map",
+  "about": "Shape comes from the edges. Everything else comes from the prompt.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader.",
+   "A Canny ControlNet for SD 1.5 in models/controlnet."
+  ],
+  "packs": [],
+  "notes": {
+   "6": "Edges from your picture. Preview this before you trust it.",
+   "8": "Attaches the control to both conditionings. end_percent 0.8 lets the last fifth of the schedule run free."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "3": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "5": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "6": {
+   "class_type": "Canny",
+   "inputs": {
+    "image": [
+     "5",
+     0
+    ],
+    "low_threshold": 0.4,
+    "high_threshold": 0.8
+   }
+  },
+  "7": {
+   "class_type": "ControlNetLoader",
+   "inputs": {
+    "control_net_name": "control_v11p_sd15_canny.safetensors"
+   }
+  },
+  "8": {
+   "class_type": "ControlNetApplyAdvanced",
+   "inputs": {
+    "positive": [
+     "2",
+     0
+    ],
+    "negative": [
+     "3",
+     0
+    ],
+    "control_net": [
+     "7",
+     0
+    ],
+    "image": [
+     "6",
+     0
+    ],
+    "strength": 0.9,
+    "start_percent": 0.0,
+    "end_percent": 0.8
+   }
+  },
+  "9": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "seed": 424242,
+    "steps": 20,
+    "cfg": 7.0,
+    "sampler_name": "euler",
+    "scheduler": "karras",
+    "positive": [
+     "8",
+     0
+    ],
+    "negative": [
+     "8",
+     1
+    ],
+    "latent_image": [
+     "4",
+     0
+    ],
+    "denoise": 1.0
+   }
+  },
+  "10": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "9",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "11": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "10",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

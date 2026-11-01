@@ -21,5 +21,7 @@
   "comfy/cli_args.py:--cache-none",
   "comfy/cli_args.py:--cache-ram",
   "main.py:RAM_PRESSURE"
- ]
+ ],
+ "track": "debugging",
+ "order": 20
 }

@@ -9,6 +9,11 @@ SRC = Path(paths.setting("COMFYUI_SRC", default=paths.home("ComfyUI")))
 
 def audited(): return [c for c in B.courses() if c.get("status") != "draft" and B.complete(c)]
 
+def test_symbol_lookup_reads_classes_and_rejects_invented_names(tmp_path):
+    (tmp_path / "m.py").write_text("class A:\n    x = 1\n    def go(self): pass\nclass B(A):\n    pass\ndef f(): pass\n")
+    assert B.symbol_exists(tmp_path, "m.py:A.go") and B.symbol_exists(tmp_path, "m.py:A.x") and B.symbol_exists(tmp_path, "m.py:f")
+    assert not B.symbol_exists(tmp_path, "m.py:A.nope") and not B.symbol_exists(tmp_path, "m.py:C.go") and not B.symbol_exists(tmp_path, "m.py:g") and not B.symbol_exists(tmp_path, "gone.py:A.go")
+
 def test_default_path_is_in_the_repo_and_env_var_is_optional(monkeypatch):
     monkeypatch.delenv("STUDIO_UNIVERSITY", raising=False); import studio.server as s; s = importlib.reload(s)
     assert s.UNI == Path(s.__file__).resolve().parent / "university" and (s.UNI / "catalogue.json").exists()
@@ -48,7 +53,7 @@ def test_arxiv_sources_match_the_title_arxiv_gives():
 def test_named_comfyui_symbols_exist_in_the_source():
     for c in audited():
         for r in c.get("code_refs", []):
-            f, _, sym = r.partition(":"); assert (SRC / f).exists() and sym in (SRC / f).read_text(errors="replace"), (c["code"], r)
+            assert B.symbol_exists(SRC, r), (c["code"], r)
 
 def test_audited_labs_run_on_cpu_under_a_minute_and_reproduce():
     import torch

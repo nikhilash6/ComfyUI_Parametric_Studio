@@ -6,7 +6,7 @@
 
 Welcome, student. You are standing at the edge of the latent space, looking out at the vast, noisy ocean of published research. In the world of generative AI, the volume of new papers is like a storm of particles. If you try to read every word, you will drown in the noise. Your goal in this 400-level course is not to memorize every equation, but to develop the spatial intuition to judge whether a new model is a solid structure or a mirage.
 
-Reading a paper in 20 minutes is an act of compression, much like the VAE compressing a high-resolution image into a low-dimensional latent vector. You must extract the essential signal—the architecture, the claim, and the evidence—while discarding the redundant noise. This skill allows you to decide quickly if a model is worth downloading, fine-tuning, or integrating into your ComfyUI workflow. It is the difference between blindly loading a checkpoint and understanding why it works.
+Reading a paper in 20 minutes is an act of compression, much like the VAE compressing a high-resolution image into a low-dimensional latent vector. You must extract the essential signal, the architecture, the claim, and the evidence, while discarding the redundant noise. This skill allows you to decide quickly if a model is worth downloading, fine-tuning, or integrating into your ComfyUI workflow. It is the difference between blindly loading a checkpoint and understanding why it works.
 
 ## The intuition
 

@@ -6,5 +6,7 @@
  "code": "CU-308",
  "prereq": [],
  "status": "draft",
- "code_refs": []
+ "code_refs": [],
+ "track": "performance",
+ "order": 50
 }

@@ -6,5 +6,7 @@
  "code": "CU-314",
  "prereq": [],
  "status": "draft",
- "code_refs": []
+ "code_refs": [],
+ "track": "noise-latent",
+ "order": 40
 }

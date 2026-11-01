@@ -1,0 +1,52 @@
+{
+ "code": "CU-100",
+ "title": "Your first graph, with no model at all",
+ "level": "100",
+ "prereq": [],
+ "char": "graph",
+ "hook": "Three nodes, no model, no GPU. See what a node, a wire and an output node are by making them work in under a second.",
+ "track": "first-graph",
+ "order": 5,
+ "kit": true,
+ "graphs": [
+  "nm_first",
+  "nm_dead_branch"
+ ],
+ "code_refs": [
+  "nodes.py:EmptyImage.generate",
+  "nodes.py:ImageInvert.invert",
+  "nodes.py:PreviewImage",
+  "execution.py:validate_prompt",
+  "comfy_execution/graph.py:ExecutionList"
+ ],
+ "verified": [
+  {
+   "claim": "EmptyImage splits the colour number into red, green and blue, each divided by 255.",
+   "how": "source",
+   "ref": "nodes.py:EmptyImage.generate"
+  },
+  {
+   "claim": "ImageInvert computes 1 minus the value and leaves any alpha channel alone.",
+   "how": "source",
+   "ref": "nodes.py:ImageInvert.invert"
+  },
+  {
+   "claim": "A graph with no output node is refused with prompt_no_outputs.",
+   "how": "source",
+   "ref": "execution.py:validate_prompt"
+  },
+  {
+   "claim": "Both graphs in this lesson pass validate_prompt and ran on a CPU here.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "Dropping an API-format file on the canvas opens it: the front end's isApiJson and loadApiJson handle it.",
+   "how": "docs",
+   "ref": "src/scripts/app.ts in the ComfyUI front end, fetched 2026-11-01"
+  }
+ ],
+ "unchecked": [
+  "We read that front-end code on its main branch. We did not test dropping a file by hand in the version installed here."
+ ]
+}

@@ -1,0 +1,54 @@
+{
+ "meta": {
+  "title": "The branch that never runs",
+  "about": "Queue this and watch node 4 stay idle: no output node needs it.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "2": "Feeds the preview, so it runs.",
+   "3": "An output node pulls on its inputs.",
+   "4": "Nothing downstream asks for this, so the engine never runs it."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1,
+    "color": 2245734
+   }
+  },
+  "2": {
+   "class_type": "ImageBlur",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "blur_radius": 4,
+    "sigma": 2.0
+   }
+  },
+  "3": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "2",
+     0
+    ]
+   }
+  },
+  "4": {
+   "class_type": "ImageInvert",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ]
+   }
+  }
+ }
+}

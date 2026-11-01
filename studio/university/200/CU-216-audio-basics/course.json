@@ -14,5 +14,7 @@
   "comfy/ldm/audio/autoencoder.py:class AudioOobleckVAE",
   "comfy/ldm/ace/vae/music_log_mel.py:class LogMelSpectrogram",
   "comfy/ldm/ace/vae/music_dcae_pipeline.py:class MusicDCAE"
- ]
+ ],
+ "track": "audio",
+ "order": 10
 }

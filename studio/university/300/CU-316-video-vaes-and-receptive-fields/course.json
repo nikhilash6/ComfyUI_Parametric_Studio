@@ -9,5 +9,7 @@
   "CU-201"
  ],
  "status": "draft",
- "code_refs": []
+ "code_refs": [],
+ "track": "video",
+ "order": 50
 }

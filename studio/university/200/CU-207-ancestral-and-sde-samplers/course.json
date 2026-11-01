@@ -12,5 +12,7 @@
   "comfy/k_diffusion/sampling.py:sample_euler_ancestral",
   "comfy/k_diffusion/sampling.py:sample_euler_ancestral_RF",
   "comfy/k_diffusion/sampling.py:BrownianTreeNoiseSampler"
- ]
+ ],
+ "track": "sampling",
+ "order": 40
 }

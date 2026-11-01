@@ -1,0 +1,44 @@
+{
+ "meta": {
+  "title": "A second of silence, saved",
+  "about": "The audio types and save nodes, with no model.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "An AUDIO value is a waveform tensor and a sample rate.",
+   "2": "Volume is in decibels on this node.",
+   "3": "Writes a file to output/audio."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyAudio",
+   "inputs": {
+    "duration": 1.0,
+    "sample_rate": 44100,
+    "channels": 2
+   }
+  },
+  "2": {
+   "class_type": "AudioAdjustVolume",
+   "inputs": {
+    "audio": [
+     "1",
+     0
+    ],
+    "volume": -6
+   }
+  },
+  "3": {
+   "class_type": "SaveAudio",
+   "inputs": {
+    "audio": [
+     "2",
+     0
+    ],
+    "filename_prefix": "audio/university"
+   }
+  }
+ }
+}

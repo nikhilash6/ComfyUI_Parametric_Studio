@@ -15,5 +15,7 @@
   "comfy_execution/graph.py:ux_friendly_pick_node",
   "comfy_execution/graph.py:make_input_strong_link",
   "comfy_execution/graph_utils.py:ExecutionBlocker"
- ]
+ ],
+ "track": "debugging",
+ "order": 10
 }

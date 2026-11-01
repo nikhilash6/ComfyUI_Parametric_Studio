@@ -87,10 +87,13 @@ def _family_image(info: dict, image: str, values: dict, tpl_path: str) -> None:
     name = "wk_" + uuid.uuid4().hex[:10] + Path(image).suffix.lower()
     shutil.copy2(image, d / name)
     ui = json.load(open(tpl_path, encoding="utf-8"))
-    node = next((n for n in ui.get("nodes", []) if n.get("type") == "LoadImage"), None)
-    if node is None:
+    if "nodes" not in ui:                                    # the studio's own templates are API graphs: node id -> class_type
+        nid = next((k for k, n in ui.items() if isinstance(n, dict) and n.get("class_type") == "LoadImage"), None)
+    else:
+        nid = next((n["id"] for n in ui["nodes"] if n.get("type") == "LoadImage"), None)
+    if nid is None:
         raise RuntimeError("this template has no picture input")
-    values[f"{node['id']}|image"] = name
+    values[f"{nid}|image"] = name
 
 
 def _submit_family(req: dict) -> str:

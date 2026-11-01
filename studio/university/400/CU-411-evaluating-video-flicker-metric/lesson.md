@@ -9,7 +9,7 @@
 
 ## Why this matters
 
-Cut! Action! Wait, hold on. Why is the background shimmering like a heat haze? Why does the character’s face look like it’s being remixed every 100 milliseconds? In image generation, we obsess over spatial fidelity—sharpness, texture, color accuracy. But video is time. It is a sequence of shots, a narrative flow, a continuous stream of photons hitting the retina. If your pixels jump around randomly from frame $t$ to frame $t+1$, you don’t have a video; you have a strobe light.
+Cut! Action! Wait, hold on. Why is the background shimmering like a heat haze? Why does the character’s face look like it’s being remixed every 100 milliseconds? In image generation, we obsess over spatial fidelity, sharpness, texture, color accuracy. But video is time. It is a sequence of shots, a narrative flow, a continuous stream of photons hitting the retina. If your pixels jump around randomly from frame $t$ to frame $t+1$, you don’t have a video; you have a strobe light.
 
 In the engineering of generative video models, "flicker" is the enemy of immersion. It is the visual noise that breaks the viewer’s suspension of disbelief. We need a metric that is not just a subjective "it looks weird," but a precise, computable measure of temporal instability. This lesson introduces the **Flicker Metric**, a simple yet powerful engineering tool derived from basic statistics. It allows us to quantify temporal consistency. If you can’t measure it, you can’t optimize it. And if you can’t optimize it, your model is just throwing dice at the screen.
 
@@ -17,7 +17,7 @@ In the engineering of generative video models, "flicker" is the enemy of immersi
 
 Think of a video as a stack of transparencies. If you look at a single pixel position $(x, y)$ across time, what should you see? In a stable scene, that pixel should remain relatively constant. If the camera is static and the object is static, the pixel value at $t=0$, $t=1$, and $t=2$ should be identical.
 
-Flicker occurs when that pixel value changes unpredictably. It’s not motion—motion is structured change. Flicker is *random* change. It’s the difference between a car driving down the road (structured spatial shift) and the car’s color randomly turning blue, then red, then green while staying in the same spot.
+Flicker occurs when that pixel value changes unpredictably. It’s not motion, motion is structured change. Flicker is *random* change. It’s the difference between a car driving down the road (structured spatial shift) and the car’s color randomly turning blue, then red, then green while staying in the same spot.
 
 Our intuition is simple: **Stability is the inverse of variance.**
 

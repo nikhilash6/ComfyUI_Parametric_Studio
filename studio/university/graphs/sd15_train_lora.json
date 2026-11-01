@@ -1,0 +1,112 @@
+{
+ "meta": {
+  "title": "Train a LoRA with core nodes",
+  "about": "The path our Train page uses, in six nodes.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader.",
+   "A folder of pictures with matching .txt captions in the input folder, named my_dataset."
+  ],
+  "packs": [],
+  "notes": {
+   "2": "Pairs each picture with its caption.",
+   "3": "Encodes pictures to latents and captions to conditioning, once, ahead of training.",
+   "4": "The training loop. Rank sets the file size. It needs a free GPU.",
+   "5": "Writes the LoRA."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "LoadImageTextDataSetFromFolder",
+   "inputs": {
+    "folder": "my_dataset"
+   }
+  },
+  "3": {
+   "class_type": "MakeTrainingDataset",
+   "inputs": {
+    "images": [
+     "2",
+     0
+    ],
+    "texts": [
+     "2",
+     1
+    ],
+    "vae": [
+     "1",
+     2
+    ],
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "TrainLoraNode",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "latents": [
+     "3",
+     0
+    ],
+    "positive": [
+     "3",
+     1
+    ],
+    "batch_size": 1,
+    "grad_accumulation_steps": 1,
+    "steps": 300,
+    "learning_rate": 0.0005,
+    "rank": 8,
+    "optimizer": "AdamW",
+    "loss_function": "MSE",
+    "seed": 0,
+    "training_dtype": "bf16",
+    "lora_dtype": "bf16",
+    "quantized_backward": false,
+    "algorithm": "LoRA",
+    "gradient_checkpointing": true,
+    "checkpoint_depth": 1,
+    "offloading": false,
+    "existing_lora": "[None]",
+    "bucket_mode": false,
+    "bypass_mode": false
+   }
+  },
+  "5": {
+   "class_type": "SaveLoRA",
+   "inputs": {
+    "lora": [
+     "4",
+     0
+    ],
+    "prefix": "loras/university",
+    "steps": [
+     "4",
+     2
+    ]
+   }
+  },
+  "6": {
+   "class_type": "LossGraphNode",
+   "inputs": {
+    "loss": [
+     "4",
+     1
+    ],
+    "filename_prefix": "university_loss"
+   }
+  }
+ }
+}

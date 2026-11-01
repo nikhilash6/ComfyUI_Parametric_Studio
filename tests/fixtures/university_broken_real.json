@@ -1,0 +1,54 @@
+[
+{
+"name": "Missing wire",
+"ok": false,
+"top": "prompt_outputs_failed_validation",
+"types": [
+"required_input_missing"
+]
+},
+{
+"name": "Wrong socket",
+"ok": false,
+"top": "prompt_outputs_failed_validation",
+"types": [
+"return_type_mismatch"
+]
+},
+{
+"name": "No output",
+"ok": false,
+"top": "prompt_no_outputs",
+"types": []
+},
+{
+"name": "Out of range",
+"ok": false,
+"top": "prompt_outputs_failed_validation",
+"types": [
+"value_smaller_than_min"
+]
+},
+{
+"name": "Not installed",
+"ok": false,
+"top": "missing_node_type",
+"types": []
+},
+{
+"name": "Bad option",
+"ok": false,
+"top": "prompt_outputs_failed_validation",
+"types": [
+"value_not_in_list"
+]
+},
+{
+"name": "Dangling wire",
+"ok": false,
+"top": "prompt_outputs_failed_validation",
+"types": [
+"exception_during_inner_validation"
+]
+}
+]

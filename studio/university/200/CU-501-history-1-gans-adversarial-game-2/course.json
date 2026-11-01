@@ -12,5 +12,7 @@
   "comfy/ldm/ace/vae/music_vocoder.py:class HiFiGANGenerator",
   "comfy_extras/nodes_upscale_model.py:class UpscaleModelLoader",
   "comfy/ldm/cascade/stage_a.py:class Discriminator"
- ]
+ ],
+ "track": "history",
+ "order": 10
 }

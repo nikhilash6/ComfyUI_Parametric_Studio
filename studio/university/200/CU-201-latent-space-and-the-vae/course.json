@@ -17,5 +17,7 @@
   "nodes.py:class VAEDecode",
   "nodes.py:class VAEEncode",
   "comfy/sd.py:class VAE"
- ]
+ ],
+ "track": "noise-latent",
+ "order": 10
 }

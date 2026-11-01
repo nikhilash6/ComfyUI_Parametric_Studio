@@ -1,0 +1,56 @@
+{
+ "meta": {
+  "title": "Latent operations you can run on a CPU",
+  "about": "Latents are tensors. Print one and see.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "An all-zero tensor, one eighth the pixel size on each side.",
+   "2": "Resizes the numbers directly. It is not an image upscale.",
+   "3": "Multiplies every value. Sampling is sensitive to this."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "2": {
+   "class_type": "LatentUpscale",
+   "inputs": {
+    "samples": [
+     "1",
+     0
+    ],
+    "upscale_method": "nearest-exact",
+    "width": 1024,
+    "height": 1024,
+    "crop": "disabled"
+   }
+  },
+  "3": {
+   "class_type": "LatentMultiply",
+   "inputs": {
+    "samples": [
+     "2",
+     0
+    ],
+    "multiplier": 0.5
+   }
+  },
+  "4": {
+   "class_type": "PreviewAny",
+   "inputs": {
+    "source": [
+     "3",
+     0
+    ]
+   }
+  }
+ }
+}

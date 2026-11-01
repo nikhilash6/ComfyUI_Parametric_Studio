@@ -502,7 +502,7 @@
 }
 },
 {
-"id": "style_pixar_like",
+"id": "style_family_3d_animation",
 "kind": "picture",
 "group": "Stylize: Illustration & anime",
 "rating": "sfw",
@@ -585,7 +585,7 @@
 }
 },
 {
-"id": "style_disney_2d_like",
+"id": "style_hand_drawn_2d_animation",
 "kind": "picture",
 "group": "Stylize: Illustration & anime",
 "rating": "sfw",
@@ -3490,7 +3490,7 @@
 }
 },
 {
-"id": "style_lego_like",
+"id": "style_toy_bricks",
 "kind": "picture",
 "group": "Stylize: Craft & material",
 "rating": "sfw",
@@ -3988,7 +3988,7 @@
 }
 },
 {
-"id": "style_polaroid",
+"id": "style_instant_photo",
 "kind": "picture",
 "group": "Stylize: Photo looks",
 "rating": "sfw",

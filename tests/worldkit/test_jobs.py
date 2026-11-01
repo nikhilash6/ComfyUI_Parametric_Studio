@@ -124,3 +124,14 @@ def test_a_family_refusal_and_finish_come_back_in_the_same_shape(monkeypatch, tm
     assert "30 GB" in jobs.wait("pixal3d/fam-1", work=tmp_path)["error"]
     res = jobs.wait("pixal3d/fam-1", work=tmp_path)
     assert res["status"] == "done" and res["artifacts"][0]["path"].endswith("pixal3d/output/m.glb") and res["artifacts"][0]["media_type"] == "file"
+
+
+def test_a_family_picture_finds_the_loader_in_a_ui_or_an_api_template(tmp_path, monkeypatch):
+    from psn import instances as I
+    monkeypatch.setattr(I, "INSTANCES", str(tmp_path))
+    pic = tmp_path / "p.png"; pic.write_bytes(b"x")
+    ui = tmp_path / "ui.json"; ui.write_text('{"nodes": [{"id": 7, "type": "LoadImage"}]}')
+    api = tmp_path / "api.json"; api.write_text('{"122": {"class_type": "LoadImage", "inputs": {}}}')
+    a, b = {}, {}
+    jobs._family_image({"slug": "s"}, str(pic), a, str(ui)); jobs._family_image({"slug": "s"}, str(pic), b, str(api))
+    assert list(a) == ["7|image"] and list(b) == ["122|image"] and (tmp_path / "s" / "input" / a["7|image"]).exists()

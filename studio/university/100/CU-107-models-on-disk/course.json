@@ -13,5 +13,7 @@
   "comfy/supported_models.py:class SD15",
   "comfy/supported_models.py:class SDXL",
   "comfy/supported_models_base.py:def matches"
- ]
+ ],
+ "track": "first-graph",
+ "order": 80
 }

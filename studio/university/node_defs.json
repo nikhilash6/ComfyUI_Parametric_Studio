@@ -1,0 +1,3358 @@
+{
+"AudioAdjustVolume": {
+"input": {
+"required": {
+"audio": [
+"AUDIO"
+],
+"volume": [
+"INT",
+{
+"default": 1,
+"min": -100,
+"max": 100
+}
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO"
+],
+"output_name": [
+"AUDIO"
+],
+"module": "comfy_extras.nodes_audio",
+"is_output": false
+},
+"BasicGuider": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"conditioning": [
+"CONDITIONING"
+]
+},
+"optional": {}
+},
+"output": [
+"GUIDER"
+],
+"output_name": [
+"GUIDER"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"BasicScheduler": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"scheduler": [
+"COMBO"
+],
+"steps": [
+"INT",
+{
+"default": 20,
+"min": 1,
+"max": 10000
+}
+],
+"denoise": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"SIGMAS"
+],
+"output_name": [
+"SIGMAS"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"CFGGuider": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"positive": [
+"CONDITIONING"
+],
+"negative": [
+"CONDITIONING"
+],
+"cfg": [
+"FLOAT",
+{
+"default": 8.0,
+"min": 0.0,
+"max": 100.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"GUIDER"
+],
+"output_name": [
+"GUIDER"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"CFGNorm": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"strength": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 100.0
+}
+]
+},
+"optional": {
+"pre_cfg": [
+"BOOLEAN",
+{
+"default": false
+}
+]
+}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"patched_model"
+],
+"module": "comfy_extras.nodes_cfg",
+"is_output": false
+},
+"CLIPLoader": {
+"input": {
+"required": {
+"clip_name": [
+"FILE"
+],
+"type": [
+[
+"stable_diffusion",
+"stable_cascade",
+"sd3",
+"stable_audio",
+"mochi",
+"ltxv",
+"pixart",
+"cosmos",
+"lumina2",
+"wan",
+"hidream",
+"chroma",
+"ace",
+"omnigen2",
+"qwen_image",
+"hunyuan_image",
+"flux2",
+"ovis",
+"longcat_image",
+"cogvideox",
+"lens",
+"pixeldit",
+"ideogram4",
+"boogu",
+"krea2",
+"joyimage",
+"mage",
+"minimax",
+"yue2",
+"flux3",
+"moss_image",
+"fibo2"
+]
+]
+},
+"optional": {
+"device": [
+[
+"default",
+"cpu"
+]
+]
+}
+},
+"output": [
+"CLIP"
+],
+"output_name": [
+"CLIP"
+],
+"module": "nodes",
+"is_output": false
+},
+"CLIPTextEncode": {
+"input": {
+"required": {
+"text": [
+"STRING"
+],
+"clip": [
+"CLIP"
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
+"is_output": false
+},
+"CLIPVisionEncode": {
+"input": {
+"required": {
+"clip_vision": [
+"CLIP_VISION"
+],
+"image": [
+"IMAGE"
+],
+"crop": [
+[
+"center",
+"none"
+]
+]
+},
+"optional": {}
+},
+"output": [
+"CLIP_VISION_OUTPUT"
+],
+"output_name": [
+"CLIP_VISION_OUTPUT"
+],
+"module": "nodes",
+"is_output": false
+},
+"Canny": {
+"input": {
+"required": {
+"image": [
+"IMAGE"
+],
+"low_threshold": [
+"FLOAT",
+{
+"default": 0.4,
+"min": 0.01,
+"max": 0.99
+}
+],
+"high_threshold": [
+"FLOAT",
+{
+"default": 0.8,
+"min": 0.01,
+"max": 0.99
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_canny",
+"is_output": false
+},
+"CheckpointLoaderSimple": {
+"input": {
+"required": {
+"ckpt_name": [
+"FILE"
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL",
+"CLIP",
+"VAE"
+],
+"output_name": [
+"MODEL",
+"CLIP",
+"VAE"
+],
+"module": "nodes",
+"is_output": false
+},
+"CheckpointSave": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"clip": [
+"CLIP"
+],
+"vae": [
+"VAE"
+],
+"filename_prefix": [
+"STRING",
+{
+"default": "checkpoints/ComfyUI"
+}
+]
+},
+"optional": {}
+},
+"output": [],
+"output_name": [],
+"module": "comfy_extras.nodes_model_merging",
+"is_output": true
+},
+"ComfyMathExpression": {
+"input": {
+"required": {
+"expression": [
+"STRING",
+{
+"default": "a + b"
+}
+],
+"values": [
+"COMFY_AUTOGROW_V3"
+]
+},
+"optional": {}
+},
+"output": [
+"FLOAT",
+"INT",
+"BOOLEAN"
+],
+"output_name": [
+"FLOAT",
+"INT",
+"BOOL"
+],
+"module": "comfy_extras.nodes_math",
+"is_output": false
+},
+"ComfySwitchNode": {
+"input": {
+"required": {
+"switch": [
+"BOOLEAN"
+]
+},
+"optional": {
+"on_false": [
+"COMFY_MATCHTYPE_V3"
+],
+"on_true": [
+"COMFY_MATCHTYPE_V3"
+]
+}
+},
+"output": [
+"COMFY_MATCHTYPE_V3"
+],
+"output_name": [
+"output"
+],
+"module": "comfy_extras.nodes_logic",
+"is_output": false
+},
+"ConditioningAverage": {
+"input": {
+"required": {
+"conditioning_to": [
+"CONDITIONING"
+],
+"conditioning_from": [
+"CONDITIONING"
+],
+"conditioning_to_strength": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
+"is_output": false
+},
+"ConditioningCombine": {
+"input": {
+"required": {
+"conditioning_1": [
+"CONDITIONING"
+],
+"conditioning_2": [
+"CONDITIONING"
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
+"is_output": false
+},
+"ConditioningConcat": {
+"input": {
+"required": {
+"conditioning_to": [
+"CONDITIONING"
+],
+"conditioning_from": [
+"CONDITIONING"
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
+"is_output": false
+},
+"ConditioningSetArea": {
+"input": {
+"required": {
+"conditioning": [
+"CONDITIONING"
+],
+"width": [
+"INT",
+{
+"default": 64,
+"min": 64,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 64,
+"min": 64,
+"max": 16384
+}
+],
+"x": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"y": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"strength": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 10.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
+"is_output": false
+},
+"ConditioningSetTimestepRange": {
+"input": {
+"required": {
+"conditioning": [
+"CONDITIONING"
+],
+"start": [
+"FLOAT",
+{
+"default": 0.0,
+"min": 0.0,
+"max": 1.0
+}
+],
+"end": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
+"is_output": false
+},
+"ConditioningZeroOut": {
+"input": {
+"required": {
+"conditioning": [
+"CONDITIONING"
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
+"is_output": false
+},
+"ControlNetApplyAdvanced": {
+"input": {
+"required": {
+"positive": [
+"CONDITIONING"
+],
+"negative": [
+"CONDITIONING"
+],
+"control_net": [
+"CONTROL_NET"
+],
+"image": [
+"IMAGE"
+],
+"strength": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 10.0
+}
+],
+"start_percent": [
+"FLOAT",
+{
+"default": 0.0,
+"min": 0.0,
+"max": 1.0
+}
+],
+"end_percent": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 1.0
+}
+]
+},
+"optional": {
+"vae": [
+"VAE"
+]
+}
+},
+"output": [
+"CONDITIONING",
+"CONDITIONING"
+],
+"output_name": [
+"positive",
+"negative"
+],
+"module": "nodes",
+"is_output": false
+},
+"ControlNetLoader": {
+"input": {
+"required": {
+"control_net_name": [
+"FILE"
+]
+},
+"optional": {}
+},
+"output": [
+"CONTROL_NET"
+],
+"output_name": [
+"CONTROL_NET"
+],
+"module": "nodes",
+"is_output": false
+},
+"CreateVideo": {
+"input": {
+"required": {
+"images": [
+"IMAGE"
+],
+"fps": [
+"FLOAT",
+{
+"default": 30.0,
+"min": 1.0,
+"max": 120.0
+}
+]
+},
+"optional": {
+"audio": [
+"AUDIO"
+],
+"bit_depth": [
+"COMBO",
+{
+"default": "auto"
+}
+],
+"color_space": [
+"COMBO",
+{
+"default": "sRGB"
+}
+],
+"codec": [
+"COMBO",
+{
+"default": "none"
+}
+]
+}
+},
+"output": [
+"VIDEO"
+],
+"output_name": [
+"VIDEO"
+],
+"module": "comfy_extras.nodes_video",
+"is_output": false
+},
+"EmptyAudio": {
+"input": {
+"required": {
+"duration": [
+"FLOAT",
+{
+"default": 60.0,
+"min": 0.0,
+"max": 18446744073709551615
+}
+],
+"sample_rate": [
+"INT",
+{
+"default": 44100,
+"min": 1,
+"max": 192000
+}
+],
+"channels": [
+"INT",
+{
+"default": 2,
+"min": 1,
+"max": 2
+}
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO"
+],
+"output_name": [
+"AUDIO"
+],
+"module": "comfy_extras.nodes_audio",
+"is_output": false
+},
+"EmptyFlux2LatentImage": {
+"input": {
+"required": {
+"width": [
+"INT",
+{
+"default": 1024,
+"min": 16,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 1024,
+"min": 16,
+"max": 16384
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "comfy_extras.nodes_flux",
+"is_output": false
+},
+"EmptyImage": {
+"input": {
+"required": {
+"width": [
+"INT",
+{
+"default": 512,
+"min": 1,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 512,
+"min": 1,
+"max": 16384
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+],
+"color": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16777215
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "nodes",
+"is_output": false
+},
+"EmptyLTXVLatentVideo": {
+"input": {
+"required": {
+"width": [
+"INT",
+{
+"default": 768,
+"min": 64,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 512,
+"min": 64,
+"max": 16384
+}
+],
+"length": [
+"INT",
+{
+"default": 97,
+"min": 1,
+"max": 16384
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "comfy_extras.nodes_lt",
+"is_output": false
+},
+"EmptyLatentHunyuan3Dv2": {
+"input": {
+"required": {
+"resolution": [
+"INT",
+{
+"default": 3072,
+"min": 1,
+"max": 8192
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "comfy_extras.nodes_hunyuan3d",
+"is_output": false
+},
+"EmptyLatentImage": {
+"input": {
+"required": {
+"width": [
+"INT",
+{
+"default": 1024,
+"min": 16,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 1024,
+"min": 16,
+"max": 16384
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "nodes",
+"is_output": false
+},
+"EmptyMiniMaxMusic3LatentAudio": {
+"input": {
+"required": {
+"seconds": [
+"FLOAT",
+{
+"default": 120.0,
+"min": 0.04,
+"max": 360.0
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "comfy_extras.nodes_minimax_music",
+"is_output": false
+},
+"EmptySD3LatentImage": {
+"input": {
+"required": {
+"width": [
+"INT",
+{
+"default": 1024,
+"min": 16,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 1024,
+"min": 16,
+"max": 16384
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "comfy_extras.nodes_sd3",
+"is_output": false
+},
+"ExponentialScheduler": {
+"input": {
+"required": {
+"steps": [
+"INT",
+{
+"default": 20,
+"min": 1,
+"max": 10000
+}
+],
+"sigma_max": [
+"FLOAT",
+{
+"default": 14.614642,
+"min": 0.0,
+"max": 5000.0
+}
+],
+"sigma_min": [
+"FLOAT",
+{
+"default": 0.0291675,
+"min": 0.0,
+"max": 5000.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"SIGMAS"
+],
+"output_name": [
+"SIGMAS"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"FeatherMask": {
+"input": {
+"required": {
+"mask": [
+"MASK"
+],
+"left": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"top": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"right": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"bottom": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MASK"
+],
+"output_name": [
+"MASK"
+],
+"module": "comfy_extras.nodes_mask",
+"is_output": false
+},
+"Flux2Scheduler": {
+"input": {
+"required": {
+"steps": [
+"INT",
+{
+"default": 20,
+"min": 1,
+"max": 4096
+}
+],
+"width": [
+"INT",
+{
+"default": 1024,
+"min": 16,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 1024,
+"min": 16,
+"max": 16384
+}
+]
+},
+"optional": {}
+},
+"output": [
+"SIGMAS"
+],
+"output_name": [
+"SIGMAS"
+],
+"module": "comfy_extras.nodes_flux",
+"is_output": false
+},
+"Hunyuan3Dv2Conditioning": {
+"input": {
+"required": {
+"clip_vision_output": [
+"CLIP_VISION_OUTPUT"
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING",
+"CONDITIONING"
+],
+"output_name": [
+"positive",
+"negative"
+],
+"module": "comfy_extras.nodes_hunyuan3d",
+"is_output": false
+},
+"ImageBlur": {
+"input": {
+"required": {
+"image": [
+"IMAGE"
+],
+"blur_radius": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 31
+}
+],
+"sigma": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.1,
+"max": 10.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_post_processing",
+"is_output": false
+},
+"ImageCompositeMasked": {
+"input": {
+"required": {
+"destination": [
+"IMAGE"
+],
+"source": [
+"IMAGE"
+],
+"x": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"y": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"resize_source": [
+"BOOLEAN",
+{
+"default": false
+}
+]
+},
+"optional": {
+"mask": [
+"MASK"
+]
+}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_mask",
+"is_output": false
+},
+"ImageInvert": {
+"input": {
+"required": {
+"image": [
+"IMAGE"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "nodes",
+"is_output": false
+},
+"ImageOnlyCheckpointLoader": {
+"input": {
+"required": {
+"ckpt_name": [
+"FILE"
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL",
+"CLIP_VISION",
+"VAE"
+],
+"output_name": [
+"MODEL",
+"CLIP_VISION",
+"VAE"
+],
+"module": "comfy_extras.nodes_video_model",
+"is_output": false
+},
+"ImageUpscaleWithModel": {
+"input": {
+"required": {
+"upscale_model": [
+"UPSCALE_MODEL"
+],
+"image": [
+"IMAGE"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_upscale_model",
+"is_output": false
+},
+"KSampler": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"seed": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 18446744073709551615
+}
+],
+"steps": [
+"INT",
+{
+"default": 20,
+"min": 1,
+"max": 10000
+}
+],
+"cfg": [
+"FLOAT",
+{
+"default": 8.0,
+"min": 0.0,
+"max": 100.0
+}
+],
+"sampler_name": [
+[
+"euler",
+"euler_cfg_pp",
+"euler_ancestral",
+"euler_ancestral_cfg_pp",
+"heun",
+"heunpp2",
+"exp_heun_2_x0",
+"exp_heun_2_x0_sde",
+"dpm_2",
+"dpm_2_ancestral",
+"lms",
+"dpm_fast",
+"dpm_adaptive",
+"dpmpp_2s_ancestral",
+"dpmpp_2s_ancestral_cfg_pp",
+"dpmpp_sde",
+"dpmpp_sde_gpu",
+"dpmpp_2m",
+"dpmpp_2m_cfg_pp",
+"dpmpp_2m_sde",
+"dpmpp_2m_sde_gpu",
+"dpmpp_2m_sde_heun",
+"dpmpp_2m_sde_heun_gpu",
+"dpmpp_3m_sde",
+"dpmpp_3m_sde_gpu",
+"ddpm",
+"lcm",
+"ipndm",
+"ipndm_v",
+"deis",
+"cfgpp_ud10_ab",
+"res_multistep",
+"res_multistep_cfg_pp",
+"res_multistep_ancestral",
+"res_multistep_ancestral_cfg_pp",
+"gradient_estimation",
+"gradient_estimation_cfg_pp",
+"er_sde",
+"seeds_2",
+"seeds_3",
+"sa_solver",
+"sa_solver_pece",
+"ddim",
+"uni_pc",
+"uni_pc_bh2"
+]
+],
+"scheduler": [
+[
+"simple",
+"sgm_uniform",
+"karras",
+"exponential",
+"ddim_uniform",
+"beta",
+"normal",
+"linear_quadratic",
+"kl_optimal"
+]
+],
+"positive": [
+"CONDITIONING"
+],
+"negative": [
+"CONDITIONING"
+],
+"latent_image": [
+"LATENT"
+],
+"denoise": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "nodes",
+"is_output": false
+},
+"KSamplerAdvanced": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"add_noise": [
+[
+"enable",
+"disable"
+]
+],
+"noise_seed": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 18446744073709551615
+}
+],
+"steps": [
+"INT",
+{
+"default": 20,
+"min": 1,
+"max": 10000
+}
+],
+"cfg": [
+"FLOAT",
+{
+"default": 8.0,
+"min": 0.0,
+"max": 100.0
+}
+],
+"sampler_name": [
+[
+"euler",
+"euler_cfg_pp",
+"euler_ancestral",
+"euler_ancestral_cfg_pp",
+"heun",
+"heunpp2",
+"exp_heun_2_x0",
+"exp_heun_2_x0_sde",
+"dpm_2",
+"dpm_2_ancestral",
+"lms",
+"dpm_fast",
+"dpm_adaptive",
+"dpmpp_2s_ancestral",
+"dpmpp_2s_ancestral_cfg_pp",
+"dpmpp_sde",
+"dpmpp_sde_gpu",
+"dpmpp_2m",
+"dpmpp_2m_cfg_pp",
+"dpmpp_2m_sde",
+"dpmpp_2m_sde_gpu",
+"dpmpp_2m_sde_heun",
+"dpmpp_2m_sde_heun_gpu",
+"dpmpp_3m_sde",
+"dpmpp_3m_sde_gpu",
+"ddpm",
+"lcm",
+"ipndm",
+"ipndm_v",
+"deis",
+"cfgpp_ud10_ab",
+"res_multistep",
+"res_multistep_cfg_pp",
+"res_multistep_ancestral",
+"res_multistep_ancestral_cfg_pp",
+"gradient_estimation",
+"gradient_estimation_cfg_pp",
+"er_sde",
+"seeds_2",
+"seeds_3",
+"sa_solver",
+"sa_solver_pece",
+"ddim",
+"uni_pc",
+"uni_pc_bh2"
+]
+],
+"scheduler": [
+[
+"simple",
+"sgm_uniform",
+"karras",
+"exponential",
+"ddim_uniform",
+"beta",
+"normal",
+"linear_quadratic",
+"kl_optimal"
+]
+],
+"positive": [
+"CONDITIONING"
+],
+"negative": [
+"CONDITIONING"
+],
+"latent_image": [
+"LATENT"
+],
+"start_at_step": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 10000
+}
+],
+"end_at_step": [
+"INT",
+{
+"default": 10000,
+"min": 0,
+"max": 10000
+}
+],
+"return_with_leftover_noise": [
+[
+"disable",
+"enable"
+]
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "nodes",
+"is_output": false
+},
+"KSamplerSelect": {
+"input": {
+"required": {
+"sampler_name": [
+"COMBO"
+]
+},
+"optional": {}
+},
+"output": [
+"SAMPLER"
+],
+"output_name": [
+"SAMPLER"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"KarrasScheduler": {
+"input": {
+"required": {
+"steps": [
+"INT",
+{
+"default": 20,
+"min": 1,
+"max": 10000
+}
+],
+"sigma_max": [
+"FLOAT",
+{
+"default": 14.614642,
+"min": 0.0,
+"max": 5000.0
+}
+],
+"sigma_min": [
+"FLOAT",
+{
+"default": 0.0291675,
+"min": 0.0,
+"max": 5000.0
+}
+],
+"rho": [
+"FLOAT",
+{
+"default": 7.0,
+"min": 0.0,
+"max": 100.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"SIGMAS"
+],
+"output_name": [
+"SIGMAS"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"LTXVAudioVAEDecode": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"audio_vae": [
+"VAE"
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO"
+],
+"output_name": [
+"Audio"
+],
+"module": "comfy_extras.nodes_lt_audio",
+"is_output": false
+},
+"LTXVConcatAVLatent": {
+"input": {
+"required": {
+"video_latent": [
+"LATENT"
+],
+"audio_latent": [
+"LATENT"
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"latent"
+],
+"module": "comfy_extras.nodes_lt",
+"is_output": false
+},
+"LTXVConditioning": {
+"input": {
+"required": {
+"positive": [
+"CONDITIONING"
+],
+"negative": [
+"CONDITIONING"
+],
+"frame_rate": [
+"FLOAT",
+{
+"default": 25.0,
+"min": 0.0,
+"max": 1000.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING",
+"CONDITIONING"
+],
+"output_name": [
+"positive",
+"negative"
+],
+"module": "comfy_extras.nodes_lt",
+"is_output": false
+},
+"LTXVEmptyLatentAudio": {
+"input": {
+"required": {
+"frames_number": [
+"INT",
+{
+"default": 97,
+"min": 1,
+"max": 1000
+}
+],
+"frame_rate": [
+"FLOAT,INT",
+{
+"default": 25.0,
+"min": 1.0,
+"max": 1000.0
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+],
+"audio_vae": [
+"VAE"
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"Latent"
+],
+"module": "comfy_extras.nodes_lt_audio",
+"is_output": false
+},
+"LTXVSeparateAVLatent": {
+"input": {
+"required": {
+"av_latent": [
+"LATENT"
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT",
+"LATENT"
+],
+"output_name": [
+"video_latent",
+"audio_latent"
+],
+"module": "comfy_extras.nodes_lt",
+"is_output": false
+},
+"LatentMultiply": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"multiplier": [
+"FLOAT",
+{
+"default": 1.0,
+"min": -10.0,
+"max": 10.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "comfy_extras.nodes_latent",
+"is_output": false
+},
+"LatentUpscale": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"upscale_method": [
+[
+"nearest-exact",
+"bilinear",
+"area",
+"bicubic",
+"bislerp"
+]
+],
+"width": [
+"INT",
+{
+"default": 512,
+"min": 0,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 512,
+"min": 0,
+"max": 16384
+}
+],
+"crop": [
+[
+"disabled",
+"center"
+]
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "nodes",
+"is_output": false
+},
+"LoadImage": {
+"input": {
+"required": {
+"image": [
+"FILE"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE",
+"MASK"
+],
+"output_name": [
+"IMAGE",
+"MASK"
+],
+"module": "nodes",
+"is_output": false
+},
+"LoadImageTextDataSetFromFolder": {
+"input": {
+"required": {
+"folder": [
+"COMBO"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE",
+"STRING"
+],
+"output_name": [
+"images",
+"texts"
+],
+"module": "comfy_extras.nodes_dataset",
+"is_output": false
+},
+"LoraLoader": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"clip": [
+"CLIP"
+],
+"lora_name": [
+"FILE"
+],
+"strength_model": [
+"FLOAT",
+{
+"default": 1.0,
+"min": -100.0,
+"max": 100.0
+}
+],
+"strength_clip": [
+"FLOAT",
+{
+"default": 1.0,
+"min": -100.0,
+"max": 100.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL",
+"CLIP"
+],
+"output_name": [
+"MODEL",
+"CLIP"
+],
+"module": "nodes",
+"is_output": false
+},
+"LoraLoaderModelOnly": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"lora_name": [
+"FILE"
+],
+"strength_model": [
+"FLOAT",
+{
+"default": 1.0,
+"min": -100.0,
+"max": 100.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "nodes",
+"is_output": false
+},
+"LossGraphNode": {
+"input": {
+"required": {
+"loss": [
+"LOSS_MAP"
+],
+"filename_prefix": [
+"STRING",
+{
+"default": "loss_graph"
+}
+]
+},
+"optional": {}
+},
+"output": [],
+"output_name": [],
+"module": "comfy_extras.nodes_train",
+"is_output": true
+},
+"MakeTrainingDataset": {
+"input": {
+"required": {
+"images": [
+"IMAGE"
+],
+"vae": [
+"VAE"
+],
+"clip": [
+"CLIP"
+]
+},
+"optional": {
+"texts": [
+"STRING"
+]
+}
+},
+"output": [
+"LATENT",
+"CONDITIONING"
+],
+"output_name": [
+"latents",
+"conditioning"
+],
+"module": "comfy_extras.nodes_dataset",
+"is_output": false
+},
+"ManualSigmas": {
+"input": {
+"required": {
+"sigmas": [
+"STRING",
+{
+"default": "1, 0.5"
+}
+]
+},
+"optional": {}
+},
+"output": [
+"SIGMAS"
+],
+"output_name": [
+"SIGMAS"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"MiniMaxH3ImageToVideo": {
+"input": {
+"required": {
+"clip": [
+"CLIP"
+],
+"vae": [
+"VAE"
+],
+"prompt": [
+"STRING"
+],
+"width": [
+"INT",
+{
+"default": 1344,
+"min": 32,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 768,
+"min": 32,
+"max": 16384
+}
+],
+"length": [
+"INT",
+{
+"default": 124,
+"min": 5,
+"max": 3600
+}
+]
+},
+"optional": {
+"first_frame": [
+"IMAGE"
+],
+"last_frame": [
+"IMAGE"
+]
+}
+},
+"output": [
+"CONDITIONING",
+"LATENT"
+],
+"output_name": [
+"positive",
+"LATENT"
+],
+"module": "comfy_extras.nodes_minimax_h3",
+"is_output": false
+},
+"MiniMaxMusic3TextEncode": {
+"input": {
+"required": {
+"clip": [
+"CLIP"
+],
+"caption": [
+"STRING"
+],
+"lyrics": [
+"STRING"
+],
+"seed": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 18446744073709551615
+}
+],
+"max_duration": [
+"FLOAT",
+{
+"default": 120.0,
+"min": 0.04,
+"max": 360.0
+}
+],
+"cfg_scale": [
+"FLOAT",
+{
+"default": 1.5,
+"min": 0.0,
+"max": 100.0
+}
+],
+"top_k": [
+"INT",
+{
+"default": 50,
+"min": 1,
+"max": 16384
+}
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING",
+"FLOAT"
+],
+"output_name": [
+"CONDITIONING",
+"seconds"
+],
+"module": "comfy_extras.nodes_minimax_music",
+"is_output": false
+},
+"ModelMergeSimple": {
+"input": {
+"required": {
+"model1": [
+"MODEL"
+],
+"model2": [
+"MODEL"
+],
+"ratio": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_model_merging",
+"is_output": false
+},
+"ModelSamplingSD3": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"shift": [
+"FLOAT",
+{
+"default": 3.0,
+"min": 0.0,
+"max": 100.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_model_advanced",
+"is_output": false
+},
+"PerpNegGuider": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"positive": [
+"CONDITIONING"
+],
+"negative": [
+"CONDITIONING"
+],
+"empty_conditioning": [
+"CONDITIONING"
+],
+"cfg": [
+"FLOAT",
+{
+"default": 8.0,
+"min": 0.0,
+"max": 100.0
+}
+],
+"neg_scale": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 100.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"GUIDER"
+],
+"output_name": [
+"GUIDER"
+],
+"module": "comfy_extras.nodes_perpneg",
+"is_output": false
+},
+"PerturbedAttentionGuidance": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"scale": [
+"FLOAT",
+{
+"default": 3.0,
+"min": 0.0,
+"max": 100.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_pag",
+"is_output": false
+},
+"PreviewAny": {
+"input": {
+"required": {
+"source": [
+"*"
+]
+},
+"optional": {}
+},
+"output": [
+"STRING"
+],
+"output_name": [
+"STRING"
+],
+"module": "comfy_extras.nodes_preview_any",
+"is_output": true
+},
+"PreviewImage": {
+"input": {
+"required": {
+"images": [
+"IMAGE"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"images"
+],
+"module": "nodes",
+"is_output": true
+},
+"PrimitiveBoolean": {
+"input": {
+"required": {
+"value": [
+"BOOLEAN"
+]
+},
+"optional": {}
+},
+"output": [
+"BOOLEAN"
+],
+"output_name": [
+"BOOLEAN"
+],
+"module": "comfy_extras.nodes_primitive",
+"is_output": false
+},
+"PrimitiveFloat": {
+"input": {
+"required": {
+"value": [
+"FLOAT",
+{
+"min": -9223372036854775807,
+"max": 9223372036854775807
+}
+]
+},
+"optional": {}
+},
+"output": [
+"FLOAT"
+],
+"output_name": [
+"FLOAT"
+],
+"module": "comfy_extras.nodes_primitive",
+"is_output": false
+},
+"PrimitiveInt": {
+"input": {
+"required": {
+"value": [
+"INT",
+{
+"min": -9223372036854775807,
+"max": 9223372036854775807
+}
+]
+},
+"optional": {}
+},
+"output": [
+"INT"
+],
+"output_name": [
+"INT"
+],
+"module": "comfy_extras.nodes_primitive",
+"is_output": false
+},
+"PrimitiveString": {
+"input": {
+"required": {
+"value": [
+"STRING"
+]
+},
+"optional": {}
+},
+"output": [
+"STRING"
+],
+"output_name": [
+"STRING"
+],
+"module": "comfy_extras.nodes_primitive",
+"is_output": false
+},
+"RandomNoise": {
+"input": {
+"required": {
+"noise_seed": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 18446744073709551615
+}
+]
+},
+"optional": {}
+},
+"output": [
+"NOISE"
+],
+"output_name": [
+"NOISE"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"RescaleCFG": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"multiplier": [
+"FLOAT",
+{
+"default": 0.7,
+"min": 0.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_model_advanced",
+"is_output": false
+},
+"ResolutionSelector": {
+"input": {
+"required": {
+"aspect_ratio": [
+"COMBO",
+{
+"default": "1:1 (Square)"
+}
+],
+"megapixels": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.1,
+"max": 16.0
+}
+],
+"multiple": [
+"INT",
+{
+"default": 8,
+"min": 8,
+"max": 128
+}
+]
+},
+"optional": {
+"preview": [
+"RESOLUTION_PREVIEW"
+]
+}
+},
+"output": [
+"INT",
+"INT"
+],
+"output_name": [
+"width",
+"height"
+],
+"module": "comfy_extras.nodes_resolution",
+"is_output": false
+},
+"SamplerCustomAdvanced": {
+"input": {
+"required": {
+"noise": [
+"NOISE"
+],
+"guider": [
+"GUIDER"
+],
+"sampler": [
+"SAMPLER"
+],
+"sigmas": [
+"SIGMAS"
+],
+"latent_image": [
+"LATENT"
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT",
+"LATENT"
+],
+"output_name": [
+"output",
+"denoised_output"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"SaveAudio": {
+"input": {
+"required": {
+"audio": [
+"AUDIO"
+],
+"filename_prefix": [
+"STRING",
+{
+"default": "audio/ComfyUI"
+}
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO"
+],
+"output_name": [
+"audio"
+],
+"module": "comfy_extras.nodes_audio",
+"is_output": true
+},
+"SaveAudioAdvanced": {
+"input": {
+"required": {
+"audio": [
+"AUDIO"
+],
+"filename_prefix": [
+"STRING",
+{
+"default": "audio/ComfyUI"
+}
+],
+"format": [
+"COMFY_DYNAMICCOMBO_V3"
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO"
+],
+"output_name": [
+"audio"
+],
+"module": "comfy_extras.nodes_audio",
+"is_output": true
+},
+"SaveGLB": {
+"input": {
+"required": {
+"mesh": [
+"MESH,FILE_3D_GLB,FILE_3D_GLTF,FILE_3D_OBJ,FILE_3D_FBX,FILE_3D_STL,FILE_3D_USDZ,FILE_3D_PLY,FILE_3D_SPLAT,FILE_3D_SPZ,FILE_3D_KSPLAT,FILE_3D_SPLAT_ANY,FILE_3D_POINT_CLOUD_ANY,FILE_3D"
+],
+"filename_prefix": [
+"STRING",
+{
+"default": "3d/ComfyUI"
+}
+]
+},
+"optional": {}
+},
+"output": [],
+"output_name": [],
+"module": "comfy_extras.nodes_save_3d",
+"is_output": true
+},
+"SaveImage": {
+"input": {
+"required": {
+"images": [
+"IMAGE"
+],
+"filename_prefix": [
+"STRING",
+{
+"default": "ComfyUI"
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"images"
+],
+"module": "nodes",
+"is_output": true
+},
+"SaveLoRA": {
+"input": {
+"required": {
+"lora": [
+"LORA_MODEL"
+],
+"prefix": [
+"STRING",
+{
+"default": "loras/ComfyUI_trained_lora"
+}
+]
+},
+"optional": {
+"steps": [
+"INT"
+]
+}
+},
+"output": [],
+"output_name": [],
+"module": "comfy_extras.nodes_train",
+"is_output": true
+},
+"SaveVideo": {
+"input": {
+"required": {
+"video": [
+"VIDEO"
+],
+"filename_prefix": [
+"STRING",
+{
+"default": "video/ComfyUI"
+}
+],
+"format": [
+"COMFY_DYNAMICCOMBO_V3"
+]
+},
+"optional": {
+"codec": [
+"COMFY_DYNAMICCOMBO_V3"
+]
+}
+},
+"output": [
+"VIDEO"
+],
+"output_name": [
+"video"
+],
+"module": "comfy_extras.nodes_video",
+"is_output": true
+},
+"SeedNode": {
+"input": {
+"required": {
+"seed": [
+"INT",
+{
+"min": 0,
+"max": 9223372036854775807
+}
+]
+},
+"optional": {}
+},
+"output": [
+"INT"
+],
+"output_name": [
+"seed"
+],
+"module": "comfy_extras.nodes_seed",
+"is_output": false
+},
+"SelfAttentionGuidance": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"scale": [
+"FLOAT",
+{
+"default": 0.5,
+"min": -2.0,
+"max": 5.0
+}
+],
+"blur_sigma": [
+"FLOAT",
+{
+"default": 2.0,
+"min": 0.0,
+"max": 10.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_sag",
+"is_output": false
+},
+"SetLatentNoiseMask": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"mask": [
+"MASK"
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "nodes",
+"is_output": false
+},
+"SolidMask": {
+"input": {
+"required": {
+"value": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 1.0
+}
+],
+"width": [
+"INT",
+{
+"default": 512,
+"min": 1,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 512,
+"min": 1,
+"max": 16384
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MASK"
+],
+"output_name": [
+"MASK"
+],
+"module": "comfy_extras.nodes_mask",
+"is_output": false
+},
+"SplitSigmas": {
+"input": {
+"required": {
+"sigmas": [
+"SIGMAS"
+],
+"step": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 10000
+}
+]
+},
+"optional": {}
+},
+"output": [
+"SIGMAS",
+"SIGMAS"
+],
+"output_name": [
+"high_sigmas",
+"low_sigmas"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"StringConcatenate": {
+"input": {
+"required": {
+"string_a": [
+"STRING"
+],
+"string_b": [
+"STRING"
+],
+"delimiter": [
+"STRING",
+{
+"default": ""
+}
+]
+},
+"optional": {}
+},
+"output": [
+"STRING"
+],
+"output_name": [
+"STRING"
+],
+"module": "comfy_extras.nodes_string",
+"is_output": false
+},
+"TrainLoraNode": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"latents": [
+"LATENT"
+],
+"positive": [
+"CONDITIONING"
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 10000
+}
+],
+"grad_accumulation_steps": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 1024
+}
+],
+"steps": [
+"INT",
+{
+"default": 16,
+"min": 1,
+"max": 100000
+}
+],
+"learning_rate": [
+"FLOAT",
+{
+"default": 0.0005,
+"min": 1e-07,
+"max": 1.0
+}
+],
+"rank": [
+"INT",
+{
+"default": 8,
+"min": 1,
+"max": 128
+}
+],
+"optimizer": [
+"COMBO",
+{
+"default": "AdamW"
+}
+],
+"loss_function": [
+"COMBO",
+{
+"default": "MSE"
+}
+],
+"seed": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 18446744073709551615
+}
+],
+"training_dtype": [
+"COMBO",
+{
+"default": "bf16"
+}
+],
+"lora_dtype": [
+"COMBO",
+{
+"default": "bf16"
+}
+],
+"quantized_backward": [
+"BOOLEAN",
+{
+"default": false
+}
+],
+"algorithm": [
+"COMBO",
+{
+"default": "LoRA"
+}
+],
+"gradient_checkpointing": [
+"BOOLEAN",
+{
+"default": true
+}
+],
+"checkpoint_depth": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 5
+}
+],
+"offloading": [
+"BOOLEAN",
+{
+"default": false
+}
+],
+"existing_lora": [
+"COMBO",
+{
+"default": "[None]"
+}
+],
+"bucket_mode": [
+"BOOLEAN",
+{
+"default": false
+}
+],
+"bypass_mode": [
+"BOOLEAN",
+{
+"default": false
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LORA_MODEL",
+"LOSS_MAP",
+"INT"
+],
+"output_name": [
+"lora",
+"loss_map",
+"steps"
+],
+"module": "comfy_extras.nodes_train",
+"is_output": false
+},
+"TripleCLIPLoader": {
+"input": {
+"required": {
+"clip_name1": [
+"COMBO"
+],
+"clip_name2": [
+"COMBO"
+],
+"clip_name3": [
+"COMBO"
+]
+},
+"optional": {}
+},
+"output": [
+"CLIP"
+],
+"output_name": [
+"CLIP"
+],
+"module": "comfy_extras.nodes_sd3",
+"is_output": false
+},
+"UNETLoader": {
+"input": {
+"required": {
+"unet_name": [
+"FILE"
+],
+"weight_dtype": [
+[
+"default",
+"fp8_e4m3fn",
+"fp8_e4m3fn_fast",
+"fp8_e5m2"
+]
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "nodes",
+"is_output": false
+},
+"UpscaleModelLoader": {
+"input": {
+"required": {
+"model_name": [
+"COMBO"
+]
+},
+"optional": {}
+},
+"output": [
+"UPSCALE_MODEL"
+],
+"output_name": [
+"UPSCALE_MODEL"
+],
+"module": "comfy_extras.nodes_upscale_model",
+"is_output": false
+},
+"VAEDecode": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"vae": [
+"VAE"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "nodes",
+"is_output": false
+},
+"VAEDecodeAudio": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"vae": [
+"VAE"
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO"
+],
+"output_name": [
+"AUDIO"
+],
+"module": "comfy_extras.nodes_audio",
+"is_output": false
+},
+"VAEDecodeAudioTiled": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"vae": [
+"VAE"
+],
+"tile_size": [
+"INT",
+{
+"default": 512,
+"min": 32,
+"max": 8192
+}
+],
+"overlap": [
+"INT",
+{
+"default": 64,
+"min": 0,
+"max": 1024
+}
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO"
+],
+"output_name": [
+"AUDIO"
+],
+"module": "comfy_extras.nodes_audio",
+"is_output": false
+},
+"VAEDecodeHunyuan3D": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"vae": [
+"VAE"
+],
+"num_chunks": [
+"INT",
+{
+"default": 8000,
+"min": 1000,
+"max": 500000
+}
+],
+"octree_resolution": [
+"INT",
+{
+"default": 256,
+"min": 16,
+"max": 512
+}
+]
+},
+"optional": {}
+},
+"output": [
+"VOXEL"
+],
+"output_name": [
+"VOXEL"
+],
+"module": "comfy_extras.nodes_hunyuan3d",
+"is_output": false
+},
+"VAEDecodeTiled": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"vae": [
+"VAE"
+],
+"tile_size": [
+"INT",
+{
+"default": 512,
+"min": 64,
+"max": 4096
+}
+],
+"overlap": [
+"INT",
+{
+"default": 64,
+"min": 0,
+"max": 4096
+}
+],
+"temporal_size": [
+"INT",
+{
+"default": 64,
+"min": 8,
+"max": 4096
+}
+],
+"temporal_overlap": [
+"INT",
+{
+"default": 8,
+"min": 4,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "nodes",
+"is_output": false
+},
+"VAEEncode": {
+"input": {
+"required": {
+"pixels": [
+"IMAGE"
+],
+"vae": [
+"VAE"
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "nodes",
+"is_output": false
+},
+"VAEEncodeForInpaint": {
+"input": {
+"required": {
+"pixels": [
+"IMAGE"
+],
+"vae": [
+"VAE"
+],
+"mask": [
+"MASK"
+],
+"grow_mask_by": [
+"INT",
+{
+"default": 6,
+"min": 0,
+"max": 64
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "nodes",
+"is_output": false
+},
+"VAELoader": {
+"input": {
+"required": {
+"vae_name": [
+"FILE"
+]
+},
+"optional": {}
+},
+"output": [
+"VAE"
+],
+"output_name": [
+"VAE"
+],
+"module": "nodes",
+"is_output": false
+},
+"VoxelToMeshBasic": {
+"input": {
+"required": {
+"voxel": [
+"VOXEL"
+],
+"threshold": [
+"FLOAT",
+{
+"default": 0.6,
+"min": -1.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MESH"
+],
+"output_name": [
+"MESH"
+],
+"module": "comfy_extras.nodes_hunyuan3d",
+"is_output": false
+},
+"Wan22ImageToVideoLatent": {
+"input": {
+"required": {
+"vae": [
+"VAE"
+],
+"width": [
+"INT",
+{
+"default": 1280,
+"min": 32,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 704,
+"min": 32,
+"max": 16384
+}
+],
+"length": [
+"INT",
+{
+"default": 49,
+"min": 1,
+"max": 16384
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+]
+},
+"optional": {
+"start_image": [
+"IMAGE"
+]
+}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "comfy_extras.nodes_wan",
+"is_output": false
+}
+}

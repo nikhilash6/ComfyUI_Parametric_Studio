@@ -10,5 +10,7 @@
  "code_refs": [
   "comfy/samplers.py:cfg_function",
   "comfy/samplers.py:sampling_function"
- ]
+ ],
+ "track": "guidance",
+ "order": 10
 }

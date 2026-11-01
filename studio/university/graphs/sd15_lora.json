@@ -1,0 +1,138 @@
+{
+ "meta": {
+  "title": "Load a LoRA",
+  "about": "The most common mistake is wiring the original CLIP past the loader.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader.",
+   "A LoRA for SD 1.5 in models/loras, made by you or by someone you trust."
+  ],
+  "packs": [],
+  "notes": {
+   "5": "Patches the denoiser and the text encoder. Everything after it must use its outputs.",
+   "6": "Encoded with the patched text encoder, not the original."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "3": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "5": {
+   "class_type": "LoraLoader",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "clip": [
+     "1",
+     1
+    ],
+    "lora_name": "your_lora.safetensors",
+    "strength_model": 0.8,
+    "strength_clip": 0.8
+   }
+  },
+  "6": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "5",
+     1
+    ]
+   }
+  },
+  "7": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "5",
+     1
+    ]
+   }
+  },
+  "8": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "5",
+     0
+    ],
+    "seed": 424242,
+    "steps": 20,
+    "cfg": 7.0,
+    "sampler_name": "euler",
+    "scheduler": "karras",
+    "positive": [
+     "6",
+     0
+    ],
+    "negative": [
+     "7",
+     0
+    ],
+    "latent_image": [
+     "4",
+     0
+    ],
+    "denoise": 1.0
+   }
+  },
+  "9": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "8",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "10": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "9",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

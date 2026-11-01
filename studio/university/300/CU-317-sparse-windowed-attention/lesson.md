@@ -6,13 +6,13 @@
 
 Welcome back. You have mastered the standard dot-product attention in CU-304. You know that for a sequence of length $L$, the computational cost is $O(L^2)$. This is the tax we pay for global context. Every token looks at every other token. It is elegant. It is also expensive.
 
-In modern architectures—whether you are running SDXL, SD3, or 3D generation models like Trellis2—this quadratic scaling becomes a bottleneck. We need to be selective. We need to decide who attends to whom. This lesson covers **Sparse** and **Windowed** attention. These are not just optimizations; they are architectural choices that alter the very structure of the attention matrix. We trade some global connectivity for computational efficiency and memory savings. If you cannot manage this trade-off, you cannot build scalable generative systems.
+In modern architectures, whether you are running SDXL, SD3, or 3D generation models like Trellis2, this quadratic scaling becomes a bottleneck. We need to be selective. We need to decide who attends to whom. This lesson covers **Sparse** and **Windowed** attention. These are not just optimizations; they are architectural choices that alter the very structure of the attention matrix. We trade some global connectivity for computational efficiency and memory savings. If you cannot manage this trade-off, you cannot build scalable generative systems.
 
 ## The intuition
 
 Imagine a room full of people (tokens). In full attention, everyone talks to everyone. It is chaotic and slow.
 
-**Windowed Attention** is like a conversation circle. Each person only talks to their immediate neighbors—say, the two people to their left and themselves. They ignore the rest of the room. This captures local context (syntax, local texture) but misses long-range dependencies (global structure, semantic consistency).
+**Windowed Attention** is like a conversation circle. Each person only talks to their immediate neighbors, say, the two people to their left and themselves. They ignore the rest of the room. This captures local context (syntax, local texture) but misses long-range dependencies (global structure, semantic consistency).
 
 **Sparse Attention** is more selective. It is not necessarily about neighbors. It might be that everyone only talks to the people wearing red shirts (even-indexed tokens), or only to specific "expert" tokens. This creates a structured sparsity in the attention matrix. It is efficient because we do not compute scores for pairs that are masked out.
 

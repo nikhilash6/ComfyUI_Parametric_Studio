@@ -9,5 +9,7 @@
   "CU-401"
  ],
  "status": "draft",
- "code_refs": []
+ "code_refs": [],
+ "track": "automation",
+ "order": 30
 }

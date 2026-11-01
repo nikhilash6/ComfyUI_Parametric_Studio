@@ -25,3 +25,9 @@ def test_a_bypassed_node_hands_its_input_through():
     ui = {"nodes": [{"id": 1, "type": "Src", "outputs": [{"type": "IMAGE"}]}, {"id": 2, "type": "Fx", "mode": 4, "inputs": [{"name": "image", "type": "IMAGE", "link": 10}], "outputs": [{"type": "IMAGE"}]}, {"id": 3, "type": "Dst", "inputs": [{"name": "image", "type": "IMAGE", "link": 11}]}], "links": [[10, 1, 0, 2, 0, "IMAGE"], [11, 2, 0, 3, 0, "IMAGE"]]}
     g, p = ui_to_api(ui, OI2)
     assert not p and "2" not in g and g["3"]["inputs"]["image"] == ["1", 0]
+def test_colour_and_viewport_widgets_keep_their_slot():
+    oi = {"RenderSplat": {"input": {"required": {"splat": ["SPLAT", {}], "width": ["INT", {}], "render_style": ["COMBO", {"options": ["color"]}], "background": ["COLOR", {"default": "#000000", "socketless": True}]}}},
+          "Save3DAdvanced": {"input": {"required": {"model_3d": ["FILE_3D", {}], "filename_prefix": ["STRING", {}], "viewport_state": ["LOAD_3D", {}], "width": ["INT", {}], "height": ["INT", {}]}}}}
+    g, p = ui_to_api({"nodes": [node(1, "RenderSplat", [512, "color", "#848484"]), node(2, "Save3DAdvanced", ["3d/x", "", 1024, 768])], "links": []}, oi)
+    assert not p and g["1"]["inputs"]["background"] == "#848484"
+    assert (g["2"]["inputs"]["viewport_state"], g["2"]["inputs"]["width"], g["2"]["inputs"]["height"]) == ("", 1024, 768)

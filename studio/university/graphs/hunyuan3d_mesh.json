@@ -1,0 +1,123 @@
+{
+ "meta": {
+  "title": "Image to mesh with core nodes",
+  "about": "A sampler again, then a mesh step at the end.",
+  "runs": "model",
+  "needs": [
+   "A Hunyuan3D 2 checkpoint in models/checkpoints. Not on our test box, so we validated this graph but did not run it."
+  ],
+  "packs": [],
+  "notes": {
+   "1": "This loader returns a vision encoder rather than a text encoder.",
+   "7": "Decodes the latent to a grid of occupancy values.",
+   "8": "Turns the grid into triangles at a threshold.",
+   "9": "Writes a GLB you can open in the 3D tab."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "ImageOnlyCheckpointLoader",
+   "inputs": {
+    "ckpt_name": "hunyuan3d-dit-v2_fp16.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "3": {
+   "class_type": "CLIPVisionEncode",
+   "inputs": {
+    "clip_vision": [
+     "1",
+     1
+    ],
+    "image": [
+     "2",
+     0
+    ],
+    "crop": "center"
+   }
+  },
+  "4": {
+   "class_type": "Hunyuan3Dv2Conditioning",
+   "inputs": {
+    "clip_vision_output": [
+     "3",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "EmptyLatentHunyuan3Dv2",
+   "inputs": {
+    "resolution": 3072,
+    "batch_size": 1
+   }
+  },
+  "6": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "seed": 424242,
+    "steps": 30,
+    "cfg": 5.5,
+    "sampler_name": "euler",
+    "scheduler": "normal",
+    "positive": [
+     "4",
+     0
+    ],
+    "negative": [
+     "4",
+     1
+    ],
+    "latent_image": [
+     "5",
+     0
+    ],
+    "denoise": 1.0
+   }
+  },
+  "7": {
+   "class_type": "VAEDecodeHunyuan3D",
+   "inputs": {
+    "samples": [
+     "6",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ],
+    "num_chunks": 8000,
+    "octree_resolution": 256
+   }
+  },
+  "8": {
+   "class_type": "VoxelToMeshBasic",
+   "inputs": {
+    "voxel": [
+     "7",
+     0
+    ],
+    "threshold": 0.6
+   }
+  },
+  "9": {
+   "class_type": "SaveGLB",
+   "inputs": {
+    "mesh": [
+     "8",
+     0
+    ],
+    "filename_prefix": "3d/university"
+   }
+  }
+ }
+}

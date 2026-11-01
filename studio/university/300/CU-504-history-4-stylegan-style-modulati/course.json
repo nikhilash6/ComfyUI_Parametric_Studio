@@ -13,5 +13,7 @@
   "comfy/ldm/modules/diffusionmodules/mmdit.py:def modulate",
   "comfy/ldm/modules/diffusionmodules/mmdit.py:class DismantledBlock",
   "comfy/ldm/modules/diffusionmodules/openaimodel.py:use_scale_shift_norm"
- ]
+ ],
+ "track": "history",
+ "order": 40
 }

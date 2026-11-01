@@ -1,0 +1,43 @@
+{
+ "meta": {
+  "title": "Your first graph, no model needed",
+  "about": "Three nodes and no model. It runs on any machine in under a second.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "Makes a solid image. The colour is one number, 0xF5C518 here.",
+   "2": "Flips every channel: 1 minus the value.",
+   "3": "An output node. Without it nothing runs."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1,
+    "color": 16106776
+   }
+  },
+  "2": {
+   "class_type": "ImageInvert",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ]
+   }
+  },
+  "3": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "2",
+     0
+    ]
+   }
+  }
+ }
+}

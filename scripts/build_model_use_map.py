@@ -1,0 +1,216 @@
+"""Every file downloaded on 2026-11-01 against what uses it. Reads the fetch plans, the disk, ComfyUI's model folders and every graph the studio can reach, and writes one row per file.
+A file's status is earned: rendered (a graph naming it finished on this box), graph (a graph names it, not run), reachable (a loader can see it, nothing uses it), unreachable (nothing can see it), not_on_disk.
+What a model does comes from its model card when the card was read (--cards), and says so when it was not. Run: python scripts/build_model_use_map.py --out worker/MODEL_USE_MAP_2026-11-01.tsv"""
+import argparse, csv, json, os, re, sys, urllib.parse, urllib.request
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+PLANS = ("3d_models", "three", "3d2", "small", "families", "fibo", "hyenc", "ming", "layout", "prio")
+COLUMNS = ["file", "gb", "repo", "path_in_repo", "on_disk", "disk_path", "function", "family", "does", "does_source", "status", "used_by", "proof", "next_step", "sha"]
+#: Non-ComfyUI runners that read a model folder directly: what the file is read by, from each tool's own launcher.
+RUNNERS = [("_complete_pipelines/SAM-3D-Objects/", "tool sam3d-objects, World Kit prop route (worldkit/tools.py sam3d_objects)"),
+           ("3d/sam-3d-objects/", "tool sam3d-objects, World Kit prop route (worldkit/tools.py sam3d_objects)"),
+           ("3d/SkinTokens/", "tool skintokens, World Kit rig step (worldkit/tools.py skintokens)"),
+           ("motion/kimodo/", "tool kimodo, World Kit motion step (worldkit/tools.py kimodo)"),
+           ("motion/text-encoders/", "tool kimodo text encoder, World Kit motion step (worldkit/tools.py kimodo)")]
+
+
+def read_plan(path):
+    with open(path, newline="") as f: return list(csv.DictReader(f, delimiter="\t"))
+
+
+def load_plans(workbench, names=PLANS):
+    """One row per unique file (sha, else repo+path), keeping the first plan that named it."""
+    seen, out = set(), []
+    for n in names:
+        p = Path(workbench) / f"fetch_{n}_now_plan.tsv"
+        if not p.exists(): continue
+        for r in read_plan(p):
+            k = r.get("sha") or (r.get("repo"), r.get("path"))
+            if k in seen: continue
+            seen.add(k); out.append({**r, "plan": n})
+    return out
+
+
+def comfy_folders(yaml_path):
+    """{relative folder: model type} that ComfyUI's extra_model_paths.yaml lists. Line-based so it needs no yaml module."""
+    out, cur = {}, None
+    for ln in open(yaml_path):
+        m = re.match(r"^\s{4}([\w-]+):\s*(\|)?\s*(\S.*)?$", ln)
+        if m and m.group(1) != "base_path":
+            cur = m.group(1)
+            if m.group(3): out[m.group(3).strip().rstrip("/")] = cur
+            continue
+        m = re.match(r"^\s{8}(\S.*)$", ln)
+        if m and cur: out[m.group(1).strip().rstrip("/")] = cur
+    return out
+
+
+def reach(rel, folders):
+    """The ComfyUI model type that can see this path, or ''."""
+    d = os.path.dirname(rel)
+    while d:
+        if d in folders: return folders[d]
+        d = os.path.dirname(d)
+    return ""
+
+
+def on_disk(models_root, row):
+    """-> (exists at full size, its real path). A plan row may name a link; a size under 90% of the plan's is a partial, not a model."""
+    p = Path(models_root) / row["rel"]
+    try:
+        if p.is_file():
+            want = int(row.get("bytes") or 0)
+            return (not want or p.stat().st_size >= want * 0.9), str(p)
+    except (OSError, ValueError): pass
+    return False, str(p)
+
+
+def _walk_strings(x):
+    if isinstance(x, str): yield x
+    elif isinstance(x, dict):
+        for k, v in x.items():
+            yield from _walk_strings(v)
+    elif isinstance(x, list):
+        for v in x: yield from _walk_strings(v)
+
+
+def graph_names(path):
+    """The model-looking file names inside one graph file."""
+    try: d = json.load(open(path, encoding="utf-8"))
+    except (OSError, ValueError): return set()
+    return {os.path.basename(s) for s in _walk_strings(d) if len(s) < 400 and re.search(r"\.(safetensors|ckpt|pt|pth|bin|gguf|sft|onnx)$", s, re.I)}
+
+
+def index_uses(repo_root, template_dir=None):
+    """{file name: [where it is used]} from the studio's graphs, family metadata, World Kit's needs and the shipped ComfyUI templates."""
+    uses = {}
+    def add(name, where):
+        uses.setdefault(os.path.basename(name), [])
+        if where not in uses[os.path.basename(name)]: uses[os.path.basename(name)].append(where)
+    studio = Path(repo_root) / "studio"
+    st = json.load(open(studio / "family_status.json"))["families"]
+    for fam, r in st.items():
+        for t in r.get("templates") or []:
+            for m in t.get("models") or []: add(m["name"], f"family {fam} / {t['name']}")
+    try:
+        for t in json.load(open(studio / "family_templates" / "index.json"))["templates"]:
+            for m in t.get("models") or []: add(m["name"], f"family {t['family']} / {t['name']}")
+    except (OSError, ValueError, KeyError): pass
+    for p in sorted((studio / "family_templates").glob("*.json")):
+        if p.name != "index.json":
+            for n in graph_names(p): add(n, f"studio template {p.stem}")
+    for p in sorted((Path(repo_root) / "workflows").glob("*.json")):
+        for n in graph_names(p): add(n, f"workflow {p.stem}")
+    try:
+        man = json.load(open(studio / "models_manifest.json"))["goals"]
+        for g, r in man.items():
+            for f in r.get("files") or []: add(f.get("dest") or f.get("name") or "", f"goal {g}")
+    except (OSError, ValueError, KeyError): pass
+    for row in json.load(open(studio / "lora_recipes.json"))["loras"]: add(row["path"], f"LoRA recipe {row['id']}")
+    for p in sorted((studio / "recipe_library").glob("*.json")):
+        for n in graph_names(p): add(n, f"recipe list {p.stem}")
+    try:
+        for n in graph_names(studio / "recipes.json"): add(n, "recipes.json")
+    except OSError: pass
+    src = (studio / "worldkit" / "capabilities.py").read_text() if (studio / "worldkit" / "capabilities.py").exists() else ""
+    for key, path in re.findall(r'"(\w+)": \{"label"[^\n]*?\("([^"]+\.(?:safetensors|ckpt|pt|pth|bin))"', src): add(path, f"World Kit need {key}")
+    for path in re.findall(r'\("([^"]+\.(?:safetensors|ckpt|pt|pth|bin))", ', src): add(path, "World Kit capabilities")
+    if template_dir and os.path.isdir(template_dir):
+        for p in sorted(Path(template_dir).glob("*.json")):
+            if p.name.startswith("api_"): continue
+            for n in graph_names(p): add(n, f"ComfyUI template {p.stem}")
+    return uses
+
+
+def proof_index(all_json, status):
+    """{template name: 'proof text'} for templates that finished on this box, from the watcher's results and the recorded media."""
+    out = {}
+    for slug, rec in (all_json.get("families") or {}).items():
+        for t in rec.get("tries") or []:
+            if t.get("status") == "done" and t.get("files"): out[t["template"]] = f"rendered {slug}/{t['template']} ({t.get('wall_s')} s)"
+    for fam, r in status.items():
+        for m in r.get("media") or []:
+            if m.get("tpl") and m.get("own") and not m.get("library"): out.setdefault(m["tpl"], f"rendered {fam}/{m['tpl']} ({m.get('src')})")
+    return out
+
+
+def family_of(row, status_families):
+    m = re.match(r"_complete_pipelines/([^/]+)/", row.get("rel", ""))
+    if m: return m.group(1)
+    repo = row.get("repo", "").lower()
+    for fam, r in status_families.items():
+        if any(x.lower() == repo for x in r.get("repos") or []): return fam
+    return ""
+
+
+def first_paragraph(text):
+    """The first plain sentence of a model card, with its front matter and markup removed."""
+    t = re.sub(r"^---\n.*?\n---\n", "", text or "", flags=re.S)
+    for p in re.split(r"\n\s*\n", t):
+        p = re.sub(r"<[^>]+>|!\[[^\]]*\]\([^)]*\)|\[([^\]]*)\]\([^)]*\)", r"\1", p).strip()
+        if len(p) < 40 or p.startswith(("#", "|", "```", "<", ">", "*", "-")): continue
+        return " ".join(p.split())[:220]
+    return ""
+
+
+def fetch_card(repo, cache_dir):
+    """A repo's model card, cached. -> (description, source)."""
+    c = Path(cache_dir) / (repo.replace("/", "__") + ".md"); c.parent.mkdir(parents=True, exist_ok=True)
+    if not c.exists():
+        try:
+            data = urllib.request.urlopen(f"https://huggingface.co/{urllib.parse.quote(repo)}/raw/main/README.md", timeout=30).read().decode("utf8", "replace")
+        except Exception: data = ""
+        c.write_text(data)
+    text = c.read_text(); d = first_paragraph(text)
+    return (d, f"model card of {repo}") if d else ("", "")
+
+
+def decide(row, ok, reachable, used, proof):
+    """-> (status, next step). Pure."""
+    if not ok: return "not_on_disk", "not landed: check the fetch log before relying on it"
+    if proof: return "rendered", ""
+    if used: return "graph", "a graph names it: run it"
+    if reachable: return "reachable", "a loader can see it but no graph uses it: add a graph or a LoRA recipe"
+    return "unreachable", "no ComfyUI folder lists it and no runner reads it: wire a runner or map the folder"
+
+
+def build(repo_root, models_root, workbench, yaml_path, all_json, template_dir=None, cards=None, plans=PLANS):
+    status = json.load(open(Path(repo_root) / "studio" / "family_status.json"))["families"]
+    from studio.names import model_key
+    uses = index_uses(repo_root, template_dir); by_key = {}
+    for n, w in uses.items(): by_key.setdefault(model_key(n), []).extend(w)
+    folders = comfy_folders(yaml_path); proofs = proof_index(all_json, status); rows = []
+    for r in load_plans(workbench, plans):
+        ok, path = on_disk(models_root, r); name = os.path.basename(r["rel"]); used = list(uses.get(name) or by_key.get(model_key(name)) or [])
+        for pre, label in RUNNERS:
+            if pre in r["rel"] and label not in used: used.append(label)
+        typ = reach(r["rel"], folders)
+        proof = next((proofs[t] for u in used for t in [u.rsplit(" / ", 1)[-1]] if t in proofs), "")
+        st, nxt = decide(r, ok, bool(typ), used, proof)
+        does, src = (fetch_card(r["repo"], cards) if cards else ("", ""))
+        rows.append({"file": name, "gb": round(int(r.get("bytes") or 0) / 1e9, 2), "repo": r["repo"], "path_in_repo": r["path"], "on_disk": "yes" if ok else "no", "disk_path": path, "function": r.get("function", ""), "family": family_of(r, status),
+                     "does": does or f"not read: plan says {r.get('function', '')}", "does_source": src or "plan function only, card not read", "status": st, "used_by": "; ".join(used[:6]) + (f"; +{len(used) - 6} more" if len(used) > 6 else ""), "proof": proof, "next_step": nxt, "sha": r.get("sha", "")})
+    return rows
+
+
+def write_tsv(rows, out):
+    with open(out, "w", newline="") as f:
+        w = csv.DictWriter(f, COLUMNS, delimiter="\t", lineterminator="\n"); w.writeheader(); w.writerows(rows)
+
+
+def main(argv=None):
+    a = argparse.ArgumentParser(); a.add_argument("--out", required=True); a.add_argument("--models", required=True); a.add_argument("--yaml", required=True); a.add_argument("--all-json", required=True); a.add_argument("--cards"); a = a.parse_args(argv)
+    try:
+        import comfyui_workflow_templates_json as t; td = os.path.join(os.path.dirname(t.__file__), "templates")
+    except ImportError: td = None
+    rows = build(ROOT, a.models, os.path.join(a.models, "_workbench"), a.yaml, json.load(open(a.all_json)), td, a.cards)
+    write_tsv(rows, a.out)
+    n = {}
+    for r in rows: n[r["status"]] = n.get(r["status"], 0) + 1
+    print(len(rows), "files:", n)
+
+
+if __name__ == "__main__":
+    main()

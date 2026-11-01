@@ -13,5 +13,7 @@
   "comfy/samplers.py:ddpm",
   "comfy/ldm/modules/diffusionmodules/util.py:sqrt_linear",
   "comfy/model_sampling.py:class ModelSamplingDiscrete"
- ]
+ ],
+ "track": "history",
+ "order": 60
 }

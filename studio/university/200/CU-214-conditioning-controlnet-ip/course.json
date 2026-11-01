@@ -17,5 +17,7 @@
   "comfy/ldm/modules/diffusionmodules/openaimodel.py:apply_control",
   "nodes.py:class StyleModelApply",
   "nodes.py:class unCLIPConditioning"
- ]
+ ],
+ "track": "control",
+ "order": 10
 }

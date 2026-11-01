@@ -13,5 +13,7 @@
   "comfy_execution/graph.py:add_ephemeral_node",
   "execution.py:pending_subgraph_results",
   "app/subgraph_manager.py:SubgraphManager"
- ]
+ ],
+ "track": "custom-nodes",
+ "order": 20
 }

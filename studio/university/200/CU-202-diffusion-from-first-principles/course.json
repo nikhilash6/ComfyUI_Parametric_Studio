@@ -12,5 +12,7 @@
   "comfy/model_sampling.py:ModelSamplingDiscrete",
   "comfy/model_sampling.py:EPS",
   "comfy/ldm/modules/diffusionmodules/util.py:make_beta_schedule"
- ]
+ ],
+ "track": "sampling",
+ "order": 10
 }

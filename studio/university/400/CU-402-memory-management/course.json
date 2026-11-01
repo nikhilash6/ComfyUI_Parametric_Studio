@@ -26,5 +26,7 @@
   "comfy/cli_args.py:enables_dynamic_vram",
   "execution.py:unload_all_models",
   "server.py:/free"
- ]
+ ],
+ "track": "performance",
+ "order": 20
 }

@@ -12,5 +12,7 @@
   "comfy/model_sampling.py:def noise_scaling",
   "nodes.py:def common_ksampler",
   "comfy_extras/nodes_custom_sampler.py:class Noise_RandomNoise"
- ]
+ ],
+ "track": "first-graph",
+ "order": 60
 }

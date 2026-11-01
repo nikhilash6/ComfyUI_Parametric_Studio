@@ -1,0 +1,50 @@
+{
+ "meta": {
+  "title": "Prompts are strings you can wire",
+  "about": "Build a prompt out of parts before any model is loaded.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "3": "Joins the two strings. Feed this to a text encoder's text input.",
+   "4": "Shows the result as text."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "PrimitiveString",
+   "inputs": {
+    "value": "a weathered brass astrolabe"
+   }
+  },
+  "2": {
+   "class_type": "PrimitiveString",
+   "inputs": {
+    "value": "warm window light"
+   }
+  },
+  "3": {
+   "class_type": "StringConcatenate",
+   "inputs": {
+    "string_a": [
+     "1",
+     0
+    ],
+    "string_b": [
+     "2",
+     0
+    ],
+    "delimiter": ", "
+   }
+  },
+  "4": {
+   "class_type": "PreviewAny",
+   "inputs": {
+    "source": [
+     "3",
+     0
+    ]
+   }
+  }
+ }
+}

@@ -6,7 +6,7 @@
 
 In the workshop, we don’t just "look" at a generated image or video to see if it looks "good." We measure it. But here is the hard truth I learned the expensive way: **metrics are not truth.** They are proxies. A high score doesn’t guarantee a good result, and a low score doesn’t always mean a bad one.
 
-In CU-404, we move beyond "does it look like a cat?" to "how do we quantify the distance between what we asked for and what we got?" We will examine two fundamental metrics: **PSNR** (Peak Signal-to-Noise Ratio) and **Structural Correlation** (Pearson Correlation). We will see how they behave under different types of distortion—blur, brightness shifts, and spatial shifts—and why relying on a single number is a recipe for disaster in production pipelines.
+In CU-404, we move beyond "does it look like a cat?" to "how do we quantify the distance between what we asked for and what we got?" We will examine two fundamental metrics: **PSNR** (Peak Signal-to-Noise Ratio) and **Structural Correlation** (Pearson Correlation). We will see how they behave under different types of distortion, blur, brightness shifts, and spatial shifts, and why relying on a single number is a recipe for disaster in production pipelines.
 
 ## The intuition
 

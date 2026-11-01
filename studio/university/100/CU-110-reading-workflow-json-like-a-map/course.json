@@ -13,5 +13,7 @@
   "comfy_execution/graph_utils.py:def is_link",
   "script_examples/basic_api_example.py:def queue_prompt",
   "server.py:json_data[\"prompt\"]"
- ]
+ ],
+ "track": "first-graph",
+ "order": 40
 }

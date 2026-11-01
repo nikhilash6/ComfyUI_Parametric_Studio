@@ -10,5 +10,7 @@
  "code_refs": [
   "comfy/k_diffusion/sampling.py:to_d",
   "comfy/k_diffusion/sampling.py:sample_euler"
- ]
+ ],
+ "track": "noise-latent",
+ "order": 20
 }

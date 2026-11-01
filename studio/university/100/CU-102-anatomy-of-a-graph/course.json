@@ -13,5 +13,36 @@
   "comfy_execution/caching.py:class CacheKeySetInputSignature",
   "nodes.py:class SaveImage",
   "nodes.py:class LoadImage"
+ ],
+ "track": "first-graph",
+ "order": 20,
+ "kit": true,
+ "graphs": [
+  "nm_dead_branch"
+ ],
+ "verified": [
+  {
+   "claim": "The cache key contains the class, constant inputs and ancestors, and no node ids.",
+   "how": "source",
+   "ref": "comfy_execution/caching.py:CacheKeySetInputSignature"
+  },
+  {
+   "claim": "The error names and wording in the lab are taken from validate_inputs and validate_prompt.",
+   "how": "source",
+   "ref": "execution.py:validate_inputs"
+  },
+  {
+   "claim": "LoadImage returns a file hash from IS_CHANGED, and CheckpointLoaderSimple has no such hook.",
+   "how": "source",
+   "ref": "nodes.py:LoadImage.IS_CHANGED"
+  },
+  {
+   "claim": "The dead-branch graph ran here, and its unused node stayed idle.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The list of cache modes is correct for this version's main.py. Later versions may change the default."
  ]
 }

@@ -12,5 +12,7 @@
   "comfy/clip_model.py:class CLIPTextModel_",
   "comfy/sdxl_clip.py:class SDXLClipModel",
   "comfy/text_encoders/flux.py:class FluxClipModel"
- ]
+ ],
+ "track": "first-graph",
+ "order": 70
 }

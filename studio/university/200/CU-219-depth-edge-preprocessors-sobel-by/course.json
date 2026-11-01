@@ -13,5 +13,7 @@
   "comfy/ldm/depth_anything_3/preprocess.py:normalize_depth_v2_style",
   "comfy/ldm/depth_anything_3/preprocess.py:normalize_depth_min_max",
   "comfy_extras/nodes_moge.py:class MoGeInference"
- ]
+ ],
+ "track": "control",
+ "order": 20
 }

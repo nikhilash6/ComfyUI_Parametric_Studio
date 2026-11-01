@@ -13,5 +13,7 @@
   "comfy/ldm/models/autoencoder.py:class DiagonalGaussianRegularizer",
   "comfy/ldm/models/autoencoder.py:class AutoencoderKL",
   "comfy/ldm/modules/distributions/distributions.py:class DiagonalGaussianDistribution"
- ]
+ ],
+ "track": "history",
+ "order": 20
 }

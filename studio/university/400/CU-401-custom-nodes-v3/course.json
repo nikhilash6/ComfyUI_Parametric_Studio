@@ -21,5 +21,7 @@
   "comfy_api/latest/__init__.py:ComfyExtension",
   "nodes.py:comfy_entrypoint",
   "comfy_extras/nodes_lotus.py:get_node_list"
- ]
+ ],
+ "track": "custom-nodes",
+ "order": 10
 }

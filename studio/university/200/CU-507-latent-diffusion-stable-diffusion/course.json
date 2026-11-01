@@ -12,5 +12,7 @@
   "nodes.py:class EmptyLatentImage",
   "comfy/ldm/modules/attention.py:class BasicTransformerBlock",
   "comfy/ldm/modules/attention.py:class CrossAttention"
- ]
+ ],
+ "track": "history",
+ "order": 70
 }

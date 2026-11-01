@@ -27,7 +27,7 @@ Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Win
 | Train | One SDXL LoRA: 300 steps, 40 GiB peak | Any other base |
 | Virtual Set | Blender passes on the CPU. Modes A (H3 and LTX-2.5), B, C and D rendered once each on one street shot | Wan, a pose pass, Qwen keyframes, any other shot |
 | World Kit | Places, looks, library, Godot export, a prop from a mesh, on the CPU with Blender | Every step that needs a model (tested with fakes) |
-| Recipes | 2 of 10 flagships rendered. A library of 740 passes an offline format check, and 474 of its recipes show a result we rendered here (413 pictures, 13 clips, 48 sounds), each from one run. The sounds were checked for level and length, not listened to. More renders are on the way | The other 8 flagships and the rest of the library |
+| Recipes | 2 of 10 flagships rendered. A library of 740 passes an offline format check, and 522 of its recipes show a result we rendered here (458 pictures, 16 clips, 48 sounds), each from one run. The sounds were checked for level and length, not listened to. More renders are on the way | The other 8 flagships and the rest of the library |
 | Sampling Lab | 44 renders on SDXL, SD 1.5 and SD 3.5, and core sampler measurements | Pack entries are read from source, not run |
 | RES4LYF page | A credit page. The pack is not shipped; run separately, of 154 nodes checked 92 rendered, 14 ran and 44 errored | The other nodes in the pack |
 | Families | 82 wired, 41 with a render on record | The other 41 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
@@ -126,13 +126,13 @@ Bring one clip and queue the lot: reshoot it with a new camera, orbit around the
 **RES4LYF** is a credit page for ClownsharkBatwing's pack, which we don't ship. Run separately, of 154 nodes checked, 92 rendered, 14 ran, 44 errored and 4 were skipped or refused. The rest of the pack was not tried.
 
 ### ComfyUniversity
-Levels 100 to 400, from *what happens when you press Queue* to *building and measuring models*: latent space, attention, flow matching, CFG, precision. Each lesson has a lab that runs on your CPU and prints real numbers, and a quiz. Audited lessons cite their sources; the rest carry a visible Draft banner until they earn it. Interactive graph-building walkthroughs are coming soon.
+Levels 100 to 400, from *what happens when you press Queue* to *building and measuring models*: latent space, attention, flow matching, CFG, precision. Each lesson has a lab that runs on your CPU and prints real numbers, and a quiz. Audited lessons cite their sources; the rest carry a visible Draft banner until they earn it. You wire graphs in the browser, with real type checks, and most labs need no GPU.
 
 ### Atlas: the history of generative AI
 More than 130 models across 8 eras, from the first VAEs and GANs to today: what each was, why it mattered, its licence, whether it runs here, and a button to use it.
 
 ### Recipes and processes
-**Recipes** chain models into one click and pass each output along to the next model. 2 of the 10 flagships have been rendered. The library of 740 (621 prompt recipes and 119 LoRA settings) passes an offline format check. 474 of its recipes show a result we rendered here (413 pictures, 13 clips, 48 sounds), each from one run, and more renders are on the way. Without rendering, the page can also read each recipe against your ComfyUI's nodes and your model files. On our box 154 passed that, and most of the rest wait on a model file. **Processes** lists 97 methods, most with guides. Many guides were written for the earlier studio and say so at the top. Most entries open a real tool or family page here today; the rest are marked Coming soon.
+**Recipes** chain models into one click and pass each output along to the next model. 2 of the 10 flagships have been rendered. The library of 740 (621 prompt recipes and 119 LoRA settings) passes an offline format check. 522 of its recipes show a result we rendered here (458 pictures, 16 clips, 48 sounds), each from one run, and more renders are on the way. Without rendering, the page can also read each recipe against your ComfyUI's nodes and your model files. On our box 154 passed that, and most of the rest wait on a model file. **Processes** lists 97 methods, most with guides. Many guides were written for the earlier studio and say so at the top. Most entries open a real tool or family page here today; the rest are marked Coming soon.
 
 ### Apps: every graph in one place
 The 18 studio graphs, the recipes, 53 family templates and ComfyUI's own app templates when that package is installed, searchable, each one click from its form. If a graph needs a model you don't have, its page says what to download.

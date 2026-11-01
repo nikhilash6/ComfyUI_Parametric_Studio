@@ -1,0 +1,611 @@
+[
+{
+"name": "Missing wire",
+"graph": {
+"4": {
+"class_type": "CheckpointLoaderSimple",
+"inputs": {
+"ckpt_name": "v1-5-pruned-emaonly.safetensors"
+}
+},
+"6": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "a brass astrolabe",
+"clip": [
+"4",
+1
+]
+}
+},
+"7": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "blurry",
+"clip": [
+"4",
+1
+]
+}
+},
+"5": {
+"class_type": "EmptyLatentImage",
+"inputs": {
+"width": 512,
+"height": 512,
+"batch_size": 1
+}
+},
+"3": {
+"class_type": "KSampler",
+"inputs": {
+"model": [
+"4",
+0
+],
+"seed": 424242,
+"steps": 20,
+"cfg": 7.0,
+"sampler_name": "euler",
+"scheduler": "karras",
+"positive": [
+"6",
+0
+],
+"latent_image": [
+"5",
+0
+],
+"denoise": 1.0
+}
+},
+"9": {
+"class_type": "VAEDecode",
+"inputs": {
+"samples": [
+"3",
+0
+],
+"vae": [
+"4",
+2
+]
+}
+},
+"8": {
+"class_type": "SaveImage",
+"inputs": {
+"images": [
+"9",
+0
+],
+"filename_prefix": "university"
+}
+}
+}
+},
+{
+"name": "Wrong socket",
+"graph": {
+"4": {
+"class_type": "CheckpointLoaderSimple",
+"inputs": {
+"ckpt_name": "v1-5-pruned-emaonly.safetensors"
+}
+},
+"6": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "a brass astrolabe",
+"clip": [
+"4",
+1
+]
+}
+},
+"7": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "blurry",
+"clip": [
+"4",
+1
+]
+}
+},
+"5": {
+"class_type": "EmptyLatentImage",
+"inputs": {
+"width": 512,
+"height": 512,
+"batch_size": 1
+}
+},
+"3": {
+"class_type": "KSampler",
+"inputs": {
+"model": [
+"4",
+0
+],
+"seed": 424242,
+"steps": 20,
+"cfg": 7.0,
+"sampler_name": "euler",
+"scheduler": "karras",
+"positive": [
+"6",
+0
+],
+"negative": [
+"7",
+0
+],
+"latent_image": [
+"5",
+0
+],
+"denoise": 1.0
+}
+},
+"9": {
+"class_type": "VAEDecode",
+"inputs": {
+"samples": [
+"3",
+0
+],
+"vae": [
+"4",
+0
+]
+}
+},
+"8": {
+"class_type": "SaveImage",
+"inputs": {
+"images": [
+"9",
+0
+],
+"filename_prefix": "university"
+}
+}
+}
+},
+{
+"name": "No output",
+"graph": {
+"4": {
+"class_type": "CheckpointLoaderSimple",
+"inputs": {
+"ckpt_name": "v1-5-pruned-emaonly.safetensors"
+}
+},
+"6": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "a brass astrolabe",
+"clip": [
+"4",
+1
+]
+}
+},
+"7": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "blurry",
+"clip": [
+"4",
+1
+]
+}
+},
+"5": {
+"class_type": "EmptyLatentImage",
+"inputs": {
+"width": 512,
+"height": 512,
+"batch_size": 1
+}
+},
+"3": {
+"class_type": "KSampler",
+"inputs": {
+"model": [
+"4",
+0
+],
+"seed": 424242,
+"steps": 20,
+"cfg": 7.0,
+"sampler_name": "euler",
+"scheduler": "karras",
+"positive": [
+"6",
+0
+],
+"negative": [
+"7",
+0
+],
+"latent_image": [
+"5",
+0
+],
+"denoise": 1.0
+}
+},
+"9": {
+"class_type": "VAEDecode",
+"inputs": {
+"samples": [
+"3",
+0
+],
+"vae": [
+"4",
+2
+]
+}
+}
+}
+},
+{
+"name": "Out of range",
+"graph": {
+"4": {
+"class_type": "CheckpointLoaderSimple",
+"inputs": {
+"ckpt_name": "v1-5-pruned-emaonly.safetensors"
+}
+},
+"6": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "a brass astrolabe",
+"clip": [
+"4",
+1
+]
+}
+},
+"7": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "blurry",
+"clip": [
+"4",
+1
+]
+}
+},
+"5": {
+"class_type": "EmptyLatentImage",
+"inputs": {
+"width": 512,
+"height": 512,
+"batch_size": 1
+}
+},
+"3": {
+"class_type": "KSampler",
+"inputs": {
+"model": [
+"4",
+0
+],
+"seed": 424242,
+"steps": 0,
+"cfg": 7.0,
+"sampler_name": "euler",
+"scheduler": "karras",
+"positive": [
+"6",
+0
+],
+"negative": [
+"7",
+0
+],
+"latent_image": [
+"5",
+0
+],
+"denoise": 1.0
+}
+},
+"9": {
+"class_type": "VAEDecode",
+"inputs": {
+"samples": [
+"3",
+0
+],
+"vae": [
+"4",
+2
+]
+}
+},
+"8": {
+"class_type": "SaveImage",
+"inputs": {
+"images": [
+"9",
+0
+],
+"filename_prefix": "university"
+}
+}
+}
+},
+{
+"name": "Not installed",
+"graph": {
+"4": {
+"class_type": "CheckpointLoaderSimple",
+"inputs": {
+"ckpt_name": "v1-5-pruned-emaonly.safetensors"
+}
+},
+"6": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "a brass astrolabe",
+"clip": [
+"4",
+1
+]
+}
+},
+"7": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "blurry",
+"clip": [
+"4",
+1
+]
+}
+},
+"5": {
+"class_type": "EmptyLatentImage",
+"inputs": {
+"width": 512,
+"height": 512,
+"batch_size": 1
+}
+},
+"3": {
+"class_type": "SuperKSampler",
+"inputs": {
+"model": [
+"4",
+0
+],
+"seed": 424242,
+"steps": 20,
+"cfg": 7.0,
+"sampler_name": "euler",
+"scheduler": "karras",
+"positive": [
+"6",
+0
+],
+"negative": [
+"7",
+0
+],
+"latent_image": [
+"5",
+0
+],
+"denoise": 1.0
+}
+},
+"9": {
+"class_type": "VAEDecode",
+"inputs": {
+"samples": [
+"3",
+0
+],
+"vae": [
+"4",
+2
+]
+}
+},
+"8": {
+"class_type": "SaveImage",
+"inputs": {
+"images": [
+"9",
+0
+],
+"filename_prefix": "university"
+}
+}
+}
+},
+{
+"name": "Bad option",
+"graph": {
+"4": {
+"class_type": "CheckpointLoaderSimple",
+"inputs": {
+"ckpt_name": "v1-5-pruned-emaonly.safetensors"
+}
+},
+"6": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "a brass astrolabe",
+"clip": [
+"4",
+1
+]
+}
+},
+"7": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "blurry",
+"clip": [
+"4",
+1
+]
+}
+},
+"5": {
+"class_type": "EmptyLatentImage",
+"inputs": {
+"width": 512,
+"height": 512,
+"batch_size": 1
+}
+},
+"3": {
+"class_type": "KSampler",
+"inputs": {
+"model": [
+"4",
+0
+],
+"seed": 424242,
+"steps": 20,
+"cfg": 7.0,
+"sampler_name": "euler_magic",
+"scheduler": "karras",
+"positive": [
+"6",
+0
+],
+"negative": [
+"7",
+0
+],
+"latent_image": [
+"5",
+0
+],
+"denoise": 1.0
+}
+},
+"9": {
+"class_type": "VAEDecode",
+"inputs": {
+"samples": [
+"3",
+0
+],
+"vae": [
+"4",
+2
+]
+}
+},
+"8": {
+"class_type": "SaveImage",
+"inputs": {
+"images": [
+"9",
+0
+],
+"filename_prefix": "university"
+}
+}
+}
+},
+{
+"name": "Dangling wire",
+"graph": {
+"4": {
+"class_type": "CheckpointLoaderSimple",
+"inputs": {
+"ckpt_name": "v1-5-pruned-emaonly.safetensors"
+}
+},
+"6": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "a brass astrolabe",
+"clip": [
+"4",
+1
+]
+}
+},
+"7": {
+"class_type": "CLIPTextEncode",
+"inputs": {
+"text": "blurry",
+"clip": [
+"4",
+1
+]
+}
+},
+"5": {
+"class_type": "EmptyLatentImage",
+"inputs": {
+"width": 512,
+"height": 512,
+"batch_size": 1
+}
+},
+"3": {
+"class_type": "KSampler",
+"inputs": {
+"model": [
+"4",
+0
+],
+"seed": 424242,
+"steps": 20,
+"cfg": 7.0,
+"sampler_name": "euler",
+"scheduler": "karras",
+"positive": [
+"99",
+0
+],
+"negative": [
+"7",
+0
+],
+"latent_image": [
+"5",
+0
+],
+"denoise": 1.0
+}
+},
+"9": {
+"class_type": "VAEDecode",
+"inputs": {
+"samples": [
+"3",
+0
+],
+"vae": [
+"4",
+2
+]
+}
+},
+"8": {
+"class_type": "SaveImage",
+"inputs": {
+"images": [
+"9",
+0
+],
+"filename_prefix": "university"
+}
+}
+}
+}
+]

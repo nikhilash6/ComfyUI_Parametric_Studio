@@ -12,5 +12,7 @@
   "comfy/sd.py:def vae_encode_crop_pixels",
   "comfy/sd.py:self.process_output",
   "comfy/model_management.py:def intermediate_dtype"
- ]
+ ],
+ "track": "first-graph",
+ "order": 50
 }

@@ -14,5 +14,7 @@
   "comfy/sd.py:self.memory_used_decode",
   "comfy/ldm/modules/attention.py:def optimized_attention_for_device",
   "execution.py:value_bigger_than_max"
- ]
+ ],
+ "track": "first-graph",
+ "order": 90
 }

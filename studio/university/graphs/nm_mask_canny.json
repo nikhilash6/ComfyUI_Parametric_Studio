@@ -1,0 +1,105 @@
+{
+ "meta": {
+  "title": "Masks and edges without a model",
+  "about": "A soft square, then its edges. Everything a ControlNet preprocessor does starts like this.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "3": "A mask is a single-channel picture of numbers from 0 to 1.",
+   "4": "Fades the mask edge in from each side, in pixels.",
+   "5": "Pastes the source where the mask says, blended by its value.",
+   "7": "The same edge detector a Canny ControlNet would take as input."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1,
+    "color": 1053457
+   }
+  },
+  "2": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 256,
+    "height": 256,
+    "batch_size": 1,
+    "color": 16106776
+   }
+  },
+  "3": {
+   "class_type": "SolidMask",
+   "inputs": {
+    "value": 1.0,
+    "width": 256,
+    "height": 256
+   }
+  },
+  "4": {
+   "class_type": "FeatherMask",
+   "inputs": {
+    "mask": [
+     "3",
+     0
+    ],
+    "left": 64,
+    "top": 64,
+    "right": 64,
+    "bottom": 64
+   }
+  },
+  "5": {
+   "class_type": "ImageCompositeMasked",
+   "inputs": {
+    "destination": [
+     "1",
+     0
+    ],
+    "source": [
+     "2",
+     0
+    ],
+    "x": 128,
+    "y": 128,
+    "resize_source": false,
+    "mask": [
+     "4",
+     0
+    ]
+   }
+  },
+  "6": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "5",
+     0
+    ]
+   }
+  },
+  "7": {
+   "class_type": "Canny",
+   "inputs": {
+    "image": [
+     "5",
+     0
+    ],
+    "low_threshold": 0.1,
+    "high_threshold": 0.3
+   }
+  },
+  "8": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "7",
+     0
+    ]
+   }
+  }
+ }
+}

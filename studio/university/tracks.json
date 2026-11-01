@@ -1,0 +1,123 @@
+{
+ "tracks": [
+  {
+   "slug": "first-graph",
+   "title": "Your first graph",
+   "blurb": "Press Queue and know what happened. Nodes, wires, seeds, files, and how to read a workflow.",
+   "art": "sampling_lab/sampler-euler.jpg"
+  },
+  {
+   "slug": "sampling",
+   "title": "Samplers, schedulers and CFG",
+   "blurb": "The loop at the heart of ComfyUI, the choices it exposes, and what those choices really change.",
+   "art": "sampling_lab/sampler-dpmpp_2m.jpg"
+  },
+  {
+   "slug": "noise-latent",
+   "title": "Noise and latent maths",
+   "blurb": "What a latent is, what noise is doing to it, and the numbers that keep images from breaking.",
+   "art": "sampling_lab/flow-euler-simple.jpg"
+  },
+  {
+   "slug": "guidance",
+   "title": "Guidance",
+   "blurb": "CFG and everything built to fix it: rescale, CFG++, PAG, SAG, Perp-Neg, and embedded guidance.",
+   "art": "sampling_lab/guidance-cfg-14.jpg"
+  },
+  {
+   "slug": "conditioning",
+   "title": "Conditioning",
+   "blurb": "How a prompt reaches the model, and how to mix, time and place several of them.",
+   "art": "res4lyf_renders/flux_regional.jpg"
+  },
+  {
+   "slug": "control",
+   "title": "ControlNet, depth and inpainting",
+   "blurb": "Steer shape, depth and regions with a picture, and keep the rest of the image.",
+   "art": "res4lyf_renders/flux_control.jpg"
+  },
+  {
+   "slug": "lora-training",
+   "title": "LoRAs and training",
+   "blurb": "What a LoRA is as maths, how to load it right, and how to train one with core nodes.",
+   "art": "train_art/lighthouse_lora.webp"
+  },
+  {
+   "slug": "video",
+   "title": "Video: LTX-2.5, MiniMax H3, Wan",
+   "blurb": "Frames, temporal latents, and the three models this studio runs, node by node.",
+   "art": "vset_art/h3_result.webp"
+  },
+  {
+   "slug": "audio",
+   "title": "Audio and Music 3",
+   "blurb": "Waveforms, spectrograms, audio latents, and making songs with MiniMax Music 3.",
+   "art": "showcase/a_score.webp"
+  },
+  {
+   "slug": "three-d",
+   "title": "3D",
+   "blurb": "Meshes, splats and NeRFs, how images become 3D, and the core nodes for it.",
+   "art": "vset_art/ltx_depth.webp"
+  },
+  {
+   "slug": "custom-nodes",
+   "title": "Writing custom nodes",
+   "blurb": "From your first V3 class to lazy inputs, caching rules, expansion and front-end extensions.",
+   "art": "sampling_lab/scheduler-exponential.jpg"
+  },
+  {
+   "slug": "debugging",
+   "title": "Debugging graphs",
+   "blurb": "Read validation errors, black images and NaNs, shape mismatches, and find the cause fast.",
+   "art": "sampling_lab/guidance-cfgpp-1.jpg"
+  },
+  {
+   "slug": "performance",
+   "title": "VRAM and performance",
+   "blurb": "Budget memory, read what the engine is doing, and make slow graphs fast.",
+   "art": "sampling_lab/sampler-lcm.jpg"
+  },
+  {
+   "slug": "packs",
+   "title": "Reading and vetting node packs",
+   "blurb": "Find what a pack really does before it runs on your machine: code, licences and risks.",
+   "art": "sampling_lab/scheduler-beta.jpg"
+  },
+  {
+   "slug": "automation",
+   "title": "The API, apps and agents",
+   "blurb": "Drive ComfyUI from code, put a form on a graph, and let an agent queue work safely.",
+   "art": "sampling_lab/sampler-uni_pc.jpg"
+  },
+  {
+   "slug": "architecture",
+   "title": "Inside the models",
+   "blurb": "Attention, transformers, positions and flows: the machinery under every node.",
+   "art": "sampling_lab/scheduler-kl_optimal.jpg"
+  },
+  {
+   "slug": "research",
+   "title": "Measuring and research",
+   "blurb": "Evaluate outputs honestly, read papers, and keep results you can reproduce.",
+   "art": "sampling_lab/sampler-gradient_estimation.jpg"
+  },
+  {
+   "slug": "history",
+   "title": "How we got here",
+   "blurb": "From GANs to this year's video models, told by the idea each era added.",
+   "art": "sampling_lab/flow-slg.jpg"
+  }
+ ],
+ "hero": [
+  "sampling_lab/sampler-euler.jpg",
+  "sampling_lab/guidance-cfg-14.jpg",
+  "sampling_lab/sampler-lcm.jpg",
+  "sampling_lab/flow-euler-simple.jpg",
+  "res4lyf_renders/flux_regional.jpg",
+  "sampling_lab/guidance-pag-7.jpg",
+  "sampling_lab/scheduler-beta.jpg",
+  "sampling_lab/sampler-dpmpp_2m.jpg",
+  "res4lyf_renders/flux_control.jpg"
+ ]
+}

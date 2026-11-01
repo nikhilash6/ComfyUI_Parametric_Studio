@@ -1,0 +1,147 @@
+{
+ "meta": {
+  "title": "Change the prompt part-way through",
+  "about": "Layout from one prompt, detail from another.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader."
+  ],
+  "packs": [],
+  "notes": {
+   "6": "Active for the first half of the schedule, by percent of model sigmas.",
+   "7": "Active for the second half.",
+   "8": "Holds both. The sampler picks by the current noise level."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "an old stone tower",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "3": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "covered in moss and vines",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "5": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "6": {
+   "class_type": "ConditioningSetTimestepRange",
+   "inputs": {
+    "conditioning": [
+     "2",
+     0
+    ],
+    "start": 0.0,
+    "end": 0.5
+   }
+  },
+  "7": {
+   "class_type": "ConditioningSetTimestepRange",
+   "inputs": {
+    "conditioning": [
+     "3",
+     0
+    ],
+    "start": 0.5,
+    "end": 1.0
+   }
+  },
+  "8": {
+   "class_type": "ConditioningCombine",
+   "inputs": {
+    "conditioning_1": [
+     "6",
+     0
+    ],
+    "conditioning_2": [
+     "7",
+     0
+    ]
+   }
+  },
+  "9": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "seed": 424242,
+    "steps": 20,
+    "cfg": 7.0,
+    "sampler_name": "euler",
+    "scheduler": "karras",
+    "positive": [
+     "8",
+     0
+    ],
+    "negative": [
+     "4",
+     0
+    ],
+    "latent_image": [
+     "5",
+     0
+    ],
+    "denoise": 1.0
+   }
+  },
+  "10": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "9",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "11": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "10",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

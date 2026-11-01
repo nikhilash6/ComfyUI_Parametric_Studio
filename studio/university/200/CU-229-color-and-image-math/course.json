@@ -15,5 +15,7 @@
   "comfy_extras/nodes_post_processing.py:class Blend",
   "comfy_extras/nodes_images.py:srgb_to_linear",
   "comfy_extras/nodes_images.py:class ImageColorSpace"
- ]
+ ],
+ "track": "noise-latent",
+ "order": 60
 }

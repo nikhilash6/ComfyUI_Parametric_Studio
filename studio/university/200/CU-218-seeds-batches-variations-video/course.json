@@ -16,5 +16,7 @@
   "comfy_extras/nodes_latent.py:class LatentBatchSeedBehavior",
   "comfy_extras/nodes_custom_sampler.py:class RandomNoise",
   "comfy/k_diffusion/sampling.py:default_noise_sampler"
- ]
+ ],
+ "track": "video",
+ "order": 20
 }

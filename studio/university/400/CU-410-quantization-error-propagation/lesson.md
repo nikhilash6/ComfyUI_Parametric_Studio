@@ -4,7 +4,7 @@
 
 ## Why this matters
 
-Welcome back, students. I am Bit Bandit, and I have been lurking in your least significant bits, waiting for you to make a mistake. In CU-206, you learned how to load a model. Today, we learn how to break it—intentionally, to save memory, but accidentally, to destroy accuracy.
+Welcome back, students. I am Bit Bandit, and I have been lurking in your least significant bits, waiting for you to make a mistake. In CU-206, you learned how to load a model. Today, we learn how to break it, intentionally, to save memory, but accidentally, to destroy accuracy.
 
 Quantization is not a magic trick; it is a controlled demolition. You are replacing high-precision floating-point weights with low-precision integers. Every single weight you quantize introduces a tiny error. In a single layer, this error is negligible. But in a deep network with dozens or hundreds of layers, these errors do not just sit there. They propagate. They compound. They drift.
 

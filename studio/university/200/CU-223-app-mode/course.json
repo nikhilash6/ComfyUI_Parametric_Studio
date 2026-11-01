@@ -8,5 +8,7 @@
  ],
  "char": "graph",
  "hook": "App Mode shows chosen inputs and outputs of a workflow as a simple form. The graph underneath does not change.",
- "code_refs": []
+ "code_refs": [],
+ "track": "automation",
+ "order": 20
 }

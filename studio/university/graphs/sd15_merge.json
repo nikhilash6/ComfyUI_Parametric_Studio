@@ -1,0 +1,61 @@
+{
+ "meta": {
+  "title": "Merge two checkpoints",
+  "about": "A blend, written to disk.",
+  "runs": "model",
+  "needs": [
+   "Two checkpoints of the same architecture."
+  ],
+  "packs": [],
+  "notes": {
+   "3": "Blends every matching weight. Merge unquantized files, then quantize the result.",
+   "4": "Writes the merged file. It is an output node with no outputs."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "another_sd15_model.safetensors"
+   }
+  },
+  "3": {
+   "class_type": "ModelMergeSimple",
+   "inputs": {
+    "model1": [
+     "1",
+     0
+    ],
+    "model2": [
+     "2",
+     0
+    ],
+    "ratio": 0.5
+   }
+  },
+  "4": {
+   "class_type": "CheckpointSave",
+   "inputs": {
+    "model": [
+     "3",
+     0
+    ],
+    "clip": [
+     "1",
+     1
+    ],
+    "vae": [
+     "1",
+     2
+    ],
+    "filename_prefix": "checkpoints/merged"
+   }
+  }
+ }
+}

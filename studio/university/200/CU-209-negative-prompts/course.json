@@ -11,5 +11,7 @@
   "comfy/samplers.py:cfg_function",
   "comfy/samplers.py:sampling_function",
   "nodes.py:KSampler"
- ]
+ ],
+ "track": "guidance",
+ "order": 20
 }

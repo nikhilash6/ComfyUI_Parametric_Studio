@@ -36,6 +36,14 @@ The server receives the graph as a dict from node id to `class_type` and `inputs
 
 How long results stay is a launch option, chosen in `main.py` from flags in `comfy/cli_args.py`. The default keeps results until system RAM runs short. `--cache-classic` keeps only what the latest graph used, `--cache-lru N` keeps N results, and `--cache-none` runs every node every time. One more trap is the seed widget's "control after generate" setting. The KSampler documentation lists Random, Inc, Dec and Keep, and with a random choice the seed changes after each queue, so the KSampler and everything after it run again every time.
 
+## Predict it yourself
+
+Before you read the table in the lab, try the rule on the classic graph. The answers come from a walk along the wires, the same one the cache key encodes.
+
+{{play:cache}}
+
+{{graph:nm_dead_branch}}
+
 ## Lab
 
 The lab is a small engine that follows these rules on the classic seven-node text-to-image graph, plus an eighth node wired to nothing. No model runs, and every result is a label, so you can check each count by hand. Each row changes one more thing than the row above it, and the cache keeps what the earlier rows stored.
@@ -76,6 +84,14 @@ no output node                     prompt_no_outputs  |  Prompt has no outputs
 ```
 
 These are the error names and wording `validate_prompt` uses. The real function also checks value ranges and list membership, which the lab skips.
+
+## What goes wrong
+
+- **"I changed something and nothing re-ran."** The change did not reach this node's key. An edit on a branch that doesn't feed this output is invisible to it.
+- **"I replaced a file on disk and got the old result."** `CheckpointLoaderSimple` has no change hook, so a new file under the same name keeps its old key until you restart or clear the cache. `LoadImage` hashes its file and does notice.
+- **Random nodes that won't re-randomise.** A node's seed is an input. If the value doesn't change, the key doesn't either. That's what `control_after_generate` in the editor is for.
+- **Two wires of the same type swapped.** Validation only compares types. Positive and negative prompts can be crossed with no complaint at all.
+- **A graph that loops.** `dependency_cycle` means a chain of wires returns to where it started. Only one path needs to be broken.
 
 ## What the lab leaves out
 

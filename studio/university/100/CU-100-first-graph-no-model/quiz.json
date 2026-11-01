@@ -1,0 +1,11 @@
+{
+ "code": "CU-100",
+ "title": "Your first graph, with no model at all",
+ "level": "100",
+ "questions": [
+  {"q": "A node on your canvas did nothing when you pressed Queue, and there is no error. What is the most likely reason?", "options": ["Its output never reaches an output node", "It needs a GPU", "The seed was wrong", "ComfyUI only runs the first nodes you added"], "answer": "Its output never reaches an output node", "why": "The engine starts from output nodes and pulls backwards. A node with no path to one is never started."},
+  {"q": "You connect your negative prompt to the positive socket of KSampler. What happens?", "options": ["Validation refuses it", "It runs, and the picture is wrong", "The editor deletes the wire", "ComfyUI swaps them for you"], "answer": "It runs, and the picture is wrong", "why": "Both carry CONDITIONING, so types match. Types can't catch a wire that is legal but silly."},
+  {"q": "What does the number 0xF5C518 mean to EmptyImage?", "options": ["A seed", "Red 245, green 197, blue 24 packed into one number", "A model hash", "A file name"], "answer": "Red 245, green 197, blue 24 packed into one number", "why": "generate() shifts out each byte and divides by 255."},
+  {"q": "You delete SaveImage from a graph and press Queue. What does the server say?", "options": ["Nothing, it runs anyway", "Prompt has no outputs", "Out of memory", "Value not in list"], "answer": "Prompt has no outputs", "why": "validate_prompt collects output nodes first. With none, it stops there."}
+ ]
+}

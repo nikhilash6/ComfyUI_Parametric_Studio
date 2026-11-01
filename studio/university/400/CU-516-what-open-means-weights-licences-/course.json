@@ -6,5 +6,7 @@
  "code": "CU-516",
  "prereq": [],
  "status": "draft",
- "code_refs": []
+ "code_refs": [],
+ "track": "packs",
+ "order": 10
 }

@@ -26,5 +26,7 @@
   "execution.py:execution_error",
   "execution.py:execution_interrupted",
   "script_examples/websockets_api_example.py:get_images"
- ]
+ ],
+ "track": "automation",
+ "order": 10
 }

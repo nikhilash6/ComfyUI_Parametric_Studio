@@ -17,5 +17,7 @@
   "comfy_extras/nodes_video.py:class CreateVideo",
   "comfy/sd.py:class VAE",
   "comfy/ldm/wan/model.py:patch_size"
- ]
+ ],
+ "track": "video",
+ "order": 10
 }

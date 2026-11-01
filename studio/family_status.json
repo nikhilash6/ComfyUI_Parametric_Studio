@@ -35,6 +35,30 @@
 "own": true,
 "kind": "audio",
 "src": "families/ace-step-1-5_0.mp3"
+},
+{
+"id": "fam_ace-step-1-5_1",
+"prompt": "ACE-Step 1.5 Music Generation Workflow",
+"seconds": 25.3,
+"tpl": "audio_ace_step_1_5_split",
+"own": true,
+"kind": "audio",
+"src": "families/ace-step-1-5_1.mp3",
+"model": "acestep_v1.5_turbo.safetensors",
+"seed": 770067412,
+"peak_vram_gib": 6.9
+},
+{
+"id": "fam_ace-step-1-5_2",
+"prompt": "ACE-Step 1.5 Music Generation (4B LLM )",
+"seconds": 25.3,
+"tpl": "audio_ace_step_1_5_split_4b",
+"own": true,
+"kind": "audio",
+"src": "families/ace-step-1-5_2.mp3",
+"model": "acestep_v1.5_turbo.safetensors",
+"seed": 1490792022,
+"peak_vram_gib": 14.5
 }
 ],
 "templates": [
@@ -371,6 +395,63 @@
 "poster": "families/anima_2.webp",
 "w": 720,
 "h": 411
+},
+{
+"id": "fam_anima_3",
+"prompt": "Anima Base: Text to Image",
+"seconds": 20.2,
+"tpl": "anima_base_t2i",
+"own": true,
+"kind": "image",
+"src": "families/anima_3.webp",
+"poster": "families/anima_3.webp",
+"w": 640,
+"h": 640,
+"model": "anima-base-v1.0.safetensors",
+"seed": 1632150304
+},
+{
+"id": "fam_anima_4",
+"prompt": "Anima Aesthetic: Text to Image",
+"seconds": 20.2,
+"tpl": "anima_aesthetic_t2i",
+"own": true,
+"kind": "image",
+"src": "families/anima_4.webp",
+"poster": "families/anima_4.webp",
+"w": 640,
+"h": 640,
+"model": "anima-aesthetic-v1.1.safetensors",
+"seed": 1365366521
+},
+{
+"id": "fam_anima_5",
+"prompt": "Anima Turbo: Text to Image",
+"seconds": 15.6,
+"tpl": "anima_turbo_t2i",
+"own": true,
+"kind": "image",
+"src": "families/anima_5.webp",
+"poster": "families/anima_5.webp",
+"w": 640,
+"h": 640,
+"model": "anima-turbo-v1.1.safetensors",
+"seed": 227627257
+},
+{
+"id": "fam_anima_6",
+"prompt": "Anima Anime Text-to-Image Generation",
+"seconds": 25.4,
+"tpl": "image_anima_preview",
+"own": true,
+"kind": "image",
+"src": "families/anima_6.webp",
+"poster": "families/anima_6.webp",
+"w": 640,
+"h": 640,
+"model": "anima-preview3-base.safetensors",
+"seed": 1484452900,
+"peak_vram_gib": 6.4
 }
 ],
 "templates": [
@@ -876,6 +957,20 @@
 "poster": "families/dwpose_0.webp",
 "w": 720,
 "h": 398
+},
+{
+"id": "fam_dwpose_1",
+"prompt": "DWPose: Image to Pose",
+"seconds": 20.2,
+"tpl": "dwpose_image_to_pose",
+"own": true,
+"kind": "image",
+"src": "families/dwpose_1.webp",
+"poster": "families/dwpose_1.webp",
+"w": 640,
+"h": 354,
+"model": null,
+"seed": 2084022029
 }
 ],
 "templates": []
@@ -1030,21 +1125,58 @@
 ],
 "what": "Bria's image model, one 8B network for instruction-based editing and text-to-image, trained on long structured captions. Weights are non-commercial only (CC BY-NC 4.0); commercial use needs a separate agreement with Bria.",
 "what_source": "notes",
-"level": "untested",
-"test": {},
+"level": "render",
+"test": {
+"tpl": "fibo2_dev_t2i",
+"render": "ok",
+"tested": "2026-11-01",
+"secs": 45.5,
+"note": "fibo2_dev_t2i rendered on this box 2026-11-01 (seed 122453447, model fibo2_dev_int8_convrot.safetensors)"
+},
 "media": [
 {
-"id": "lib_fibo-2-0",
+"id": "fam_fibo-2-0_0",
+"prompt": "FIBO 2.0 Dev: Text to Image",
+"seconds": 45.5,
+"tpl": "fibo2_dev_t2i",
+"own": true,
 "kind": "image",
-"src": "families/lib_fibo-2-0.webp",
-"poster": "families/lib_fibo-2-0.webp",
-"w": 400,
-"h": 400,
-"prompt": "Fibo 2.0 Dev: Image Edit: sample from ComfyUI's template library",
+"src": "families/fibo-2-0_0.webp",
+"poster": "families/fibo-2-0_0.webp",
+"w": 640,
+"h": 640,
+"model": "fibo2_dev_int8_convrot.safetensors",
+"seed": 122453447
+},
+{
+"id": "fam_fibo-2-0_1",
+"prompt": "Fibo 2.0 Dev: Image Edit",
+"seconds": 130.1,
 "tpl": "image_fibo2_edit_dev_pe",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"own": true,
+"kind": "image",
+"src": "families/fibo-2-0_1.webp",
+"poster": "families/fibo-2-0_1.webp",
+"w": 640,
+"h": 354,
+"model": "fibo2_dev_int8_convrot.safetensors",
+"seed": 1120158455,
+"peak_vram_gib": 27.3
+},
+{
+"id": "fam_fibo-2-0_2",
+"prompt": "Fibo 2.0 Turbo: Image Edit",
+"seconds": 82.9,
+"tpl": "image_fibo2_edit_turbo_pe",
+"own": true,
+"kind": "image",
+"src": "families/fibo-2-0_2.webp",
+"poster": "families/fibo-2-0_2.webp",
+"w": 640,
+"h": 354,
+"model": "fibo2_edit_turbo_int8_convrot.safetensors",
+"seed": 1398774073,
+"peak_vram_gib": 25.9
 }
 ],
 "templates": [
@@ -1318,6 +1450,20 @@
 "poster": "families/flux-1_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_flux-1_2",
+"prompt": "Flux 1 Schnell: Text to Image (tuned)",
+"seconds": 25.2,
+"tpl": "flux1_schnell_t2i",
+"own": true,
+"kind": "image",
+"src": "families/flux-1_2.webp",
+"poster": "families/flux-1_2.webp",
+"w": 640,
+"h": 640,
+"model": "flux1-schnell.safetensors",
+"seed": 1230218750
 }
 ],
 "templates": [
@@ -1882,6 +2028,62 @@
 "w": 640,
 "h": 640,
 "model": "FLUX.2 Klein 4B"
+},
+{
+"id": "fam_flux-2_6",
+"prompt": "Flux 2 Klein 4B Base: Image Edit",
+"seconds": 30.2,
+"tpl": "klein4b_base_edit",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_6.webp",
+"poster": "families/flux-2_6.webp",
+"w": 640,
+"h": 640,
+"model": "flux-2-klein-base-4b.safetensors",
+"seed": 2075612418
+},
+{
+"id": "fam_flux-2_7",
+"prompt": "Flux 2 Klein 4B: Image Edit",
+"seconds": 15.2,
+"tpl": "klein4b_edit",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_7.webp",
+"poster": "families/flux-2_7.webp",
+"w": 640,
+"h": 640,
+"model": "flux-2-klein-4b.safetensors",
+"seed": 1557537473
+},
+{
+"id": "fam_flux-2_8",
+"prompt": "Flux 2 Klein 9B: Image Edit",
+"seconds": 15.2,
+"tpl": "klein9b_edit",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_8.webp",
+"poster": "families/flux-2_8.webp",
+"w": 640,
+"h": 640,
+"model": "flux-2-klein-9b.safetensors",
+"seed": 1357930684
+},
+{
+"id": "fam_flux-2_9",
+"prompt": "Flux 2 Klein 9B: Render to Photo",
+"seconds": 20.2,
+"tpl": "klein9b_mesh2photo",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_9.webp",
+"poster": "families/flux-2_9.webp",
+"w": 640,
+"h": 357,
+"model": "flux-2-klein-9b.safetensors",
+"seed": 401677871
 }
 ],
 "templates": [
@@ -2280,6 +2482,34 @@
 "poster": "families/flux-3-klein_2.webp",
 "w": 720,
 "h": 493
+},
+{
+"id": "fam_flux-3-klein_3",
+"prompt": "Flux 3 Klein nvfp4: Text to Image",
+"seconds": 20.2,
+"tpl": "flux3_klein_nvfp4_t2i",
+"own": true,
+"kind": "image",
+"src": "families/flux-3-klein_3.webp",
+"poster": "families/flux-3-klein_3.webp",
+"w": 640,
+"h": 640,
+"model": "flux3_image_klein_nvfp4.safetensors",
+"seed": 1929350326
+},
+{
+"id": "fam_flux-3-klein_4",
+"prompt": "Flux 3 Klein bf16: Text to Image",
+"seconds": 20.2,
+"tpl": "flux3_klein_bf16_t2i",
+"own": true,
+"kind": "image",
+"src": "families/flux-3-klein_4.webp",
+"poster": "families/flux-3-klein_4.webp",
+"w": 640,
+"h": 640,
+"model": "flux3_image_klein_bf16.safetensors",
+"seed": 662101089
 }
 ],
 "templates": [
@@ -3029,6 +3259,20 @@
 "w": 640,
 "h": 640,
 "model": "Hunyuan Image 2.1"
+},
+{
+"id": "fam_hunyuandit-1-2_3",
+"prompt": "HunyuanDiT 1.2: Text to Image",
+"seconds": 20.2,
+"tpl": "hunyuandit_core_t2i",
+"own": true,
+"kind": "image",
+"src": "families/hunyuandit-1-2_3.webp",
+"poster": "families/hunyuandit-1-2_3.webp",
+"w": 640,
+"h": 640,
+"model": "hunyuan_dit_1.2.safetensors",
+"seed": 1908372649
 }
 ],
 "templates": []
@@ -3559,6 +3803,19 @@
 "poster": "families/kandinsky-5-0-t2i-lite_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_kandinsky-5-0-t2i-lite_2",
+"prompt": "Kandinsky 5.0 Video Lite Image to Video",
+"seconds": 354.6,
+"tpl": "video_kandinsky5_i2v",
+"own": true,
+"kind": "video",
+"src": "families/kandinsky-5-0-t2i-lite_2.mp4",
+"poster": "families/kandinsky-5-0-t2i-lite_2.webp",
+"model": "kandinsky5lite_i2v_5s.safetensors",
+"seed": 593325116,
+"peak_vram_gib": 28.7
 }
 ],
 "templates": [
@@ -3698,26 +3955,44 @@
 ],
 "what": "Generate images with the Krea-2 Turbo model while referencing the style of 1–2 uploaded images, using the high-performance Int8 Convrot format for faster, higher-quality inference. This workflow accepts up to two reference image inputs and produces a single stylized output, with optional LoRA support for further creative control. Ideal for matching a specific artistic style in concept art, produci",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:42:30",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "krea2_turbo_t2i rendered on this box 2026-11-01 (seed 1477558560, model krea2_turbo_bf16.safetensors)",
+"tpl": "krea2_turbo_t2i",
+"render": "ok",
+"secs": 25.3
 },
 "media": [
 {
-"id": "lib_krea2",
+"id": "fam_krea2_0",
+"prompt": "Krea 2 Turbo: Text to Image",
+"seconds": 25.3,
+"tpl": "krea2_turbo_t2i",
+"own": true,
 "kind": "image",
-"src": "families/lib_krea2.webp",
-"poster": "families/lib_krea2.webp",
-"w": 400,
-"h": 400,
-"prompt": "Krea-2 Int8: Image Style Reference: sample from ComfyUI's template library",
-"tpl": "image_krea2_turbo_int8_image_style_reference",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"src": "families/krea2_0.webp",
+"poster": "families/krea2_0.webp",
+"w": 640,
+"h": 640,
+"model": "krea2_turbo_bf16.safetensors",
+"seed": 1477558560
+},
+{
+"id": "fam_krea2_1",
+"prompt": "Krea 2 RAW: Text to Image",
+"seconds": 60.4,
+"tpl": "krea2_raw_t2i",
+"own": true,
+"kind": "image",
+"src": "families/krea2_1.webp",
+"poster": "families/krea2_1.webp",
+"w": 640,
+"h": 640,
+"model": "krea2_raw_bf16.safetensors",
+"seed": 1649154201
 }
 ],
 "templates": [
@@ -3935,6 +4210,20 @@
 "poster": "families/longcat-image_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_longcat-image_2",
+"prompt": "LongCat Image Edit",
+"seconds": 50.2,
+"tpl": "image_longcat_image_edit",
+"own": true,
+"kind": "image",
+"src": "families/longcat-image_2.webp",
+"poster": "families/longcat-image_2.webp",
+"w": 640,
+"h": 357,
+"model": "longcat_image_edit_bf16.safetensors",
+"seed": 2091951459
 }
 ],
 "templates": [
@@ -4868,6 +5157,20 @@
 "w": 640,
 "h": 960,
 "model": "NewBie"
+},
+{
+"id": "fam_lumina-2_3",
+"prompt": "Lumina 2: Text to Image",
+"seconds": 25.2,
+"tpl": "lumina2_core_t2i",
+"own": true,
+"kind": "image",
+"src": "families/lumina-2_3.webp",
+"poster": "families/lumina-2_3.webp",
+"w": 640,
+"h": 640,
+"model": "lumina_2_model_bf16.safetensors",
+"seed": 653991452
 }
 ],
 "templates": [
@@ -4904,44 +5207,14 @@
 ],
 "what": null,
 "what_source": null,
-"level": "render",
+"level": "nodes",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tpl": "wan22_5b_t2v_api",
-"render": "ok",
-"secs": 20.0,
-"peak_gib": 64.0,
-"kind": "video",
 "tested": "07:04:56",
-"note": "repo:wan22_5b_t2v_api (18.1 GB weights, inputs none)"
+"note": "Earlier test ran Wan 2.2 5B text to video, which reads none of Matrix-3D's own weights, so that proved nothing about this model. No runner for Matrix-3D's panorama video and LRM checkpoints exists here yet."
 },
-"media": [
-{
-"id": "fam_matrix-3d_0",
-"prompt": "Matrix-3D test render",
-"seconds": 20.0,
-"peak_vram_gib": 64.0,
-"tpl": "wan22_5b_t2v_api",
-"own": true,
-"kind": "image",
-"src": "families/matrix-3d_0.webp",
-"poster": "families/matrix-3d_0.webp",
-"w": 640,
-"h": 640
-},
-{
-"id": "fam_matrix-3d_1",
-"prompt": "A quiet emerald forest valley at dusk, a single golden lantern glowing on an old stone bridge, drifting mist, volumetric light, dark moody cinematic matte painting",
-"seconds": 20.0,
-"peak_vram_gib": 64.0,
-"tpl": "repo:wan22_5b_t2v_api",
-"own": true,
-"kind": "video",
-"src": "families/matrix-3d_1.mp4",
-"poster": "families/matrix-3d_1.webp"
-}
-],
+"media": [],
 "templates": [
 {
 "name": "video_wan2_2_5B_ti2v",
@@ -5158,6 +5431,17 @@
 "note": "Rendered here through the main ComfyUI with this family's template, not on its own server.",
 "kind": "audio",
 "src": "families/mini-max-music3_1.mp3"
+},
+{
+"id": "fam_mini-max-music3_2",
+"prompt": "MiniMax Music 3: Text to Music",
+"seconds": 65.3,
+"tpl": "audio_minimax_music_3",
+"own": true,
+"kind": "audio",
+"src": "families/mini-max-music3_2.mp3",
+"model": "minimax_music3_dit_fp16.safetensors",
+"seed": 1492752567
 }
 ],
 "templates": [
@@ -5252,6 +5536,56 @@
 "kind": "video",
 "src": "families/minimax-h3_2.mp4",
 "poster": "families/minimax-h3_2.webp"
+},
+{
+"id": "fam_minimax-h3_3",
+"prompt": "MiniMax H3: Text to Image",
+"seconds": 30.2,
+"tpl": "image_minimax_h3_t2i",
+"own": true,
+"kind": "image",
+"src": "families/minimax-h3_3.webp",
+"poster": "families/minimax-h3_3.webp",
+"w": 640,
+"h": 363,
+"model": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+"seed": 919824999
+},
+{
+"id": "fam_minimax-h3_4",
+"prompt": "MiniMax H3: Image to Video",
+"seconds": 70.4,
+"tpl": "video_minimax_h3_i2v",
+"own": true,
+"kind": "video",
+"src": "families/minimax-h3_4.mp4",
+"poster": "families/minimax-h3_4.webp",
+"model": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+"seed": 456992567
+},
+{
+"id": "fam_minimax-h3_5",
+"prompt": "Image to Video",
+"seconds": 80.5,
+"tpl": "video_minimax_h3_i2v_continuation",
+"own": true,
+"kind": "video",
+"src": "families/minimax-h3_5.mp4",
+"poster": "families/minimax-h3_5.webp",
+"model": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+"seed": 1653790520
+},
+{
+"id": "fam_minimax-h3_6",
+"prompt": "MiniMax H3: Text to Video",
+"seconds": 70.4,
+"tpl": "video_minimax_h3_t2v",
+"own": true,
+"kind": "video",
+"src": "families/minimax-h3_6.mp4",
+"poster": "families/minimax-h3_6.webp",
+"model": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+"seed": 880721896
 }
 ],
 "templates": [
@@ -5732,17 +6066,19 @@
 "model": null
 },
 {
-"id": "lib_moss-image",
+"id": "fam_moss-image_1",
+"prompt": "MOSS-Image: Color & Depth Control",
+"seconds": 30.5,
+"tpl": "image_moss_image_color_depth_control",
+"own": true,
 "kind": "image",
-"src": "families/lib_moss-image.webp",
-"poster": "families/lib_moss-image.webp",
-"w": 400,
-"h": 400,
-"prompt": "MOSS-Image Base: Text to Image: sample from ComfyUI's template library",
-"tpl": "image_moss_image_base_t2i",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"src": "families/moss-image_1.webp",
+"poster": "families/moss-image_1.webp",
+"w": 640,
+"h": 357,
+"model": "moss_image_sft_int8_convrot.safetensors",
+"seed": 2083664887,
+"peak_vram_gib": 16.5
 }
 ],
 "templates": [
@@ -6006,6 +6342,20 @@
 "poster": "families/omnigen-2_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_omnigen-2_2",
+"prompt": "OmniGen2 Image Edit",
+"seconds": 30.6,
+"tpl": "image_omnigen2_image_edit",
+"own": true,
+"kind": "image",
+"src": "families/omnigen-2_2.webp",
+"poster": "families/omnigen-2_2.webp",
+"w": 640,
+"h": 353,
+"model": "omnigen2_fp16.safetensors",
+"seed": 1611872186
 }
 ],
 "templates": [
@@ -6351,6 +6701,21 @@
 "poster": "families/pixart-sigma_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_pixart-sigma_2",
+"prompt": "PixArt-Sigma: Text to Image",
+"seconds": 25.7,
+"tpl": "pixart_sigma_core_t2i",
+"own": true,
+"kind": "image",
+"src": "families/pixart-sigma_2.webp",
+"poster": "families/pixart-sigma_2.webp",
+"w": 640,
+"h": 640,
+"model": "pixart-sigma_transformer.safetensors",
+"seed": 1381449878,
+"peak_vram_gib": 12.7
 }
 ],
 "templates": []
@@ -6528,6 +6893,62 @@
 "w": 640,
 "h": 640,
 "model": "Qwen Image 2.1"
+},
+{
+"id": "fam_qwen-image-2-1_4",
+"prompt": "Qwen Image Edit 2509: Image Edit",
+"seconds": 40.3,
+"tpl": "qwen_image_edit_2509_int8",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_4.webp",
+"poster": "families/qwen-image-2-1_4.webp",
+"w": 640,
+"h": 346,
+"model": "qwen_image_edit_2509_int8_convrot.safetensors",
+"seed": 1455213998
+},
+{
+"id": "fam_qwen-image-2-1_5",
+"prompt": "Qwen Image 2.1: Image Edit",
+"seconds": 35.3,
+"tpl": "qwen21_edit",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_5.webp",
+"poster": "families/qwen-image-2-1_5.webp",
+"w": 640,
+"h": 357,
+"model": "qwen_image_2.1_bf16.safetensors",
+"seed": 488187552
+},
+{
+"id": "fam_qwen-image-2-1_6",
+"prompt": "Qwen Image 2.1: Clean Frame",
+"seconds": 25.2,
+"tpl": "qwen21_clean_frame",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_6.webp",
+"poster": "families/qwen-image-2-1_6.webp",
+"w": 640,
+"h": 354,
+"model": "qwen_image_2.1_bf16.safetensors",
+"seed": 663661480
+},
+{
+"id": "fam_qwen-image-2-1_7",
+"prompt": "Qwen Image 2.1 Turbo: Text to Image",
+"seconds": 20.2,
+"tpl": "qwen21_turbo_t2i",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_7.webp",
+"poster": "families/qwen-image-2-1_7.webp",
+"w": 640,
+"h": 640,
+"model": "qwen_image_2.1_turbo_bf16.safetensors",
+"seed": 400294841
 }
 ],
 "templates": [
@@ -7650,6 +8071,20 @@
 "poster": "families/sd15_1.webp",
 "w": 720,
 "h": 480
+},
+{
+"id": "fam_sd15_2",
+"prompt": "SD 1.5: Text to Image",
+"seconds": 15.3,
+"tpl": "sd15_core_t2i",
+"own": true,
+"kind": "image",
+"src": "families/sd15_2.webp",
+"poster": "families/sd15_2.webp",
+"w": 640,
+"h": 427,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 656040316
 }
 ],
 "templates": []
@@ -7870,6 +8305,62 @@
 "poster": "families/sdxl_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_sdxl_2",
+"prompt": "SDXL Turbo",
+"seconds": 15.2,
+"tpl": "sdxlturbo_example",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_2.webp",
+"poster": "families/sdxl_2.webp",
+"w": 512,
+"h": 512,
+"model": "sd_xl_turbo_1.0_fp16.safetensors",
+"seed": 121569347
+},
+{
+"id": "fam_sdxl_3",
+"prompt": "SDXL Refiner Prompt",
+"seconds": 20.2,
+"tpl": "sdxl_refiner_prompt_example",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_3.webp",
+"poster": "families/sdxl_3.webp",
+"w": 640,
+"h": 640,
+"model": "sd_xl_refiner_1.0.safetensors",
+"seed": 619246286
+},
+{
+"id": "fam_sdxl_4",
+"prompt": "SDXL Simple",
+"seconds": 20.2,
+"tpl": "sdxl_simple_example",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_4.webp",
+"poster": "families/sdxl_4.webp",
+"w": 640,
+"h": 640,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 1888044049
+},
+{
+"id": "fam_sdxl_5",
+"prompt": "SDXL Revision: Two Images and Text",
+"seconds": 20.3,
+"tpl": "sdxl_revision_clip_g",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_5.webp",
+"poster": "families/sdxl_5.webp",
+"w": 640,
+"h": 640,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 943181542
 }
 ],
 "templates": [
@@ -8020,26 +8511,32 @@
 ],
 "what": "Upscale images using SeedVR2 3B Int8, a one-step diffusion-based video restoration model that produces high-quality results with improved temporal consistency. Ideal for restoring degraded footage, upscaling low-resolution videos, and enhancing archival media.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1874,
 "psn": 578,
-"tested": "06:44:53",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "utility_seedvr2_3b_int8_upscale_image rendered on this box 2026-11-01 (seed 711374019, model seedvr2_3b_int8_convrot.safetensors)",
+"tpl": "utility_seedvr2_3b_int8_upscale_image",
+"render": "ok",
+"secs": 36.7,
+"peak_gib": 7.1
 },
 "media": [
 {
-"id": "lib_seedvr2",
-"kind": "image",
-"src": "families/lib_seedvr2.webp",
-"poster": "families/lib_seedvr2.webp",
-"w": 400,
-"h": 400,
-"prompt": "Image Upscale: SeedVR2 3B Int8: sample from ComfyUI's template library",
+"id": "fam_seedvr2_0",
+"prompt": "Image Upscale: SeedVR2 3B Int8",
+"seconds": 36.7,
 "tpl": "utility_seedvr2_3b_int8_upscale_image",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"own": true,
+"kind": "image",
+"src": "families/seedvr2_0.webp",
+"poster": "families/seedvr2_0.webp",
+"w": 640,
+"h": 354,
+"model": "seedvr2_3b_int8_convrot.safetensors",
+"seed": 711374019,
+"peak_vram_gib": 7.1
 }
 ],
 "templates": [
@@ -8208,6 +8705,20 @@
 "poster": "families/stable-cascade_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_stable-cascade_2",
+"prompt": "Stable Cascade: Text to Image",
+"seconds": 20.2,
+"tpl": "stable_cascade_core_t2i",
+"own": true,
+"kind": "image",
+"src": "families/stable-cascade_2.webp",
+"poster": "families/stable-cascade_2.webp",
+"w": 640,
+"h": 640,
+"model": "stable_cascade_stage_c.safetensors",
+"seed": 19815550
 }
 ],
 "templates": []
@@ -8558,17 +9069,30 @@
 "model": "RealESRGAN x4"
 },
 {
-"id": "lib_upscale-models",
+"id": "fam_upscale-models_1",
+"prompt": "Image Upscale: Traditional Interpolation",
+"seconds": 15.2,
+"tpl": "utility_interpolation_image_upscale",
+"own": true,
 "kind": "image",
-"src": "families/lib_upscale-models.webp",
-"poster": "families/lib_upscale-models.webp",
-"w": 350,
-"h": 350,
-"prompt": "Video Upscale: Real-ESRGAN: sample from ComfyUI's template library",
+"src": "families/upscale-models_1.webp",
+"poster": "families/upscale-models_1.webp",
+"w": 640,
+"h": 354,
+"model": null,
+"seed": 559517198
+},
+{
+"id": "fam_upscale-models_2",
+"prompt": "Video Upscale: Real-ESRGAN",
+"seconds": 271.6,
 "tpl": "utility-gan_upscaler",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"own": true,
+"kind": "video",
+"src": "families/upscale-models_2.mp4",
+"poster": "families/upscale-models_2.webp",
+"model": "RealESRGAN_x4plus.safetensors",
+"seed": 2014560577
 }
 ],
 "templates": [
@@ -9632,6 +10156,18 @@
 "kind": "video",
 "src": "families/wan2-2_2.mp4",
 "poster": "families/wan2-2_2.webp"
+},
+{
+"id": "fam_wan2-2_3",
+"prompt": "Wan 2.2 5B Video Generation",
+"seconds": 105.4,
+"tpl": "video_wan2_2_5B_ti2v",
+"own": true,
+"kind": "video",
+"src": "families/wan2-2_3.mp4",
+"poster": "families/wan2-2_3.webp",
+"model": "wan2.2_ti2v_5B_fp16.safetensors",
+"seed": 1235565738
 }
 ],
 "templates": [
@@ -10291,26 +10827,29 @@
 ],
 "what": "Create a new version of a song from reference audio with YuE2. Preserve the original melody while changing the musical style, vocals, lyrics, and arrangement.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:46:59",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "audio_yue2_text2music rendered on this box 2026-11-01 (seed 1382777807, model yue2_3b_int8_convrot.safetensors)",
+"tpl": "audio_yue2_text2music",
+"render": "ok",
+"secs": 55.4,
+"peak_gib": 6.9
 },
 "media": [
 {
-"id": "lib_yue2",
-"kind": "image",
-"src": "families/lib_yue2.webp",
-"poster": "families/lib_yue2.webp",
-"w": 400,
-"h": 400,
-"prompt": "YuE2: Music Cover: sample from ComfyUI's template library",
-"tpl": "audio_yue2_music_cover",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"id": "fam_yue2_0",
+"prompt": "YuE2: Text to Music",
+"seconds": 55.4,
+"tpl": "audio_yue2_text2music",
+"own": true,
+"kind": "audio",
+"src": "families/yue2_0.mp3",
+"model": "yue2_3b_int8_convrot.safetensors",
+"seed": 1382777807,
+"peak_vram_gib": 6.9
 }
 ],
 "templates": [
@@ -10410,6 +10949,62 @@
 "poster": "families/z-image_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_z-image_2",
+"prompt": "Z-Image: Text to Image",
+"seconds": 30.2,
+"tpl": "image_z_image",
+"own": true,
+"kind": "image",
+"src": "families/z-image_2.webp",
+"poster": "families/z-image_2.webp",
+"w": 640,
+"h": 640,
+"model": "z_image_bf16.safetensors",
+"seed": 1362767775
+},
+{
+"id": "fam_z-image_3",
+"prompt": "Image Upscale: Z-Image-Turbo 2K",
+"seconds": 30.3,
+"tpl": "utility_z_image_turbo_2k_upscaler.app",
+"own": true,
+"kind": "image",
+"src": "families/z-image_3.webp",
+"poster": "families/z-image_3.webp",
+"w": 640,
+"h": 353,
+"model": "z_image_turbo_bf16.safetensors",
+"seed": 576947157
+},
+{
+"id": "fam_z-image_4",
+"prompt": "Z-Image Base: Text to Image (tuned)",
+"seconds": 30.2,
+"tpl": "zimage_base_t2i",
+"own": true,
+"kind": "image",
+"src": "families/z-image_4.webp",
+"poster": "families/z-image_4.webp",
+"w": 640,
+"h": 640,
+"model": "z_image_bf16.safetensors",
+"seed": 299096694
+},
+{
+"id": "fam_z-image_5",
+"prompt": "Z-Image Turbo: Text to Image (tuned)",
+"seconds": 20.2,
+"tpl": "zimage_turbo_t2i",
+"own": true,
+"kind": "image",
+"src": "families/z-image_5.webp",
+"poster": "families/z-image_5.webp",
+"w": 640,
+"h": 640,
+"model": "z_image_turbo_bf16.safetensors",
+"seed": 1933431873
 }
 ],
 "templates": [

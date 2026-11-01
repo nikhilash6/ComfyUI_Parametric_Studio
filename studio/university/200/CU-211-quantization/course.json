@@ -14,5 +14,7 @@
   "comfy/ops.py:get_disabled_quant_formats",
   "comfy/ops.py:pick_operations",
   "comfy/ops.py:cast_bias_weight"
- ]
+ ],
+ "track": "performance",
+ "order": 40
 }

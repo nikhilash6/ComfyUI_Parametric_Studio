@@ -9,5 +9,7 @@
   "CU-405"
  ],
  "status": "draft",
- "code_refs": []
+ "code_refs": [],
+ "track": "automation",
+ "order": 50
 }

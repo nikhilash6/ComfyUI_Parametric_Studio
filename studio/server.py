@@ -1,7 +1,7 @@
 """Parametric Studio API + web app. One small FastAPI app between the browser (desktop or phone over Tailscale) and a plain ComfyUI.
 Run:  python -m studio.server   (env: COMFYUI_URL=http://127.0.0.1:8200, STUDIO_PORT=8310, STUDIO_HOST=127.0.0.1)
 Open edition: everything generates locally; the only outside calls are the model-catalogue lookups, and downloads happen only after an explicit confirm."""
-import ipaddress, os, re, json, secrets, socket, time, uuid, glob, hashlib, tempfile, urllib.request, urllib.parse, urllib.error
+import ipaddress, os, re, json, secrets, socket, threading, time, uuid, glob, hashlib, tempfile, urllib.request, urllib.parse, urllib.error
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, UploadFile, File, Request
@@ -273,7 +273,27 @@ def course(code: str):
     if not c: raise HTTPException(404, "no such course")
     d = UNI / c["path"]; rd = lambda n: (d / n).read_text(errors="replace") if (d / n).exists() else ""
     q = json.loads(rd("quiz.json") or "{}")
-    return {**c, "lesson": rd("lesson.md"), "lab": rd("lab.py"), "lab_output": rd("lab_output.txt"), "quiz": [{k: v for k, v in x.items()} for x in q.get("questions", [])]}
+    extra = json.loads(rd("course.json") or "{}")
+    graphs = [g for g in (_uni_build().load_graph(i) for i in c.get("graphs", [])) if g]
+    return {**c, "verified": extra.get("verified"), "unchecked": extra.get("unchecked"), "code_refs": extra.get("code_refs", []), "lesson": rd("lesson.md"), "lab": rd("lab.py"), "lab_output": rd("lab_output.txt"), "quiz": [{k: v for k, v in x.items()} for x in q.get("questions", [])], "graphs": graphs}
+
+def _uni_build():
+    from studio.university import build as B
+    return B
+
+_LAB_LOCK = threading.Lock()
+@app.post("/api/university/{code}/run-lab")
+def run_lab(code: str):
+    """Runs the stored lab of one lesson on the CPU, once at a time. Nothing from the request reaches the code: it is the file in the lesson folder."""
+    if not re.fullmatch(r"CU-\d{3}", code): raise HTTPException(400, "bad course code")
+    c = next((c for c in _uni_catalogue()["courses"] if c["code"] == code), None)
+    if not c: raise HTTPException(404, "no such course")
+    if not _LAB_LOCK.acquire(blocking=False): raise HTTPException(409, "another lab is running")
+    try:
+        d = UNI / c["path"]; ok, out, sec, err = _uni_build().run_lab(d / "lab.py")
+        stored = (d / "lab_output.txt").read_text(errors="replace") if (d / "lab_output.txt").exists() else ""
+        return {"ok": ok, "output": out, "seconds": round(sec, 1), "same": ok and out == stored, "error_tail": "" if ok else err[-600:]}
+    finally: _LAB_LOCK.release()
 
 # ---------- Models + catalogue browser
 _MODELS_CACHE: dict = {}

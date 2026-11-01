@@ -4,7 +4,7 @@
 
 ## Why this matters
 
-Ladies and gentlemen, welcome to the lecture hall. Put away your U-Net diagrams. They are charming, but they are relics. For years, we believed that the U-Net architecture was the only way to structure the denoising process. We believed that spatial hierarchy—downsampling, upsampling, skip connections—was mandatory. We were wrong.
+Ladies and gentlemen, welcome to the lecture hall. Put away your U-Net diagrams. They are charming, but they are relics. For years, we believed that the U-Net architecture was the only way to structure the denoising process. We believed that spatial hierarchy, downsampling, upsampling, skip connections, was mandatory. We were wrong.
 
 In this lesson, we examine the seismic shift in generative AI: the replacement of the U-Net backbone with the Diffusion Transformer (DiT). This is not merely an architectural swap; it is a fundamental change in how we view the geometry of generation. We are moving from curved, complex trajectories in latent space to straight, efficient lines. This shift enables scalability that U-Nets simply cannot match, allowing models to grow in depth and width without collapsing under their own complexity. As Madame Attention, I will show you that when you let the transformer attend to every patch, you unlock a new regime of performance.
 

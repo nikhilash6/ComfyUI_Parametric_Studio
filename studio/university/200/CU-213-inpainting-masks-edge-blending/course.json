@@ -20,5 +20,7 @@
   "comfy_extras/nodes_mask.py:FeatherMask",
   "comfy_extras/nodes_mask.py:GrowMask",
   "comfy_extras/nodes_post_processing.py:Blur"
- ]
+ ],
+ "track": "control",
+ "order": 30
 }

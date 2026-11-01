@@ -42,7 +42,7 @@ def test_every_indexed_template_has_a_graph_real_fields_and_no_partner_node():
     assert INDEX
     for t in INDEX:
         g = json.load(open(D / (t["name"] + ".json")))
-        assert A.is_api_graph(g) and t["family"] and t["title"] and t["media"] in ("image", "video") and isinstance(t["models"], list)
+        assert A.is_api_graph(g) and t["family"] and t["title"] and t["media"] in ("image", "video", "3d") and isinstance(t["models"], list)
         assert not [n for n in g.values() if n["class_type"].startswith(("Bria", "Kling", "Runway", "Luma", "Veo", "OpenAI", "Stability", "Gemini"))]
         for m in t["models"]: assert m["name"] and m["dir"]
 
@@ -86,7 +86,7 @@ FIBO_OI = {"UNETLoader": {"input": {"required": {"unet_name": [["fibo2_dev_int8_
 
 def test_fibo2_says_it_is_non_commercial_everywhere_a_user_reads_it():
     root = D.parent; fam = json.load(open(root / "family_status.json", encoding="utf8"))["families"]["Fibo-2.0"]
-    assert "non-commercial" in fam["licence"].lower() and "CC-BY-NC-4.0" in fam["licence"] and "non-commercial" in fam["what"].lower() and fam["slug"] == "fibo-2-0" and fam["level"] == "untested"
+    assert "non-commercial" in fam["licence"].lower() and "CC-BY-NC-4.0" in fam["licence"] and "non-commercial" in fam["what"].lower() and fam["slug"] == "fibo-2-0" and fam["level"] == "render"  # rendered 2026-11-01
     assert [t["name"] for t in fam["templates"]] == ["image_fibo2_edit_dev_pe", "image_fibo2_edit_turbo_pe"] and all(m["gb"] for t in fam["templates"] for m in t["models"])
     t2i = next(t for t in INDEX if t["name"] == "fibo2_dev_t2i"); assert t2i["family"] == "Fibo-2.0" and "non-commercial" in t2i["desc"].lower()
     atlas = next(m for m in json.load(open(root / "atlas_models.json", encoding="utf8"))["models"] if m["family"] == "Fibo-2.0"); assert atlas["licence_class"] == "noncommercial"

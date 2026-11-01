@@ -16,5 +16,7 @@
   "comfy/k_diffusion/sampling.py:get_sigmas_exponential",
   "comfy/model_sampling.py:time_snr_shift",
   "comfy/model_sampling.py:flux_time_shift"
- ]
+ ],
+ "track": "sampling",
+ "order": 30
 }

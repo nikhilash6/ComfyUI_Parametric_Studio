@@ -18,7 +18,7 @@ We will dissect how these representations are generated, decoded, and refined.
 Imagine you are trying to describe a statue to a blind person.
 
 **Strategy A: The Voxel Grid (Trellis2)**
-You hand them a cube made of tiny, sticky notes. Some notes are "solid," some are "empty." To make the statue smooth, you need millions of tiny notes. This is a **Voxel Grid**. It is intuitive but memory-hungry. To save space, we use **Sparse Voxels**—we only store the notes that are "solid" or near the surface.
+You hand them a cube made of tiny, sticky notes. Some notes are "solid," some are "empty." To make the statue smooth, you need millions of tiny notes. This is a **Voxel Grid**. It is intuitive but memory-hungry. To save space, we use **Sparse Voxels**, we only store the notes that are "solid" or near the surface.
 
 **Strategy B: The Gaussian Cloud (TripoSplat)**
 Instead of a grid, you hand them a cloud of fuzzy, colored balloons. Each balloon has a position, a size (scale), a rotation, and a color. If you squint, the cloud looks like a statue. This is **3D Gaussian Splatting**. It is incredibly fast to render because you just project these balloons onto a 2D screen. It is "soft" and volumetric, not a hard surface.
@@ -52,7 +52,7 @@ In `comfy/ldm/triposplat`, the output is not a mesh, but a set of Gaussians. Eac
 *   **Color** $C$: RGB values.
 *   **Opacity** $\alpha$: How transparent it is.
 
-The rendering process projects these 3D Gaussians onto the 2D image plane. The function `render_splat` in `preview.py` takes these parameters and computes the final pixel color by blending the splats based on their depth and opacity. This is why Gaussian Splatting is "real-time"—it avoids the expensive ray-marching of NeRFs.
+The rendering process projects these 3D Gaussians onto the 2D image plane. The function `render_splat` in `preview.py` takes these parameters and computes the final pixel color by blending the splats based on their depth and opacity. This is why Gaussian Splatting is "real-time", it avoids the expensive ray-marching of NeRFs.
 
 ## In ComfyUI
 *   **Trellis2**: Look for nodes related to `SLatFlowModel` or `ShapeVae`. These handle the sparse voxel generation. The `SparseTensor` class is the backbone, storing only non-zero coordinates to save memory.
@@ -77,7 +77,7 @@ RESULT relative_error = 2.02278
 **What each proves:**
 1.  `grid_size = 32`: We used a $32 \times 32 \times 32$ grid. This is a relatively coarse resolution for a smooth sphere.
 2.  `voxel_size = 0.0967742`: The physical size of each voxel. This determines the granularity of our approximation.
-3.  `surface_voxel_count = 1488`: Only 1488 out of $32^3 = 32768$ voxels are considered "surface." This proves the efficiency of the **Narrow Band** approach—we ignore ~95% of the volume.
+3.  `surface_voxel_count = 1488`: Only 1488 out of $32^3 = 32768$ voxels are considered "surface." This proves the efficiency of the **Narrow Band** approach, we ignore ~95% of the volume.
 4.  `estimated_surface_area = 37.9854`: The area calculated by summing the faces of the surface voxels.
 5.  `analytical_surface_area = 12.5664`: The true area of a sphere with radius 1 ($4\pi r^2$).
 6.  `area_ratio = 3.02278`: The voxel-based area is **3 times larger** than the true area. This proves the "Staircase Effect." A coarse grid approximates a smooth curve with flat faces, which adds extra surface area. This is why we need **remeshing** and **smoothing** (like `_taubin_smooth` in the code) to recover the true shape.

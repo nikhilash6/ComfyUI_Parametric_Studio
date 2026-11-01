@@ -16,5 +16,7 @@
   "comfy/ldm/modules/diffusionmodules/openaimodel.py:def apply_control",
   "comfy/controlnet.py:def control_merge",
   "comfy/t2i_adapter/adapter.py:class Adapter"
- ]
+ ],
+ "track": "history",
+ "order": 80
 }

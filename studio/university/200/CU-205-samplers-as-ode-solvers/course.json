@@ -13,5 +13,7 @@
   "comfy/k_diffusion/sampling.py:sample_dpmpp_2m",
   "comfy/k_diffusion/sampling.py:get_sigmas_karras",
   "comfy/samplers.py:KSAMPLER_NAMES"
- ]
+ ],
+ "track": "sampling",
+ "order": 20
 }

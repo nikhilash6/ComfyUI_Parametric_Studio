@@ -1,0 +1,119 @@
+{
+ "meta": {
+  "title": "A flow model: SD 3.5",
+  "about": "Flow models use a shift and a different latent.",
+  "runs": "model",
+  "needs": [
+   "SD 3.5 Medium and its three text encoders."
+  ],
+  "packs": [],
+  "notes": {
+   "3": "Sets how the flow schedule is bent. Larger shift spends more steps at high noise.",
+   "6": "SD3 latents have 16 channels, so it needs its own empty latent node."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "sd3.5_medium.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "TripleCLIPLoader",
+   "inputs": {
+    "clip_name1": "clip_l.safetensors",
+    "clip_name2": "clip_g.safetensors",
+    "clip_name3": "t5xxl_fp16.safetensors"
+   }
+  },
+  "3": {
+   "class_type": "ModelSamplingSD3",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "shift": 3.0
+   }
+  },
+  "4": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "2",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "",
+    "clip": [
+     "2",
+     0
+    ]
+   }
+  },
+  "6": {
+   "class_type": "EmptySD3LatentImage",
+   "inputs": {
+    "width": 1024,
+    "height": 1024,
+    "batch_size": 1
+   }
+  },
+  "7": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "3",
+     0
+    ],
+    "seed": 424242,
+    "steps": 20,
+    "cfg": 4.5,
+    "sampler_name": "euler",
+    "scheduler": "simple",
+    "positive": [
+     "4",
+     0
+    ],
+    "negative": [
+     "5",
+     0
+    ],
+    "latent_image": [
+     "6",
+     0
+    ],
+    "denoise": 1.0
+   }
+  },
+  "8": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "7",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "9": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "8",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

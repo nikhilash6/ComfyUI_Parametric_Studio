@@ -1,0 +1,79 @@
+{
+ "meta": {
+  "title": "Print a schedule, no model needed",
+  "about": "Schedules are plain lists of numbers. Print them and read them.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "These two scheduler nodes take no MODEL: they only need the range.",
+   "3": "PreviewAny shows whatever arrives as text. Here, the list of noise levels.",
+   "5": "Cuts one schedule in two at a step. Two samplers can then run the two halves."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "KarrasScheduler",
+   "inputs": {
+    "steps": 10,
+    "sigma_max": 14.614642,
+    "sigma_min": 0.0291675,
+    "rho": 7.0
+   }
+  },
+  "2": {
+   "class_type": "ExponentialScheduler",
+   "inputs": {
+    "steps": 10,
+    "sigma_max": 14.614642,
+    "sigma_min": 0.0291675
+   }
+  },
+  "3": {
+   "class_type": "PreviewAny",
+   "inputs": {
+    "source": [
+     "1",
+     0
+    ]
+   }
+  },
+  "4": {
+   "class_type": "PreviewAny",
+   "inputs": {
+    "source": [
+     "2",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "SplitSigmas",
+   "inputs": {
+    "sigmas": [
+     "1",
+     0
+    ],
+    "step": 5
+   }
+  },
+  "6": {
+   "class_type": "PreviewAny",
+   "inputs": {
+    "source": [
+     "5",
+     0
+    ]
+   }
+  },
+  "7": {
+   "class_type": "PreviewAny",
+   "inputs": {
+    "source": [
+     "5",
+     1
+    ]
+   }
+  }
+ }
+}

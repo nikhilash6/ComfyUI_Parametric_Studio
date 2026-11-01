@@ -15,5 +15,7 @@
   "comfy/cli_args.py:--fp8_e4m3fn-unet",
   "comfy/cli_args.py:--fp16-vae",
   "comfy/ops.py:manual_cast"
- ]
+ ],
+ "track": "noise-latent",
+ "order": 50
 }

@@ -1,0 +1,6 @@
+EmptyImage 0xF5C518 -> shape (1, 4, 4, 3)  values 0.9608 0.7725 0.0941
+ImageInvert         -> values 0.0392 0.2275 0.9059
+run twice: same numbers: True
+
+nodes on the canvas: 4   nodes that ran: 3   left idle: ['ImageInvert']
+without an output node: nothing runs, the server says prompt_no_outputs

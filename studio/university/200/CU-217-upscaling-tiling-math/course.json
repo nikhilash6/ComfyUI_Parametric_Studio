@@ -15,5 +15,7 @@
   "nodes.py:class LatentUpscale",
   "nodes.py:class LatentUpscaleBy",
   "comfy_extras/nodes_upscale_model.py:class ImageUpscaleWithModel"
- ]
+ ],
+ "track": "video",
+ "order": 30
 }

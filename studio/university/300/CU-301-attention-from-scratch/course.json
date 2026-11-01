@@ -12,5 +12,7 @@
   "comfy/ldm/modules/attention.py:class CrossAttention",
   "comfy/ldm/modules/attention.py:optimized_attention",
   "comfy/ldm/flux/math.py:def attention"
- ]
+ ],
+ "track": "architecture",
+ "order": 10
 }

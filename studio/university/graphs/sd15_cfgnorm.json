@@ -1,0 +1,110 @@
+{
+ "meta": {
+  "title": "CFGNorm",
+  "about": "Norm control at high CFG.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader."
+  ],
+  "packs": [],
+  "notes": {
+   "5": "Caps how large the guided prediction may grow compared to the positive one."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "3": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "5": {
+   "class_type": "CFGNorm",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "strength": 1.0
+   }
+  },
+  "6": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "5",
+     0
+    ],
+    "seed": 424242,
+    "steps": 20,
+    "cfg": 14.0,
+    "sampler_name": "euler",
+    "scheduler": "karras",
+    "positive": [
+     "2",
+     0
+    ],
+    "negative": [
+     "3",
+     0
+    ],
+    "latent_image": [
+     "4",
+     0
+    ],
+    "denoise": 1.0
+   }
+  },
+  "7": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "6",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "8": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "7",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

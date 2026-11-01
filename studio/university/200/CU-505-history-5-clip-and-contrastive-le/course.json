@@ -14,5 +14,7 @@
   "comfy/sd1_clip.py:class SD1CheckpointClipModel",
   "comfy/sdxl_clip.py:class SDXLClipG",
   "comfy/model_base.py:def encode_adm"
- ]
+ ],
+ "track": "history",
+ "order": 50
 }

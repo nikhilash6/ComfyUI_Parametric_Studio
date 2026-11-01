@@ -1,0 +1,144 @@
+{
+ "meta": {
+  "title": "KSampler taken apart",
+  "about": "The five parts of a KSampler as separate nodes, so you can swap each one.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader."
+  ],
+  "packs": [],
+  "notes": {
+   "5": "Where the noise comes from.",
+   "6": "How model calls become one prediction: here, CFG.",
+   "7": "The update rule.",
+   "8": "The list of noise levels.",
+   "9": "Does what KSampler does, from these four separate parts."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "3": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "5": {
+   "class_type": "RandomNoise",
+   "inputs": {
+    "noise_seed": 424242
+   }
+  },
+  "6": {
+   "class_type": "CFGGuider",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "positive": [
+     "2",
+     0
+    ],
+    "negative": [
+     "3",
+     0
+    ],
+    "cfg": 7.0
+   }
+  },
+  "7": {
+   "class_type": "KSamplerSelect",
+   "inputs": {
+    "sampler_name": "euler"
+   }
+  },
+  "8": {
+   "class_type": "BasicScheduler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "scheduler": "karras",
+    "steps": 20,
+    "denoise": 1.0
+   }
+  },
+  "9": {
+   "class_type": "SamplerCustomAdvanced",
+   "inputs": {
+    "noise": [
+     "5",
+     0
+    ],
+    "guider": [
+     "6",
+     0
+    ],
+    "sampler": [
+     "7",
+     0
+    ],
+    "sigmas": [
+     "8",
+     0
+    ],
+    "latent_image": [
+     "4",
+     0
+    ]
+   }
+  },
+  "10": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "9",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "11": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "10",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

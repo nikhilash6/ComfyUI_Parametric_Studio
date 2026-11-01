@@ -8,5 +8,7 @@
   "CU-402"
  ],
  "status": "draft",
- "code_refs": []
+ "code_refs": [],
+ "track": "lora-training",
+ "order": 20
 }

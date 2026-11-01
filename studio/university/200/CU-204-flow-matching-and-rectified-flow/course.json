@@ -12,5 +12,7 @@
   "comfy/model_sampling.py:CONST",
   "comfy/model_sampling.py:ModelSamplingDiscreteFlow",
   "comfy/model_sampling.py:time_snr_shift"
- ]
+ ],
+ "track": "noise-latent",
+ "order": 30
 }

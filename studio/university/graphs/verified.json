@@ -1,0 +1,350 @@
+{
+ "comfyui": "v0.43.0",
+ "torch": "2.16.0.dev20261027+cu134",
+ "graphs": {
+  "hunyuan3d_mesh": {
+   "sha": "4b16b11ed7d5c4f4",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "nm_audio": {
+   "sha": "66968f006d4ea37c",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.01
+  },
+  "nm_dead_branch": {
+   "sha": "1b8d7285a665372d",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.02
+  },
+  "nm_first": {
+   "sha": "4835b34a50dbf7a8",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.02
+  },
+  "nm_latent_ops": {
+   "sha": "8638b9a10f409a02",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.01
+  },
+  "nm_mask_canny": {
+   "sha": "9010f158e7bad652",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.03
+  },
+  "nm_sigmas": {
+   "sha": "7172b209a0224ec1",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "nm_text": {
+   "sha": "46f4b9fe702e9974",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "nm_video": {
+   "sha": "c878ec6430cc8529",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.02
+  },
+  "sd15_cfgnorm": {
+   "sha": "8fb12848379e6057",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_cond_area": {
+   "sha": "b923075df75a594a",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_cond_average": {
+   "sha": "204e267eb8a629fa",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_cond_combine": {
+   "sha": "358f61f633031f0e",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_cond_concat": {
+   "sha": "94e847d543e80582",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_cond_time": {
+   "sha": "a6da6d9f2632429c",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_controlnet": {
+   "sha": "dc10c0c144434bb9",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 2,
+   "errors": []
+  },
+  "sd15_controlnet_depth": {
+   "sha": "6157f50500463c0d",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 2,
+   "errors": []
+  },
+  "sd15_custom": {
+   "sha": "c49ff913e1d618b3",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_hires": {
+   "sha": "e856092e8a3ae150",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_img2img": {
+   "sha": "ba9dc052cf2dd064",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_inpaint": {
+   "sha": "4fafadfbb561faaf",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_inpaint_vae": {
+   "sha": "2ef27d171d049325",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_karras_rho": {
+   "sha": "b56f5b8743685578",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_lora": {
+   "sha": "8a646368e4942772",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 2,
+   "errors": []
+  },
+  "sd15_merge": {
+   "sha": "fa6339109c816760",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 2,
+   "errors": []
+  },
+  "sd15_pag": {
+   "sha": "8c72ec70cb1fb170",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_perpneg": {
+   "sha": "6dab27834222d936",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_rescale": {
+   "sha": "2baf984089ee341b",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_sag": {
+   "sha": "5ba8872f3d534134",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_tiled_vae": {
+   "sha": "e0a082427dbbe863",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_train_lora": {
+   "sha": "c7371de9cdea10a4",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 2,
+   "errors": []
+  },
+  "sd15_two_stage": {
+   "sha": "b9aa8363ccfc6007",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_txt2img": {
+   "sha": "9c7307443038d10d",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "sd15_upscale": {
+   "sha": "9d29c8e35afb2f31",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 2,
+   "errors": []
+  },
+  "sd35_flow": {
+   "sha": "00e04b6807ee8ccb",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 4,
+   "errors": []
+  },
+  "sdxl_txt2img": {
+   "sha": "dc528c577697c4c5",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "wf_flux2_klein": {
+   "sha": "a9d526b1ea36b4e1",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 3,
+   "errors": []
+  },
+  "wf_h3_t2v": {
+   "sha": "4e3062cea40b2c89",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 5,
+   "errors": []
+  },
+  "wf_ltx25_t2v": {
+   "sha": "1be09f9c4c88b5de",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 4,
+   "errors": []
+  },
+  "wf_music3": {
+   "sha": "aefb9d3a8df5a36b",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 3,
+   "errors": []
+  },
+  "wf_wan22_t2v": {
+   "sha": "19c8c9ae1f7c7e90",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 3,
+   "errors": []
+  }
+ }
+}

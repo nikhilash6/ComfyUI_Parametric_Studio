@@ -11,5 +11,7 @@
   "comfy_extras/nodes_audio.py:class SaveAudio",
   "comfy_extras/nodes_video.py:class SaveVideo",
   "comfy_api/latest/_input_impl/video_types.py:use_metadata_tags+faststart"
- ]
+ ],
+ "track": "first-graph",
+ "order": 100
 }
