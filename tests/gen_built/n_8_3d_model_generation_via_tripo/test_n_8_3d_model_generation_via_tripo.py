@@ -1,160 +1,136 @@
-import torch
 import base64
+import json
+import struct
+import zlib
 
+import torch
+
+import n_8_3d_model_generation_via_tripo as mod
 from n_8_3d_model_generation_via_tripo import (
-    PSN_Tripo_Text_To_3D,
-    PSN_Tripo_Image_To_3D,
+    PSN_Tripo_Text_Request_Builder,
+    PSN_Tripo_Image_Request_Builder,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
     _validate_image,
     _image_to_base64_png,
-    _make_job_id,
-    _make_model_url,
 )
 
-# 1. Module-level mappings exist and are correct
-assert "PSN_Tripo_Text_To_3D" in NODE_CLASS_MAPPINGS
-assert "PSN_Tripo_Image_To_3D" in NODE_CLASS_MAPPINGS
-assert NODE_DISPLAY_NAME_MAPPINGS["PSN_Tripo_Text_To_3D"] == "Tripo Text to 3D"
-assert NODE_DISPLAY_NAME_MAPPINGS["PSN_Tripo_Image_To_3D"] == "Tripo Image to 3D"
 
-# 2. INPUT_TYPES classmethod works
-it = PSN_Tripo_Text_To_3D.INPUT_TYPES()
-assert "api_key" in it["required"]
-assert "prompt" in it["required"]
-assert "texture" in it["required"]
-assert "pbr" in it["required"]
+def decode_png(b64):
+    """Minimal decoder for the 8-bit RGB filter-0 PNGs the module writes."""
+    data = base64.b64decode(b64)
+    assert data[:8] == b"\x89PNG\r\n\x1a\n"
+    pos, idat, ihdr = 8, b"", None
+    while pos < len(data):
+        (n,) = struct.unpack(">I", data[pos:pos + 4])
+        tag, body = data[pos + 4:pos + 8], data[pos + 8:pos + 8 + n]
+        (crc,) = struct.unpack(">I", data[pos + 8 + n:pos + 12 + n])
+        assert crc == zlib.crc32(tag + body) & 0xFFFFFFFF
+        if tag == b"IHDR":
+            ihdr = struct.unpack(">IIBBBBB", body)
+        elif tag == b"IDAT":
+            idat += body
+        pos += 12 + n
+    w, h, depth, ctype = ihdr[0], ihdr[1], ihdr[2], ihdr[3]
+    assert (depth, ctype) == (8, 2)
+    raw = zlib.decompress(idat)
+    assert len(raw) == h * (1 + 3 * w)
+    out = torch.empty(h, w, 3, dtype=torch.uint8)
+    for y in range(h):
+        row = raw[y * (1 + 3 * w):(y + 1) * (1 + 3 * w)]
+        assert row[0] == 0
+        out[y] = torch.frombuffer(bytearray(row[1:]), dtype=torch.uint8).reshape(w, 3)
+    return out
 
-it2 = PSN_Tripo_Image_To_3D.INPUT_TYPES()
-assert "image" in it2["required"]
 
-# 3. Text-to-3D: valid input returns URL and job_id
-node = PSN_Tripo_Text_To_3D()
-url, jid = node.run(api_key="test_key", prompt="a red cube", texture=True, pbr=True)
-assert isinstance(url, str) and url.startswith("https://")
-assert isinstance(jid, str) and jid.startswith("tripo_")
-assert len(jid) == len("tripo_") + 24
+# 1. Module-level mappings: only the builders, old fabricating nodes gone
+assert set(NODE_CLASS_MAPPINGS) == {"PSN_Tripo_Text_Request_Builder", "PSN_Tripo_Image_Request_Builder"}
+assert set(NODE_DISPLAY_NAME_MAPPINGS) == set(NODE_CLASS_MAPPINGS)
+assert not hasattr(mod, "PSN_Tripo_Text_To_3D")
+assert not hasattr(mod, "PSN_Tripo_Image_To_3D")
+assert not hasattr(mod, "_make_job_id")
+assert not hasattr(mod, "_make_model_url")
 
-# 4. Text-to-3D: deterministic - same prompt gives same job id
-url2, jid2 = node.run(api_key="test_key", prompt="a red cube", texture=True, pbr=True)
-assert jid == jid2
-assert url == url2
+# 2. INPUT_TYPES: no api_key (nothing is sent)
+it = PSN_Tripo_Text_Request_Builder.INPUT_TYPES()
+assert list(it["required"]) == ["prompt", "texture", "pbr"]
+it2 = PSN_Tripo_Image_Request_Builder.INPUT_TYPES()
+assert list(it2["required"]) == ["image", "texture"]
 
-# 5. Text-to-3D: different prompt gives different job id
-_, jid3 = node.run(api_key="test_key", prompt="a blue sphere", texture=True, pbr=True)
-assert jid3 != jid
+# 3. Text request: exact JSON content, no url / job id
+node = PSN_Tripo_Text_Request_Builder()
+(txt,) = node.run(prompt="  a red cube ", texture=True, pbr=False)
+assert json.loads(txt) == {"type": "text_to_model", "prompt": "a red cube",
+                           "texture": True, "pbr": False}
+assert "tripo3d.ai" not in txt and "job" not in txt
 
-# 6. Text-to-3D: empty prompt raises ValueError
+# 4. Text request: different prompt gives different request
+(txt2,) = node.run(prompt="a blue sphere", texture=True, pbr=True)
+assert json.loads(txt2)["prompt"] == "a blue sphere" and txt2 != txt
+
+# 5. Text: empty prompt raises ValueError, bad types raise TypeError
 try:
-    node.run(api_key="k", prompt="   ", texture=True, pbr=True)
+    node.run(prompt="   ", texture=True, pbr=True)
     assert False, "should have raised"
 except ValueError:
     pass
+for kw in ({"prompt": 123}, {"prompt": "x", "texture": "y"}, {"prompt": "x", "pbr": 1}):
+    try:
+        node.run(**kw)
+        assert False, "should have raised"
+    except TypeError:
+        pass
 
-# 7. Text-to-3D: non-string prompt raises TypeError
+# 6. Image request: the PNG in the payload decodes to the input pixels
+img = torch.rand(1, 8, 6, 3)  # [B,H,W,C] in 0..1
+node2 = PSN_Tripo_Image_Request_Builder()
+(req,) = node2.run(image=img, texture=False)
+d = json.loads(req)
+assert d["type"] == "image_to_model" and d["texture"] is False
+assert set(d) == {"type", "texture", "image_png_base64"}
+px = decode_png(d["image_png_base64"])
+assert px.shape == (8, 6, 3)
+assert torch.equal(px, (img[0] * 255.0).round().to(torch.uint8))
+
+# 7. Different image gives different request; same image the same request
+(req_same,) = node2.run(image=img, texture=False)
+assert req_same == req
+(req_diff,) = node2.run(image=torch.rand(1, 8, 6, 3), texture=False)
+assert req_diff != req
+
+# 8. Image validation errors
+for bad, exc in ((torch.rand(4, 4, 3), ValueError), (torch.rand(1, 4, 4, 5), ValueError),
+                 (torch.rand(1, 4, 4, 3) * 2.0, ValueError), ("not a tensor", TypeError)):
+    try:
+        _validate_image(bad)
+        assert False, "should have raised"
+    except exc:
+        pass
 try:
-    node.run(api_key="k", prompt=123, texture=True, pbr=True)
+    node2.run(image=img, texture="yes")
     assert False, "should have raised"
 except TypeError:
     pass
 
-# 8. Image-to-3D: valid image returns URL and job_id
-img = torch.rand(1, 8, 8, 3)  # [B,H,W,C] in 0..1
-node2 = PSN_Tripo_Image_To_3D()
-url_i, jid_i = node2.run(api_key="test_key", image=img, texture=True)
-assert isinstance(url_i, str) and url_i.startswith("https://")
-assert isinstance(jid_i, str) and jid_i.startswith("tripo_")
+# 9. 1-channel and 4-channel images are expanded / stripped to RGB
+g = torch.rand(1, 4, 4, 1)
+pg = decode_png(_image_to_base64_png(g))
+assert torch.equal(pg[..., 0], pg[..., 2]) and torch.equal(pg[..., 0], (g[0, ..., 0] * 255).round().to(torch.uint8))
+a = torch.rand(1, 4, 4, 4)
+pa = decode_png(_image_to_base64_png(a))
+assert torch.equal(pa, (a[0, ..., :3] * 255).round().to(torch.uint8))
 
-# 9. Image-to-3D: deterministic
-url_i2, jid_i2 = node2.run(api_key="test_key", image=img, texture=True)
-assert jid_i == jid_i2
-assert url_i == url_i2
+# 10. Batch > 1 uses the first frame
+batch = torch.rand(3, 4, 4, 3)
+(rb,) = node2.run(image=batch, texture=True)
+assert torch.equal(decode_png(json.loads(rb)["image_png_base64"]), (batch[0] * 255).round().to(torch.uint8))
 
-# 10. Image-to-3D: different image gives different job id
-img_diff = torch.rand(1, 8, 8, 3)
-_, jid_diff = node2.run(api_key="test_key", image=img_diff, texture=True)
-assert jid_diff != jid_i
-
-# 11. Image validation: wrong dims raises ValueError
-try:
-    _validate_image(torch.rand(4, 4, 3))  # 3-D, not 4-D
-    assert False, "should have raised"
-except ValueError:
-    pass
-
-# 12. Image validation: bad channel count raises ValueError
-try:
-    _validate_image(torch.rand(1, 4, 4, 5))  # 5 channels
-    assert False, "should have raised"
-except ValueError:
-    pass
-
-# 13. Image validation: out-of-range values raise ValueError
-try:
-    _validate_image(torch.rand(1, 4, 4, 3) * 2.0)  # values up to ~2
-    assert False, "should have raised"
-except ValueError:
-    pass
-
-# 14. Image validation: non-tensor raises TypeError
-try:
-    _validate_image("not a tensor")
-    assert False, "should have raised"
-except TypeError:
-    pass
-
-# 15. Image-to-3D: non-tensor image raises TypeError
-try:
-    node2.run(api_key="k", image="bad", texture=True)
-    assert False, "should have raised"
-except TypeError:
-    pass
-
-# 16. Image-to-3D: non-bool texture raises TypeError
-try:
-    node2.run(api_key="k", image=img, texture="yes")
-    assert False, "should have raised"
-except TypeError:
-    pass
-
-# 17. _image_to_base64_png produces valid base64
-b64 = _image_to_base64_png(img)
-decoded = base64.b64decode(b64)
-assert len(decoded) == 8 * 8 * 3  # H*W*C bytes
-
-# 18. _make_job_id is deterministic
-assert _make_job_id("abc") == _make_job_id("abc")
-assert _make_job_id("abc") != _make_job_id("abd")
-
-# 19. _make_model_url format
-u = _make_model_url("tripo_abc123")
-assert u == "https://models.tripo3d.ai/tripo_abc123/tripo_abc123.glb"
-
-# 20. RETURN_TYPES and RETURN_NAMES
-assert PSN_Tripo_Text_To_3D.RETURN_TYPES == ("STRING", "STRING")
-assert PSN_Tripo_Text_To_3D.RETURN_NAMES == ("model_url", "job_id")
-assert PSN_Tripo_Image_To_3D.RETURN_TYPES == ("STRING", "STRING")
-assert PSN_Tripo_Image_To_3D.RETURN_NAMES == ("model_url", "job_id")
-
-# 21. FUNCTION and CATEGORY
-assert PSN_Tripo_Text_To_3D.FUNCTION == "run"
-assert PSN_Tripo_Text_To_3D.CATEGORY == "ParametricStudio/3D"
-assert PSN_Tripo_Image_To_3D.FUNCTION == "run"
-assert PSN_Tripo_Image_To_3D.CATEGORY == "ParametricStudio/3D"
-
-# 22. Single-channel image works
-img1 = torch.rand(1, 4, 4, 1)
-b64_1 = _image_to_base64_png(img1)
-assert len(base64.b64decode(b64_1)) == 4 * 4 * 3  # expanded to 3 channels
-
-# 23. 4-channel image works (alpha stripped)
-img4 = torch.rand(1, 4, 4, 4)
-b64_4 = _image_to_base64_png(img4)
-assert len(base64.b64decode(b64_4)) == 4 * 4 * 3
-
-# 24. Batch > 1 works (uses first image)
-img_batch = torch.rand(3, 4, 4, 3)
-url_b, jid_b = node2.run(api_key="k", image=img_batch, texture=True)
-assert jid_b.startswith("tripo_")
+# 11. RETURN_TYPES / NAMES / FUNCTION / CATEGORY / DESCRIPTION
+for cls in (PSN_Tripo_Text_Request_Builder, PSN_Tripo_Image_Request_Builder):
+    assert cls.RETURN_TYPES == ("STRING",)
+    assert cls.RETURN_NAMES == ("request_json",)
+    assert cls.FUNCTION == "run"
+    assert cls.CATEGORY == "ParametricStudio/3D"
+    assert "Calls no API" in cls.DESCRIPTION or "calls no API" in cls.DESCRIPTION
 
 print('ok')

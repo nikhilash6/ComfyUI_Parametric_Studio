@@ -16,3 +16,4 @@ was not encryption) by scrypt + Fernet, no default key.
 
 psn_nodes/latent.py (12 torch-backed latent nodes, 2026-10-30): original code written by Claude for this project; tested on CPU tensors. Replaces the factory's section-24 latent modules, which only handled plain lists
 (their docstring says tensor conversion is "out of scope") and so could not run on a real LATENT; those were not merged.
+Node audit (2026-11-01): every node was read and labelled. 156 generated nodes implied work they did not do or fabricated results: 34 were removed, 98 renamed to say what they are (their fabricated outputs dropped), and 24 made real. tests/test_node_honesty.py stops fabrication markers coming back. The earlier "reviewed before merge" scan looked for unsafe code, not for honest results.

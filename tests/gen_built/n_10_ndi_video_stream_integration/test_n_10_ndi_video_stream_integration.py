@@ -29,6 +29,7 @@ def test_module_structure():
 
     # Check RETURN_TYPES and FUNCTION
     assert PSN_NDI_Source.RETURN_TYPES == ("BOOLEAN",)
+    assert PSN_NDI_Source.RETURN_NAMES == ("handed_to_sender",)
     assert PSN_NDI_Source.FUNCTION == "run"
     assert PSN_NDI_Source.CATEGORY == "ParametricStudio/NDI"
 
@@ -71,29 +72,31 @@ def test_image_to_rgb_bytes_clamping():
     assert frames[0][2] == 128  # 0.5 * 255 = 127.5
 
 
-def test_run_dry_run():
-    """Test run without a sender (dry run)."""
+def test_run_without_sender_reports_false():
+    """With no sender nothing is handed off, so the output is False (not True)."""
     node = PSN_NDI_Source()
     img = torch.rand(1, 4, 4, 3)
     result = node.run(img, "TestNDI", 30)
-    assert result == (True,)
+    assert result == (False,)
 
 
 def test_run_with_sender():
-    """Test run with a mock sender."""
+    """Test run with a recording sender."""
     node = PSN_NDI_Source()
     img = torch.rand(2, 4, 4, 3)  # 2 frames
 
     sent_data = {}
 
-    def mock_sender(ndi_name, fps, frames):
+    def recording_sender(ndi_name, fps, frames):
         sent_data["name"] = ndi_name
         sent_data["fps"] = fps
         sent_data["frames"] = frames
         return True
 
-    result = node.run(img, "MyStream", 60, ndi_sender=mock_sender)
+    result = node.run(img, "MyStream", 60, ndi_sender=recording_sender)
     assert result == (True,)
+    # frame bytes handed to the sender are the real RGB bytes of the input
+    assert sent_data["frames"] == image_to_rgb_bytes(img)
     assert sent_data["name"] == "MyStream"
     assert sent_data["fps"] == 60
     assert len(sent_data["frames"]) == 2
@@ -171,7 +174,7 @@ if __name__ == "__main__":
     test_image_to_rgb_bytes_basic()
     test_image_to_rgb_bytes_rgba()
     test_image_to_rgb_bytes_clamping()
-    test_run_dry_run()
+    test_run_without_sender_reports_false()
     test_run_with_sender()
     test_run_sender_returns_false()
     test_bad_input_not_tensor()

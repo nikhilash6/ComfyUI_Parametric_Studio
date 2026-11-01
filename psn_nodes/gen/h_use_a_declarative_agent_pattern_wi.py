@@ -1,13 +1,14 @@
-"""Declarative agent pattern with strict output schemas for specialized pipeline stages.
+"""Agent schema check for declared pipeline stages.
 
-This module implements a lightweight, declarative agent system for ComfyUI.
-Each agent is defined by an identity (name, role, description) and a strict
-output schema (required keys with expected types).  A pipeline is a list of
-agents; execution walks the handoff chain, validates each stage's output
-against its schema, and passes validated payloads to the next stage.
+Each agent is declared by an identity (name, role, description), a strict
+output schema (required keys with expected types) and an optional handoff to
+the next agent.  Nothing here runs an agent.  The check validates ONE starting
+payload against each declared agent's schema, walking the handoff chain, and
+reports pass/fail per stage.  The same starting payload is checked at every
+stage: no stage produces output, so no stage's output is validated.
 
-The ComfyUI node exposes the pipeline as a string (one agent per line) and
-returns the final validated payload plus a per-stage trace.
+The ComfyUI node exposes the pipeline as a string (one agent per line), passes
+the latent through unchanged, and returns a per-stage schema trace.
 """
 
 import torch
@@ -99,16 +100,18 @@ class Agent:
 
 
 # ---------------------------------------------------------------------------
-# Pipeline execution (run_spec)
+# Handoff-chain schema check (check_handoff_chain)
 # ---------------------------------------------------------------------------
 
-def run_spec(agents, initial_payload, max_steps=32):
-    """Execute a declarative agent pipeline.
+def check_handoff_chain(agents, initial_payload, max_steps=32):
+    """Validate one payload against each agent's schema along the handoff chain.
+
+    No agent is run; the same payload is checked at every stage.
 
     Parameters
     ----------
     agents : list[Agent]
-        Ordered list of agents.  The first agent receives *initial_payload*.
+        Ordered list of agents.  The chain starts at the first agent.
     initial_payload : dict
         Input to the first agent.
     max_steps : int
@@ -117,7 +120,7 @@ def run_spec(agents, initial_payload, max_steps=32):
     Returns
     -------
     (final_payload, trace)
-        final_payload : dict – validated output of the last agent.
+        final_payload : dict – the starting payload (copy), unchanged.
         trace : list[dict] – one entry per stage with keys
             ``agent``, ``ok``, ``errors``, ``payload``.
     """
@@ -147,7 +150,7 @@ def run_spec(agents, initial_payload, max_steps=32):
             raise ValueError("handoff target %r not found in pipeline" % nxt)
         current = by_name[nxt]
 
-    raise ValueError("pipeline did not terminate within max_steps")
+    raise ValueError("handoff chain did not terminate within max_steps")
 
 
 # ---------------------------------------------------------------------------
@@ -208,15 +211,21 @@ def _out(latent, samples):
     return {"samples": samples}
 
 
-class PSN_DeclarativeAgentPipeline:
-    """Run a declarative agent pipeline with strict output schemas.
+class PSN_AgentSchemaCheck:
+    """Check a starting payload against declared agent schemas.  Runs no agents.
 
     The pipeline is defined as a multi-line string.  Each line declares one
     agent: ``name | role | description | key:type,key:type | handoff``.
 
-    The node takes a LATENT (used as the initial payload's ``image`` tensor),
-    runs the pipeline, and returns the final LATENT plus a trace string.
+    The node builds a starting payload (the LATENT samples as ``image``, plus
+    ``style`` and ``log``), validates it against each agent's schema along the
+    handoff chain, and returns the latent unchanged plus a trace string.
     """
+
+    DESCRIPTION = (
+        "Validates the starting payload against each agent's declared schema along the handoff "
+        "chain. Runs no agents and returns the latent unchanged."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -239,7 +248,7 @@ class PSN_DeclarativeAgentPipeline:
         }
 
     RETURN_TYPES = ("LATENT", "STRING")
-    RETURN_NAMES = ("latent", "trace")
+    RETURN_NAMES = ("latent_unchanged", "schema_trace")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -248,18 +257,16 @@ class PSN_DeclarativeAgentPipeline:
         samples = _s(latent)
         # Build initial payload: the image tensor plus a style tag.
         initial = {"image": samples, "style": style, "log": ""}
-        final_payload, trace = run_spec(agents, initial)
+        final_payload, trace = check_handoff_chain(agents, initial)
 
-        # The final payload's 'image' tensor becomes the output latent.
-        out_samples = final_payload.get("image", samples)
-        if not isinstance(out_samples, torch.Tensor):
-            out_samples = samples
+        # No agent runs, so the latent goes out as it came in.
+        out_samples = samples
 
         # Build a human-readable trace string.
         lines = []
         for i, entry in enumerate(trace):
-            status = "OK" if entry["ok"] else "FAIL"
-            lines.append("[%d] %s (%s): %s" % (i, entry["agent"], entry["agent"], status))
+            status = "schema ok" if entry["ok"] else "schema FAIL"
+            lines.append("[%d] %s: %s" % (i, entry["agent"], status))
             for err in entry["errors"]:
                 lines.append("    error: %s" % err)
         trace_str = "\n".join(lines)
@@ -272,9 +279,9 @@ class PSN_DeclarativeAgentPipeline:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_DeclarativeAgentPipeline": PSN_DeclarativeAgentPipeline,
+    "PSN_AgentSchemaCheck": PSN_AgentSchemaCheck,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_DeclarativeAgentPipeline": "Declarative Agent Pipeline",
+    "PSN_AgentSchemaCheck": "Agent Schema Check (runs no agents)",
 }

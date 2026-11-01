@@ -1,24 +1,16 @@
-"""ParametricStudio - Advanced Matting (VitMatte-style) node.
+"""ParametricStudio - Trimap mask feathering.
 
-The real VitMatte model is a heavy ViT encoder/decoder that requires
-onnxruntime and a downloaded checkpoint.  Neither is available in this
-environment, so this module implements the *core* of the matting
-pipeline that plain torch on CPU can do:
+Turns a rough MASK into a soft alpha MASK using plain torch on CPU. It is not
+VitMatte and runs no matting model; the image is not used, so edges do not
+follow image detail.
 
 1.  Build a trimap from the rough mask (definite-foreground /
     definite-background / unknown band) using a morphological
     dilation/erosion implemented with torch.nn.functional.max_pool2d
-    and min_pool2d (no scipy / cv2 needed).
-2.  Refine the rough mask into a smooth alpha channel by solving a
-    simple Poisson-like diffusion (iterative Jacobi relaxation) on the
-    unknown band, constrained by the trimap boundary values.
-3.  Optionally blend the result with the original rough mask to keep
-    the user's intent while smoothing edges.
-
-What is NOT implemented (needs onnxruntime + model weights):
-  * The actual VitMatte ViT encoder/decoder network.
-  * GPU inference.
-  * The onnxruntime session loading.
+    (no scipy / cv2 needed).
+2.  Fill the unknown band by iterative Jacobi relaxation (Laplacian
+    smoothing) between the foreground and background values.
+3.  Optionally blur the result lightly, keeping the definite regions fixed.
 """
 
 import torch
@@ -27,39 +19,14 @@ import torch.nn.functional as F
 CAT = "ParametricStudio/Matting"
 
 
-def _as_tensor(x):
-    """Return x as a torch tensor (no copy if already a tensor)."""
-    if isinstance(x, torch.Tensor):
-        return x
-    return torch.as_tensor(x)
-
-
-def _validate_image(image):
-    """Validate an IMAGE tensor [B,H,W,C] in 0..1."""
-    if not isinstance(image, torch.Tensor):
-        raise TypeError("image must be a torch.Tensor")
-    if image.dim() != 4:
-        raise ValueError(f"image must be 4-D [B,H,W,C], got {image.dim()}-D")
-    if image.shape[-1] < 1:
-        raise ValueError("image channel dim must be >= 1")
-    if image.shape[1] < 2 or image.shape[2] < 2:
-        raise ValueError("image H and W must be >= 2")
-    if image.min() < -1e-6 or image.max() > 1 + 1e-6:
-        raise ValueError("image values must be in [0, 1]")
-    return image
-
-
-def _validate_mask(mask, h, w):
+def _validate_mask(mask):
     """Validate a MASK tensor [B,H,W] in 0..1."""
     if not isinstance(mask, torch.Tensor):
         raise TypeError("mask must be a torch.Tensor")
     if mask.dim() != 3:
         raise ValueError(f"mask must be 3-D [B,H,W], got {mask.dim()}-D")
-    if mask.shape[1] != h or mask.shape[2] != w:
-        raise ValueError(
-            f"mask spatial size {mask.shape[1]}x{mask.shape[2]} "
-            f"does not match image {h}x{w}"
-        )
+    if mask.shape[1] < 2 or mask.shape[2] < 2:
+        raise ValueError("mask H and W must be >= 2")
     if mask.min() < -1e-6 or mask.max() > 1 + 1e-6:
         raise ValueError("mask values must be in [0, 1]")
     return mask
@@ -90,11 +57,11 @@ def _build_trimap(rough_mask, fg_radius, bg_radius):
 
     Returns (fg, bg, unknown) each [B,H,W] in {0,1}.
     fg  = eroded rough mask  (definite foreground)
-    bg  = dilated complement (definite background)
+    bg  = eroded complement, i.e. outside the dilated mask (definite background)
     unknown = everything else
     """
     fg = _erode(rough_mask, fg_radius)
-    bg = _dilate(1.0 - rough_mask, bg_radius)
+    bg = _erode(1.0 - rough_mask, bg_radius)
     unknown = 1.0 - fg - bg
     # In case fg and bg overlap (very thin mask), resolve in favour of
     # the unknown band so we never have contradictory constraints.
@@ -143,19 +110,23 @@ def _gaussian_blur(mask, radius):
     return mask
 
 
-class PSN_VitMatteAlpha:
-    """Refine a rough mask into a smooth alpha channel (VitMatte-style).
+class PSN_TrimapMaskFeather:
+    """Feather a rough mask into a soft alpha by trimap + diffusion.
 
-    Uses trimap construction + iterative diffusion to produce a
-    high-quality alpha matting result.  This is a CPU/torch-only
-    approximation of the full VitMatte pipeline.
+    Erodes the mask for definite foreground, dilates its complement for
+    definite background, and diffuses alpha across the unknown band between
+    them. Uses no model and not the image, so it cannot recover hair or
+    other detail the rough mask lacks.
     """
+
+    DESCRIPTION = ("Builds a trimap by erosion/dilation of a rough mask and "
+                   "diffuses alpha across the unknown band. Not VitMatte: no "
+                   "model, and the image is not used.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "image": ("IMAGE",),
                 "rough_mask": ("MASK",),
             },
             "optional": {
@@ -189,7 +160,6 @@ class PSN_VitMatteAlpha:
 
     def run(
         self,
-        image,
         rough_mask,
         fg_radius=5,
         bg_radius=5,
@@ -197,9 +167,7 @@ class PSN_VitMatteAlpha:
         sigma=0.5,
         blur_radius=1,
     ):
-        image = _validate_image(image)
-        h, w = image.shape[1], image.shape[2]
-        rough_mask = _validate_mask(rough_mask, h, w)
+        rough_mask = _validate_mask(rough_mask)
 
         # Work in float32 on CPU
         rm = rough_mask.float().cpu()
@@ -225,9 +193,9 @@ class PSN_VitMatteAlpha:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_VitMatteAlpha": PSN_VitMatteAlpha,
+    "PSN_TrimapMaskFeather": PSN_TrimapMaskFeather,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_VitMatteAlpha": "VitMatte Alpha (Advanced Matting)",
+    "PSN_TrimapMaskFeather": "Trimap Mask Feather",
 }

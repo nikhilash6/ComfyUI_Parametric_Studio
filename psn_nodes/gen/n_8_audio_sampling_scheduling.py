@@ -1,9 +1,8 @@
-"""ParametricStudio - Audio Sampling & Scheduling nodes.
+"""ParametricStudio - Audio sigma schedules.
 
-Core-only implementation: sigma schedule generation (Linear / Karras /
-AudioOptimized) and a deterministic Euler-style latent denoising loop that
-maps a latent to a synthetic audio waveform.  No real audio diffusion model
-or hdf5plugin decoding is implemented.
+PSN_AudioScheduler builds a sigma schedule (Linear / Karras / AudioOptimized).
+It is only a list of numbers; there is no audio sampler in this module and no
+audio diffusion model.
 """
 
 import math
@@ -11,32 +10,6 @@ import math
 import torch
 
 CAT = "ParametricStudio/Audio"
-
-
-def _as_tensor(x):
-    if isinstance(x, torch.Tensor):
-        return x
-    if isinstance(x, (int, float)):
-        return torch.tensor(float(x))
-    if isinstance(x, (list, tuple)):
-        return torch.tensor(list(x), dtype=torch.float32)
-    raise TypeError("expected a tensor-like value")
-
-
-def _latent_samples(latent):
-    if isinstance(latent, dict) and "samples" in latent:
-        return latent["samples"]
-    if isinstance(latent, torch.Tensor):
-        return latent
-    raise TypeError("latent must be a dict with 'samples' or a tensor")
-
-
-def _latent_out(latent, samples):
-    if isinstance(latent, dict):
-        out = dict(latent)
-        out["samples"] = samples
-        return out
-    return {"samples": samples}
 
 
 def _karras_sigmas(steps, sigma_max, sigma_min):
@@ -118,107 +91,10 @@ class PSN_AudioScheduler:
         return (sigmas,)
 
 
-class PSN_AudioSampler:
-    """Execute a deterministic Euler-style denoising loop over a latent using
-    the given sigmas, then map the result to a synthetic audio waveform.
-
-    No real audio diffusion model is used; the 'model' input is accepted for
-    interface compatibility but the denoising is a simple linear interpolation
-    toward a target latent derived from the conditioning.
-    """
-
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "latent": ("LATENT",),
-                "sigmas": ("SIGMAS",),
-                "sampler": ("Euler", "EulerAncestral", "Heun"),
-                "sample_rate": ("INT", {"default": 22050, "min": 8000, "max": 96000}),
-            },
-            "optional": {
-                "positive": ("CONDITIONING",),
-                "negative": ("CONDITIONING",),
-            },
-        }
-
-    RETURN_TYPES = ("AUDIO",)
-    RETURN_NAMES = ("audio",)
-    FUNCTION = "run"
-    CATEGORY = CAT
-
-    def run(self, latent, sigmas, sampler, sample_rate, positive=None, negative=None):
-        samples = _latent_samples(latent)
-        if not isinstance(sigmas, torch.Tensor):
-            sigmas = _as_tensor(sigmas)
-        sigmas = sigmas.to(dtype=torch.float32)
-
-        if sigmas.dim() != 1 or sigmas.numel() < 2:
-            raise ValueError("sigmas must be a 1-D tensor with at least 2 elements")
-
-        # Ensure sigmas are strictly decreasing to 0
-        if sigmas[-1].item() != 0.0:
-            sigmas = torch.cat([sigmas, torch.zeros(1, dtype=torch.float32)])
-
-        # Build a simple target latent: use positive conditioning if available,
-        # otherwise use a fixed pattern derived from the latent shape.
-        if positive is not None and isinstance(positive, torch.Tensor):
-            target = positive.to(dtype=torch.float32)
-            # Reshape to match latent shape if possible
-            if target.shape != samples.shape:
-                target = torch.nn.functional.interpolate(
-                    target.reshape(1, -1, 1, 1),
-                    size=samples.shape[1:],
-                    mode="nearest",
-                ).reshape(samples.shape)
-        else:
-            # Deterministic pseudo-target from latent shape
-            target = torch.zeros_like(samples)
-            for i in range(samples.shape[0]):
-                target[i] = torch.linspace(0.0, 1.0, samples.numel() // samples.shape[0]).reshape(samples.shape[1:])
-
-        # Euler denoising: x_{t+1} = x_t + (sigma_{t+1} - sigma_t) * (target - x_t) / sigma_t
-        x = samples.clone().to(dtype=torch.float32)
-        for i in range(len(sigmas) - 1):
-            sigma_t = sigmas[i].item()
-            sigma_next = sigmas[i + 1].item()
-            if sigma_t > 1e-8:
-                # Simple Euler step toward target
-                x = x + (sigma_next - sigma_t) * (target - x) / sigma_t
-            else:
-                x = target
-
-        # Map latent to audio waveform: take first channel, reshape to [B, samples]
-        # Assume latent is [B, C, H, W] or [B, C, T]
-        if x.dim() == 4:
-            # [B, C, H, W] -> use first channel, flatten H*W as time
-            waveform = x[:, 0, :, :].reshape(x.shape[0], -1)
-        elif x.dim() == 3:
-            # [B, C, T]
-            waveform = x[:, 0, :]
-        elif x.dim() == 2:
-            waveform = x
-        else:
-            waveform = x.reshape(x.shape[0], -1)
-
-        # Normalize to [-1, 1]
-        max_val = waveform.abs().max()
-        if max_val > 1e-8:
-            waveform = waveform / max_val
-
-        audio = {
-            "waveform": waveform,
-            "sample_rate": sample_rate,
-        }
-        return (audio,)
-
-
 NODE_CLASS_MAPPINGS = {
     "PSN_AudioScheduler": PSN_AudioScheduler,
-    "PSN_AudioSampler": PSN_AudioSampler,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_AudioScheduler": "Audio Scheduler",
-    "PSN_AudioSampler": "Audio Sampler",
 }

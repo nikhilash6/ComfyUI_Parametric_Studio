@@ -1,14 +1,14 @@
-"""PSN_Quantization_Monitor: pure-logic VRAM savings and quality comparison.
+"""PSN_Quantization_Savings_Calc: percent VRAM saved and a score ratio from numbers you type.
 
-This module implements the reporting logic for quantization monitoring without
-any GPU, torch, or ComfyUI imports. It accepts plain numeric values (VRAM
-usage in MB, quality scores) and computes:
+This module does arithmetic on plain numbers (VRAM usage in MB, quality scores)
+that you or an upstream node supply. It measures nothing: no model is loaded,
+no VRAM is read and no quality is evaluated. It computes:
 
-- vram_savings: percentage of VRAM saved by the quantized model relative to
-  the reference (full precision) model.
-- quality_metric: a normalized comparison score between the quantized model's
-  quality score and the reference model's quality score (0.0 to 1.0, where
-  1.0 means identical quality).
+- vram_saved_percent: percentage of VRAM saved by the quantized figure relative
+  to the reference (full precision) figure.
+- score_ratio: quantized score divided by reference score, clamped to 0.0..1.0.
+  It is 0.0 when no scores were given (reference score 0 or missing); that means
+  "no data", not "poor quality".
 
 All inputs are plain numbers (FLOAT) or strings (JSON text for optional
 metadata). No file, network, subprocess, or torch access is performed.
@@ -59,21 +59,17 @@ def compute_vram_savings(quantized_vram_mb, reference_vram_mb):
     return _clamp(savings, -100.0, 100.0)
 
 
-def compute_quality_metric(quantized_score, reference_score):
-    """Compute a normalized quality comparison score in [0.0, 1.0].
+def compute_score_ratio(quantized_score, reference_score):
+    """Return quantized/reference clamped to [0.0, 1.0].
 
-    If reference_score is 0, returns 1.0 if quantized_score is also 0,
-    otherwise 0.0. The score is the ratio quantized/reference clamped to
-    [0, 1] when both are non-negative. If either is negative, returns 0.0.
+    Returns 0.0 when there is no usable data: a reference score of 0 (the
+    default, meaning none was given) or any negative score.
     """
     qs = _safe_float(quantized_score, 0.0)
     rs = _safe_float(reference_score, 0.0)
-    if rs < 0.0 or qs < 0.0:
+    if rs <= 0.0 or qs < 0.0:
         return 0.0
-    if rs == 0.0:
-        return 1.0 if qs == 0.0 else 0.0
-    ratio = qs / rs
-    return _clamp(ratio, 0.0, 1.0)
+    return _clamp(qs / rs, 0.0, 1.0)
 
 
 def parse_metadata(json_text):
@@ -89,12 +85,16 @@ def parse_metadata(json_text):
         return {}
 
 
-class PSN_QuantizationMonitor:
-    """Monitors VRAM savings and quality impact of quantization.
+class PSN_Quantization_Savings_Calc:
+    """Compute percent VRAM saved and a score ratio from numbers you type.
 
-    Accepts plain numeric VRAM values (in MB) and optional quality scores.
-    No model objects, torch tensors, or GPU access are used.
+    Measures nothing: no model objects, torch tensors, or GPU access are used.
     """
+
+    DESCRIPTION = (
+        "Computes % VRAM saved and a score ratio from numbers you type; measures nothing. "
+        "score_ratio is 0 when no scores are given."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -111,7 +111,7 @@ class PSN_QuantizationMonitor:
         }
 
     RETURN_TYPES = ("FLOAT", "FLOAT", "STRING")
-    RETURN_NAMES = ("vram_savings", "quality_metric", "report")
+    RETURN_NAMES = ("vram_saved_percent", "score_ratio", "report")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -121,14 +121,19 @@ class PSN_QuantizationMonitor:
         savings = compute_vram_savings(quantized_vram_mb, reference_vram_mb)
 
         if quantized_quality_score is not None and reference_quality_score is not None:
-            quality = compute_quality_metric(quantized_quality_score, reference_quality_score)
+            quality = compute_score_ratio(quantized_quality_score, reference_quality_score)
         else:
             quality = 0.0
+        have_scores = _safe_float(reference_quality_score, 0.0) > 0.0
 
         meta = parse_metadata(metadata_json)
         report_parts = [
-            "vram_savings={:.2f}%".format(savings),
-            "quality_metric={:.4f}".format(quality),
+            "vram_saved_percent={:.2f}%".format(savings)
+            if _safe_float(reference_vram_mb, 0.0) > 0.0
+            else "vram_saved_percent=0.00% (no reference VRAM given)",
+            "score_ratio={:.4f}".format(quality)
+            if have_scores
+            else "score_ratio=0.0000 (no scores given)",
         ]
         if meta:
             for key in sorted(meta.keys()):
@@ -139,9 +144,9 @@ class PSN_QuantizationMonitor:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_QuantizationMonitor": PSN_QuantizationMonitor,
+    "PSN_Quantization_Savings_Calc": PSN_Quantization_Savings_Calc,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_QuantizationMonitor": "PSN Quantization Monitor",
+    "PSN_Quantization_Savings_Calc": "PSN Quantization Savings Calculator (measures nothing)",
 }

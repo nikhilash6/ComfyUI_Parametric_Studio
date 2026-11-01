@@ -8,10 +8,10 @@ import math
 
 import torch
 
+import n_10_spectral_noise_injection as mod
 from n_10_spectral_noise_injection import (
     PSN_SpectralScheduler,
     PSN_SpectralNoise,
-    PSN_SpectralSampler,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
     _sigma_schedule,
@@ -30,7 +30,10 @@ def _tiny_latent(B=1, C=4, H=8, W=8, val=0.5):
 def test_mappings():
     assert "PSN_SpectralScheduler" in NODE_CLASS_MAPPINGS
     assert "PSN_SpectralNoise" in NODE_CLASS_MAPPINGS
-    assert "PSN_SpectralSampler" in NODE_CLASS_MAPPINGS
+    assert "PSN_SpectralSampler" not in NODE_CLASS_MAPPINGS
+    assert "PSN_SpectralSampler" not in NODE_DISPLAY_NAME_MAPPINGS
+    assert not hasattr(mod, "PSN_SpectralSampler")
+    assert sorted(NODE_CLASS_MAPPINGS) == ["PSN_SpectralNoise", "PSN_SpectralScheduler"]
     for k in NODE_CLASS_MAPPINGS:
         assert k in NODE_DISPLAY_NAME_MAPPINGS
         assert isinstance(NODE_DISPLAY_NAME_MAPPINGS[k], str)
@@ -126,6 +129,9 @@ def test_spectral_noise_node():
     assert out_lat["samples"].shape == lat["samples"].shape
     assert torch.allclose(lat["samples"], orig, atol=1e-6)
     assert not torch.allclose(out_lat["samples"], orig, atol=1e-4)
+    # output is exactly input + noise_scale * the seeded spectral noise
+    expected = orig + 0.5 * _spectral_noise(tuple(orig.shape), cfg, torch.device("cpu"), torch.float32)
+    assert torch.allclose(out_lat["samples"], expected, atol=1e-6)
 
 
 # ---------------------------------------------------------------------------
@@ -142,61 +148,6 @@ def test_spectral_noise_bad_latent():
     try:
         node.run({"samples": torch.randn(2, 8, 8)}, cfg, noise_scale=1.0)
         assert False, "expected ValueError for 3-D latent"
-    except ValueError:
-        pass
-
-
-# ---------------------------------------------------------------------------
-# 9. PSN_SpectralSampler: end-to-end with trivial denoiser, output valid
-# ---------------------------------------------------------------------------
-def test_spectral_sampler_e2e():
-    sched = PSN_SpectralScheduler()
-    sigmas, cfg = sched.run(5, "linear", 1.0, 0.0, 1.0, 0.5, "gaussian", 99)
-    lat = _tiny_latent(B=1, C=4, H=8, W=8, val=0.3)
-    sampler = PSN_SpectralSampler()
-    (out_lat,) = sampler.run(lat, sigmas, cfg, sampler="euler", noise_scale=1.0)
-    assert out_lat["samples"].shape == lat["samples"].shape
-    assert torch.isfinite(out_lat["samples"]).all()
-    assert torch.allclose(lat["samples"], torch.full((1, 4, 8, 8), 0.3), atol=1e-6)
-
-
-# ---------------------------------------------------------------------------
-# 10. PSN_SpectralSampler: with a custom model callable
-# ---------------------------------------------------------------------------
-def test_spectral_sampler_custom_model():
-    sched = PSN_SpectralScheduler()
-    sigmas, cfg = sched.run(3, "linear", 1.0, 0.0, 1.0, 0.5, "gaussian", 5)
-    lat = _tiny_latent(B=1, C=2, H=4, W=4, val=0.5)
-
-    call_count = [0]
-
-    def fake_model(latent_dict, sigma):
-        call_count[0] += 1
-        x = latent_dict["samples"] - sigma * 0.1
-        return {"samples": x}
-
-    sampler = PSN_SpectralSampler()
-    (out_lat,) = sampler.run(lat, sigmas, cfg, sampler="euler", noise_scale=0.5, model=fake_model)
-    assert call_count[0] == 3
-    assert out_lat["samples"].shape == lat["samples"].shape
-    assert torch.isfinite(out_lat["samples"]).all()
-
-
-# ---------------------------------------------------------------------------
-# 11. PSN_SpectralSampler: bad sigmas (too short) raises
-# ---------------------------------------------------------------------------
-def test_spectral_sampler_bad_sigmas():
-    sampler = PSN_SpectralSampler()
-    lat = _tiny_latent()
-    cfg = {"spectral_weight": 1.0, "cutoff_frac": 0.5, "seed": 1, "noise_type": "gaussian"}
-    try:
-        sampler.run(lat, torch.tensor([1.0]), cfg, sampler="euler", noise_scale=1.0)
-        assert False, "expected ValueError for 1-element sigmas"
-    except ValueError:
-        pass
-    try:
-        sampler.run(lat, [1.0, 0.5, 0.0], cfg, sampler="euler", noise_scale=1.0)
-        assert False, "expected ValueError for list sigmas"
     except ValueError:
         pass
 
@@ -264,9 +215,6 @@ if __name__ == "__main__":
     test_spectral_noise_weight_effect()
     test_spectral_noise_node()
     test_spectral_noise_bad_latent()
-    test_spectral_sampler_e2e()
-    test_spectral_sampler_custom_model()
-    test_spectral_sampler_bad_sigmas()
     test_radial_mask()
     test_scheduler_karras_exponential()
     test_scheduler_bad_type()

@@ -1,18 +1,9 @@
-"""PSN Multi-GPU Distribution for Large Models.
+"""PSN Device Layer Plan.
 
-Implements a planning/simulation layer for distributing model components
-across multiple devices.  Real multi-GPU execution requires ``accelerate``
-and a multi-GPU host; this module provides the core planning logic that
-torch/stdlib can do: parsing device maps, computing per-device layer
-assignments, estimating VRAM budgets, and simulating the distribution.
-
-NOT implemented (requires real multi-GPU + accelerate):
-  * Actual model weight movement between GPUs.
-  * Real VRAM measurement / offloading at runtime.
-  * Communication overhead between GPUs.
+Writes a round-robin layer-to-device text plan from a comma-separated device
+list. It does not load, move or split any model, measure VRAM or run on
+several devices.
 """
-
-import torch
 
 CAT = "ParametricStudio/MultiGPU"
 
@@ -61,135 +52,46 @@ def _compute_layer_assignment(num_layers: int, devices: list):
     return assignment
 
 
-def _estimate_vram(num_layers: int, params_per_layer: float, devices: list):
-    """Estimate VRAM usage per device (in bytes) for a uniform model.
-
-    Returns a dict: device -> estimated bytes.
-    """
-    total_bytes = num_layers * params_per_layer * 4  # fp32
-    per_device = total_bytes / len(devices)
-    return {dev: per_device for dev in devices}
-
-
-def _simulate_distribution(num_layers: int, devices: list, offload_threshold: float):
-    """Simulate distributing layers across devices.
-
-    Returns a dict with:
-      - "assignment": list of lists (layer indices per device)
-      - "vram_estimate": dict device -> bytes
-      - "offloaded_layers": list of layer indices that would be offloaded
-        to CPU if their estimated VRAM share exceeds the threshold.
-    """
-    assignment = _compute_layer_assignment(num_layers, devices)
-    vram = _estimate_vram(num_layers, 1.0, devices)  # 1 param per layer for sim
-    total_vram = sum(vram.values())
-    offloaded = []
-    for i, dev in enumerate(devices):
-        if dev == "cpu":
-            continue
-        share = vram[dev] / total_vram if total_vram > 0 else 0.0
-        if share > offload_threshold:
-            offloaded.extend(assignment[i])
-    return {
-        "assignment": assignment,
-        "vram_estimate": vram,
-        "offloaded_layers": offloaded,
-    }
-
-
 # ---------------------------------------------------------------------------
-# Node 1: PSN_Distribute_Model
+# Node: PSN_Device_Layer_Plan
 # ---------------------------------------------------------------------------
 
-class PSN_Distribute_Model:
-    """Plan the distribution of model layers across multiple devices.
+class PSN_Device_Layer_Plan:
+    """Round-robin layer-to-device text plan from a device list.
 
-    In a real multi-GPU setup this would use ``accelerate`` to move weights.
-    Here it computes the layer assignment and VRAM estimates so downstream
-    nodes can be informed about the distribution plan.
+    Takes no model and moves nothing; the output is a text plan only.
     """
+
+    DESCRIPTION = (
+        "Writes a round-robin layer-to-device text plan from a comma-separated "
+        "device list and a layer count. It does not move or split any model, "
+        "estimate memory or run on several devices."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": ("MODEL",),
                 "device_map": ("STRING", {"default": "cuda:0,cuda:1"}),
                 "num_layers": ("INT", {"default": 32, "min": 1, "max": 1024}),
-                "offload_threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0}),
             }
         }
 
-    RETURN_TYPES = ("MODEL", "STRING")
-    RETURN_NAMES = ("distributed_model", "distribution_plan")
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("layer_plan",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, model, device_map, num_layers, offload_threshold):
+    def run(self, device_map, num_layers):
         devices = _parse_device_map(device_map)
         for d in devices:
             _validate_device(d)
 
-        plan = _simulate_distribution(num_layers, devices, offload_threshold)
-
-        # Build a human-readable plan string
+        assignment = _compute_layer_assignment(num_layers, devices)
         lines = [f"Device map: {', '.join(devices)}"]
-        for i, dev in enumerate(devices):
-            layers = plan["assignment"][i]
-            vram = plan["vram_estimate"][dev]
-            lines.append(f"  {dev}: layers {layers}, ~{vram:.0f} bytes")
-        if plan["offloaded_layers"]:
-            lines.append(f"  Offloaded to CPU: {plan['offloaded_layers']}")
-        plan_str = "\n".join(lines)
-
-        # Return the model unchanged (planning only) plus the plan string
-        return (model, plan_str)
-
-
-# ---------------------------------------------------------------------------
-# Node 2: PSN_Gather_Results
-# ---------------------------------------------------------------------------
-
-class PSN_Gather_Results:
-    """Collect and combine results from a distributed model.
-
-    In a real setup this would gather tensors from all devices and
-    concatenate/average them.  Here it validates the distribution plan
-    and returns the output tensor unchanged (pass-through with metadata).
-    """
-
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "distributed_model": ("MODEL",),
-                "output": ("IMAGE",),
-                "distribution_plan": ("STRING", {"default": ""}),
-            }
-        }
-
-    RETURN_TYPES = ("IMAGE", "STRING")
-    RETURN_NAMES = ("final_output", "gather_info")
-    FUNCTION = "run"
-    CATEGORY = CAT
-
-    def run(self, distributed_model, output, distribution_plan):
-        if not isinstance(output, torch.Tensor):
-            raise TypeError("output must be a torch.Tensor")
-        if output.dim() != 4:
-            raise ValueError(f"output must be 4D [B,H,W,C], got {output.dim()}D")
-
-        # Count devices from the plan string
-        device_count = 1
-        if distribution_plan:
-            first_line = distribution_plan.split("\n")[0]
-            if "Device map:" in first_line:
-                devices_str = first_line.split(":", 1)[1].strip()
-                device_count = len([d for d in devices_str.split(",") if d.strip()])
-
-        info = f"Gathered from {device_count} device(s). Output shape: {list(output.shape)}"
-        # Return output unchanged (no in-place modification)
-        return (output, info)
+        for dev, layers in zip(devices, assignment):
+            lines.append(f"  {dev}: layers {layers}")
+        return ("\n".join(lines),)
 
 
 # ---------------------------------------------------------------------------
@@ -197,11 +99,9 @@ class PSN_Gather_Results:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Distribute_Model": PSN_Distribute_Model,
-    "PSN_Gather_Results": PSN_Gather_Results,
+    "PSN_Device_Layer_Plan": PSN_Device_Layer_Plan,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Distribute_Model": "PSN Distribute Model (Multi-GPU)",
-    "PSN_Gather_Results": "PSN Gather Results (Multi-GPU)",
+    "PSN_Device_Layer_Plan": "Device Layer Plan (text only)",
 }

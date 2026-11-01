@@ -1,9 +1,9 @@
-"""Tests for psn_nodes.gen.psn_bm3d_denoise (pure-logic BM3D control node)."""
+"""Tests for psn_nodes.gen.psn_bm3d_denoise (PSN_PatchDCT_Shrink: patch DCT shrinkage, not BM3D)."""
 
 import math
 
 from psn_nodes.gen.psn_bm3d_denoise import (
-    PSN_BM3D_Denoise,
+    PSN_PatchDCT_Shrink,
     _soft_threshold,
     _hard_threshold,
     _dct1d,
@@ -88,55 +88,81 @@ def test_vram_estimate_positive_and_scales():
     assert small > 0 and big > small
 
 
-def test_node_run_ok_and_denoise_changes_image():
-    node = PSN_BM3D_Denoise()
+def test_node_run_ok_and_shrink_moves_image_toward_constant():
+    node = PSN_PatchDCT_Shrink()
     # noisy image: constant + small noise
     img = _make_image(8, 8, lambda r, c: 0.5 + 0.05 * ((r * 3 + c * 7) % 3 - 1))
-    denoised, psnr, reason, vram_ok = node.run(
-        sigma=0.1, block_size=4, nbd_threshold=0.01, image=img,
+    shrunk, psnr, reason, vram_ok = node.run(
+        sigma=0.1, block_size=4, image=img,
         threshold_mode="soft", vram_budget_bytes=0,
     )
     assert vram_ok is True
     assert reason == "ok"
-    assert isinstance(denoised, list) and len(denoised) == 8
+    assert isinstance(shrunk, list) and len(shrunk) == 8
     assert math.isfinite(psnr)
-    # denoised should be closer to the constant 0.5 than the noisy input
+    # shrunk should be closer to the constant 0.5 than the noisy input
     def mean_abs_to_const(m):
         s = 0.0
         for row in m:
             for v in row:
                 s += abs(v - 0.5)
         return s / (8 * 8)
-    assert mean_abs_to_const(denoised) <= mean_abs_to_const(img) + 1e-9
+    assert mean_abs_to_const(shrunk) <= mean_abs_to_const(img) + 1e-9
 
 
 def test_node_run_vram_budget_exceeded():
-    node = PSN_BM3D_Denoise()
+    node = PSN_PatchDCT_Shrink()
     img = _make_image(8, 8, lambda r, c: 0.5)
-    denoised, psnr, reason, vram_ok = node.run(
-        sigma=0.1, block_size=4, nbd_threshold=0.01, image=img,
+    shrunk, psnr, reason, vram_ok = node.run(
+        sigma=0.1, block_size=4, image=img,
         threshold_mode="soft", vram_budget_bytes=1,  # tiny budget
     )
     assert vram_ok is False
     assert reason == "vram budget exceeded"
-    assert denoised is img  # passthrough on refusal
+    assert shrunk is img  # passthrough on refusal
 
 
 def test_node_run_bad_image_passthrough():
-    node = PSN_BM3D_Denoise()
-    denoised, psnr, reason, vram_ok = node.run(
-        sigma=0.1, block_size=4, nbd_threshold=0.01, image="not-an-image",
+    node = PSN_PatchDCT_Shrink()
+    shrunk, psnr, reason, vram_ok = node.run(
+        sigma=0.1, block_size=4, image="not-an-image",
     )
     assert vram_ok is False
-    assert denoised == "not-an-image"
+    assert shrunk == "not-an-image"
     assert "image" in reason
 
 
 def test_node_run_image_too_small():
-    node = PSN_BM3D_Denoise()
+    node = PSN_PatchDCT_Shrink()
     img = _make_image(2, 2, lambda r, c: 0.5)
-    denoised, psnr, reason, vram_ok = node.run(
-        sigma=0.1, block_size=4, nbd_threshold=0.01, image=img,
+    shrunk, psnr, reason, vram_ok = node.run(
+        sigma=0.1, block_size=4, image=img,
     )
     assert vram_ok is False
     assert "block_size" in reason
+
+
+def test_node_removes_fabricated_claims_and_unused_input():
+    inputs = PSN_PatchDCT_Shrink.INPUT_TYPES()
+    assert "nbd_threshold" not in inputs["required"]
+    assert PSN_PatchDCT_Shrink.RETURN_NAMES == ("shrunk_image", "psnr_db", "reason", "vram_ok")
+    assert "BM3D" in PSN_PatchDCT_Shrink.DESCRIPTION and "Not BM3D" in PSN_PatchDCT_Shrink.DESCRIPTION
+    from psn_nodes.gen import psn_bm3d_denoise as m
+    assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_PatchDCT_Shrink"]
+
+
+def test_constant_image_is_unchanged():
+    img = _make_image(8, 8, lambda r, c: 0.5)
+    shrunk, psnr, reason, ok = PSN_PatchDCT_Shrink().run(sigma=0.0, block_size=4, image=img)
+    assert ok and reason == "ok"
+    assert all(abs(shrunk[r][c] - 0.5) < 1e-9 for r in range(8) for c in range(8))
+
+
+def test_hard_mode_zeroes_small_coefficients_only():
+    img = _make_image(4, 4, lambda r, c: 0.5 + (0.01 if (r + c) % 2 else 0.0))
+    out_hard = PSN_PatchDCT_Shrink().run(sigma=0.2, block_size=4, image=img, threshold_mode="hard")[0]
+    out_none = PSN_PatchDCT_Shrink().run(sigma=0.2, block_size=4, image=img, threshold_mode="none")[0]
+    # "none" skips thresholding so the round trip returns the input
+    assert all(abs(out_none[r][c] - img[r][c]) < 1e-9 for r in range(4) for c in range(4))
+    # hard threshold removes the 0.01 checker pattern (its DCT coefficients are below lam)
+    assert abs(out_hard[0][0] - out_hard[0][1]) < 1e-6

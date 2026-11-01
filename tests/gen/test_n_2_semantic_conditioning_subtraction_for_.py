@@ -1,111 +1,65 @@
 import pytest
 import json
 import math
+import torch
 from psn_nodes.gen.n_2_semantic_conditioning_subtraction_for_ import (
     PSN_Conditioning_Subtract,
-    PSN_Conditioning_Clamp,
-    _mean_magnitude,
-    _subtract_vectors,
+    PSN_Number_List_Clamp,
+    NODE_CLASS_MAPPINGS,
     _clamp_vector,
     _parse_vector_json
 )
 
 
+def _cond(values, opts=None):
+    return [[torch.tensor(values, dtype=torch.float32).reshape(1, 1, -1), dict(opts or {})]]
+
+
 class TestPSN_Conditioning_Subtract:
-    def test_basic_subtraction(self):
-        node = PSN_Conditioning_Subtract()
-        base_vec = "[1.0, 2.0, 3.0]"
-        sub_vec = "[0.5, 0.5, 0.5]"
-        strength = 1.0
-        auto_scale = False
-        
-        result_float, result_json = node.run(
-            base_conditioning=0.0,
-            subtract_conditioning=0.0,
-            strength=strength,
-            auto_scale=auto_scale,
-            base_vector=base_vec,
-            subtract_vector=sub_vec
-        )
-        
-        expected = [1.0 - 0.5, 2.0 - 0.5, 3.0 - 0.5]
-        parsed_result = json.loads(result_json)
-        assert parsed_result == expected
-        assert result_float == expected[0]
+    def test_basic_subtraction_on_tensors(self):
+        base = _cond([1.0, 2.0, 3.0], {"pooled": 1})
+        sub = _cond([0.5, 0.5, 0.5])
+        (out,) = PSN_Conditioning_Subtract().run(base, sub, 1.0, False)
+        assert torch.allclose(out[0][0], torch.tensor([0.5, 1.5, 2.5]).reshape(1, 1, 3))
+        assert out[0][1] == {"pooled": 1}
 
-    def test_auto_scale(self):
-        node = PSN_Conditioning_Subtract()
-        base_vec = "[2.0, 2.0]"  # Norm = sqrt(8) = 2.828
-        sub_vec = "[1.0, 1.0]"   # Norm = sqrt(2) = 1.414
-        strength = 1.0
-        auto_scale = True
-        
-        result_float, result_json = node.run(
-            base_conditioning=0.0,
-            subtract_conditioning=0.0,
-            strength=strength,
-            auto_scale=auto_scale,
-            base_vector=base_vec,
-            subtract_vector=sub_vec
-        )
-        
-        # Auto-scale factor = base_norm / sub_norm = 2.828 / 1.414 = 2.0
-        # Effective strength = 1.0 * 2.0 = 2.0
-        # Result = [2.0 - (1.0 * 2.0), 2.0 - (1.0 * 2.0)] = [0.0, 0.0]
-        expected = [0.0, 0.0]
-        parsed_result = json.loads(result_json)
-        assert parsed_result == expected
-        assert result_float == 0.0
+    def test_strength_scales_subtraction(self):
+        base = _cond([1.0, 2.0, 3.0])
+        sub = _cond([0.5, 0.5, 0.5])
+        (out,) = PSN_Conditioning_Subtract().run(base, sub, 2.0, False)
+        assert torch.allclose(out[0][0], torch.tensor([0.0, 1.0, 2.0]).reshape(1, 1, 3))
 
-    def test_mismatched_lengths(self):
-        node = PSN_Conditioning_Subtract()
-        base_vec = "[1.0, 2.0]"
-        sub_vec = "[1.0]"
-        
-        with pytest.raises(ValueError, match="Vectors must have the same length"):
-            node.run(
-                base_conditioning=0.0,
-                subtract_conditioning=0.0,
-                strength=1.0,
-                auto_scale=False,
-                base_vector=base_vec,
-                subtract_vector=sub_vec
-            )
+    def test_auto_scale_matches_norm(self):
+        base = _cond([2.0, 2.0])   # norm sqrt(8)
+        sub = _cond([1.0, 1.0])    # norm sqrt(2); factor 2
+        (out,) = PSN_Conditioning_Subtract().run(base, sub, 1.0, True)
+        assert torch.allclose(out[0][0], torch.zeros(1, 1, 2), atol=1e-6)
 
-    def test_invalid_vector_format(self):
-        node = PSN_Conditioning_Subtract()
-        base_vec = "not a list"
-        sub_vec = "[1.0]"
-        
-        with pytest.raises(ValueError, match="Invalid JSON format"):
-            node.run(
-                base_conditioning=0.0,
-                subtract_conditioning=0.0,
-                strength=1.0,
-                auto_scale=False,
-                base_vector=base_vec,
-                subtract_vector=sub_vec
-            )
+    def test_inputs_not_modified_and_every_entry_processed(self):
+        base = _cond([1.0, 1.0]) + _cond([4.0, 4.0])
+        sub = _cond([1.0, 0.0])
+        before = [b[0].clone() for b in base]
+        (out,) = PSN_Conditioning_Subtract().run(base, sub, 1.0, False)
+        assert len(out) == 2
+        assert torch.allclose(out[1][0], torch.tensor([3.0, 4.0]).reshape(1, 1, 2))
+        assert all(torch.equal(b[0], x) for b, x in zip(base, before))
 
-    def test_non_numeric_elements(self):
-        node = PSN_Conditioning_Subtract()
-        base_vec = "[1.0, \"two\"]"
-        sub_vec = "[1.0, 1.0]"
-        
-        with pytest.raises(ValueError, match="All elements in the vector must be numbers"):
-            node.run(
-                base_conditioning=0.0,
-                subtract_conditioning=0.0,
-                strength=1.0,
-                auto_scale=False,
-                base_vector=base_vec,
-                subtract_vector=sub_vec
-            )
+    def test_shape_mismatch_and_empty_rejected(self):
+        with pytest.raises(ValueError, match="shapes must match"):
+            PSN_Conditioning_Subtract().run(_cond([1.0, 2.0]), _cond([1.0]), 1.0, False)
+        with pytest.raises(ValueError, match="must not be empty"):
+            PSN_Conditioning_Subtract().run([], _cond([1.0]), 1.0, False)
+
+    def test_types_and_dead_inputs_gone(self):
+        it = PSN_Conditioning_Subtract.INPUT_TYPES()["required"]
+        assert it["base"] == ("CONDITIONING",) and it["subtract"] == ("CONDITIONING",)
+        assert "base_conditioning" not in it and "subtract_conditioning" not in it
+        assert PSN_Conditioning_Subtract.RETURN_TYPES == ("CONDITIONING",)
 
 
-class TestPSN_Conditioning_Clamp:
+class TestPSN_Number_List_Clamp:
     def test_linear_clamp(self):
-        node = PSN_Conditioning_Clamp()
+        node = PSN_Number_List_Clamp()
         vec = "[-2.0, 0.5, 3.0]"
         min_val = -1.0
         max_val = 1.0
@@ -124,7 +78,7 @@ class TestPSN_Conditioning_Clamp:
         assert result_float == -1.0
 
     def test_tanh_clamp(self):
-        node = PSN_Conditioning_Clamp()
+        node = PSN_Number_List_Clamp()
         vec = "[-2.0, 0.0, 2.0]"
         min_val = -1.0
         max_val = 1.0
@@ -148,7 +102,7 @@ class TestPSN_Conditioning_Clamp:
         assert abs(result_float - math.tanh(-2.0)) < 1e-6
 
     def test_invalid_range(self):
-        node = PSN_Conditioning_Clamp()
+        node = PSN_Number_List_Clamp()
         vec = "[1.0]"
         min_val = 2.0
         max_val = 1.0
@@ -163,7 +117,7 @@ class TestPSN_Conditioning_Clamp:
             )
 
     def test_invalid_method(self):
-        node = PSN_Conditioning_Clamp()
+        node = PSN_Number_List_Clamp()
         vec = "[1.0]"
         min_val = -1.0
         max_val = 1.0
@@ -178,22 +132,15 @@ class TestPSN_Conditioning_Clamp:
             )
 
 
+class TestRenamedClamp:
+    def test_registry_and_output_names(self):
+        assert "PSN_Conditioning_Clamp" not in NODE_CLASS_MAPPINGS
+        assert NODE_CLASS_MAPPINGS["PSN_Number_List_Clamp"] is PSN_Number_List_Clamp
+        assert PSN_Number_List_Clamp.RETURN_NAMES == ("first_value", "result_json")
+        assert "does not touch CONDITIONING" in PSN_Number_List_Clamp.DESCRIPTION
+
+
 class TestHelperFunctions:
-    def test_mean_magnitude(self):
-        vec = [3.0, 4.0]
-        assert _mean_magnitude(vec) == 5.0  # sqrt(9 + 16) = 5
-        
-        vec = []
-        assert _mean_magnitude(vec) == 0.0
-
-    def test_subtract_vectors(self):
-        base = [1.0, 2.0, 3.0]
-        sub = [0.5, 0.5, 0.5]
-        strength = 2.0
-        result = _subtract_vectors(base, sub, strength)
-        expected = [1.0 - 1.0, 2.0 - 1.0, 3.0 - 1.0]
-        assert result == expected
-
     def test_clamp_vector_linear(self):
         vec = [-2.0, 0.5, 3.0]
         result = _clamp_vector(vec, -1.0, 1.0, "linear")

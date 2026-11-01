@@ -1,14 +1,10 @@
-"""PSN_MongoDB_Load_Prompt (pure-logic, secure-by-design).
+"""PSN_Prompt_Document_Lookup (pure logic).
 
-This module implements the *logic* of a "load prompt from MongoDB" node
-without any real database, network, file, or OS access.  The spec's
-`db_session` (MONGO_SESSION) is represented as a plain JSON text string
-holding a mapping of document id -> document, and the "fetch" is a pure
-in-memory lookup.  This keeps the node testable with the standard library
-only and safe by design (no sockets, no pymongo, no I/O).
+Looks up a prompt document by id in a JSON mapping that you paste in. No
+database is used: there is no pymongo, network, file or OS access.
 
 Inputs:
-    db_session (STRING): JSON text mapping doc_id -> {"prompt": str, "params": dict}
+    documents_json (STRING): JSON text mapping doc_id -> {"prompt": str, "params": dict}
     doc_id     (STRING): the id of the document to fetch
 
 Outputs:
@@ -23,23 +19,23 @@ import json
 CAT = "ParametricStudio/Database"
 
 
-def _parse_db_session(db_session):
-    """Parse the db_session JSON text into a dict.
+def _parse_documents_json(documents_json):
+    """Parse the documents_json JSON text into a dict.
 
     Returns (data, error).  On success error is None and data is a dict.
     On failure data is None and error is a descriptive string.
     """
-    if not isinstance(db_session, str):
-        return None, "db_session must be a JSON string"
-    text = db_session.strip()
+    if not isinstance(documents_json, str):
+        return None, "documents_json must be a JSON string"
+    text = documents_json.strip()
     if not text:
-        return None, "db_session is empty"
+        return None, "documents_json is empty"
     try:
         data = json.loads(text)
     except (ValueError, TypeError) as exc:
-        return None, "db_session is not valid JSON: %s" % exc
+        return None, "documents_json is not valid JSON: %s" % exc
     if not isinstance(data, dict):
-        return None, "db_session must be a JSON object mapping id -> document"
+        return None, "documents_json must be a JSON object mapping id -> document"
     return data, None
 
 
@@ -75,14 +71,19 @@ def _extract_params(doc):
         return json.dumps({"value": str(params)}, sort_keys=True)
 
 
-class PSN_MongoDB_Load_Prompt:
-    """Fetch a saved prompt document by id from a JSON-encoded session."""
+class PSN_Prompt_Document_Lookup:
+    """Fetch a prompt document by id from pasted JSON text."""
+
+    DESCRIPTION = (
+        "Looks up an id in a JSON mapping of id to {prompt, params} that you paste in. "
+        "Uses no database and reads no file."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "db_session": ("STRING", {"default": "{}", "multiline": True}),
+                "documents_json": ("STRING", {"default": "{}", "multiline": True}),
                 "doc_id": ("STRING", {"default": ""}),
             },
             "optional": {},
@@ -93,8 +94,8 @@ class PSN_MongoDB_Load_Prompt:
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, db_session, doc_id):
-        data, err = _parse_db_session(db_session)
+    def run(self, documents_json, doc_id):
+        data, err = _parse_documents_json(documents_json)
         if err is not None:
             return ("", "", False, err)
 
@@ -107,5 +108,5 @@ class PSN_MongoDB_Load_Prompt:
         return (prompt, params, True, "ok")
 
 
-NODE_CLASS_MAPPINGS = {"PSN_MongoDB_Load_Prompt": PSN_MongoDB_Load_Prompt}
-NODE_DISPLAY_NAME_MAPPINGS = {"PSN_MongoDB_Load_Prompt": "PSN MongoDB Load Prompt"}
+NODE_CLASS_MAPPINGS = {"PSN_Prompt_Document_Lookup": PSN_Prompt_Document_Lookup}
+NODE_DISPLAY_NAME_MAPPINGS = {"PSN_Prompt_Document_Lookup": "PSN Prompt Document Lookup (pasted JSON, no database)"}

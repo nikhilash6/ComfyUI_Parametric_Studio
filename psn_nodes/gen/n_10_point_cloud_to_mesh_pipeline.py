@@ -3,8 +3,9 @@
 Two nodes:
   * PSN_Depth_To_PointCloud : back-project an IMAGE + DEPTH_MAP through camera
     intrinsics into a 3D point cloud (with per-point RGB colors).
-  * PSN_PointCloud_To_Mesh  : reconstruct a watertight-ish mesh from the point
-    cloud using one of three algorithms (poisson / ball_pivoting / alpha_shape).
+  * PSN_PointCloud_To_Mesh  : build a triangle mesh from the point cloud with
+    one of three methods (convex_hull / ball_pivoting / delaunay). convex_hull
+    and delaunay are plain geometry, not surface reconstruction.
 
 Heavy libraries (trimesh, open3d) are imported lazily inside the mesh node so
 that the depth->point cloud node keeps working in minimal environments.
@@ -163,14 +164,8 @@ class PSN_Depth_To_PointCloud:
 # Node 2: point cloud -> mesh
 # ---------------------------------------------------------------------------
 
-def _mesh_poisson(points, colors, detail):
-    """Poisson-style surface reconstruction via trimesh convex hull.
-
-    A true Poisson reconstruction requires a signed distance field and is
-    computationally expensive.  We use the convex hull as a robust watertight
-    base mesh, which is a valid (conservative) approximation for convex or
-    near-convex point clouds.
-    """
+def _mesh_convex_hull(points, colors):
+    """Convex hull of the points via trimesh (a closed hull, not a surface fit)."""
     import trimesh
 
     mesh = trimesh.convex.convex_hull(points)
@@ -179,7 +174,7 @@ def _mesh_poisson(points, colors, detail):
     return mesh
 
 
-def _mesh_ball_pivoting(points, colors, detail):
+def _mesh_ball_pivoting(points, colors):
     """Ball Pivoting Method via open3d (CPU)."""
     import open3d as o3d
 
@@ -187,9 +182,10 @@ def _mesh_ball_pivoting(points, colors, detail):
     pcd.points = o3d.utility.Vector3dVector(points)
     if colors is not None and len(colors) == len(points):
         pcd.colors = o3d.utility.Vector3dVector(colors)
+    pcd.estimate_normals()  # ball pivoting needs normals
 
     # estimate a reasonable radius from the point cloud scale
-    extent = float(pcd.get_max_bound() - pcd.get_min_bound())
+    extent = float((pcd.get_max_bound() - pcd.get_min_bound()).max())
     n = max(len(points), 1)
     radius = max(extent / max(math.sqrt(n), 1.0) * 1.5, 1e-6)
 
@@ -199,39 +195,47 @@ def _mesh_ball_pivoting(points, colors, detail):
     return mesh
 
 
-def _mesh_alpha_shape(points, colors, detail):
-    """Alpha shape via scipy Delaunay (fallback: trimesh convex hull)."""
+def _mesh_delaunay(points, colors):
+    """Raw 3D Delaunay tetrahedralisation (scipy), returned as its unique
+    triangles (interior faces included). Errors from degenerate input
+    (e.g. coplanar points) are raised, not hidden."""
+    import numpy as np
     import trimesh
+    from scipy.spatial import Delaunay
 
-    try:
-        from scipy.spatial import Delaunay
-        tri = Delaunay(points)
-        mesh = trimesh.Trimesh(vertices=points, faces=tri.simplices, process=False)
-    except Exception:
-        mesh = trimesh.convex.convex_hull(points)
+    s = Delaunay(points).simplices
+    tris = np.concatenate([s[:, [0, 1, 2]], s[:, [0, 1, 3]], s[:, [0, 2, 3]], s[:, [1, 2, 3]]])
+    faces = np.unique(np.sort(tris, axis=1), axis=0)
+    mesh = trimesh.Trimesh(vertices=points, faces=faces, process=False)
     if colors is not None and len(colors) == len(points):
         mesh.vertex_colors = colors
     return mesh
 
 
 _METHODS = {
-    "poisson": _mesh_poisson,
+    "convex_hull": _mesh_convex_hull,
     "ball_pivoting": _mesh_ball_pivoting,
-    "alpha_shape": _mesh_alpha_shape,
+    "delaunay": _mesh_delaunay,
 }
 
 
 class PSN_PointCloud_To_Mesh:
-    """Reconstruct a triangle mesh from a 3D point cloud.
+    """Build a triangle mesh from a 3D point cloud.
 
     Methods:
-      poisson       - trimesh convex hull (robust, watertight)
-      ball_pivoting - open3d BPA (preserves surface detail)
-      alpha_shape   - scipy Delaunay / trimesh convex hull fallback
+      convex_hull   - trimesh convex hull (closed, ignores concavities)
+      ball_pivoting - open3d ball pivoting (normals are estimated first)
+      delaunay      - unique triangles of the scipy 3D Delaunay tetrahedralisation
 
     Output: MESH (a trimesh.Trimesh object, or an open3d TriangleMesh for
     ball_pivoting; downstream nodes should handle both).
     """
+
+    DESCRIPTION = (
+        "Builds a triangle mesh from a point cloud by convex hull, open3d "
+        "ball pivoting, or the raw 3D Delaunay triangulation. It does not do "
+        "Poisson or alpha-shape surface reconstruction."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -239,8 +243,7 @@ class PSN_PointCloud_To_Mesh:
             "required": {
                 "POINT_CLOUD": ("TENSOR",),
                 "COLORS": ("TENSOR",),
-                "METHOD": (["poisson", "ball_pivoting", "alpha_shape"],),
-                "DETAIL": ("INT", {"default": 10, "min": 1, "max": 16}),
+                "METHOD": (["convex_hull", "ball_pivoting", "delaunay"],),
             }
         }
 
@@ -249,18 +252,17 @@ class PSN_PointCloud_To_Mesh:
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, POINT_CLOUD, COLORS, METHOD, DETAIL):
+    def run(self, POINT_CLOUD, COLORS, METHOD):
         points = _validate_point_cloud(POINT_CLOUD)
         colors = _validate_colors(COLORS, points.shape[0])
 
         if METHOD not in _METHODS:
             raise ValueError(f"Unknown METHOD '{METHOD}', expected one of {list(_METHODS)}")
 
-        detail = max(1, min(16, int(DETAIL)))
         pts_np = points.numpy()
         col_np = colors.numpy()
 
-        mesh = _METHODS[METHOD](pts_np, col_np, detail)
+        mesh = _METHODS[METHOD](pts_np, col_np)
         return (mesh,)
 
 

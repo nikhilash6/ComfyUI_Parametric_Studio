@@ -5,32 +5,23 @@ LLM-Enhanced Prompt Generation via Ollama.
 This module provides a ComfyUI custom node that enhances short user prompts
 into detailed, structured prompts using a local Ollama LLM service.
 
-Since network access is forbidden in this environment, the node implements:
-  - A template-based fallback enhancer (pure Python, no network) that expands
-    a short prompt into a structured, detailed prompt with style descriptors,
-    lighting, composition, and quality tags.
-  - A pluggable ``_ollama_request`` hook that, in a real deployment, would be
-    replaced by an HTTP call to the Ollama API.  The hook is injectable so
-    tests can supply a mock without any network.
-  - Robust parsing of Ollama-style JSON responses (``{"message": {"content": ...}}``)
-    and plain-text responses.
-  - Clear error messages when the Ollama service is unreachable.
+The node POSTs to ``{ollama_url}/api/generate`` (``stream: false``) with the
+standard library and uses the returned text. If the request fails (service
+unreachable, HTTP error, bad URL) or Ollama returns no text, it falls back to a
+fixed template of style tags and says so in the ``source`` output, so a canned
+result is never presented as model output.
 
-What was NOT implemented (requires network / external service):
-  - Actual HTTP POST to the Ollama REST API (``/api/generate``).
-  - Real LLM inference (llama3, etc.).
-  - Timeout / connection-error handling against a live service.
-
-What IS implemented (core logic, testable offline):
-  - Template-based prompt enhancement with style presets.
-  - Negative-prompt generation per style.
-  - Response parsing (JSON and plain text).
+  - The request hook ``_ollama_request`` is injectable so tests can supply a
+    canned reply without any network.
+  - Robust parsing of Ollama-style JSON responses (``{"response": ...}``,
+    ``{"message": {"content": ...}}``) and plain-text responses.
+  - Template-based enhancement with style presets, and negative prompts per style.
   - Input validation and edge-case handling.
-  - Full ComfyUI node interface (INPUT_TYPES, RETURN_TYPES, etc.).
 """
 
 import json
 import re
+import urllib.request
 
 # ---------------------------------------------------------------------------
 # Style presets: each style maps to a set of descriptor fragments and a
@@ -186,20 +177,26 @@ def _parse_ollama_response(raw: str) -> str:
 
 
 def _default_ollama_request(ollama_url: str, model_name: str, prompt: str, max_tokens: int) -> str:
-    """Default Ollama request handler.
+    """POST to ``{ollama_url}/api/generate`` (stream false) and return the body.
 
-    In a real deployment this would perform an HTTP POST to
-    ``{ollama_url}/api/generate``.  Because network access is forbidden
-    in this sandbox, this function raises a clear error.
-
-    Override by assigning a different callable to
-    ``PSN_Ollama_Prompt_Enhancer._ollama_request``.
+    Raises ValueError for a non-http(s) URL and OSError (URLError/HTTPError/
+    timeout) when the service cannot be reached.
     """
-    raise ConnectionError(
-        f"Ollama service is not reachable at {ollama_url}. "
-        "Network access is unavailable in this environment. "
-        "Falling back to template-based enhancement."
+    base = (ollama_url or "").strip().rstrip("/")
+    if not base.lower().startswith(("http://", "https://")):
+        raise ValueError("ollama_url must start with http:// or https://")
+    body = json.dumps({
+        "model": model_name,
+        "prompt": prompt,
+        "stream": False,
+        "options": {"num_predict": int(max_tokens)},
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        base + "/api/generate", data=body,
+        headers={"Content-Type": "application/json"}, method="POST",
     )
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        return resp.read().decode("utf-8", "replace")
 
 
 # ---------------------------------------------------------------------------
@@ -210,8 +207,10 @@ CAT = "ParametricStudio/LLM"
 
 
 class PSN_Ollama_Prompt_Enhancer:
-    """Enhance a short prompt into a detailed, structured prompt using a local
-    Ollama LLM (or a template-based fallback when the service is unavailable).
+    """Enhance a short prompt into a detailed prompt using a local Ollama LLM.
+
+    When the request fails or returns no text, a fixed template of style tags is
+    used instead and the ``source`` output says so.
 
     Inputs:
         short_prompt  – the user's initial short prompt.
@@ -223,9 +222,15 @@ class PSN_Ollama_Prompt_Enhancer:
     Outputs:
         enhanced_prompt  – the detailed prompt string.
         negative_prompt  – a suggested negative prompt string.
+        source           – "ollama", or "template (fallback: <reason>)".
     """
 
-    # Injected by tests / deployment; replaced at runtime.
+    DESCRIPTION = ("Expands a short prompt with a local Ollama model via "
+                   "POST /api/generate. If Ollama cannot be reached or returns "
+                   "nothing, it uses fixed style tags and reports that in the "
+                   "source output.")
+
+    # Replaceable by tests (canned reply, no network).
     _ollama_request = staticmethod(_default_ollama_request)
 
     @classmethod
@@ -245,8 +250,8 @@ class PSN_Ollama_Prompt_Enhancer:
             },
         }
 
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("enhanced_prompt", "negative_prompt")
+    RETURN_TYPES = ("STRING", "STRING", "STRING")
+    RETURN_NAMES = ("enhanced_prompt", "negative_prompt", "source")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -260,7 +265,7 @@ class PSN_Ollama_Prompt_Enhancer:
     ):
         """Enhance *short_prompt* via Ollama (or template fallback).
 
-        Returns ``(enhanced_prompt, negative_prompt)``.
+        Returns ``(enhanced_prompt, negative_prompt, source)``.
         """
         # --- Validate inputs ------------------------------------------------
         if not isinstance(short_prompt, str):
@@ -286,6 +291,8 @@ class PSN_Ollama_Prompt_Enhancer:
         # --- Try Ollama first, fall back to template ------------------------
         enhanced = None
         negative = None
+        source = "ollama"
+        fallback_reason = ""
 
         try:
             raw_response = self._ollama_request(
@@ -299,19 +306,22 @@ class PSN_Ollama_Prompt_Enhancer:
                 if neg_match:
                     negative = neg_match.group(1).strip()
                     enhanced = enhanced[: neg_match.start()].strip().rstrip(",")
-        except (ConnectionError, OSError, Exception) as exc:
-            # Fall back to template-based enhancement
+        except (OSError, ValueError) as exc:
             enhanced = None
             negative = None
+            fallback_reason = "%s: %s" % (type(exc).__name__, exc)
 
         if not enhanced:
+            if not fallback_reason:
+                fallback_reason = "Ollama returned no text"
+            source = "template (fallback: %s)" % fallback_reason
             enhanced, negative = _template_enhance(short_prompt, style, max_tokens)
 
         # Ensure we always have a negative prompt
         if not negative:
             negative = _STYLE_PRESETS[style]["negative"]
 
-        return (enhanced, negative)
+        return (enhanced, negative, source)
 
 
 # ---------------------------------------------------------------------------

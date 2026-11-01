@@ -1,16 +1,15 @@
-"""PSN_VRAMGuard: Pre-flight VRAM safety check.
+"""PSN_VRAM_Bytes_Check: arithmetic on VRAM byte counts you type.
 
-This module implements the pure-logic, secure-by-design part of a VRAM guard.
-It does NOT import torch, does NOT query the GPU, and does NOT perform any
-file/network/OS access. Instead, it accepts plain numeric inputs (allocated
-bytes, reserved bytes, total bytes, required GB, batch size) and applies the
-same decision rule the spec describes:
+This module does NOT import torch, does NOT query the GPU, and does NOT perform
+any file/network/OS access. It accepts plain numeric inputs (allocated bytes,
+reserved bytes, total bytes, required GB, batch size) typed by you or fed in by
+an upstream node, and applies this rule:
 
-    If (allocated + required_gb * 1e9) > total_memory * 0.9 -> unsafe (OOM risk)
+    If (allocated + required_gb * 1e9) > total_memory * 0.9 -> over budget
 
-The ComfyUI node wrapper (PSN_VRAMGuard) takes these values as inputs so the
-caller (or an upstream node that actually queries torch.cuda) can feed them in.
-This keeps the node testable without a GPU and safe by design.
+Nothing is measured here. If allocated_bytes and reserved_bytes are both 0 (as at
+the defaults), no measurement was given and the node says so instead of
+reporting that the request fits.
 """
 
 from psn import expr, orchestration as _orch
@@ -71,11 +70,17 @@ def _validate_inputs(required_gb, current_batch_size, allocated_bytes,
 
 def _check_vram(required_gb, current_batch_size, allocated_bytes,
                 reserved_bytes, total_bytes):
-    """Core VRAM check. Returns (safe, message)."""
+    """Core byte-count check. Returns (fits, message)."""
     ok, why = _validate_inputs(required_gb, current_batch_size,
                                allocated_bytes, reserved_bytes, total_bytes)
     if not ok:
         return False, f"Invalid input: {why}"
+
+    if allocated_bytes == 0 and reserved_bytes == 0:
+        return False, (
+            "No measurement given: allocated_bytes and reserved_bytes are both 0, "
+            "so nothing can be said about whether the request fits"
+        )
 
     required_bytes = required_gb * 1e9
     projected = allocated_bytes + required_bytes
@@ -84,7 +89,7 @@ def _check_vram(required_gb, current_batch_size, allocated_bytes,
     if projected > limit:
         headroom = limit - projected
         return False, (
-            f"OOM risk: projected {projected:.3e} bytes exceeds "
+            f"Over budget: projected {projected:.3e} bytes exceeds "
             f"90% limit {limit:.3e} bytes by {-headroom:.3e} bytes "
             f"(allocated={allocated_bytes:.3e}, required={required_bytes:.3e}, "
             f"total={total_bytes:.3e}, batch={current_batch_size})"
@@ -92,20 +97,23 @@ def _check_vram(required_gb, current_batch_size, allocated_bytes,
 
     headroom = limit - projected
     return True, (
-        f"Safe: projected {projected:.3e} bytes is within "
+        f"Fits: projected {projected:.3e} bytes is within "
         f"90% limit {limit:.3e} bytes (headroom={headroom:.3e} bytes, "
-        f"batch={current_batch_size})"
+        f"batch={current_batch_size}), going by the numbers given"
     )
 
 
-class PSN_VRAMGuard:
-    """Pre-flight VRAM safety check.
+class PSN_VRAM_Bytes_Check:
+    """Arithmetic check on typed VRAM byte counts. Reads no GPU.
 
-    Inputs are plain numbers so this node is pure-logic and testable without
-    a GPU. An upstream node (or the user) should supply the actual
-    torch.cuda.memory_allocated(), torch.cuda.memory_reserved(), and
-    torch.cuda.get_device_properties(0).total_memory values.
+    Inputs are plain numbers. An upstream node (or the user) must supply the
+    allocated, reserved and total memory values; this node measures none of them.
     """
+
+    DESCRIPTION = (
+        "Arithmetic on allocated, reserved and total bytes you type; reads no GPU. "
+        "With allocated and reserved both 0 it reports no measurement given, not a pass."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -120,22 +128,22 @@ class PSN_VRAMGuard:
         }
 
     RETURN_TYPES = ("BOOLEAN", "STRING")
-    RETURN_NAMES = ("safe", "message")
+    RETURN_NAMES = ("fits_budget", "message")
     FUNCTION = "run"
     CATEGORY = CAT
 
     def run(self, required_gb, current_batch_size, allocated_bytes,
             reserved_bytes, total_bytes):
-        safe, message = _check_vram(required_gb, current_batch_size,
+        fits, message = _check_vram(required_gb, current_batch_size,
                                     allocated_bytes, reserved_bytes,
                                     total_bytes)
-        return (safe, message)
+        return (fits, message)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_VRAMGuard": PSN_VRAMGuard,
+    "PSN_VRAM_Bytes_Check": PSN_VRAM_Bytes_Check,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_VRAMGuard": "VRAM Guard (Pre-flight Check)",
+    "PSN_VRAM_Bytes_Check": "VRAM Bytes Check (typed numbers, reads no GPU)",
 }

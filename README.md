@@ -111,9 +111,8 @@ The installer and planner look at your GPU, RAM and disk and offer what fits: GP
 - **On your phone:** add it to your home screen over Tailscale, with private HTTPS and a QR code. Your GPU does the work.
 - **Comfy SDK:** the default is your local ComfyUI. Set `STUDIO_BACKEND=sdk` to send the same graphs through Comfy's official SDK, to Comfy Cloud, a deployment or your own proxy. Cloud and deployments spend Comfy credits.
 
-### 578 custom nodes, including a new V3 pack
-339 of the 578 are lightweight helpers that plan, validate or write metadata and load no model. The new V3 flagship pack does the heavy lifting:
-The `PSN_` nodes load in about 0.07 s thanks to lazy imports.
+### 544 custom nodes, including a new V3 pack
+Audited by reading the code: 158 do real work on images, latents, audio or files, or call a service. 262 are honest utilities (maths, text, config) and 102 build a plan or a payload for something else; those load no model and render nothing. 22 do not work on real ComfyUI inputs yet ([list](docs/NODES.md#node-reference)). Node ids that changed are in [NODE_RENAMES](docs/NODE_RENAMES.md). The `PSN_` nodes load in about 0.07 s thanks to lazy imports. The new V3 flagship pack has seven nodes for your own graphs; the studio's built-in graphs don't use them yet. The main ones:
 
 | Node | What it does |
 |---|---|

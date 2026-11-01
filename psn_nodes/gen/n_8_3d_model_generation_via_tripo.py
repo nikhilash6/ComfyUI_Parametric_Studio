@@ -1,34 +1,27 @@
-"""ParametricStudio - Tripo 3D model generation (offline core).
+"""ParametricStudio - Tripo 3D request builders (offline, no API call).
 
-The real Tripo API requires network access and an API key, which are not
-available in this sandbox.  This module implements the *core* logic that
-torch/stdlib can do:
+These nodes only build request JSON text. They call no API, take no API key,
+upload nothing, and return no model, URL or job id.
 
-* PSN_Tripo_Text_To_3D  - validates inputs, builds a deterministic job id
-  and a deterministic (offline) model URL from the prompt.
-* PSN_Tripo_Image_To_3D - validates inputs, converts the IMAGE tensor to a
-  base64-encoded PNG-like payload (pure torch/stdlib), builds a job id and
-  a deterministic model URL.
+* PSN_Tripo_Text_Request_Builder  - validates a prompt and the texture / pbr
+  flags and returns request JSON for a text-to-model task.
+* PSN_Tripo_Image_Request_Builder - validates an IMAGE, encodes the first
+  frame as a real PNG (base64) and returns request JSON for an image-to-model
+  task.
 
-What was NOT implemented: actual network calls to the Tripo API, polling,
-and real model generation.  The nodes return a placeholder URL and job id
-so the rest of the pipeline can be wired and tested offline.
+The field names ("type", "prompt", "texture", "pbr", "image_png_base64") are
+this module's own request shape and have not been checked against the live
+Tripo API. A later step must add the key, send the request and poll the task.
 """
 
 import base64
-import hashlib
 import json
+import struct
+import zlib
 
 import torch
 
 CAT = "ParametricStudio/3D"
-
-
-def _s(x):
-    """Return the tensor inside a LATENT dict, or the tensor itself."""
-    if isinstance(x, dict):
-        return x["samples"]
-    return x
 
 
 def _validate_image(image):
@@ -47,58 +40,53 @@ def _validate_image(image):
     return image
 
 
-def _image_to_base64_png(image):
-    """Encode an IMAGE tensor [B,H,W,C] as a base64 string.
+def _png_chunk(tag, data):
+    body = tag + data
+    return struct.pack(">I", len(data)) + body + struct.pack(">I", zlib.crc32(body) & 0xFFFFFFFF)
 
-    This is a simplified encoding: we take the first image in the batch,
-    convert to uint8, and produce a minimal base64 payload.  It is NOT a
-    real PNG; it is a deterministic byte representation suitable for
-    offline testing and as a stand-in for the real upload payload.
-    """
+
+def _image_to_base64_png(image):
+    """Encode the first image of an IMAGE tensor [B,H,W,C] as a real 8-bit RGB
+    PNG, returned as a base64 string. Alpha is dropped, grey is expanded."""
     img = image[0].clamp(0.0, 1.0)
     if img.shape[-1] == 1:
         img = img.expand(-1, -1, 3)
     elif img.shape[-1] == 4:
         img = img[..., :3]
-    # [H, W, C] -> uint8
-    u8 = (img * 255.0).round().to(torch.uint8)
-    raw = u8.contiguous().view(-1).numpy().tobytes()
-    return base64.b64encode(raw).decode("ascii")
+    u8 = (img * 255.0).round().to(torch.uint8).contiguous()
+    h, w, _ = u8.shape
+    rows = u8.reshape(h, w * 3).numpy()
+    raw = b"".join(b"\x00" + rows[y].tobytes() for y in range(h))  # filter 0
+    png = (b"\x89PNG\r\n\x1a\n"
+           + _png_chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
+           + _png_chunk(b"IDAT", zlib.compress(raw))
+           + _png_chunk(b"IEND", b""))
+    return base64.b64encode(png).decode("ascii")
 
 
-def _make_job_id(seed_str):
-    """Deterministic job id from a seed string."""
-    h = hashlib.sha256(seed_str.encode("utf-8")).hexdigest()
-    return "tripo_" + h[:24]
+class PSN_Tripo_Text_Request_Builder:
+    """Build request JSON for a Tripo text-to-model task. Calls no API."""
 
-
-def _make_model_url(job_id, fmt="glb"):
-    """Deterministic placeholder model URL."""
-    return f"https://models.tripo3d.ai/{job_id}/{job_id}.{fmt}"
-
-
-class PSN_Tripo_Text_To_3D:
-    """Generate a 3D model from a text prompt (offline core, no network)."""
+    DESCRIPTION = ("Builds request JSON for a Tripo text-to-model task from the "
+                   "prompt. Calls no API, takes no key, and returns no model "
+                   "URL or job id.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "api_key": ("STRING", {"default": ""}),
                 "prompt": ("STRING", {"default": "a red cube"}),
                 "texture": ("BOOLEAN", {"default": True}),
                 "pbr": ("BOOLEAN", {"default": True}),
             }
         }
 
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("model_url", "job_id")
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("request_json",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, api_key, prompt, texture=True, pbr=True):
-        if not isinstance(api_key, str):
-            raise TypeError("api_key must be a string")
+    def run(self, prompt, texture=True, pbr=True):
         if not isinstance(prompt, str):
             raise TypeError("prompt must be a string")
         if not prompt.strip():
@@ -108,50 +96,48 @@ class PSN_Tripo_Text_To_3D:
         if not isinstance(pbr, bool):
             raise TypeError("pbr must be a boolean")
 
-        seed = f"text|{prompt.strip().lower()}|texture={texture}|pbr={pbr}"
-        job_id = _make_job_id(seed)
-        model_url = _make_model_url(job_id)
-        return (model_url, job_id)
+        request = {"type": "text_to_model", "prompt": prompt.strip(),
+                   "texture": texture, "pbr": pbr}
+        return (json.dumps(request),)
 
 
-class PSN_Tripo_Image_To_3D:
-    """Generate a 3D model from an input image (offline core, no network)."""
+class PSN_Tripo_Image_Request_Builder:
+    """Build request JSON for a Tripo image-to-model task. Calls no API."""
+
+    DESCRIPTION = ("Builds request JSON for a Tripo image-to-model task, with "
+                   "the first image frame encoded as a base64 PNG. Calls no "
+                   "API, uploads nothing, and returns no model URL or job id.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "api_key": ("STRING", {"default": ""}),
                 "image": ("IMAGE",),
                 "texture": ("BOOLEAN", {"default": True}),
             }
         }
 
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("model_url", "job_id")
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("request_json",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, api_key, image, texture=True):
-        if not isinstance(api_key, str):
-            raise TypeError("api_key must be a string")
+    def run(self, image, texture=True):
         if not isinstance(texture, bool):
             raise TypeError("texture must be a boolean")
 
         img = _validate_image(image)
-        b64 = _image_to_base64_png(img)
-        seed = f"image|{b64[:64]}|texture={texture}"
-        job_id = _make_job_id(seed)
-        model_url = _make_model_url(job_id)
-        return (model_url, job_id)
+        request = {"type": "image_to_model", "texture": texture,
+                   "image_png_base64": _image_to_base64_png(img)}
+        return (json.dumps(request),)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Tripo_Text_To_3D": PSN_Tripo_Text_To_3D,
-    "PSN_Tripo_Image_To_3D": PSN_Tripo_Image_To_3D,
+    "PSN_Tripo_Text_Request_Builder": PSN_Tripo_Text_Request_Builder,
+    "PSN_Tripo_Image_Request_Builder": PSN_Tripo_Image_Request_Builder,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Tripo_Text_To_3D": "Tripo Text to 3D",
-    "PSN_Tripo_Image_To_3D": "Tripo Image to 3D",
+    "PSN_Tripo_Text_Request_Builder": "Tripo Text-to-3D Request Builder",
+    "PSN_Tripo_Image_Request_Builder": "Tripo Image-to-3D Request Builder",
 }

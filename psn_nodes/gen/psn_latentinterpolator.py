@@ -12,11 +12,15 @@ Inputs:
 - method: String ("lerp" or "slerp")
 
 Outputs:
-- latent_out: List of floats (interpolated vector)
+- latent_out_first: FLOAT, the first element of the interpolated vector
 - valid: Boolean (whether the operation was valid)
 - reason: String (explanation if invalid)
+- latent_out_json: STRING, the whole interpolated vector as a JSON list ("[]" if invalid)
+
+This is not a ComfyUI LATENT node: there is no LATENT input or output, only typed numbers or lists.
 """
 
+import json
 import math
 
 CAT = "ParametricStudio/Latent"
@@ -41,8 +45,8 @@ class PSN_LatentInterpolator:
             }
         }
 
-    RETURN_TYPES = ("FLOAT", "BOOLEAN", "STRING")
-    RETURN_NAMES = ("latent_out_first", "valid", "reason")
+    RETURN_TYPES = ("FLOAT", "BOOLEAN", "STRING", "STRING")
+    RETURN_NAMES = ("latent_out_first", "valid", "reason", "latent_out_json")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -139,11 +143,11 @@ class PSN_LatentInterpolator:
             
         # Validate lengths
         if len(vec_a) != len(vec_b):
-            return (0.0, False, "Vector lengths must match")
+            return (0.0, False, "Vector lengths must match", "[]")
             
         # Validate t
         if t < 0.0 or t > 1.0:
-            return (0.0, False, "t must be between 0 and 1")
+            return (0.0, False, "t must be between 0 and 1", "[]")
             
         # Perform interpolation
         try:
@@ -152,16 +156,13 @@ class PSN_LatentInterpolator:
             elif method == "slerp":
                 result = self._slerp(vec_a, vec_b, t)
             else:
-                return (0.0, False, f"Unknown method: {method}")
+                return (0.0, False, f"Unknown method: {method}", "[]")
                 
-            # Return first element as FLOAT output, but the full vector is conceptually the output
-            # Since RETURN_TYPES is FLOAT, we return the first element. 
-            # In a real ComfyUI node with LATENT types, we'd return the tensor.
-            # Here we return the first element to satisfy the FLOAT return type.
-            return (result[0], True, "Success")
+            # First element as FLOAT, and the whole interpolated vector as JSON text.
+            return (result[0], True, "Success", json.dumps(result))
             
         except Exception as e:
-            return (0.0, False, f"Error: {str(e)}")
+            return (0.0, False, f"Error: {str(e)}", "[]")
 
 NODE_CLASS_MAPPINGS = {
     "PSN_LatentInterpolator": PSN_LatentInterpolator

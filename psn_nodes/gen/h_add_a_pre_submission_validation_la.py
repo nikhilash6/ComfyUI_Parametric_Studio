@@ -142,7 +142,8 @@ def validate_graph(graph, never_wire_rules=None):
     """Validate a ComfyUI graph before submission.
 
     Args:
-        graph: Dictionary representing the ComfyUI API graph.
+        graph: Dictionary representing the ComfyUI API graph, either flat
+            ({"1": {...}}) or wrapped ({"nodes": {"1": {...}}}).
         never_wire_rules: Optional list of (source_class, target_class) tuples.
 
     Returns:
@@ -153,10 +154,17 @@ def validate_graph(graph, never_wire_rules=None):
 
     all_errors = []
 
+    # A flat API-format graph ({"1": {"class_type": ...}}) has no "nodes" key:
+    # the graph itself is the nodes map.
+    if isinstance(graph, dict) and "nodes" not in graph:
+        graph = {"nodes": graph}
+
     # 1. Structure validation
     all_errors.extend(_validate_graph_structure(graph))
     if all_errors:
         return (False, all_errors)
+    if not graph["nodes"]:
+        return (False, ["Graph contains no nodes; nothing was checked"])
 
     # 2. Dangling input check
     all_errors.extend(_check_dangling_inputs(graph))

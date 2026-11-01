@@ -1,3 +1,5 @@
+import os
+
 import torch
 
 CAT = "ParametricStudio/3D"
@@ -87,19 +89,6 @@ def _cube_mesh():
         [1, 2, 6], [1, 6, 5],
     ], dtype=torch.long)
     return v, f
-
-
-def _uv_from_vertices(v):
-    """Planar (x,y) UV projection -> [1, H, W, 4] float tensor in 0..1."""
-    H = W = 64
-    xs = torch.linspace(0.0, 1.0, W)
-    ys = torch.linspace(0.0, 1.0, H)
-    gx, gy = torch.meshgrid(xs, ys, indexing="xy")
-    img = torch.zeros(1, H, W, 4, dtype=torch.float32)
-    img[0, :, :, 0] = gx
-    img[0, :, :, 1] = gy
-    img[0, :, :, 3] = 1.0
-    return img
 
 
 def _render_mesh(v, f, camera_angle, lighting, size=128):
@@ -208,14 +197,23 @@ def _render_mesh(v, f, camera_angle, lighting, size=128):
 # Node 1: PSN_Load_3D_Mesh
 # ---------------------------------------------------------------------------
 
-class PSN_Load_3D_Mesh:
-    """Load a 3D mesh from inline OBJ text or generate a default cube.
+_MAX_OBJ_BYTES = 64 * 1024 * 1024
 
-    Since file I/O is not permitted, `mesh_path` is interpreted as:
-    - If it starts with "obj:" the remainder is parsed as inline OBJ text.
-    - If it is "cube" a unit cube is generated.
-    - Otherwise a default cube is used.
+
+class PSN_Load_3D_Mesh:
+    """Load a 3D mesh from an .obj file, inline OBJ text, or a built-in cube.
+
+    `mesh_path` is interpreted as:
+    - "cube": a unit cube is generated.
+    - Starts with "obj:": the remainder is parsed as inline OBJ text.
+    - Path of an existing ``.obj`` file (up to 64 MiB): the file is read and
+      parsed as OBJ (``v`` and triangle ``f`` lines only).
+    - Anything else raises ValueError (no silent fallback to a cube).
     """
+
+    DESCRIPTION = ("Loads a mesh from an .obj file path, inline 'obj:' text, "
+                   "or the word 'cube'. Reads only v and triangle f lines; "
+                   "anything it cannot parse raises an error. Makes no UVs.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -226,8 +224,8 @@ class PSN_Load_3D_Mesh:
             }
         }
 
-    RETURN_TYPES = ("MESH", "IMAGE")
-    RETURN_NAMES = ("mesh", "uv_map")
+    RETURN_TYPES = ("MESH",)
+    RETURN_NAMES = ("mesh",)
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -237,22 +235,30 @@ class PSN_Load_3D_Mesh:
         path = str(mesh_path).strip()
 
         if path.startswith("obj:"):
-            text = path[4:]
-            v, f = _parse_obj_text(text)
+            v, f = _parse_obj_text(path[4:])
         elif path.lower() == "cube":
             v, f = _cube_mesh()
+        elif os.path.isfile(path):
+            if not path.lower().endswith(".obj"):
+                raise ValueError("mesh_path file must have a .obj extension")
+            if os.path.getsize(path) > _MAX_OBJ_BYTES:
+                raise ValueError("OBJ file is larger than 64 MiB")
+            with open(path, "r", encoding="utf-8", errors="replace") as fh:
+                v, f = _parse_obj_text(fh.read())
         else:
+            # Not a file: only accept it if it parses as OBJ text itself.
             try:
                 v, f = _parse_obj_text(path)
-            except Exception:
-                v, f = _cube_mesh()
+            except ValueError:
+                raise ValueError(
+                    "mesh_path is not 'cube', an 'obj:' text, an existing .obj file "
+                    "or parseable OBJ text"
+                )
 
         if normalize:
             v, f = _normalize_mesh(v, f)
 
-        mesh = {"vertices": v, "faces": f}
-        uv = _uv_from_vertices(v)
-        return (mesh, uv)
+        return ({"vertices": v, "faces": f},)
 
 
 # ---------------------------------------------------------------------------

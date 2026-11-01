@@ -1,8 +1,8 @@
 """
 Tests for PSN_Random_Image_Selector
 
-These tests verify the pure-logic selection behavior without any file system
-access, network, or GPU operations.
+These tests verify the selection behavior. Folder listing is tested against
+tmp_path only; no network or GPU operations.
 """
 
 import pytest
@@ -13,6 +13,7 @@ from psn_nodes.gen.psn_random_image_selector import (
     _validate_num_images,
     _validate_seed,
     _validate_file_names,
+    _list_image_files,
 )
 
 
@@ -321,3 +322,55 @@ class TestNodeRun:
         assert "num_images" in input_types["required"]
         assert "seed" in input_types["optional"]
         assert "file_names" in input_types["optional"]
+
+
+class TestFolderListing:
+    """With no file_names the node lists the folder for image files."""
+
+    def _make_folder(self, tmp_path):
+        for n in ("b.png", "a.JPG", "c.webp", "notes.txt", "d.mp4"):
+            (tmp_path / n).write_bytes(b"x")
+        (tmp_path / "sub.png").mkdir()          # a directory named like an image is not a file
+        (tmp_path / "sub").mkdir()
+        (tmp_path / "sub" / "deep.png").write_bytes(b"x")  # non-recursive
+        return str(tmp_path)
+
+    def test_list_image_files_filters_and_sorts(self, tmp_path):
+        folder = self._make_folder(tmp_path)
+        assert _list_image_files(folder) == ["a.JPG", "b.png", "c.webp"]
+
+    def test_list_missing_folder_is_empty(self, tmp_path):
+        assert _list_image_files(str(tmp_path / "nope")) == []
+
+    def test_run_selects_from_the_folder_when_no_file_names(self, tmp_path):
+        folder = self._make_folder(tmp_path)
+        node = PSN_Random_Image_Selector()
+        indices, names, paths, reason = node.run(folder, 2, 5)
+        assert len(names) == 2 and set(names) <= {"a.JPG", "b.png", "c.webp"}
+        assert paths == [f"{folder}/{n}" for n in names]
+        # indices point into the sorted listing
+        listing = ["a.JPG", "b.png", "c.webp"]
+        assert [listing[i] for i in indices] == names
+        assert reason.startswith("Selected 2 of 3")
+
+    def test_run_all_when_num_images_exceeds_folder(self, tmp_path):
+        folder = self._make_folder(tmp_path)
+        _, names, _, reason = PSN_Random_Image_Selector().run(folder, 10, 1, file_names=[])
+        assert sorted(names) == ["a.JPG", "b.png", "c.webp"]
+        assert "3 of 3" in reason
+
+    def test_run_same_seed_same_folder_same_pick(self, tmp_path):
+        folder = self._make_folder(tmp_path)
+        node = PSN_Random_Image_Selector()
+        assert node.run(folder, 2, 9) == node.run(folder, 2, 9)
+
+    def test_supplied_file_names_win_and_folder_is_not_read(self, tmp_path):
+        folder = self._make_folder(tmp_path)
+        _, names, _, _ = PSN_Random_Image_Selector().run(folder, 5, 3, file_names=["x.png", "y.png"])
+        assert sorted(names) == ["x.png", "y.png"]
+
+    def test_folder_without_images_says_none_available(self, tmp_path):
+        (tmp_path / "readme.txt").write_text("hi")
+        indices, names, paths, reason = PSN_Random_Image_Selector().run(str(tmp_path), 3, 1)
+        assert (indices, names, paths) == ([], [], [])
+        assert "No files" in reason

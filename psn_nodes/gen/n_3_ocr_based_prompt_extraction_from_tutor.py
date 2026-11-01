@@ -1,22 +1,15 @@
-"""PSN OCR-based prompt extraction from tutorial screenshots (pure-logic core).
+"""PSN prompt extraction helpers for text taken from tutorial screenshots.
 
-This module implements the *secure, pure-Python* portion of the
-"OCR-Based Prompt Extraction from Tutorials" spec.
+This module does NOT perform OCR. It has two pure-string nodes:
 
-Because real OCR (Chandra / PaddleOCR / EasyOCR) requires GPU models and
-third-party packages, and because ComfyUI's IMAGE/MASK tensors are not
-available here, the OCR *extraction* node is implemented as a **deterministic
-mock** that:
-  * validates the engine / language configuration,
-  * accepts a plain-text stand-in for the screenshot's OCR output,
-  * returns that text plus a small, well-formed region-mask payload.
+  * PSN_TextLinesToRegions splits text you supply (for example text copied out
+    of an external OCR tool) into one record per non-empty line.
+  * PSN_Prompt_Cleaner strips common UI noise, splits prompt / negative-prompt /
+    settings sections, and emits a JSON document for a prompt library.
 
-The *prompt cleaner* node is fully functional pure string logic: it strips
-common UI noise, splits prompt / negative-prompt / settings sections, and
-emits a JSON document suitable for import into a prompt library.
-
-No network, file, OS, subprocess, eval/exec, or torch/comfy imports are used.
-All functions take plain values (strings, numbers, booleans, JSON text).
+It reads no image, loads no model, and has no box coordinates or confidence
+scores. No network, file, OS, subprocess, eval/exec, or torch/comfy imports are
+used. All functions take plain values (strings, booleans, JSON text).
 """
 
 import json
@@ -27,9 +20,6 @@ from psn import expr, orchestration as _orch
 CAT = "ParametricStudio/OCR"
 
 # --- configuration ---------------------------------------------------------
-
-OCR_ENGINES = ("Chandra", "PaddleOCR", "EasyOCR")
-OCR_LANGUAGES = ("en", "zh", "multi")
 
 # Common UI / chrome text that should be dropped from a tutorial screenshot.
 # Matched case-insensitively as whole tokens.
@@ -64,40 +54,11 @@ _SETTINGS_MARKERS = (
 )
 
 
-def _validate_engine(engine):
-    """Return (ok, reason) for an OCR engine name."""
-    if not isinstance(engine, str):
-        return False, "ocr_engine must be a string"
-    if engine not in OCR_ENGINES:
-        return False, "ocr_engine must be one of %s" % (", ".join(OCR_ENGINES))
-    return True, "ok"
-
-
-def _validate_language(language):
-    """Return (ok, reason) for an OCR language code."""
-    if not isinstance(language, str):
-        return False, "language must be a string"
-    if language not in OCR_LANGUAGES:
-        return False, "language must be one of %s" % (", ".join(OCR_LANGUAGES))
-    return True, "ok"
-
-
-def _build_region_mask(text, language):
-    """Build a small, deterministic region-mask payload from OCR text.
-
-    Returns a JSON string describing one region per non-empty line. This is a
-    stand-in for a real MASK tensor; it is pure data and safe to inspect.
-    """
-    lines = [ln for ln in (text or "").splitlines() if ln.strip()]
-    regions = []
-    for idx, line in enumerate(lines):
-        regions.append({
-            "id": idx,
-            "text": line.strip(),
-            "box": [0, idx * 24, max(1, len(line.strip())), 24],
-            "confidence": 0.9,
-        })
-    return json.dumps({"language": language, "regions": regions})
+def _build_line_records(text):
+    """Return a JSON string with one record per non-empty line of text."""
+    lines = [ln.strip() for ln in (text or "").splitlines() if ln.strip()]
+    lines_out = [{"id": idx, "text": line} for idx, line in enumerate(lines)]
+    return json.dumps({"lines": lines_out})
 
 
 def _strip_ui(text):
@@ -185,40 +146,31 @@ def _build_structured(prompt, negative, settings):
 
 # --- nodes -----------------------------------------------------------------
 
-class PSN_Tutorial_OCR_Extractor:
-    """Mock OCR extractor: validates config and returns raw text + region mask.
+class PSN_TextLinesToRegions:
+    """Split supplied text into per-line records. Performs no OCR."""
 
-    Real OCR is GPU/third-party; this node performs the pure-logic part only:
-    configuration validation and a deterministic region-mask payload.
-    """
+    DESCRIPTION = ("Splits text you supply into one record per non-empty line. "
+                   "It reads no image and performs no OCR; it gives no boxes "
+                   "or confidence scores.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "image": ("STRING", {"default": "", "multiline": True,
-                                     "tooltip": "Plain-text stand-in for the screenshot OCR output."}),
-                "ocr_engine": (list(OCR_ENGINES),),
-                "language": (list(OCR_LANGUAGES),),
+                "text": ("STRING", {"default": "", "multiline": True,
+                                    "tooltip": "Text to split into lines (for example copied from an OCR tool)."}),
             },
             "optional": {},
         }
 
     RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("raw_text", "text_regions")
+    RETURN_NAMES = ("raw_text", "line_records")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, image, ocr_engine, language):
-        ok_engine, why_engine = _validate_engine(ocr_engine)
-        ok_lang, why_lang = _validate_language(language)
-        if not ok_engine:
-            return ("", json.dumps({"error": why_engine}))
-        if not ok_lang:
-            return ("", json.dumps({"error": why_lang}))
-        text = image if isinstance(image, str) else ""
-        mask = _build_region_mask(text, language)
-        return (text, mask)
+    def run(self, text):
+        text = text if isinstance(text, str) else ""
+        return (text, _build_line_records(text))
 
 
 class PSN_Prompt_Cleaner:
@@ -257,11 +209,11 @@ class PSN_Prompt_Cleaner:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Tutorial_OCR_Extractor": PSN_Tutorial_OCR_Extractor,
+    "PSN_TextLinesToRegions": PSN_TextLinesToRegions,
     "PSN_Prompt_Cleaner": PSN_Prompt_Cleaner,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Tutorial_OCR_Extractor": "PSN Tutorial OCR Extractor",
+    "PSN_TextLinesToRegions": "PSN Split Text Into Line Records",
     "PSN_Prompt_Cleaner": "PSN Prompt Cleaner",
 }

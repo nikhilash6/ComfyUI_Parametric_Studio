@@ -1,22 +1,14 @@
 """
-PSN_Modal_Submit_Workflow
+PSN_Modal_Job_Spec
 
-This module implements the pure-logic, secure-by-design portion of a ComfyUI
-custom node that would normally offload a sub-graph to a remote Modal GPU
-instance.
+Validates inputs and builds the job spec that would be sent to a Modal GPU
+instance. It does NOT submit anything: it opens no sockets, makes no HTTP
+requests and imports neither modal, torch nor comfy.
 
-Because the specification requires network access (Modal API, requests) and
-external SDKs (modal), which are prohibited in this environment, this
-implementation ONLY handles:
 1. Validation of inputs (workflow_json, modal_env, gpu_type, timeout_sec).
-2. Serialization/formatting of the payload that *would* be sent to Modal.
-3. Simulation of job submission and status polling using deterministic,
-   in-memory logic (no actual network calls).
-4. Generation of a mock job_id and status based on input validity.
-
-The node does NOT open sockets, make HTTP requests, or import torch/comfy/modal.
-It returns a job_id and a status string as per the spec, but the "submission"
-is simulated locally.
+2. Serialization of the spec (JSON text) from those inputs.
+3. A content-hash key (job_key) over the inputs, so the same inputs give the
+   same key. It is not an id issued by Modal.
 
 Inputs:
     workflow_json (STRING): JSON string representing the ComfyUI workflow.
@@ -25,20 +17,16 @@ Inputs:
     timeout_sec (INT): Timeout in seconds for the job.
 
 Outputs:
-    job_id (STRING): A generated job identifier.
-    status (STRING): One of ["pending", "running", "completed", "failed"].
+    job_key (STRING): Content hash of the inputs, empty when invalid.
+    job_spec_json (STRING): The spec as JSON text, empty when invalid.
+    status (STRING): "validated", or "invalid: <reason>".
 """
 
 import json
 import hashlib
-import time
-import uuid
 
 # Allowed GPU types
 ALLOWED_GPU_TYPES = ["A100", "H100", "L4"]
-
-# Allowed statuses
-ALLOWED_STATUSES = ["pending", "running", "completed", "failed"]
 
 # Allowed modal environments (simple allow-list for security)
 ALLOWED_MODAL_ENVS = ["prod", "dev", "staging", "test"]
@@ -100,49 +88,35 @@ def _validate_timeout_sec(timeout_sec: int) -> tuple[bool, str]:
     return True, ""
 
 
-def _generate_job_id(workflow_json: str, modal_env: str, gpu_type: str, timeout_sec: int) -> str:
-    """
-    Generate a deterministic job ID based on the inputs.
-    Uses a hash of the inputs to create a unique but reproducible ID.
-    """
+def _job_key(workflow_json: str, modal_env: str, gpu_type: str, timeout_sec: int) -> str:
+    """Content-hash key over the inputs (same inputs, same key)."""
     content = f"{workflow_json}|{modal_env}|{gpu_type}|{timeout_sec}"
-    hash_obj = hashlib.sha256(content.encode("utf-8")).hexdigest()
-    # Use first 16 chars of hash + a uuid suffix for uniqueness in real scenarios
-    # For deterministic testing, we use just the hash prefix
-    return f"modal-job-{hash_obj[:16]}"
+    return "modal-spec-" + hashlib.sha256(content.encode("utf-8")).hexdigest()[:16]
 
 
-def _simulate_submission(workflow_json: str, modal_env: str, gpu_type: str, timeout_sec: int) -> tuple[str, str]:
-    """
-    Simulate submitting a job to Modal and polling for status.
-    Returns (job_id, status).
-    
-    In a real implementation, this would:
-    1. Serialize the workflow
-    2. Send to Modal API
-    3. Poll for completion
-    
-    Here, we simulate:
-    - If the workflow is valid, the job is "completed" (simulating success)
-    - The job_id is generated deterministically
-    """
-    job_id = _generate_job_id(workflow_json, modal_env, gpu_type, timeout_sec)
-    
-    # Simulate a successful completion for valid inputs
-    # In a real scenario, this would depend on the actual Modal response
-    status = "completed"
-    
-    return job_id, status
+def _build_spec(workflow_json: str, modal_env: str, gpu_type: str, timeout_sec: int) -> str:
+    """Serialize the job spec for already-validated inputs."""
+    return json.dumps(
+        {
+            "workflow": json.loads(workflow_json),
+            "modal_env": modal_env,
+            "gpu_type": gpu_type,
+            "timeout_sec": timeout_sec,
+        },
+        sort_keys=True,
+    )
 
 
-class PSN_Modal_Submit_Workflow:
+class PSN_Modal_Job_Spec:
     """
-    ComfyUI custom node that simulates submitting a workflow to a Modal GPU instance.
-    
-    This is a pure-logic implementation that validates inputs and simulates
-    the submission process without making actual network calls.
+    Validates inputs and builds a Modal job spec. Submits nothing.
     """
-    
+
+    DESCRIPTION = (
+        "Validates a workflow JSON, Modal environment, GPU type and timeout, and builds the job "
+        "spec as JSON with a content-hash key. Does not contact Modal or submit a job."
+    )
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -155,51 +129,38 @@ class PSN_Modal_Submit_Workflow:
             "optional": {},
         }
     
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("job_id", "status")
+    RETURN_TYPES = ("STRING", "STRING", "STRING")
+    RETURN_NAMES = ("job_key", "job_spec_json", "status")
     FUNCTION = "run"
     CATEGORY = "ParametricStudio/Modal"
     
-    def run(self, workflow_json: str, modal_env: str, gpu_type: str, timeout_sec: int) -> tuple[str, str]:
+    def run(self, workflow_json: str, modal_env: str, gpu_type: str, timeout_sec: int) -> tuple[str, str, str]:
         """
-        Validate inputs and simulate Modal job submission.
-        
-        Args:
-            workflow_json: JSON string of the ComfyUI workflow.
-            modal_env: Modal environment name.
-            gpu_type: GPU type to use.
-            timeout_sec: Timeout in seconds.
-            
+        Validate inputs and build the job spec.
+
         Returns:
-            Tuple of (job_id, status).
+            Tuple of (job_key, job_spec_json, status).
         """
-        # Validate all inputs
-        valid, err = _validate_workflow_json(workflow_json)
-        if not valid:
-            return ("", "failed")
-        
-        valid, err = _validate_modal_env(modal_env)
-        if not valid:
-            return ("", "failed")
-        
-        valid, err = _validate_gpu_type(gpu_type)
-        if not valid:
-            return ("", "failed")
-        
-        valid, err = _validate_timeout_sec(timeout_sec)
-        if not valid:
-            return ("", "failed")
-        
-        # Simulate submission
-        job_id, status = _simulate_submission(workflow_json, modal_env, gpu_type, timeout_sec)
-        
-        return (job_id, status)
+        for ok, err in (
+            _validate_workflow_json(workflow_json),
+            _validate_modal_env(modal_env),
+            _validate_gpu_type(gpu_type),
+            _validate_timeout_sec(timeout_sec),
+        ):
+            if not ok:
+                return ("", "", "invalid: " + err)
+
+        return (
+            _job_key(workflow_json, modal_env, gpu_type, timeout_sec),
+            _build_spec(workflow_json, modal_env, gpu_type, timeout_sec),
+            "validated",
+        )
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Modal_Submit_Workflow": PSN_Modal_Submit_Workflow,
+    "PSN_Modal_Job_Spec": PSN_Modal_Job_Spec,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Modal_Submit_Workflow": "PSN Modal Submit Workflow",
+    "PSN_Modal_Job_Spec": "PSN Modal Job Spec (validate only, does not submit)",
 }

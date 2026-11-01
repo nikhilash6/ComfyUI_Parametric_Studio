@@ -1,22 +1,18 @@
 """
-PSN_Document_Quality_Assessor
+PSN_Document_Quality_Score_From_Metrics
 
-Pure-logic document quality assessment for OCR pre-filtering.
+Pure-logic quality scoring from numbers you supply.
 
-This module implements a secure-by-design, dependency-free quality gate that
-operates on *plain numeric descriptors* of a document scan (width, height,
-DPI, sharpness, contrast) rather than on raw image tensors.  It is the
-"pure-logic, secure-by-design part" of the Document Quality Assessment
-Pipeline: no torch, no ComfyUI internals, no file/network I/O, no eval/exec.
+This module does NOT look at any image or scan. It scores a document from five
+numbers that the user types in or wires from elsewhere (width, height, DPI,
+sharpness, contrast): no torch, no ComfyUI internals, no file/network I/O, no
+eval/exec.
 
-The node validates the descriptor, computes a 0.0-1.0 quality score from
-resolution, sharpness and contrast, emits a JSON list of detected issues, and
-returns a pass/fail boolean.  Downstream logic can route to OCR or reject the
-document based on these outputs.
-
-Inputs are plain values (ints, floats, strings).  The `image` input is
-represented by its numeric descriptors (width_px, height_px, dpi, sharpness,
-contrast) so that the node can be exercised without any image library.
+The node validates those numbers, computes a 0.0-1.0 score from resolution
+(DPI against a required minimum), sharpness and contrast, emits a JSON list of
+issues found by comparing them with thresholds, and returns a pass/fail
+boolean. Nothing measures the real sharpness, contrast or DPI of a file, so the
+result is only as accurate as the numbers entered.
 """
 
 import json
@@ -220,21 +216,24 @@ def assess_document(width_px, height_px, dpi, sharpness, contrast,
 # ComfyUI node
 # ---------------------------------------------------------------------------
 
-class PSN_Document_Quality_Assessor:
+class PSN_Document_Quality_Score_From_Metrics:
     """
-    Assess the quality of a document scan before OCR or AI processing.
+    Score a document scan from DPI, sharpness and contrast numbers you supply
+    and apply pass thresholds. It does not look at any image.
 
-    Operates on plain numeric descriptors of the image (width, height, DPI,
-    sharpness, contrast) so it can run without any image library.  Returns a
-    0.0-1.0 quality score, a JSON string of detected issues, and a pass/fail
-    boolean for conditional routing.
+    Returns a 0.0-1.0 score, a JSON string of issues, and a pass/fail boolean
+    for conditional routing.
     """
+
+    DESCRIPTION = ("Scores a scan from DPI, sharpness and contrast numbers you "
+                   "supply and applies pass thresholds. It does not look at "
+                   "any image, so it cannot measure a real scan.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                # Numeric descriptors of the document scan.
+                # Numbers describing the scan, entered by the user (not measured).
                 "width_px": ("INT", {"default": 2480, "min": 1, "max": 100000, "step": 1}),
                 "height_px": ("INT", {"default": 3508, "min": 1, "max": 100000, "step": 1}),
                 "dpi": ("FLOAT", {"default": 300.0, "min": 1.0, "max": 1200.0, "step": 1.0}),
@@ -271,9 +270,9 @@ class PSN_Document_Quality_Assessor:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Document_Quality_Assessor": PSN_Document_Quality_Assessor,
+    "PSN_Document_Quality_Score_From_Metrics": PSN_Document_Quality_Score_From_Metrics,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Document_Quality_Assessor": "PSN Document Quality Assessor",
+    "PSN_Document_Quality_Score_From_Metrics": "PSN Document Quality Score (from typed metrics)",
 }

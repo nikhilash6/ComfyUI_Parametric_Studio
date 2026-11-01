@@ -3,12 +3,12 @@ PSN Z-Image Specific XY Plotting (pure-logic core).
 
 This module implements the configuration, validation, and matrix-generation
 logic for Z-Image specific XY plotting. It does NOT perform GPU inference,
-image generation, or file I/O. Instead, it provides:
+generate or draw any image, or do file I/O. It provides:
 
 - Parameter validation and allow-listing for Z-Image specific parameters.
 - Parsing of comma-separated value strings into typed lists.
 - Generation of a parameter matrix (list of label strings) for the plot grid.
-- A config dict that downstream (GPU) nodes can consume.
+- A config dict, per-cell spec dicts and a text layout summary. No image is made.
 
 The node classes follow the ComfyUI custom node conventions but operate on
 plain Python values only.
@@ -168,16 +168,20 @@ class PSN_ZImage_Plot_Config:
 
 
 # ---------------------------------------------------------------------------
-# Node 2: PSN_ZImage_Grid_Generator (pure-logic stub)
+# Node 2: PSN_ZImage_Grid_Spec
 # ---------------------------------------------------------------------------
 
-class PSN_ZImage_Grid_Generator:
+class PSN_ZImage_Grid_Spec:
     """
-    Pure-logic stub for the grid generator. In a full ComfyUI environment
-    this would invoke Z-Image sampling. Here it validates the config and
-    returns a placeholder structure representing what would be generated.
-    No GPU, no model, no image data is produced.
+    Builds one spec dict per grid cell (label, prompt, size) from a plot
+    config. Samples nothing and generates no image: the specs are plain data
+    for a downstream workflow to use.
     """
+
+    DESCRIPTION = (
+        "Builds per-cell spec dicts (label, prompt, size) for a Z-Image XY plot. "
+        "It generates no image and runs no model."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -192,7 +196,7 @@ class PSN_ZImage_Grid_Generator:
         }
 
     RETURN_TYPES = ("LIST", "LIST")
-    RETURN_NAMES = ("grid_placeholders", "param_matrix")
+    RETURN_NAMES = ("cell_specs", "param_matrix")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -211,10 +215,9 @@ class PSN_ZImage_Grid_Generator:
         if not matrix:
             raise ValueError("plot_config has an empty param_matrix.")
 
-        # Build placeholder entries for each cell
-        placeholders: List[Dict[str, Any]] = []
+        cell_specs: List[Dict[str, Any]] = []
         for i, label in enumerate(matrix):
-            placeholders.append({
+            cell_specs.append({
                 "index": i,
                 "label": label,
                 "prompt": prompt,
@@ -224,59 +227,79 @@ class PSN_ZImage_Grid_Generator:
                 "z_image_specific": plot_config.get("z_image_specific", False),
             })
 
-        return (placeholders, matrix)
+        return (cell_specs, matrix)
+
+
+def _layout_from_labels(labels: List[str]):
+    """Return (rows, cols) for row-major labels 'x=.., y=..', or None.
+
+    Row-major means the y part is constant along a row, so the number of
+    leading labels sharing the first label's y part is the column count.
+    """
+    if not labels or any(", " not in lab for lab in labels):
+        return None
+    y_parts = [lab.split(", ", 1)[1] for lab in labels]
+    cols = 1
+    while cols < len(y_parts) and y_parts[cols] == y_parts[0]:
+        cols += 1
+    if len(labels) % cols:
+        return None
+    return len(labels) // cols, cols
 
 
 # ---------------------------------------------------------------------------
-# Node 3: PSN_ZImage_Grid_Visualizer (pure-logic stub)
+# Node 3: PSN_ZImage_Grid_Layout
 # ---------------------------------------------------------------------------
 
-class PSN_ZImage_Grid_Visualizer:
+class PSN_ZImage_Grid_Layout:
     """
-    Pure-logic stub for the grid visualizer. In a full ComfyUI environment
-    this would assemble images into a grid with labels. Here it validates
-    inputs and returns a summary dict describing the grid layout.
+    Reads the cell specs and labels and reports the grid layout (rows x
+    columns) as a text string. Draws no image.
     """
+
+    DESCRIPTION = (
+        "Computes the rows x columns layout of a Z-Image XY plot from its cell specs "
+        "and returns it as text. It draws no image."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "grid_placeholders": ("LIST",),
+                "cell_specs": ("LIST",),
                 "param_matrix": ("LIST",),
             },
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("grid_summary",)
+    RETURN_NAMES = ("layout_summary",)
     FUNCTION = "run"
     CATEGORY = CAT
 
     def run(
         self,
-        grid_placeholders: List[Dict[str, Any]],
+        cell_specs: List[Dict[str, Any]],
         param_matrix: List[str],
     ) -> Tuple[str,]:
-        if not isinstance(grid_placeholders, list):
-            raise TypeError("grid_placeholders must be a list.")
+        if not isinstance(cell_specs, list):
+            raise TypeError("cell_specs must be a list.")
         if not isinstance(param_matrix, list):
             raise TypeError("param_matrix must be a list.")
 
-        if len(grid_placeholders) != len(param_matrix):
+        if len(cell_specs) != len(param_matrix):
             raise ValueError(
-                f"Length mismatch: {len(grid_placeholders)} placeholders vs {len(param_matrix)} matrix entries."
+                f"Length mismatch: {len(cell_specs)} cell specs vs {len(param_matrix)} matrix entries."
             )
 
-        if not grid_placeholders:
+        if not cell_specs:
             return ("Empty grid.",)
 
-        # Determine grid dimensions from the first placeholder's config if available
-        # For the summary, just report count and a few labels
-        count = len(grid_placeholders)
-        sample_labels = param_matrix[:4]
+        count = len(cell_specs)
+        layout = _layout_from_labels(param_matrix)
+        shape = f"{layout[0]} rows x {layout[1]} columns" if layout else "layout unknown"
         summary = (
-            f"Z-Image Grid: {count} cells. "
-            f"Sample labels: {', '.join(sample_labels)}"
+            f"Z-Image Grid: {count} cells, {shape}. "
+            f"Sample labels: {', '.join(param_matrix[:4])}"
         )
         return (summary,)
 
@@ -287,12 +310,12 @@ class PSN_ZImage_Grid_Visualizer:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_ZImage_Plot_Config": PSN_ZImage_Plot_Config,
-    "PSN_ZImage_Grid_Generator": PSN_ZImage_Grid_Generator,
-    "PSN_ZImage_Grid_Visualizer": PSN_ZImage_Grid_Visualizer,
+    "PSN_ZImage_Grid_Spec": PSN_ZImage_Grid_Spec,
+    "PSN_ZImage_Grid_Layout": PSN_ZImage_Grid_Layout,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_ZImage_Plot_Config": "Z-Image Plot Config",
-    "PSN_ZImage_Grid_Generator": "Z-Image Grid Generator",
-    "PSN_ZImage_Grid_Visualizer": "Z-Image Grid Visualizer",
+    "PSN_ZImage_Grid_Spec": "Z-Image Grid Cell Specs (no image)",
+    "PSN_ZImage_Grid_Layout": "Z-Image Grid Layout Summary (draws nothing)",
 }

@@ -22,35 +22,6 @@ import hashlib
 import struct
 from typing import Any, Dict, List, Tuple
 
-# Safe evaluator and gate/retry helpers (assumed to exist in psn package)
-try:
-    from psn import expr, orchestration
-except ImportError:
-    # Fallback stubs for standalone testing
-    class _ExprStub:
-        @staticmethod
-        def evaluate(expression: str, context: Dict[str, Any] = None) -> Any:
-            raise NotImplementedError("psn.expr not available")
-    class _OrchStub:
-        MODES = ["gte", "lte", "gt", "lt", "eq", "neq"]
-        @staticmethod
-        def gate(score: float, threshold: float, mode: str) -> Tuple[bool, str]:
-            if mode == "gte":
-                return (score >= threshold, f"score {score} >= threshold {threshold}")
-            elif mode == "lte":
-                return (score <= threshold, f"score {score} <= threshold {threshold}")
-            elif mode == "gt":
-                return (score > threshold, f"score {score} > threshold {threshold}")
-            elif mode == "lt":
-                return (score < threshold, f"score {score} < threshold {threshold}")
-            elif mode == "eq":
-                return (score == threshold, f"score {score} == threshold {threshold}")
-            elif mode == "neq":
-                return (score != threshold, f"score {score} != threshold {threshold}")
-            return (False, f"unknown mode: {mode}")
-    expr = _ExprStub()
-    orchestration = _OrchStub()
-
 CAT = "ParametricStudio/SingleCell"
 
 # Allow-list of valid latent dimensions (common diffusion model latent dims)
@@ -63,19 +34,10 @@ MAX_GENES = 10000
 MAX_CLUSTER_ID = 100000
 
 
-def _deterministic_random_projection(seed: int, dim: int) -> List[float]:
-    """
-    Generate a deterministic random projection vector using a simple PRNG.
-    Uses a hash-based approach to ensure reproducibility without numpy.
-    """
-    projection = []
-    for i in range(dim):
-        # Create a deterministic value based on seed and index
-        h = hashlib.sha256(f"{seed}:{i}".encode()).digest()
-        # Convert first 8 bytes to a float in [-1, 1]
-        val = struct.unpack('q', h[:8])[0] / (2**63)
-        projection.append(val)
-    return projection
+def _projection_weight(seed: int, i: int, j: int) -> float:
+    """Deterministic weight in [-1, 1) for latent dimension i and gene j (hash of seed:i:j)."""
+    h = hashlib.sha256(f"{seed}:{i}:{j}".encode()).digest()
+    return struct.unpack('q', h[:8])[0] / (2**63)
 
 
 def _encode_cluster_profile(gene_values: List[float], latent_dim: int, seed: int = 42) -> List[float]:
@@ -103,20 +65,16 @@ def _encode_cluster_profile(gene_values: List[float], latent_dim: int, seed: int
     else:
         normalized = [(v - min_val) / range_val for v in gene_values]
     
-    # Generate random projection matrix (latent_dim x len(normalized))
-    projection = _deterministic_random_projection(seed, latent_dim)
-    
-    # Project: latent[i] = sum(normalized[j] * projection[i] * weight[j])
-    # Use a simple weighted sum where weights decay with gene index
+    # Project: latent[i] = sum_j normalized[j] * weight(seed, i, j) * decay[j]
+    # Each gene has its own weight per latent dimension, so the vector depends on the gene values.
     latent = []
     for i in range(latent_dim):
         val = 0.0
         for j, nv in enumerate(normalized):
-            # Weight by position to create structure
-            weight = 1.0 / (1.0 + j * 0.01)
-            val += nv * projection[i] * weight
+            decay = 1.0 / (1.0 + j * 0.01)
+            val += nv * _projection_weight(seed, i, j) * decay
         latent.append(val)
-    
+
     # Normalize the latent vector to unit length
     norm = math.sqrt(sum(v * v for v in latent))
     if norm > 0:

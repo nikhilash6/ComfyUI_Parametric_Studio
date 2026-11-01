@@ -1,13 +1,10 @@
-"""ParametricStudio status aggregation nodes.
+"""ParametricStudio status scoring and aggregation nodes.
 
-Builds a status aggregation system that polls individual ComfyUI instances
-to report health and resource usage.  Because a ComfyUI custom node cannot
-open sockets, the *polling* side is modelled as a pure function over a
-structured snapshot (the same shape ``_poll_instance`` would return from a
-live instance), and the *aggregation* side combines many snapshots into a
-fleet-wide health report.  Tensors are used where the spec calls for real
-ComfyUI types: a per-instance health score is emitted as a small IMAGE
-tensor so the report can be visualised in the UI.
+Scores ComfyUI instance snapshots and combines them into a fleet health report.
+No node here contacts an instance: PSN_StatusScoreSnapshot scores a snapshot
+whose values (alive, queue, vram, cpu) are typed in by hand, and
+PSN_StatusAggregateFleet combines snapshots given as JSON text. A score is also
+emitted as a small IMAGE tensor so it can be shown in the UI.
 """
 
 import torch
@@ -15,7 +12,7 @@ import torch
 CAT = "ParametricStudio/Status"
 
 # ---------------------------------------------------------------------------
-# snapshot helpers
+# snapshot helpers (snapshots are supplied by the caller, never fetched)
 # ---------------------------------------------------------------------------
 
 
@@ -91,8 +88,13 @@ def _fleet_state(scores, alive_count, total):
 # ---------------------------------------------------------------------------
 
 
-class PSN_StatusPollInstance:
-    """Poll one ComfyUI instance snapshot and score its health (0..1)."""
+class PSN_StatusScoreSnapshot:
+    """Score a manually entered instance snapshot 0..1. Contacts no instance."""
+
+    DESCRIPTION = (
+        "Scores a manually entered instance snapshot (alive, queue, vram, cpu) from 0 to 1. "
+        "Does not contact any instance; the values are whatever you type or wire in."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -129,6 +131,7 @@ class PSN_StatusPollInstance:
         )
         score = _score_instance(snap)
         lines = [
+            "source: manually entered snapshot (no instance contacted)",
             "instance: %s" % snap["name"],
             "alive: %s" % ("yes" if snap["alive"] else "no"),
             "queue: %d" % snap["queue"],
@@ -213,11 +216,11 @@ class PSN_StatusAggregateFleet:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_StatusPollInstance": PSN_StatusPollInstance,
+    "PSN_StatusScoreSnapshot": PSN_StatusScoreSnapshot,
     "PSN_StatusAggregateFleet": PSN_StatusAggregateFleet,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_StatusPollInstance": "Status: Poll Instance",
+    "PSN_StatusScoreSnapshot": "Status: Score Manual Snapshot (contacts nothing)",
     "PSN_StatusAggregateFleet": "Status: Aggregate Fleet",
 }

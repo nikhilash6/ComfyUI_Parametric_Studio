@@ -149,11 +149,36 @@ def test_invalid_json():
 
 def test_empty_graph():
     """Test that an empty graph is handled."""
-    graph = {"nodes": {}}
-    is_valid, errors = validate_graph(graph)
-    assert is_valid, "Empty graph should be valid (no nodes to validate)"
-    assert errors == [], f"No errors expected for empty graph, got: {errors}"
+    for graph in ({"nodes": {}}, {}):
+        is_valid, errors = validate_graph(graph)
+        assert not is_valid, "A graph with no nodes must not report valid"
+        assert errors == ["Graph contains no nodes; nothing was checked"], errors
+    report, ok = PSN_PreSubmissionValidator().run("{}", True)
+    assert not ok and "VALID: Graph passed" not in report, report
     print("  [PASS] Empty graph")
+
+
+def test_flat_api_graph():
+    """A flat API-format graph is checked, not skipped."""
+    flat_bad = {
+        "1": {"class_type": "KSampler", "inputs": {"seed": 1}},
+        "2": {"class_type": "KSampler", "inputs": {"model": ["1", 0]}},
+    }
+    is_valid, errors = validate_graph(flat_bad)
+    assert not is_valid and any("Never-wire" in e for e in errors), errors
+    flat_dangling = {"1": {"class_type": "KSampler", "inputs": {"model": ["9", 0]}}}
+    is_valid, errors = validate_graph(flat_dangling)
+    assert not is_valid and any("non-existent" in e for e in errors), errors
+    flat_missing = {"1": {"inputs": {}}}
+    assert not validate_graph(flat_missing)[0]
+    flat_ok = {
+        "1": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "m"}},
+        "2": {"class_type": "KSampler", "inputs": {"model": ["1", 0]}},
+    }
+    assert validate_graph(flat_ok) == (True, [])
+    report, ok = PSN_PreSubmissionValidator().run(json.dumps(flat_bad), True)
+    assert not ok and report.startswith("[STRICT] INVALID"), report
+    print("  [PASS] Flat API graph")
 
 
 def test_non_dict_graph():
@@ -282,6 +307,7 @@ if __name__ == "__main__":
     test_cycle_detection()
     test_invalid_json()
     test_empty_graph()
+    test_flat_api_graph()
     test_non_dict_graph()
     test_never_wire_rule_checker()
     test_validator_node()

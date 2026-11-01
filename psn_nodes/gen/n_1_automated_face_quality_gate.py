@@ -1,20 +1,19 @@
-"""ParametricStudio - Automated Face Quality Gate.
+"""ParametricStudio - Image Sharpness/Noise Score and Quality Gate Router.
 
 Two ComfyUI nodes:
 
-* PSN_FaceQualityScorer: scores an IMAGE for quality using pure-torch
-  heuristics (sharpness via Laplacian energy, artifact detection via
-  high-frequency noise energy, and optional identity similarity against a
-  REFERENCE_IMAGE via normalized cross-correlation). Outputs the image
-  unchanged plus a composite SCORE in [0, 1] and a PASS boolean.
+* PSN_Image_Sharpness_Noise_Score: scores a whole IMAGE with pure-torch
+  heuristics (sharpness via Laplacian energy, noise via the energy left after a
+  3x3 blur, and optionally a grayscale normalized cross-correlation against a
+  CORRELATION_REFERENCE image). It does no face detection and no identity
+  matching; the correlation is of whole-image grayscale pixels. Outputs the
+  image unchanged plus a composite SCORE in [0, 1] and a PASS boolean.
 
 * PSN_QualityGateRouter: passes the image through when PASS is True,
-  otherwise substitutes FALLBACK_IMAGE (or a neutral placeholder when no
+  otherwise substitutes FALLBACK_IMAGE (or a flat 0.5 gray image when no
   fallback is provided).
 
-No external models are required: the spec's insightface/opencv/scipy
-pipeline is replaced by lightweight torch CPU heuristics so the module
-runs anywhere torch is available.
+No external models are used: the scoring is lightweight torch CPU arithmetic.
 """
 
 import torch
@@ -78,8 +77,8 @@ def _artifact_score(gray):
     return max(0.0, 1.0 - noise / 0.001)
 
 
-def _identity_similarity(a, b):
-    """Normalized cross-correlation between two images (same size)."""
+def _gray_correlation(a, b):
+    """Normalized cross-correlation of the grayscale pixels of two images."""
     ga, gb = _to_gray(a), _to_gray(b)
     if ga.shape != gb.shape:
         # Resize b to a's spatial size with nearest.
@@ -95,14 +94,24 @@ def _identity_similarity(a, b):
     return ncc.clamp(0.0, 1.0).item()
 
 
-def _placeholder_image(ref):
-    """Neutral gray placeholder with the same batch/size as ref."""
+def _flat_gray_image(ref):
+    """Flat 0.5 gray image with the same batch/size as ref."""
     b, h, w, c = ref.shape
     return torch.full((b, h, w, c), 0.5, dtype=torch.float32)
 
 
-class PSN_FaceQualityScorer:
-    """Score an image for face quality (sharpness, artifacts, optional identity)."""
+class PSN_Image_Sharpness_Noise_Score:
+    """Heuristic whole-image sharpness and noise score with a pass threshold.
+
+    No face detection. The optional reference adds a grayscale correlation
+    term; it does not measure face identity.
+    """
+
+    DESCRIPTION = (
+        "Heuristic whole-image sharpness and noise score with a pass "
+        "threshold. The optional correlation reference is grayscale pixel "
+        "correlation, not face identity. It does no face detection."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -112,7 +121,7 @@ class PSN_FaceQualityScorer:
                 "THRESHOLD": ("FLOAT", {"default": 0.75, "min": 0.0, "max": 1.0}),
             },
             "optional": {
-                "REFERENCE_IMAGE": ("IMAGE",),
+                "CORRELATION_REFERENCE": ("IMAGE",),
             },
         }
 
@@ -121,17 +130,17 @@ class PSN_FaceQualityScorer:
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, IMAGE, THRESHOLD, REFERENCE_IMAGE=None):
+    def run(self, IMAGE, THRESHOLD, CORRELATION_REFERENCE=None):
         img = _as_image(IMAGE, "IMAGE")
         if not (0.0 <= THRESHOLD <= 1.0):
             raise ValueError("THRESHOLD must be in [0, 1]")
         gray = _to_gray(img)
         sharp = _sharpness(gray)
         clean = _artifact_score(gray)
-        if REFERENCE_IMAGE is not None:
-            ref = _as_image(REFERENCE_IMAGE, "REFERENCE_IMAGE")
-            ident = _identity_similarity(img, ref)
-            score = 0.4 * sharp + 0.3 * clean + 0.3 * ident
+        if CORRELATION_REFERENCE is not None:
+            ref = _as_image(CORRELATION_REFERENCE, "CORRELATION_REFERENCE")
+            corr = _gray_correlation(img, ref)
+            score = 0.4 * sharp + 0.3 * clean + 0.3 * corr
         else:
             score = 0.6 * sharp + 0.4 * clean
         score = float(min(1.0, max(0.0, score)))
@@ -169,16 +178,16 @@ class PSN_QualityGateRouter:
                     fb.permute(0, 3, 1, 2), size=(img.shape[1], img.shape[2]), mode="nearest"
                 ).permute(0, 2, 3, 1)
             return (fb,)
-        # No fallback: emit a neutral placeholder so downstream nodes keep working.
-        return (_placeholder_image(img),)
+        # No fallback: emit a flat gray image so downstream nodes keep working.
+        return (_flat_gray_image(img),)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_FaceQualityScorer": PSN_FaceQualityScorer,
+    "PSN_Image_Sharpness_Noise_Score": PSN_Image_Sharpness_Noise_Score,
     "PSN_QualityGateRouter": PSN_QualityGateRouter,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_FaceQualityScorer": "PSN Face Quality Scorer",
+    "PSN_Image_Sharpness_Noise_Score": "Image Sharpness and Noise Score",
     "PSN_QualityGateRouter": "PSN Quality Gate Router",
 }

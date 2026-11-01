@@ -1,17 +1,18 @@
-"""PSN_Folder_Batch_Queue: queue image files from a folder for batch processing.
+"""PSN_Folder_Batch_Queue: queue image files from a manifest for batch processing.
 
-Because this sandbox forbids filesystem access (no os/glob/open), the node
-operates on an in-memory manifest: a list of dicts describing files
-({"name": str, "mtime": float, "data": bytes}).  In a real ComfyUI install
-the same class would scan `folder_path` with glob; here the manifest is
-supplied by the caller (or a companion loader node) so the queueing logic
-(pattern filter, sort, max_files, tensor conversion) is fully testable.
+The node does not scan a folder. It operates on an in-memory manifest: a list
+of dicts describing files ({"name": str, "mtime": float, "data": bytes}) where
+"data" holds the encoded image file bytes (PNG, JPEG, ...). It filters by name
+pattern, sorts, limits the count and decodes each file's bytes into an IMAGE
+tensor with PIL. Bytes that are not a decodable image raise ValueError.
 """
 
-import hashlib
+import io
 import random
 
+import numpy as np
 import torch
+from PIL import Image
 
 CAT = "ParametricStudio/Batch"
 
@@ -38,19 +39,17 @@ def _matches_pattern(name: str, pattern: str) -> bool:
 
 
 def _bytes_to_image(data: bytes, name: str) -> torch.Tensor:
-    """Deterministically turn raw bytes into a [1,H,W,C] float tensor in 0..1.
+    """Decode encoded image bytes into a [1,H,W,3] float32 tensor in 0..1.
 
-    Real implementation would use PIL.Image.open; here we derive a small
-    image from a hash so the pipeline is testable without file I/O.
+    Raises ValueError if the bytes are not a decodable image.
     """
-    h = int(hashlib.sha256(data).hexdigest()[:8], 16)
-    w = int(hashlib.sha256(data).hexdigest()[8:16], 16)
-    H = 8 + (h % 16)   # 8..23
-    W = 8 + (w % 16)
-    seed = (h ^ w) % (2 ** 31)
-    g = torch.Generator().manual_seed(seed)
-    t = torch.rand(1, H, W, 3, generator=g)
-    return t
+    try:
+        with Image.open(io.BytesIO(data)) as im:
+            rgb = im.convert("RGB")
+            arr = np.asarray(rgb, dtype=np.float32) / 255.0
+    except (OSError, ValueError, SyntaxError) as exc:
+        raise ValueError(f"cannot decode image bytes for {name!r}: {exc}")
+    return torch.from_numpy(arr).unsqueeze(0).contiguous()
 
 
 def _sort_manifest(manifest: list, sort_order: str) -> list:
@@ -67,7 +66,11 @@ def _sort_manifest(manifest: list, sort_order: str) -> list:
 
 
 class PSN_Folder_Batch_Queue:
-    """Queue image files (manifest) for batch processing: filter, sort, limit, load."""
+    """Queue image files (manifest) for batch processing: filter, sort, limit, decode."""
+
+    DESCRIPTION = ("Filters, sorts and limits a manifest of image files and "
+                   "decodes each file's bytes into an IMAGE. It does not scan "
+                   "a folder; the manifest is supplied by the caller.")
 
     @classmethod
     def INPUT_TYPES(cls):

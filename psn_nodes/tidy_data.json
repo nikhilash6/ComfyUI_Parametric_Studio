@@ -7,6 +7,7 @@
 "PSN_NtfyNotify",
 "PSN_OSCReceive",
 "PSN_OSCSend",
+"PSN_Ollama_Prompt_Enhancer",
 "PSN_RemoteQueue",
 "PSN_SlackSend",
 "PSN_Subagent",

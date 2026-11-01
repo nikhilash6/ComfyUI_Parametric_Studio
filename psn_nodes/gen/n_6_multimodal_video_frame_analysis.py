@@ -2,10 +2,10 @@
 
 Core logic implemented with torch (CPU) only:
 - PSN_Scene_Transition_Detector: histogram-difference based scene change detection.
-- PSN_Video_Frame_Captioner: frame selection + aggregation logic. The actual VLM
-  call is NOT implemented (no llama-cpp-python / network allowed); instead the node
-  accepts an optional `mock_responses` string (one response per selected frame,
-  newline separated) so the aggregation pipeline can be exercised and tested.
+- PSN_Frame_Description_Aggregator: frame selection + aggregation logic. It does NOT
+  caption images and runs no model: the per-frame descriptions are supplied by the
+  user as text (one line per selected frame) and are joined into a narrative plus
+  key-moment JSON positioned with histogram scene boundaries.
 """
 
 import json
@@ -76,10 +76,7 @@ def _aggregate_narrative(responses, indices, total_frames):
     parts = []
     for resp, idx in zip(responses, indices):
         parts.append("Frame %d: %s" % (idx, resp.strip()))
-    narrative = " ".join(parts)
-    if not narrative.strip():
-        narrative = "(no frame descriptions available)"
-    return narrative
+    return " ".join(parts)
 
 
 def _key_moments(responses, indices, boundaries, total_frames):
@@ -133,15 +130,20 @@ class PSN_Scene_Transition_Detector:
         return (tuple(boundaries), json.dumps(boundaries))
 
 
-class PSN_Video_Frame_Captioner:
-    """Select frames by interval and aggregate per-frame descriptions into a
-    narrative plus a JSON list of key moments.
+class PSN_Frame_Description_Aggregator:
+    """Join user-supplied per-frame descriptions into a narrative and a JSON list
+    of key moments placed at histogram-detected scene boundaries.
 
-    NOTE: the actual multimodal LLM call is NOT implemented (no network / no
-    llama-cpp-python available in this environment). Provide `mock_responses`
-    (one description per selected frame, newline separated) to drive the
-    aggregation logic; when empty, placeholder descriptions are used.
+    It does not look at the image content to describe it: no captioning model is
+    run. Supply one description line per selected frame (every `frame_interval`-th
+    frame); too few lines raises an error.
     """
+
+    DESCRIPTION = (
+        "Joins per-frame descriptions you type (one line per selected frame) into a "
+        "narrative and key-moment JSON, using histogram scene boundaries from the "
+        "frames. It does not caption images and runs no model."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -149,27 +151,30 @@ class PSN_Video_Frame_Captioner:
             "required": {
                 "video_frames": ("IMAGE",),
                 "frame_interval": ("INT", {"default": 1, "min": 1, "max": 256}),
-                "mock_responses": ("STRING", {"default": "", "multiline": True}),
+                "frame_descriptions": ("STRING", {"default": "", "multiline": True}),
+                "boundary_threshold": ("FLOAT", {"default": 0.35, "min": 0.0, "max": 1.0, "step": 0.01}),
             }
         }
 
     RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("scene_description", "key_moments")
+    RETURN_NAMES = ("narrative", "key_moments")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, video_frames, frame_interval, mock_responses):
+    def run(self, video_frames, frame_interval, frame_descriptions, boundary_threshold=0.35):
         frames = _as_image_tensor(video_frames)
         selected, indices = _select_frames(frames, frame_interval)
         total_frames = frames.shape[0]
 
-        provided = [r for r in (mock_responses or "").splitlines() if r.strip() != ""]
-        if len(provided) >= len(indices):
-            responses = provided[:len(indices)]
-        else:
-            responses = list(provided) + ["(frame %d)" % i for i in indices[len(provided):]]
+        provided = [r for r in (frame_descriptions or "").splitlines() if r.strip() != ""]
+        if len(provided) < len(indices):
+            raise ValueError(
+                "need %d description lines (one per selected frame), got %d"
+                % (len(indices), len(provided))
+            )
+        responses = provided[:len(indices)]
 
-        boundaries = _detect_boundaries(frames, 0.35)
+        boundaries = _detect_boundaries(frames, boundary_threshold)
         narrative = _aggregate_narrative(responses, indices, total_frames)
         moments = _key_moments(responses, indices, boundaries, total_frames)
         return (narrative, moments)
@@ -177,10 +182,10 @@ class PSN_Video_Frame_Captioner:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_Scene_Transition_Detector": PSN_Scene_Transition_Detector,
-    "PSN_Video_Frame_Captioner": PSN_Video_Frame_Captioner,
+    "PSN_Frame_Description_Aggregator": PSN_Frame_Description_Aggregator,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_Scene_Transition_Detector": "PSN Scene Transition Detector",
-    "PSN_Video_Frame_Captioner": "PSN Video Frame Captioner",
+    "PSN_Frame_Description_Aggregator": "Frame Description Aggregator (no captioning)",
 }

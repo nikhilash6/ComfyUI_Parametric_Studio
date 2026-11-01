@@ -1,26 +1,20 @@
-"""VRAM-efficient video pipeline for ComfyUI (ParametricStudio).
+"""Test-latent video chain for ComfyUI (ParametricStudio).
 
-Implements frame-to-frame video generation with sequential processing and
-context caching to keep peak VRAM low on a shared GPU.  The heavy sampler
-(`comfy.sample`) is not available in this environment, so the frame
-generator uses a deterministic torch-based pseudo-sampler that mimics the
-interface (takes prev-latent and returns a latent).
+Builds a chain of test latents, each blended with the one before, and stacks
+their first three channels as RGB frames.  No model, sampler or VAE is
+involved: the "frame" latents are a gradient plus seeded Gaussian noise (the
+``steps`` and ``cfg`` inputs only scale the noise amplitude), and the stacking
+step does not decode anything.  Use it to wire and test the nodes around a
+video graph, not to make video.
 
 Nodes
 -----
-PSN_Video_Frame_Generator : generate one frame latent, optionally conditioned
-                            on the previous frame's latent (temporal
-                            consistency).  Intermediate activations are kept
-                            on CPU to bound VRAM.
-PSN_Video_Assembler       : decode a list of latents into a video tensor
-                            [B, T, H, W, C] in 0..1.
-PSN_Video_Frame_Loop      : convenience wrapper that runs the generator
-                            sequentially for N frames.
-
-Data flow
----------
-PSN_Video_Frame_Generator (loop over frames) -> latents -> PSN_Video_Assembler
--> video
+PSN_Synthetic_Latent_Frame : one test latent, blended with the previous
+                             frame's latent when one is given.  Computed on CPU.
+PSN_Latent_RGB_Stack       : stacks the first three channels of each latent as
+                             RGB frames (no VAE decode), clamped to 0..1, as an
+                             IMAGE batch [T*B, H, W, 3].
+PSN_Synthetic_Latent_Loop  : runs the test-latent generator for N frames.
 """
 
 import torch
@@ -58,11 +52,11 @@ def _clamp01(t):
 def _deterministic_frame_latent(
     prev_latent, frame_index, total_frames, steps, cfg, seed
 ):
-    """Deterministic pseudo-sampler.
+    """Seeded noise plus gradient, blended with the previous latent.
 
     Produces a [B, C, H, W] latent that depends on the previous frame's
-    latent (temporal consistency) and the frame index.  All computation is
-    done on CPU to keep VRAM usage minimal.
+    latent and the frame index.  No model or sampling is involved.  All
+    computation is done on CPU.
 
     Parameters
     ----------
@@ -71,9 +65,9 @@ def _deterministic_frame_latent(
     frame_index : int
         0-based index of the frame being generated.
     total_frames : int
-        Total number of frames in the video.
+        Total number of frames in the chain.
     steps : int
-        Number of sampling steps (affects the noise scale).
+        Divides the noise amplitude (no sampling takes place).
     cfg : float
         Classifier-free guidance scale.
     seed : int
@@ -107,11 +101,11 @@ def _deterministic_frame_latent(
     return _clamp01(out)
 
 
-def _decode_latent_to_frames(latent):
-    """Decode a [B, C, H, W] latent into a [B, H, W, C] image tensor in 0..1.
+def _latent_rgb_frames(latent):
+    """Take a [B, C, H, W] latent's first 3 channels as a [B, H, W, 3] tensor in 0..1.
 
-    Uses a simple deterministic channel mapping (first 3 channels as RGB,
-    or repeat if fewer) so the output is a valid IMAGE tensor.
+    Channels are used as RGB as they are (repeated if the latent has fewer
+    than 3).  No VAE decode happens.
     """
     x = _latent_samples(latent)
     b, c, h, w = x.shape
@@ -128,17 +122,20 @@ def _decode_latent_to_frames(latent):
 
 
 # ---------------------------------------------------------------------------
-# Node 1: PSN_Video_Frame_Generator
+# Node 1: PSN_Synthetic_Latent_Frame
 # ---------------------------------------------------------------------------
 
 
-class PSN_Video_Frame_Generator:
-    """Generate a single video frame latent with temporal conditioning.
+class PSN_Synthetic_Latent_Frame:
+    """Make one test latent: gradient plus seeded noise, blended with the previous latent.
 
-    Processes one frame at a time to keep peak VRAM low.  The previous
-    frame's latent is blended into the current frame for temporal
-    consistency.  All intermediate tensors are kept on CPU.
+    Runs no model or sampler.  The first frame is 1x4x8x8; later frames take
+    the previous latent's shape.  Computed on CPU.
     """
+
+    DESCRIPTION = ("Makes a deterministic test latent from a gradient and seeded noise, blended "
+                   "with the previous latent when given. It runs no model or sampling; steps "
+                   "and cfg only scale the noise.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -148,12 +145,6 @@ class PSN_Video_Frame_Generator:
                 "total_frames": ("INT", {"default": 4, "min": 1, "max": 10000}),
                 "steps": ("INT", {"default": 20, "min": 1, "max": 150}),
                 "cfg": ("FLOAT", {"default": 7.0, "min": 0.0, "max": 30.0}),
-                "sampler_name": (
-                    ["euler", "euler_ancestral", "heun", "dpmpp_2m"],
-                ),
-                "scheduler": (
-                    ["normal", "karras", "exponential", "sgm_uniform"],
-                ),
                 "seed": ("INT", {"default": 42, "min": 0, "max": 2**32 - 1}),
             },
             "optional": {
@@ -172,8 +163,6 @@ class PSN_Video_Frame_Generator:
         total_frames,
         steps,
         cfg,
-        sampler_name,
-        scheduler,
         seed,
         prev_latent=None,
     ):
@@ -204,37 +193,40 @@ class PSN_Video_Frame_Generator:
         return (_make_latent(current), _make_latent(next_prev))
 
 
+# The loop below uses the frame node under this alias.
+_FrameNode = PSN_Synthetic_Latent_Frame
+
+
 # ---------------------------------------------------------------------------
-# Node 2: PSN_Video_Assembler
+# Node 2: PSN_Latent_RGB_Stack
 # ---------------------------------------------------------------------------
 
 
-class PSN_Video_Assembler:
-    """Decode a list of latents into a video tensor [B, T, H, W, C] in 0..1.
+class PSN_Latent_RGB_Stack:
+    """Stack the first three channels of each latent as RGB frames, clamped to 0..1.
 
-    Each latent in the list is decoded to an image and stacked along a new
-    time axis.  The output is a plain torch tensor (VIDEO type in ComfyUI
-    is a [B, T, H, W, C] float tensor in 0..1).
+    No VAE decode.  The output is an IMAGE batch [T*B, H, W, 3], frames in
+    list order.
     """
+
+    DESCRIPTION = ("Stacks the first three latent channels of each latent as RGB frames, "
+                   "clamped to 0..1, as an IMAGE batch. It does no VAE decode, so the "
+                   "pictures are raw latent values.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "latents": ("LATENT",),
-                "fps": ("FLOAT", {"default": 24.0, "min": 1.0, "max": 240.0}),
             },
         }
 
-    RETURN_TYPES = ("VIDEO",)
-    RETURN_NAMES = ("video",)
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("rgb_frames",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, latents, fps):
-        if fps <= 0:
-            raise ValueError("fps must be > 0")
-
+    def run(self, latents):
         # latents can be a single LATENT dict or a list of LATENT dicts
         if isinstance(latents, dict):
             latent_list = [latents]
@@ -252,7 +244,7 @@ class PSN_Video_Assembler:
         for i, lat in enumerate(latent_list):
             if not isinstance(lat, dict):
                 raise ValueError("latents[%d] is not a LATENT dict" % i)
-            img = _decode_latent_to_frames(lat)
+            img = _latent_rgb_frames(lat)
             frames.append(img)
 
         # all frames must have the same spatial size and batch
@@ -264,22 +256,24 @@ class PSN_Video_Assembler:
                     % (i, tuple(f.shape), tuple(ref.shape))
                 )
 
-        # stack: [B, H, W, C] each -> [B, T, H, W, C]
-        video = torch.stack(frames, dim=1).contiguous()
-        return (video,)
+        # [B, H, W, 3] each -> [T*B, H, W, 3]
+        return (torch.cat(frames, dim=0).contiguous(),)
 
 
 # ---------------------------------------------------------------------------
-# Node 3: PSN_Video_Frame_Loop  (convenience: run the generator N times)
+# Node 3: PSN_Synthetic_Latent_Loop  (convenience: run the generator N times)
 # ---------------------------------------------------------------------------
 
 
-class PSN_Video_Frame_Loop:
-    """Run PSN_Video_Frame_Generator sequentially for *total_frames* frames.
+class PSN_Synthetic_Latent_Loop:
+    """Run the test-latent generator sequentially for *total_frames* frames.
 
-    Returns the list of latents (as a list of LATENT dicts) ready for
-    PSN_Video_Assembler.  This is the "loop" in the data flow diagram.
+    Runs no model or sampling.  Returns the list of latents (as a list of
+    LATENT dicts) ready for PSN_Latent_RGB_Stack.
     """
+
+    DESCRIPTION = ("Runs the test-latent generator (gradient plus seeded noise, chained from the "
+                   "previous frame) for N frames. It runs no model or sampling.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -288,12 +282,6 @@ class PSN_Video_Frame_Loop:
                 "total_frames": ("INT", {"default": 4, "min": 1, "max": 10000}),
                 "steps": ("INT", {"default": 20, "min": 1, "max": 150}),
                 "cfg": ("FLOAT", {"default": 7.0, "min": 0.0, "max": 30.0}),
-                "sampler_name": (
-                    ["euler", "euler_ancestral", "heun", "dpmpp_2m"],
-                ),
-                "scheduler": (
-                    ["normal", "karras", "exponential", "sgm_uniform"],
-                ),
                 "seed": ("INT", {"default": 42, "min": 0, "max": 2**32 - 1}),
             },
         }
@@ -303,11 +291,11 @@ class PSN_Video_Frame_Loop:
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, total_frames, steps, cfg, sampler_name, scheduler, seed):
+    def run(self, total_frames, steps, cfg, seed):
         if total_frames < 1:
             raise ValueError("total_frames must be >= 1")
 
-        gen = PSN_Video_Frame_Generator()
+        gen = _FrameNode()
         latents = []
         prev = None
         for i in range(total_frames):
@@ -316,8 +304,6 @@ class PSN_Video_Frame_Loop:
                 total_frames=total_frames,
                 steps=steps,
                 cfg=cfg,
-                sampler_name=sampler_name,
-                scheduler=scheduler,
                 seed=seed,
                 prev_latent=prev,
             )
@@ -331,13 +317,13 @@ class PSN_Video_Frame_Loop:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Video_Frame_Generator": PSN_Video_Frame_Generator,
-    "PSN_Video_Assembler": PSN_Video_Assembler,
-    "PSN_Video_Frame_Loop": PSN_Video_Frame_Loop,
+    "PSN_Synthetic_Latent_Frame": PSN_Synthetic_Latent_Frame,
+    "PSN_Latent_RGB_Stack": PSN_Latent_RGB_Stack,
+    "PSN_Synthetic_Latent_Loop": PSN_Synthetic_Latent_Loop,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Video_Frame_Generator": "PSN Video Frame Generator",
-    "PSN_Video_Assembler": "PSN Video Assembler",
-    "PSN_Video_Frame_Loop": "PSN Video Frame Loop",
+    "PSN_Synthetic_Latent_Frame": "Test Latent Frame (gradient and noise, no model)",
+    "PSN_Latent_RGB_Stack": "Latent RGB Stack (no VAE decode)",
+    "PSN_Synthetic_Latent_Loop": "Test Latent Loop (gradient and noise, no model)",
 }

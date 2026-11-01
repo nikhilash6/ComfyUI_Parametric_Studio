@@ -1,22 +1,15 @@
-"""ParametricStudio - SAM-based segmentation for inpainting.
+"""ParametricStudio - point/box mask for inpainting.
 
-This module provides a ComfyUI node that produces a segmentation mask
-from an image plus point/box prompts.  The real Segment Anything Model
-(`segment_anything` / `sam2`) is a heavy dependency that is NOT available
-in this environment, so the node implements the *core* logic that torch
-and the standard library can do:
+This module provides a ComfyUI node that draws a mask from typed point or
+box coordinates and multiplies the image by it.  It does NOT segment: the
+image pixels never influence the mask, and no Segment Anything (SAM) or other
+model is loaded or run.
 
 * prompt parsing and validation (points, boxes, auto mode),
-* deterministic mask generation from the prompts (geometric primitives
-  that stand in for SAM's learned segmentation),
+* mask drawing from the coordinates (disks around points, a filled box, or a
+  centre disk in Auto mode with no points),
 * mask -> image isolation for inpainting,
 * proper ComfyUI tensor conventions (IMAGE [B,H,W,C] 0..1, MASK [B,H,W]).
-
-What was NOT implemented:
-* Actual SAM/SAM2 model loading and inference (requires the
-  `segment_anything` package and a model checkpoint, neither of which
-  can be installed or downloaded here).
-* GPU acceleration (CPU torch only).
 """
 
 import torch
@@ -142,13 +135,19 @@ def _generate_mask(H, W, points, box, mask_mode):
     raise ValueError(f"unknown mask_mode: {mask_mode!r}")
 
 
-class PSN_SAM_Segmenter:
-    """Generate a segmentation mask from point/box prompts (SAM stand-in).
+class PSN_PointBoxMask:
+    """Draw a disk around each typed point (or a filled box) on a blank MASK and
+    multiply the image by it.
 
-    NOTE: This is a geometric stand-in for the real SAM model.  The real
-    SAM inference requires the `segment_anything` package and a model
-    checkpoint, which are not available in this environment.
+    The mask depends only on the typed coordinates and the image size, never on
+    the image content, and no model is run.
     """
+
+    DESCRIPTION = (
+        "Draws a disk around each typed point or a filled box on a blank MASK and "
+        "multiplies the image by it. It does not analyse the image and runs no "
+        "segmentation model."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -157,16 +156,15 @@ class PSN_SAM_Segmenter:
                 "image": ("IMAGE",),
                 "point_coords": ("STRING", {"default": "[128, 128]"}),
                 "mask_mode": (["Point", "Box", "Auto"], {"default": "Point"}),
-                "sam_model_path": ("STRING", {"default": ""}),
             }
         }
 
     RETURN_TYPES = ("MASK", "IMAGE")
-    RETURN_NAMES = ("mask", "segmented_image")
+    RETURN_NAMES = ("mask", "masked_image")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, image, point_coords, mask_mode, sam_model_path):
+    def run(self, image, point_coords, mask_mode):
         img = _validate_image(image)
         B, H, W, C = img.shape
 
@@ -189,17 +187,17 @@ class PSN_SAM_Segmenter:
         mask_hw = _generate_mask(H, W, points, box, mask_mode)
         mask = mask_hw.unsqueeze(0).expand(B, H, W).clone()
 
-        # Isolate the segmented region: image * mask (broadcast over C)
+        # Isolate the masked region: image * mask (broadcast over C)
         mask_bc = mask.unsqueeze(-1)  # [B, H, W, 1]
-        segmented = img * mask_bc
+        masked = img * mask_bc
 
-        return (mask, segmented)
+        return (mask, masked)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_SAM_Segmenter": PSN_SAM_Segmenter,
+    "PSN_PointBoxMask": PSN_PointBoxMask,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_SAM_Segmenter": "SAM Segmenter (Inpainting)",
+    "PSN_PointBoxMask": "Point/Box Mask (does not analyse the image)",
 }

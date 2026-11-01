@@ -1,37 +1,45 @@
 """
-PSN Semantic Conditioning Subtraction and Clamping Nodes.
-
-This module implements the pure-logic, secure-by-design portion of the
-"Semantic Conditioning Subtraction for Negative Prompts" specification.
-
-Because the full specification requires GPU/torch/ComfyUI internals (specifically
-the `CONDITIONING` tensor type and `torch` operations), this implementation
-operates on plain Python lists of floats (representing the conditioning vectors)
-and standard Python types. It performs the mathematical operations (subtraction,
-scaling, clamping) without relying on external libraries like `torch`.
+PSN Conditioning Subtraction and Number-List Clamp Nodes.
 
 Nodes:
-1. PSN_Conditioning_Subtract: Subtracts one vector from another with optional auto-scaling.
-2. PSN_Conditioning_Clamp: Clamps vector values to a specified range using linear or tanh methods.
+1. PSN_Conditioning_Subtract: takes two CONDITIONING inputs and returns the
+   base conditioning with the first tensor of the subtract conditioning
+   (times ``strength``, optionally scaled to the base's norm) taken away from
+   every base entry, using torch.  Shapes must match.
+2. PSN_Number_List_Clamp: clamps a JSON list of numbers with a linear or tanh
+   method.  It works on plain numbers and does not touch CONDITIONING tensors.
 """
 
 import math
 import json
 
+import torch
+
 # Define the category for these nodes
 CAT = "ParametricStudio/Semantic"
 
-# Helper function to calculate the mean magnitude (L2 norm) of a vector
-def _mean_magnitude(vec):
-    if not vec:
-        return 0.0
-    return math.sqrt(sum(x * x for x in vec))
+def _subtract_conditioning(base, subtract, strength, auto_scale):
+    """Return a new CONDITIONING: every base tensor minus subtract[0][0] * k.
 
-# Helper function to perform element-wise subtraction
-def _subtract_vectors(base, sub, strength):
-    if len(base) != len(sub):
-        raise ValueError("Vectors must have the same length for subtraction")
-    return [b - (s * strength) for b, s in zip(base, sub)]
+    k is ``strength``; with auto_scale it is multiplied by the ratio of the
+    base tensor's L2 norm to the subtract tensor's L2 norm.  Inputs are not
+    modified.  Tensor shapes must match.
+    """
+    if not base or not subtract:
+        raise ValueError("base and subtract conditioning must not be empty")
+    sub = subtract[0][0]
+    out = []
+    for tensor, opts in base:
+        if tensor.shape != sub.shape:
+            raise ValueError("conditioning shapes must match: %s vs %s" % (tuple(tensor.shape), tuple(sub.shape)))
+        s = sub.to(device=tensor.device, dtype=tensor.dtype)
+        k = float(strength)
+        if auto_scale:
+            sub_norm = torch.linalg.vector_norm(s.float()).item()
+            if sub_norm > 0:
+                k *= torch.linalg.vector_norm(tensor.float()).item() / sub_norm
+        out.append([tensor - s * k, dict(opts)])
+    return out
 
 # Helper function to clamp values
 def _clamp_vector(vec, min_val, max_val, method):
@@ -98,67 +106,46 @@ def _parse_vector_json(json_str):
 
 class PSN_Conditioning_Subtract:
     """
-    Subtracts one conditioning vector from another.
-    
-    Computes: base_conditioning - (subtract_conditioning * strength)
-    If auto_scale is true, scales the subtraction vector to match the base vector's norm.
+    Subtracts the first tensor of one CONDITIONING from every entry of another.
+
+    Computes: base - subtract[0][0] * strength. If auto_scale is true, the
+    subtraction is scaled so its norm matches the base tensor's norm first.
     """
-    
+
+    DESCRIPTION = ("Subtracts the first tensor of the subtract conditioning, times strength "
+                   "(optionally norm-matched to the base), from every base conditioning "
+                   "tensor. Tensor shapes must match.")
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "base_conditioning": ("FLOAT", {"default": 0.0, "min": -1e9, "max": 1e9, "step": 0.001}),
-                "subtract_conditioning": ("FLOAT", {"default": 0.0, "min": -1e9, "max": 1e9, "step": 0.001}),
+                "base": ("CONDITIONING",),
+                "subtract": ("CONDITIONING",),
                 "strength": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.01}),
                 "auto_scale": ("BOOLEAN", {"default": False}),
             },
-            "optional": {
-                "base_vector": ("STRING", {"default": "[]", "multiline": True}),
-                "subtract_vector": ("STRING", {"default": "[]", "multiline": True}),
-            }
         }
-    
-    RETURN_TYPES = ("FLOAT", "STRING")
-    RETURN_NAMES = ("result_vector", "result_json")
+
+    RETURN_TYPES = ("CONDITIONING",)
+    RETURN_NAMES = ("conditioning",)
     FUNCTION = "run"
     CATEGORY = CAT
-    
-    def run(self, base_conditioning, subtract_conditioning, strength, auto_scale, base_vector="[]", subtract_vector="[]"):
-        # Parse the vectors from JSON strings
-        base_vec = _parse_vector_json(base_vector)
-        sub_vec = _parse_vector_json(subtract_vector)
-        
-        # Ensure vectors are lists of floats (already done by parser)
-        
-        if len(base_vec) != len(sub_vec):
-            raise ValueError("Vectors must have the same length")
-        
-        # Calculate auto_scale if needed
-        effective_strength = strength
-        if auto_scale:
-            base_norm = _mean_magnitude(base_vec)
-            sub_norm = _mean_magnitude(sub_vec)
-            if sub_norm > 0:
-                effective_strength = strength * (base_norm / sub_norm)
-        
-        # Perform subtraction
-        result_vec = _subtract_vectors(base_vec, sub_vec, effective_strength)
-        
-        # Return as JSON string and a representative float (e.g., first element or 0.0)
-        result_json = json.dumps(result_vec)
-        result_float = result_vec[0] if result_vec else 0.0
-        
-        return (result_float, result_json)
+
+    def run(self, base, subtract, strength, auto_scale):
+        return (_subtract_conditioning(base, subtract, strength, auto_scale),)
 
 
-class PSN_Conditioning_Clamp:
+class PSN_Number_List_Clamp:
     """
-    Clamps the values of a conditioning vector to a specified range.
-    
-    Uses linear or tanh methods for clamping.
+    Clamps a JSON list of numbers to a range using a linear or tanh method.
+
+    Works on plain numbers; it does not touch CONDITIONING tensors.
     """
-    
+
+    DESCRIPTION = ("Clamps a JSON list of numbers to [min, max] with a linear (hard) or tanh "
+                   "(smooth) method. It does not touch CONDITIONING.")
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -169,33 +156,26 @@ class PSN_Conditioning_Clamp:
                 "vector": ("STRING", {"default": "[]", "multiline": True}),
             }
         }
-    
+
     RETURN_TYPES = ("FLOAT", "STRING")
-    RETURN_NAMES = ("result_vector", "result_json")
+    RETURN_NAMES = ("first_value", "result_json")
     FUNCTION = "run"
     CATEGORY = CAT
-    
+
     def run(self, min_val, max_val, method, vector="[]"):
-        # Parse the vector from JSON string
         vec = _parse_vector_json(vector)
-        
-        # Clamp the vector
         result_vec = _clamp_vector(vec, min_val, max_val, method)
-        
-        # Return as JSON string and a representative float
-        result_json = json.dumps(result_vec)
-        result_float = result_vec[0] if result_vec else 0.0
-        
-        return (result_float, result_json)
+        first_value = result_vec[0] if result_vec else 0.0
+        return (first_value, json.dumps(result_vec))
 
 
 # Node mappings for ComfyUI
 NODE_CLASS_MAPPINGS = {
     "PSN_Conditioning_Subtract": PSN_Conditioning_Subtract,
-    "PSN_Conditioning_Clamp": PSN_Conditioning_Clamp,
+    "PSN_Number_List_Clamp": PSN_Number_List_Clamp,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Conditioning_Subtract": "PSN Conditioning Subtract",
-    "PSN_Conditioning_Clamp": "PSN Conditioning Clamp",
+    "PSN_Conditioning_Subtract": "Conditioning Subtract",
+    "PSN_Number_List_Clamp": "Number List Clamp (not conditioning)",
 }

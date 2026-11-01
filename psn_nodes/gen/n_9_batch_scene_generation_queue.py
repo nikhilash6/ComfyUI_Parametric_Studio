@@ -1,16 +1,17 @@
 """ParametricStudio - Batch Scene Generation Queue.
 
-Defines named scenes and automatically renders combinations for rapid
-iteration.  Two nodes are provided:
+Builds a list of full prompts from a base prompt and scene variants, and makes
+small test images for layout.  Two nodes are provided:
 
 * ``PSN_SceneQueueBuilder`` - combines a base prompt with a JSON list of
   scene variants and produces a flat list of full prompts.
-* ``PSN_BatchExecutor`` - loops through the queue and produces one small
-  placeholder IMAGE per prompt (deterministic, CPU, torch).
+* ``PSN_PromptPlaceholderImages`` - makes one small hash-coloured gradient
+  IMAGE per prompt (deterministic, CPU, torch).  It runs no model and renders
+  nothing from the prompt text: the image only depends on a hash of the string.
 
 Data flow::
 
-    PSN_SceneQueueBuilder -> PSN_BatchExecutor
+    PSN_SceneQueueBuilder -> PSN_PromptPlaceholderImages
 
 Only ``torch`` (CPU) and the Python standard library are used.  No network,
 no subprocess, no file I/O, no model weights.
@@ -42,8 +43,8 @@ def _hash_prompt(prompt: str) -> int:
     return h
 
 
-def _make_placeholder_image(prompt: str, height: int, width: int, channels: int) -> torch.Tensor:
-    """Create a small deterministic placeholder IMAGE tensor [1,H,W,C] in 0..1.
+def _make_gradient_image(prompt: str, height: int, width: int, channels: int) -> torch.Tensor:
+    """Create a small deterministic gradient IMAGE tensor [1,H,W,C] in 0..1.
 
     The image is a smooth gradient whose phase is derived from the prompt
     hash, so different prompts produce visibly different images while the
@@ -130,14 +131,18 @@ class PSN_SceneQueueBuilder:
         return (items,)
 
 
-class PSN_BatchExecutor:
-    """Loop through a queue of prompts and produce one placeholder IMAGE per item.
+class PSN_PromptPlaceholderImages:
+    """Make one small gradient test IMAGE per prompt, coloured by a hash of the text.
 
-    This is a CPU-only, deterministic stand-in for a real sampler loop.  Each
-    prompt is turned into a small gradient image whose appearance depends on
-    the prompt hash, so different prompts yield different images.  The output
-    is a ``LIST[IMAGE]`` (one ``[1,H,W,C]`` tensor per prompt).
+    Runs no model and does not render the scene the prompt describes; use it to
+    test list/layout wiring.  The output is a ``LIST[IMAGE]`` (one ``[1,H,W,C]``
+    tensor per prompt).
     """
+
+    DESCRIPTION = (
+        "Makes one small hash-coloured gradient IMAGE per prompt for layout testing. "
+        "It runs no model and does not render what the prompt describes."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -153,7 +158,7 @@ class PSN_BatchExecutor:
         }
 
     RETURN_TYPES = ("LIST[IMAGE]",)
-    RETURN_NAMES = ("batch_results",)
+    RETURN_NAMES = ("gradient_images",)
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -172,7 +177,7 @@ class PSN_BatchExecutor:
 
         results = []
         for p in queue_items:
-            img = _make_placeholder_image(p, height, width, channels)
+            img = _make_gradient_image(p, height, width, channels)
             results.append(img)
         return (results,)
 
@@ -183,10 +188,10 @@ class PSN_BatchExecutor:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_SceneQueueBuilder": PSN_SceneQueueBuilder,
-    "PSN_BatchExecutor": PSN_BatchExecutor,
+    "PSN_PromptPlaceholderImages": PSN_PromptPlaceholderImages,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_SceneQueueBuilder": "PSN Scene Queue Builder",
-    "PSN_BatchExecutor": "PSN Batch Executor",
+    "PSN_PromptPlaceholderImages": "Prompt Gradient Test Images (runs no model)",
 }

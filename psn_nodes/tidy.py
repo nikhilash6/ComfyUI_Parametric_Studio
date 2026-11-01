@@ -26,7 +26,7 @@ try:
 except (OSError, ValueError): pass
 NETWORK = set(_DATA.get("network") or ())
 # Weak duplicates, hidden from the Add Node menu with DEPRECATED. Old graphs keep running. Each was compared with the node it points at by signature and description; the inspector, structure and iterator pairs were also run side by side.
-HIDDEN = {"PSN_Latent_Batch_Repeat": "PSN_LatentBatchRepeat", "PSN_Latent_Batch_Merge": "PSN_LatentBatchConcat", "PSN_Node_Inspector": "PSN_NodeInspector", "PSN_Workflow_Structure": "PSN_WorkflowStructure", "PSN_PromptIterator": "PSN_Prompt_Iterator", "PSN_Prompt_Enhancer": "PSN_PromptEnhancer", "PSN_VramGate": "PSN_VRAMGate"}
+HIDDEN = {"PSN_Node_Inspector": "PSN_NodeInspector", "PSN_PromptIterator": "PSN_Prompt_Iterator", "PSN_Prompt_Enhancer": "PSN_PromptEnhance"}
 
 def area_of(category):
     sub = str(category or "").split("/", 1)[-1].split("/")[0]

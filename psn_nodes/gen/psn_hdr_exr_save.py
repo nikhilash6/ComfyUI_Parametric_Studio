@@ -1,18 +1,14 @@
-"""PSN_HDR_EXR_Save: pure-logic EXR save planner.
+"""PSN_EXR_Save_Plan: checks an EXR output path and estimates the file size. It writes nothing.
 
-This module implements ONLY the secure, pure-logic portion of an EXR save node.
-It does NOT open sockets, files, or use torch/OpenEXR. Instead it:
+It takes no image. It does NOT open sockets or files and does not use torch/OpenEXR. It:
   - validates the file path against an allow-list of safe extensions and
     rejects path traversal / absolute paths / null bytes,
   - validates the compression choice against an allow-list,
-  - estimates the required disk space from a plain (H, W, C) shape and a
-    bytes-per-channel value, and compares it against a provided free-space
-    figure,
-  - builds a deterministic, JSON-serializable "save plan" payload that a real
-    EXR writer could consume.
+  - estimates the size from a plain (H, W, C) shape at 4 bytes per channel (uncompressed float32;
+    compression is not applied to the estimate) and compares it with a free-space figure you type in,
+  - returns that as a JSON "plan" a real EXR writer could consume.
 
-Inputs are plain values (numbers, strings, JSON text). The node returns a
-status string and the plan as JSON text.
+The status string is "Planned" when the checks pass: nothing has been saved.
 """
 
 import json
@@ -70,8 +66,11 @@ def _psn_build_plan(file_path, compression, height, width, channels, free_space)
     return plan
 
 
-class PSN_HDR_EXR_Save:
-    """Plan and validate an EXR save without performing any I/O."""
+class PSN_EXR_Save_Plan:
+    """Validate an EXR path and estimate its size against typed free space. Writes nothing; takes no image."""
+
+    DESCRIPTION = ("Validates an EXR path and compression and estimates the uncompressed size against a free-space "
+                   "number you type. It takes no image and writes no file; status 'Planned' means the checks passed.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -110,8 +109,8 @@ class PSN_HDR_EXR_Save:
                 "Error: insufficient disk space (need %d, have %d)" % (plan["required_bytes"], plan["free_space_bytes"]),
                 json.dumps(plan),
             )
-        return ("Saved", json.dumps(plan))
+        return ("Planned", json.dumps(plan))
 
 
-NODE_CLASS_MAPPINGS = {"PSN_HDR_EXR_Save": PSN_HDR_EXR_Save}
-NODE_DISPLAY_NAME_MAPPINGS = {"PSN_HDR_EXR_Save": "HDR EXR Save (Planner)"}
+NODE_CLASS_MAPPINGS = {"PSN_EXR_Save_Plan": PSN_EXR_Save_Plan}
+NODE_DISPLAY_NAME_MAPPINGS = {"PSN_EXR_Save_Plan": "EXR Save Plan (writes nothing)"}

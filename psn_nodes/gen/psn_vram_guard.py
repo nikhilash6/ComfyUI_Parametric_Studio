@@ -1,19 +1,17 @@
-"""PSN_VRAM_Guard: pure-logic VRAM threshold guard.
+"""PSN_VRAM_Budget_Compare: compares one number you type against another.
 
-This module implements a secure, dependency-free guard that compares a
-reported VRAM usage value against a configured threshold. It does NOT
-touch the GPU, read system memory, open sockets, or perform any I/O.
-It is intended to be wired into a ComfyUI workflow where an upstream
-node supplies `current_usage` (in GB) and this node decides whether
-generation should proceed.
+This module compares a VRAM usage value in GB that you (or an upstream node)
+supply against a budget value in GB. It does NOT read the GPU, read system
+memory, open sockets, or perform any I/O, so it measures nothing: the answer is
+only as true as the usage number put in.
 
 Inputs (plain values):
-    threshold (float, GB)   - maximum allowed VRAM usage.
-    current_usage (float, GB) - reported current VRAM usage.
+    budget_gb (float, GB) - maximum allowed usage.
+    usage_gb (float, GB)  - usage value supplied by you or an upstream node.
 
 Outputs:
-    is_safe (bool)   - True when current_usage <= threshold.
-    warning (str)    - human-readable warning when unsafe, else "".
+    within_budget (bool) - True when usage_gb <= budget_gb.
+    message (str)        - text when over budget or on bad input, else "".
 """
 
 import math
@@ -44,52 +42,53 @@ def _validate_finite_number(value, name):
     return False, f"{name} must be a number, got {type(value).__name__}", None
 
 
-class PSN_VRAM_Guard:
-    """Monitor VRAM usage and flag generation as unsafe when over threshold."""
+class PSN_VRAM_Budget_Compare:
+    """Compare a typed VRAM usage number against a typed budget number. Reads no GPU."""
+
+    DESCRIPTION = "Compares a usage number you type against a budget number you type; reads no GPU."
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "threshold": ("FLOAT", {"default": 8.0, "min": 0.0, "max": 1e9, "step": 0.1}),
-                "current_usage": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1e9, "step": 0.1}),
+                "budget_gb": ("FLOAT", {"default": 8.0, "min": 0.0, "max": 1e9, "step": 0.1}),
+                "usage_gb": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1e9, "step": 0.1}),
             }
         }
 
     RETURN_TYPES = ("BOOLEAN", "STRING")
-    RETURN_NAMES = ("is_safe", "warning")
+    RETURN_NAMES = ("within_budget", "message")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, threshold, current_usage):
-        ok_t, why_t, thr = _validate_finite_number(threshold, "threshold")
+    def run(self, budget_gb, usage_gb):
+        ok_t, why_t, thr = _validate_finite_number(budget_gb, "budget_gb")
         if not ok_t:
             return (False, f"Invalid input: {why_t}")
 
-        ok_u, why_u, usage = _validate_finite_number(current_usage, "current_usage")
+        ok_u, why_u, usage = _validate_finite_number(usage_gb, "usage_gb")
         if not ok_u:
             return (False, f"Invalid input: {why_u}")
 
         if thr < 0.0:
-            return (False, f"Invalid input: threshold must be >= 0, got {thr}")
+            return (False, f"Invalid input: budget_gb must be >= 0, got {thr}")
         if usage < 0.0:
-            return (False, f"Invalid input: current_usage must be >= 0, got {usage}")
+            return (False, f"Invalid input: usage_gb must be >= 0, got {usage}")
 
         if usage > thr:
-            headroom = thr - usage
-            warning = (
-                f"VRAM guard: usage {usage:.3f} GB exceeds threshold {thr:.3f} GB "
-                f"(over by {usage - thr:.3f} GB). Pause generation."
+            message = (
+                f"usage {usage:.3f} GB (as given) exceeds budget {thr:.3f} GB "
+                f"(over by {usage - thr:.3f} GB)."
             )
-            return (False, warning)
+            return (False, message)
 
         return (True, "")
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_VRAM_Guard": PSN_VRAM_Guard,
+    "PSN_VRAM_Budget_Compare": PSN_VRAM_Budget_Compare,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_VRAM_Guard": "VRAM Guard",
+    "PSN_VRAM_Budget_Compare": "VRAM Budget Compare (typed numbers, reads no GPU)",
 }

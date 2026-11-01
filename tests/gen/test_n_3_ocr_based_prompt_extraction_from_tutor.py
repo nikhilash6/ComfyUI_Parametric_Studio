@@ -2,47 +2,45 @@
 
 import json
 
+from psn_nodes.gen import n_3_ocr_based_prompt_extraction_from_tutor as mod
 from psn_nodes.gen.n_3_ocr_based_prompt_extraction_from_tutor import (
-    PSN_Tutorial_OCR_Extractor,
+    PSN_TextLinesToRegions,
     PSN_Prompt_Cleaner,
     _strip_ui,
     _split_sections,
     _build_structured,
-    _validate_engine,
-    _validate_language,
 )
 
 
-def test_extractor_valid_config_returns_text_and_mask():
-    node = PSN_Tutorial_OCR_Extractor()
-    raw, mask = node.run("a cat on a mat\nnegative: blur", "Chandra", "en")
-    assert raw == "a cat on a mat\nnegative: blur"
-    parsed = json.loads(mask)
-    assert parsed["language"] == "en"
-    assert len(parsed["regions"]) == 2
-    assert parsed["regions"][0]["text"] == "a cat on a mat"
+def test_lines_to_regions_splits_lines():
+    node = PSN_TextLinesToRegions()
+    raw, recs = node.run("a cat on a mat\n\n  negative: blur  ")
+    assert raw == "a cat on a mat\n\n  negative: blur  "
+    parsed = json.loads(recs)
+    assert parsed["lines"] == [
+        {"id": 0, "text": "a cat on a mat"},
+        {"id": 1, "text": "negative: blur"},
+    ]
 
 
-def test_extractor_rejects_bad_engine():
-    node = PSN_Tutorial_OCR_Extractor()
-    raw, mask = node.run("hello", "NotAnEngine", "en")
+def test_lines_to_regions_has_no_fabricated_fields():
+    node = PSN_TextLinesToRegions()
+    _, recs = node.run("hello\nworld")
+    for rec in json.loads(recs)["lines"]:
+        assert set(rec) == {"id", "text"}
+    assert "confidence" not in recs and "box" not in recs
+    assert "ocr_engine" not in PSN_TextLinesToRegions.INPUT_TYPES()["required"]
+    assert not hasattr(mod, "OCR_ENGINES")
+    assert "PSN_Tutorial_OCR_Extractor" not in mod.NODE_CLASS_MAPPINGS
+    assert "PSN_TextLinesToRegions" in mod.NODE_CLASS_MAPPINGS
+    assert "no OCR" in PSN_TextLinesToRegions.DESCRIPTION
+
+
+def test_lines_to_regions_handles_non_string():
+    node = PSN_TextLinesToRegions()
+    raw, recs = node.run(12345)
     assert raw == ""
-    assert "error" in json.loads(mask)
-
-
-def test_extractor_rejects_bad_language():
-    node = PSN_Tutorial_OCR_Extractor()
-    raw, mask = node.run("hello", "Chandra", "xx")
-    assert raw == ""
-    assert "error" in json.loads(mask)
-
-
-def test_extractor_handles_non_string_image():
-    node = PSN_Tutorial_OCR_Extractor()
-    raw, mask = node.run(12345, "PaddleOCR", "zh")
-    assert raw == ""
-    parsed = json.loads(mask)
-    assert parsed["regions"] == []
+    assert json.loads(recs)["lines"] == []
 
 
 def test_cleaner_removes_ui_elements():
@@ -99,13 +97,6 @@ def test_cleaner_handles_empty_and_bad_input():
 def test_strip_ui_removes_embedded_tokens():
     assert _strip_ui("Submit a form") == "a form"
     assert _strip_ui("Cancel") == ""
-
-
-def test_validate_helpers():
-    assert _validate_engine("Chandra")[0] is True
-    assert _validate_engine("bad")[0] is False
-    assert _validate_language("multi")[0] is True
-    assert _validate_language(5)[0] is False
 
 
 def test_build_structured_roundtrip():

@@ -1,13 +1,13 @@
 """
 PSN Workflow Flow Control for Batch Processing (pure-logic core).
 
-This module implements the *logic* of batch conditioning loops and conditioning
-variation generation without any GPU/torch/ComfyUI internals. Because the real
-nodes require torch tensors (CONDITIONING, LATENT, MODEL, IMAGE), this module
-exposes only the secure, pure-Python parts:
+This module implements pure-Python batch planning without any GPU/torch/ComfyUI
+internals. Nothing here produces or consumes ComfyUI CONDITIONING tensors:
 
-  * PSN_Conditioning_Variation_Generator: builds a deterministic list of
-    "variation specs" (dicts) from a base conditioning description.
+  * PSN_Prompt_Weight_Variation_Specs: builds a deterministic list of
+    "variation specs" (dicts of prompt text plus a seeded weight/bias) from a
+    base prompt string. No node in this module applies the weight or bias to
+    any real conditioning.
   * PSN_Batch_Conditioning_Loop: validates a batch of conditioning specs and
     produces a *plan* (list of per-item sampling configs) that a real sampler
     would execute. It never touches a GPU.
@@ -125,13 +125,19 @@ def _apply_variation(base, variation_type, magnitude, index, rng):
     return varied
 
 
-class PSN_Conditioning_Variation_Generator:
+class PSN_Prompt_Weight_Variation_Specs:
     """
-    Generates multiple variations of a base conditioning by applying
-    deterministic (seeded) perturbations or scaling factors.
+    Generates a list of spec dicts (prompt, weight, bias) by applying
+    deterministic (seeded) perturbations or scaling factors to a base
+    weight and bias.
 
-    Pure-logic: returns a list of conditioning spec dicts.
+    Pure-logic: returns spec dicts only; produces no ComfyUI CONDITIONING.
     """
+
+    DESCRIPTION = (
+        "Generates seeded weight/bias variation spec dicts for a prompt string. "
+        "It produces no ComfyUI CONDITIONING and applies nothing to a model."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -150,7 +156,7 @@ class PSN_Conditioning_Variation_Generator:
         }
 
     RETURN_TYPES = ("CONDITIONING_LIST",)
-    RETURN_NAMES = ("conditioning_list",)
+    RETURN_NAMES = ("variation_specs",)
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -277,11 +283,11 @@ class PSN_Batch_Conditioning_Loop:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Conditioning_Variation_Generator": PSN_Conditioning_Variation_Generator,
+    "PSN_Prompt_Weight_Variation_Specs": PSN_Prompt_Weight_Variation_Specs,
     "PSN_Batch_Conditioning_Loop": PSN_Batch_Conditioning_Loop,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Conditioning_Variation_Generator": "PSN Conditioning Variation Generator",
+    "PSN_Prompt_Weight_Variation_Specs": "Prompt Weight Variation Specs (no conditioning)",
     "PSN_Batch_Conditioning_Loop": "PSN Batch Conditioning Loop",
 }

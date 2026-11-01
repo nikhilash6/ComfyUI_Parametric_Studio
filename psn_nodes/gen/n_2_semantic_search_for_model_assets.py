@@ -1,23 +1,23 @@
-"""PSN Semantic Search for Model Assets (pure-logic core).
+"""PSN Keyword Search for Model Assets (pure-logic core).
 
-This module implements the *pure-logic, secure-by-design* portion of the
-"Semantic Search for Model Assets" spec.  The real spec requires GPU/torch
-internals (Qwen3-VL-Embedding, Qwen3-VL-Reranker) and FAISS, plus filesystem
-scanning of a folder of model/image assets.  None of that is available here,
-so we implement only the deterministic, dependency-free parts:
+This module builds and searches a keyword index over an explicit list of asset
+descriptors.  It uses no embedding model, no reranker and no FAISS, and it does
+not scan the filesystem; callers supply the descriptors.
 
-  * PSN_Semantic_Index_Builder  -- validates the index configuration and
-    builds an in-memory index from an explicit list of asset descriptors
-    (name, path, kind, text).  It does NOT scan the filesystem; callers
-    supply the descriptors.  Embeddings are produced with a deterministic
-    bag-of-words pseudo-embedding so the index is reproducible and testable.
-  * PSN_Semantic_Search_Query   -- encodes a natural-language query with the
-    same deterministic embedding, scores it against the index, applies a
-    minimum-score threshold, and returns the top-k matches.
+  * PSN_Keyword_Index_Builder  -- validates the index configuration and
+    builds an in-memory index from a list of asset descriptors
+    (name, path, kind, text).  Each item's name and text are turned into a
+    64-bucket hashed bag-of-words vector (SHA-256 of each token picks a bucket
+    and a sign).
+  * PSN_Keyword_Search_Query   -- builds the same kind of vector for the
+    query, scores it against the index by cosine similarity, applies a
+    minimum-score threshold, and returns the top-k matches.  A score reflects
+    shared words (and some hash-bucket collisions), not meaning: "car" does
+    not match "automobile".
 
 All functions and node wrappers take plain values (strings, numbers, lists,
 JSON text).  No sockets, no file/OS access, no network, no torch, no ComfyUI
-imports, no eval/exec.  The "semantic_index" and "search_results" outputs are
+imports, no eval/exec.  The "keyword_index" and "search_results" outputs are
 plain Python dicts (JSON-serialisable) so they can be passed between nodes.
 """
 
@@ -31,13 +31,7 @@ CAT = "ParametricStudio/SemanticSearch"
 # Supported asset kinds (images and PDFs per the spec).
 SUPPORTED_KINDS = ("image", "pdf")
 
-# Embedding model choices (names only; the real models are external).
-EMBEDDING_MODELS = ("Qwen3-VL-Embedding", "Qwen3-VL-Embedding-8B")
-
-# Reranker model choices (names only).
-RERANKER_MODELS = ("Qwen3-VL-Reranker", "Qwen3-VL-Reranker-8B")
-
-# Dimensionality of the deterministic pseudo-embedding.
+# Number of hash buckets in the bag-of-words vector.
 _EMB_DIM = 64
 
 # Simple stop words to ignore when building the bag-of-words vector.
@@ -60,15 +54,13 @@ def _psn_tokenize(text):
     return [t for t in tokens if t not in _STOP_WORDS]
 
 
-def _psn_embed(text):
-    """Deterministic pseudo-embedding for a string.
+def _psn_bow_vector(text):
+    """Hashed bag-of-words unit vector for a string.
 
-    Produces a fixed-length unit vector derived from the text via a
-    bag-of-words hashing scheme.  This is NOT a real semantic embedding; it is
-    a reproducible stand-in so that index building and search can be exercised
-    without torch/FAISS.  Identical text -> identical vector.  Vectors for
-    texts sharing tokens will have higher cosine similarity than texts with
-    disjoint tokens.
+    A fixed-length unit vector built by hashing each token (stop words
+    dropped) into one of _EMB_DIM buckets with a +1/-1 sign.  It captures which
+    words appear, not what they mean.  Identical text -> identical vector;
+    texts sharing tokens score higher than texts with none.
     """
     if text is None:
         text = ""
@@ -93,7 +85,7 @@ def _psn_embed(text):
 def _psn_cosine(a, b):
     """Cosine similarity between two equal-length vectors."""
     if len(a) != len(b):
-        raise ValueError("embedding dimension mismatch")
+        raise ValueError("vector dimension mismatch")
     dot = sum(x * y for x, y in zip(a, b))
     na = math.sqrt(sum(x * x for x in a))
     nb = math.sqrt(sum(y * y for y in b))
@@ -128,20 +120,19 @@ def _psn_validate_folder_path(folder_path):
     return path
 
 
-def _psn_build_index(folder_path, embedding_model, index_name, assets):
-    """Build an in-memory semantic index from asset descriptors.
+def _psn_build_index(folder_path, index_name, assets):
+    """Build an in-memory keyword index from asset descriptors.
 
     Args:
-        folder_path: validated folder path string.
-        embedding_model: chosen embedding model name.
+        folder_path: validated folder path string (recorded only).
         index_name: validated index name.
         assets: list of dicts, each with keys:
             "name" (str), "path" (str), "kind" (str in SUPPORTED_KINDS),
             "text" (str, optional, default "").
 
     Returns:
-        dict with keys: index_name, embedding_model, folder_path,
-        item_count, items (list of {name, path, kind, text, embedding}).
+        dict with keys: index_name, folder_path,
+        item_count, items (list of {name, path, kind, text, vector}).
     """
     if not isinstance(assets, list):
         raise ValueError("assets must be a list")
@@ -168,18 +159,17 @@ def _psn_build_index(folder_path, embedding_model, index_name, assets):
         if path in seen_paths:
             raise ValueError("asset %d: duplicate path '%s'" % (i, path))
         seen_paths.add(path)
-        # Combine name and text for the embedding so both contribute.
-        emb = _psn_embed(name + " " + text)
+        # Combine name and text so both contribute.
+        emb = _psn_bow_vector(name + " " + text)
         items.append({
             "name": name,
             "path": path,
             "kind": kind,
             "text": text,
-            "embedding": emb,
+            "vector": emb,
         })
     return {
         "index_name": index_name,
-        "embedding_model": embedding_model,
         "folder_path": folder_path,
         "item_count": len(items),
         "items": items,
@@ -187,7 +177,7 @@ def _psn_build_index(folder_path, embedding_model, index_name, assets):
 
 
 def _psn_search(index, query_text, top_k, min_score):
-    """Search a semantic index with a natural-language query.
+    """Search a keyword index with a query.
 
     Args:
         index: dict produced by _psn_build_index.
@@ -200,9 +190,9 @@ def _psn_search(index, query_text, top_k, min_score):
         results (list of {name, path, kind, score}).
     """
     if not isinstance(index, dict):
-        raise ValueError("semantic_index must be a dict")
+        raise ValueError("keyword_index must be a dict")
     if "items" not in index:
-        raise ValueError("semantic_index missing 'items'")
+        raise ValueError("keyword_index missing 'items'")
     if not isinstance(query_text, str):
         raise ValueError("query_text must be a string")
     if not isinstance(top_k, int) or isinstance(top_k, bool):
@@ -214,10 +204,10 @@ def _psn_search(index, query_text, top_k, min_score):
     if min_score < -1.0 or min_score > 1.0:
         raise ValueError("min_score must be in [-1, 1]")
 
-    q_emb = _psn_embed(query_text)
+    q_emb = _psn_bow_vector(query_text)
     scored = []
     for item in index["items"]:
-        score = _psn_cosine(q_emb, item["embedding"])
+        score = _psn_cosine(q_emb, item["vector"])
         if score >= min_score:
             scored.append({
                 "name": item["name"],
@@ -237,19 +227,21 @@ def _psn_search(index, query_text, top_k, min_score):
     }
 
 
-class PSN_Semantic_Index_Builder:
-    """Build an in-memory semantic index from asset descriptors.
+class PSN_Keyword_Index_Builder:
+    """Build an in-memory hashed bag-of-words keyword index from asset descriptors.
 
-    Pure-logic core: validates configuration and builds a deterministic
-    pseudo-embedding index.  No filesystem scanning, no torch, no FAISS.
+    Pure-logic core: validates configuration and builds the index.  No
+    embedding model, no filesystem scanning, no torch, no FAISS.
     """
+
+    DESCRIPTION = ("Builds a hashed bag-of-words keyword index from the asset descriptors you "
+                   "supply. It uses no embedding model and does not scan any folder.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "folder_path": ("STRING", {"default": "", "multiline": False}),
-                "embedding_model": (list(EMBEDDING_MODELS),),
                 "index_name": ("STRING", {"default": "my_index", "multiline": False}),
                 "assets_json": ("STRING", {
                     "default": "[]",
@@ -260,45 +252,45 @@ class PSN_Semantic_Index_Builder:
             },
         }
 
-    RETURN_TYPES = ("SEMANTIC_INDEX", "STRING")
-    RETURN_NAMES = ("semantic_index", "index_stats")
+    RETURN_TYPES = ("KEYWORD_INDEX", "STRING")
+    RETURN_NAMES = ("keyword_index", "index_stats")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, folder_path, embedding_model, index_name, assets_json):
+    def run(self, folder_path, index_name, assets_json):
         path = _psn_validate_folder_path(folder_path)
         name = _psn_validate_index_name(index_name)
-        if embedding_model not in EMBEDDING_MODELS:
-            raise ValueError("embedding_model must be one of %s" % (EMBEDDING_MODELS,))
         try:
             assets = json.loads(assets_json)
         except (json.JSONDecodeError, TypeError) as e:
             raise ValueError("assets_json is not valid JSON: %s" % e)
         if not isinstance(assets, list):
             raise ValueError("assets_json must decode to a JSON list")
-        index = _psn_build_index(path, embedding_model, name, assets)
+        index = _psn_build_index(path, name, assets)
         stats = json.dumps({
             "index_name": name,
-            "embedding_model": embedding_model,
             "folder_path": path,
             "item_count": index["item_count"],
         }, indent=2)
         return (index, stats)
 
 
-class PSN_Semantic_Search_Query:
-    """Search a semantic index with a natural-language query.
+class PSN_Keyword_Search_Query:
+    """Rank indexed assets by hashed bag-of-words cosine overlap with a query.
 
-    Pure-logic core: deterministic pseudo-embedding cosine search with
-    threshold and top-k.  No torch, no FAISS, no reranker model.
+    Pure-logic core: cosine search with threshold and top-k.  It matches shared
+    words, not meaning.  No embedding model, no torch, no FAISS, no reranker.
     """
+
+    DESCRIPTION = ("Ranks indexed assets by hashed bag-of-words cosine overlap with the query "
+                   "text, with a minimum score and top-k. It matches shared words, not meaning.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "query_text": ("STRING", {"default": "", "multiline": False}),
-                "semantic_index": ("SEMANTIC_INDEX",),
+                "keyword_index": ("KEYWORD_INDEX",),
                 "top_k": ("INT", {"default": 5, "min": 1, "max": 100, "step": 1}),
                 "min_score": ("FLOAT", {"default": 0.0, "min": -1.0, "max": 1.0, "step": 0.001}),
             },
@@ -309,18 +301,18 @@ class PSN_Semantic_Search_Query:
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, query_text, semantic_index, top_k, min_score):
-        result = _psn_search(semantic_index, query_text, top_k, min_score)
+    def run(self, query_text, keyword_index, top_k, min_score):
+        result = _psn_search(keyword_index, query_text, top_k, min_score)
         results_json = json.dumps(result, indent=2)
         return (result, results_json)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Semantic_Index_Builder": PSN_Semantic_Index_Builder,
-    "PSN_Semantic_Search_Query": PSN_Semantic_Search_Query,
+    "PSN_Keyword_Index_Builder": PSN_Keyword_Index_Builder,
+    "PSN_Keyword_Search_Query": PSN_Keyword_Search_Query,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Semantic_Index_Builder": "PSN Semantic Index Builder",
-    "PSN_Semantic_Search_Query": "PSN Semantic Search Query",
+    "PSN_Keyword_Index_Builder": "Keyword Index Builder (no embedding model)",
+    "PSN_Keyword_Search_Query": "Keyword Search Query (word overlap, not semantic)",
 }

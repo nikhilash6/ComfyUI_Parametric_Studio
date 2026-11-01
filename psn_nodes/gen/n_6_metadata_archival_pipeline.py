@@ -6,9 +6,9 @@ Nodes:
     also try to embed the metadata into the image's PNG/EXIF block; here we
     only do the pure-Python part (dict + JSON) because Pillow is not
     guaranteed to be available and the task forbids file I/O.
-  * PSN_Archive_Logger  - serialises a metadata dict to a single JSONL line
-    (the "log entry").  In a full install it would append to a file or POST
-    to a local API; here it returns the line plus a status string.
+  * PSN_Archive_Line_Format - serialises a metadata dict to a single JSONL line
+    and returns it.  It writes nothing: no file is opened and nothing is
+    posted.  The caller must save the returned line.
 """
 
 import json
@@ -91,8 +91,14 @@ class PSN_Meta_Extractor:
         return (meta, js)
 
 
-class PSN_Archive_Logger:
-    """Serialise a metadata dict into a single JSONL line (log entry)."""
+class PSN_Archive_Line_Format:
+    """Serialise a metadata dict into a single JSONL line. Writes nothing."""
+
+    DESCRIPTION = (
+        "Formats a metadata dict as one JSONL archive line and returns it. "
+        "It writes no file and posts nothing; the path you type is only recorded "
+        "inside the line as intended_output_path."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -102,16 +108,16 @@ class PSN_Archive_Logger:
                 "run_id": ("STRING", {"default": "run-0001"}),
             },
             "optional": {
-                "output_path": ("STRING", {"default": "archive.jsonl"}),
+                "intended_output_path": ("STRING", {"default": "archive.jsonl"}),
             },
         }
 
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("status", "jsonl_line")
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("jsonl_line",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, metadata_dict, run_id, output_path="archive.jsonl"):
+    def run(self, metadata_dict, run_id, intended_output_path="archive.jsonl"):
         if not isinstance(metadata_dict, dict):
             raise TypeError("metadata_dict must be a dict")
         if not metadata_dict:
@@ -119,18 +125,17 @@ class PSN_Archive_Logger:
         # Make sure the run_id in the log line matches the one passed in.
         entry = dict(metadata_dict)
         entry["run_id"] = str(run_id)
-        entry["output_path"] = str(output_path)
+        entry["intended_output_path"] = str(intended_output_path)
         line = json.dumps(entry, sort_keys=True, separators=(",", ":"))
-        status = "ok:1:%s" % str(run_id)
-        return (status, line)
+        return (line,)
 
 
 NODE_CLASS_MAPPINGS = {
     "PSN_Meta_Extractor": PSN_Meta_Extractor,
-    "PSN_Archive_Logger": PSN_Archive_Logger,
+    "PSN_Archive_Line_Format": PSN_Archive_Line_Format,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_Meta_Extractor": "PSN Meta Extractor",
-    "PSN_Archive_Logger": "PSN Archive Logger",
+    "PSN_Archive_Line_Format": "Archive JSONL Line Formatter (writes nothing)",
 }

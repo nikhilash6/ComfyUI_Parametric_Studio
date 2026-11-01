@@ -12,9 +12,9 @@ parts:
    actually print to console (no side effects), but returns the formatted
    string that would be printed.
 
-2. PSN_Tensor_Save: Validates the path and returns the path string. It does
-   NOT actually save to disk (no file I/O), but validates the path format
-   and returns it as the output.
+2. PSN_Tensor_Save_Plan: Checks a target path string (and the tensor data, if
+   given) and returns the planned path. It writes nothing: no file is created
+   and no tensor is saved.
 
 All functions take plain values (lists, strings, numbers) and return plain
 values. No torch, no file access, no network.
@@ -174,11 +174,14 @@ class PSN_Tensor_Inspect:
         return (str(shape), dtype, min_val, max_val, mean_val)
 
 
-class PSN_Tensor_Save:
+class PSN_Tensor_Save_Plan:
     """
-    Validate a path for saving a tensor to a .pt file. Returns the validated
-    path string. Pure logic only: no actual file I/O.
+    Work out where a tensor would be saved. Checks the path string (and the
+    tensor data, if given) and returns it as planned_path. Writes nothing:
+    no file is created and no tensor is saved.
     """
+
+    DESCRIPTION = "Works out where a tensor would be saved; writes nothing. Returns the checked path as planned_path."
     
     @classmethod
     def INPUT_TYPES(cls):
@@ -192,7 +195,7 @@ class PSN_Tensor_Save:
         }
     
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("path",)
+    RETURN_NAMES = ("planned_path",)
     FUNCTION = "run"
     CATEGORY = "ParametricStudio/TensorDebug"
     
@@ -217,10 +220,10 @@ class PSN_Tensor_Save:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_Tensor_Inspect": PSN_Tensor_Inspect,
-    "PSN_Tensor_Save": PSN_Tensor_Save,
+    "PSN_Tensor_Save_Plan": PSN_Tensor_Save_Plan,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_Tensor_Inspect": "PSN Tensor Inspect",
-    "PSN_Tensor_Save": "PSN Tensor Save",
+    "PSN_Tensor_Save_Plan": "PSN Tensor Save Plan (writes nothing)",
 }

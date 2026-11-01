@@ -7,8 +7,8 @@ frontend, a GPU, the network, or the file system.  Instead it:
   * validates inputs against strict allow-lists,
   * builds a deterministic, JSON-serializable ``layout_config`` payload that a
     frontend *could* apply (grouping, theme, wireless routing), and
-  * models a "wireless" logical connection that passes data from a source to a
-    target without any visual wire.
+  * records a route (source id, target id, a wireless flag and a payload string)
+    as a dict.  No connection or routing is created.
 
 All public entry points are ordinary functions / node wrappers that take plain
 values (strings, numbers, booleans, lists, dicts) and return plain values.
@@ -142,12 +142,11 @@ def _build_layout_config(graph_id, theme, grouping_rule, nodes):
     return config
 
 
-def _route_wireless(source_node_id, target_node_id, wireless, payload=None):
-    """Model a (possibly wireless) logical connection.
+def _route_record(source_node_id, target_node_id, wireless, payload=None):
+    """Record a route as a dict.
 
-    Returns a dict describing the routed data.  When ``wireless`` is True the
-    connection is logical-only (no visual wire); when False it is a normal
-    wired connection.  Data is passed through unchanged.
+    Returns a dict holding the ids, the ``wireless`` flag (and its inverse as
+    ``visual_wire``) and the payload unchanged.  No connection is made.
     """
     if not _is_valid_id(source_node_id):
         raise ValueError("invalid source_node_id: %r" % (source_node_id,))
@@ -201,12 +200,15 @@ class PSN_LayoutEnforcer:
         return (config,)
 
 
-class PSN_WirelessRouter:
-    """Pass data from a source node to a target node, optionally wirelessly.
+class PSN_Route_Record:
+    """Wrap a payload string in a dict recording a source id, target id and wireless flag.
 
-    Pure logic only: validates ids and returns a routed-data dict.  No actual
-    connection is created; this models the logical data flow.
+    Pure logic only: validates ids and returns the record.  No connection or
+    routing is created, and nothing is sent to the target node.
     """
+
+    DESCRIPTION = ("Wraps a payload string in a dict recording the source id, target id and a "
+                   "wireless flag. It creates no connection and sends nothing to the target.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -222,15 +224,15 @@ class PSN_WirelessRouter:
         }
 
     RETURN_TYPES = ("DICT",)
-    RETURN_NAMES = ("routed_data",)
+    RETURN_NAMES = ("route_record",)
     FUNCTION = "run"
     CATEGORY = "ParametricStudio/Canvas"
 
     def run(self, source_node_id, target_node_id, wireless, payload=None):
-        routed = _route_wireless(
+        record = _route_record(
             source_node_id, target_node_id, wireless, payload
         )
-        return (routed,)
+        return (record,)
 
 
 # ---------------------------------------------------------------------------
@@ -239,10 +241,10 @@ class PSN_WirelessRouter:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_LayoutEnforcer": PSN_LayoutEnforcer,
-    "PSN_WirelessRouter": PSN_WirelessRouter,
+    "PSN_Route_Record": PSN_Route_Record,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_LayoutEnforcer": "PSN Layout Enforcer",
-    "PSN_WirelessRouter": "PSN Wireless Router",
+    "PSN_Route_Record": "Route Record (creates no connection)",
 }

@@ -1,11 +1,13 @@
-"""ParametricStudio: scripted headless smoke test for ComfyUI workflows.
+"""ParametricStudio: tensor expectation check driven by a small op script.
 
-This module provides a single ComfyUI custom node that runs a small, scripted
-"smoke test" against a workflow description (a plain Python dict) and a set of
-minimal inputs.  The node simulates the workflow steps in-process (headless,
-no network, no subprocess) and reports pass/fail plus per-step diagnostics.
+This module provides a single ComfyUI custom node that applies a small script
+of tensor ops (identity, scale, add, mean, threshold) to the connected image,
+then checks min/max/mean expectations on each step's result.  It does NOT run
+any ComfyUI workflow: no workflow is loaded, queued or executed, and there is
+no network or subprocess.  The default script only checks that the image
+values lie in 0..1.
 
-The workflow dict format (kept deliberately simple):
+The script dict format (kept deliberately simple):
 
     {
         "steps": [
@@ -118,10 +120,10 @@ def _check_expect(out, expect):
 
 
 def run_smoke_test(workflow, inputs):
-    """Core smoke-test engine (pure Python + torch, no side effects).
+    """Core engine: applies the op script (pure Python + torch, no side effects).
 
     Args:
-        workflow: dict with "steps" (list) and optional "inputs" (dict mapping
+        workflow: script dict with "steps" (list) and optional "inputs" (dict mapping
                   logical input names to keys in `inputs`).
         inputs:   dict mapping tensor names to torch tensors.
 
@@ -129,15 +131,15 @@ def run_smoke_test(workflow, inputs):
         (passed: bool, report: str, last_output: torch.Tensor or None)
     """
     if not isinstance(workflow, dict):
-        return False, "ERROR: workflow must be a dict", None
+        return False, "ERROR: script must be a dict", None
     steps = workflow.get("steps", [])
     if not isinstance(steps, list) or len(steps) == 0:
-        return False, "ERROR: workflow must have a non-empty 'steps' list", None
+        return False, "ERROR: script must have a non-empty 'steps' list", None
 
     # Resolve top-level input mapping
     wf_inputs = workflow.get("inputs", {})
     if not isinstance(wf_inputs, dict):
-        return False, "ERROR: workflow 'inputs' must be a dict", None
+        return False, "ERROR: script 'inputs' must be a dict", None
 
     # Build the resolved input map: logical_name -> tensor
     inputs_map = {}
@@ -209,19 +211,24 @@ def run_smoke_test(workflow, inputs):
     return all_ok, report, last_output
 
 
-class PSN_SmokeTestWorkflow:
-    """Run a scripted headless smoke test against a ComfyUI workflow description.
+class PSN_TensorExpectationCheck:
+    """Apply a small op script to the image and check min/max/mean expectations.
 
-    Feed in a workflow dict (as a JSON string) and a set of minimal input
-    tensors.  The node executes each step in order, checks expectations, and
-    returns PASS/FAIL with a detailed report.
+    Feed in a script dict (as a JSON string) and an image.  The node applies
+    each step in order, checks expectations, and returns PASS/FAIL with a
+    detailed report.  It runs no ComfyUI workflow.
     """
+
+    DESCRIPTION = (
+        "Applies a small op script (identity, scale, add, mean, threshold) to the image and "
+        "checks min/max/mean expectations on each step. Does not run ComfyUI workflows."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "workflow_json": ("STRING", {
+                "script_json": ("STRING", {
                     "multiline": True,
                     "default": '{"steps": [{"id": "s1", "op": "identity", "inputs": {"a": "img"}, "expect": {"min": 0.0, "max": 1.0}}], "inputs": {"img": "img"}}',
                 }),
@@ -237,14 +244,14 @@ class PSN_SmokeTestWorkflow:
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, workflow_json, image, mask=None):
+    def run(self, script_json, image, mask=None):
         import json
 
-        # Parse workflow JSON
+        # Parse script JSON
         try:
-            workflow = json.loads(workflow_json)
+            workflow = json.loads(script_json)
         except (json.JSONDecodeError, TypeError) as e:
-            return ("FAIL", "ERROR: invalid workflow JSON: %s" % e, image)
+            return ("FAIL", "ERROR: invalid script JSON: %s" % e, image)
 
         # Build inputs dict
         inputs = {"img": image}
@@ -260,9 +267,9 @@ class PSN_SmokeTestWorkflow:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_SmokeTestWorkflow": PSN_SmokeTestWorkflow,
+    "PSN_TensorExpectationCheck": PSN_TensorExpectationCheck,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_SmokeTestWorkflow": "Smoke Test Workflow (Headless)",
+    "PSN_TensorExpectationCheck": "Tensor Expectation Check (op script, runs no workflow)",
 }

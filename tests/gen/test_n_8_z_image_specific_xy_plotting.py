@@ -6,8 +6,8 @@ import pytest
 
 from psn_nodes.gen.n_8_z_image_specific_xy_plotting import (
     PSN_ZImage_Plot_Config,
-    PSN_ZImage_Grid_Generator,
-    PSN_ZImage_Grid_Visualizer,
+    PSN_ZImage_Grid_Spec,
+    PSN_ZImage_Grid_Layout,
     _parse_values,
     _build_param_matrix,
     NODE_CLASS_MAPPINGS,
@@ -138,9 +138,9 @@ class TestPSN_ZImage_Plot_Config:
             )
 
 
-class TestPSN_ZImage_Grid_Generator:
+class TestPSN_ZImage_Grid_Spec:
     def setup_method(self):
-        self.node = PSN_ZImage_Grid_Generator()
+        self.node = PSN_ZImage_Grid_Spec()
 
     def test_basic_generation(self):
         config = {
@@ -157,18 +157,21 @@ class TestPSN_ZImage_Grid_Generator:
             ],
             "grid_size": (2, 2),
         }
-        placeholders, matrix = self.node.run(
+        cell_specs, matrix = self.node.run(
             plot_config=config,
             prompt="test prompt",
             negative_prompt="bad",
             width=512,
             height=512,
         )
-        assert len(placeholders) == 4
+        assert len(cell_specs) == 4
         assert len(matrix) == 4
-        assert placeholders[0]["label"] == "steps=10, cfg=1.0"
-        assert placeholders[0]["prompt"] == "test prompt"
-        assert placeholders[0]["width"] == 512
+        assert cell_specs[0]["label"] == "steps=10, cfg=1.0"
+        assert cell_specs[0]["prompt"] == "test prompt"
+        assert cell_specs[0]["width"] == 512
+        assert PSN_ZImage_Grid_Spec.RETURN_NAMES == ("cell_specs", "param_matrix")
+        assert [c["index"] for c in cell_specs] == [0, 1, 2, 3]
+        assert cell_specs[3]["label"] == "steps=20, cfg=2.0"
 
     def test_empty_matrix_raises(self):
         config = {"param_matrix": []}
@@ -192,49 +195,66 @@ class TestPSN_ZImage_Grid_Generator:
             )
 
 
-class TestPSN_ZImage_Grid_Visualizer:
+class TestPSN_ZImage_Grid_Layout:
     def setup_method(self):
-        self.node = PSN_ZImage_Grid_Visualizer()
+        self.node = PSN_ZImage_Grid_Layout()
 
     def test_basic_summary(self):
-        placeholders = [
+        cell_specs = [
             {"index": 0, "label": "steps=10, cfg=1.0"},
             {"index": 1, "label": "steps=20, cfg=1.0"},
         ]
         matrix = ["steps=10, cfg=1.0", "steps=20, cfg=1.0"]
-        (summary,) = self.node.run(grid_placeholders=placeholders, param_matrix=matrix)
+        (summary,) = self.node.run(cell_specs=cell_specs, param_matrix=matrix)
         assert "2 cells" in summary
+        assert "1 rows x 2 columns" in summary
         assert "steps=10, cfg=1.0" in summary
 
+    def test_layout_rows_and_columns(self):
+        matrix = _build_param_matrix("steps", [10, 20, 30], "cfg", [1.0, 2.0])
+        specs = [{"index": i, "label": m} for i, m in enumerate(matrix)]
+        (summary,) = self.node.run(cell_specs=specs, param_matrix=matrix)
+        assert "6 cells, 2 rows x 3 columns" in summary
+        # single column
+        m1 = _build_param_matrix("steps", [10], "cfg", [1.0, 2.0, 3.0])
+        (s1,) = self.node.run(cell_specs=[{}] * 3, param_matrix=m1)
+        assert "3 rows x 1 columns" in s1
+
+    def test_no_image_and_no_placeholder_names(self):
+        assert self.node.RETURN_NAMES == ("layout_summary",)
+        assert "draws no image" in PSN_ZImage_Grid_Layout.DESCRIPTION
+        assert "PSN_ZImage_Grid_Visualizer" not in NODE_CLASS_MAPPINGS
+        assert "PSN_ZImage_Grid_Generator" not in NODE_CLASS_MAPPINGS
+
     def test_length_mismatch_raises(self):
-        placeholders = [{"index": 0, "label": "a"}]
+        cell_specs = [{"index": 0, "label": "a"}]
         matrix = ["a", "b"]
         with pytest.raises(ValueError, match="Length mismatch"):
-            self.node.run(grid_placeholders=placeholders, param_matrix=matrix)
+            self.node.run(cell_specs=cell_specs, param_matrix=matrix)
 
     def test_empty_grid(self):
-        (summary,) = self.node.run(grid_placeholders=[], param_matrix=[])
+        (summary,) = self.node.run(cell_specs=[], param_matrix=[])
         assert summary == "Empty grid."
 
-    def test_non_list_placeholders_raises(self):
+    def test_non_list_cell_specs_raises(self):
         with pytest.raises(TypeError):
-            self.node.run(grid_placeholders="not a list", param_matrix=[])
+            self.node.run(cell_specs="not a list", param_matrix=[])
 
     def test_non_list_matrix_raises(self):
         with pytest.raises(TypeError):
-            self.node.run(grid_placeholders=[], param_matrix="not a list")
+            self.node.run(cell_specs=[], param_matrix="not a list")
 
 
 class TestNodeMappings:
     def test_node_class_mappings(self):
         assert "PSN_ZImage_Plot_Config" in NODE_CLASS_MAPPINGS
-        assert "PSN_ZImage_Grid_Generator" in NODE_CLASS_MAPPINGS
-        assert "PSN_ZImage_Grid_Visualizer" in NODE_CLASS_MAPPINGS
+        assert "PSN_ZImage_Grid_Spec" in NODE_CLASS_MAPPINGS
+        assert "PSN_ZImage_Grid_Layout" in NODE_CLASS_MAPPINGS
 
     def test_display_name_mappings(self):
         assert NODE_DISPLAY_NAME_MAPPINGS["PSN_ZImage_Plot_Config"] == "Z-Image Plot Config"
-        assert NODE_DISPLAY_NAME_MAPPINGS["PSN_ZImage_Grid_Generator"] == "Z-Image Grid Generator"
-        assert NODE_DISPLAY_NAME_MAPPINGS["PSN_ZImage_Grid_Visualizer"] == "Z-Image Grid Visualizer"
+        assert NODE_DISPLAY_NAME_MAPPINGS["PSN_ZImage_Grid_Spec"] == "Z-Image Grid Cell Specs (no image)"
+        assert NODE_DISPLAY_NAME_MAPPINGS["PSN_ZImage_Grid_Layout"] == "Z-Image Grid Layout Summary (draws nothing)"
 
     def test_input_types_structure(self):
         it = PSN_ZImage_Plot_Config.INPUT_TYPES()

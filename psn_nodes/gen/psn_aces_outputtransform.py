@@ -1,17 +1,16 @@
 """
-PSN_ACES_OutputTransform
+PSN_ACES_OutputConfig_Check
 
-Pure-logic, secure-by-design implementation of the ACES2065-1 -> display-space
-output transform pipeline.
-
-Because the real pipeline requires OpenColorIO and torch (GPU), this module
-implements ONLY the pure-logic, secure-by-design parts:
+Checks an ACES2065-1 -> display-space output setting. The node only validates
+the setting; it takes no image and does not run a transform. The module also
+holds plain-float helper functions (not called by the node):
   * config validation (output space, tone mapping, exposure),
   * allow-list checks,
   * exposure / tone-mapping math on plain Python floats,
   * a deterministic dithering helper for low-bit-depth quantization,
   * a small, dependency-free sRGB <-> linear <-> ACES2065-1 color-space
-    conversion used for round-trip testing.
+    conversion used for round-trip testing (approximate matrices; a real
+    pipeline would use OpenColorIO).
 
 It never opens a socket, never touches the file system, never imports torch
 or comfy, and never performs network / subprocess / eval / exec. All public
@@ -254,16 +253,20 @@ def transform_pixel(rgb_aces, output_space, tone_mapping, exposure=0.0,
 CAT = "ParametricStudio/Color"
 
 
-class PSN_ACES_OutputTransform:
+class PSN_ACES_OutputConfig_Check:
     """
-    Converts images from ACES2065-1 working space to a target display space
-    (sRGB, P3, HDR10, HLG) with tone mapping.
+    Checks an ACES output-transform setting (output space, tone mapping,
+    exposure in stops, or the same three in a JSON text) against the allowed
+    values and reports whether it is valid.
 
-    NOTE: This is a pure-logic, secure-by-design implementation. It does NOT
-    perform actual GPU image processing. It validates configuration, applies
-    tone-mapping math, and provides a deterministic dithering helper. For
-    real image processing, use OpenColorIO + torch.
+    DESCRIPTION below states the limits: this node takes no image and changes
+    no pixels. The tone-mapping and colour-space helpers in this module are
+    plain-float functions that the node does not call.
     """
+
+    DESCRIPTION = ("Checks an ACES output-space / tone-mapping / exposure setting against the allowed values "
+                   "and returns config_valid or config_invalid with the reason. It takes no image, "
+                   "applies no exposure and changes no pixels.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -274,33 +277,29 @@ class PSN_ACES_OutputTransform:
                 "exposure": ("FLOAT", {"default": 0.0, "min": -30.0, "max": 30.0, "step": 0.01}),
             },
             "optional": {
-                "image": (None,),  # IMAGE placeholder; not used in pure-logic mode
                 "config_json": ("STRING", {"default": ""}),
             },
         }
 
-    RETURN_TYPES = ("STRING", "STRING", "FLOAT")
-    RETURN_NAMES = ("status", "reason", "exposure_applied")
+    RETURN_TYPES = ("STRING", "STRING")
+    RETURN_NAMES = ("status", "reason")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, output_space, tone_mapping, exposure, image=None, config_json=""):
-        # If config_json is provided, parse and validate it
+    def run(self, output_space, tone_mapping, exposure, config_json=""):
+        # If config_json is provided, it replaces the three widget values
         if config_json:
             ok, config, reason = parse_config_json(config_json)
             if not ok:
-                return ("error", reason, 0.0)
+                return ("config_invalid", reason)
             output_space = config["output_space"]
             tone_mapping = config["tone_mapping"]
             exposure = config["exposure"]
 
         ok, reason = validate_config(output_space, tone_mapping, exposure)
         if not ok:
-            return ("error", reason, 0.0)
-
-        # In a real implementation, we would process the image here.
-        # For pure-logic mode, we just report success and the applied exposure.
-        return ("ok", reason, float(exposure))
+            return ("config_invalid", reason)
+        return ("config_valid", reason)
 
 
 # ---------------------------------------------------------------------------
@@ -308,9 +307,9 @@ class PSN_ACES_OutputTransform:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_ACES_OutputTransform": PSN_ACES_OutputTransform,
+    "PSN_ACES_OutputConfig_Check": PSN_ACES_OutputConfig_Check,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_ACES_OutputTransform": "ACES Output Transform",
+    "PSN_ACES_OutputConfig_Check": "ACES Output Setting Check (no image)",
 }

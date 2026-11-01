@@ -1,3 +1,4 @@
+"""Orthographic preview render of a built-in unit cube. Reads no mesh files."""
 import math
 
 import torch
@@ -12,7 +13,7 @@ def _clamp01(x):
 
 
 def _default_mesh():
-    """Return a small default cube mesh (vertices, faces) used when no FBX is available."""
+    """Return the built-in unit cube mesh (vertices, faces)."""
     # 8 vertices of a unit cube centered at origin
     verts = [
         (-0.5, -0.5, -0.5),
@@ -33,17 +34,6 @@ def _default_mesh():
         (1, 2, 6, 5),  # right
     ]
     return verts, faces
-
-
-def _load_fbx_mesh(fbx_path):
-    """
-    Attempt to load an FBX file. Since pyassimp is not available, we fall back
-    to a default cube mesh. Returns (vertices, faces, source_description).
-    """
-    if not fbx_path or not isinstance(fbx_path, str):
-        return _default_mesh() + ("default_cube (no path)",)
-    # We cannot actually parse FBX without pyassimp; return default cube
-    return _default_mesh() + ("default_cube (fbx_path=%s, pyassimp unavailable)" % fbx_path,)
 
 
 def _render_mesh(verts, faces, render_mode, camera_angle, width=256, height=256):
@@ -157,38 +147,46 @@ def _point_in_polygon(x, y, polygon):
     return inside
 
 
-class PSN_FBXLoad_Render:
-    """Load an FBX model (falls back to a default cube) and render a preview image."""
+class PSN_Cube_Preview_Render:
+    """Render a built-in unit cube orthographically at a camera angle.
+
+    Reads no FBX or other mesh file; the cube is the only geometry.
+    """
+
+    DESCRIPTION = (
+        "Renders a built-in unit cube orthographically (clay or shaded) at a "
+        "camera angle around the Y axis. It does not read FBX or any other "
+        "mesh file."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "fbx_path": ("STRING", {"default": ""}),
                 "render_mode": (RENDER_MODES,),
                 "camera_angle": ("FLOAT", {"default": 0.0, "min": -6.2832, "max": 6.2832}),
             }
         }
 
     RETURN_TYPES = ("IMAGE", "STRING")
-    RETURN_NAMES = ("rendered_image", "mesh_data")
+    RETURN_NAMES = ("rendered_image", "mesh_description")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, fbx_path, render_mode, camera_angle):
+    def run(self, render_mode, camera_angle):
         if render_mode not in RENDER_MODES:
             render_mode = "clay"
 
-        verts, faces, source = _load_fbx_mesh(fbx_path)
+        verts, faces = _default_mesh()
         img = _render_mesh(verts, faces, render_mode, camera_angle)
-        mesh_data_str = source
-        return (img, mesh_data_str)
+        desc = "built-in unit cube (%d vertices, %d faces)" % (len(verts), len(faces))
+        return (img, desc)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_FBXLoad_Render": PSN_FBXLoad_Render,
+    "PSN_Cube_Preview_Render": PSN_Cube_Preview_Render,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_FBXLoad_Render": "FBX Load & Render",
+    "PSN_Cube_Preview_Render": "Cube Preview Render",
 }

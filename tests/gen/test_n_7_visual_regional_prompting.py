@@ -7,11 +7,11 @@ import pytest
 
 from psn_nodes.gen.n_7_visual_regional_prompting import (
     PSN_RegionalMask,
-    PSN_RegionalPrompt,
+    PSN_RegionalPrompt_Plan,
     _validate_bbox,
     _build_mask_rows,
     _validate_regions,
-    _compute_attention_weights,
+    _split_strength,
 )
 
 
@@ -97,19 +97,19 @@ class TestValidateRegions:
             _validate_regions(regions, 512, 512)
 
 
-class TestComputeAttentionWeights:
+class TestSplitStrength:
     def test_even_distribution(self):
         entries = [{"name": "a"}, {"name": "b"}, {"name": "c"}]
-        weights = _compute_attention_weights(entries, 3.0)
+        weights = _split_strength(entries, 3.0)
         assert weights == [1.0, 1.0, 1.0]
 
     def test_single_region_full_strength(self):
         entries = [{"name": "only"}]
-        weights = _compute_attention_weights(entries, 2.5)
+        weights = _split_strength(entries, 2.5)
         assert weights == [2.5]
 
     def test_empty_entries(self):
-        weights = _compute_attention_weights([], 1.0)
+        weights = _split_strength([], 1.0)
         assert weights == []
 
 
@@ -141,55 +141,71 @@ class TestPSNRegionalMask:
         assert info["bbox"] == [2, 2, 2, 2]
 
 
-class TestPSNRegionalPrompt:
+class TestPSNRegionalPromptPlan:
     def test_run_two_regions(self):
-        node = PSN_RegionalPrompt()
+        node = PSN_RegionalPrompt_Plan()
         regions = json.dumps({
             "left": {"bbox": [0, 0, 256, 512], "prompt": "a cat"},
             "right": {"bbox": [256, 0, 256, 512], "prompt": "a dog"},
         })
         plan_json, count, status = node.run(512, 512, regions, 2.0)
-        assert status == "ok"
+        assert status == "regions valid"
         assert count == 2
         plan = json.loads(plan_json)
         assert len(plan["regions"]) == 2
         assert plan["regions"][0]["prompt"] == "a cat"
         assert plan["regions"][1]["prompt"] == "a dog"
         # Each gets 2.0/2 = 1.0
-        assert plan["regions"][0]["attention_weight"] == 1.0
+        assert plan["regions"][0]["strength_share"] == 1.0
+        assert plan["regions"][1]["strength_share"] == 1.0
+        assert plan["attention_strength"] == 2.0
+        assert "attention_weight" not in plan["regions"][0]
 
     def test_run_empty_regions(self):
-        node = PSN_RegionalPrompt()
+        node = PSN_RegionalPrompt_Plan()
         plan_json, count, status = node.run(512, 512, "{}", 1.0)
-        assert status == "ok"
+        assert status == "regions valid"
         assert count == 0
         plan = json.loads(plan_json)
         assert plan["regions"] == []
 
     def test_run_invalid_json(self):
-        node = PSN_RegionalPrompt()
+        node = PSN_RegionalPrompt_Plan()
         _, _, status = node.run(512, 512, "not json", 1.0)
         assert status.startswith("error:")
 
     def test_run_region_missing_prompt(self):
-        node = PSN_RegionalPrompt()
+        node = PSN_RegionalPrompt_Plan()
         regions = json.dumps({"r1": {"bbox": [0, 0, 10, 10]}})
         _, _, status = node.run(512, 512, regions, 1.0)
         assert "missing 'prompt'" in status
 
     def test_run_bbox_out_of_bounds(self):
-        node = PSN_RegionalPrompt()
+        node = PSN_RegionalPrompt_Plan()
         regions = json.dumps({"r1": {"bbox": [500, 500, 100, 100], "prompt": "x"}})
         plan_json, count, status = node.run(512, 512, regions, 1.0)
-        assert status == "ok"
+        assert status == "regions valid"
         plan = json.loads(plan_json)
         # bbox clamped: x=500, y=500, w=12, h=12
         assert plan["regions"][0]["bbox"] == [500, 500, 12, 12]
 
+    def test_node_is_a_plan_not_an_applier(self):
+        import psn_nodes.gen.n_7_visual_regional_prompting as m
+        assert "PSN_RegionalPrompt" not in m.NODE_CLASS_MAPPINGS
+        assert m.NODE_CLASS_MAPPINGS["PSN_RegionalPrompt_Plan"] is PSN_RegionalPrompt_Plan
+        assert PSN_RegionalPrompt_Plan.RETURN_NAMES == ("regional_plan", "total_regions", "status")
+        assert "no attention masks" in PSN_RegionalPrompt_Plan.DESCRIPTION.lower()
+
+    def test_three_regions_share_split(self):
+        node = PSN_RegionalPrompt_Plan()
+        regions = json.dumps({n: {"bbox": [0, 0, 10, 10], "prompt": n} for n in "abc"})
+        plan = json.loads(node.run(64, 64, regions, 3.0)[0])
+        assert [r["strength_share"] for r in plan["regions"]] == [1.0, 1.0, 1.0]
+
     def test_run_zero_attention_strength(self):
-        node = PSN_RegionalPrompt()
+        node = PSN_RegionalPrompt_Plan()
         regions = json.dumps({"r1": {"bbox": [0, 0, 10, 10], "prompt": "x"}})
         plan_json, _, status = node.run(512, 512, regions, 0.0)
-        assert status == "ok"
+        assert status == "regions valid"
         plan = json.loads(plan_json)
-        assert plan["regions"][0]["attention_weight"] == 0.0
+        assert plan["regions"][0]["strength_share"] == 0.0

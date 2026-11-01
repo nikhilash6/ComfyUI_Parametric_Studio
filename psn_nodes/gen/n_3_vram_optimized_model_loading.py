@@ -1,13 +1,15 @@
 """
-VRAM-Optimized Model Loading (pure-logic, secure-by-design).
+VRAM budget planner (pure arithmetic, secure-by-design).
 
-This module implements the *planning and reporting* logic for VRAM-optimized
-model loading. It does NOT load models, touch GPU memory, or import torch/comfy.
-Instead, it operates on a plain JSON text description of a model's state dict
-and produces a pruned/quantized plan plus a human-readable memory report.
+This module estimates whether a model would fit in a VRAM budget. It does NOT
+load, prune or quantize any model, touch GPU memory, or import torch/comfy.
+It reads a typed JSON object of per-key parameter counts, drops keys that match
+a regex list, multiplies the remaining parameter count by an assumed number of
+bytes per parameter (fp32 = 4, int8 = 1), and prints the result. Nothing about
+the real model file is read, so the estimate is only as good as the numbers
+you type in.
 
-The node takes plain values (strings, numbers, booleans) and returns plain
-values (strings, booleans). No file I/O, no network, no subprocess, no eval.
+No file I/O, no network, no subprocess, no eval.
 """
 
 import json
@@ -29,10 +31,11 @@ _PRUNABLE_KEY_PATTERNS = [
     r"^\.metadata$",
 ]
 
-# Quantization modes and their simulated bytes-per-parameter.
+# Assumed storage modes and their bytes-per-parameter (arithmetic only).
 # "none"  -> 4 bytes (fp32)
 # "w8a8"  -> 1 byte  (int8 weight + int8 activation)
 # "int8"  -> 1 byte  (int8 weight, fp32 activation)
+# No quantization is performed; the number is only used to scale the estimate.
 _QUANT_BYTES_PER_PARAM = {
     "none": 4,
     "w8a8": 1,
@@ -92,7 +95,7 @@ def _compute_memory_gb(num_params: int, bytes_per_param: float) -> float:
 def _build_report(
     original_params: int,
     pruned_params: int,
-    quantized_params: int,
+    kept_params: int,
     quant_mode: str,
     target_vram_gb: float,
     final_memory_gb: float,
@@ -100,17 +103,17 @@ def _build_report(
 ) -> str:
     """Build a human-readable memory report string."""
     lines = []
-    lines.append("=== VRAM Optimization Report ===")
+    lines.append("=== VRAM Budget Estimate ===")
     lines.append(f"Original parameters:   {original_params:,}")
     lines.append(f"Pruned parameters:     {pruned_params:,}")
-    lines.append(f"Quantized parameters:  {quantized_params:,}")
-    lines.append(f"Quantization mode:     {quant_mode}")
+    lines.append(f"Parameters kept:       {kept_params:,}")
+    lines.append(f"Assumed storage mode:  {quant_mode}")
     lines.append(f"Final memory estimate: {final_memory_gb:.4f} GB")
     lines.append(f"Target VRAM:           {target_vram_gb:.4f} GB")
     if final_memory_gb <= target_vram_gb:
-        lines.append("Status: FITS within target VRAM")
+        lines.append("Estimate: FITS within target VRAM")
     else:
-        lines.append("Status: EXCEEDS target VRAM")
+        lines.append("Estimate: EXCEEDS target VRAM")
     if pruned_keys:
         lines.append(f"Pruned keys ({len(pruned_keys)}):")
         for k in pruned_keys[:20]:
@@ -124,14 +127,18 @@ def _build_report(
 # Node
 # ---------------------------------------------------------------------------
 
-class PSN_Model_Vram_Optimizer:
+class PSN_VramBudgetPlanner:
     """
-    Inspect and prune unnecessary keys from a model state dict and simulate
-    quantization to fit within GPU memory constraints.
+    Estimate VRAM fit from a typed JSON of per-key parameter counts.
 
-    Pure-logic: operates on a JSON text description of the state dict.
-    No torch, no GPU, no file I/O.
+    Filters keys by regex and multiplies the kept parameter count by an assumed
+    bytes-per-parameter. Touches no model, no GPU and no file.
     """
+
+    DESCRIPTION = ("Estimates VRAM fit from a typed JSON of per-key parameter "
+                   "counts, with regex key filtering and fp32/int8 byte "
+                   "arithmetic. It loads, prunes and quantizes no model; the "
+                   "estimate is only as good as the numbers you enter.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -155,7 +162,7 @@ class PSN_Model_Vram_Optimizer:
         }
 
     RETURN_TYPES = ("BOOLEAN", "STRING", "STRING")
-    RETURN_NAMES = ("fits_vram", "optimized_state_dict_json", "memory_report")
+    RETURN_NAMES = ("estimated_fits", "planned_keys_json", "memory_estimate")
     FUNCTION = "run"
     CATEGORY = "ParametricStudio/VRAM"
 
@@ -183,21 +190,20 @@ class PSN_Model_Vram_Optimizer:
         else:
             remaining = dict(state_dict)
 
-        # Step 2: Quantize
+        # Step 2: Assumed bytes per parameter (arithmetic only)
         bytes_per_param = _QUANT_BYTES_PER_PARAM[quantize_mode]
-        quantized_params = sum(remaining.values())
+        kept_params = sum(remaining.values())
 
         # Step 3: Compute final memory
-        final_memory_gb = _compute_memory_gb(quantized_params, bytes_per_param)
+        final_memory_gb = _compute_memory_gb(kept_params, bytes_per_param)
         fits = final_memory_gb <= target_vram_gb
 
-        # Build optimized state dict JSON (only remaining keys, with quantization info)
+        # Planned key list (remaining keys with the assumed bytes per parameter)
         optimized = {}
         for key, np_ in remaining.items():
             optimized[key] = {
                 "num_params": np_,
-                "bytes_per_param": bytes_per_param,
-                "quantized": quantize_mode != "none",
+                "assumed_bytes_per_param": bytes_per_param,
             }
         optimized_json = json.dumps(optimized, indent=2)
 
@@ -205,7 +211,7 @@ class PSN_Model_Vram_Optimizer:
         report = _build_report(
             original_params=original_params,
             pruned_params=pruned_params,
-            quantized_params=quantized_params,
+            kept_params=kept_params,
             quant_mode=quantize_mode,
             target_vram_gb=target_vram_gb,
             final_memory_gb=final_memory_gb,
@@ -220,9 +226,9 @@ class PSN_Model_Vram_Optimizer:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Model_Vram_Optimizer": PSN_Model_Vram_Optimizer,
+    "PSN_VramBudgetPlanner": PSN_VramBudgetPlanner,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Model_Vram_Optimizer": "Model VRAM Optimizer",
+    "PSN_VramBudgetPlanner": "VRAM Budget Planner (estimate only)",
 }

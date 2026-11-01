@@ -4,29 +4,12 @@ import json
 import pytest
 
 from psn_nodes.gen.psn_telegram_listener import (
-    PSN_Telegram_Listener,
-    psn_redact_token,
+    PSN_Telegram_Update_Parser,
     psn_parse_allow_list,
     psn_is_allowed,
     psn_is_command,
-    psn_rate_limit_ok,
     psn_parse_updates_payload,
 )
-
-
-def test_psn_redact_token_normal():
-    token = "1234567890:ABCDEFghijklMNOP"
-    redacted = psn_redact_token(token)
-    assert redacted.startswith("1234")
-    assert redacted.endswith("MNOP")
-    assert "*" in redacted
-    assert "ABCDEF" not in redacted
-
-
-def test_psn_redact_token_short():
-    token = "ab"
-    redacted = psn_redact_token(token)
-    assert redacted == "ab"
 
 
 def test_psn_parse_allow_list_valid():
@@ -45,23 +28,6 @@ def test_psn_is_command_variants():
     assert psn_is_command("hello") is False
     assert psn_is_command("") is False
     assert psn_is_command(None) is False
-
-
-def test_psn_rate_limit_ok_valid():
-    ok, why = psn_rate_limit_ok(5)
-    assert ok is True
-    assert why == "ok"
-
-
-def test_psn_rate_limit_ok_too_small():
-    ok, why = psn_rate_limit_ok(0)
-    assert ok is False
-    assert "must be >=" in why
-
-
-def test_psn_rate_limit_ok_not_int():
-    ok, why = psn_rate_limit_ok("5")
-    assert ok is False
 
 
 def test_psn_parse_updates_payload_with_message():
@@ -118,76 +84,47 @@ def test_psn_parse_updates_payload_invalid_json():
         psn_parse_updates_payload("not json")
 
 
+def _payload(chat_id, text="hello"):
+    return json.dumps({"ok": True, "result": [{"update_id": 1, "message": {"chat": {"id": chat_id}, "text": text}}]})
+
+
 def test_psn_node_run_allowed_chat():
-    node = PSN_Telegram_Listener()
-    payload = json.dumps({
-        "ok": True,
-        "result": [
-            {
-                "update_id": 1,
-                "message": {
-                    "chat": {"id": 100},
-                    "text": "hello",
-                },
-            }
-        ],
-    })
-    chat_id, text, is_cmd, is_allowed, redacted = node.run(
-        bot_token="1234567890:ABCDEFghijklMNOP",
-        allowed_chat_ids="100,200",
-        poll_interval=5,
-        updates_payload=payload,
-    )
+    node = PSN_Telegram_Update_Parser()
+    chat_id, text, is_cmd, is_allowed = node.run(allowed_chat_ids="100,200", updates_payload=_payload(100))
     assert chat_id == 100
     assert text == "hello"
     assert is_cmd is False
     assert is_allowed is True
-    assert redacted.startswith("1234")
 
 
 def test_psn_node_run_disallowed_chat():
-    node = PSN_Telegram_Listener()
-    payload = json.dumps({
-        "ok": True,
-        "result": [
-            {
-                "update_id": 1,
-                "message": {
-                    "chat": {"id": 999},
-                    "text": "hello",
-                },
-            }
-        ],
-    })
-    chat_id, text, is_cmd, is_allowed, redacted = node.run(
-        bot_token="1234567890:ABCDEFghijklMNOP",
-        allowed_chat_ids="100,200",
-        poll_interval=5,
-        updates_payload=payload,
-    )
+    node = PSN_Telegram_Update_Parser()
+    chat_id, text, is_cmd, is_allowed = node.run(allowed_chat_ids="100,200", updates_payload=_payload(999))
     assert chat_id == 999
     assert is_allowed is False
 
 
-def test_psn_node_run_bad_poll_interval():
-    node = PSN_Telegram_Listener()
-    payload = json.dumps({"ok": True, "result": []})
-    with pytest.raises(ValueError):
-        node.run(
-            bot_token="tok",
-            allowed_chat_ids="1",
-            poll_interval=0,
-            updates_payload=payload,
-        )
+def test_psn_node_run_command_text():
+    _, text, is_cmd, _ = PSN_Telegram_Update_Parser().run("1", _payload(1, "/start now"))
+    assert text == "/start now" and is_cmd is True
+
+
+def test_psn_node_run_no_message_is_never_allowed():
+    out = PSN_Telegram_Update_Parser().run("1,-1", json.dumps({"ok": True, "result": []}))
+    assert out == (-1, "", False, False)
 
 
 def test_psn_node_run_bad_allow_list():
-    node = PSN_Telegram_Listener()
-    payload = json.dumps({"ok": True, "result": []})
+    node = PSN_Telegram_Update_Parser()
     with pytest.raises(ValueError):
-        node.run(
-            bot_token="tok",
-            allowed_chat_ids="1,abc",
-            poll_interval=5,
-            updates_payload=payload,
-        )
+        node.run(allowed_chat_ids="1,abc", updates_payload=json.dumps({"ok": True, "result": []}))
+
+
+def test_node_is_renamed_and_has_no_connection_inputs_or_token_output():
+    import psn_nodes.gen.psn_telegram_listener as m
+    assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_Telegram_Update_Parser"]
+    cls = m.PSN_Telegram_Update_Parser
+    assert set(cls.INPUT_TYPES()["required"]) == {"allowed_chat_ids", "updates_payload"}
+    assert cls.RETURN_NAMES == ("chat_id", "text_prompt", "is_command", "is_allowed")
+    assert "does not connect" in cls.DESCRIPTION
+    assert not hasattr(m, "psn_redact_token") and not hasattr(m, "PSN_Telegram_Listener")

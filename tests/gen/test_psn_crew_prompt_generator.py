@@ -1,118 +1,72 @@
-import pytest
 import json
-from psn_nodes.gen.psn_crew_prompt_generator import PSN_Crew_Prompt_Generator, ALLOWED_ROLES
+from psn_nodes.gen.psn_crew_prompt_generator import PSN_Role_Text_Concat, ALLOWED_ROLES
 
-class TestPSNCrewPromptGenerator:
+
+class TestPSNRoleTextConcat:
     def setup_method(self):
-        self.node = PSN_Crew_Prompt_Generator()
+        self.node = PSN_Role_Text_Concat()
 
-    def test_basic_workflow_with_mock_responses(self):
-        """Test that the final prompt contains contributions from all roles."""
-        brief = "Create a rock song"
-        roles = ["Lyricist", "Composer"]
-        llm_json = json.dumps({
-            "Lyricist": "Verse 1: I am the rock",
-            "Composer": "Key of G, 120 BPM"
-        })
-        
-        final_prompt, dialogue = self.node.run(brief, roles, llm_json)
-        
-        assert "Create a rock song" in final_prompt
-        assert "Verse 1: I am the rock" in final_prompt
-        assert "Key of G, 120 BPM" in final_prompt
-        assert "Lyricist" in dialogue
-        assert "Composer" in dialogue
+    def test_appends_supplied_text_in_role_order(self):
+        text = json.dumps({"Lyricist": "Verse 1: I am the rock", "Composer": "Key of G, 120 BPM"})
+        combined, report = self.node.run("Create a rock song", "Lyricist, Composer", text)
+        assert combined == "Create a rock song\n[Lyricist]: Verse 1: I am the rock\n[Composer]: Key of G, 120 BPM"
+        assert report.splitlines()[0] == "Appended: Lyricist, Composer"
 
-    def test_invalid_roles_are_filtered(self):
-        """Test that roles not in the allow-list are ignored."""
-        brief = "Test brief"
-        roles = ["Lyricist", "Hacker", "Composer"]
-        llm_json = json.dumps({
-            "Lyricist": "Lyrics here",
-            "Hacker": "Should not appear",
-            "Composer": "Music here"
-        })
-        
-        final_prompt, dialogue = self.node.run(brief, roles, llm_json)
-        
-        assert "Lyrics here" in final_prompt
-        assert "Music here" in final_prompt
-        assert "Should not appear" not in final_prompt
-        assert "Hacker" not in dialogue
+    def test_order_follows_roles_not_json(self):
+        text = json.dumps({"Lyricist": "L", "Composer": "C"})
+        combined, _ = self.node.run("B", "Composer, Lyricist", text)
+        assert combined == "B\n[Composer]: C\n[Lyricist]: L"
 
-    def test_empty_llm_connection_uses_fallback(self):
-        """Test that if LLM JSON is empty, fallback placeholders are used."""
-        brief = "Test brief"
-        roles = ["Lyricist"]
-        llm_json = "{}"
-        
-        final_prompt, dialogue = self.node.run(brief, roles, llm_json)
-        
-        assert "Lyricist" in final_prompt
-        assert "[Lyricist Contribution]" in final_prompt
+    def test_list_input_is_accepted(self):
+        combined, _ = self.node.run("B", ["Composer"], json.dumps({"Composer": "C"}))
+        assert combined == "B\n[Composer]: C"
 
-    def test_invalid_json_llm_connection(self):
-        """Test that invalid JSON in llm_connection is handled gracefully."""
-        brief = "Test brief"
-        roles = ["Lyricist"]
-        llm_json = "not a json"
-        
-        final_prompt, dialogue = self.node.run(brief, roles, llm_json)
-        
-        # Should still produce output using fallback
-        assert "Lyricist" in final_prompt
-        assert "[Lyricist Contribution]" in final_prompt
+    def test_roles_not_on_allow_list_are_reported_and_ignored(self):
+        text = json.dumps({"Lyricist": "Lyrics here", "Hacker": "Should not appear"})
+        combined, report = self.node.run("Test brief", "Lyricist, Hacker", text)
+        assert combined == "Test brief\n[Lyricist]: Lyrics here"
+        assert "Should not appear" not in combined
+        assert "Not on allow-list: Hacker" in report
+
+    def test_missing_text_adds_nothing_and_no_invented_contribution(self):
+        combined, report = self.node.run("Test brief", "Lyricist, Composer", json.dumps({"Composer": "Music"}))
+        assert combined == "Test brief\n[Composer]: Music"
+        assert "No text supplied: Lyricist" in report
+        assert "Contribution" not in combined and "Refining" not in combined
+
+    def test_empty_json_returns_brief_unchanged(self):
+        combined, report = self.node.run("Test brief", "Lyricist", "{}")
+        assert combined == "Test brief"
+        assert "Appended: none" in report
+
+    def test_invalid_json_returns_brief_and_names_error(self):
+        combined, report = self.node.run("Test brief", "Lyricist", "not a json")
+        assert combined == "Test brief"
+        assert "role_text_json is not valid JSON" in report
+
+    def test_non_object_json(self):
+        combined, report = self.node.run("Test brief", "Lyricist", "[1,2]")
+        assert combined == "Test brief" and "must be a JSON object" in report
 
     def test_no_valid_roles(self):
-        """Test behavior when no valid roles are provided."""
-        brief = "Test brief"
-        roles = ["InvalidRole1", "InvalidRole2"]
-        llm_json = "{}"
-        
-        final_prompt, dialogue = self.node.run(brief, roles, llm_json)
-        
-        assert "No valid roles" in final_prompt
-        assert "Error" in dialogue
+        combined, report = self.node.run("Test brief", "InvalidRole1, InvalidRole2", "{}")
+        assert combined == "Test brief"
+        assert report.startswith("Error: no roles")
 
-    def test_single_role_workflow(self):
-        """Test workflow with a single role."""
-        brief = "Create a jazz piece"
-        roles = ["Composer"]
-        llm_json = json.dumps({
-            "Composer": "Swing time, 100 BPM"
-        })
-        
-        final_prompt, dialogue = self.node.run(brief, roles, llm_json)
-        
-        assert "Create a jazz piece" in final_prompt
-        assert "Swing time, 100 BPM" in final_prompt
-        assert "Composer" in dialogue
+    def test_empty_brief_starts_with_first_line(self):
+        combined, _ = self.node.run("", "Composer", json.dumps({"Composer": "C"}))
+        assert combined == "[Composer]: C"
 
-    def test_multiple_iterations_same_role(self):
-        """Test that the same role can appear multiple times (though typically unique)."""
-        brief = "Test"
-        roles = ["Lyricist", "Lyricist"]
-        llm_json = json.dumps({
-            "Lyricist": "First verse"
-        })
-        
-        final_prompt, dialogue = self.node.run(brief, roles, llm_json)
-        
-        # The same response is used for both iterations
-        assert final_prompt.count("First verse") == 2
+    def test_same_role_listed_twice_appends_twice(self):
+        combined, _ = self.node.run("T", "Lyricist, Lyricist", json.dumps({"Lyricist": "First verse"}))
+        assert combined.count("First verse") == 2
 
-    def test_dialogue_log_structure(self):
-        """Test that the dialogue log has the expected structure."""
-        brief = "Test brief"
-        roles = ["Lyricist", "Composer"]
-        llm_json = json.dumps({
-            "Lyricist": "Lyrics",
-            "Composer": "Music"
-        })
-        
-        final_prompt, dialogue = self.node.run(brief, roles, llm_json)
-        
-        assert "=== Crew Prompt Generation Started ===" in dialogue
-        assert "=== Final Prompt Generated ===" in dialogue
-        assert "Creative Brief: Test brief" in dialogue
-        assert "Active Roles: Lyricist, Composer" in dialogue
+    def test_fabricated_pieces_are_gone(self):
+        assert PSN_Role_Text_Concat.RETURN_NAMES == ("combined_text", "role_report")
+        inputs = PSN_Role_Text_Concat.INPUT_TYPES()
+        assert "max_iterations" not in inputs.get("optional", {})
+        assert "llm_connection" not in inputs["required"] and "role_text_json" in inputs["required"]
+        assert "No agents and no LLM" in PSN_Role_Text_Concat.DESCRIPTION
+        from psn_nodes.gen import psn_crew_prompt_generator as m
+        assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_Role_Text_Concat"]
+        assert "Lyricist" in ALLOWED_ROLES

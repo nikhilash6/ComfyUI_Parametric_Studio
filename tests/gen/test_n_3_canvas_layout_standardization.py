@@ -6,9 +6,9 @@ import pytest
 
 from psn_nodes.gen.n_3_canvas_layout_standardization import (
     PSN_LayoutEnforcer,
-    PSN_WirelessRouter,
+    PSN_Route_Record,
     _build_layout_config,
-    _route_wireless,
+    _route_record,
     _is_valid_id,
     THEMES,
     GROUPING_RULES,
@@ -112,8 +112,8 @@ def test_layout_enforcer_rejects_bad_node_id_in_list():
         )
 
 
-def test_wireless_router_passes_data_wirelessly():
-    node = PSN_WirelessRouter()
+def test_route_record_wraps_payload_and_flags():
+    node = PSN_Route_Record()
     (routed,) = node.run(
         source_node_id="src",
         target_node_id="dst",
@@ -125,10 +125,15 @@ def test_wireless_router_passes_data_wirelessly():
     assert routed["wireless"] is True
     assert routed["visual_wire"] is False
     assert routed["data"] == "hello"
+    assert set(routed) == {"source", "target", "wireless", "visual_wire", "data"}
+    assert PSN_Route_Record.RETURN_NAMES == ("route_record",)
+    assert "creates no connection" in PSN_Route_Record.DESCRIPTION
+    from psn_nodes.gen import n_3_canvas_layout_standardization as m
+    assert "PSN_WirelessRouter" not in m.NODE_CLASS_MAPPINGS
 
 
-def test_wireless_router_wired_connection():
-    node = PSN_WirelessRouter()
+def test_route_record_wired_connection():
+    node = PSN_Route_Record()
     (routed,) = node.run(
         source_node_id="a",
         target_node_id="b",
@@ -140,14 +145,14 @@ def test_wireless_router_wired_connection():
     assert routed["data"] is None
 
 
-def test_wireless_router_rejects_bad_source_id():
-    node = PSN_WirelessRouter()
+def test_route_record_rejects_bad_source_id():
+    node = PSN_Route_Record()
     with pytest.raises(ValueError):
         node.run(source_node_id="1bad", target_node_id="ok", wireless=True)
 
 
-def test_wireless_router_rejects_non_bool_wireless():
-    node = PSN_WirelessRouter()
+def test_route_record_rejects_non_bool_wireless():
+    node = PSN_Route_Record()
     with pytest.raises(ValueError):
         node.run(source_node_id="a", target_node_id="b", wireless="yes")
 

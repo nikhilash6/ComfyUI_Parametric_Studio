@@ -11,7 +11,7 @@ def make_image():
 
 def test_inject_and_read_back():
     img = make_image()
-    node = mod.PSN_MetadataInjector()
+    node = mod.PSN_Metadata_Tag_Carrier()
     (tagged,) = node.run(img, json.dumps({"studio_id": "PS", "shot_id": "A1", "version": "v1"}), True)
     assert isinstance(tagged, torch.Tensor)
     assert tagged.shape == img.shape
@@ -23,7 +23,7 @@ def test_inject_and_read_back():
 def test_inject_preserves_when_not_overwrite():
     img = make_image()
     img.metadata = {"studio_id": "OLD", "custom": "keep"}
-    node = mod.PSN_MetadataInjector()
+    node = mod.PSN_Metadata_Tag_Carrier()
     (tagged,) = node.run(img, json.dumps({"shot_id": "B2"}), False)
     assert tagged.metadata["studio_id"] == "OLD"
     assert tagged.metadata["custom"] == "keep"
@@ -35,9 +35,28 @@ def test_inject_preserves_when_not_overwrite():
 def test_inject_overwrite_replaces():
     img = make_image()
     img.metadata = {"studio_id": "OLD"}
-    node = mod.PSN_MetadataInjector()
+    node = mod.PSN_Metadata_Tag_Carrier()
     (tagged,) = node.run(img, json.dumps({"studio_id": "NEW"}), True)
     assert tagged.metadata == {"studio_id": "NEW"}
+
+
+def test_tags_do_not_survive_other_ops_and_write_no_files():
+    import os, tempfile
+    img = make_image()
+    node = mod.PSN_Metadata_Tag_Carrier()
+    with tempfile.TemporaryDirectory() as d:
+        cwd = os.getcwd()
+        os.chdir(d)
+        try:
+            (tagged,) = node.run(img, json.dumps({"studio_id": "PS", "shot_id": "A1", "version": "v1"}), True)
+            assert os.listdir(".") == []
+        finally:
+            os.chdir(cwd)
+    # a downstream tensor op yields a new tensor without the tags
+    other = tagged * 1.0
+    assert not hasattr(other, "metadata")
+    is_valid, missing = mod.PSN_MetadataValidator().run(other)
+    assert is_valid is False and set(missing.split(",")) == set(mod.REQUIRED_KEYS)
 
 
 def test_validator_valid():
@@ -67,7 +86,7 @@ def test_validator_empty_metadata():
 
 
 def test_bad_json_raises():
-    node = mod.PSN_MetadataInjector()
+    node = mod.PSN_Metadata_Tag_Carrier()
     try:
         node.run(make_image(), "not json {", True)
     except ValueError:
@@ -77,7 +96,7 @@ def test_bad_json_raises():
 
 
 def test_bad_asset_raises():
-    node = mod.PSN_MetadataInjector()
+    node = mod.PSN_Metadata_Tag_Carrier()
     try:
         node.run("not a tensor", "{}", True)
     except ValueError:
@@ -88,7 +107,7 @@ def test_bad_asset_raises():
 
 def test_latent_asset_supported():
     latent = {"samples": torch.rand(1, 4, 8, 8)}
-    node = mod.PSN_MetadataInjector()
+    node = mod.PSN_Metadata_Tag_Carrier()
     (tagged,) = node.run(latent, json.dumps({"studio_id": "PS", "shot_id": "A1", "version": "v1"}), True)
     assert isinstance(tagged, dict)
     assert tagged["samples"].shape == latent["samples"].shape
@@ -98,7 +117,7 @@ def test_latent_asset_supported():
 
 
 def test_size_limit_enforced():
-    node = mod.PSN_MetadataInjector()
+    node = mod.PSN_Metadata_Tag_Carrier()
     big = json.dumps({"k": "x" * (mod.MAX_METADATA_BYTES + 100)})
     try:
         node.run(make_image(), big, True)
@@ -109,10 +128,12 @@ def test_size_limit_enforced():
 
 
 def test_mappings_present():
-    assert "PSN_MetadataInjector" in mod.NODE_CLASS_MAPPINGS
+    assert "PSN_Metadata_Tag_Carrier" in mod.NODE_CLASS_MAPPINGS
+    assert "PSN_MetadataInjector" not in mod.NODE_CLASS_MAPPINGS
+    assert "writes nothing to image or video files" in mod.PSN_Metadata_Tag_Carrier.DESCRIPTION
     assert "PSN_MetadataValidator" in mod.NODE_CLASS_MAPPINGS
-    assert mod.PSN_MetadataInjector.FUNCTION == "run"
-    assert mod.PSN_MetadataInjector.CATEGORY.startswith("ParametricStudio/")
+    assert mod.PSN_Metadata_Tag_Carrier.FUNCTION == "run"
+    assert mod.PSN_Metadata_Tag_Carrier.CATEGORY.startswith("ParametricStudio/")
     assert mod.PSN_MetadataValidator.RETURN_TYPES == ("BOOLEAN", "STRING")
 
 
@@ -120,6 +141,7 @@ if __name__ == "__main__":
     test_inject_and_read_back()
     test_inject_preserves_when_not_overwrite()
     test_inject_overwrite_replaces()
+    test_tags_do_not_survive_other_ops_and_write_no_files()
     test_validator_valid()
     test_validator_missing_keys()
     test_validator_empty_metadata()

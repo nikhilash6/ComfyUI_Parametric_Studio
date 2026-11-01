@@ -5,7 +5,7 @@ import torch
 from n_4_rss_driven_news_video_generation import (
     PSN_RSS_Fetcher,
     PSN_News_Script_Generator,
-    PSN_News_Video_Aggregator,
+    PSN_News_Thumbnail_Placeholder,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
 )
@@ -84,23 +84,33 @@ assert isinstance(script3, str)
 scenes3_list = json.loads(scenes3)
 assert scenes3_list == [], f"Expected empty scenes for bad input, got {scenes3_list}"
 
-# 9. Video aggregator produces correct thumbnail shape
-agg = PSN_News_Video_Aggregator()
-path, thumb = agg.run("Some script text", "1280x720", 30)
+# 9. Thumbnail node: shape and real gradient values
+agg = PSN_News_Thumbnail_Placeholder()
+out = agg.run("1280x720")
+assert len(out) == 1, "only the thumbnail is returned (no video path)"
+thumb = out[0]
 assert thumb.shape == (1, 720, 1280, 3), f"Expected [1,720,1280,3], got {thumb.shape}"
 assert thumb.dtype == torch.float32
 assert thumb.min() >= 0.0 and thumb.max() <= 1.0, "Thumbnail values out of [0,1] range"
-assert "1280x720" in path, f"Path should contain resolution: {path}"
+assert thumb[0, 0, 0, 0].item() == 0.0 and abs(thumb[0, -1, -1, 2].item() - 1.0) < 1e-6
+assert abs(thumb[0, 719, 0, 1].item() - 0.5) < 1e-6   # bottom-left = (1 + 0) / 2
+assert torch.equal(thumb[..., 0], thumb[..., 1])
 
-# 10. Video aggregator 1920x1080
-path2, thumb2 = agg.run("Another script", "1920x1080", 60)
+# 10. 1920x1080, and the output does not depend on any script text
+thumb2 = agg.run("1920x1080")[0]
 assert thumb2.shape == (1, 1080, 1920, 3), f"Expected [1,1080,1920,3], got {thumb2.shape}"
-assert "1920x1080" in path2
+it_t = PSN_News_Thumbnail_Placeholder.INPUT_TYPES()["required"]
+assert list(it_t) == ["output_resolution"]
+assert it_t["output_resolution"] == (["1920x1080", "1280x720"],)
+assert PSN_News_Thumbnail_Placeholder.RETURN_NAMES == ("thumbnail",)
+assert "video_path" not in PSN_News_Thumbnail_Placeholder.RETURN_NAMES
+assert "PSN_News_Video_Aggregator" not in NODE_CLASS_MAPPINGS
+assert "no video" in PSN_News_Thumbnail_Placeholder.DESCRIPTION
 
 # 11. Node mappings exist
 assert "PSN_RSS_Fetcher" in NODE_CLASS_MAPPINGS
 assert "PSN_News_Script_Generator" in NODE_CLASS_MAPPINGS
-assert "PSN_News_Video_Aggregator" in NODE_CLASS_MAPPINGS
+assert "PSN_News_Thumbnail_Placeholder" in NODE_CLASS_MAPPINGS
 assert len(NODE_DISPLAY_NAME_MAPPINGS) == 3
 
 # 12. INPUT_TYPES classmethod works

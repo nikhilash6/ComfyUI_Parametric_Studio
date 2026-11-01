@@ -1,5 +1,5 @@
 """
-Tests for PSN_Model_Vram_Optimizer.
+Tests for PSN_VramBudgetPlanner.
 Pure-logic tests: no files, no network, no GPU.
 """
 
@@ -7,11 +7,12 @@ import json
 import pytest
 
 from psn_nodes.gen.n_3_vram_optimized_model_loading import (
-    PSN_Model_Vram_Optimizer,
+    PSN_VramBudgetPlanner,
     _parse_state_dict_json,
     _is_prunable,
     _compute_memory_gb,
     _QUANT_MODES,
+    NODE_CLASS_MAPPINGS,
 )
 
 
@@ -90,7 +91,7 @@ class TestComputeMemoryGb:
 
 class TestPSNModelVramOptimizer:
     def setup_method(self):
-        self.node = PSN_Model_Vram_Optimizer()
+        self.node = PSN_VramBudgetPlanner()
 
     def test_no_prune_no_quant_fits(self):
         # 100M params fp32 = 0.3725 GB, target 8 GB -> fits
@@ -129,8 +130,8 @@ class TestPSNModelVramOptimizer:
         fits, opt_json, report = self.node.run(sd, False, "int8", 8.0)
         assert fits is True
         opt = json.loads(opt_json)
-        assert opt["unet.big.weight"]["quantized"] is True
-        assert opt["unet.big.weight"]["bytes_per_param"] == 1
+        assert "quantized" not in opt["unet.big.weight"]
+        assert opt["unet.big.weight"]["assumed_bytes_per_param"] == 1
 
     def test_prune_and_quant_combined(self):
         sd = _make_state_dict([
@@ -188,13 +189,24 @@ class TestPSNModelVramOptimizer:
             ("vae.decoder.conv1.weight", 50_000_000),
         ])
         fits, _, report = self.node.run(sd, True, "w8a8", 8.0)
-        assert "=== VRAM Optimization Report ===" in report
+        assert "=== VRAM Budget Estimate ===" in report
         assert "Original parameters:" in report
         assert "Pruned parameters:" in report
-        assert "Quantized parameters:" in report
-        assert "Quantization mode:" in report
+        assert "Parameters kept:" in report
+        assert "Assumed storage mode:" in report
         assert "Final memory estimate:" in report
         assert "Target VRAM:" in report
-        assert "Status:" in report
+        assert "Estimate:" in report
         assert "Pruned keys (1):" in report
         assert "vae.decoder.conv1.weight" in report
+
+
+def test_honest_naming_and_no_quantized_claim():
+    assert "PSN_Model_Vram_Optimizer" not in NODE_CLASS_MAPPINGS
+    assert "PSN_VramBudgetPlanner" in NODE_CLASS_MAPPINGS
+    assert "loads, prunes and quantizes no model" in PSN_VramBudgetPlanner.DESCRIPTION
+    sd = _make_state_dict([("unet.w", 2_000_000_000)])
+    fits, opt_json, report = PSN_VramBudgetPlanner().run(sd, False, "int8", 8.0)
+    assert fits is True
+    assert json.loads(opt_json)["unet.w"] == {"num_params": 2_000_000_000, "assumed_bytes_per_param": 1}
+    assert "Optimization" not in report and "Quantized" not in report

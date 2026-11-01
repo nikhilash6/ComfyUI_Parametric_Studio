@@ -7,7 +7,7 @@ import pytest
 
 from psn_nodes.gen.n_3_audio_driven_portrait_pipeline import (
     PSN_AudioToMouthTrack,
-    PSN_MouthComposite,
+    PSN_Mask_Weight_Check,
     _parse_waveform,
     _mouth_openness,
     _frame_count,
@@ -19,7 +19,7 @@ def _node_track():
 
 
 def _node_comp():
-    return PSN_MouthComposite()
+    return PSN_Mask_Weight_Check()
 
 
 def test_mouth_track_peak_amplitude_yields_widest_mouth():
@@ -80,9 +80,12 @@ def test_composite_matching_frames_returns_weights():
     base = json.dumps(["f0", "f1", "f2"])
     track = json.dumps([0.2, 0.5, 0.8])
     mask = json.dumps([1.0, 0.5, 0.0])
-    video, weights = node.run(base, track, mask)
-    assert weights == [1.0, 0.5, 0.0]
-    assert json.loads(video) == [1.0, 0.5, 0.0]
+    out = node.run(base, track, mask)
+    assert len(out) == 1, "no VIDEO output: nothing is composited"
+    assert out[0] == [1.0, 0.5, 0.0]
+    assert PSN_Mask_Weight_Check.RETURN_NAMES == ("mask_weights",)
+    assert "blend_mode" not in str(PSN_Mask_Weight_Check.INPUT_TYPES())
+    assert "composites nothing" in PSN_Mask_Weight_Check.DESCRIPTION
 
 
 def test_composite_frame_count_mismatch_raises():
@@ -103,21 +106,12 @@ def test_composite_mask_mismatch_raises():
         node.run(base, track, mask)
 
 
-def test_composite_bad_blend_mode_raises():
-    node = _node_comp()
-    base = json.dumps(["f0"])
-    track = json.dumps([0.2])
-    mask = json.dumps([1.0])
-    with pytest.raises(ValueError):
-        node.run(base, track, mask, blend_mode="screen")
-
-
 def test_composite_mask_clamped_to_unit_range():
     node = _node_comp()
     base = json.dumps(["f0", "f1"])
     track = json.dumps([0.2, 0.5])
     mask = json.dumps([1.5, -0.5])  # out of range -> clamped
-    _, weights = node.run(base, track, mask)
+    (weights,) = node.run(base, track, mask)
     assert weights == [1.0, 0.0]
 
 

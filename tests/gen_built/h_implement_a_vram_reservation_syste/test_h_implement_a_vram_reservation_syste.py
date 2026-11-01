@@ -83,7 +83,7 @@ def test_bad_inputs_raise():
 
 def test_node_reserve_gate_passes_image_unchanged():
     _reset_global()
-    node = mod.PSN_VramReserve()
+    node = mod.PSN_VramLedgerReserve()
     img = _img()
     out_img, granted, free = node.run(img, "t1", 1.0, 16.0, 1.0, 0.0, True)
     assert granted is True
@@ -95,7 +95,7 @@ def test_node_reserve_gate_passes_image_unchanged():
 
 def test_node_reserve_denied_raises_and_no_mutation():
     _reset_global()
-    node = mod.PSN_VramReserve()
+    node = mod.PSN_VramLedgerReserve()
     img = _img()
     try:
         node.run(img, "t2", 1000.0, 8.0, 1.0, 0.0, True)
@@ -110,8 +110,8 @@ def test_node_reserve_denied_raises_and_no_mutation():
 
 def test_node_release_and_report():
     _reset_global()
-    node = mod.PSN_VramReserve()
-    rel = mod.PSN_VramRelease()
+    node = mod.PSN_VramLedgerReserve()
+    rel = mod.PSN_VramLedgerRelease()
     rep = mod.PSN_VramReport()
     img = _img()
     node.run(img, "t3", 2.0, 16.0, 1.0, 0.0, True)
@@ -136,7 +136,7 @@ def test_node_release_and_report():
 
 def test_bad_image_type_and_shape():
     _reset_global()
-    node = mod.PSN_VramReserve()
+    node = mod.PSN_VramLedgerReserve()
     try:
         node.run("not a tensor", "t", 1.0, 16.0, 1.0, 0.0, True)
         raise AssertionError("expected TypeError")
@@ -149,9 +149,23 @@ def test_bad_image_type_and_shape():
         pass
 
 
+def test_ledger_names_and_no_gpu_claim():
+    R, L = mod.PSN_VramLedgerReserve, mod.PSN_VramLedgerRelease
+    assert R.RETURN_NAMES == ("image", "ledger_granted", "ledger_free_gb")
+    assert L.RETURN_NAMES == ("image", "ledger_entry_removed")
+    assert "Reserves no GPU memory" in R.DESCRIPTION
+    assert "Frees no GPU memory" in L.DESCRIPTION
+    assert "PSN_VramReserve" not in mod.NODE_CLASS_MAPPINGS
+    assert "PSN_VramRelease" not in mod.NODE_CLASS_MAPPINGS
+    # figures come from the typed inputs: 10 total - 2 system - 1 live - 3 need = 4
+    _reset_global()
+    _, granted, free = R().run(_img(), "n1", 3.0, 10.0, 2.0, 1.0, True)
+    assert granted is True and abs(free - 4.0) < 1e-9
+
+
 def test_module_mappings():
-    assert "PSN_VramReserve" in mod.NODE_CLASS_MAPPINGS
-    assert "PSN_VramRelease" in mod.NODE_CLASS_MAPPINGS
+    assert "PSN_VramLedgerReserve" in mod.NODE_CLASS_MAPPINGS
+    assert "PSN_VramLedgerRelease" in mod.NODE_CLASS_MAPPINGS
     assert "PSN_VramReport" in mod.NODE_CLASS_MAPPINGS
     for name, cls in mod.NODE_CLASS_MAPPINGS.items():
         assert cls.FUNCTION == "run"
@@ -170,5 +184,6 @@ if __name__ == "__main__":
     test_node_reserve_denied_raises_and_no_mutation()
     test_node_release_and_report()
     test_bad_image_type_and_shape()
+    test_ledger_names_and_no_gpu_claim()
     test_module_mappings()
     print("ok")

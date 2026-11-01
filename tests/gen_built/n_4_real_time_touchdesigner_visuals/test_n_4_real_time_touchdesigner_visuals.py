@@ -1,7 +1,7 @@
 import torch
 
 from n_4_real_time_touchdesigner_visuals import (
-    PSN_TD_FrameEncode,
+    PSN_TD_FrameEncode_Size,
     PSN_TD_Control_Parse,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
@@ -12,19 +12,23 @@ from n_4_real_time_touchdesigner_visuals import (
 
 
 def test_module_mappings():
-    assert "PSN_TD_FrameEncode" in NODE_CLASS_MAPPINGS
+    assert "PSN_TD_FrameEncode_Size" in NODE_CLASS_MAPPINGS
     assert "PSN_TD_Control_Parse" in NODE_CLASS_MAPPINGS
-    assert NODE_DISPLAY_NAME_MAPPINGS["PSN_TD_FrameEncode"]
+    assert NODE_DISPLAY_NAME_MAPPINGS["PSN_TD_FrameEncode_Size"]
     assert NODE_DISPLAY_NAME_MAPPINGS["PSN_TD_Control_Parse"]
 
 
 def test_input_types_shape():
-    it = PSN_TD_FrameEncode.INPUT_TYPES()
+    it = PSN_TD_FrameEncode_Size.INPUT_TYPES()
     assert "image" in it["required"]
     assert it["required"]["image"] == ("IMAGE",)
-    assert PSN_TD_FrameEncode.FUNCTION == "run"
-    assert PSN_TD_FrameEncode.CATEGORY.startswith("ParametricStudio/")
-    assert PSN_TD_FrameEncode.RETURN_TYPES == ("BOOLEAN", "INT", "STRING")
+    assert PSN_TD_FrameEncode_Size.FUNCTION == "run"
+    assert PSN_TD_FrameEncode_Size.CATEGORY.startswith("ParametricStudio/")
+    assert PSN_TD_FrameEncode_Size.RETURN_TYPES == ("INT", "STRING")
+    assert PSN_TD_FrameEncode_Size.RETURN_NAMES == ("payload_bytes", "channel")
+    assert "protocol" not in it["required"]
+    assert "does not transmit" in PSN_TD_FrameEncode_Size.DESCRIPTION
+    assert "PSN_TD_FrameEncode" not in NODE_CLASS_MAPPINGS
 
     it2 = PSN_TD_Control_Parse.INPUT_TYPES()
     assert "message" in it2["required"]
@@ -109,22 +113,13 @@ def test_decode_too_short():
 
 
 def test_node_run_encode():
-    node = PSN_TD_FrameEncode()
+    node = PSN_TD_FrameEncode_Size()
     img = torch.rand(1, 16, 16, 4)
-    sent, nbytes, ch = node.run(img, channel="video_in", protocol="osc")
-    assert sent is True
+    out = node.run(img, channel="video_in")
+    assert len(out) == 2
+    nbytes, ch = out
     assert nbytes == 24 + 1 * 16 * 16 * 4
     assert ch == "vide"  # channel truncated to 4 bytes
-
-
-def test_node_run_encode_bad_protocol():
-    node = PSN_TD_FrameEncode()
-    img = torch.rand(1, 4, 4, 4)
-    try:
-        node.run(img, channel="x", protocol="http")
-        raise AssertionError("expected ValueError for bad protocol")
-    except ValueError:
-        pass
 
 
 def test_parse_control_basic():
@@ -196,7 +191,6 @@ def main():
     test_decode_bad_magic()
     test_decode_too_short()
     test_node_run_encode()
-    test_node_run_encode_bad_protocol()
     test_parse_control_basic()
     test_parse_control_with_value()
     test_parse_control_negative_and_extra()

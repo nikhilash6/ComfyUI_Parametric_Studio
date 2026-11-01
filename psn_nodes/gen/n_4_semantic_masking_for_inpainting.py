@@ -1,25 +1,17 @@
-"""ParametricStudio - Semantic Masking for Inpainting.
+"""ParametricStudio - Luminance / Saturation Mask for Inpainting.
 
-This module provides a ComfyUI custom node that generates precise masks for
-specific objects or regions.  Because heavy segmentation models (SAM,
-YOLOv8-seg, etc.) cannot be loaded in this sandbox, the node implements the
-*core* of the idea using only torch / stdlib:
+This module provides a ComfyUI custom node that makes a binary mask by
+thresholding a simple per-pixel colour score. It is NOT semantic segmentation:
+it recognises no objects and loads no model. ``rule_id`` picks one of four
+formulas:
 
-  * A lightweight, deterministic, torch-based segmentation heuristic that
-    separates foreground from background using colour / luminance statistics
-    (Otsu-style thresholding on a per-pixel "foreground score").
-  * Class filtering: the ``class_id`` selects one of several built-in
-    "semantic priors" (e.g. 0 = generic foreground, 1 = bright objects,
-    2 = dark objects, 3 = saturated / colourful objects).  A real deployment
-    would swap this for a user-provided segmentation model.
-  * Confidence thresholding and optional morphological cleanup (erosion /
-    dilation via max/min pooling) to produce a clean binary mask.
+  0 = deviation of luminance from the image median (scaled by its 95th percentile)
+  1 = luminance (bright pixels)
+  2 = inverted luminance (dark pixels)
+  3 = max-min channel spread (saturated / colourful pixels)
 
-What is NOT implemented (requires external models / libraries):
-  * Loading user-provided segmentation model weights (SAM, YOLOv8-seg, etc.)
-  * True per-class semantic segmentation (the built-in priors are
-    colour/luminance heuristics, not learned class detectors).
-  * GPU inference (everything runs on CPU with torch).
+The score is thresholded to a binary mask, with optional erosion then dilation
+(max/min pooling) to remove specks. Everything runs on CPU with torch.
 """
 
 import torch
@@ -64,7 +56,7 @@ def _to_image(mask):
 # ---------------------------------------------------------------------------
 
 def _foreground_score(image, class_id):
-    """Compute a per-pixel foreground score in 0..1.
+    """Compute a per-pixel luminance/saturation score in 0..1 (no object recognition).
 
     Parameters
     ----------
@@ -148,65 +140,67 @@ def _morphology(mask, op, radius):
 # Node
 # ---------------------------------------------------------------------------
 
-class PSN_Semantic_Mask_Gen:
-    """Generate a semantic mask for inpainting.
+class PSN_LuminanceSaturationMask:
+    """Threshold a luminance or saturation score into a binary mask.
 
-    Uses a lightweight torch-based heuristic (luminance / saturation priors)
-    to produce a foreground mask and a confidence map.  In a full deployment
-    the heuristic would be replaced by a user-provided segmentation model
-    (SAM, YOLOv8-seg, …).
+    No semantic segmentation: it does not know what any object is. ``rule_id``
+    only selects the colour formula.
 
     Inputs
     ------
     image : IMAGE  [B,H,W,C] float 0..1
-    class_id : INT  0=generic, 1=bright, 2=dark, 3=saturated
-    confidence_threshold : FLOAT  0..1  (pixels below this are background)
+    rule_id : INT  0=luminance deviation from median, 1=bright, 2=dark, 3=saturated
+    score_threshold : FLOAT  0..1  (pixels scoring below this are background)
     morphology_radius : INT  0..16  (0 = no cleanup; >0 = erode+dilate)
 
     Outputs
     -------
     mask : MASK  [B,H,W]  binary 0/1
-    confidence_map : IMAGE  [B,H,W,1]  float 0..1
+    score_map : IMAGE  [B,H,W,1]  float 0..1 (the pre-threshold score)
     """
+
+    DESCRIPTION = ("Thresholds image luminance or saturation into a binary "
+                   "mask, with optional erode/dilate cleanup. It does no "
+                   "semantic segmentation and recognises no objects.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "image": ("IMAGE",),
-                "class_id": ("INT", {"default": 0, "min": 0, "max": 3}),
-                "confidence_threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
+                "rule_id": ("INT", {"default": 0, "min": 0, "max": 3}),
+                "score_threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
                 "morphology_radius": ("INT", {"default": 0, "min": 0, "max": 16}),
             }
         }
 
     RETURN_TYPES = ("MASK", "IMAGE")
-    RETURN_NAMES = ("mask", "confidence_map")
+    RETURN_NAMES = ("mask", "score_map")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, image, class_id, confidence_threshold, morphology_radius):
+    def run(self, image, rule_id, score_threshold, morphology_radius):
         img = _as_image(image)
-        if not (0.0 <= confidence_threshold <= 1.0):
-            raise ValueError("confidence_threshold must be in [0, 1]")
-        if class_id not in (0, 1, 2, 3):
-            raise ValueError(f"class_id must be 0..3, got {class_id}")
+        if not (0.0 <= score_threshold <= 1.0):
+            raise ValueError("score_threshold must be in [0, 1]")
+        if rule_id not in (0, 1, 2, 3):
+            raise ValueError(f"rule_id must be 0..3, got {rule_id}")
 
-        # 1. Foreground score.
-        score = _foreground_score(img, class_id)  # [B,H,W] 0..1
+        # 1. Per-pixel score.
+        score = _foreground_score(img, rule_id)  # [B,H,W] 0..1
 
         # 2. Threshold -> binary mask.
-        mask = (score >= confidence_threshold).float()  # [B,H,W] 0/1
+        mask = (score >= score_threshold).float()  # [B,H,W] 0/1
 
         # 3. Optional morphological cleanup (erode then dilate = opening).
         if morphology_radius > 0:
             mask = _morphology(mask, "erode", morphology_radius)
             mask = _morphology(mask, "dilate", morphology_radius)
 
-        # 4. Confidence map as a single-channel IMAGE.
-        conf_map = _to_image(score)  # [B,H,W,1]
+        # 4. Score map as a single-channel IMAGE.
+        score_map = _to_image(score)  # [B,H,W,1]
 
-        return (mask, conf_map)
+        return (mask, score_map)
 
 
 # ---------------------------------------------------------------------------
@@ -214,9 +208,9 @@ class PSN_Semantic_Mask_Gen:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Semantic_Mask_Gen": PSN_Semantic_Mask_Gen,
+    "PSN_LuminanceSaturationMask": PSN_LuminanceSaturationMask,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Semantic_Mask_Gen": "PSN Semantic Mask Gen (Inpainting)",
+    "PSN_LuminanceSaturationMask": "PSN Luminance / Saturation Mask (Inpainting)",
 }

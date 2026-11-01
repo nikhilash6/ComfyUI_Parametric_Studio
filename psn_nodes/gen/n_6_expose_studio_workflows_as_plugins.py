@@ -1,9 +1,8 @@
-"""Expose Studio Workflows as Plugins.
+"""Workflow plugin descriptor builder.
 
-Pure-logic, secure-by-design implementation of a workflow plugin exposer.
-This module wraps a ComfyUI-style graph (provided as JSON text) into a
-standardized plugin descriptor, validates input/output schemas against the
-graph's actual nodes, and simulates an endpoint URL.
+Wraps a ComfyUI-style graph (provided as JSON text) into a plugin descriptor dict
+and checks the input/output schemas against the graph's node ids. It registers
+nothing and serves no endpoint: the result is only validated, hashed JSON-like data.
 
 No network, file, OS, subprocess, eval/exec, or torch/comfy imports are used.
 All functions take plain values (strings, dicts) and return plain values.
@@ -33,9 +32,6 @@ MAX_NODE_COUNT = 500
 
 # Plugin API version
 PLUGIN_API_VERSION = "1.0.0"
-
-# Simulated base URL for plugin endpoints
-SIMULATED_BASE_URL = "https://plugins.parametricstudio.local/v1"
 
 
 def _validate_graph_json(graph_json: str) -> dict:
@@ -152,11 +148,6 @@ def _generate_plugin_id(plugin_name: str, graph: dict) -> str:
     return hashlib.sha256(combined.encode("utf-8")).hexdigest()[:16]
 
 
-def _generate_endpoint_url(plugin_id: str) -> str:
-    """Generate a simulated endpoint URL for the plugin."""
-    return f"{SIMULATED_BASE_URL}/plugins/{plugin_id}"
-
-
 def _sanitize_plugin_name(plugin_name: str) -> str:
     """Validate and sanitize the plugin name."""
     if not isinstance(plugin_name, str):
@@ -209,9 +200,8 @@ def build_plugin_descriptor(
     _validate_schema_against_graph(input_schema_dict, graph, "input_schema")
     _validate_schema_against_graph(output_schema_dict, graph, "output_schema")
 
-    # Generate plugin ID and endpoint URL
+    # Generate plugin ID
     plugin_id = _generate_plugin_id(sanitized_name, graph)
-    endpoint_url = _generate_endpoint_url(plugin_id)
 
     # Build descriptor
     descriptor = {
@@ -223,22 +213,24 @@ def build_plugin_descriptor(
         "node_types": node_types,
         "input_schema": input_schema_dict,
         "output_schema": output_schema_dict,
-        "endpoint_url": endpoint_url,
         "metadata": {
             "node_count": len(node_ids),
             "graph_hash": hashlib.sha256(json.dumps(graph, sort_keys=True).encode("utf-8")).hexdigest(),
-            "created_by": "PSN_Workflow_Plugin_Exposer",
+            "created_by": "PSN_Workflow_Plugin_Descriptor",
         },
     }
     return descriptor
 
 
-class PSN_Workflow_Plugin_Exposer:
-    """Expose a ComfyUI workflow graph as a standardized plugin descriptor.
-
-    Validates the graph structure, node types, and input/output schemas,
-    then wraps everything into a plugin descriptor with a simulated endpoint URL.
+class PSN_Workflow_Plugin_Descriptor:
+    """Validate a ComfyUI workflow graph and its schemas and wrap them into a
+    plugin descriptor dict. Registers nothing and serves no endpoint.
     """
+
+    DESCRIPTION = (
+        "Validates a workflow graph and its input/output schemas and wraps them into "
+        "a plugin descriptor JSON. It registers no plugin and serves no endpoint."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -252,8 +244,8 @@ class PSN_Workflow_Plugin_Exposer:
             "optional": {},
         }
 
-    RETURN_TYPES = ("DICT", "STRING")
-    RETURN_NAMES = ("plugin_descriptor", "endpoint_url")
+    RETURN_TYPES = ("DICT",)
+    RETURN_NAMES = ("plugin_descriptor",)
     FUNCTION = "run"
     CATEGORY = "ParametricStudio/Plugins"
 
@@ -264,13 +256,13 @@ class PSN_Workflow_Plugin_Exposer:
             input_schema=input_schema,
             output_schema=output_schema,
         )
-        return (descriptor, descriptor["endpoint_url"])
+        return (descriptor,)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Workflow_Plugin_Exposer": PSN_Workflow_Plugin_Exposer,
+    "PSN_Workflow_Plugin_Descriptor": PSN_Workflow_Plugin_Descriptor,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Workflow_Plugin_Exposer": "Workflow Plugin Exposer",
+    "PSN_Workflow_Plugin_Descriptor": "Workflow Plugin Descriptor Builder (registers nothing)",
 }

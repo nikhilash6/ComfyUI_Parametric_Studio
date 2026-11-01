@@ -4,8 +4,11 @@ Run:  python3 -B test_n_4_llm_enhanced_prompt_generation_via_oll.py
 Must print 'ok' and exit 0.
 """
 
+import io
 import json
 import sys
+import urllib.error
+import urllib.request
 
 # Import the module under test
 sys.path.insert(0, ".")
@@ -16,6 +19,7 @@ from n_4_llm_enhanced_prompt_generation_via_oll import (
     _STYLE_PRESETS,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
+    _default_ollama_request,
 )
 
 # ---------------------------------------------------------------------------
@@ -41,8 +45,8 @@ assert "ollama_url" in input_types["optional"]
 assert "model_name" in input_types["optional"]
 
 # RETURN_TYPES / RETURN_NAMES / FUNCTION / CATEGORY
-assert node.RETURN_TYPES == ("STRING", "STRING")
-assert node.RETURN_NAMES == ("enhanced_prompt", "negative_prompt")
+assert node.RETURN_TYPES == ("STRING", "STRING", "STRING")
+assert node.RETURN_NAMES == ("enhanced_prompt", "negative_prompt", "source")
 assert node.FUNCTION == "run"
 assert node.CATEGORY == "ParametricStudio/LLM"
 
@@ -118,44 +122,110 @@ assert _parse_ollama_response("") == ""
 assert _parse_ollama_response("   ") == ""
 
 # ---------------------------------------------------------------------------
-# 11. Node run: template fallback (default _ollama_request raises)
+# 11. Node run: unreachable service -> template, and it is reported
 # ---------------------------------------------------------------------------
-node2 = PSN_Ollama_Prompt_Enhancer()
-enhanced_out, negative_out = node2.run(
-    short_prompt="a sunset",
-    style="cinematic",
-    max_tokens=128,
-)
-assert isinstance(enhanced_out, str) and len(enhanced_out) > 0
-assert "a sunset" in enhanced_out
-assert "cinematic" in enhanced_out
-assert isinstance(negative_out, str) and len(negative_out) > 0
+class _Resp(io.BytesIO):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+
+_seen = {}
+
+
+def _canned_urlopen(req, timeout=None):
+    _seen["url"] = req.full_url
+    _seen["method"] = req.get_method()
+    _seen["body"] = json.loads(req.data.decode("utf-8"))
+    _seen["timeout"] = timeout
+    return _Resp(json.dumps({"response": "a vivid sunset over hills, golden hour"}).encode())
+
+
+def _refused_urlopen(req, timeout=None):
+    raise urllib.error.URLError("connection refused")
+
+
+_real_urlopen = urllib.request.urlopen
+try:
+    urllib.request.urlopen = _refused_urlopen
+    node2 = PSN_Ollama_Prompt_Enhancer()
+    enhanced_out, negative_out, source_out = node2.run(
+        short_prompt="a sunset",
+        style="cinematic",
+        max_tokens=128,
+    )
+    assert "a sunset" in enhanced_out and "cinematic" in enhanced_out
+    assert len(negative_out) > 0
+    assert source_out.startswith("template (fallback: URLError"), source_out
+    assert "connection refused" in source_out
+
+    # 11b. Real request path: POST /api/generate with stream false
+    urllib.request.urlopen = _canned_urlopen
+    e2, n2, s2 = PSN_Ollama_Prompt_Enhancer().run(
+        short_prompt="a sunset", style="realistic", max_tokens=64,
+        ollama_url="http://localhost:11434/", model_name="llama3",
+    )
+    assert e2 == "a vivid sunset over hills, golden hour", e2
+    assert s2 == "ollama"
+    assert _seen["url"] == "http://localhost:11434/api/generate"
+    assert _seen["method"] == "POST"
+    assert _seen["body"]["model"] == "llama3"
+    assert _seen["body"]["stream"] is False
+    assert _seen["body"]["options"]["num_predict"] == 64
+    assert "Short prompt: a sunset" in _seen["body"]["prompt"]
+    assert _seen["timeout"] and _seen["timeout"] > 0
+
+    # 11c. Non-http URL is refused before any request and reported
+    _seen.clear()
+    e3, n3, s3 = PSN_Ollama_Prompt_Enhancer().run(
+        short_prompt="a bird", style="none", max_tokens=64,
+        ollama_url="file:///etc/passwd",
+    )
+    assert "url" not in _seen
+    assert s3.startswith("template (fallback: ValueError"), s3
+
+    # 11d. Empty reply from Ollama is reported as such
+    urllib.request.urlopen = lambda req, timeout=None: _Resp(json.dumps({"response": ""}).encode())
+    e4, n4, s4 = PSN_Ollama_Prompt_Enhancer().run(short_prompt="a bird", style="none", max_tokens=64)
+    assert s4 == "template (fallback: Ollama returned no text)", s4
+finally:
+    urllib.request.urlopen = _real_urlopen
+
+# 11e. Direct call of the default hook rejects a non-http URL
+try:
+    _default_ollama_request("ftp://x", "m", "p", 8)
+    assert False, "expected ValueError"
+except ValueError:
+    pass
 
 # ---------------------------------------------------------------------------
-# 12. Node run: mock Ollama request (inject a fake)
+# 12. Node run: injected hook returning a canned reply
 # ---------------------------------------------------------------------------
-def _mock_ollama_request(url, model, prompt, max_tokens):
-    return json.dumps({"message": {"content": "a mock enhanced prompt, very detailed"}})
+def _canned_ollama_request(url, model, prompt, max_tokens):
+    return json.dumps({"message": {"content": "a canned enhanced prompt, very detailed"}})
 
 node3 = PSN_Ollama_Prompt_Enhancer()
-node3._ollama_request = staticmethod(_mock_ollama_request)
-enhanced_mock, negative_mock = node3.run(
+node3._ollama_request = staticmethod(_canned_ollama_request)
+enhanced_canned, negative_canned, source_canned = node3.run(
     short_prompt="a bird",
     style="anime",
     max_tokens=128,
 )
-assert "mock enhanced prompt" in enhanced_mock
-assert isinstance(negative_mock, str) and len(negative_mock) > 0
+assert "canned enhanced prompt" in enhanced_canned
+assert source_canned == "ollama"
+assert isinstance(negative_canned, str) and len(negative_canned) > 0
 
 # ---------------------------------------------------------------------------
-# 13. Node run: mock Ollama with negative prompt in response
+# 13. Node run: injected hook with negative prompt in response
 # ---------------------------------------------------------------------------
-def _mock_ollama_with_neg(url, model, prompt, max_tokens):
+def _canned_ollama_with_neg(url, model, prompt, max_tokens):
     return json.dumps({"message": {"content": "a detailed scene, beautiful. Negative: blurry, ugly"}})
 
 node4 = PSN_Ollama_Prompt_Enhancer()
-node4._ollama_request = staticmethod(_mock_ollama_with_neg)
-enhanced_neg, negative_neg = node4.run(
+node4._ollama_request = staticmethod(_canned_ollama_with_neg)
+enhanced_neg, negative_neg, _src = node4.run(
     short_prompt="a forest",
     style="realistic",
     max_tokens=128,
@@ -213,7 +283,7 @@ for style_name in ["realistic", "anime", "cinematic", "none"]:
 # 18. Node run: whitespace-only short_prompt
 # ---------------------------------------------------------------------------
 node8 = PSN_Ollama_Prompt_Enhancer()
-enhanced_ws, neg_ws = node8.run(short_prompt="   ", style="none", max_tokens=64)
+enhanced_ws, neg_ws, _s = node8.run(short_prompt="   ", style="none", max_tokens=64)
 assert isinstance(enhanced_ws, str) and len(enhanced_ws) > 0
 assert "a beautiful scene" in enhanced_ws
 

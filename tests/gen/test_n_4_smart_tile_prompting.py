@@ -1,13 +1,12 @@
-"""Tests for PSN_Smart_Tile_Prompter (pure-logic, no GPU, no network)."""
+"""Tests for PSN_TileGrid (pure-logic, no GPU, no network)."""
 
 import math
 
 import pytest
 
+from psn_nodes.gen import n_4_smart_tile_prompting as mod
 from psn_nodes.gen.n_4_smart_tile_prompting import (
-    ALLOWED_MODELS,
-    PSN_Smart_Tile_Prompter,
-    build_tile_prompt,
+    PSN_TileGrid,
     compute_tile_grid,
 )
 
@@ -43,32 +42,31 @@ def test_grid_overlap_increases_tile_count():
     assert len(with_overlap) > len(no_overlap)
 
 
-def test_prompts_match_tile_count_and_are_nonempty():
-    """Number of prompts equals number of tiles; all are non-empty strings."""
-    node = PSN_Smart_Tile_Prompter()
-    prompts_text, coords_text = node.run(
-        width=1024, height=1024, tile_size=512, overlap=0,
-        llm_model="llava-1.5-7b",
-    )
-    prompts = prompts_text.split("\n")
-    coords = coords_text.split("\n")
-    assert len(prompts) == len(coords)
-    assert len(prompts) == 4
-    for p in prompts:
-        assert isinstance(p, str)
-        assert len(p) > 0
-    for c in coords:
-        assert isinstance(c, str)
-        assert len(c) > 0
+def test_node_returns_exact_coords_for_known_grid():
+    """512 tiles with overlap 0 on 1024x1024 give the four quadrants, in order."""
+    node = PSN_TileGrid()
+    out = node.run(width=1024, height=1024, tile_size=512, overlap=0)
+    assert len(out) == 1
+    assert out[0].split("\n") == [
+        "[0, 0, 512, 512]", "[512, 0, 512, 512]",
+        "[0, 512, 512, 512]", "[512, 512, 512, 512]",
+    ]
 
 
-def test_prompt_is_deterministic_and_contains_model():
-    """Same inputs produce the same prompt; prompt includes model name."""
-    p1 = build_tile_prompt(0, 0, 0, 512, 512, "llava-1.5-7b")
-    p2 = build_tile_prompt(0, 0, 0, 512, 512, "llava-1.5-7b")
-    assert p1 == p2
-    assert "llava-1.5-7b" in p1
-    assert "tile 0" in p1
+def test_node_overlap_positions():
+    """1000 px wide, tile 512, overlap 64: step 448, last tile cut at the image edge."""
+    out = PSN_TileGrid().run(width=1000, height=512, tile_size=512, overlap=64)[0]
+    assert out.split("\n") == ["[0, 0, 512, 512]", "[448, 0, 512, 512]", "[896, 0, 104, 512]"]
+
+
+def test_no_prompt_text_or_model_input():
+    """The fabricated per-tile prompts and the model input are gone."""
+    assert "PSN_Smart_Tile_Prompter" not in mod.NODE_CLASS_MAPPINGS
+    assert not hasattr(mod, "build_tile_prompt")
+    assert not hasattr(mod, "ALLOWED_MODELS")
+    assert "llm_model" not in PSN_TileGrid.INPUT_TYPES()["required"]
+    assert PSN_TileGrid.RETURN_NAMES == ("TILE_COORDS",)
+    assert "no vision-language model" in PSN_TileGrid.DESCRIPTION
 
 
 def test_bad_input_non_numeric_tile_size_raises():
@@ -91,16 +89,6 @@ def test_bad_input_overlap_equals_tile_size_raises():
         compute_tile_grid(1024, 1024, 512, 512)
 
 
-def test_bad_input_disallowed_model_raises():
-    """A model not in the allow-list raises ValueError."""
-    node = PSN_Smart_Tile_Prompter()
-    with pytest.raises(ValueError):
-        node.run(
-            width=1024, height=1024, tile_size=512, overlap=64,
-            llm_model="not-a-real-model",
-        )
-
-
 def test_grid_max_tiles_guard():
     """A grid that would exceed _MAX_TILES raises ValueError."""
     # 16384x16384 with tile_size=16, overlap=0 -> 1024*1024 = 1,048,576 tiles
@@ -109,25 +97,13 @@ def test_grid_max_tiles_guard():
 
 
 def test_input_types_structure():
-    """INPUT_TYPES returns the expected keys and types."""
-    spec = PSN_Smart_Tile_Prompter.INPUT_TYPES()
-    assert "required" in spec
-    assert "width" in spec["required"]
-    assert "height" in spec["required"]
-    assert "tile_size" in spec["required"]
-    assert "overlap" in spec["required"]
-    assert "llm_model" in spec["required"]
-    # llm_model should be a tuple containing a list of allowed model strings
-    model_field = spec["required"]["llm_model"]
-    assert isinstance(model_field, tuple)
-    assert len(model_field) == 1
-    assert isinstance(model_field[0], list)
-    assert "llava-1.5-7b" in model_field[0]
+    """INPUT_TYPES returns the expected keys."""
+    spec = PSN_TileGrid.INPUT_TYPES()
+    assert set(spec["required"]) == {"width", "height", "tile_size", "overlap"}
 
 
 def test_return_types_and_names():
     """RETURN_TYPES and RETURN_NAMES match the spec."""
-    assert PSN_Smart_Tile_Prompter.RETURN_TYPES == ("STRING", "STRING")
-    assert PSN_Smart_Tile_Prompter.RETURN_NAMES == ("TILE_PROMPTS", "TILE_COORDS")
-    assert PSN_Smart_Tile_Prompter.FUNCTION == "run"
-    assert PSN_Smart_Tile_Prompter.CATEGORY == "ParametricStudio/SmartTile"
+    assert PSN_TileGrid.RETURN_TYPES == ("STRING",)
+    assert PSN_TileGrid.FUNCTION == "run"
+    assert PSN_TileGrid.CATEGORY == "ParametricStudio/SmartTile"

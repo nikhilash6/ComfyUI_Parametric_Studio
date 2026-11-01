@@ -1,15 +1,14 @@
-"""PSN_Sig_Process: pure-logic mastering chain for audio represented as JSON text.
+"""PSN_Audio_Json_Smooth_Gain_Normalize: moving-average smoothing, per-half gain and
+peak normalization on audio samples carried as JSON text.
 
-This node implements the *algorithmic* signal-processing chain (spectral denoising,
-parametric EQ, peak normalization) as a deterministic, dependency-free operation on
-plain Python data.  Because the spec's real implementation requires torch/torchaudio
-and GPU access, this module implements ONLY the secure-by-design pure-logic part:
+This is plain-Python arithmetic on a list of samples.  It is NOT a frequency-domain
+EQ or a spectral denoiser:
 
   * audio is passed in as JSON text (a list of float samples, or a dict with a
     "samples" key and optional "sample_rate"),
-  * denoising is a simple moving-average spectral smoothing,
-  * EQ is a two-band gain applied to low/high frequency bins (approximated by
-    splitting the sample stream into low/high halves for the pure-logic model),
+  * smoothing is a 5-sample moving average in the time domain,
+  * the gain stage multiplies the first half of the samples (in time) by one dB
+    value and the second half by another; no filtering by frequency happens,
   * normalization scales the peak to 0 dBFS (i.e. peak magnitude == 1.0).
 
 No torch, no ComfyUI imports, no network, no file/OS access, no eval/exec.
@@ -62,8 +61,8 @@ def _parse_audio(audio_json):
     return out, float(sample_rate)
 
 
-def _denoise(samples, window=5):
-    """Simple moving-average denoising (spectral smoothing approximation)."""
+def _smooth(samples, window=5):
+    """Time-domain moving average (smooths; does not remove noise by frequency)."""
     if len(samples) < window:
         return list(samples)
     out = []
@@ -75,23 +74,23 @@ def _denoise(samples, window=5):
     return out
 
 
-def _apply_eq(samples, eq_low, eq_high):
-    """Two-band parametric EQ approximation.
+def _apply_half_gains(samples, gain_first_db, gain_second_db):
+    """Gain by position in time, not by frequency.
 
-    Splits the sample stream into two halves: the first half is treated as the
-    "low" band and the second half as the "high" band.  Gains are applied in dB.
+    The first half of the samples is multiplied by gain_first_db (dB), the
+    second half by gain_second_db (dB).
     """
     n = len(samples)
     if n == 0:
         return samples
     mid = n // 2
-    gain_low = 10.0 ** (eq_low / 20.0)
-    gain_high = 10.0 ** (eq_high / 20.0)
+    g_first = 10.0 ** (gain_first_db / 20.0)
+    g_second = 10.0 ** (gain_second_db / 20.0)
     out = list(samples)
     for i in range(mid):
-        out[i] = samples[i] * gain_low
+        out[i] = samples[i] * g_first
     for i in range(mid, n):
-        out[i] = samples[i] * gain_high
+        out[i] = samples[i] * g_second
     return out
 
 
@@ -114,17 +113,24 @@ def _to_json(samples, sample_rate):
 # Node
 # ---------------------------------------------------------------------------
 
-class PSN_Sig_Process:
-    """Apply denoising, parametric EQ, and peak normalization to audio JSON."""
+class PSN_Audio_Json_Smooth_Gain_Normalize:
+    """Moving-average smoothing, per-half gain and peak normalization on JSON samples."""
+
+    DESCRIPTION = (
+        "Applies a 5-sample moving average, a dB gain to the first half and a "
+        "dB gain to the second half of the samples (by time position), and "
+        "peak normalization, on audio given as JSON text. It is not a "
+        "frequency EQ or a spectral denoiser."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "audio": ("STRING", {"default": "[]", "multiline": True}),
-                "denoise": ("BOOLEAN", {"default": False}),
-                "eq_low": ("FLOAT", {"default": 0.0, "min": -60.0, "max": 60.0, "step": 0.5}),
-                "eq_high": ("FLOAT", {"default": 0.0, "min": -60.0, "max": 60.0, "step": 0.5}),
+                "smooth": ("BOOLEAN", {"default": False}),
+                "gain_first_half_db": ("FLOAT", {"default": 0.0, "min": -60.0, "max": 60.0, "step": 0.5}),
+                "gain_second_half_db": ("FLOAT", {"default": 0.0, "min": -60.0, "max": 60.0, "step": 0.5}),
                 "normalize": ("BOOLEAN", {"default": True}),
             },
             "optional": {},
@@ -135,16 +141,18 @@ class PSN_Sig_Process:
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, audio, denoise, eq_low, eq_high, normalize):
+    def run(self, audio, smooth, gain_first_half_db, gain_second_half_db, normalize):
         samples, sample_rate = _parse_audio(audio)
-        if denoise:
-            samples = _denoise(samples)
-        if eq_low != 0.0 or eq_high != 0.0:
-            samples = _apply_eq(samples, eq_low, eq_high)
+        if smooth:
+            samples = _smooth(samples)
+        if gain_first_half_db != 0.0 or gain_second_half_db != 0.0:
+            samples = _apply_half_gains(samples, gain_first_half_db, gain_second_half_db)
         if normalize:
             samples = _normalize(samples)
         return (_to_json(samples, sample_rate),)
 
 
-NODE_CLASS_MAPPINGS = {"PSN_Sig_Process": PSN_Sig_Process}
-NODE_DISPLAY_NAME_MAPPINGS = {"PSN_Sig_Process": "Signal Processing Mastering Chain"}
+NODE_CLASS_MAPPINGS = {"PSN_Audio_Json_Smooth_Gain_Normalize": PSN_Audio_Json_Smooth_Gain_Normalize}
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "PSN_Audio_Json_Smooth_Gain_Normalize": "Audio JSON Smooth, Half Gain and Normalize"
+}

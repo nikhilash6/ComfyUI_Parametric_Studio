@@ -7,6 +7,7 @@ from psn_nodes.gen.psn_valueanimationmask import (
     _compute_color_deviation,
     _analyze_frame,
     _apply_threshold,
+    _frame_change,
 )
 
 
@@ -131,48 +132,64 @@ class TestApplyThreshold:
         assert mask == [[1.0, 1.0], [1.0, 1.0]]
 
 
-class TestPSNValueAnimationMask:
-    def test_brightness_mask_basic(self):
-        """Basic brightness mask generation."""
-        node = PSN_ValueAnimationMask()
-        # Frame with one dark pixel and one bright pixel
-        video = _make_video([
-            _make_frame([
-                [_make_pixel(0.1, 0.1, 0.1), _make_pixel(0.9, 0.9, 0.9)],
-            ]),
-        ])
-        (mask,) = node.run(video, "brightness", 0.5)
-        assert len(mask) == 1
-        assert mask[0] == [[0.0, 1.0]]
+class TestFrameChange:
+    def test_no_previous_frame_is_zero(self):
+        assert _frame_change(None, [[0.2, 0.9]]) == [[0.0, 0.0]]
 
-    def test_color_mask_basic(self):
-        """Basic color mask generation."""
+    def test_absolute_difference(self):
+        out = _frame_change([[0.2, 0.9]], [[0.5, 0.4]])
+        assert out[0] == pytest.approx([0.3, 0.5])
+
+    def test_size_mismatch(self):
+        with pytest.raises(ValueError, match="same height and width"):
+            _frame_change([[0.1]], [[0.1, 0.2]])
+
+
+class TestPSNValueAnimationMask:
+    def test_static_bright_video_gives_no_mask(self):
+        """A bright but unchanging video has no change, so no pixel is masked (the old code masked it all)."""
         node = PSN_ValueAnimationMask()
-        # Gray pixel (low color deviation) and red pixel (high color deviation)
-        video = _make_video([
-            _make_frame([
-                [_make_pixel(0.5, 0.5, 0.5), _make_pixel(1.0, 0.0, 0.0)],
-            ]),
-        ])
-        (mask,) = node.run(video, "color", 0.5)
-        assert len(mask) == 1
-        # Gray: deviation 0.0 < 0.5 -> 0.0
-        # Red: deviation 2/3 ≈ 0.667 >= 0.5 -> 1.0
-        assert mask[0] == [[0.0, 1.0]]
+        px = [[_make_pixel(0.9, 0.9, 0.9), _make_pixel(0.8, 0.8, 0.8)]]
+        (mask,) = node.run([px, px, px], "brightness", 0.5)
+        assert mask == [[[0.0, 0.0]]] * 3
+
+    def test_brightness_mask_marks_changed_pixels_only(self):
+        node = PSN_ValueAnimationMask()
+        f0 = [[_make_pixel(0.1, 0.1, 0.1), _make_pixel(0.9, 0.9, 0.9)]]
+        f1 = [[_make_pixel(0.8, 0.8, 0.8), _make_pixel(0.9, 0.9, 0.9)]]   # left pixel +0.7, right unchanged
+        f2 = [[_make_pixel(0.7, 0.7, 0.7), _make_pixel(0.1, 0.1, 0.1)]]   # left -0.1, right -0.8
+        (mask,) = node.run([f0, f1, f2], "brightness", 0.5)
+        assert mask[0] == [[0.0, 0.0]]      # frame 0: no previous frame
+        assert mask[1] == [[1.0, 0.0]]
+        assert mask[2] == [[0.0, 1.0]]
+
+    def test_color_mask_reacts_to_colour_change_not_brightness_level(self):
+        node = PSN_ValueAnimationMask()
+        gray = [[_make_pixel(0.5, 0.5, 0.5), _make_pixel(1.0, 0.0, 0.0)]]
+        red_now = [[_make_pixel(1.0, 0.0, 0.0), _make_pixel(1.0, 0.0, 0.0)]]  # first pixel gray -> red
+        (mask,) = node.run([gray, red_now], "color", 0.5)
+        assert mask[0] == [[0.0, 0.0]]
+        assert mask[1] == [[1.0, 0.0]]       # 0.0 -> 2/3 deviation >= 0.5; second pixel unchanged
 
     def test_multi_frame_video(self):
-        """Mask should be generated for each frame in the video."""
+        """One mask per frame, with the change measured against the previous frame."""
         node = PSN_ValueAnimationMask()
         video = _make_video([
             _make_frame([[_make_pixel(0.2, 0.2, 0.2)]]),
-            _make_frame([[_make_pixel(0.8, 0.8, 0.8)]]),
-            _make_frame([[_make_pixel(0.5, 0.5, 0.5)]]),
+            _make_frame([[_make_pixel(0.8, 0.8, 0.8)]]),   # +0.6
+            _make_frame([[_make_pixel(0.5, 0.5, 0.5)]]),   # -0.3
         ])
         (mask,) = node.run(video, "brightness", 0.5)
         assert len(mask) == 3
         assert mask[0] == [[0.0]]
         assert mask[1] == [[1.0]]
-        assert mask[2] == [[1.0]]
+        assert mask[2] == [[0.0]]
+
+    def test_frames_of_different_size_rejected(self):
+        node = PSN_ValueAnimationMask()
+        video = [[[_make_pixel(0.1, 0.1, 0.1)]], [[_make_pixel(0.1, 0.1, 0.1), _make_pixel(0.2, 0.2, 0.2)]]]
+        with pytest.raises(ValueError, match="same height and width"):
+            node.run(video, "brightness", 0.5)
 
     def test_invalid_value_type(self):
         """Invalid value_type should raise ValueError."""
@@ -208,7 +225,7 @@ class TestPSNValueAnimationMask:
         assert mask == []
 
     def test_edge_case_threshold_zero(self):
-        """Threshold of 0.0 should mask all pixels (all values >= 0)."""
+        """Threshold of 0.0 should mask all pixels (all changes >= 0)."""
         node = PSN_ValueAnimationMask()
         video = _make_video([
             _make_frame([[_make_pixel(0.0, 0.0, 0.0), _make_pixel(0.5, 0.5, 0.5)]]),
@@ -217,10 +234,12 @@ class TestPSNValueAnimationMask:
         assert mask[0] == [[1.0, 1.0]]
 
     def test_edge_case_threshold_one(self):
-        """Threshold of 1.0 should only mask fully bright pixels."""
+        """Threshold of 1.0 only masks a full black-to-white jump."""
         node = PSN_ValueAnimationMask()
         video = _make_video([
-            _make_frame([[_make_pixel(0.9, 0.9, 0.9), _make_pixel(1.0, 1.0, 1.0)]]),
+            _make_frame([[_make_pixel(0.0, 0.0, 0.0), _make_pixel(0.1, 0.1, 0.1)]]),
+            _make_frame([[_make_pixel(1.0, 1.0, 1.0), _make_pixel(0.9, 0.9, 0.9)]]),
         ])
         (mask,) = node.run(video, "brightness", 1.0)
-        assert mask[0] == [[0.0, 1.0]]
+        assert mask[0] == [[0.0, 0.0]]
+        assert mask[1] == [[1.0, 0.0]]

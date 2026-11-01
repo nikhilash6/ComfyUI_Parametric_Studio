@@ -4,7 +4,7 @@ import json
 import pytest
 
 from psn_nodes.gen.psn_mongodb_save_prompt import (
-    PSN_MongoDB_Save_Prompt,
+    PSN_Prompt_Document_Build,
     _psn_validate_params,
     _psn_generate_doc_id,
     _psn_build_document,
@@ -84,7 +84,7 @@ def test_psn_build_document_structure():
 
 
 def test_psn_node_run_success():
-    node = PSN_MongoDB_Save_Prompt()
+    node = PSN_Prompt_Document_Build()
     doc_id, doc_json = node.run("a test prompt", '{"steps": 20}', timestamp=1700000000.0)
     assert doc_id.startswith("psn_")
     doc = json.loads(doc_json)
@@ -95,7 +95,7 @@ def test_psn_node_run_success():
 
 
 def test_psn_node_run_invalid_params():
-    node = PSN_MongoDB_Save_Prompt()
+    node = PSN_Prompt_Document_Build()
     doc_id, doc_json = node.run("prompt", "not json")
     assert doc_id == ""
     doc = json.loads(doc_json)
@@ -103,7 +103,7 @@ def test_psn_node_run_invalid_params():
 
 
 def test_psn_node_run_empty_prompt():
-    node = PSN_MongoDB_Save_Prompt()
+    node = PSN_Prompt_Document_Build()
     doc_id, doc_json = node.run("", '{"steps": 20}', timestamp=1700000000.0)
     # Empty prompt is still a valid string; should succeed
     assert doc_id.startswith("psn_")
@@ -112,8 +112,19 @@ def test_psn_node_run_empty_prompt():
 
 
 def test_psn_node_run_non_string_prompt():
-    node = PSN_MongoDB_Save_Prompt()
+    node = PSN_Prompt_Document_Build()
     doc_id, doc_json = node.run(12345, '{"steps": 20}')
     assert doc_id == ""
     doc = json.loads(doc_json)
     assert "error" in doc
+
+
+def test_node_stores_nothing_and_says_so(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    node = PSN_Prompt_Document_Build()
+    doc_id, doc_json = node.run("p", '{"steps": 5}', timestamp=1700000000.0)
+    assert list(tmp_path.iterdir()) == []
+    assert doc_json == (
+        '{"_id":"%s","created_at":1700000000.0,"params":{"steps":5},"prompt":"p","schema_version":1}' % doc_id
+    )
+    assert "Stores nothing" in PSN_Prompt_Document_Build.DESCRIPTION

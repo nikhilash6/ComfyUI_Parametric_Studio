@@ -1,21 +1,15 @@
-"""PSN_BM3D_Denoise — pure-logic, secure-by-design control plane for a BM3D denoise step.
+"""PSN_PatchDCT_Shrink: overlapping-patch 2-D DCT shrinkage on a nested-list grayscale image.
 
-This module does NOT run the GPU/torch/cupy BM3D pipeline (no torch, no ComfyUI,
-no network, no file/OS access). It implements only the deterministic, CPU-safe
-parts of the spec:
+This is NOT BM3D: it does no block matching and no 3-D grouping. Each overlapping
+square patch is transformed with a 2-D DCT, its coefficients are soft- or
+hard-thresholded (level = sigma * 0.5), the patch is inverted, and the patches are
+averaged back together. Pure Python on a list of rows of floats; it does not accept
+ComfyUI IMAGE tensors (anything that is not a non-empty list of equal-length lists
+is returned unchanged with a reason). No torch, no GPU, no file or network access.
 
-  * config validation (sigma / block_size / nbd_threshold / image shape),
-  * a soft-thresholding helper (the core BM3D shrinkage op),
-  * a small pure-Python 1-D DCT-II (used to build the 2-D DCT for the
-    "3D FFT -> threshold -> inverse" step, implemented as a DCT for clarity),
-  * a patch-extraction / reassembly helper,
-  * a PSNR metric,
-  * a VRAM-guard estimate (bytes) so the real node can refuse to run when the
-    estimated working-set exceeds a budget (the "PSN_VRAM_Guard" risk).
-
-The real GPU node would call these helpers to validate its inputs and to
-compute the soft-thresholded coefficients; the heavy patch-grouping / 3D-FFT
-work stays on the GPU and is intentionally out of scope here.
+Helpers in this module: soft/hard thresholds, a 1-D and 2-D DCT-II and inverse,
+patch extraction and averaged reassembly, a PSNR metric, input validation, and a
+working-set size estimate (bytes) that can be compared with a budget.
 """
 
 import math
@@ -175,11 +169,9 @@ def _validate(sigma, block_size, nbd_threshold, h, w):
 
 
 def _vram_estimate(h, w, block_size, nbd_threshold):
-    """Rough working-set estimate in bytes for the GPU patch-grouping step.
-
-    BM3D keeps a 3-D stack of patches; a conservative estimate is
-    (num_patches * block_size^2 * 4 bytes) for the stack plus a copy for the
-    FFT domain. This is only used to gate on a VRAM budget.
+    """Rough working-set estimate in bytes: every overlapping patch stored as
+    float32 (num_patches * block_size^2 * 4), doubled for a transform-domain copy.
+    It is only compared with the optional byte budget.
     """
     num_patches = max(0, h - block_size + 1) * max(0, w - block_size + 1)
     stack_bytes = num_patches * (block_size * block_size) * 4
@@ -187,14 +179,18 @@ def _vram_estimate(h, w, block_size, nbd_threshold):
     return stack_bytes + fft_bytes
 
 
-class PSN_BM3D_Denoise:
-    """Pure-logic BM3D denoise control node (no GPU/torch).
+class PSN_PatchDCT_Shrink:
+    """Overlapping-patch DCT shrinkage (not BM3D) on a nested-list grayscale image.
 
-    Validates config, computes a soft-thresholded DCT-domain denoise on a
-    small pure-Python image, and reports PSNR + VRAM estimate. The real GPU
-    node would replace the DCT/patch loop with torch.fft + CUDA patch grouping
-    but keep this validation and metric logic.
+    Per patch: 2-D DCT, soft or hard threshold at sigma * 0.5, inverse DCT; patches
+    are averaged back. Reports the PSNR of the result against the input (a measure
+    of how much changed, not of noise removed) and whether the size estimate fits
+    the optional byte budget. IMAGE tensors are not supported.
     """
+
+    DESCRIPTION = ("Overlapping-patch 2-D DCT soft/hard thresholding on a nested-list grayscale image. "
+                   "Not BM3D (no block matching, no 3-D grouping) and not for IMAGE tensors. "
+                   "psnr_db compares the result with the input, so it measures change, not noise removed.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -202,7 +198,6 @@ class PSN_BM3D_Denoise:
             "required": {
                 "sigma": ("FLOAT", {"default": 0.1, "min": 0.0, "max": 1e9, "step": 0.001}),
                 "block_size": ("INT", {"default": 4, "min": 2, "max": 64, "step": 1}),
-                "nbd_threshold": ("FLOAT", {"default": 0.01, "min": 0.0, "max": 1e9, "step": 0.001}),
                 "image": (ANY,),
             },
             "optional": {
@@ -212,14 +207,14 @@ class PSN_BM3D_Denoise:
         }
 
     RETURN_TYPES = (ANY, "FLOAT", "STRING", "BOOLEAN")
-    RETURN_NAMES = ("denoised_image", "psnr_db", "reason", "vram_ok")
+    RETURN_NAMES = ("shrunk_image", "psnr_db", "reason", "vram_ok")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, sigma, block_size, nbd_threshold, image,
+    def run(self, sigma, block_size, image,
             threshold_mode="soft", vram_budget_bytes=0):
-        # image is expected to be a 2-D list of floats (pure-logic stand-in
-        # for an IMAGE tensor). If it is not, we report and pass through.
+        # image must be a 2-D list of floats. Anything else (including an IMAGE
+        # tensor) is reported and passed through unchanged.
         if not isinstance(image, (list, tuple)) or len(image) == 0:
             return (image, 0.0, "image must be a non-empty 2-D list", False)
         h = len(image)
@@ -229,20 +224,20 @@ class PSN_BM3D_Denoise:
         if any(len(row) != w for row in image):
             return (image, 0.0, "image rows must be equal length", False)
 
-        ok, why = _validate(sigma, block_size, nbd_threshold, h, w)
+        ok, why = _validate(sigma, block_size, 0.0, h, w)
         if not ok:
             return (image, 0.0, why, False)
 
-        vram = _vram_estimate(h, w, block_size, nbd_threshold)
+        vram = _vram_estimate(h, w, block_size, 0.0)
         vram_ok = (vram_budget_bytes <= 0) or (vram <= vram_budget_bytes)
         if not vram_ok:
             return (image, 0.0, "vram budget exceeded", False)
 
-        # Pure-Python BM3D-lite: DCT each patch, soft-threshold, inverse DCT.
+        # DCT each overlapping patch, threshold the coefficients, invert, average.
         stride = max(1, block_size // 2)
         patches = _extract_patches(image, block_size, stride)
-        lam = sigma * 0.5  # simple shrinkage level derived from sigma
-        denoised_patches = []
+        lam = sigma * 0.5  # shrinkage level derived from sigma
+        shrunk_patches = []
         for (r, c, patch) in patches:
             f = _dct2d(patch)
             if threshold_mode == "soft":
@@ -250,14 +245,13 @@ class PSN_BM3D_Denoise:
             elif threshold_mode == "hard":
                 f = [[_hard_threshold(v, lam) for v in row] for row in f]
             g = _idct2d(f)
-            denoised_patches.append((r, c, g))
-        denoised = _reassemble(denoised_patches, block_size, stride, h, w)
+            shrunk_patches.append((r, c, g))
+        shrunk = _reassemble(shrunk_patches, block_size, stride, h, w)
 
-        # PSNR vs the (noisy) input is not meaningful without a clean ref;
-        # report PSNR of denoised vs input as a stability metric (higher = less change).
-        psnr = _psnr(image, denoised, max_val=1.0)
-        return (denoised, psnr, "ok", True)
+        # PSNR of result vs input: how much the image changed (higher = less change).
+        psnr = _psnr(image, shrunk, max_val=1.0)
+        return (shrunk, psnr, "ok", True)
 
 
-NODE_CLASS_MAPPINGS = {"PSN_BM3D_Denoise": PSN_BM3D_Denoise}
-NODE_DISPLAY_NAME_MAPPINGS = {"PSN_BM3D_Denoise": "PSN BM3D Denoise (logic)"}
+NODE_CLASS_MAPPINGS = {"PSN_PatchDCT_Shrink": PSN_PatchDCT_Shrink}
+NODE_DISPLAY_NAME_MAPPINGS = {"PSN_PatchDCT_Shrink": "Patch DCT Shrinkage (list image, not BM3D)"}

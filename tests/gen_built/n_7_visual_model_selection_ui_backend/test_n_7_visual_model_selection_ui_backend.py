@@ -1,12 +1,14 @@
 """Tests for n_7_visual_model_selection_ui_backend."""
 
 import json
+import os
+import tempfile
 
+import n_7_visual_model_selection_ui_backend as mod
 from n_7_visual_model_selection_ui_backend import (
     PSN_VisualModelSelector,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
-    DEFAULT_PLACEHOLDER,
     _build_card,
     _find_cover,
     _clean_metadata,
@@ -34,21 +36,58 @@ def test_input_types_shape():
     assert PSN_VisualModelSelector.CATEGORY.startswith("ParametricStudio/")
 
 
+def _mk(root, name, files):
+    d = os.path.join(root, name)
+    os.makedirs(d)
+    for f in files:
+        with open(os.path.join(d, f), "wb") as fh:
+            fh.write(b"x")
+    return d
+
+
 def test_run_basic_cards():
     node = PSN_VisualModelSelector()
-    model_list = [
-        {"name": "alpha", "dir": "/models/alpha", "metadata": {"size": 100}},
-        {"name": "beta", "dir": "/models/beta", "metadata": {"size": 200}},
-        {"name": "gamma", "dir": "/models/gamma", "metadata": {}},
-    ]
-    (cards,) = node.run(model_list, limit=10)
-    assert len(cards) == 3
-    assert cards[0]["name"] == "alpha"
-    assert cards[0]["cover_image_path"] == "/models/alpha/cover.jpg"
-    assert cards[0]["metadata"] == {"size": 100}
-    assert cards[1]["name"] == "beta"
-    assert cards[1]["cover_image_path"] == "/models/beta/cover.jpg"
-    assert cards[2]["name"] == "gamma"
+    with tempfile.TemporaryDirectory() as root:
+        alpha = _mk(root, "alpha", ["cover.jpg"])
+        beta = _mk(root, "beta", ["preview.png"])
+        gamma = _mk(root, "gamma", [])
+        model_list = [
+            {"name": "alpha", "dir": alpha, "metadata": {"size": 100}},
+            {"name": "beta", "dir": beta, "metadata": {"size": 200}},
+            {"name": "gamma", "dir": gamma, "metadata": {}},
+        ]
+        (cards,) = node.run(model_list, limit=10)
+        assert len(cards) == 3
+        assert cards[0]["name"] == "alpha"
+        assert cards[0]["cover_image_path"] == os.path.join(alpha, "cover.jpg")
+        assert cards[0]["metadata"] == {"size": 100}
+        assert cards[1]["name"] == "beta"
+        # no cover.jpg: falls through to the preview.png that does exist
+        assert cards[1]["cover_image_path"] == os.path.join(beta, "preview.png")
+        assert cards[2]["name"] == "gamma"
+        # directory exists but has no cover file: empty, not an invented path
+        assert cards[2]["cover_image_path"] == ""
+
+
+def test_cover_prefers_cover_jpg_over_preview():
+    with tempfile.TemporaryDirectory() as root:
+        d = _mk(root, "both", ["preview.png", "cover.jpg"])
+        assert _find_cover(d) == os.path.join(d, "cover.jpg")
+
+
+def test_missing_directory_gives_empty_path():
+    node = PSN_VisualModelSelector()
+    (cards,) = node.run([{"name": "ghost", "dir": "/nonexistent/ghost-dir"}], limit=5)
+    assert cards[0]["cover_image_path"] == ""
+    # a directory named like a cover file is not a file
+    with tempfile.TemporaryDirectory() as root:
+        d = os.path.join(root, "m")
+        os.makedirs(os.path.join(d, "cover.jpg"))
+        assert _find_cover(d) is None
+
+
+def test_default_cover_constant_removed():
+    assert not hasattr(mod, "DEFAULT_PLACEHOLDER")
 
 
 def test_run_limit_truncates():
@@ -73,12 +112,12 @@ def test_run_string_entries_and_missing_dir():
     (cards,) = node.run(model_list, limit=10)
     assert len(cards) == 3
     assert cards[0]["name"] == "just-a-name"
-    assert cards[0]["cover_image_path"] == DEFAULT_PLACEHOLDER
+    assert cards[0]["cover_image_path"] == ""
     assert cards[1]["name"] == "no-dir"
-    assert cards[1]["cover_image_path"] == DEFAULT_PLACEHOLDER
+    assert cards[1]["cover_image_path"] == ""
     # blank name falls back to model-<index>
     assert cards[2]["name"] == "model-2"
-    assert cards[2]["cover_image_path"] == DEFAULT_PLACEHOLDER
+    assert cards[2]["cover_image_path"] == ""
 
 
 def test_bad_inputs_raise():
@@ -125,14 +164,16 @@ def test_find_cover_edge_cases():
     assert _find_cover("") is None
     assert _find_cover("   ") is None
     assert _find_cover(123) is None
-    assert _find_cover("/models/foo") == "/models/foo/cover.jpg"
-    assert _find_cover("/models/foo/") == "/models/foo/cover.jpg"
+    assert _find_cover("/models/foo") is None  # not on disk
+    with tempfile.TemporaryDirectory() as root:
+        d = _mk(root, "foo", ["cover.jpg"])
+        assert _find_cover(d + "/") == os.path.join(d + "/", "cover.jpg")
 
 
 def test_build_card_non_dict_entry():
     card = _build_card(42, 7)
     assert card["name"] == "model-7"
-    assert card["cover_image_path"] == DEFAULT_PLACEHOLDER
+    assert card["cover_image_path"] == ""
     assert "raw" in card["metadata"]
 
 
@@ -152,6 +193,9 @@ if __name__ == "__main__":
     test_module_mappings()
     test_input_types_shape()
     test_run_basic_cards()
+    test_cover_prefers_cover_jpg_over_preview()
+    test_missing_directory_gives_empty_path()
+    test_default_cover_constant_removed()
     test_run_limit_truncates()
     test_run_empty_and_none()
     test_run_string_entries_and_missing_dir()

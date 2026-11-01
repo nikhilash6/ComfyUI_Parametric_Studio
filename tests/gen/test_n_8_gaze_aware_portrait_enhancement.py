@@ -8,31 +8,35 @@ mediapipe, no opencv, no files, no network).
 import math
 
 from psn_nodes.gen.n_8_gaze_aware_portrait_enhancement import (
-    PSN_GazeEstimator,
+    PSN_GazeVectorNormalize,
     PSN_GazeCorrector,
     _normalize_vector,
     _correction_offset,
-    _confidence_from_vector,
 )
 
 
-def test_gaze_estimator_normalizes_forward_gaze():
-    node = PSN_GazeEstimator()
-    gaze, pupil, conf, reason = node.run("0.0, 0.0, 1.0", "512, 384")
+def test_gaze_normalize_normalizes_forward_gaze():
+    node = PSN_GazeVectorNormalize()
+    gaze, pupil, reason = node.run("0.0, 0.0, 1.0", "512, 384")
     assert reason == "ok"
     # Normalized forward vector.
     assert math.isclose(gaze[0], 0.0, abs_tol=1e-9)
     assert math.isclose(gaze[1], 0.0, abs_tol=1e-9)
     assert math.isclose(gaze[2], 1.0, abs_tol=1e-9)
     assert pupil == [512, 384]
-    # Forward, unit-length vector should be high confidence.
-    assert conf > 0.9
+    # Non-unit input is scaled to unit length.
+    gaze2, _, _ = node.run("0.0, 3.0, 4.0", "1, 2")
+    assert math.isclose(gaze2[1], 0.6, abs_tol=1e-9)
+    assert math.isclose(gaze2[2], 0.8, abs_tol=1e-9)
+    # The invented confidence score is gone.
+    assert PSN_GazeVectorNormalize.RETURN_NAMES == ("GAZE_VECTOR", "PUPIL_POSITION", "REASON")
+    assert len(node.run("0.0, 0.0, 1.0", "512, 384")) == 3
 
 
-def test_gaze_estimator_left_gaze_has_negative_x():
-    node = PSN_GazeEstimator()
+def test_gaze_normalize_left_gaze_has_negative_x():
+    node = PSN_GazeVectorNormalize()
     # Eyes looking left => negative x component.
-    gaze, pupil, conf, reason = node.run("-0.5, 0.0, 0.866", "400, 384")
+    gaze, pupil, reason = node.run("-0.5, 0.0, 0.866", "400, 384")
     assert reason == "ok"
     assert gaze[0] < 0.0
     # Still a valid unit-ish vector.
@@ -40,28 +44,27 @@ def test_gaze_estimator_left_gaze_has_negative_x():
     assert math.isclose(norm, 1.0, abs_tol=1e-6)
 
 
-def test_gaze_estimator_rejects_zero_vector():
-    node = PSN_GazeEstimator()
-    gaze, pupil, conf, reason = node.run("0.0, 0.0, 0.0", "512, 384")
+def test_gaze_normalize_rejects_zero_vector():
+    node = PSN_GazeVectorNormalize()
+    gaze, pupil, reason = node.run("0.0, 0.0, 0.0", "512, 384")
     assert reason != "ok"
-    assert conf == 0.0
     # Fallback defaults.
     assert gaze == [0.0, 0.0, 1.0]
     assert pupil == [0, 0]
 
 
-def test_gaze_estimator_rejects_bad_pupil_position():
-    node = PSN_GazeEstimator()
-    gaze, pupil, conf, reason = node.run("0.0, 0.0, 1.0", "512")
+def test_gaze_normalize_rejects_bad_pupil_position():
+    node = PSN_GazeVectorNormalize()
+    gaze, pupil, reason = node.run("0.0, 0.0, 1.0", "512")
     assert reason != "ok"
     assert pupil == [0, 0]
 
 
-def test_gaze_estimator_rejects_non_numeric_gaze():
-    node = PSN_GazeEstimator()
-    gaze, pupil, conf, reason = node.run("a, b, c", "512, 384")
+def test_gaze_normalize_rejects_non_numeric_gaze():
+    node = PSN_GazeVectorNormalize()
+    gaze, pupil, reason = node.run("a, b, c", "512, 384")
     assert reason != "ok"
-    assert conf == 0.0
+    assert gaze == [0.0, 0.0, 1.0]
 
 
 def test_gaze_corrector_center_to_center_is_zero():
@@ -116,5 +119,8 @@ def test_correction_offset_helper_clamps_strength():
     assert math.isclose(mag, 2.0, abs_tol=1e-9)
 
 
-def test_confidence_helper_zero_vector_is_zero():
-    assert _confidence_from_vector([0.0, 0.0, 0.0]) == 0.0
+def test_confidence_helper_is_gone():
+    import psn_nodes.gen.n_8_gaze_aware_portrait_enhancement as m
+    assert not hasattr(m, "_confidence_from_vector")
+    assert "PSN_GazeEstimator" not in m.NODE_CLASS_MAPPINGS
+    assert "has no image input" in PSN_GazeVectorNormalize.DESCRIPTION

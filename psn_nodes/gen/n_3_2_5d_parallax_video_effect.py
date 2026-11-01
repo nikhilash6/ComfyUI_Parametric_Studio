@@ -15,10 +15,10 @@ values:
     each pixel should be displaced for every frame.  A downstream (GPU)
     stage would apply these displacements to the actual image pixels.
 
-  * ``PSN_Parallax_Video_Assembler`` takes a JSON string describing a batch
-    of frames plus fps / codec and returns a *descriptive* video path string
-    (it does NOT write any file).  It validates the codec / fps and builds a
-    deterministic, safe path name.
+  * ``PSN_Parallax_Filename_Builder`` takes the JSON string of displacement
+    frames plus a codec and returns a filename string built from the frame
+    count, the element count and the codec's extension.  It encodes nothing
+    and writes no file.
 
 All inputs are plain numbers / strings / JSON text.  No sockets, no files,
 no subprocess, no eval/exec, no dunder tricks.
@@ -32,7 +32,7 @@ CAT = "ParametricStudio/Parallax"
 # Camera paths supported by the generator.
 CAMERA_PATHS = ["pan_left", "pan_right", "zoom_in", "zoom_out"]
 
-# Codecs supported by the assembler.
+# Codecs (filename extensions) supported by the filename builder.
 CODECS = ["mp4", "webm"]
 
 # Displacement is expressed in pixels.  We clamp so that no pixel is pushed
@@ -233,36 +233,39 @@ class PSN_Depth_Parallax_Generator:
         return (frames_json, masks_json)
 
 
-class PSN_Parallax_Video_Assembler:
-    """Build a descriptive video path string for a batch of parallax frames.
+class PSN_Parallax_Filename_Builder:
+    """Build a filename string from the frame count and element count of parallax frames.
 
-    This does NOT write any file.  It validates the fps and codec, and
-    returns a deterministic, safe path string that a downstream (GPU /
-    ffmpeg) stage would use to encode the video.
+    This does NOT write any file or encode any video.  It validates the
+    frames JSON and the codec, and returns a deterministic filename that a
+    later stage may use.
 
     Inputs: a JSON string describing the batch of frames (list of per-frame
-    displacement fields, as produced by PSN_Depth_Parallax_Generator), an
-    fps (INT), and a codec (COMBO).
-    Output: a STRING video path.
+    displacement fields, as produced by PSN_Depth_Parallax_Generator) and a
+    codec (COMBO) that picks the extension.
+    Output: a STRING filename.
     """
+
+    DESCRIPTION = ("Builds a filename string from the frame count and element count of the "
+                   "displacement frames and the codec's extension. It writes no video file "
+                   "and encodes nothing.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "frames": ("STRING", {"default": "[]", "multiline": True}),
-                "fps": ("INT", {"default": 30, "min": 1, "max": 240, "step": 1}),
                 "codec": (CODECS,),
             },
             "optional": {},
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("video_path",)
+    RETURN_NAMES = ("filename",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, frames, fps, codec):
+    def run(self, frames, codec):
         if not isinstance(frames, str):
             raise ValueError("frames must be a JSON string")
         try:
@@ -271,18 +274,10 @@ class PSN_Parallax_Video_Assembler:
             raise ValueError("frames is not valid JSON: %s" % exc)
         if not isinstance(data, list) or len(data) == 0:
             raise ValueError("frames must be a non-empty JSON list")
-        if fps < 1:
-            raise ValueError("fps must be >= 1")
-        if fps > 240:
-            raise ValueError("fps must be <= 240")
         if codec not in CODECS:
             raise ValueError("codec must be one of %s" % CODECS)
 
-        # Build a deterministic, safe path.  We use the frame count and a
-        # simple hash-like suffix derived from the frame data length to make
-        # the path unique but stable.
         frame_count = len(data)
-        # A simple, safe identifier: frame count and total element count.
         total_elements = 0
         for frame in data:
             if not isinstance(frame, list):
@@ -293,16 +288,16 @@ class PSN_Parallax_Video_Assembler:
                 total_elements += len(row)
 
         ext = "mp4" if codec == "mp4" else "webm"
-        path = "parallax_video_%d_frames_%d_elems.%s" % (frame_count, total_elements, ext)
-        return (path,)
+        name = "parallax_video_%d_frames_%d_elems.%s" % (frame_count, total_elements, ext)
+        return (name,)
 
 
 NODE_CLASS_MAPPINGS = {
     "PSN_Depth_Parallax_Generator": PSN_Depth_Parallax_Generator,
-    "PSN_Parallax_Video_Assembler": PSN_Parallax_Video_Assembler,
+    "PSN_Parallax_Filename_Builder": PSN_Parallax_Filename_Builder,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_Depth_Parallax_Generator": "PSN Depth Parallax Generator",
-    "PSN_Parallax_Video_Assembler": "PSN Parallax Video Assembler",
+    "PSN_Parallax_Filename_Builder": "Parallax Filename Builder (writes no video)",
 }

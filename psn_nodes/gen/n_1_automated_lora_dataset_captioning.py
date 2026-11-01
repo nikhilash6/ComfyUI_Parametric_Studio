@@ -1,22 +1,13 @@
-"""ParametricStudio: Automated LoRA Dataset Captioning.
+"""ParametricStudio: Image-statistics captions and caption auditing.
 
-Implements the core, torch/stdlib-only parts of the spec:
-
-* PSN_VLM_Caption_Generator: builds a style-specific system prompt for a VLM,
-  extracts deterministic image statistics (mean brightness, contrast,
-  dominant hue bucket) from the IMAGE tensor, and produces a caption plus a
-  heuristic confidence score.  The actual VLM inference is NOT implemented
-  (no transformers / llama-cpp-python available); the node accepts an optional
-  ``llm_handle`` object that, if it exposes a ``generate(prompt, image_stats)``
-  method, will be used to produce the raw text.  Otherwise a deterministic
-  template caption is produced from the image statistics so the node remains
-  fully testable on CPU.
+* PSN_Image_Stats_Caption: computes mean brightness, contrast and the
+  dominant RGB tone of the IMAGE tensor and fills a fixed caption template
+  with them.  No vision-language model runs: the caption only says how bright,
+  how contrasty and which tone the image is, never what is in it.
 
 * PSN_Caption_Auditor: validates a caption against banned/allowed term lists
-  using plain string/regex matching.
+  using plain string matching.
 """
-
-import re
 
 import torch
 
@@ -93,43 +84,15 @@ def _contrast_word(v):
     return "high contrast"
 
 
-def _build_system_prompt(caption_style, negative_prompt_hint):
-    base = {
-        "detailed": (
-            "You are a precise image captioner for LoRA training datasets. "
-            "Write a detailed, factual caption describing subject, setting, "
-            "lighting, composition and style. Do not invent objects that are "
-            "not visible."
-        ),
-        "concise": (
-            "You are a concise image captioner. Describe the image in one "
-            "short sentence, focusing on the main subject."
-        ),
-        "booru_tags": (
-            "You are an image tagger. Output a comma-separated list of booru-style "
-            "tags (lowercase, underscore-separated) describing the image. "
-            "No full sentences."
-        ),
-        "natural_language": (
-            "You are a natural-language image captioner. Write a fluent, "
-            "human-like sentence or two describing the image."
-        ),
-    }
-    prompt = base.get(caption_style, base["detailed"])
-    if negative_prompt_hint and negative_prompt_hint.strip():
-        prompt += " Avoid mentioning: %s." % negative_prompt_hint.strip()
-    return prompt
-
-
 def _template_caption(stats, caption_style):
-    """Deterministic fallback caption built from image statistics."""
+    """Caption template filled from image statistics."""
     bright = _brightness_word(stats["mean_brightness"])
     contrast = _contrast_word(stats["contrast"])
     hue = stats["dominant_hue"]
     size = "%dx%d" % (stats["width"], stats["height"])
 
     if caption_style == "booru_tags":
-        tags = ["image", size, bright, contrast.replace(" ", "_")]
+        tags = ["image", size, bright.replace(" ", "_"), contrast.replace(" ", "_")]
         if hue != "neutral":
             tags.append(hue + "_tone")
         return ", ".join(tags)
@@ -146,79 +109,30 @@ def _template_caption(stats, caption_style):
 
     return (
         "A %s image of size %s. The overall lighting is %s with %s. "
-        "The dominant color tone is %s. Composition and subject details "
-        "would be provided by the VLM in a full deployment." % (
+        "The dominant color tone is %s." % (
             bright, size, bright, contrast, hue
         )
     )
 
 
-def _confidence_score(caption, caption_style):
-    """Heuristic confidence in [0, 1] based on length and structure."""
-    if not caption or not caption.strip():
-        return 0.0
-    text = caption.strip()
-    n_chars = len(text)
-    n_words = len(text.split())
-
-    if n_chars < 10:
-        base = 0.2
-    elif n_chars < 40:
-        base = 0.5
-    elif n_chars < 120:
-        base = 0.8
-    else:
-        base = 1.0
-
-    if caption_style == "booru_tags":
-        parts = [p.strip() for p in text.split(",") if p.strip()]
-        if parts:
-            good = sum(1 for p in parts if re.fullmatch(r"[a-z0-9_]+", p) is not None)
-            base = min(1.0, base * (good / len(parts)))
-        else:
-            base = 0.1
-    else:
-        if n_words < 2:
-            base *= 0.5
-
-    return round(max(0.0, min(1.0, base)), 4)
-
-
-def _parse_caption(raw, caption_style):
-    """Light parsing / normalisation of the raw VLM (or template) output."""
-    if raw is None:
-        return ""
-    text = str(raw).strip()
-    if len(text) >= 2 and text[0] == text[-1] and text[0] in ('"', "'"):
-        text = text[1:-1].strip()
-    if caption_style == "booru_tags":
-        parts = []
-        seen = set()
-        for p in text.split(","):
-            tag = re.sub(r"\s+", "_", p.strip().lower())
-            tag = re.sub(r"[^a-z0-9_]", "", tag)
-            if tag and tag not in seen:
-                seen.add(tag)
-                parts.append(tag)
-        text = ", ".join(parts)
-    return text
-
-
 # ---------------------------------------------------------------------------
-# Node 1: PSN_VLM_Caption_Generator
+# Node 1: PSN_Image_Stats_Caption
 # ---------------------------------------------------------------------------
 
 
-class PSN_VLM_Caption_Generator:
-    """Generate a caption for an image using a VLM handle (or a deterministic
-    template fallback when no handle is provided).
+class PSN_Image_Stats_Caption:
+    """Write a template caption from mean brightness, contrast and dominant
+    RGB tone.
 
-    NOTE: Real VLM inference (transformers / llama-cpp-python) is NOT
-    implemented in this module.  If ``llm_handle`` is provided and exposes a
-    ``generate(prompt, image_stats)`` callable, its return value is used as
-    the raw caption text.  Otherwise a deterministic template caption is
-    produced from image statistics so the node is fully testable on CPU.
+    No VLM or other model is run, so the caption never describes the image
+    content.  Statistics are taken over the whole batch.
     """
+
+    DESCRIPTION = (
+        "Writes a template caption from the image's mean brightness, contrast "
+        "and dominant RGB tone. No vision-language model runs, so it does not "
+        "describe what is in the image."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -229,35 +143,17 @@ class PSN_VLM_Caption_Generator:
                     ["detailed", "concise", "booru_tags", "natural_language"],
                 ),
             },
-            "optional": {
-                "llm_handle": ("PSN_LLM_HANDLE",),
-                "negative_prompt_hint": ("STRING", {"default": "", "multiline": True}),
-            },
         }
 
-    RETURN_TYPES = ("STRING", "FLOAT")
-    RETURN_NAMES = ("caption", "confidence_score")
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("caption",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, image, caption_style, llm_handle=None, negative_prompt_hint=""):
+    def run(self, image, caption_style):
         img = _as_image_tensor(image)
         stats = _image_stats(img)
-        system_prompt = _build_system_prompt(caption_style, negative_prompt_hint)
-
-        raw = None
-        if llm_handle is not None and hasattr(llm_handle, "generate"):
-            try:
-                raw = llm_handle.generate(system_prompt, stats)
-            except Exception:
-                raw = None
-
-        if raw is None or not str(raw).strip():
-            raw = _template_caption(stats, caption_style)
-
-        caption = _parse_caption(raw, caption_style)
-        confidence = _confidence_score(caption, caption_style)
-        return (caption, confidence)
+        return (_template_caption(stats, caption_style),)
 
 
 # ---------------------------------------------------------------------------
@@ -347,11 +243,11 @@ class PSN_Caption_Auditor:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_VLM_Caption_Generator": PSN_VLM_Caption_Generator,
+    "PSN_Image_Stats_Caption": PSN_Image_Stats_Caption,
     "PSN_Caption_Auditor": PSN_Caption_Auditor,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_VLM_Caption_Generator": "VLM Caption Generator",
+    "PSN_Image_Stats_Caption": "Image Stats Caption (no VLM)",
     "PSN_Caption_Auditor": "Caption Auditor",
 }

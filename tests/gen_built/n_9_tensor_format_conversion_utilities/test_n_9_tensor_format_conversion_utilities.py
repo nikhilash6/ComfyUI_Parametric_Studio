@@ -11,8 +11,59 @@ from n_9_tensor_format_conversion_utilities import (
     PSN_Mask_To_Image,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
-    _PseudoVAE,
 )
+
+F = 8
+
+
+class RecordingVAE:
+    """Test VAE with the real ComfyUI call shapes.
+
+    encode(pixels [B,H,W,3 or 4]) -> latent tensor [B,4,H//8,W//8]
+    decode(samples tensor [B,4,h,w]) -> pixels [B,h*8,w*8,3]
+    It records what it was called with so the tests can check the node
+    passes the right objects (tensor, not dict; 3 channels for masks).
+    """
+
+    def __init__(self):
+        self.encode_args = []
+        self.decode_args = []
+
+    def encode(self, pixels):
+        assert isinstance(pixels, torch.Tensor) and pixels.dim() == 4
+        self.encode_args.append(pixels)
+        b, h, w, c = pixels.shape
+        px = pixels[..., :3].mean(dim=-1)  # [B,H,W]
+        pooled = px.reshape(b, h // F, F, w // F, F).mean(dim=(2, 4))  # [B,h,w]
+        return pooled.unsqueeze(1).repeat(1, 4, 1, 1) * 2.0
+
+    def decode(self, samples):
+        assert isinstance(samples, torch.Tensor), "decode must get a tensor, not a dict"
+        self.decode_args.append(samples)
+        up = torch.nn.functional.interpolate(samples[:, :3] / 2.0, scale_factor=F, mode="nearest")
+        return up.permute(0, 2, 3, 1)
+
+
+vae = RecordingVAE()
+
+# ---------------------------------------------------------------------------
+# 0. Wiring: the VAE inputs are VAE-typed, and there is no substitute VAE
+# ---------------------------------------------------------------------------
+for cls in (PSN_Image_To_Latent, PSN_Latent_To_Image, PSN_Mask_To_Latent):
+    assert cls.INPUT_TYPES()["required"]["vae"] == ("VAE",), cls.__name__
+import n_9_tensor_format_conversion_utilities as _mod
+assert not hasattr(_mod, "_PseudoVAE")
+
+# no VAE / object without the method: error, not silent conversion
+for bad in (None, object(), "vae"):
+    for call in (lambda v: PSN_Image_To_Latent().run(torch.rand(1, 16, 16, 3), v),
+                 lambda v: PSN_Latent_To_Image().run({"samples": torch.rand(1, 4, 2, 2)}, v),
+                 lambda v: PSN_Mask_To_Latent().run(torch.rand(1, 16, 16), v)):
+        try:
+            call(bad)
+            raise AssertionError("expected TypeError for vae=%r" % (bad,))
+        except TypeError:
+            pass
 
 # ---------------------------------------------------------------------------
 # 1. Round-trip: Image -> Latent -> Image preserves spatial shape
@@ -21,19 +72,24 @@ img = torch.rand(1, 64, 64, 3)  # [B,H,W,C]
 enc = PSN_Image_To_Latent()
 dec = PSN_Latent_To_Image()
 
-latent, = enc.run(img, None)  # None -> pseudo-VAE
+latent, = enc.run(img, vae)
 assert isinstance(latent, dict), "latent output must be a dict"
 assert "samples" in latent, "latent dict must have 'samples'"
 assert latent["samples"].dim() == 4, "latent samples must be 4-D"
 
-img2, = dec.run(latent, None)
+img2, = dec.run(latent, vae)
 assert img2.shape == img.shape, f"round-trip shape mismatch: {img2.shape} vs {img.shape}"
 assert img2.min() >= 0.0 and img2.max() <= 1.0, "decoded image must be in 0..1"
 
 # ---------------------------------------------------------------------------
-# 2. Latent spatial shape is downsampled by the pseudo-VAE factor
+# 2. Latent spatial shape is downsampled by the VAE factor, values come from the VAE
 # ---------------------------------------------------------------------------
-f = _PseudoVAE().downscale
+f = F
+assert torch.allclose(latent["samples"][:, 0], img.mean(dim=-1).reshape(1, 8, 8, 8, 8).mean(dim=(2, 4)) * 2.0, atol=1e-6)
+assert torch.equal(vae.encode_args[0], img), "node must pass the [B,H,W,C] image to vae.encode"
+assert torch.equal(vae.decode_args[0], latent["samples"]), "node must pass the samples tensor to vae.decode"
+# decode result is the VAE's, clamped to 0..1
+assert torch.allclose(img2[..., 0], img2[..., 1]) and torch.allclose(img2[0, 0, 0, 0], img.mean(dim=-1)[0, :8, :8].mean())
 assert latent["samples"].shape[2] == 64 // f, "latent H should be H//f"
 assert latent["samples"].shape[3] == 64 // f, "latent W should be W//f"
 
@@ -42,10 +98,15 @@ assert latent["samples"].shape[3] == 64 // f, "latent W should be W//f"
 # ---------------------------------------------------------------------------
 mask = torch.rand(1, 32, 32)  # [B,H,W]
 m2l = PSN_Mask_To_Latent()
-mlatent, = m2l.run(mask, None)
+mlatent, = m2l.run(mask, vae)
 assert isinstance(mlatent, dict)
 assert mlatent["samples"].dim() == 4
-assert mlatent["samples"].shape[0] == 1
+assert mlatent["samples"].shape == (1, 4, 4, 4)
+sent = vae.encode_args[-1]
+assert sent.shape == (1, 32, 32, 3), "mask must be expanded to 3 channels for the VAE"
+for c in range(3):
+    assert torch.equal(sent[..., c], mask)
+assert torch.allclose(mlatent["samples"][0, 0], mask[0].reshape(4, 8, 4, 8).mean(dim=(1, 3)) * 2.0, atol=1e-6)
 
 # ---------------------------------------------------------------------------
 # 4. Latent -> Mask reduces channels to a single-channel mask
@@ -77,7 +138,7 @@ assert img_from_mask.shape == (1, 32, 32, 1), f"mask-to-image shape: {img_from_m
 # 7. Bad input: non-tensor image raises TypeError
 # ---------------------------------------------------------------------------
 try:
-    enc.run("not a tensor", None)
+    enc.run("not a tensor", vae)
     assert False, "should have raised TypeError"
 except TypeError:
     pass
@@ -86,7 +147,7 @@ except TypeError:
 # 8. Bad input: non-dict latent raises TypeError
 # ---------------------------------------------------------------------------
 try:
-    dec.run(torch.rand(1, 4, 8, 8), None)
+    dec.run(torch.rand(1, 4, 8, 8), vae)
     assert False, "should have raised TypeError"
 except TypeError:
     pass
@@ -95,7 +156,7 @@ except TypeError:
 # 9. Bad input: wrong-dim image raises ValueError
 # ---------------------------------------------------------------------------
 try:
-    enc.run(torch.rand(5, 5), None)  # 2-D, not an image
+    enc.run(torch.rand(5, 5), vae)  # 2-D, not an image
     assert False, "should have raised ValueError"
 except ValueError:
     pass
@@ -104,7 +165,7 @@ except ValueError:
 # 10. Inputs are not modified in place
 # ---------------------------------------------------------------------------
 img_orig = img.clone()
-latent, = enc.run(img, None)
+latent, = enc.run(img, vae)
 assert torch.equal(img, img_orig), "input image must not be modified in place"
 
 # ---------------------------------------------------------------------------
@@ -123,9 +184,9 @@ for k in NODE_CLASS_MAPPINGS:
 # 12. Batch > 1 works
 # ---------------------------------------------------------------------------
 img_batch = torch.rand(3, 16, 16, 3)
-latent_b, = enc.run(img_batch, None)
+latent_b, = enc.run(img_batch, vae)
 assert latent_b["samples"].shape[0] == 3, "batch dim must be preserved"
-img_b2, = dec.run(latent_b, None)
+img_b2, = dec.run(latent_b, vae)
 assert img_b2.shape == img_batch.shape
 
 print("ok")

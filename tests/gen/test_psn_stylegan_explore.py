@@ -7,37 +7,43 @@ import math
 import pytest
 
 from psn_nodes.gen.psn_stylegan_explore import (
-    PSN_StyleGAN_Load,
+    PSN_StyleGAN_Path_Check,
     PSN_StyleGAN_Slerp,
-    PSN_StyleGAN_Generate,
+    PSN_StyleGAN_Generate_Spec,
     _validate_model_path,
     _slerp_single,
     _slerp_sequence,
 )
 
 
-class TestPSN_StyleGAN_Load:
+class TestPSN_StyleGAN_Path_Check:
     def test_valid_model_path(self):
-        node = PSN_StyleGAN_Load()
+        node = PSN_StyleGAN_Path_Check()
         result = node.run("stylegan2.pt")
         assert len(result) == 1
         model_data = json.loads(result[0])
-        assert model_data["type"] == "stylegan2"
-        assert model_data["path"] == "stylegan2.pt"
-        assert model_data["status"] == "validated"
+        assert model_data == {"path": "stylegan2.pt", "extension_ok": True, "file_opened": False}
+        assert "status" not in model_data and "type" not in model_data
+        assert PSN_StyleGAN_Path_Check.RETURN_NAMES == ("path_check_json",)
+        assert "loads nothing" in PSN_StyleGAN_Path_Check.DESCRIPTION
+
+    def test_nonexistent_file_with_good_extension_is_not_loaded(self):
+        # Only the string is checked; no file is opened, so a missing file is not an error here.
+        result = PSN_StyleGAN_Path_Check().run("/no/such/dir/missing.pth")
+        assert json.loads(result[0])["file_opened"] is False
 
     def test_invalid_extension(self):
-        node = PSN_StyleGAN_Load()
+        node = PSN_StyleGAN_Path_Check()
         with pytest.raises(ValueError, match="Invalid model path"):
             node.run("stylegan2.txt")
 
     def test_empty_path(self):
-        node = PSN_StyleGAN_Load()
+        node = PSN_StyleGAN_Path_Check()
         with pytest.raises(ValueError, match="Invalid model path"):
             node.run("")
 
     def test_non_string_path(self):
-        node = PSN_StyleGAN_Load()
+        node = PSN_StyleGAN_Path_Check()
         with pytest.raises(ValueError, match="Invalid model path"):
             node.run(12345)
 
@@ -109,30 +115,37 @@ class TestPSN_StyleGAN_Slerp:
         assert abs(frames[-1][1] - 1.0) < 0.01
 
 
-class TestPSN_StyleGAN_Generate:
+class TestPSN_StyleGAN_Generate_Spec:
     def test_valid_generate(self):
-        node = PSN_StyleGAN_Generate()
-        model = json.dumps({"type": "stylegan2", "path": "test.pt"})
+        node = PSN_StyleGAN_Generate_Spec()
+        model = json.dumps({"path": "test.pt", "extension_ok": True})
         latents = json.dumps([[1.0, 0.0], [0.0, 1.0], [0.5, 0.5]])
         result = node.run(model, latents)
-        image_data = json.loads(result[0])
-        assert image_data["type"] == "stylegan2_output"
-        assert image_data["num_frames"] == 3
-        assert image_data["latent_dim"] == 2
+        spec = json.loads(result[0])
+        assert spec == {"model_path": "test.pt", "num_frames": 3, "latent_dim": 2}
+        # no image result is claimed
+        assert PSN_StyleGAN_Generate_Spec.RETURN_NAMES == ("generation_spec_json",)
+        assert "stylegan2_output" not in result[0] and "status" not in spec
+        assert "generates no image" in PSN_StyleGAN_Generate_Spec.DESCRIPTION
+
+    def test_ragged_frames_rejected(self):
+        node = PSN_StyleGAN_Generate_Spec()
+        with pytest.raises(ValueError, match="different length"):
+            node.run("{}", json.dumps([[1.0, 0.0], [1.0]]))
 
     def test_invalid_model_json(self):
-        node = PSN_StyleGAN_Generate()
+        node = PSN_StyleGAN_Generate_Spec()
         with pytest.raises(ValueError, match="valid JSON"):
             node.run("not json", "[[1.0, 0.0]]")
 
     def test_empty_latents(self):
-        node = PSN_StyleGAN_Generate()
+        node = PSN_StyleGAN_Generate_Spec()
         model = json.dumps({"type": "stylegan2"})
         with pytest.raises(ValueError, match="at least one frame"):
             node.run(model, "[]")
 
     def test_invalid_frame_content(self):
-        node = PSN_StyleGAN_Generate()
+        node = PSN_StyleGAN_Generate_Spec()
         model = json.dumps({"type": "stylegan2"})
         latents = json.dumps([["not a number", 0.0]])
         with pytest.raises(ValueError, match="only numbers"):

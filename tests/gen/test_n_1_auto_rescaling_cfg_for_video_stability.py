@@ -1,23 +1,35 @@
 """
-Tests for PSN_AutoRescaleCFG node.
+Tests for PSN_CFG_Rescale_Calculator node.
 
-These tests verify the pure-logic implementation of dynamic CFG rescaling
-for video stability. No files, network, or GPU access is used.
+These tests verify the arithmetic that reduces a CFG number inside a step
+window. No files, network, or GPU access is used.
 """
 
 import pytest
+import psn_nodes.gen.n_1_auto_rescaling_cfg_for_video_stability as mod
 from psn_nodes.gen.n_1_auto_rescaling_cfg_for_video_stability import (
-    PSN_AutoRescaleCFG,
-    _compute_effective_cfg,
+    PSN_CFG_Rescale_Calculator,
+    _compute_reduced_cfg,
 )
 
 
-class TestPSN_AutoRescaleCFG:
-    """Test suite for the PSN_AutoRescaleCFG node."""
+class TestPSN_CFG_Rescale_Calculator:
+    """Test suite for the PSN_CFG_Rescale_Calculator node."""
+
+    def test_honest_names_and_no_model_input(self):
+        """Renamed, no MODEL input, no claim of per-step adjustment."""
+        assert list(mod.NODE_CLASS_MAPPINGS) == ["PSN_CFG_Rescale_Calculator"]
+        assert not hasattr(mod, "PSN_AutoRescaleCFG")
+        assert PSN_CFG_Rescale_Calculator.RETURN_NAMES == ("calculated_cfg", "reduction_applied", "reason")
+        req = PSN_CFG_Rescale_Calculator.INPUT_TYPES()["required"]
+        assert "model" not in req and "MODEL" not in [v[0] for v in req.values()]
+        assert "does not patch a model" in PSN_CFG_Rescale_Calculator.DESCRIPTION
+        assert mod.NODE_DISPLAY_NAME_MAPPINGS["PSN_CFG_Rescale_Calculator"] == "CFG Rescale Calculator"
+        assert _compute_reduced_cfg(7.0, 0.5, 20, 10, 50, 3.0, 1.0, "linear")[0] == 3.5
 
     def setup_method(self):
         """Set up a fresh node instance for each test."""
-        self.node = PSN_AutoRescaleCFG()
+        self.node = PSN_CFG_Rescale_Calculator()
 
     def test_no_rescaling_outside_window(self):
         """Test that no rescaling occurs when step is outside the rescaling window."""
@@ -67,7 +79,7 @@ class TestPSN_AutoRescaleCFG:
         # effective_cfg = 7.0 * 0.5 = 3.5
         assert effective_cfg == pytest.approx(3.5)
         assert rescaled is True
-        assert "Rescaled" in reason
+        assert reason.startswith("Reduced from 7.0000 to 3.5000")
 
     def test_exponential_rescaling(self):
         """Test exponential rescaling mode."""

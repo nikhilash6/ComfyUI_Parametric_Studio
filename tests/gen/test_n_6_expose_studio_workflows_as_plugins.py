@@ -1,10 +1,10 @@
-"""Tests for PSN_Workflow_Plugin_Exposer node and its helper functions."""
+"""Tests for PSN_Workflow_Plugin_Descriptor node and its helper functions."""
 
 import json
 import pytest
 
 from psn_nodes.gen.n_6_expose_studio_workflows_as_plugins import (
-    PSN_Workflow_Plugin_Exposer,
+    PSN_Workflow_Plugin_Descriptor,
     build_plugin_descriptor,
     _validate_graph_json,
     _extract_node_ids,
@@ -12,12 +12,10 @@ from psn_nodes.gen.n_6_expose_studio_workflows_as_plugins import (
     _validate_schema,
     _sanitize_plugin_name,
     _generate_plugin_id,
-    _generate_endpoint_url,
     ALLOWED_NODE_TYPES,
     MAX_GRAPH_JSON_LENGTH,
     MAX_NODE_COUNT,
     PLUGIN_API_VERSION,
-    SIMULATED_BASE_URL,
 )
 
 
@@ -86,8 +84,8 @@ class TestBuildPluginDescriptor:
         ]
         assert descriptor["metadata"]["node_count"] == 5
         assert "plugin_id" in descriptor
-        assert "endpoint_url" in descriptor
-        assert descriptor["endpoint_url"].startswith(SIMULATED_BASE_URL)
+        assert len(descriptor["plugin_id"]) == 16
+        assert "endpoint_url" not in descriptor
         assert descriptor["input_schema"]["type"] == "object"
         assert descriptor["output_schema"]["type"] == "object"
 
@@ -244,25 +242,28 @@ class TestBuildPluginDescriptor:
 
 
 class TestPSNWorkflowPluginExposerNode:
-    """Tests for the PSN_Workflow_Plugin_Exposer node class."""
+    """Tests for the PSN_Workflow_Plugin_Descriptor node class."""
 
     def test_node_run_valid(self):
         """Test that the node run method returns correct outputs."""
-        node = PSN_Workflow_Plugin_Exposer()
-        descriptor, endpoint_url = node.run(
+        node = PSN_Workflow_Plugin_Descriptor()
+        outputs = node.run(
             graph_json=_make_valid_graph(),
             plugin_name="my_plugin",
             input_schema=_make_valid_input_schema(),
             output_schema=_make_valid_output_schema(),
         )
+        assert len(outputs) == 1
+        descriptor = outputs[0]
         assert isinstance(descriptor, dict)
-        assert isinstance(endpoint_url, str)
         assert descriptor["plugin_name"] == "my_plugin"
-        assert endpoint_url == descriptor["endpoint_url"]
+        assert descriptor["node_ids"] == ["1", "2", "3", "4", "5"]
+        assert "endpoint_url" not in descriptor
+        assert "simulated" not in json.dumps(descriptor).lower()
 
     def test_node_run_invalid_graph(self):
         """Test that the node raises ValueError for invalid graph."""
-        node = PSN_Workflow_Plugin_Exposer()
+        node = PSN_Workflow_Plugin_Descriptor()
         with pytest.raises(ValueError):
             node.run(
                 graph_json="invalid",
@@ -273,7 +274,7 @@ class TestPSNWorkflowPluginExposerNode:
 
     def test_node_input_types(self):
         """Test that INPUT_TYPES returns the expected structure."""
-        input_types = PSN_Workflow_Plugin_Exposer.INPUT_TYPES()
+        input_types = PSN_Workflow_Plugin_Descriptor.INPUT_TYPES()
         assert "required" in input_types
         assert "graph_json" in input_types["required"]
         assert "plugin_name" in input_types["required"]
@@ -282,10 +283,11 @@ class TestPSNWorkflowPluginExposerNode:
 
     def test_node_return_types(self):
         """Test that RETURN_TYPES and RETURN_NAMES are correct."""
-        assert PSN_Workflow_Plugin_Exposer.RETURN_TYPES == ("DICT", "STRING")
-        assert PSN_Workflow_Plugin_Exposer.RETURN_NAMES == ("plugin_descriptor", "endpoint_url")
-        assert PSN_Workflow_Plugin_Exposer.FUNCTION == "run"
-        assert PSN_Workflow_Plugin_Exposer.CATEGORY == "ParametricStudio/Plugins"
+        assert PSN_Workflow_Plugin_Descriptor.RETURN_TYPES == ("DICT",)
+        assert PSN_Workflow_Plugin_Descriptor.RETURN_NAMES == ("plugin_descriptor",)
+        assert "registers no plugin" in PSN_Workflow_Plugin_Descriptor.DESCRIPTION
+        assert PSN_Workflow_Plugin_Descriptor.FUNCTION == "run"
+        assert PSN_Workflow_Plugin_Descriptor.CATEGORY == "ParametricStudio/Plugins"
 
 
 class TestHelperFunctions:
@@ -317,10 +319,11 @@ class TestHelperFunctions:
         result = _validate_schema("{}", "test_schema")
         assert result == {}
 
-    def test_generate_endpoint_url_format(self):
-        """Test that the endpoint URL has the correct format."""
-        url = _generate_endpoint_url("abc123")
-        assert url == f"{SIMULATED_BASE_URL}/plugins/abc123"
+    def test_no_endpoint_helpers_remain(self):
+        import psn_nodes.gen.n_6_expose_studio_workflows_as_plugins as m
+        assert not hasattr(m, "_generate_endpoint_url")
+        assert not hasattr(m, "SIMULATED_BASE_URL")
+        assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_Workflow_Plugin_Descriptor"]
 
     def test_extract_node_ids_string_and_int(self):
         """Test that node IDs can be strings or integers."""

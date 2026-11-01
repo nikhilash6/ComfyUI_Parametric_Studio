@@ -1,17 +1,13 @@
 """ParametricStudio - Production Asset Metadata Standardizer.
 
-ComfyUI custom nodes that standardize production metadata (studio_id, shot_id,
-version, ...) on image/video assets.  Because ComfyUI passes tensors (IMAGE,
-MASK, LATENT) between nodes rather than files, the metadata is carried in the
-standard ComfyUI ``metadata`` dict that travels with the tensor (this is the
-same mechanism ComfyUI uses to attach prompt info to saved images).  The
-nodes therefore implement the *core* of the idea - inject, overwrite, validate
-and size-check production tags - in a lossless, in-memory way.
+PSN_Metadata_Tag_Carrier attaches a tag dict to a copy of the tensor as a plain
+Python ``.metadata`` attribute (or a ``metadata`` key on a LATENT dict), in memory
+only.  PSN_MetadataValidator reads that attribute back.
 
-What is NOT implemented (needs file I/O / third-party libs that are not
-available here): writing EXIF/XMP into actual image files (Pillow) and audio
-/video container tags (mutagen).  The metadata dict produced here can be
-handed to a save node that performs the real file-level tagging.
+This is NOT file tagging: nothing is written to any file, no EXIF/XMP/container
+tag is produced, no ComfyUI saver reads the attribute, and any other node that
+creates a new tensor drops it.  It only survives a direct connection to the
+PSN Metadata Validator.
 """
 
 import json
@@ -106,10 +102,17 @@ def _parse_metadata_dict(raw):
 # nodes
 # ---------------------------------------------------------------------------
 
-class PSN_MetadataInjector:
-    """Write standard production tags (studio_id, shot_id, version, ...) into
-    the asset's metadata, losslessly.  With ``overwrite`` False existing keys
-    are preserved; with True the supplied keys replace any previous values."""
+class PSN_Metadata_Tag_Carrier:
+    """Attach a tag dict (studio_id, shot_id, version, ...) to a copy of the
+    asset in memory, for the PSN Metadata Validator only.  With ``overwrite``
+    False existing keys are preserved; with True the supplied keys replace any
+    previous values.  Writes nothing to files."""
+
+    DESCRIPTION = (
+        "Attaches a tag dict to a tensor copy in memory so the PSN Metadata Validator "
+        "can read it. It writes nothing to image or video files, no saver uses it, "
+        "and other nodes drop it."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -165,11 +168,11 @@ class PSN_MetadataValidator:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_MetadataInjector": PSN_MetadataInjector,
+    "PSN_Metadata_Tag_Carrier": PSN_Metadata_Tag_Carrier,
     "PSN_MetadataValidator": PSN_MetadataValidator,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_MetadataInjector": "PSN Metadata Injector",
+    "PSN_Metadata_Tag_Carrier": "Metadata Tag Carrier (in memory, writes no files)",
     "PSN_MetadataValidator": "PSN Metadata Validator",
 }

@@ -2,7 +2,7 @@
 
 import pytest
 from psn_nodes.gen.psn_tiled_renderer import (
-    PSN_Tiled_Renderer,
+    PSN_Tile_Plan_Stitch,
     compute_tile_grid,
     stitch_tiles,
     _validate_image,
@@ -75,29 +75,29 @@ def test_stitch_tiles_with_overlap_blending():
 
 
 def test_node_run_valid_input():
-    node = PSN_Tiled_Renderer()
+    node = PSN_Tile_Plan_Stitch()
     image = _make_image(100, 100, 3, 0.5)
     rendered, grid_str, reason = node.run(
         image=image,
         tile_size=50,
         overlap=10,
-        model="test_model",
         blend_mode="linear",
         tile_images=None,
     )
-    assert reason == "ok (no tile_images provided; returned input)"
-    assert rendered is image
+    # No tiles given: the input must NOT come back as if it had been processed.
+    assert rendered is None
+    assert "nothing rendered or stitched" in reason
     assert "0, 0, 50, 50" in grid_str
+    assert len(eval(grid_str)) == 9
 
 
 def test_node_run_bad_tile_size():
-    node = PSN_Tiled_Renderer()
+    node = PSN_Tile_Plan_Stitch()
     image = _make_image(100, 100, 3, 0.5)
     rendered, grid_str, reason = node.run(
         image=image,
         tile_size=0,
         overlap=10,
-        model="test_model",
         blend_mode="linear",
     )
     assert rendered is None
@@ -105,13 +105,12 @@ def test_node_run_bad_tile_size():
 
 
 def test_node_run_overlap_ge_tile_size():
-    node = PSN_Tiled_Renderer()
+    node = PSN_Tile_Plan_Stitch()
     image = _make_image(100, 100, 3, 0.5)
     rendered, grid_str, reason = node.run(
         image=image,
         tile_size=50,
         overlap=50,
-        model="test_model",
         blend_mode="linear",
     )
     assert rendered is None
@@ -119,30 +118,23 @@ def test_node_run_overlap_ge_tile_size():
 
 
 def test_node_run_bad_image():
-    node = PSN_Tiled_Renderer()
+    node = PSN_Tile_Plan_Stitch()
     rendered, grid_str, reason = node.run(
         image=[],
         tile_size=50,
         overlap=10,
-        model="test_model",
         blend_mode="linear",
     )
     assert rendered is None
     assert "image" in reason
 
 
-def test_node_run_bad_model():
-    node = PSN_Tiled_Renderer()
-    image = _make_image(100, 100, 3, 0.5)
-    rendered, grid_str, reason = node.run(
-        image=image,
-        tile_size=50,
-        overlap=10,
-        model="",
-        blend_mode="linear",
-    )
-    assert rendered is None
-    assert "model" in reason
+def test_model_input_and_renderer_names_are_gone():
+    import psn_nodes.gen.psn_tiled_renderer as m
+    assert "model" not in PSN_Tile_Plan_Stitch.INPUT_TYPES()["required"]
+    assert PSN_Tile_Plan_Stitch.RETURN_NAMES == ("stitched_image", "tile_grid", "status")
+    assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_Tile_Plan_Stitch"]
+    assert "renders nothing" in PSN_Tile_Plan_Stitch.DESCRIPTION
 
 
 def test_validate_image_inconsistent_rows():
@@ -168,7 +160,7 @@ def test_validate_non_negative_int_negative():
 
 
 def test_node_run_with_tile_images():
-    node = PSN_Tiled_Renderer()
+    node = PSN_Tile_Plan_Stitch()
     image = _make_image(100, 100, 3, 0.5)
     tiles = compute_tile_grid(100, 100, 50, 0)
     tile_images = []
@@ -179,10 +171,11 @@ def test_node_run_with_tile_images():
         image=image,
         tile_size=50,
         overlap=0,
-        model="test_model",
         blend_mode="none",
         tile_images=tile_images,
     )
-    assert reason == "ok"
+    assert reason == "stitched 4 supplied tiles"
     assert rendered is not None
     assert rendered[0][0] == [1.0, 1.0, 1.0]
+    assert rendered[99][99] == [1.0, 1.0, 1.0]
+    assert rendered is not image

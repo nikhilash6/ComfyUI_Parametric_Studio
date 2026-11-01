@@ -1,15 +1,16 @@
-"""Tests for PSN_Sig_Process mastering chain node."""
+"""Tests for PSN_Audio_Json_Smooth_Gain_Normalize."""
 
 import json
 import math
 
 import pytest
 
+import psn_nodes.gen.n_10_signal_processing_mastering_chain as mod
 from psn_nodes.gen.n_10_signal_processing_mastering_chain import (
-    PSN_Sig_Process,
+    PSN_Audio_Json_Smooth_Gain_Normalize as Node,
     _parse_audio,
-    _denoise,
-    _apply_eq,
+    _smooth,
+    _apply_half_gains,
     _normalize,
 )
 
@@ -18,93 +19,85 @@ def _make_audio(samples, sample_rate=44100):
     return json.dumps({"samples": samples, "sample_rate": sample_rate})
 
 
+def _run(samples, smooth=False, first=0.0, second=0.0, normalize=True):
+    out = Node().run(_make_audio(samples), smooth=smooth, gain_first_half_db=first,
+                     gain_second_half_db=second, normalize=normalize)
+    return json.loads(out[0])
+
+
+def test_registration_and_honest_names():
+    assert list(mod.NODE_CLASS_MAPPINGS) == ["PSN_Audio_Json_Smooth_Gain_Normalize"]
+    assert "PSN_Sig_Process" not in mod.NODE_CLASS_MAPPINGS
+    assert not hasattr(mod, "_apply_eq") and not hasattr(mod, "_denoise")
+    req = Node.INPUT_TYPES()["required"]
+    assert set(req) == {"audio", "smooth", "gain_first_half_db", "gain_second_half_db", "normalize"}
+    assert "not a frequency EQ" in Node.DESCRIPTION
+
+
 def test_normalize_brings_peak_to_one():
-    """Normalization should scale the peak to exactly 1.0 (0 dBFS)."""
-    samples = [0.5, -0.5, 0.25, -0.25, 0.75]
-    node = PSN_Sig_Process()
-    result = node.run(_make_audio(samples), denoise=False, eq_low=0.0, eq_high=0.0, normalize=True)
-    data = json.loads(result[0])
-    peak = max(abs(s) for s in data["samples"])
-    assert abs(peak - 1.0) < 1e-9
+    data = _run([0.5, -0.5, 0.25, -0.25, 0.75])
+    assert abs(max(abs(s) for s in data["samples"]) - 1.0) < 1e-9
+    assert data["samples"] == pytest.approx([2 / 3, -2 / 3, 1 / 3, -1 / 3, 1.0])
+    assert data["sample_rate"] == 44100.0
 
 
 def test_normalize_zero_audio():
-    """All-zero audio should remain all-zero after normalization."""
-    samples = [0.0, 0.0, 0.0]
-    node = PSN_Sig_Process()
-    result = node.run(_make_audio(samples), denoise=False, eq_low=0.0, eq_high=0.0, normalize=True)
-    data = json.loads(result[0])
-    assert all(s == 0.0 for s in data["samples"])
+    assert _run([0.0, 0.0, 0.0])["samples"] == [0.0, 0.0, 0.0]
 
 
-def test_eq_gain_applied():
-    """EQ gains in dB should scale samples correctly."""
-    samples = [1.0, 1.0, 1.0, 1.0]
-    # +6 dB low, 0 dB high
-    node = PSN_Sig_Process()
-    result = node.run(_make_audio(samples), denoise=False, eq_low=6.0, eq_high=0.0, normalize=False)
-    data = json.loads(result[0])
-    # First half (low band) should be scaled by 10^(6/20) ≈ 1.995
-    expected_low = 1.0 * (10.0 ** (6.0 / 20.0))
-    assert abs(data["samples"][0] - expected_low) < 1e-9
-    # Second half (high band) unchanged
-    assert abs(data["samples"][2] - 1.0) < 1e-9
+def test_half_gain_is_by_time_position_not_frequency():
+    # +6 dB on the first half, 0 dB on the second half
+    data = _run([1.0, 1.0, 1.0, 1.0], first=6.0, second=0.0, normalize=False)
+    g = 10.0 ** (6.0 / 20.0)
+    assert data["samples"] == pytest.approx([g, g, 1.0, 1.0])
+    # a 1 Hz-like low tone and a fast alternating tone are treated identically:
+    # only the position in the stream matters
+    slow = [1.0] * 4
+    fast = [1.0, -1.0, 1.0, -1.0]
+    s = _run(slow, first=6.0, normalize=False)["samples"]
+    f = _run(fast, first=6.0, normalize=False)["samples"]
+    assert [abs(x) for x in f] == pytest.approx([abs(x) for x in s])
 
 
-def test_denoise_reduces_noise():
-    """Denoising (moving average) should reduce variance of a noisy signal."""
-    # Create a signal with a constant value plus alternating noise
-    base = 0.5
-    noisy = [base + (0.1 if i % 2 == 0 else -0.1) for i in range(20)]
-    denoised = _denoise(noisy, window=5)
-    # Variance should decrease
-    mean_orig = sum(noisy) / len(noisy)
-    mean_den = sum(denoised) / len(denoised)
-    var_orig = sum((x - mean_orig) ** 2 for x in noisy) / len(noisy)
-    var_den = sum((x - mean_den) ** 2 for x in denoised) / len(denoised)
-    assert var_den < var_orig
+def test_smooth_is_moving_average_with_known_values():
+    out = _smooth([0.0, 0.0, 10.0, 0.0, 0.0], window=5)
+    # centred 5-wide mean with edge truncation
+    assert out == pytest.approx([10 / 3, 10 / 4, 10 / 5, 10 / 4, 10 / 3])
+    noisy = [0.5 + (0.1 if i % 2 == 0 else -0.1) for i in range(20)]
+    sm = _smooth(noisy)
+    mean_o = sum(noisy) / len(noisy)
+    mean_s = sum(sm) / len(sm)
+    assert sum((x - mean_s) ** 2 for x in sm) < sum((x - mean_o) ** 2 for x in noisy)
 
 
 def test_bad_audio_json_raises():
-    """Invalid JSON should raise ValueError."""
-    node = PSN_Sig_Process()
     with pytest.raises(ValueError):
-        node.run("not valid json", denoise=False, eq_low=0.0, eq_high=0.0, normalize=True)
+        Node().run("not valid json", smooth=False, gain_first_half_db=0.0,
+                   gain_second_half_db=0.0, normalize=True)
 
 
 def test_bad_audio_type_raises():
-    """Non-string audio input should raise ValueError."""
-    node = PSN_Sig_Process()
     with pytest.raises(ValueError):
-        node.run(12345, denoise=False, eq_low=0.0, eq_high=0.0, normalize=True)
+        Node().run(12345, smooth=False, gain_first_half_db=0.0,
+                   gain_second_half_db=0.0, normalize=True)
 
 
 def test_empty_samples():
-    """Empty sample list should pass through unchanged."""
-    node = PSN_Sig_Process()
-    result = node.run(_make_audio([]), denoise=True, eq_low=3.0, eq_high=-3.0, normalize=True)
-    data = json.loads(result[0])
-    assert data["samples"] == []
+    assert _run([], smooth=True, first=3.0, second=-3.0)["samples"] == []
 
 
 def test_parse_audio_list_format():
-    """Audio as a plain JSON list should be parsed correctly."""
     samples, sr = _parse_audio("[1.0, 2.0, 3.0]")
     assert samples == [1.0, 2.0, 3.0]
     assert sr == 44100
 
 
 def test_parse_audio_non_numeric_sample():
-    """Non-numeric sample in list should raise ValueError."""
     with pytest.raises(ValueError):
         _parse_audio('["a", 1.0]')
 
 
 def test_full_chain_order():
-    """Full chain: denoise -> EQ -> normalize should produce peak 1.0."""
-    samples = [0.1, -0.1, 0.2, -0.2, 0.3, -0.3]
-    node = PSN_Sig_Process()
-    result = node.run(_make_audio(samples), denoise=True, eq_low=2.0, eq_high=-2.0, normalize=True)
-    data = json.loads(result[0])
-    peak = max(abs(s) for s in data["samples"])
-    assert abs(peak - 1.0) < 1e-9
+    """smooth -> half gain -> normalize ends with peak 1.0."""
+    data = _run([0.1, -0.1, 0.2, -0.2, 0.3, -0.3], smooth=True, first=2.0, second=-2.0)
+    assert abs(max(abs(s) for s in data["samples"]) - 1.0) < 1e-9

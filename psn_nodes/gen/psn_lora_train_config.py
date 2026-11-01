@@ -7,10 +7,10 @@ touch the filesystem, and does NOT import torch or ComfyUI internals.
 - PSN_LoRA_Param_Set validates hyperparameters (rank power-of-two, batch
   size capped at 4 for HunYuan VRAM safety, positive steps, etc.) and
   emits a plain configuration dictionary.
-- PSN_LoRA_Train_HunYuan formats a job payload (JSON text) that a
-  downstream studio backend would submit, and returns a deterministic
-  placeholder path plus a synthetic loss curve description. It never
-  opens sockets, files, or subprocesses.
+- PSN_LoRA_Job_Payload_HunYuan formats a job payload (JSON text) that a
+  downstream studio backend could submit, and the path the finished LoRA
+  would be expected at. It trains nothing and never opens sockets, files,
+  or subprocesses.
 """
 
 import json
@@ -111,14 +111,18 @@ class PSN_LoRA_Param_Set:
         return ({}, result)
 
 
-class PSN_LoRA_Train_HunYuan:
-    """Formats a HunYuan LoRA training job payload.
+class PSN_LoRA_Job_Payload_HunYuan:
+    """Formats a HunYuan LoRA training job payload as JSON text.
 
-    This node does NOT execute training. It constructs a JSON payload
-    that a studio backend would use to submit the kohya-ss script, and
-    returns a deterministic placeholder path and a synthetic loss curve
-    description. No file, network, or subprocess access is performed.
+    This node does NOT train, submit or write anything. It returns the
+    payload a backend could use to run the kohya-ss script, plus the path
+    where a finished LoRA would be expected. Nothing exists at that path.
     """
+
+    DESCRIPTION = (
+        "Formats a HunYuan LoRA training job payload as JSON and the expected output path. "
+        "Trains nothing, submits nothing and writes no file."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -128,17 +132,14 @@ class PSN_LoRA_Train_HunYuan:
                 "base_model_path": ("STRING", {"default": "/models/hunyuan-diffusion-v1.2"}),
                 "output_dir": ("STRING", {"default": "/outputs/lora"}),
             },
-            "optional": {
-                "dataset": ("DATASET",),
-            },
         }
 
     RETURN_TYPES = ("STRING", "STRING", "STRING")
-    RETURN_NAMES = ("lora_path", "loss_curve", "status")
+    RETURN_NAMES = ("job_payload_json", "expected_output_path", "status")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, config, base_model_path, output_dir, dataset=None):
+    def run(self, config, base_model_path, output_dir):
         # Validate config is a dict with required keys
         if not isinstance(config, dict):
             return ("", "", "error: config must be a dict")
@@ -160,7 +161,12 @@ class PSN_LoRA_Train_HunYuan:
         if not ok:
             return ("", "", "error: config validation failed")
 
-        # Build job payload
+        # Where a finished LoRA would be expected (nothing is written there)
+        lora_filename = "hunyuan_lora_rank{}_step{}.safetensors".format(
+            config["rank"], config["steps"]
+        )
+        expected_path = output_dir.rstrip("/") + "/" + lora_filename
+
         job_payload = {
             "script": "train_network.py",
             "model": "hunyuan",
@@ -176,32 +182,15 @@ class PSN_LoRA_Train_HunYuan:
             },
             "output_format": "safetensors",
         }
-
-        # Deterministic placeholder path
-        lora_filename = "hunyuan_lora_rank{}_step{}.safetensors".format(
-            config["rank"], config["steps"]
-        )
-        lora_path = output_dir.rstrip("/") + "/" + lora_filename
-
-        # Synthetic loss curve description (no actual training)
-        loss_curve = json.dumps({
-            "type": "synthetic",
-            "note": "No training executed. This is a placeholder loss curve.",
-            "steps": config["steps"],
-            "initial_loss": 1.0,
-            "final_loss": 0.1,
-        })
-
-        status = "payload_ready"
-        return (lora_path, loss_curve, status)
+        return (json.dumps(job_payload, sort_keys=True), expected_path, "payload_formatted")
 
 
 NODE_CLASS_MAPPINGS = {
     "PSN_LoRA_Param_Set": PSN_LoRA_Param_Set,
-    "PSN_LoRA_Train_HunYuan": PSN_LoRA_Train_HunYuan,
+    "PSN_LoRA_Job_Payload_HunYuan": PSN_LoRA_Job_Payload_HunYuan,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_LoRA_Param_Set": "PSN LoRA Param Set",
-    "PSN_LoRA_Train_HunYuan": "PSN LoRA Train HunYuan",
+    "PSN_LoRA_Job_Payload_HunYuan": "PSN LoRA Job Payload (HunYuan, trains nothing)",
 }

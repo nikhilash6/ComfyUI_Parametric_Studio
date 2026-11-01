@@ -9,7 +9,7 @@ import torch
 
 from n_9_batch_scene_generation_queue import (
     PSN_SceneQueueBuilder,
-    PSN_BatchExecutor,
+    PSN_PromptPlaceholderImages,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
 )
@@ -19,14 +19,17 @@ from n_9_batch_scene_generation_queue import (
 # 1. Module-level registration
 # ---------------------------------------------------------------------------
 assert "PSN_SceneQueueBuilder" in NODE_CLASS_MAPPINGS
-assert "PSN_BatchExecutor" in NODE_CLASS_MAPPINGS
+assert "PSN_PromptPlaceholderImages" in NODE_CLASS_MAPPINGS
 assert NODE_DISPLAY_NAME_MAPPINGS["PSN_SceneQueueBuilder"] == "PSN Scene Queue Builder"
-assert NODE_DISPLAY_NAME_MAPPINGS["PSN_BatchExecutor"] == "PSN Batch Executor"
+assert NODE_DISPLAY_NAME_MAPPINGS["PSN_PromptPlaceholderImages"] == "Prompt Gradient Test Images (runs no model)"
+assert "PSN_BatchExecutor" not in NODE_CLASS_MAPPINGS
+assert PSN_PromptPlaceholderImages.RETURN_NAMES == ("gradient_images",)
+assert "runs no model" in PSN_PromptPlaceholderImages.DESCRIPTION
 
 # ---------------------------------------------------------------------------
 # 2. INPUT_TYPES / RETURN_TYPES / FUNCTION / CATEGORY
 # ---------------------------------------------------------------------------
-for cls in (PSN_SceneQueueBuilder, PSN_BatchExecutor):
+for cls in (PSN_SceneQueueBuilder, PSN_PromptPlaceholderImages):
     it = cls.INPUT_TYPES()
     assert "required" in it
     assert cls.RETURN_TYPES == ("LIST[STRING]",) or cls.RETURN_TYPES == ("LIST[IMAGE]",)
@@ -82,7 +85,7 @@ except ValueError:
 # ---------------------------------------------------------------------------
 # 8. BatchExecutor: 2 prompts -> 2 IMAGE tensors, correct shape and range
 # ---------------------------------------------------------------------------
-executor = PSN_BatchExecutor()
+executor = PSN_PromptPlaceholderImages()
 (results,) = executor.run(queue_items=["prompt A", "prompt B"], height=16, width=16, channels=3)
 assert len(results) == 2, f"expected 2 results, got {len(results)}"
 for img in results:

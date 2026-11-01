@@ -25,8 +25,16 @@ class TestPSN_JSON_Config_Loader:
         json_text = json.dumps({"model": {"sdxl": {"steps": 20, "cfg": 7.0}}})
         config, success, reason = node.run(json_text=json_text, key_path="model.sdxl.steps")
         assert success is True
-        assert config == {}  # non-dict value returns empty dict
+        assert config == {"value": 20}  # scalar is wrapped, not dropped
         assert "resolved key_path" in reason
+
+    def test_key_path_non_dict_values_are_kept(self):
+        node = PSN_JSON_Config_Loader()
+        json_text = json.dumps({"m": {"cfg": 7.5, "name": "euler", "list": [1, 2], "off": False, "none": None}})
+        for key, expected in (("cfg", 7.5), ("name", "euler"), ("list", [1, 2]), ("off", False), ("none", None)):
+            config, success, _ = node.run(json_text=json_text, key_path="m." + key)
+            assert success is True
+            assert config == {"value": expected}
 
     def test_parse_with_key_path_returns_dict(self):
         node = PSN_JSON_Config_Loader()

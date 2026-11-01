@@ -1,8 +1,9 @@
 import torch
 
+import n_7_multi_gpu_video_upscaling as mod
 from n_7_multi_gpu_video_upscaling import (
     PSN_SplitBatchForGPU,
-    PSN_UpscaleOnGPU,
+    PSN_NearestUpscaleBatch,
     PSN_MergeUpscaledBatches,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
@@ -45,32 +46,50 @@ except TypeError:
 
 # 5. Bad input: wrong ndim raises ValueError.
 try:
-    PSN_UpscaleOnGPU().run(torch.rand(4, 4, 3), 0, 2)
+    PSN_NearestUpscaleBatch().run(torch.rand(4, 4, 3), 2)
     raise AssertionError("expected ValueError")
 except ValueError:
     pass
 
 # 6. Upscale doubles spatial dims and preserves values (nearest = pick pixel).
 small = make_batch(2, 4, 4)
-up, gid = PSN_UpscaleOnGPU().run(small, 1, 2)
+res = PSN_NearestUpscaleBatch().run(small, 2)
+assert len(res) == 1  # no gpu_id echo output
+up = res[0]
 assert up.shape == (2, 8, 8, 3), up.shape
-assert gid == 1
 # nearest-neighbour: upsampled pixel (0,0) equals original (0,0)
 assert torch.equal(up[0, 0, 0], small[0, 0, 0])
 assert torch.equal(up[0, 1, 1], small[0, 0, 0])
 # input not modified in place
 assert small.shape == (2, 4, 4, 3)
 
+# 6b. every output pixel is its source pixel repeated scale x scale, scale=3.
+tri, = PSN_NearestUpscaleBatch().run(small, 3)
+assert tri.shape == (2, 12, 12, 3)
+for y in range(12):
+    for x in range(12):
+        assert torch.equal(tri[1, y, x], small[1, y // 3, x // 3])
+# the model/gpu_id inputs and the fabricated gpu_id output are gone
+it = PSN_NearestUpscaleBatch.INPUT_TYPES()
+assert list(it["required"]) == ["image_batch", "scale"] and "optional" not in it
+assert PSN_NearestUpscaleBatch.RETURN_NAMES == ("upscaled_batch",)
+assert not hasattr(mod, "PSN_UpscaleOnGPU")
+try:
+    PSN_NearestUpscaleBatch().run(small, 0)
+    raise AssertionError("expected ValueError")
+except ValueError:
+    pass
+
 # 7. scale=1 is a no-op (values identical, new tensor).
-up1, _ = PSN_UpscaleOnGPU().run(small, 0, 1)
+up1, = PSN_NearestUpscaleBatch().run(small, 1)
 assert up1.shape == small.shape
 assert torch.equal(up1, small)
 
 # 8. Full pipeline: split -> upscale each -> merge restores frame order.
 img = make_batch(4, 6, 6)
 parts = PSN_SplitBatchForGPU().run(img, 2)
-up0, _ = PSN_UpscaleOnGPU().run(parts[0], 0, 2)
-up1, _ = PSN_UpscaleOnGPU().run(parts[1], 1, 2)
+up0, = PSN_NearestUpscaleBatch().run(parts[0], 2)
+up1, = PSN_NearestUpscaleBatch().run(parts[1], 2)
 merged = PSN_MergeUpscaledBatches().run(up0, extra_1=up1)[0]
 assert merged.shape == (4, 12, 12, 3), merged.shape
 assert torch.equal(merged[0], up0[0])
@@ -89,7 +108,7 @@ except ValueError:
     pass
 
 # 11. Module-level mappings exist and are consistent.
-assert set(NODE_CLASS_MAPPINGS) == {"PSN_SplitBatchForGPU", "PSN_UpscaleOnGPU", "PSN_MergeUpscaledBatches"}
+assert set(NODE_CLASS_MAPPINGS) == {"PSN_SplitBatchForGPU", "PSN_NearestUpscaleBatch", "PSN_MergeUpscaledBatches"}
 for name, cls in NODE_CLASS_MAPPINGS.items():
     assert name in NODE_DISPLAY_NAME_MAPPINGS
     assert cls.FUNCTION == "run"

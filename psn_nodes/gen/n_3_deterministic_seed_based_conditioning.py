@@ -1,24 +1,24 @@
-"""Deterministic seed-based conditioning (pure-logic, secure-by-design).
+"""Seed hash vector (pure-logic, secure-by-design).
 
-This module implements the *logic* of a "Zero-CLIP" conditioner: it maps an
-integer seed to a deterministic, reproducible conditioning payload using only
-the Python standard library (``hashlib`` + ``struct``). It does NOT import
-torch, ComfyUI, numpy, or any model weights, and it performs no file, network,
-or OS access.
+This module maps an integer seed to two deterministic, reproducible float
+vectors using only the Python standard library (``hashlib`` + ``struct``). It
+does NOT import torch, ComfyUI, numpy, or any model weights, and it performs no
+file, network, or OS access.
 
-Because a real ComfyUI ``CONDITIONING`` is a list of ``[clip_embedding,
-pooled_embedding]`` tensors, this node emits the *data* of that structure as
-plain JSON text (``conditioning_json``) plus a human-readable ``summary``.
-Downstream GPU code can deserialize the JSON and build the actual tensors.
+The vectors are hash and LCG output, not CLIP embeddings: no text and no model
+is involved, and the result cannot drive sampling as it is.  The node emits
+them as plain JSON text (``vector_json``) plus a human-readable ``summary``.
+The ``size_preset`` input only picks the vector lengths (sd15: 768 and 768;
+sdxl: 2048 and 1280), matching the shapes of those models' CLIP outputs.
 
 Strategies:
-  * A - Anchor-weighted: deterministic pseudo-random weights (no external
-        anchor file is read; the "anchors" are derived from the seed).
+  * A - Anchor-weighted: SHA-256-derived weights (no external anchor file is
+        read; the "anchors" are derived from the seed).
   * B - Hash-based: raw SHA-256 digest bytes mapped to floats.
   * C - LCG-based: linear congruential generator seeded by the integer seed.
   * D - Mixed: combines B and C for extra diffusion.
 
-All strategies are pure functions of (seed, strategy, model_type), so the same
+All strategies are pure functions of (seed, strategy, size_preset), so the same
 inputs always yield byte-identical outputs.
 """
 
@@ -29,11 +29,11 @@ import struct
 CAT = "ParametricStudio/Conditioning"
 
 _STRATEGIES = ["A", "B", "C", "D"]
-_MODEL_TYPES = ["sd15", "sdxl"]
+_SIZE_PRESETS_NAMES = ["sd15", "sdxl"]
 
-# (clip_dim, pooled_dim) per model architecture.
-# SD1.5: clip 768, pooled 768. SDXL: clip 2048, pooled 1280.
-_MODEL_DIMS = {
+# (dim_a, dim_b) per size preset.
+# sd15: 768 and 768. sdxl: 2048 and 1280.
+_SIZE_PRESETS = {
     "sd15": (768, 768),
     "sdxl": (2048, 1280),
 }
@@ -97,12 +97,12 @@ def _anchor_weights(seed, slots):
     return weights
 
 
-def _build_clip_vector(seed, strategy, clip_dim):
-    """Build the clip embedding vector for the given strategy."""
+def _build_vector_a(seed, strategy, dim_a):
+    """Build the first vector (length dim_a) for the given strategy."""
     if strategy == "A":
         # Anchor-weighted: blend anchor weights with hash-based values.
         anchors = _anchor_weights(seed, _ANCHOR_SLOTS)
-        base = _bytes_to_floats(_digest_bytes(seed, "A", "clip"), clip_dim)
+        base = _bytes_to_floats(_digest_bytes(seed, "A", "vector_a"), dim_a)
         # Weight each element by the nearest anchor weight.
         out = []
         for i, v in enumerate(base):
@@ -110,34 +110,34 @@ def _build_clip_vector(seed, strategy, clip_dim):
             out.append(v * (0.5 + 0.5 * w))
         return out
     elif strategy == "B":
-        return _bytes_to_floats(_digest_bytes(seed, "B", "clip"), clip_dim)
+        return _bytes_to_floats(_digest_bytes(seed, "B", "vector_a"), dim_a)
     elif strategy == "C":
-        return _lcg_floats(seed, clip_dim)
+        return _lcg_floats(seed, dim_a)
     elif strategy == "D":
         # Mixed: average of B and C.
-        b = _bytes_to_floats(_digest_bytes(seed, "D", "clip"), clip_dim)
-        c = _lcg_floats(seed, clip_dim)
+        b = _bytes_to_floats(_digest_bytes(seed, "D", "vector_a"), dim_a)
+        c = _lcg_floats(seed, dim_a)
         return [(x + y) * 0.5 for x, y in zip(b, c)]
     raise ValueError("Unknown strategy: {}".format(strategy))
 
 
-def _build_pooled_vector(seed, strategy, pooled_dim):
-    """Build the pooled embedding vector for the given strategy."""
+def _build_vector_b(seed, strategy, dim_b):
+    """Build the second vector (length dim_b) for the given strategy."""
     if strategy == "A":
         anchors = _anchor_weights(seed, _ANCHOR_SLOTS)
-        base = _bytes_to_floats(_digest_bytes(seed, "A", "pooled"), pooled_dim)
+        base = _bytes_to_floats(_digest_bytes(seed, "A", "vector_b"), dim_b)
         out = []
         for i, v in enumerate(base):
             w = anchors[i % _ANCHOR_SLOTS]
             out.append(v * (0.5 + 0.5 * w))
         return out
     elif strategy == "B":
-        return _bytes_to_floats(_digest_bytes(seed, "B", "pooled"), pooled_dim)
+        return _bytes_to_floats(_digest_bytes(seed, "B", "vector_b"), dim_b)
     elif strategy == "C":
-        return _lcg_floats(seed + 1, pooled_dim)  # offset seed for pooled
+        return _lcg_floats(seed + 1, dim_b)  # offset seed for the second vector
     elif strategy == "D":
-        b = _bytes_to_floats(_digest_bytes(seed, "D", "pooled"), pooled_dim)
-        c = _lcg_floats(seed + 1, pooled_dim)
+        b = _bytes_to_floats(_digest_bytes(seed, "D", "vector_b"), dim_b)
+        c = _lcg_floats(seed + 1, dim_b)
         return [(x + y) * 0.5 for x, y in zip(b, c)]
     raise ValueError("Unknown strategy: {}".format(strategy))
 
@@ -147,47 +147,51 @@ def _round_floats(vec, decimals=6):
     return [round(v, decimals) for v in vec]
 
 
-def generate_conditioning(seed, strategy, model_type):
-    """Pure-logic core: produce the conditioning payload as a dict.
+def generate_seed_vectors(seed, strategy, size_preset):
+    """Pure-logic core: produce the two seed vectors as a dict.
 
     Returns a dict with keys:
-      * ``clip``: list of floats (length = clip_dim)
-      * ``pooled``: list of floats (length = pooled_dim)
+      * ``vector_a``: list of floats (length = dim_a)
+      * ``vector_b``: list of floats (length = dim_b)
       * ``seed``: the input seed
       * ``strategy``: the strategy used
-      * ``model_type``: the model type
-      * ``clip_dim``: int
-      * ``pooled_dim``: int
+      * ``size_preset``: the model type
+      * ``dim_a``: int
+      * ``dim_b``: int
     """
     if strategy not in _STRATEGIES:
         raise ValueError("strategy must be one of {}".format(_STRATEGIES))
-    if model_type not in _MODEL_TYPES:
-        raise ValueError("model_type must be one of {}".format(_MODEL_TYPES))
+    if size_preset not in _SIZE_PRESETS_NAMES:
+        raise ValueError("size_preset must be one of {}".format(_SIZE_PRESETS_NAMES))
     if not isinstance(seed, int) or isinstance(seed, bool):
         raise ValueError("seed must be an integer")
 
-    clip_dim, pooled_dim = _MODEL_DIMS[model_type]
-    clip = _build_clip_vector(seed, strategy, clip_dim)
-    pooled = _build_pooled_vector(seed, strategy, pooled_dim)
+    dim_a, dim_b = _SIZE_PRESETS[size_preset]
+    vec_a = _build_vector_a(seed, strategy, dim_a)
+    vec_b = _build_vector_b(seed, strategy, dim_b)
 
     return {
-        "clip": _round_floats(clip),
-        "pooled": _round_floats(pooled),
+        "vector_a": _round_floats(vec_a),
+        "vector_b": _round_floats(vec_b),
         "seed": seed,
         "strategy": strategy,
-        "model_type": model_type,
-        "clip_dim": clip_dim,
-        "pooled_dim": pooled_dim,
+        "size_preset": size_preset,
+        "dim_a": dim_a,
+        "dim_b": dim_b,
     }
 
 
-class PSN_ZeroCLIPConditioner:
-    """Map an integer seed to a deterministic conditioning payload.
+class PSN_SeedHashVector:
+    """Derive deterministic hash-based float vectors from an integer seed.
 
-    Outputs the conditioning data as JSON text (``conditioning_json``) and a
-    short human-readable ``summary``. The JSON can be deserialized by GPU-side
-    code to build the actual ComfyUI ``CONDITIONING`` tensors.
+    Not a CLIP embedding and cannot drive sampling: no text or model is
+    involved.  Outputs the vectors as JSON text (``vector_json``) and a short
+    human-readable ``summary``.
     """
+
+    DESCRIPTION = ("Derives deterministic hash-based float vectors from a seed and returns "
+                   "them as JSON text. It is not a CLIP embedding and cannot drive sampling; "
+                   "size_preset only picks the vector lengths.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -195,31 +199,31 @@ class PSN_ZeroCLIPConditioner:
             "required": {
                 "seed": ("INT", {"default": 0, "min": -2**63, "max": 2**63 - 1, "step": 1}),
                 "strategy": (_STRATEGIES,),
-                "model_type": (_MODEL_TYPES,),
+                "size_preset": (_SIZE_PRESETS_NAMES,),
             },
             "optional": {},
         }
 
     RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("conditioning_json", "summary")
+    RETURN_NAMES = ("vector_json", "summary")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, seed, strategy, model_type):
-        payload = generate_conditioning(seed, strategy, model_type)
-        conditioning_json = json.dumps(payload, separators=(",", ":"))
+    def run(self, seed, strategy, size_preset):
+        payload = generate_seed_vectors(seed, strategy, size_preset)
+        vector_json = json.dumps(payload, separators=(",", ":"))
         summary = (
-            "seed={} strategy={} model={} clip_dim={} pooled_dim={}".format(
-                seed, strategy, model_type, payload["clip_dim"], payload["pooled_dim"]
+            "seed={} strategy={} size_preset={} dim_a={} dim_b={}".format(
+                seed, strategy, size_preset, payload["dim_a"], payload["dim_b"]
             )
         )
-        return (conditioning_json, summary)
+        return (vector_json, summary)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_ZeroCLIPConditioner": PSN_ZeroCLIPConditioner,
+    "PSN_SeedHashVector": PSN_SeedHashVector,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_ZeroCLIPConditioner": "ZeroCLIP Conditioner (Seed-Based)",
+    "PSN_SeedHashVector": "Seed Hash Vector (not a CLIP embedding)",
 }

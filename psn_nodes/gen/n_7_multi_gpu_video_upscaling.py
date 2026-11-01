@@ -5,16 +5,13 @@ sub-batch, and merge the results back into a single batch.
 
 What is implemented here (CPU-safe, torch only):
   * PSN_SplitBatchForGPU   - split an IMAGE batch into N sub-batches.
-  * PSN_UpscaleOnGPU       - upscale a sub-batch.  The spec asks for a real
-    MODEL + torch.cuda; neither is available in this sandbox, so the node
-    performs a deterministic nearest-neighbour 2x spatial upscale on CPU and
-    records the requested gpu_id in the returned metadata.  No CUDA code is
-    executed and no model weights are loaded.
+  * PSN_NearestUpscaleBatch - integer nearest-neighbour upscale of an IMAGE
+    batch on CPU. It uses no upscaler model and no GPU.
   * PSN_MergeUpscaledBatches - concatenate sub-batches back into one batch.
 
 NOT implemented (needs real multi-GPU hardware / ComfyUI model plumbing):
   * actual CUDA device placement (torch.cuda),
-  * real upscaler MODEL inference,
+  * model-based upscaling,
   * true parallel execution across GPUs (this is a node library, not a
     scheduler; ComfyUI runs nodes sequentially).
 """
@@ -88,42 +85,35 @@ class PSN_SplitBatchForGPU:
         return tuple(parts)
 
 
-class PSN_UpscaleOnGPU:
-    """Upscale an IMAGE sub-batch.
+class PSN_NearestUpscaleBatch:
+    """Integer nearest-neighbour upscale of an IMAGE batch on CPU.
 
-    Spec: run a real upscaler MODEL on CUDA device `gpu_id`.  In this sandbox
-    there is no CUDA and no model, so we do a deterministic 2x nearest
-    upscale on CPU and return the requested gpu_id as metadata.  The input
-    tensor is never modified in place.
+    Repeats each pixel `scale` times along height and width. Runs no upscaler
+    model and uses no GPU. The input tensor is never modified in place.
     """
+
+    DESCRIPTION = ("Integer nearest-neighbour upscale of an IMAGE batch on "
+                   "CPU. Uses no upscaler model and no GPU.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "image_batch": ("IMAGE",),
-                "gpu_id": ("INT", {"default": 0, "min": 0, "max": 63}),
                 "scale": ("INT", {"default": 2, "min": 1, "max": 8}),
-            },
-            "optional": {
-                # Declared for API parity with the spec; ignored on CPU.
-                "upscale_model": ("MODEL",),
             },
         }
 
-    RETURN_TYPES = ("IMAGE", "INT")
-    RETURN_NAMES = ("upscaled_batch", "gpu_id")
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("upscaled_batch",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, image_batch, gpu_id, scale, upscale_model=None):
+    def run(self, image_batch, scale):
         img = _as_image(image_batch)
-        if gpu_id < 0:
-            raise ValueError("gpu_id must be >= 0")
         if scale < 1:
             raise ValueError("scale must be >= 1")
-        out = _nearest_upscale(img, scale)
-        return (out, gpu_id)
+        return (_nearest_upscale(img, scale),)
 
 
 class PSN_MergeUpscaledBatches:
@@ -171,12 +161,12 @@ class PSN_MergeUpscaledBatches:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_SplitBatchForGPU": PSN_SplitBatchForGPU,
-    "PSN_UpscaleOnGPU": PSN_UpscaleOnGPU,
+    "PSN_NearestUpscaleBatch": PSN_NearestUpscaleBatch,
     "PSN_MergeUpscaledBatches": PSN_MergeUpscaledBatches,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_SplitBatchForGPU": "PSN Split Batch For GPU",
-    "PSN_UpscaleOnGPU": "PSN Upscale On GPU",
+    "PSN_NearestUpscaleBatch": "PSN Nearest-Neighbour Upscale (CPU)",
     "PSN_MergeUpscaledBatches": "PSN Merge Upscaled Batches",
 }

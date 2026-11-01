@@ -1,22 +1,19 @@
-"""PSN_StreamDiffusion: pure-logic state machine for StreamDiffusion-style incremental preview.
+"""PSN_StreamDiffusion: step-counter and noise-level schedule bookkeeping for a StreamDiffusion-style loop.
 
-This module implements ONLY the secure, pure-Python control logic for a
-StreamDiffusion-style real-time preview pipeline. It does NOT perform any
-GPU/torch inference, image decoding, or ComfyUI tensor operations. Instead it
-manages a JSON-serializable "stream_state" dictionary that tracks the
-incremental denoising schedule, caches intermediate activation placeholders,
-and validates every step.
+This module runs no model. It does not denoise, decode or produce any image, and it
+touches no GPU or ComfyUI tensor. It manages a JSON-serializable "stream_state"
+dictionary holding a step counter, the chosen noise-level schedule and a prompt
+history, and validates every step.
 
 The node wrappers take plain values (numbers, strings, JSON text) and return
 plain values (numbers, strings, dicts). No sockets, no files, no network, no
-subprocess, no eval/exec, no dunder tricks.
+subprocess, no eval/exec.
 
-Data flow (logical):
-    PSN_Stream_Init -> PSN_Stream_Step (looped) -> Preview
+Data flow:
+    PSN_Stream_Init -> PSN_Stream_Schedule_Step (looped)
 
-The "image" outputs are represented as JSON text describing the current
-preview frame (e.g. step index, noise level, activation cache size) so that
-downstream pure-logic nodes can consume them without torch.
+PSN_Stream_Schedule_Step emits a JSON status text (step index, noise level on the
+schedule, whether the schedule is used up). It is not an image.
 """
 
 import json
@@ -29,8 +26,8 @@ import math
 # Allowed modes for the incremental schedule
 _SCHEDULE_MODES = ("linear", "cosine", "exponential")
 
-# Maximum number of cached activation entries to prevent unbounded memory
-_MAX_CACHE_ENTRIES = 1024
+# Maximum number of history entries kept, to prevent unbounded memory
+_MAX_HISTORY_ENTRIES = 1024
 
 # Maximum allowed steps to prevent runaway loops
 _MAX_STEPS = 1024
@@ -121,21 +118,20 @@ def _make_state(steps, guidance_scale, schedule_mode):
         "schedule_mode": schedule_mode,
         "current_step": 0,
         "completed": False,
-        "activation_cache": {},
         "history": [],
     }
     return state
 
 
 def _step_state(state, prompt, image_json=None):
-    """Perform one incremental step on the stream state.
+    """Advance the step counter and read the noise level for that step.
 
-    Returns (image_json, updated_state).
+    Returns (status_json, updated_state). Nothing is denoised.
     """
     if not isinstance(state, dict):
         raise ValueError("stream_state must be a dict")
 
-    required_keys = {"steps", "guidance_scale", "schedule_mode", "current_step", "completed", "activation_cache", "history"}
+    required_keys = {"steps", "guidance_scale", "schedule_mode", "current_step", "completed", "history"}
     missing = required_keys - set(state.keys())
     if missing:
         raise ValueError("stream_state missing keys: {}".format(sorted(missing)))
@@ -154,23 +150,6 @@ def _step_state(state, prompt, image_json=None):
 
     noise_level = _compute_noise_level(current, total, mode)
 
-    # Simulate an activation cache entry (pure placeholder, no torch)
-    cache_key = "step_{}".format(current)
-    activation_entry = {
-        "step": current,
-        "noise_level": round(noise_level, 6),
-        "prompt_hash": hash(prompt) % (10 ** 9),
-        "has_image_input": image_json is not None,
-    }
-
-    # Enforce cache size limit
-    cache = dict(state["activation_cache"])
-    if len(cache) >= _MAX_CACHE_ENTRIES:
-        # Evict oldest entry (smallest step key)
-        oldest_key = min(cache.keys(), key=lambda k: int(k.split("_")[1]))
-        del cache[oldest_key]
-    cache[cache_key] = activation_entry
-
     new_step = current + 1
     completed = new_step >= total
 
@@ -181,8 +160,8 @@ def _step_state(state, prompt, image_json=None):
         "prompt": prompt,
     })
     # Keep history bounded
-    if len(history) > _MAX_CACHE_ENTRIES:
-        history = history[-_MAX_CACHE_ENTRIES:]
+    if len(history) > _MAX_HISTORY_ENTRIES:
+        history = history[-_MAX_HISTORY_ENTRIES:]
 
     new_state = {
         "steps": total,
@@ -190,24 +169,23 @@ def _step_state(state, prompt, image_json=None):
         "schedule_mode": mode,
         "current_step": new_step,
         "completed": completed,
-        "activation_cache": cache,
         "history": history,
     }
 
-    # Build the preview "image" as JSON text (pure logic, no actual pixels)
-    image_payload = {
+    # Status text only: where the counter and schedule are. No pixels.
+    status_payload = {
         "step": current,
         "total_steps": total,
         "noise_level": round(noise_level, 6),
         "guidance_scale": float(state["guidance_scale"]),
         "schedule_mode": mode,
         "prompt": prompt,
-        "cache_size": len(cache),
-        "completed": completed,
+        "has_image_input": bool(image_json),
+        "schedule_finished": completed,
     }
-    image_json_out = json.dumps(image_payload, sort_keys=True)
+    status_json = json.dumps(status_payload, sort_keys=True)
 
-    return image_json_out, new_state
+    return status_json, new_state
 
 
 # ---------------------------------------------------------------------------
@@ -218,10 +196,10 @@ CAT = "ParametricStudio/StreamDiffusion"
 
 
 class PSN_Stream_Init:
-    """Initialize a StreamDiffusion-style incremental preview state.
+    """Initialize a StreamDiffusion-style step-schedule state.
 
-    Pure-logic node: creates a JSON-serializable state dict that tracks the
-    denoising schedule, guidance scale, and activation cache. No GPU work.
+    Creates a JSON-serializable state dict holding the step count, schedule
+    mode, guidance scale value and a prompt history. Runs no model, no GPU work.
     """
 
     @classmethod
@@ -245,13 +223,18 @@ class PSN_Stream_Init:
         return (state,)
 
 
-class PSN_Stream_Step:
-    """Perform one incremental denoising step on a StreamDiffusion state.
+class PSN_Stream_Schedule_Step:
+    """Advance a step counter and noise-level schedule; emit a JSON status.
 
-    Pure-logic node: advances the state by one step, updates the activation
-    cache, and returns a JSON-text preview descriptor plus the updated state.
-    No GPU work, no actual image pixels.
+    Does not denoise and does not produce an image. It moves the stream state
+    forward by one step, reads the noise level for that step from the chosen
+    schedule, and returns that as JSON text plus the updated state.
     """
+
+    DESCRIPTION = (
+        "Advances a StreamDiffusion-style step counter and noise-level schedule and emits a JSON status; "
+        "does not denoise or produce an image."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -266,13 +249,13 @@ class PSN_Stream_Step:
         }
 
     RETURN_TYPES = ("STRING", "DICT")
-    RETURN_NAMES = ("image", "stream_state")
+    RETURN_NAMES = ("step_status_json", "stream_state")
     FUNCTION = "run"
     CATEGORY = CAT
 
     def run(self, stream_state, prompt, image=None):
-        image_json, new_state = _step_state(stream_state, prompt, image)
-        return (image_json, new_state)
+        status_json, new_state = _step_state(stream_state, prompt, image)
+        return (status_json, new_state)
 
 
 # ---------------------------------------------------------------------------
@@ -281,10 +264,10 @@ class PSN_Stream_Step:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_Stream_Init": PSN_Stream_Init,
-    "PSN_Stream_Step": PSN_Stream_Step,
+    "PSN_Stream_Schedule_Step": PSN_Stream_Schedule_Step,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_Stream_Init": "PSN Stream Init",
-    "PSN_Stream_Step": "PSN Stream Step",
+    "PSN_Stream_Schedule_Step": "PSN Stream Step Counter and Noise Schedule (no denoising)",
 }

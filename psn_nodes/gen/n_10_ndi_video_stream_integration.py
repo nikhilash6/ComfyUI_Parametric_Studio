@@ -1,13 +1,9 @@
 """NDI Video Stream Integration for ComfyUI (ParametricStudio).
 
-Sends generated frames to an NDI stream for live broadcasting.
-
-Since the real `ndi-python` / `PyNDI` library is not available in this
-environment, the module implements the full tensor-to-RGB conversion
-pipeline and a pluggable NDI sender interface.  When the real NDI
-library is installed, a user can supply a sender callable that performs
-the actual network send.  The node returns a boolean indicating whether
-a frame was successfully handed to the sender.
+Converts IMAGE frames to RGB bytes and hands them to a caller-supplied sender
+callable (the NDI_SENDER input). The module itself has no NDI library and
+sends nothing over the network: with no sender connected, nothing is handed
+off and the node reports False. No node here produces an NDI_SENDER.
 """
 
 import torch
@@ -57,11 +53,18 @@ def image_to_rgb_bytes(image):
 
 
 class PSN_NDI_Source:
-    """Sends generated frames to an NDI stream for live broadcasting.
+    """Converts IMAGE frames to RGB bytes and hands them to a supplied sender.
 
-    Converts the IMAGE tensor to RGB byte arrays and hands them to an
-    NDI sender.  Returns True if the frame was successfully sent.
+    Returns True only when a connected sender callable returned truthy.
+    Without a sender nothing is sent and the output is False.
     """
+
+    DESCRIPTION = (
+        "Converts frames to RGB bytes and hands them to the connected "
+        "NDI_SENDER callable; output is True only if that sender returned "
+        "truthy. With no sender connected nothing is sent and the output is "
+        "False. This node has no NDI library of its own."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -77,22 +80,22 @@ class PSN_NDI_Source:
         }
 
     RETURN_TYPES = ("BOOLEAN",)
-    RETURN_NAMES = ("streaming",)
+    RETURN_NAMES = ("handed_to_sender",)
     FUNCTION = "run"
     CATEGORY = CAT
 
     def run(self, image, ndi_name, fps, ndi_sender=None):
-        """Convert image to RGB bytes and send via NDI sender.
+        """Convert image to RGB bytes and hand them to the NDI sender.
 
         Args:
             image: IMAGE tensor [B,H,W,C] in 0..1.
             ndi_name: Name of the NDI source to register.
             fps: Target frames per second.
             ndi_sender: Optional callable(ndi_name, fps, frames_bytes) -> bool.
-                        If None, no actual send is performed (dry run).
+                        If None, nothing is sent.
 
         Returns:
-            (bool,): True if the frame was handed to a sender successfully.
+            (bool,): True only if a supplied sender returned truthy.
         """
         # Validate inputs
         if not torch.is_tensor(image):
@@ -109,15 +112,13 @@ class PSN_NDI_Source:
         # Convert to RGB byte arrays
         frames = image_to_rgb_bytes(image)
 
-        # Send via NDI sender if provided
-        if ndi_sender is not None:
-            if not callable(ndi_sender):
-                raise TypeError("ndi_sender must be callable")
-            result = ndi_sender(ndi_name, fps, frames)
-            return (bool(result),)
-
-        # Dry run: no sender, just validate conversion succeeded
-        return (True,)
+        if ndi_sender is None:
+            # No sender connected: nothing is handed off.
+            return (False,)
+        if not callable(ndi_sender):
+            raise TypeError("ndi_sender must be callable")
+        result = ndi_sender(ndi_name, fps, frames)
+        return (bool(result),)
 
 
 NODE_CLASS_MAPPINGS = {

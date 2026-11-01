@@ -1,11 +1,11 @@
 """
-PSN_Audio_Notifier: Validates audio notification configuration and formats the playback payload.
+PSN_Audio_Notify_Payload: Validates audio notification settings and formats a JSON payload; plays nothing.
 
 This node does NOT play audio. It performs secure-by-design validation:
 - Validates volume is within [0.0, 1.0]
 - Validates sound_file extension is in an allow-list (wav, mp3)
 - Formats a JSON payload describing the intended playback action
-- Returns a boolean indicating whether the configuration is valid for playback
+- Returns a boolean `validated` that is True when sound_file and volume passed the checks (nothing was played)
 
 Pure Python standard library only. No file access, no audio playback, no network.
 """
@@ -52,16 +52,17 @@ def _format_payload(sound_file: str, volume: float) -> str:
     }
     return json.dumps(payload, sort_keys=True)
 
-class PSN_AudioNotifier:
+class PSN_Audio_Notify_Payload:
     """
-    Validates audio notification configuration and formats the playback payload.
+    Validates audio notification settings and formats a JSON payload. Plays nothing,
+    opens no file and checks that no file exists at sound_file.
     
     Inputs:
         sound_file (STRING): Path to the audio file (WAV/MP3).
         volume (FLOAT): Volume level from 0.0 to 1.0.
     
     Outputs:
-        played (BOOLEAN): True if the configuration is valid for playback.
+        validated (BOOLEAN): True if sound_file and volume passed the checks.
         payload (STRING): JSON-formatted payload describing the playback action.
         reason (STRING): Human-readable reason for pass/fail.
     """
@@ -76,8 +77,10 @@ class PSN_AudioNotifier:
             "optional": {}
         }
     
+    DESCRIPTION = ("Validates notification settings (sound_file extension, volume) and formats a JSON payload. "
+                   "Plays nothing and does not check that the file exists.")
     RETURN_TYPES = ("BOOLEAN", "STRING", "STRING")
-    RETURN_NAMES = ("played", "payload", "reason")
+    RETURN_NAMES = ("validated", "payload", "reason")
     FUNCTION = "run"
     CATEGORY = CAT
     
@@ -86,7 +89,7 @@ class PSN_AudioNotifier:
         Validate the audio notification configuration and format the payload.
         
         Returns:
-            played: True if both sound_file and volume are valid.
+            validated: True if both sound_file and volume are valid.
             payload: JSON string with the playback action details (empty string if invalid).
             reason: Explanation of why the configuration passed or failed.
         """
@@ -105,9 +108,9 @@ class PSN_AudioNotifier:
         return (True, payload, "ok")
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_AudioNotifier": PSN_AudioNotifier
+    "PSN_Audio_Notify_Payload": PSN_Audio_Notify_Payload
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_AudioNotifier": "PSN Audio Notifier"
+    "PSN_Audio_Notify_Payload": "Audio Notification Payload (plays nothing)"
 }

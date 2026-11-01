@@ -1,23 +1,18 @@
-"""PSN_TonalGradingPro: Pure-logic tonal grading pipeline (no GPU/torch).
+"""PSN_TonalGradingPro: tonal grading (exposure, brightness, contrast, saturation, curves).
 
-This module implements the *pure-logic, secure-by-design* part of a professional
-tonal-grading node. Because the original spec requires PyTorch/GPU tensor
-operations (which are disallowed here), this implementation operates on plain
-Python values and JSON text only:
+The node grades two things with the same math:
+- an optional IMAGE tensor (batch, height, width, channels in 0..1), vectorised
+  with torch on whatever device the tensor is on; and
+- a single sample RGB colour (r, g, b), returned as plain floats.
 
-- It validates and clamps scalar tonal parameters (exposure, contrast,
-  brightness, saturation) to safe, finite ranges.
-- It parses and validates an optional ``curves_json`` string that describes
-  per-channel curve points, rejecting malformed or out-of-range data.
-- It computes a deterministic, float32-precision *reference* tonal transform
-  for a single scalar pixel value (0.0..1.0), which mirrors the math a GPU
-  kernel would apply: exposure (multiplicative), brightness (additive),
-  contrast (pivot around 0.5), saturation (mix toward luminance), and an
-  optional piecewise-linear curve.
+Math, in order: exposure (multiplicative, 2^exposure), brightness (additive),
+contrast (pivot around 0.5), saturation (mix toward Rec. 709 luminance), and an
+optional per-channel piecewise-linear curve from ``curves_json``. Every step is
+clamped to 0..1. There is no Levels (black/white point) control.
 
-The node therefore takes plain numbers and JSON text, and returns plain
-numbers plus a human-readable report. It never opens sockets, files, or
-processes, and never imports torch/comfy.
+Scalar parameters are validated and clamped to finite ranges, and ``curves_json``
+is parsed and validated, rejecting malformed data. No sockets, files or
+processes are used.
 """
 
 import json
@@ -146,6 +141,38 @@ def _apply_curve(value, points):
     return value
 
 
+def _curve_tensor(v, points):
+    """Vectorised piecewise-linear curve: same result as _apply_curve, for a whole tensor."""
+    import torch
+    if not points:
+        return v
+    xs = torch.tensor([p[0] for p in points], dtype=v.dtype, device=v.device)
+    ys = torch.tensor([p[1] for p in points], dtype=v.dtype, device=v.device)
+    if len(points) == 1:
+        return torch.full_like(v, float(ys[0]))
+    idx = torch.bucketize(v.contiguous(), xs).clamp(1, len(points) - 1)
+    x0, x1, y0, y1 = xs[idx - 1], xs[idx], ys[idx - 1], ys[idx]
+    den = x1 - x0
+    t = torch.where(den > 0, (v - x0) / den.clamp_min(1e-12), torch.zeros_like(v)).clamp(0.0, 1.0)
+    return y0 + t * (y1 - y0)
+
+
+def _grade_tensor(image, exposure, contrast, brightness, saturation, curves):
+    """Apply the tonal pipeline to a (B,H,W,C>=3) torch tensor in 0..1. Alpha/extra channels pass through."""
+    import torch
+    rgb = image[..., :3].clamp(0.0, 1.0)
+    rgb = (rgb * (2.0 ** exposure)).clamp(0.0, 1.0)
+    rgb = (rgb + brightness).clamp(0.0, 1.0)
+    rgb = (_CONTRAST_PIVOT + (rgb - _CONTRAST_PIVOT) * contrast).clamp(0.0, 1.0)
+    w = torch.tensor([0.2126, 0.7152, 0.0722], dtype=rgb.dtype, device=rgb.device)
+    lum = (rgb * w).sum(dim=-1, keepdim=True)
+    rgb = (lum + (rgb - lum) * saturation).clamp(0.0, 1.0)
+    if curves:
+        chans = [_curve_tensor(rgb[..., i], curves[k]) if k in curves else rgb[..., i] for i, k in enumerate("rgb")]
+        rgb = torch.stack(chans, dim=-1)
+    return torch.cat([rgb, image[..., 3:]], dim=-1) if image.shape[-1] > 3 else rgb
+
+
 def _luminance(r, g, b):
     """Rec. 709 luminance of an RGB triple in [0,1]."""
     return 0.2126 * r + 0.7152 * g + 0.0722 * b
@@ -192,12 +219,16 @@ def _apply_tonal(r, g, b, exposure, contrast, brightness, saturation, curves):
 
 
 class PSN_TonalGradingPro:
-    """Applies professional tonal adjustments (Curves, Levels, Exposure, Contrast).
+    """Tonal grading: exposure, brightness, contrast, saturation and curves.
 
-    Pure-logic reference implementation: operates on scalar RGB values and
-    JSON text, mirroring the math a GPU kernel would apply. No torch, no
-    network, no file I/O.
+    Grades an optional IMAGE tensor and, with the same math, a sample RGB colour.
+    There is no Levels control.
     """
+
+    DESCRIPTION = (
+        "Grades an IMAGE (and a sample r,g,b colour) with exposure, brightness, contrast, saturation "
+        "and per-channel curves from JSON. No Levels control."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -213,15 +244,16 @@ class PSN_TonalGradingPro:
             },
             "optional": {
                 "curves_json": ("STRING", {"default": ""}),
+                "image": ("IMAGE",),
             },
         }
 
-    RETURN_TYPES = ("FLOAT", "FLOAT", "FLOAT", "STRING")
-    RETURN_NAMES = ("r", "g", "b", "report")
+    RETURN_TYPES = ("FLOAT", "FLOAT", "FLOAT", "STRING", "IMAGE")
+    RETURN_NAMES = ("r", "g", "b", "report", "graded_image")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, r, g, b, exposure, contrast, brightness, saturation, curves_json=""):
+    def run(self, r, g, b, exposure, contrast, brightness, saturation, curves_json="", image=None):
         # Validate scalar inputs.
         ok_r, r_c, why_r = _validate_scalar("r", r, 0.0, 1.0)
         ok_g, g_c, why_g = _validate_scalar("g", g, 0.0, 1.0)
@@ -233,21 +265,25 @@ class PSN_TonalGradingPro:
 
         if not (ok_r and ok_g and ok_b and ok_e and ok_ct and ok_br and ok_sa):
             reasons = [w for w in (why_r, why_g, why_b, why_e, why_ct, why_br, why_sa) if w != "ok"]
-            return (0.0, 0.0, 0.0, "error: " + "; ".join(reasons))
+            return (0.0, 0.0, 0.0, "error: " + "; ".join(reasons), None)
 
         # Parse and validate curves.
         ok_curves, curves, why_curves = _parse_curves(curves_json)
         if not ok_curves:
-            return (0.0, 0.0, 0.0, "error: " + why_curves)
+            return (0.0, 0.0, 0.0, "error: " + why_curves, None)
 
         # Apply the tonal pipeline.
         out_r, out_g, out_b = _apply_tonal(r_c, g_c, b_c, e_c, ct_c, br_c, sa_c, curves)
+
+        graded = None
+        if image is not None:
+            graded = _grade_tensor(image, e_c, ct_c, br_c, sa_c, curves)
 
         report = (
             "ok: exposure=%.3f contrast=%.3f brightness=%.3f saturation=%.3f curves=%s"
             % (e_c, ct_c, br_c, sa_c, why_curves)
         )
-        return (out_r, out_g, out_b, report)
+        return (out_r, out_g, out_b, report, graded)
 
 
 NODE_CLASS_MAPPINGS = {

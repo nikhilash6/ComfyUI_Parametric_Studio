@@ -8,7 +8,7 @@ import h_build_a_status_aggregation_system_ as mod
 # --- module-level contract -------------------------------------------------
 
 def test_module_contract():
-    assert "PSN_StatusPollInstance" in mod.NODE_CLASS_MAPPINGS
+    assert "PSN_StatusScoreSnapshot" in mod.NODE_CLASS_MAPPINGS
     assert "PSN_StatusAggregateFleet" in mod.NODE_CLASS_MAPPINGS
     assert set(mod.NODE_DISPLAY_NAME_MAPPINGS) == set(mod.NODE_CLASS_MAPPINGS)
     for cls in mod.NODE_CLASS_MAPPINGS.values():
@@ -24,7 +24,7 @@ def test_module_contract():
 # --- poll instance ----------------------------------------------------------
 
 def test_poll_healthy():
-    node = mod.PSN_StatusPollInstance()
+    node = mod.PSN_StatusScoreSnapshot()
     report, score, img = node.run(
         name="a", alive=True, queue=0, vram_used=2.0, vram_total=16.0,
         cpu=10.0, uptime=100.0, error="",
@@ -32,13 +32,17 @@ def test_poll_healthy():
     assert 0.0 <= score <= 1.0
     assert score > 0.9  # plenty of headroom, empty queue
     assert "instance: a" in report
+    assert "no instance contacted" in report
+    assert "PSN_StatusPollInstance" not in mod.NODE_CLASS_MAPPINGS
+    # headroom = 1 - 2/16 = 0.875, doubled and capped at 1.0; queue 0
+    assert score == 1.0
     assert img.shape == (1, 1, 1, 3)
     assert torch.all((img >= 0.0) & (img <= 1.0))
     assert abs(img[0, 0, 0, 0].item() - score) < 1e-6
 
 
 def test_poll_dead_instance():
-    node = mod.PSN_StatusPollInstance()
+    node = mod.PSN_StatusScoreSnapshot()
     report, score, img = node.run(
         name="b", alive=False, queue=5, vram_used=0.0, vram_total=8.0,
         cpu=0.0, uptime=0.0, error="connection refused",
@@ -49,7 +53,7 @@ def test_poll_dead_instance():
 
 
 def test_poll_bad_values_clamped():
-    node = mod.PSN_StatusPollInstance()
+    node = mod.PSN_StatusScoreSnapshot()
     report, score, img = node.run(
         name="c", alive=True, queue=-5, vram_used=-1.0, vram_total=0.0,
         cpu=500.0, uptime=-3.0, error="",

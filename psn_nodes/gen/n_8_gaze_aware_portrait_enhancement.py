@@ -1,14 +1,12 @@
 """
 Gaze-Aware Portrait Enhancement (pure-logic core).
 
-This module implements the *secure, pure-Python* control logic for a
-gaze-aware portrait enhancement pipeline. The real pipeline would use
-torch/mediapipe/opencv to estimate gaze from pixels and warp the eye
-region; those GPU/vision dependencies are intentionally NOT used here.
+This module implements pure-Python vector arithmetic around gaze. It looks at
+no image and estimates no gaze: all gaze values are typed in by the user.
 
-Instead, this module provides:
-  * PSN_GazeEstimator  - validates a numeric 3D gaze vector and a pupil
-    position, normalizes the gaze vector, and reports a confidence score.
+This module provides:
+  * PSN_GazeVectorNormalize - parses a typed 3D gaze vector and a pupil
+    position and returns the unit-length gaze vector. No confidence score.
   * PSN_GazeCorrector  - computes a bounded correction offset from a
     current gaze vector toward a target gaze vector, scaled by a clamped
     strength, and reports whether the correction is safe (not too strong).
@@ -69,23 +67,6 @@ def _normalize_vector(vec):
     return [nx, ny, nz], True, "ok"
 
 
-def _confidence_from_vector(vec):
-    """
-    Heuristic confidence: a gaze vector close to unit length and with a
-    dominant forward (z) component is considered more confident.
-    Returns a float in [0, 1].
-    """
-    x, y, z = float(vec[0]), float(vec[1]), float(vec[2])
-    norm = math.sqrt(x * x + y * y + z * z)
-    if norm < 1e-9:
-        return 0.0
-    # How close to unit length (1.0 is best).
-    length_score = 1.0 - min(abs(norm - 1.0), 1.0)
-    # How forward-facing (z positive and large is best).
-    forward_score = _clamp(z / norm, 0.0, 1.0)
-    return _clamp(0.5 * length_score + 0.5 * forward_score, 0.0, 1.0)
-
-
 def _validate_pupil_position(pos):
     """
     Validate a pupil position given as a list/tuple of 2 or 3 ints.
@@ -128,15 +109,19 @@ def _correction_offset(current, target, strength):
     return offset, magnitude, True, "ok"
 
 
-class PSN_GazeEstimator:
+class PSN_GazeVectorNormalize:
     """
-    Validate and normalize a 3D gaze vector and a pupil position.
+    Parse a typed 3D gaze vector and pupil position and return the
+    unit-length gaze vector and the validated pupil position.
 
-    In a full pipeline this would run a vision model on an IMAGE tensor.
-    Here it accepts the *already-estimated* numeric gaze vector and pupil
-    position (as plain values) and returns a normalized gaze vector, the
-    validated pupil position, and a confidence score.
+    It takes no image and estimates nothing; the numbers are whatever the
+    user typed.
     """
+
+    DESCRIPTION = (
+        "Parses a typed 3D gaze vector and pupil position and returns the unit "
+        "vector. It has no image input and estimates no gaze."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -148,8 +133,8 @@ class PSN_GazeEstimator:
             "optional": {},
         }
 
-    RETURN_TYPES = ("FLOAT", "INT", "FLOAT", "STRING")
-    RETURN_NAMES = ("GAZE_VECTOR", "PUPIL_POSITION", "CONFIDENCE", "REASON")
+    RETURN_TYPES = ("FLOAT", "INT", "STRING")
+    RETURN_NAMES = ("GAZE_VECTOR", "PUPIL_POSITION", "REASON")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -157,18 +142,17 @@ class PSN_GazeEstimator:
         # Parse gaze vector from a comma/space separated string.
         vec, ok, reason = self._parse_vector_string(gaze_vector)
         if not ok:
-            return ([0.0, 0.0, 1.0], [0, 0], 0.0, reason)
+            return ([0.0, 0.0, 1.0], [0, 0], reason)
         normalized, ok, reason = _normalize_vector(vec)
         if not ok:
-            return ([0.0, 0.0, 1.0], [0, 0], 0.0, reason)
-        confidence = _confidence_from_vector(normalized)
+            return ([0.0, 0.0, 1.0], [0, 0], reason)
 
         # Parse pupil position.
         pos, ok, reason = self._parse_pupil_string(pupil_position)
         if not ok:
-            return (normalized, [0, 0], 0.0, reason)
+            return (normalized, [0, 0], reason)
 
-        return (normalized, pos, confidence, "ok")
+        return (normalized, pos, "ok")
 
     @staticmethod
     def _parse_vector_string(text):
@@ -269,11 +253,11 @@ class PSN_GazeCorrector:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_GazeEstimator": PSN_GazeEstimator,
+    "PSN_GazeVectorNormalize": PSN_GazeVectorNormalize,
     "PSN_GazeCorrector": PSN_GazeCorrector,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_GazeEstimator": "Gaze Estimator (PSN)",
+    "PSN_GazeVectorNormalize": "Gaze Vector Normalize (typed values, no estimation)",
     "PSN_GazeCorrector": "Gaze Corrector (PSN)",
 }

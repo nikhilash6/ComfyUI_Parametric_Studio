@@ -1,22 +1,19 @@
 """PSN_VisualModelSelector: backend for a visual model selection UI.
 
 Given a model list (as produced by a registry loader), this node assembles
-"model cards" containing a display name, a cover image path (searching for
-cover.jpg / preview.png inside each model's directory, with a fallback to a
-default placeholder), and a metadata dict.
+"model cards" containing a display name, a cover image path and a metadata
+dict. The cover path is the first of cover.jpg / preview.png that exists as a
+file inside the model's directory (checked with os.path.isfile); when the
+directory is missing or has neither file, the path is the empty string.
 
-The node is pure Python + stdlib (json) and does not touch the network or
-filesystem outside the workspace.  In a real ComfyUI deployment the
-`model_list` input would be a CUSTOM type produced by PSN_ModelRegistryLoader;
-here we accept a plain list of dicts so the module is testable in isolation.
+The node is pure Python + stdlib and does not touch the network. `model_list`
+is a plain list of dicts (or names).
 """
 
 import json
+import os
 
 CAT = "ParametricStudio/ModelSelection"
-
-# Fallback placeholder used when a model directory has no cover image.
-DEFAULT_PLACEHOLDER = "placeholder://default-cover"
 
 # Candidate cover file names, in priority order.
 COVER_CANDIDATES = ("cover.jpg", "preview.png")
@@ -53,23 +50,14 @@ def _clean_metadata(value):
 
 
 def _find_cover(model_dir):
-    """Return the path of the first existing cover candidate, else None.
-
-    `model_dir` is treated as an opaque string; we do NOT actually stat the
-    filesystem here (the node must stay workspace-safe and testable).  The
-    caller is expected to pass a directory that has already been resolved by
-    the registry loader.  We simply record the *expected* path so the UI can
-    fetch it; if the directory is empty/None we return None and the caller
-    falls back to the placeholder.
-    """
+    """Return the path of the first cover candidate that exists as a file
+    inside `model_dir`, else None (also None for a blank or non-string dir)."""
     if not isinstance(model_dir, str) or not model_dir.strip():
         return None
-    base = model_dir.rstrip("/")
     for cand in COVER_CANDIDATES:
-        # We cannot use os.path here (forbidden import), so we build the path
-        # with plain string concatenation.  The UI layer is responsible for
-        # verifying existence; the backend only assembles the candidate path.
-        return base + "/" + cand
+        path = os.path.join(model_dir, cand)
+        if os.path.isfile(path):
+            return path
     return None
 
 
@@ -92,9 +80,7 @@ def _build_card(entry, index):
         model_dir = None
         metadata = {"raw": repr(entry)}
 
-    cover = _find_cover(model_dir)
-    if cover is None:
-        cover = DEFAULT_PLACEHOLDER
+    cover = _find_cover(model_dir) or ""
 
     return {
         "name": name,

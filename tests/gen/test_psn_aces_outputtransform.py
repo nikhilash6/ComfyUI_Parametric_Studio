@@ -6,7 +6,7 @@ import math
 import pytest
 
 from psn_nodes.gen.psn_aces_outputtransform import (
-    PSN_ACES_OutputTransform,
+    PSN_ACES_OutputConfig_Check,
     OUTPUT_SPACES,
     TONE_MAPPINGS,
     validate_config,
@@ -177,40 +177,49 @@ class TestTransformPixel:
 
 class TestNode:
     def test_node_valid(self):
-        node = PSN_ACES_OutputTransform()
-        status, reason, exposure = node.run("sRGB", "None", 0.0)
-        assert status == "ok"
-        assert reason == "ok"
-        assert exposure == 0.0
+        node = PSN_ACES_OutputConfig_Check()
+        assert node.run("sRGB", "None", 0.0) == ("config_valid", "ok")
 
     def test_node_invalid_space(self):
-        node = PSN_ACES_OutputTransform()
-        status, reason, exposure = node.run("Invalid", "None", 0.0)
-        assert status == "error"
+        status, reason = PSN_ACES_OutputConfig_Check().run("Invalid", "None", 0.0)
+        assert status == "config_invalid"
         assert "output_space" in reason
 
-    def test_node_with_config_json(self):
-        node = PSN_ACES_OutputTransform()
-        config_json = '{"output_space": "Display_P3", "tone_mapping": "ACES_RRT", "exposure": 0.5}'
-        status, reason, exposure = node.run("sRGB", "None", 0.0, config_json=config_json)
-        assert status == "ok"
-        assert exposure == 0.5
+    def test_node_out_of_range_exposure(self):
+        status, reason = PSN_ACES_OutputConfig_Check().run("sRGB", "Reinhard", 99.0)
+        assert status == "config_invalid"
+        assert "exposure" in reason
+
+    def test_node_config_json_replaces_widgets(self):
+        node = PSN_ACES_OutputConfig_Check()
+        good = '{"output_space": "Display_P3", "tone_mapping": "ACES_RRT", "exposure": 0.5}'
+        assert node.run("sRGB", "None", 0.0, config_json=good) == ("config_valid", "ok")
+        # json wins: a bad json space is reported even though the widget value is fine
+        bad = '{"output_space": "Bad", "tone_mapping": "None", "exposure": 0}'
+        status, reason = node.run("sRGB", "None", 0.0, config_json=bad)
+        assert status == "config_invalid" and "output_space" in reason
 
     def test_node_with_invalid_config_json(self):
-        node = PSN_ACES_OutputTransform()
-        status, reason, exposure = node.run("sRGB", "None", 0.0, config_json="bad json")
-        assert status == "error"
+        status, reason = PSN_ACES_OutputConfig_Check().run("sRGB", "None", 0.0, config_json="bad json")
+        assert status == "config_invalid"
         assert "invalid JSON" in reason
 
-    def test_node_input_types(self):
-        inputs = PSN_ACES_OutputTransform.INPUT_TYPES()
-        assert "required" in inputs
-        assert "output_space" in inputs["required"]
-        assert "tone_mapping" in inputs["required"]
-        assert "exposure" in inputs["required"]
+    def test_node_input_types_have_no_image(self):
+        inputs = PSN_ACES_OutputConfig_Check.INPUT_TYPES()
+        assert {"output_space", "tone_mapping", "exposure"} <= set(inputs["required"])
+        assert "image" not in inputs["required"] and "image" not in inputs["optional"]
 
-    def test_node_return_types(self):
-        assert PSN_ACES_OutputTransform.RETURN_TYPES == ("STRING", "STRING", "FLOAT")
-        assert PSN_ACES_OutputTransform.RETURN_NAMES == ("status", "reason", "exposure_applied")
-        assert PSN_ACES_OutputTransform.FUNCTION == "run"
-        assert PSN_ACES_OutputTransform.CATEGORY == "ParametricStudio/Color"
+    def test_node_return_types_and_fabricated_output_gone(self):
+        assert PSN_ACES_OutputConfig_Check.RETURN_TYPES == ("STRING", "STRING")
+        assert PSN_ACES_OutputConfig_Check.RETURN_NAMES == ("status", "reason")
+        assert "exposure_applied" not in PSN_ACES_OutputConfig_Check.RETURN_NAMES
+        assert len(PSN_ACES_OutputConfig_Check().run("sRGB", "None", 2.0)) == 2
+        assert PSN_ACES_OutputConfig_Check.FUNCTION == "run"
+        assert PSN_ACES_OutputConfig_Check.CATEGORY == "ParametricStudio/Color"
+        assert "no image" in PSN_ACES_OutputConfig_Check.DESCRIPTION
+
+    def test_mappings(self):
+        from psn_nodes.gen import psn_aces_outputtransform as m
+        assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_ACES_OutputConfig_Check"]
+        assert "PSN_ACES_OutputTransform" not in m.NODE_CLASS_MAPPINGS
+        assert "no image" in m.NODE_DISPLAY_NAME_MAPPINGS["PSN_ACES_OutputConfig_Check"]

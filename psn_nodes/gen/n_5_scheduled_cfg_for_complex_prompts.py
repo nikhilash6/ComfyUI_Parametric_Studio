@@ -1,17 +1,17 @@
 """
-PSN_ScheduledCFG: Pure-logic implementation of a scheduled CFG (Classifier-Free Guidance)
-interpolation engine for complex prompts.
+PSN_CFG_Schedule_Interpolator: pure-logic interpolation of a CFG (Classifier-Free
+Guidance) value from a JSON schedule.
 
-This module implements ONLY the pure-logic, secure-by-design part of the spec:
-- Parsing and validating a JSON schedule of [step_percent, cfg_value] pairs.
-- Interpolating the CFG value at a given step percentage using Linear, Smoothstep,
-  or Cosine interpolation.
+This module does NOT patch a model or a sampler, and applies nothing across
+sampling. It only:
+- Parses and validates a JSON schedule of [step_percent, cfg_value] pairs.
+- Interpolates the CFG value at one given step percentage using Linear,
+  Smoothstep, or Cosine interpolation.
 - No torch, no ComfyUI imports, no network, no file I/O, no GPU access.
 
-The node class PSN_ScheduledCFG takes plain values (strings, floats) and returns
-the interpolated CFG value, the parsed schedule, and a status message. In a real
-ComfyUI environment, this logic would be wrapped to patch a MODEL object, but here
-we expose the core interpolation logic as a standalone node.
+The node takes plain values (strings, floats) and returns the interpolated CFG
+value for the step_percent you type in, the parsed schedule, and a status
+message. Wire the FLOAT output into something else to use it.
 """
 
 import json
@@ -158,16 +158,18 @@ def compute_cfg_at_step(schedule: list, step_percent: float, mode: str) -> float
     return schedule[-1][1]
 
 
-class PSN_ScheduledCFG:
+class PSN_CFG_Schedule_Interpolator:
     """
-    Applies a custom CFG schedule that varies guidance strength across the sampling process.
+    Interpolate a CFG value at one step percentage from a JSON schedule.
 
-    This node takes a JSON schedule of [step_percent, cfg_value] pairs and an interpolation
-    mode, and outputs the interpolated CFG value at a given step percentage.
-
-    In a full ComfyUI implementation, this would patch a MODEL object. Here, we expose
-    the pure-logic interpolation as a standalone node that takes plain values.
+    This node takes a JSON schedule of [step_percent, cfg_value] pairs, an
+    interpolation mode and a step percentage, and outputs the interpolated CFG
+    value. It does not patch a MODEL and does not change sampling.
     """
+
+    DESCRIPTION = ("Interpolates a CFG value at a given step percentage from "
+                   "a JSON schedule. It does not patch a model or sampler; it "
+                   "returns one number.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -184,7 +186,7 @@ class PSN_ScheduledCFG:
                     "min": 0.0,
                     "max": 1.0,
                     "step": 0.001,
-                    "tooltip": "Current step percentage (0.0 to 1.0)"
+                    "tooltip": "Step percentage to evaluate the schedule at (0.0 to 1.0)"
                 }),
             },
             "optional": {},
@@ -231,9 +233,9 @@ class PSN_ScheduledCFG:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_ScheduledCFG": PSN_ScheduledCFG,
+    "PSN_CFG_Schedule_Interpolator": PSN_CFG_Schedule_Interpolator,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_ScheduledCFG": "PSN Scheduled CFG",
+    "PSN_CFG_Schedule_Interpolator": "PSN CFG Schedule Interpolator (one value)",
 }

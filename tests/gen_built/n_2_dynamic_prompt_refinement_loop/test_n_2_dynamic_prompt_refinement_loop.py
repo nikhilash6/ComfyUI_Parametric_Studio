@@ -5,10 +5,10 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from n_2_dynamic_prompt_refinement_loop import (
-    PSN_Prompt_Refiner_Loop,
+    PSN_Prompt_Scripted_Rewrite,
     PSN_Prompt_Structure_Enforcer,
     _heuristic_score,
-    _parse_mock_handle,
+    _parse_script,
     _extract_components,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
@@ -17,23 +17,26 @@ from n_2_dynamic_prompt_refinement_loop import (
 # ---------------------------------------------------------------------------
 # 1. Module-level registration
 # ---------------------------------------------------------------------------
-assert "PSN_Prompt_Refiner_Loop" in NODE_CLASS_MAPPINGS, "Refiner not in NODE_CLASS_MAPPINGS"
+assert "PSN_Prompt_Scripted_Rewrite" in NODE_CLASS_MAPPINGS, "Refiner not in NODE_CLASS_MAPPINGS"
 assert "PSN_Prompt_Structure_Enforcer" in NODE_CLASS_MAPPINGS, "Enforcer not in NODE_CLASS_MAPPINGS"
-assert NODE_DISPLAY_NAME_MAPPINGS["PSN_Prompt_Refiner_Loop"] == "PSN Prompt Refiner Loop"
+assert NODE_DISPLAY_NAME_MAPPINGS["PSN_Prompt_Scripted_Rewrite"] == "Scripted Prompt Rewrite (calls no LLM)"
+assert "PSN_Prompt_Refiner_Loop" not in NODE_CLASS_MAPPINGS
+assert "calls no LLM" in PSN_Prompt_Scripted_Rewrite.DESCRIPTION
+assert "llm_handle" not in PSN_Prompt_Scripted_Rewrite.INPUT_TYPES()["required"]
 assert NODE_DISPLAY_NAME_MAPPINGS["PSN_Prompt_Structure_Enforcer"] == "PSN Prompt Structure Enforcer"
 
 # ---------------------------------------------------------------------------
 # 2. INPUT_TYPES / RETURN_TYPES / FUNCTION / CATEGORY
 # ---------------------------------------------------------------------------
-rt = PSN_Prompt_Refiner_Loop.INPUT_TYPES()
+rt = PSN_Prompt_Scripted_Rewrite.INPUT_TYPES()
 assert "initial_prompt" in rt["required"]
-assert "llm_handle" in rt["required"]
+assert "script" in rt["required"]
 assert "max_iterations" in rt["required"]
 assert "quality_threshold" in rt["required"]
-assert PSN_Prompt_Refiner_Loop.RETURN_TYPES == ("STRING", "INT", "FLOAT")
-assert PSN_Prompt_Refiner_Loop.RETURN_NAMES == ("refined_prompt", "iteration_count", "final_score")
-assert PSN_Prompt_Refiner_Loop.FUNCTION == "run"
-assert PSN_Prompt_Refiner_Loop.CATEGORY == "ParametricStudio/Prompt"
+assert PSN_Prompt_Scripted_Rewrite.RETURN_TYPES == ("STRING", "INT", "FLOAT")
+assert PSN_Prompt_Scripted_Rewrite.RETURN_NAMES == ("rewritten_prompt", "iteration_count", "score")
+assert PSN_Prompt_Scripted_Rewrite.FUNCTION == "run"
+assert PSN_Prompt_Scripted_Rewrite.CATEGORY == "ParametricStudio/Prompt"
 
 rt2 = PSN_Prompt_Structure_Enforcer.INPUT_TYPES()
 assert "prompt" in rt2["required"]
@@ -58,25 +61,26 @@ assert short_score < 0.5, f"short prompt should score < 0.5, got {short_score}"
 assert detailed_score > short_score, f"detailed prompt should score higher, got {detailed_score} vs {short_score}"
 
 # ---------------------------------------------------------------------------
-# 5. Mock handle parsing
+# 5. Script parsing
 # ---------------------------------------------------------------------------
-handle = "mock:score=0.4,rewrite=a more detailed cat;score=0.9,rewrite=final beautiful cat"
-turns = _parse_mock_handle(handle)
+handle = "script:score=0.4,rewrite=a more detailed cat;score=0.9,rewrite=final beautiful cat"
+turns = _parse_script(handle)
 assert len(turns) == 2
 assert turns[0] == (0.4, "a more detailed cat")
 assert turns[1] == (0.9, "final beautiful cat")
 
 # empty handle -> no turns
-assert _parse_mock_handle("") == []
-assert _parse_mock_handle("not a mock") == []
+assert _parse_script("") == []
+assert _parse_script("not a script") == []
+assert _parse_script("mock:score=0.4,rewrite=x") == [], "old mock: prefix is no longer accepted"
 
 # ---------------------------------------------------------------------------
-# 6. Refiner loop: mock LLM returns low score first, then high score -> 2 iterations
+# 6. Refiner loop: script returns low score first, then high score -> 2 iterations
 # ---------------------------------------------------------------------------
-node = PSN_Prompt_Refiner_Loop()
+node = PSN_Prompt_Scripted_Rewrite()
 refined, iters, score = node.run(
     initial_prompt="a cat",
-    llm_handle="mock:score=0.4,rewrite=a more detailed cat;score=0.9,rewrite=final beautiful cat",
+    script="script:score=0.4,rewrite=a more detailed cat;score=0.9,rewrite=final beautiful cat",
     max_iterations=5,
     quality_threshold=0.7,
 )
@@ -89,7 +93,7 @@ assert refined == "final beautiful cat", f"unexpected refined prompt: {refined}"
 # ---------------------------------------------------------------------------
 refined2, iters2, score2 = node.run(
     initial_prompt="a cat",
-    llm_handle="mock:score=0.2,rewrite=still bad;score=0.3,rewrite=still bad 2;score=0.4,rewrite=still bad 3",
+    script="script:score=0.2,rewrite=still bad;score=0.3,rewrite=still bad 2;score=0.4,rewrite=still bad 3",
     max_iterations=3,
     quality_threshold=0.9,
 )
@@ -101,7 +105,7 @@ assert score2 == 0.4, f"expected final score 0.4, got {score2}"
 # ---------------------------------------------------------------------------
 refined3, iters3, score3 = node.run(
     initial_prompt="",
-    llm_handle="",
+    script="",
     max_iterations=5,
     quality_threshold=0.7,
 )
@@ -114,7 +118,7 @@ assert score3 == 0.0
 # ---------------------------------------------------------------------------
 refined4, iters4, score4 = node.run(
     initial_prompt="a cat",
-    llm_handle="mock:score=0.95,rewrite=already great",
+    script="script:score=0.95,rewrite=already great",
     max_iterations=5,
     quality_threshold=0.7,
 )
@@ -161,17 +165,22 @@ assert "lighting" in comps["light"].lower(), f"light component wrong: {comps['li
 assert "oil" in comps["style"].lower(), f"style component wrong: {comps['style']}"
 
 # ---------------------------------------------------------------------------
-# 14. Bad input: non-string llm_handle should not crash (treated as empty)
+# 14. Bad input: non-string script should not crash (treated as empty)
 # ---------------------------------------------------------------------------
 refined5, iters5, score5 = node.run(
     initial_prompt="a cat",
-    llm_handle=None,
+    script=None,
     max_iterations=2,
     quality_threshold=0.7,
 )
-# None is falsy so _parse_mock_handle returns [] and heuristic is used
+# None is falsy so _parse_script returns [] and heuristic is used
 assert isinstance(refined5, str)
 assert isinstance(iters5, int)
 assert isinstance(score5, float)
+
+# 15. Heuristic path with real values: short prompt gets the fixed phrase, score is the heuristic's
+refined6, iters6, score6 = node.run(initial_prompt="a cat", script="", max_iterations=1, quality_threshold=0.99)
+assert refined6 == "a cat, cinematic lighting, detailed texture, dramatic mood", refined6
+assert iters6 == 1 and score6 == _heuristic_score("a cat")
 
 print('ok')

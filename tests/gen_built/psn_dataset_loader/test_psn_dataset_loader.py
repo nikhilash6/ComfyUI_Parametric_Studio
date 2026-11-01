@@ -84,4 +84,49 @@ assert PSN_Dataset_Loader.CATEGORY.startswith("ParametricStudio/")
 out, _ = node.run("a,b,c\n1,2", "csv")
 assert out["records"][0] == {"a": "1", "b": "2", "c": ""}
 
+# 13. A real file path is read, not parsed as text
+import os, tempfile
+with tempfile.TemporaryDirectory() as d:
+    csv_path = os.path.join(d, "data.csv")
+    with open(csv_path, "w", encoding="utf-8") as fh:
+        fh.write("name,age\nAlice,30\nBob,25\nCy,41\n")
+    out, meta = node.run(csv_path, "csv")
+    assert out["num_records"] == 3, out
+    assert out["records"][2] == {"name": "Cy", "age": "41"}
+    assert json.loads(meta)["source_kind"] == "file"
+
+    json_path = os.path.join(d, "data.json")
+    with open(json_path, "w", encoding="utf-8") as fh:
+        fh.write('[{"a": 1}, {"a": 2}]')
+    out, _ = node.run(json_path, "json")
+    assert out["records"] == [{"a": 1}, {"a": 2}]
+
+    # 14. A directory with format folder lists sorted file names (subdirs skipped)
+    folder = os.path.join(d, "imgs")
+    os.mkdir(folder)
+    os.mkdir(os.path.join(folder, "sub"))
+    for n in ("b.png", "a.png", "c.txt"):
+        open(os.path.join(folder, n), "w").close()
+    out, meta = node.run(folder, "folder")
+    assert [r["path"] for r in out["records"]] == [os.path.join(folder, n) for n in ("a.png", "b.png", "c.txt")]
+    assert json.loads(meta)["source_kind"] == "directory"
+
+    # 15. A directory with a text format raises instead of parsing the path as text
+    try:
+        node.run(folder, "csv")
+        raise AssertionError("expected ValueError for directory with csv")
+    except ValueError:
+        pass
+
+    # 16. A file path in folder format holds one path per line
+    lst = os.path.join(d, "list.txt")
+    with open(lst, "w", encoding="utf-8") as fh:
+        fh.write("/x/1.png\n/x/2.png\n")
+    out, _ = node.run(lst, "folder")
+    assert [r["path"] for r in out["records"]] == ["/x/1.png", "/x/2.png"]
+
+# 17. Inline text still works and is labelled as such
+out, meta = node.run("k\nv", "csv")
+assert json.loads(meta)["source_kind"] == "inline_text" and out["records"] == [{"k": "v"}]
+
 print("ok")

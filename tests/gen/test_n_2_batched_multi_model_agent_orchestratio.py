@@ -5,7 +5,7 @@ Tests for Batched Multi-Model Agent Orchestration nodes.
 import pytest
 from psn_nodes.gen.n_2_batched_multi_model_agent_orchestratio import (
     PSN_Agent_Loop_Init,
-    PSN_Agent_Executor,
+    PSN_Agent_Transform_Sim,
     PSN_Agent_Aggregator,
     _validate_agent_config,
     _execute_agent,
@@ -48,10 +48,10 @@ class TestPSN_Agent_Loop_Init:
             node.run(model_ids, agent_config)
 
 
-class TestPSN_Agent_Executor:
+class TestPSN_Agent_Transform_Sim:
     def test_single_iteration(self):
         init_node = PSN_Agent_Loop_Init()
-        exec_node = PSN_Agent_Executor()
+        exec_node = PSN_Agent_Transform_Sim()
         model_ids = "model_a"
         agent_config = '{"agents": {"model_a": "uppercase"}}'
         loop_state, idx = init_node.run(model_ids, agent_config)
@@ -62,7 +62,7 @@ class TestPSN_Agent_Executor:
 
     def test_two_iterations(self):
         init_node = PSN_Agent_Loop_Init()
-        exec_node = PSN_Agent_Executor()
+        exec_node = PSN_Agent_Transform_Sim()
         model_ids = "model_a\nmodel_b"
         agent_config = '{"agents": {"model_a": "identity", "model_b": "reverse"}}'
         loop_state, idx = init_node.run(model_ids, agent_config)
@@ -82,7 +82,7 @@ class TestPSN_Agent_Executor:
 
     def test_index_out_of_range(self):
         init_node = PSN_Agent_Loop_Init()
-        exec_node = PSN_Agent_Executor()
+        exec_node = PSN_Agent_Transform_Sim()
         model_ids = "model_a"
         agent_config = '{"agents": {"model_a": "identity"}}'
         loop_state, idx = init_node.run(model_ids, agent_config)
@@ -93,7 +93,7 @@ class TestPSN_Agent_Executor:
 
     def test_model_id_mismatch(self):
         init_node = PSN_Agent_Loop_Init()
-        exec_node = PSN_Agent_Executor()
+        exec_node = PSN_Agent_Transform_Sim()
         model_ids = "model_a"
         agent_config = '{"agents": {"model_a": "identity"}}'
         loop_state, idx = init_node.run(model_ids, agent_config)
@@ -102,12 +102,35 @@ class TestPSN_Agent_Executor:
 
     def test_negative_index(self):
         init_node = PSN_Agent_Loop_Init()
-        exec_node = PSN_Agent_Executor()
+        exec_node = PSN_Agent_Transform_Sim()
         model_ids = "model_a"
         agent_config = '{"agents": {"model_a": "identity"}}'
         loop_state, idx = init_node.run(model_ids, agent_config)
         with pytest.raises(ValueError, match="non-negative"):
             exec_node.run(loop_state, -1, "model_a")
+
+
+class TestHonestTransform:
+    def test_description_and_registry(self):
+        from psn_nodes.gen import n_2_batched_multi_model_agent_orchestratio as m
+        assert "PSN_Agent_Executor" not in m.NODE_CLASS_MAPPINGS
+        assert m.NODE_CLASS_MAPPINGS["PSN_Agent_Transform_Sim"] is PSN_Agent_Transform_Sim
+        assert "calls no model" in PSN_Agent_Transform_Sim.DESCRIPTION
+        assert "calls no model" in m.NODE_DISPLAY_NAME_MAPPINGS["PSN_Agent_Transform_Sim"]
+
+    def test_prefix_suffix_and_lower_on_fixed_text(self):
+        init_node = PSN_Agent_Loop_Init()
+        exec_node = PSN_Agent_Transform_Sim()
+        cfg = '{"agents": {"A": "prefix", "B": "suffix", "C": "lowercase"}}'
+        state, idx = init_node.run("A\nB\nC", cfg)
+        r1, i1, d1 = exec_node.run(state, idx, "A")
+        r2, i2, d2 = exec_node.run(state, i1, "B")
+        r3, i3, d3 = exec_node.run(state, i2, "C")
+        assert r1 == "[A] input_for_A"
+        assert r2 == "input_for_B [B]"
+        assert r3 == "input_for_c"
+        assert (d1, d2, d3) == (False, False, True)
+        assert state["results"] == [r1, r2, r3]
 
 
 class TestPSN_Agent_Aggregator:

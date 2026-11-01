@@ -1,190 +1,101 @@
 """
-Tests for PSN_Modal_Submit_Workflow node.
+Tests for PSN_Modal_Job_Spec node.
 
-These tests verify the pure-logic implementation of the Modal submit workflow
-node, including input validation, job ID generation, and status simulation.
+The node validates inputs and builds a job spec. It contacts nothing, so these
+tests check the values it returns and that no completion claim is made.
 """
 
 import json
-import pytest
 
 from psn_nodes.gen.psn_modal_submit_workflow import (
-    PSN_Modal_Submit_Workflow,
+    PSN_Modal_Job_Spec,
     _validate_workflow_json,
-    _validate_modal_env,
-    _validate_gpu_type,
     _validate_timeout_sec,
-    _generate_job_id,
-    _simulate_submission,
+    _job_key,
     ALLOWED_GPU_TYPES,
     ALLOWED_MODAL_ENVS,
 )
 
+WF = json.dumps({"nodes": [], "links": []})
 
-class TestPSNModalSubmitWorkflow:
-    """Test suite for PSN_Modal_Submit_Workflow node."""
-    
-    def test_valid_inputs_returns_completed_status(self):
-        """Test that valid inputs return a job_id and 'completed' status."""
-        node = PSN_Modal_Submit_Workflow()
-        workflow_json = json.dumps({"nodes": [], "links": []})
-        job_id, status = node.run(workflow_json, "prod", "A100", 300)
-        
-        assert job_id.startswith("modal-job-")
-        assert len(job_id) == len("modal-job-") + 16
-        assert status == "completed"
-    
-    def test_invalid_json_returns_failed_status(self):
-        """Test that invalid JSON returns empty job_id and 'failed' status."""
-        node = PSN_Modal_Submit_Workflow()
-        job_id, status = node.run("not valid json", "prod", "A100", 300)
-        
-        assert job_id == ""
-        assert status == "failed"
-    
-    def test_empty_workflow_json_returns_failed(self):
-        """Test that empty workflow_json returns failed status."""
-        node = PSN_Modal_Submit_Workflow()
-        job_id, status = node.run("", "prod", "A100", 300)
-        
-        assert job_id == ""
-        assert status == "failed"
-    
-    def test_invalid_modal_env_returns_failed(self):
-        """Test that invalid modal_env returns failed status."""
-        node = PSN_Modal_Submit_Workflow()
-        workflow_json = json.dumps({"nodes": []})
-        job_id, status = node.run(workflow_json, "invalid_env", "A100", 300)
-        
-        assert job_id == ""
-        assert status == "failed"
-    
-    def test_invalid_gpu_type_returns_failed(self):
-        """Test that invalid gpu_type returns failed status."""
-        node = PSN_Modal_Submit_Workflow()
-        workflow_json = json.dumps({"nodes": []})
-        job_id, status = node.run(workflow_json, "prod", "V100", 300)
-        
-        assert job_id == ""
-        assert status == "failed"
-    
-    def test_invalid_timeout_returns_failed(self):
-        """Test that invalid timeout_sec returns failed status."""
-        node = PSN_Modal_Submit_Workflow()
-        workflow_json = json.dumps({"nodes": []})
-        
-        # Zero timeout
-        job_id, status = node.run(workflow_json, "prod", "A100", 0)
-        assert job_id == ""
-        assert status == "failed"
-        
-        # Negative timeout
-        job_id, status = node.run(workflow_json, "prod", "A100", -10)
-        assert job_id == ""
-        assert status == "failed"
-        
-        # Timeout too large
-        job_id, status = node.run(workflow_json, "prod", "A100", 100000)
-        assert job_id == ""
-        assert status == "failed"
-    
-    def test_job_id_is_deterministic(self):
-        """Test that the same inputs always produce the same job_id."""
-        workflow_json = json.dumps({"nodes": [{"id": 1}]})
-        job_id1 = _generate_job_id(workflow_json, "prod", "A100", 300)
-        job_id2 = _generate_job_id(workflow_json, "prod", "A100", 300)
-        
-        assert job_id1 == job_id2
-    
-    def test_job_id_changes_with_different_inputs(self):
-        """Test that different inputs produce different job_ids."""
-        workflow_json1 = json.dumps({"nodes": [{"id": 1}]})
-        workflow_json2 = json.dumps({"nodes": [{"id": 2}]})
-        
-        job_id1 = _generate_job_id(workflow_json1, "prod", "A100", 300)
-        job_id2 = _generate_job_id(workflow_json2, "prod", "A100", 300)
-        
-        assert job_id1 != job_id2
-    
-    def test_all_valid_gpu_types_accepted(self):
-        """Test that all allowed GPU types are accepted."""
-        node = PSN_Modal_Submit_Workflow()
-        workflow_json = json.dumps({"nodes": []})
-        
-        for gpu_type in ALLOWED_GPU_TYPES:
-            job_id, status = node.run(workflow_json, "prod", gpu_type, 300)
-            assert status == "completed", f"Failed for gpu_type: {gpu_type}"
-            assert job_id.startswith("modal-job-")
-    
-    def test_all_valid_modal_envs_accepted(self):
-        """Test that all allowed modal environments are accepted."""
-        node = PSN_Modal_Submit_Workflow()
-        workflow_json = json.dumps({"nodes": []})
-        
+
+class TestPSNModalJobSpec:
+    def test_valid_inputs_build_spec_and_validated_status(self):
+        key, spec, status = PSN_Modal_Job_Spec().run(WF, "prod", "A100", 300)
+        assert status == "validated"
+        assert key.startswith("modal-spec-")
+        assert len(key) == len("modal-spec-") + 16
+        assert json.loads(spec) == {
+            "workflow": {"nodes": [], "links": []},
+            "modal_env": "prod",
+            "gpu_type": "A100",
+            "timeout_sec": 300,
+        }
+
+    def test_no_completion_is_claimed(self):
+        key, spec, status = PSN_Modal_Job_Spec().run(WF, "prod", "H100", 60)
+        assert status != "completed"
+        assert "completed" not in status
+        assert PSN_Modal_Job_Spec.RETURN_NAMES == ("job_key", "job_spec_json", "status")
+        assert "does not" in PSN_Modal_Job_Spec.DESCRIPTION.lower()
+
+    def test_invalid_json(self):
+        key, spec, status = PSN_Modal_Job_Spec().run("not valid json", "prod", "A100", 300)
+        assert (key, spec) == ("", "")
+        assert status.startswith("invalid: Invalid JSON")
+
+    def test_empty_workflow_json(self):
+        key, spec, status = PSN_Modal_Job_Spec().run("", "prod", "A100", 300)
+        assert (key, spec) == ("", "")
+        assert status == "invalid: workflow_json must not be empty"
+
+    def test_invalid_modal_env(self):
+        key, spec, status = PSN_Modal_Job_Spec().run(WF, "invalid_env", "A100", 300)
+        assert (key, spec) == ("", "")
+        assert "modal_env must be one of" in status
+
+    def test_invalid_gpu_type(self):
+        key, spec, status = PSN_Modal_Job_Spec().run(WF, "prod", "V100", 300)
+        assert (key, spec) == ("", "")
+        assert "gpu_type must be one of" in status
+
+    def test_invalid_timeout(self):
+        node = PSN_Modal_Job_Spec()
+        for t, msg in ((0, "positive"), (-10, "positive"), (100000, "exceed")):
+            key, spec, status = node.run(WF, "prod", "A100", t)
+            assert (key, spec) == ("", "")
+            assert msg in status
+
+    def test_key_is_deterministic_and_input_sensitive(self):
+        wf1 = json.dumps({"nodes": [{"id": 1}]})
+        wf2 = json.dumps({"nodes": [{"id": 2}]})
+        assert _job_key(wf1, "prod", "A100", 300) == _job_key(wf1, "prod", "A100", 300)
+        assert _job_key(wf1, "prod", "A100", 300) != _job_key(wf2, "prod", "A100", 300)
+        assert _job_key(wf1, "prod", "A100", 300) != _job_key(wf1, "dev", "A100", 300)
+
+    def test_all_gpu_types_and_envs_reach_spec(self):
+        node = PSN_Modal_Job_Spec()
+        for gpu in ALLOWED_GPU_TYPES:
+            _, spec, status = node.run(WF, "prod", gpu, 300)
+            assert status == "validated" and json.loads(spec)["gpu_type"] == gpu
         for env in ALLOWED_MODAL_ENVS:
-            job_id, status = node.run(workflow_json, env, "A100", 300)
-            assert status == "completed", f"Failed for modal_env: {env}"
-            assert job_id.startswith("modal-job-")
-    
-    def test_validate_workflow_json_with_non_dict_json(self):
-        """Test that JSON that parses to non-dict is rejected."""
-        valid, err = _validate_workflow_json("[1, 2, 3]")
-        assert not valid
-        assert "JSON object" in err
-        
-        valid, err = _validate_workflow_json('"string"')
-        assert not valid
-        assert "JSON object" in err
-    
-    def test_validate_timeout_with_bool_rejected(self):
-        """Test that boolean values are rejected for timeout_sec."""
-        valid, err = _validate_timeout_sec(True)
-        assert not valid
-        assert "integer" in err
-        
-        valid, err = _validate_timeout_sec(False)
-        assert not valid
-        assert "integer" in err
-    
-    def test_workflow_json_must_be_string(self):
-        """Test that non-string workflow_json is rejected."""
-        valid, err = _validate_workflow_json(123)
-        assert not valid
-        assert "string" in err
-        
-        valid, err = _validate_workflow_json(None)
-        assert not valid
-        assert "string" in err
-    
-    def test_simulate_submission_returns_valid_status(self):
-        """Test that _simulate_submission returns a valid status."""
-        workflow_json = json.dumps({"nodes": []})
-        job_id, status = _simulate_submission(workflow_json, "prod", "A100", 300)
-        
-        assert job_id.startswith("modal-job-")
-        assert status in ["pending", "running", "completed", "failed"]
-    
-    def test_input_types_structure(self):
-        """Test that INPUT_TYPES has the correct structure."""
-        input_types = PSN_Modal_Submit_Workflow.INPUT_TYPES()
-        
-        assert "required" in input_types
-        required = input_types["required"]
-        
-        assert "workflow_json" in required
-        assert "modal_env" in required
-        assert "gpu_type" in required
-        assert "timeout_sec" in required
-        
-        # Check types
-        assert required["workflow_json"][0] == "STRING"
-        assert required["modal_env"][0] == ALLOWED_MODAL_ENVS
-        assert required["gpu_type"][0] == ALLOWED_GPU_TYPES
-        assert required["timeout_sec"][0] == "INT"
-    
-    def test_return_types_and_names(self):
-        """Test that RETURN_TYPES and RETURN_NAMES are correct."""
-        assert PSN_Modal_Submit_Workflow.RETURN_TYPES == ("STRING", "STRING")
-        assert PSN_Modal_Submit_Workflow.RETURN_NAMES == ("job_id", "status")
-        assert PSN_Modal_Submit_Workflow.FUNCTION == "run"
-        assert PSN_Modal_Submit_Workflow.CATEGORY == "ParametricStudio/Modal"
+            _, spec, status = node.run(WF, env, "A100", 300)
+            assert status == "validated" and json.loads(spec)["modal_env"] == env
+
+    def test_validate_workflow_json_rejects_non_dict_and_non_string(self):
+        assert _validate_workflow_json("[1, 2, 3]") == (False, "workflow_json must parse to a JSON object (dict)")
+        assert _validate_workflow_json(123) == (False, "workflow_json must be a string")
+        assert _validate_workflow_json(None)[0] is False
+
+    def test_validate_timeout_rejects_bool(self):
+        assert _validate_timeout_sec(True) == (False, "timeout_sec must be an integer")
+        assert _validate_timeout_sec(300) == (True, "")
+
+    def test_input_types_and_names(self):
+        req = PSN_Modal_Job_Spec.INPUT_TYPES()["required"]
+        assert req["workflow_json"][0] == "STRING"
+        assert req["modal_env"][0] == ALLOWED_MODAL_ENVS
+        assert req["gpu_type"][0] == ALLOWED_GPU_TYPES
+        assert req["timeout_sec"][0] == "INT"
+        assert PSN_Modal_Job_Spec.RETURN_TYPES == ("STRING", "STRING", "STRING")
+        assert PSN_Modal_Job_Spec.FUNCTION == "run"

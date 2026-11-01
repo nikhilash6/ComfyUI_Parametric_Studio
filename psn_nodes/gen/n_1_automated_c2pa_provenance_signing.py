@@ -1,23 +1,20 @@
-"""Automated C2PA Provenance Signing (pure-logic, secure-by-design).
+"""Manifest + fixed-key HMAC embedding (pure-logic).
 
-This module implements the *pure-logic* part of a C2PA provenance
-signing/verification pipeline.  It does NOT touch the network, the file
-system, or any GPU/torch/ComfyUI internals, and it does NOT depend on the
-``c2pa`` / ``Pillow`` / ``ffmpeg`` libraries.
+This is NOT C2PA.  It writes no C2PA/JUMBF structure and no X.509 signature,
+uses no ``c2pa`` library, and writes no file.  It is also not tamper-proof:
+the HMAC key is a constant in this source file, so anyone can produce a
+matching manifest and HMAC.  It only shows that a manifest dict still matches
+the hash and HMAC stored beside it.
 
-What it does do, using only the Python standard library:
+What it does, using only the Python standard library:
 
-* Build a deterministic C2PA-style manifest (creation claims, software
-  agent info, provenance chain) from plain values.
-* Compute a stable, canonical manifest hash (SHA-256 over canonical JSON).
-* Produce a *deterministic* signature over the manifest.  The signature is
-  a keyed HMAC-SHA256 (a stand-in for a real asymmetric signature) so the
-  whole sign -> verify -> tamper-detect flow is fully testable offline.
-* Embed the manifest + signature into a media container as a base64
-  payload (PNG ``tEXt`` chunk or MP4 ``udta`` atom) *without* altering the
-  pixel data.
-* Extract and validate that embedded manifest: recompute the hash, check
-  the signature, and detect tampering.
+* Build a small JSON manifest (author, tool, media format) from plain values.
+* Compute a stable manifest hash (SHA-256 over canonical JSON).
+* Compute an HMAC-SHA256 of the manifest with the fixed key.
+* Add the manifest + HMAC as a base64 string under the ``psn_manifest`` key of
+  a media dict's ``metadata``, leaving ``pixels`` untouched.  Nothing is
+  written into a PNG or MP4 file.
+* Read that entry back and recompute the hash and HMAC.
 
 The media is represented as a plain dict:
     {"format": "png"|"mp4", "pixels": <opaque>, "metadata": {...}}
@@ -35,10 +32,9 @@ import re
 
 CAT = "ParametricStudio/Provenance"
 
-# A deterministic key used for the stand-in signature.  In a real system
-# this would be a private key; here it is a fixed, documented constant so
-# the pipeline is reproducible and testable without any key material I/O.
-_DEFAULT_KEY = b"psn-c2pa-deterministic-signing-key"
+# Fixed HMAC key.  It is public (it is in this source file), so the HMAC shows
+# consistency only, not authorship or tamper resistance.
+_DEFAULT_KEY = b"psn-manifest-fixed-public-hmac-key"
 
 # Maximum allowed length for free-text fields (author / tool / override).
 _MAX_TEXT_LEN = 4096
@@ -46,8 +42,8 @@ _MAX_TEXT_LEN = 4096
 # Allowed media container formats.
 _ALLOWED_FORMATS = ("png", "mp4")
 
-# C2PA manifest tag used inside the container metadata.
-_MANIFEST_TAG = "c2pa_manifest"
+# Metadata key holding the embedded manifest payload.
+_MANIFEST_TAG = "psn_manifest"
 
 
 def _canonical_json(obj):
@@ -98,7 +94,7 @@ def _validate_media(media):
 
 
 def build_manifest(author, tool, media_format, manifest_override=None):
-    """Build a C2PA-style manifest dict from plain values.
+    """Build a small manifest dict from plain values.
 
     ``manifest_override`` (optional JSON text) is merged *on top of* the
     generated claims so callers can inject extra provenance fields.  The
@@ -110,8 +106,8 @@ def build_manifest(author, tool, media_format, manifest_override=None):
         raise ValueError("media format must be one of %s" % (_ALLOWED_FORMATS,))
 
     manifest = {
-        "c2pa_version": "1.0",
-        "claim_generator": "PSN_C2PA_Signer",
+        "manifest_version": "1",
+        "claim_generator": "PSN_Manifest_HMAC_Embed",
         "creation": {
             "author": author,
             "tool": tool,
@@ -147,11 +143,10 @@ def manifest_hash(manifest):
 
 
 def sign_manifest(manifest, key=_DEFAULT_KEY):
-    """Return a deterministic HMAC-SHA256 signature (hex) over the manifest.
+    """Return a deterministic HMAC-SHA256 (hex) of the manifest.
 
-    This is a stand-in for an asymmetric signature: it is keyed, so a
-    verifier holding the same key can confirm integrity, and it is
-    deterministic so tests are stable.
+    The default key is public, so this is a consistency check only, not a
+    signature in the asymmetric sense.
     """
     if not isinstance(key, (bytes, bytearray)):
         raise ValueError("signing key must be bytes")
@@ -163,9 +158,8 @@ def embed_manifest(media, manifest, signature):
     """Embed manifest + signature into the media container metadata.
 
     The pixel data is returned unchanged.  The manifest and signature are
-    stored base64-encoded under the ``c2pa_manifest`` metadata tag, which
-    mirrors how a real C2PA payload would ride in a PNG ``tEXt`` chunk or
-    an MP4 ``udta`` atom.
+    stored base64-encoded under the ``psn_manifest`` metadata key of the
+    returned dict.  Nothing is written into a PNG or MP4 file.
     """
     fmt, pixels, metadata = _validate_media(media)
     payload = {
@@ -188,27 +182,27 @@ def extract_manifest(media):
     _fmt, _pixels, metadata = _validate_media(media)
     encoded = metadata.get(_MANIFEST_TAG)
     if encoded is None:
-        raise ValueError("no C2PA manifest embedded in media")
+        raise ValueError("no embedded manifest in media")
     if not isinstance(encoded, str):
-        raise ValueError("C2PA manifest payload is malformed")
+        raise ValueError("embedded manifest payload is malformed")
     try:
         raw = _b64decode(encoded)
         payload = json.loads(raw.decode("utf-8"))
     except (ValueError, TypeError) as exc:
-        raise ValueError("C2PA manifest payload is not valid: %s" % exc)
+        raise ValueError("embedded manifest payload is not valid: %s" % exc)
     if not isinstance(payload, dict):
-        raise ValueError("C2PA manifest payload must be an object")
+        raise ValueError("embedded manifest payload must be an object")
     for key in ("manifest", "signature", "hash"):
         if key not in payload:
-            raise ValueError("C2PA manifest payload missing '%s'" % key)
+            raise ValueError("embedded manifest payload missing '%s'" % key)
     return payload
 
 
 def verify_manifest(media):
-    """Verify the embedded manifest: hash integrity + signature validity.
+    """Check the embedded manifest against its stored hash and the fixed-key HMAC.
 
-    Returns a tuple ``(valid, details_json, error)`` where:
-      * ``valid`` is a bool,
+    Returns a tuple ``(hmac_matches, details_json, error)`` where:
+      * ``hmac_matches`` is a bool (True only says the hash and HMAC match),
       * ``details_json`` is a JSON string describing the manifest (or "" on
         failure),
       * ``error`` is a human-readable reason (or "" on success).
@@ -230,10 +224,10 @@ def verify_manifest(media):
     # 2) Signature: recompute the keyed signature and compare.
     expected_signature = sign_manifest(manifest)
     if not hmac.compare_digest(expected_signature, signature):
-        return (False, "", "signature invalid (tampered or wrong key)")
+        return (False, "", "HMAC mismatch (tampered or different key)")
 
     details = {
-        "valid": True,
+        "hmac_matches": True,
         "hash": recomputed_hash,
         "author": manifest.get("creation", {}).get("author", ""),
         "tool": manifest.get("creation", {}).get("tool", ""),
@@ -247,12 +241,19 @@ def verify_manifest(media):
 # ComfyUI-style node wrappers
 # ---------------------------------------------------------------------------
 
-class PSN_C2PA_Signer:
-    """Embed a verifiable C2PA provenance manifest into media.
+class PSN_Manifest_HMAC_Embed:
+    """Add a JSON manifest with a fixed-key HMAC to a media dict's metadata.
 
-    Pure-logic: builds the manifest, signs it deterministically, and embeds
-    it into the container metadata without touching pixel data.
+    Not C2PA and not tamper-proof (the key is public).  Builds the manifest,
+    computes the HMAC, and returns a new media dict; pixels are untouched and
+    no file is written.
     """
+
+    DESCRIPTION = (
+        "Adds a JSON provenance manifest with a fixed-key HMAC to a media "
+        "dict's metadata. Not C2PA, not tamper-proof (the key is public), "
+        "and it writes no file."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -261,7 +262,7 @@ class PSN_C2PA_Signer:
                 "media": ("MEDIA",),
                 "author": ("STRING", {"default": "Anonymous", "multiline": False}),
                 "tool": ("STRING", {"default": "ParametricStudio", "multiline": False}),
-                "sign_with_key": ("BOOLEAN", {"default": True}),
+                "add_hmac": ("BOOLEAN", {"default": True}),
             },
             "optional": {
                 "manifest_override": ("STRING", {"default": "", "multiline": True}),
@@ -269,28 +270,33 @@ class PSN_C2PA_Signer:
         }
 
     RETURN_TYPES = ("MEDIA", "STRING")
-    RETURN_NAMES = ("signed_media", "manifest_hash")
+    RETURN_NAMES = ("media_with_manifest", "manifest_hash")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, media, author, tool, sign_with_key, manifest_override=""):
+    def run(self, media, author, tool, add_hmac, manifest_override=""):
         manifest = build_manifest(author, tool, media.get("format"), manifest_override)
-        if sign_with_key:
+        if add_hmac:
             signature = sign_manifest(manifest)
         else:
-            # Unsigned: store an empty signature; verification will fail the
-            # signature check but the hash is still recorded.
+            # No HMAC: store an empty one; the check will report a mismatch
+            # but the hash is still recorded.
             signature = ""
-        signed = embed_manifest(media, manifest, signature)
-        return (signed, manifest_hash(manifest))
+        embedded = embed_manifest(media, manifest, signature)
+        return (embedded, manifest_hash(manifest))
 
 
-class PSN_C2PA_Verifier:
-    """Extract and validate an embedded C2PA manifest.
+class PSN_Manifest_HMAC_Check:
+    """Recompute the hash and fixed-key HMAC of the manifest in a media dict.
 
-    Pure-logic: recomputes the manifest hash and the keyed signature and
-    reports validity, details, and any error.
+    Not C2PA validation: a match shows only that the manifest still equals the
+    hash and HMAC stored beside it, and anyone can make such a pair.
     """
+
+    DESCRIPTION = (
+        "Recomputes the hash and fixed-key HMAC of the manifest embedded in a "
+        "media dict. Not C2PA validation; a match proves only consistency."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -301,21 +307,21 @@ class PSN_C2PA_Verifier:
         }
 
     RETURN_TYPES = ("BOOLEAN", "STRING", "STRING")
-    RETURN_NAMES = ("valid", "details", "error")
+    RETURN_NAMES = ("hmac_matches", "details", "error")
     FUNCTION = "run"
     CATEGORY = CAT
 
     def run(self, media):
-        valid, details, error = verify_manifest(media)
-        return (valid, details, error)
+        matches, details, error = verify_manifest(media)
+        return (matches, details, error)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_C2PA_Signer": PSN_C2PA_Signer,
-    "PSN_C2PA_Verifier": PSN_C2PA_Verifier,
+    "PSN_Manifest_HMAC_Embed": PSN_Manifest_HMAC_Embed,
+    "PSN_Manifest_HMAC_Check": PSN_Manifest_HMAC_Check,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_C2PA_Signer": "C2PA Provenance Signer",
-    "PSN_C2PA_Verifier": "C2PA Provenance Verifier",
+    "PSN_Manifest_HMAC_Embed": "Manifest HMAC Embed (not C2PA)",
+    "PSN_Manifest_HMAC_Check": "Manifest HMAC Check (not C2PA)",
 }

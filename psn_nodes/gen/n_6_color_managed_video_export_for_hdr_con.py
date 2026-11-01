@@ -1,11 +1,10 @@
 """
-PSN_HDR_Color_Manager: Pure-logic color management and HDR tone mapping configuration.
+PSN_HDR_Color_Config: validates colour names and builds a tone-mapping config JSON.
 
-This module implements the secure, pure-logic portion of a color-managed video export
-node for HDR content. It does NOT perform actual pixel manipulation, file I/O, or GPU
-operations. Instead, it validates ICC profile names, target color spaces, and HDR
-settings, and computes deterministic tone-mapping parameters (e.g., exposure, gamma,
-clipping thresholds) that a downstream GPU/CPU renderer would use.
+This module converts no pixels and exports no video. It checks an ICC profile name and a
+target colour space against allow-lists, clamps exposure and gamma, and returns the
+resulting settings as a JSON string. Nothing in this module reads or writes files, touches
+the GPU, or applies the settings to an image.
 
 Inputs are plain values (strings, booleans, numbers). The node outputs a configuration
 dictionary (as a JSON string) and a boolean indicating whether the configuration is
@@ -135,21 +134,23 @@ def build_color_config(icc_profile: str, target_colorspace: str, hdr_mode: bool,
         "color_conversion": {
             "source": icc_profile,
             "target": target_colorspace,
-            "method": "matrix" if icc_profile == target_colorspace else "lut",
+            "needs_conversion": icc_profile != target_colorspace,
         },
     }
 
     return True, config, "Configuration valid"
 
 
-class PSN_HDR_Color_Manager:
+class PSN_HDR_Color_Config:
     """
-    Color-Managed Video Export for HDR Content.
+    Validates ICC profile and target colorspace names and builds a tone-mapping
+    config JSON string. Converts no pixels and exports no video.
+    """
 
-    Validates ICC profile, target colorspace, and HDR tone mapping settings.
-    Outputs a JSON configuration string that a downstream renderer would use
-    to perform actual color conversion and tone mapping.
-    """
+    DESCRIPTION = (
+        "Validates ICC profile and colour space names and builds a tone-mapping "
+        "config JSON. It does not convert any pixels and does not export video."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -185,9 +186,9 @@ class PSN_HDR_Color_Manager:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_HDR_Color_Manager": PSN_HDR_Color_Manager,
+    "PSN_HDR_Color_Config": PSN_HDR_Color_Config,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_HDR_Color_Manager": "HDR Color Manager",
+    "PSN_HDR_Color_Config": "HDR Colour Config Builder (no pixel conversion)",
 }

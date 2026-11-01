@@ -1,24 +1,23 @@
-"""PSN_Tiled_Renderer: pure-logic tiling planner and stitcher for large image jobs.
+"""PSN_Tile_Plan_Stitch: pure-logic tile planner and stitcher for large image jobs.
 
-This module implements ONLY the secure, pure-Python logic of a tiled renderer:
+This module implements ONLY the secure, pure-Python logic around a tiled render:
 - validating tile_size / overlap / image dimensions,
 - computing the tile grid (start offsets and tile sizes) for a given image,
-- stitching a list of rendered tiles back into a single image using linear
+- stitching a list of tiles you supply back into a single image using linear
   cross-fade blending in the overlap regions to avoid seams.
 
-It does NOT touch torch, ComfyUI, Pillow, files, sockets, or the network.
-The `image` input is represented as a plain nested list of floats (rows of
-pixels, each pixel a list of channel values). The `model` input is accepted
-but only validated as a non-empty string identifier; no model is loaded or
-called. The actual per-tile generation is out of scope for this pure-logic
-node; the stitcher accepts pre-rendered tiles.
+It renders nothing. It does NOT touch torch, ComfyUI, Pillow, files, sockets, or
+the network, and it loads and calls no model. The `image` input is a plain
+nested list of floats (rows of pixels, each pixel a list of channel values).
+The tiles to stitch must come from somewhere else; with no tiles given, the
+node only returns the planned grid and a status saying nothing was stitched.
 """
 
 from psn import expr, orchestration as _orch
 
 CAT = "ParametricStudio/Rendering"
 
-# Placeholder for ComfyUI's ANY type (not available in pure-logic context).
+# Name of ComfyUI's wildcard type, as a plain string.
 ANY = "ANY"
 
 # Allowed blend modes for stitching.
@@ -186,12 +185,18 @@ def stitch_tiles(image, tiles, tile_images, blend_mode="linear"):
     return out
 
 
-class PSN_Tiled_Renderer:
-    """Plan tiles for a large image and stitch rendered tiles with blending.
+class PSN_Tile_Plan_Stitch:
+    """Plan a tile grid for a large image and stitch tiles you supply.
 
-    Pure-logic node: validates inputs, computes the tile grid, and stitches
-    pre-rendered tiles. No GPU, no model loading, no file/network I/O.
+    Validates inputs, computes the tile grid, and stitches the tiles passed in
+    `tile_images` with blending. It renders nothing: no GPU, no model, no
+    file/network I/O. With no `tile_images` it returns no image, only the grid.
     """
+
+    DESCRIPTION = (
+        "Plans a tile grid and stitches tiles you supply; renders nothing, and says so in its status "
+        "when no tiles are given instead of returning the input as if processed."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -200,7 +205,6 @@ class PSN_Tiled_Renderer:
                 "image": (ANY,),
                 "tile_size": ("INT", {"default": 512, "min": 1, "max": 100000, "step": 1}),
                 "overlap": ("INT", {"default": 64, "min": 0, "max": 100000, "step": 1}),
-                "model": ("STRING", {"default": "default_model", "multiline": False}),
                 "blend_mode": (list(BLEND_MODES),),
             },
             "optional": {
@@ -209,15 +213,11 @@ class PSN_Tiled_Renderer:
         }
 
     RETURN_TYPES = (ANY, "STRING", "STRING")
-    RETURN_NAMES = ("rendered_image", "tile_grid", "reason")
+    RETURN_NAMES = ("stitched_image", "tile_grid", "status")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, image, tile_size, overlap, model, blend_mode, tile_images=None):
-        # Validate model.
-        if not isinstance(model, str) or len(model.strip()) == 0:
-            return (None, "[]", "model must be a non-empty string")
-
+    def run(self, image, tile_size, overlap, blend_mode, tile_images=None):
         # Validate tile_size and overlap.
         ok, why, ts = _validate_positive_int(tile_size, "tile_size")
         if not ok:
@@ -246,20 +246,19 @@ class PSN_Tiled_Renderer:
             if not isinstance(tile_images, list) or len(tile_images) != len(tiles):
                 return (None, tile_grid_str, "tile_images must be a list matching tile count")
             try:
-                rendered = stitch_tiles(image, tiles, tile_images, blend_mode)
+                stitched = stitch_tiles(image, tiles, tile_images, blend_mode)
             except ValueError as e:
                 return (None, tile_grid_str, str(e))
-            return (rendered, tile_grid_str, "ok")
+            return (stitched, tile_grid_str, "stitched %d supplied tiles" % len(tiles))
 
-        # If no tile_images, return the original image as a placeholder
-        # (pure-logic node does not perform generation).
-        return (image, tile_grid_str, "ok (no tile_images provided; returned input)")
+        # No tiles supplied: nothing was rendered or stitched, so return no image.
+        return (None, tile_grid_str, "no tile_images supplied: grid planned only, nothing rendered or stitched")
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Tiled_Renderer": PSN_Tiled_Renderer,
+    "PSN_Tile_Plan_Stitch": PSN_Tile_Plan_Stitch,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Tiled_Renderer": "PSN Tiled Renderer",
+    "PSN_Tile_Plan_Stitch": "PSN Tile Plan and Stitch (renders nothing)",
 }

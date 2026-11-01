@@ -1,18 +1,14 @@
-"""PSN_NAFNet_Denoise: pure-logic, secure-by-design stage for the Artifact Cleanup pipeline.
+"""PSN_NAFNet_Config_Check: validates NAFNet denoise settings for the Artifact Cleanup pipeline.
 
-This module implements ONLY the non-GPU, non-ComfyUI part of the NAFNet denoise stage.
-It does NOT import torch, torchvision, or any ComfyUI internals, and it performs no
-network, file, or OS access. Instead it:
+This module only checks configuration.  It takes no image, runs no NAFNet model and
+denoises nothing.  It does not import torch, torchvision, or any ComfyUI internals,
+and it performs no network, file, or OS access.  It:
 
-  * validates the denoise configuration (noise level, model path, image metadata),
-  * enforces an allow-list of supported NAFNet model variants,
-  * computes a deterministic, pure-Python "denoise plan" (per-channel gain, blur
-    kernel size, and a small synthetic denoised preview) from plain values, and
-  * reports pass/fail with a human-readable reason.
-
-The node wrapper takes plain values (numbers, strings, JSON text) and returns plain
-values (numbers, strings, JSON text). A real GPU implementation would consume the
-produced plan; this module is the safe, testable core.
+  * validates the noise level (a number in 0..1),
+  * checks the model name against an allow-list of NAFNet variants (the weights
+    are not looked for or loaded),
+  * validates image metadata (width, height, channels) given as JSON text, and
+  * reports pass/fail with a human-readable reason and the normalized settings.
 """
 
 import json
@@ -79,59 +75,11 @@ def _validate_image_meta(image_meta):
     return True, "ok", meta
 
 
-def _compute_gain(noise_level, channels):
-    """Deterministic per-channel gain: higher noise -> stronger denoise (lower gain)."""
-    # gain in (0, 1]; noise 0 -> 1.0 (no change), noise 1 -> 0.2 (strong denoise)
-    base = 1.0 - 0.8 * float(noise_level)
-    # slight per-channel variation so channels are not identical
-    gains = []
-    for c in range(channels):
-        wobble = 0.02 * (c - (channels - 1) / 2.0)
-        g = base + wobble
-        g = max(0.05, min(1.0, g))
-        gains.append(round(g, 6))
-    return gains
+def validate_denoise_config(noise_level, model_path, image_meta):
+    """Validate the settings and return their normalized form.
 
-
-def _compute_blur_kernel(noise_level):
-    """Deterministic odd blur kernel size: 3 for low noise, up to 7 for high noise."""
-    size = 3 + int(round(4 * float(noise_level)))
-    size = max(3, min(7, size))
-    if size % 2 == 0:
-        size += 1
-    return size
-
-
-def _synthetic_preview(meta, gains, blur_kernel):
-    """Build a small, deterministic synthetic 'denoised preview' as a list of floats.
-
-    This is NOT the real image; it is a pure-logic stand-in that proves the plan
-    changes the data (denoising occurred) and preserves shape.
-    """
-    width = meta["width"]
-    height = meta["height"]
-    channels = meta["channels"]
-    # Cap the preview size so it stays small and deterministic.
-    pw = min(width, 4)
-    ph = min(height, 4)
-    preview = []
-    for y in range(ph):
-        for x in range(pw):
-            for c in range(channels):
-                # deterministic pseudo-noise from coordinates
-                raw = ((x * 7 + y * 13 + c * 3) % 100) / 100.0
-                denoised = raw * gains[c]
-                preview.append(round(denoised, 6))
-    return preview
-
-
-def build_denoise_plan(noise_level, model_path, image_meta):
-    """Validate inputs and build a pure-logic denoise plan.
-
-    Returns (ok, reason, plan). plan is a dict (or None) with:
-      model_path, noise_level, width, height, channels,
-      gains (list), blur_kernel (int), preview (list of floats),
-      preview_shape (list of ints, JSON-serializable).
+    Returns (ok, reason, config). config is a dict (or None) with:
+      model_path, noise_level, width, height, channels.
     """
     ok, why = _validate_noise_level(noise_level)
     if not ok:
@@ -143,32 +91,29 @@ def build_denoise_plan(noise_level, model_path, image_meta):
     if not ok:
         return False, why, None
 
-    gains = _compute_gain(noise_level, meta["channels"])
-    blur_kernel = _compute_blur_kernel(noise_level)
-    preview = _synthetic_preview(meta, gains, blur_kernel)
-    plan = {
+    config = {
         "model_path": model_path,
         "noise_level": float(noise_level),
         "width": meta["width"],
         "height": meta["height"],
         "channels": meta["channels"],
-        "gains": gains,
-        "blur_kernel": blur_kernel,
-        "preview": preview,
-        "preview_shape": [min(meta["height"], 4), min(meta["width"], 4), meta["channels"]],
     }
-    return True, "ok", plan
+    return True, "ok", config
 
 
 CAT = "ParametricStudio/ArtifactCleanup"
 
 
-class PSN_NAFNet_Denoise:
-    """Pure-logic NAFNet denoise stage: validates config and emits a denoise plan.
+class PSN_NAFNet_Config_Check:
+    """Check NAFNet model name, noise level and image-size settings; denoise nothing.
 
-    No GPU, no torch, no ComfyUI internals, no I/O. Takes plain values, returns
-    plain values (booleans, strings, JSON text).
+    No image input, no model run, no GPU, no I/O. Takes plain values, returns
+    plain values (a boolean, a reason string, and the normalized settings as JSON).
     """
+
+    DESCRIPTION = ("Validates a NAFNet model name, noise level and image width/height/channels "
+                   "and returns the normalized settings as JSON. It takes no image, runs no "
+                   "model and denoises nothing.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -182,20 +127,20 @@ class PSN_NAFNet_Denoise:
         }
 
     RETURN_TYPES = ("BOOLEAN", "STRING", "STRING")
-    RETURN_NAMES = ("ok", "reason", "plan_json")
+    RETURN_NAMES = ("ok", "reason", "config_json")
     FUNCTION = "run"
     CATEGORY = CAT
 
     def run(self, noise_level, model_path, image_meta):
-        ok, reason, plan = build_denoise_plan(noise_level, model_path, image_meta)
-        plan_json = json.dumps(plan) if plan is not None else ""
-        return (ok, reason, plan_json)
+        ok, reason, config = validate_denoise_config(noise_level, model_path, image_meta)
+        config_json = json.dumps(config) if config is not None else ""
+        return (ok, reason, config_json)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_NAFNet_Denoise": PSN_NAFNet_Denoise,
+    "PSN_NAFNet_Config_Check": PSN_NAFNet_Config_Check,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_NAFNet_Denoise": "NAFNet Denoise (Artifact Cleanup)",
+    "PSN_NAFNet_Config_Check": "NAFNet Settings Check (denoises nothing)",
 }

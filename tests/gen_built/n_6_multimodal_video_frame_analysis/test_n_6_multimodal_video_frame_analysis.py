@@ -14,8 +14,9 @@ def make_frames(specs):
 
 def test_mappings():
     assert "PSN_Scene_Transition_Detector" in m.NODE_CLASS_MAPPINGS
-    assert "PSN_Video_Frame_Captioner" in m.NODE_CLASS_MAPPINGS
-    assert m.NODE_DISPLAY_NAME_MAPPINGS["PSN_Video_Frame_Captioner"] == "PSN Video Frame Captioner"
+    assert "PSN_Frame_Description_Aggregator" in m.NODE_CLASS_MAPPINGS
+    assert "PSN_Video_Frame_Captioner" not in m.NODE_CLASS_MAPPINGS
+    assert "does not caption" in m.PSN_Frame_Description_Aggregator.DESCRIPTION
     for name, cls in m.NODE_CLASS_MAPPINGS.items():
         assert cls.FUNCTION == "run"
         assert cls.CATEGORY.startswith("ParametricStudio/")
@@ -55,9 +56,9 @@ def test_detector_bad_input():
         pass
 
 
-def test_captioner_aggregation():
+def test_aggregator_aggregation():
     frames = make_frames([(8, 8, 3, 0.1), (8, 8, 3, 0.1), (8, 8, 3, 0.9), (8, 8, 3, 0.9)])
-    node = m.PSN_Video_Frame_Captioner()
+    node = m.PSN_Frame_Description_Aggregator()
     narrative, moments = node.run(frames, 1, "a cat walks\na dog runs\nthe sun sets\nthe night falls")
     assert "Frame 0: a cat walks" in narrative
     assert "Frame 3: the night falls" in narrative
@@ -68,20 +69,41 @@ def test_captioner_aggregation():
     assert km[0]["frame"] == 0 and km[-1]["frame"] == 3
 
 
-def test_captioner_interval_and_placeholders():
+def test_captioner_interval_and_missing_descriptions():
     frames = make_frames([(8, 8, 3, 0.2), (8, 8, 3, 0.2), (8, 8, 3, 0.2), (8, 8, 3, 0.2)])
-    node = m.PSN_Video_Frame_Captioner()
-    # interval 2 -> frames 0 and 2 selected; only one mock provided -> placeholder for second
-    narrative, moments = node.run(frames, 2, "first only")
-    assert "Frame 0: first only" in narrative
-    assert "Frame 2: (frame 2)" in narrative
+    node = m.PSN_Frame_Description_Aggregator()
+    # interval 2 -> frames 0 and 2 selected
+    narrative, moments = node.run(frames, 2, "first\nsecond")
+    assert narrative == "Frame 0: first Frame 2: second"
     km = json.loads(moments)
     assert km[0]["frame"] == 0 and km[-1]["frame"] == 3
+    assert km[0]["description"] == "first"
+    # too few lines: no placeholder text is invented, it raises
+    try:
+        node.run(frames, 2, "first only")
+        raise AssertionError("expected ValueError for missing description")
+    except ValueError as e:
+        assert "need 2" in str(e)
+    try:
+        node.run(frames, 1, "")
+        raise AssertionError("expected ValueError for empty descriptions")
+    except ValueError:
+        pass
 
 
-def test_captioner_bad_interval():
+def test_boundary_threshold_is_an_input():
+    frames = make_frames([(8, 8, 3, 0.1), (8, 8, 3, 0.9)])
+    node = m.PSN_Frame_Description_Aggregator()
+    _, km_hi = node.run(frames, 1, "a\nb", 1.0)  # distance 1.0 >= 1.0 still a boundary
+    _, km_lo = node.run(frames, 1, "a\nb", 0.0)
+    assert [k["frame"] for k in json.loads(km_lo)] == [0, 1]
+    # no hardcoded text left in the output
+    assert "(frame" not in km_lo
+
+
+def test_aggregator_bad_interval():
     frames = make_frames([(8, 8, 3, 0.2), (8, 8, 3, 0.2)])
-    node = m.PSN_Video_Frame_Captioner()
+    node = m.PSN_Frame_Description_Aggregator()
     try:
         node.run(frames, 0, "")
         raise AssertionError("expected ValueError for interval 0")
@@ -93,7 +115,7 @@ def test_no_inplace_mutation():
     frames = make_frames([(8, 8, 3, 0.1), (8, 8, 3, 0.9)])
     snapshot = frames.clone()
     m.PSN_Scene_Transition_Detector().run(frames, 0.35, 16)
-    m.PSN_Video_Frame_Captioner().run(frames, 1, "x\ny")
+    m.PSN_Frame_Description_Aggregator().run(frames, 1, "x\ny")
     assert torch.equal(frames, snapshot)
 
 
@@ -102,8 +124,9 @@ if __name__ == "__main__":
     test_detector_abrupt_change()
     test_detector_no_change()
     test_detector_bad_input()
-    test_captioner_aggregation()
-    test_captioner_interval_and_placeholders()
-    test_captioner_bad_interval()
+    test_aggregator_aggregation()
+    test_captioner_interval_and_missing_descriptions()
+    test_boundary_threshold_is_an_input()
+    test_aggregator_bad_interval()
     test_no_inplace_mutation()
     print("ok")

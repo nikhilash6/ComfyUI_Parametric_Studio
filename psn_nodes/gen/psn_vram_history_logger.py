@@ -1,33 +1,29 @@
-"""PSN_VRAM_History_Logger: pure-logic VRAM history logger.
+"""PSN_VRAM_Samples_Formatter: formats a list of VRAM samples you supply as JSON.
 
-This module implements the secure, pure-Python logic for a VRAM history
-logger. It does NOT import torch, does NOT start threads, and does NOT
-access the GPU. Instead, it provides:
+This module does NOT import torch, start threads, or access the GPU, and it
+takes no clock readings. It provides:
 
-- A `VRAMHistoryLogger` class that accepts pre-sampled VRAM values (as a
-  list of floats) and records them with timestamps, enforcing a minimum
-  interval between samples to prevent excessive CPU usage.
-- A `run` function that validates inputs, simulates the sampling logic
-  over a provided list of sample values, and returns the history data.
+- A `VRAMSampleSeries` class that accepts VRAM values (MB) with an offset in ms
+  and keeps them, enforcing a minimum spacing between consecutive samples.
+- A node `run` function that validates inputs, gives the i-th sample the offset
+  i * interval_ms (evenly spaced positions, not times when anything was measured),
+  and returns the series.
 
-The node is designed to be used in a ComfyUI workflow where an upstream
-node (or a future GPU-aware wrapper) provides the actual VRAM samples.
-This module handles validation, interval enforcement, and data formatting.
+Whoever supplies the samples measured them; this module only formats them.
 """
 
-import time
 import json
 
 CAT = "ParametricStudio/VRAM"
 
 
-class VRAMHistoryLogger:
-    """Records VRAM usage samples with timestamps, enforcing a minimum interval.
+class VRAMSampleSeries:
+    """Holds VRAM usage samples with offsets in ms, enforcing a minimum spacing.
 
     Attributes:
-        run_id: Identifier for this logging session.
-        interval_ms: Minimum interval in milliseconds between samples.
-        history: List of dicts with 'timestamp_ms' and 'vram_mb' keys.
+        run_id: Label for this series.
+        interval_ms: Minimum spacing in milliseconds between consecutive sample offsets.
+        history: List of dicts with 'offset_ms' and 'vram_mb' keys.
     """
 
     def __init__(self, run_id: str, interval_ms: int):
@@ -38,42 +34,40 @@ class VRAMHistoryLogger:
         self.run_id = run_id
         self.interval_ms = interval_ms
         self.history = []
-        self._last_sample_time_ms = None
+        self._last_offset_ms = None
 
-    def add_sample(self, vram_mb: float, timestamp_ms: float = None) -> bool:
-        """Add a VRAM sample if the interval constraint is satisfied.
+    def add_sample(self, vram_mb: float, offset_ms: float) -> bool:
+        """Add a VRAM sample if the spacing constraint is satisfied.
 
         Args:
             vram_mb: VRAM usage in megabytes.
-            timestamp_ms: Optional timestamp in ms. If None, uses current time.
+            offset_ms: Position of the sample in ms from the start of the series.
 
         Returns:
-            True if the sample was added, False if rejected due to interval.
+            True if the sample was added, False if rejected due to spacing.
         """
         if not isinstance(vram_mb, (int, float)) or vram_mb < 0:
             raise ValueError("vram_mb must be a non-negative number")
-        if timestamp_ms is None:
-            timestamp_ms = time.time() * 1000.0
-        if not isinstance(timestamp_ms, (int, float)) or timestamp_ms < 0:
-            raise ValueError("timestamp_ms must be a non-negative number")
+        if not isinstance(offset_ms, (int, float)) or offset_ms < 0:
+            raise ValueError("offset_ms must be a non-negative number")
 
-        if self._last_sample_time_ms is not None:
-            if (timestamp_ms - self._last_sample_time_ms) < self.interval_ms:
+        if self._last_offset_ms is not None:
+            if (offset_ms - self._last_offset_ms) < self.interval_ms:
                 return False
 
         self.history.append({
-            "timestamp_ms": float(timestamp_ms),
+            "offset_ms": float(offset_ms),
             "vram_mb": float(vram_mb),
         })
-        self._last_sample_time_ms = float(timestamp_ms)
+        self._last_offset_ms = float(offset_ms)
         return True
 
     def get_history(self) -> list:
-        """Return the recorded history as a list of dicts."""
+        """Return the recorded series as a list of dicts."""
         return list(self.history)
 
     def to_json(self) -> str:
-        """Return the history as a JSON string."""
+        """Return the series as a JSON string."""
         return json.dumps({
             "run_id": self.run_id,
             "interval_ms": self.interval_ms,
@@ -93,19 +87,24 @@ def _validate_inputs(run_id: str, interval_ms: int, samples: list) -> tuple:
         if not isinstance(s, (int, float)) or s < 0:
             return None, f"samples[{i}] must be a non-negative number"
     try:
-        logger = VRAMHistoryLogger(run_id, interval_ms)
+        logger = VRAMSampleSeries(run_id, interval_ms)
     except ValueError as e:
         return None, str(e)
     return logger, None
 
 
-class PSN_VRAM_History_Logger:
-    """ComfyUI node that records VRAM usage history from pre-sampled values.
+class PSN_VRAM_Samples_Formatter:
+    """ComfyUI node that formats a list of VRAM samples (MB) you supply as JSON.
 
-    This node does NOT sample the GPU. It accepts a list of VRAM sample
-    values (in MB) and records them with simulated timestamps, enforcing
-    the minimum interval between samples.
+    This node does NOT sample the GPU and reads no clock. Sample i gets the
+    offset i * interval_ms: an evenly spaced index position, not a time at
+    which anything was measured.
     """
+
+    DESCRIPTION = (
+        "Formats a supplied list of VRAM samples (MB) as JSON with evenly spaced index offsets; "
+        "does not sample the GPU."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -119,7 +118,7 @@ class PSN_VRAM_History_Logger:
         }
 
     RETURN_TYPES = ("LIST", "STRING")
-    RETURN_NAMES = ("history_data", "history_json")
+    RETURN_NAMES = ("samples_data", "samples_json")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -128,12 +127,9 @@ class PSN_VRAM_History_Logger:
         if err:
             return ([], json.dumps({"error": err}))
 
-        # Simulate timestamps: assume samples arrive at regular intervals
-        # starting from 0. We use the actual interval_ms as the time step.
-        base_time_ms = 0.0
+        # Evenly spaced index offsets: sample i sits at i * interval_ms.
         for i, vram_mb in enumerate(samples):
-            ts = base_time_ms + i * interval_ms
-            logger.add_sample(float(vram_mb), timestamp_ms=ts)
+            logger.add_sample(float(vram_mb), offset_ms=i * interval_ms)
 
         history = logger.get_history()
         history_json = logger.to_json()
@@ -141,9 +137,9 @@ class PSN_VRAM_History_Logger:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_VRAM_History_Logger": PSN_VRAM_History_Logger,
+    "PSN_VRAM_Samples_Formatter": PSN_VRAM_Samples_Formatter,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_VRAM_History_Logger": "VRAM History Logger",
+    "PSN_VRAM_Samples_Formatter": "VRAM Samples Formatter (does not sample the GPU)",
 }

@@ -4,8 +4,8 @@ import json
 import pytest
 
 from psn_nodes.gen.psn_model_merger import (
-    PSN_Merge_Checkpoints,
-    PSN_Inspect_Model,
+    PSN_Merge_JSON_Weights,
+    PSN_Inspect_JSON_Weights,
     merge_models,
     inspect_model,
     _parse_model,
@@ -131,7 +131,7 @@ def test_inspect_model_invalid():
 # --- Tests for node classes ---
 
 def test_psn_merge_checkpoints_node():
-    node = PSN_Merge_Checkpoints()
+    node = PSN_Merge_JSON_Weights()
     model_a = _model({"w": [1.0, 2.0]})
     model_b = _model({"w": [3.0, 4.0]})
     merged, error = node.run(model_a, model_b, 0.5, 0.5)
@@ -141,14 +141,14 @@ def test_psn_merge_checkpoints_node():
 
 
 def test_psn_merge_checkpoints_node_error():
-    node = PSN_Merge_Checkpoints()
+    node = PSN_Merge_JSON_Weights()
     merged, error = node.run("bad", "{}", 0.5, 0.5)
     assert merged == "{}"
     assert "model_a" in error
 
 
 def test_psn_inspect_model_node():
-    node = PSN_Inspect_Model()
+    node = PSN_Inspect_JSON_Weights()
     model = _model({"a": [1.0, 2.0], "b": [3.0]})
     layer_names, param_count, error = node.run(model)
     assert error == ""
@@ -158,8 +158,22 @@ def test_psn_inspect_model_node():
 
 
 def test_psn_inspect_model_node_error():
-    node = PSN_Inspect_Model()
+    node = PSN_Inspect_JSON_Weights()
     layer_names, param_count, error = node.run("invalid")
     assert layer_names == ""
     assert param_count == 0
     assert "invalid JSON" in error
+
+
+def test_node_names_do_not_claim_checkpoints():
+    assert PSN_Merge_JSON_Weights.RETURN_NAMES == ("merged_weights_json", "error")
+    assert "checkpoint" in PSN_Merge_JSON_Weights.DESCRIPTION.lower()
+    assert "Cannot" in PSN_Merge_JSON_Weights.DESCRIPTION
+    assert "Opens no" in PSN_Inspect_JSON_Weights.DESCRIPTION
+
+
+def test_merge_weighted_sum_unequal_weights():
+    node = PSN_Merge_JSON_Weights()
+    merged, error = node.run(_model({"w": [2.0, 4.0]}), _model({"w": [10.0, 20.0]}), 0.25, 0.75)
+    assert error == ""
+    assert json.loads(merged) == {"w": [8.0, 16.0]}

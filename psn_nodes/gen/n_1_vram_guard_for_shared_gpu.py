@@ -4,16 +4,20 @@ A single ComfyUI custom-node module that enforces a strict VRAM budget
 before heavy operations (KSampler, ModelSamplingAuraFlow, ...) on a shared
 high-memory GPU (e.g. a 96 GB Blackwell card).
 
-The node inspects the *current* device memory usage (via torch when CUDA is
-available, otherwise a caller-injected probe for tests), estimates the
-memory the next step will need, and either:
+The node reads the device-wide used memory (total minus free from
+``torch.cuda.mem_get_info()``, so it counts every process on the shared card;
+a caller-supplied ``probe_gb`` overrides it), estimates the memory the next
+step will need, and either:
 
 * passes the model/latent through untouched when the budget is respected,
 * offloads the model to CPU (``model.to('cpu')``) when the budget would be
-  breached, or
+  breached and the model is a ``torch.nn.Module``, or
 * raises a hard-stop ``RuntimeError`` when ``hard_stop`` is enabled.
 
-It also returns the measured usage in GB so it can be logged downstream.
+Limits: ComfyUI's MODEL is a ModelPatcher, not an ``nn.Module``, so on a real
+graph a breach without ``hard_stop`` is only reported, nothing is offloaded,
+and no ComfyUI model is unloaded.  It also returns the measured usage in GB so
+it can be logged downstream.
 
 Only ``torch`` and the Python standard library are used.  No network, no
 subprocess, no file I/O, no third-party dependencies (``psutil`` is NOT
@@ -37,11 +41,16 @@ _GB = 1024.0 ** 3
 
 
 def _current_vram_gb() -> float:
-    """Return the current CUDA memory usage in GB (0.0 when no CUDA)."""
+    """Return device-wide used CUDA memory in GB (0.0 when no CUDA).
+
+    Total minus free from ``mem_get_info``, i.e. all processes on the card,
+    not just this one.
+    """
     if not torch.cuda.is_available():
         return 0.0
     try:
-        return torch.cuda.memory_allocated() / _GB
+        free, total = torch.cuda.mem_get_info()
+        return (total - free) / _GB
     except Exception:  # pragma: no cover - defensive
         return 0.0
 
@@ -90,6 +99,10 @@ def _offload_model(model: Any) -> Any:
 class PSN_VRAM_Budget_Gate:
     """Enforce a VRAM budget before a heavy node (KSampler, ...).
 
+    Offloads only a ``torch.nn.Module`` it is handed; any other MODEL object
+    (such as a ModelPatcher) is passed through and the breach is only
+    reported, unless ``hard_stop`` raises.
+
     * When ``current + estimated <= max_vram_gb`` the model and latent are
       passed through unchanged.
     * When the budget would be breached the model is offloaded to CPU
@@ -97,6 +110,11 @@ class PSN_VRAM_Budget_Gate:
       (``hard_stop=True``).
     * The measured current usage (GB) is always returned for logging.
     """
+
+    DESCRIPTION = ("Compares device-wide used VRAM plus an estimate for the next step "
+                   "against a budget. On a breach it moves a torch.nn.Module to CPU, or "
+                   "raises if hard_stop is on; any other MODEL (such as a ModelPatcher) "
+                   "is passed through and the breach is only reported.")
 
     @classmethod
     def INPUT_TYPES(cls):

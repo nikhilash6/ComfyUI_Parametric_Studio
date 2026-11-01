@@ -1,27 +1,21 @@
-"""ParametricStudio - Text-to-Motion pipeline validation node.
+"""ParametricStudio - random motion test fixture.
 
-This module implements a *validation* node for the text-to-motion pipeline.
-Because the real MDM / Kimodo / MoMask diffusion models, the AnimoFlow Docker
-containers and the motion model weights are NOT available
-in this sandbox, the node implements the full *core* logic that torch + the
-standard library can do:
+This module emits seeded random joint-rotation noise so a graph that consumes
+motion data can be wired and tested.  It is NOT text-to-motion: no text
+encoder, no MDM / Kimodo / MoMask model and no AnimoFlow backend is involved,
+and nothing about the output depends on a prompt.
 
-* deterministic pseudo-diffusion sampling (seeded, reproducible),
-* decoding the sampled latent into SMPL-like joint rotations + translations,
-* conversion of the parameter stream into a BVH (XML) string,
-* a small in-memory ``ANIMOFLOW_NPZ``-style dict (keys ``rotations`` and
-  ``translations``) that mirrors what the real node would serialise to ``.npz``.
+What it does:
+* draws seeded Gaussian noise (``torch.Generator``) for a small humanoid rig,
+* splits it into rotations and translations,
+* writes those values into a BVH text string,
+* returns the same values as an in-memory dict with keys ``rotations`` and
+  ``translations`` (no ``.npz`` file is written).
 
-What is NOT implemented (needs heavy models / external services):
-* real text encoding (transformers / CLIP),
-* real MDM / Kimodo / MoMask diffusion sampling,
-* real SMPL / SOMA decoding,
-* AnimoFlow Docker communication,
-* actual ``.npz`` file writing (we return an in-memory dict instead).
+The result is reproducible for a given (duration, seed) and is not real motion.
 """
 
 import math
-import xml.etree.ElementTree as ET
 
 import torch
 
@@ -41,30 +35,15 @@ TRANS_DIM = 3
 # Frames per second for the generated clip.
 FPS = 30
 
-# Supported model backends (the real models are not loaded here).
-MODEL_TYPES = ("MDM", "Kimodo", "MoMask")
-
 # Status codes.
 STATUS_OK = 0
-STATUS_BAD_PROMPT = 1
 STATUS_BAD_DURATION = 2
-STATUS_BAD_MODEL = 3
 STATUS_BAD_SEED = 4
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-def _validate_prompt(prompt):
-    """Return (ok, normalised_prompt)."""
-    if not isinstance(prompt, str):
-        return False, ""
-    p = prompt.strip()
-    if not p:
-        return False, ""
-    return True, p
-
 
 def _validate_duration(duration):
     """Return (ok, frames)."""
@@ -77,12 +56,6 @@ def _validate_duration(duration):
     return True, frames
 
 
-def _validate_model(model_type):
-    if not isinstance(model_type, str) or model_type not in MODEL_TYPES:
-        return False
-    return True
-
-
 def _validate_seed(seed):
     if isinstance(seed, bool) or not isinstance(seed, int):
         return False
@@ -91,28 +64,15 @@ def _validate_seed(seed):
     return True
 
 
-def _pseudo_diffusion_sample(seed, frames, model_type):
-    """Deterministic pseudo-diffusion: produce a motion latent tensor.
+def _seeded_noise_sample(seed, frames):
+    """Seeded Gaussian noise, shape [frames, NUM_JOINTS, ROT_DIM + TRANS_DIM].
 
-    In the real pipeline this would be the output of the MDM / Kimodo /
-    MoMask diffusion process conditioned on the encoded text.  Here we use a
-    seeded ``torch.Generator`` so that the same (seed, frames, model_type)
-    always yields the same latent, which is enough to validate the rest of
-    the pipeline (decoding, BVH conversion, status codes).
-
-    Returns a tensor of shape [frames, NUM_JOINTS, ROT_DIM + TRANS_DIM].
+    The same (seed, frames) always gives the same tensor.  Nothing conditions
+    it: it is random numbers scaled to 0.25, not a motion model's output.
     """
     gen = torch.Generator(device="cpu")
     gen.manual_seed(seed)
-
-    # A small per-model offset so different model_type values give different
-    # (but still deterministic) latents.
-    model_offset = MODEL_TYPES.index(model_type)
-
-    latent = torch.randn(frames, NUM_JOINTS, ROT_DIM + TRANS_DIM, generator=gen)
-    # Scale down to a plausible joint-parameter range (radians / metres).
-    latent = latent * 0.25 + model_offset * 0.01
-    return latent
+    return torch.randn(frames, NUM_JOINTS, ROT_DIM + TRANS_DIM, generator=gen) * 0.25
 
 
 def _decode_latent(latent):
@@ -126,7 +86,7 @@ def _decode_latent(latent):
 
 
 def _build_bvh_string(rotations, translations, fps=FPS):
-    """Build a BVH (XML) string from joint rotations and translations.
+    """Build a BVH text string from joint rotations and translations.
 
     The BVH format is a text-based motion-capture format.  We produce a
     minimal but structurally valid BVH file with a Hips root joint and
@@ -179,12 +139,10 @@ def _build_bvh_string(rotations, translations, fps=FPS):
     return "\n".join(lines) + "\n"
 
 
-def _make_animoflow_npz(rotations, translations):
-    """Create an in-memory dict that mirrors the keys of an ANIMOFLOW_NPZ.
+def _make_motion_dict(rotations, translations):
+    """In-memory dict with the noise as ``rotations`` and ``translations``.
 
-    In the real pipeline this would be a ``numpy.savez`` file.  Here we return
-    a plain dict with tensor values so the rest of the ComfyUI graph can
-    consume it without file I/O.
+    No ``.npz`` file is written.
     """
     return {
         "rotations": rotations.clone(),
@@ -196,57 +154,44 @@ def _make_animoflow_npz(rotations, translations):
 # Node
 # ---------------------------------------------------------------------------
 
-class PSN_TextToMotion_Generate:
-    """Validate the text-to-motion pipeline: prompt -> pseudo-diffusion ->
-    joint parameters -> BVH string + in-memory NPZ dict + status code.
+class PSN_Random_Motion_Test_Fixture:
+    """Seeded random joint-rotation noise as BVH text and a rotations/translations dict.
 
-    NOTE: This is a *validation* node.  The real MDM / Kimodo / MoMask models,
-    text encoders, SMPL decoder and AnimoFlow Docker backend are NOT used.
+    For wiring tests only.  It is not text-to-motion and runs no model.
     """
+
+    DESCRIPTION = ("Emits seeded random joint-rotation noise as BVH text and a "
+                   "rotations/translations dict, for wiring tests. It runs no "
+                   "motion model, takes no prompt, and the result is not real motion.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "prompt": ("STRING", {"default": "a person walking forward", "multiline": True}),
                 "duration": ("FLOAT", {"default": 2.0, "min": 0.1, "max": 60.0, "step": 0.1}),
                 "seed": ("INT", {"default": 42, "min": 0, "max": 2 ** 32 - 1}),
-                "model_type": (MODEL_TYPES,),
             }
         }
 
-    RETURN_TYPES = ("ANIMOFLOW_NPZ", "ANIMOFLOW_BVH", "INT")
-    RETURN_NAMES = ("motion_data", "rigged_animation", "status")
+    RETURN_TYPES = ("RANDOM_MOTION_DICT", "STRING", "INT")
+    RETURN_NAMES = ("random_motion", "bvh_text", "status")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, prompt, duration, seed, model_type):
-        # --- validate inputs ------------------------------------------------
-        ok, norm_prompt = _validate_prompt(prompt)
-        if not ok:
-            return ({"error": "bad prompt"}, "", STATUS_BAD_PROMPT)
-
+    def run(self, duration, seed):
         ok, frames = _validate_duration(duration)
         if not ok:
             return ({"error": "bad duration"}, "", STATUS_BAD_DURATION)
 
-        if not _validate_model(model_type):
-            return ({"error": "bad model_type"}, "", STATUS_BAD_MODEL)
-
         if not _validate_seed(seed):
             return ({"error": "bad seed"}, "", STATUS_BAD_SEED)
 
-        # --- pseudo-diffusion sampling --------------------------------------
-        latent = _pseudo_diffusion_sample(seed, frames, model_type)
-
-        # --- decode to joint parameters -------------------------------------
+        latent = _seeded_noise_sample(seed, frames)
         rotations, translations = _decode_latent(latent)
-
-        # --- build outputs ---------------------------------------------------
-        motion_data = _make_animoflow_npz(rotations, translations)
+        motion = _make_motion_dict(rotations, translations)
         bvh_string = _build_bvh_string(rotations, translations, FPS)
 
-        return (motion_data, bvh_string, STATUS_OK)
+        return (motion, bvh_string, STATUS_OK)
 
 
 # ---------------------------------------------------------------------------
@@ -254,9 +199,9 @@ class PSN_TextToMotion_Generate:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_TextToMotion_Generate": PSN_TextToMotion_Generate,
+    "PSN_Random_Motion_Test_Fixture": PSN_Random_Motion_Test_Fixture,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_TextToMotion_Generate": "Text-to-Motion Generate (Validation)",
+    "PSN_Random_Motion_Test_Fixture": "Random Motion Test Fixture (seeded noise, not real motion)",
 }

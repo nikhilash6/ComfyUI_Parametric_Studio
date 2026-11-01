@@ -3,7 +3,8 @@
 Core logic only – no network, no LLM, no moviepy.
 - PSN_RSS_Fetcher: parses RSS/Atom XML from a provided string.
 - PSN_News_Script_Generator: template-based script from headlines.
-- PSN_News_Video_Aggregator: synthetic thumbnail tensor + deterministic path.
+- PSN_News_Thumbnail_Placeholder: a plain gradient IMAGE at the chosen resolution.
+  It makes no video, writes no file and does not depend on the script.
 """
 
 import json
@@ -13,10 +14,6 @@ import xml.etree.ElementTree as ET
 import torch
 
 CAT = "ParametricStudio/NewsVideo"
-
-
-def _clamp(v, lo, hi):
-    return max(lo, min(hi, v))
 
 
 def _parse_rss_xml(xml_text, max_items=10, category_filter=""):
@@ -140,51 +137,46 @@ class PSN_News_Script_Generator:
         return (script, scenes)
 
 
-class PSN_News_Video_Aggregator:
-    """Generate a synthetic thumbnail and a deterministic video path string (no real MP4)."""
+class PSN_News_Thumbnail_Placeholder:
+    """Build a plain diagonal gradient IMAGE sized by the chosen resolution.
+
+    It does not render a video, write any file, or use the script text."""
+
+    DESCRIPTION = ("Builds a plain black-to-white diagonal gradient IMAGE at "
+                   "the chosen resolution. It makes no video, writes no file "
+                   "and does not read the script.")
+
+    _RESOLUTIONS = ["1920x1080", "1280x720"]
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "video_script": ("STRING", {"default": "", "multiline": True}),
-                "output_resolution": ("1920x1080", "1280x720"),
-                "loop_duration": ("INT", {"default": 30, "min": 1, "max": 600}),
+                "output_resolution": (cls._RESOLUTIONS,),
             }
         }
 
-    RETURN_TYPES = ("STRING", "IMAGE")
-    RETURN_NAMES = ("video_path", "thumbnail")
+    RETURN_TYPES = ("IMAGE",)
+    RETURN_NAMES = ("thumbnail",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, video_script, output_resolution, loop_duration):
+    def run(self, output_resolution):
         w, h = (int(x) for x in output_resolution.split("x"))
-        # Deterministic thumbnail: gradient based on script length
-        n = max(1, len(video_script))
-        t = torch.linspace(0.0, 1.0, h, device="cpu")
-        thumb = t.view(1, h, 1, 1).expand(1, h, w, 1).clone()
-        # Add a simple horizontal variation
-        t2 = torch.linspace(0.0, 1.0, w, device="cpu")
-        thumb = (thumb + t2.view(1, 1, w, 1).expand(1, h, w, 1)) / 2.0
-        # Scale by script length factor (clamped)
-        factor = _clamp(n / 1000.0, 0.1, 1.0)
-        thumb = (thumb * factor).clamp(0.0, 1.0)
-        # Add a channel for RGB: [1,h,w,1] -> [1,h,w,3]
-        thumb = thumb.expand(1, h, w, 3).clone()
-
-        path = f"/tmp/news_digest_{w}x{h}_{loop_duration}s.mp4"
-        return (path, thumb)
+        tv = torch.linspace(0.0, 1.0, h, device="cpu").view(1, h, 1, 1).expand(1, h, w, 1)
+        th = torch.linspace(0.0, 1.0, w, device="cpu").view(1, 1, w, 1).expand(1, h, w, 1)
+        thumb = ((tv + th) / 2.0).clamp(0.0, 1.0)
+        return (thumb.expand(1, h, w, 3).clone(),)
 
 
 NODE_CLASS_MAPPINGS = {
     "PSN_RSS_Fetcher": PSN_RSS_Fetcher,
     "PSN_News_Script_Generator": PSN_News_Script_Generator,
-    "PSN_News_Video_Aggregator": PSN_News_Video_Aggregator,
+    "PSN_News_Thumbnail_Placeholder": PSN_News_Thumbnail_Placeholder,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_RSS_Fetcher": "RSS Fetcher (XML)",
     "PSN_News_Script_Generator": "News Script Generator",
-    "PSN_News_Video_Aggregator": "News Video Aggregator",
+    "PSN_News_Thumbnail_Placeholder": "News Gradient Thumbnail (no video)",
 }

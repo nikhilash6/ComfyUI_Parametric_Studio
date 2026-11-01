@@ -1,15 +1,13 @@
-"""PSN_FilmEmulation: pure-logic film stock emulation configuration and validation.
+"""PSN_FilmGrainLUT: builds a film-stock tone LUT, a seeded grain-noise mask and a halation threshold from numbers.
 
-This module implements ONLY the secure, pure-logic parts of a film emulation node:
-- film stock preset validation and allow-list checks
-- ISO / grain / halation parameter validation and clamping
-- procedural grain seed derivation (deterministic, resolution-aware)
-- halation highlight-threshold computation
-- LUT (lookup table) generation for the selected film stock (pure Python lists)
-- a grain/halation "mask" as a list of per-pixel intensity values (0.0-1.0)
+It takes no image and processes no image. What it returns:
+- a 256-entry tone LUT for the selected stock and ISO (a list of floats, as JSON)
+- a flat width*height list of uniform noise scaled by a grain strength (seeded, repeatable)
+- the grain scale and the highlight threshold at which halation would start
 
-It does NOT touch torch, numpy, ComfyUI, files, sockets, or the network.
-All functions take plain values (numbers, strings, lists) and return plain values.
+It does NOT build a halation mask: halation follows the highlights of an image, and with no image
+there is nothing to follow. The module also holds stock-preset validation, clamping and a LUT lookup.
+It does not touch torch, numpy, ComfyUI, files, sockets, or the network.
 """
 
 from psn import expr, orchestration as _orch
@@ -167,7 +165,7 @@ def _deterministic_seed(film_stock, iso, width, height, grain_amount, halation):
 
 
 def _lcg_next(state):
-    """Return (next_state, value) where value is a pseudo-random float in [0,1)."""
+    """Return (next_state, value) where value is a repeatable noise float in [0,1)."""
     next_state = (state * 1103515245 + 12345) & 0x7FFFFFFF
     return next_state, next_state / float(0x7FFFFFFF)
 
@@ -181,24 +179,6 @@ def generate_grain_mask(width, height, grain_scale, seed):
     for _ in range(width * height):
         state, val = _lcg_next(state)
         out.append(_clamp(val * grain_scale, 0.0, 1.0))
-    return out
-
-
-def generate_halation_mask(width, height, halation, threshold, seed):
-    """Return a flat list of length width*height with halation intensities in [0,1].
-
-    Halation is strongest in highlights; we approximate by using a second
-    deterministic stream and weighting by (1 - threshold) so that lower
-    thresholds (more halation) produce stronger values.
-    """
-    if width <= 0 or height <= 0:
-        return []
-    state = (seed ^ 0x5A5A5A5A) & 0xFFFFFFFF
-    strength = _clamp(halation * (1.0 - threshold) * 2.0, 0.0, 1.0)
-    out = []
-    for _ in range(width * height):
-        state, val = _lcg_next(state)
-        out.append(_clamp(val * strength, 0.0, 1.0))
     return out
 
 
@@ -221,9 +201,13 @@ def apply_lut_to_pixel(pixel, lut):
     return _clamp(lut[idx], 0.0, 1.0)
 
 
-class PSN_FilmEmulation:
-    """Pure-logic film stock emulation: validates inputs, builds LUT, and
-    generates deterministic grain/halation masks. No GPU, no torch, no I/O."""
+class PSN_FilmGrainLUT:
+    """Builds a tone LUT, a seeded grain-noise mask and a halation threshold from numbers.
+    Takes no image and processes no image; makes no halation mask. No GPU, no torch, no I/O."""
+
+    DESCRIPTION = ("Builds a film-stock tone LUT, a seeded uniform grain-noise mask (width*height values) and the "
+                   "highlight threshold where halation would start, all from numbers. It processes no image and "
+                   "makes no halation mask.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -241,8 +225,8 @@ class PSN_FilmEmulation:
             },
         }
 
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "FLOAT", "FLOAT")
-    RETURN_NAMES = ("lut_json", "grain_mask_json", "halation_mask_json", "grain_scale", "halation_threshold")
+    RETURN_TYPES = ("STRING", "STRING", "FLOAT", "FLOAT")
+    RETURN_NAMES = ("lut_json", "grain_mask_json", "grain_scale", "halation_threshold")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -251,24 +235,24 @@ class PSN_FilmEmulation:
 
         ok_stock, why_stock = validate_film_stock(film_stock)
         if not ok_stock:
-            return ("{}", "[]", "[]", 0.0, 0.0)
+            return ("{}", "[]", 0.0, 0.0)
 
         ok_iso, iso_c, why_iso = validate_iso(iso)
         if not ok_iso:
-            return ("{}", "[]", "[]", 0.0, 0.0)
+            return ("{}", "[]", 0.0, 0.0)
 
         ok_grain, grain_c, why_grain = validate_grain(grain_amount)
         if not ok_grain:
-            return ("{}", "[]", "[]", 0.0, 0.0)
+            return ("{}", "[]", 0.0, 0.0)
 
         ok_hal, hal_c, why_hal = validate_halation(halation)
         if not ok_hal:
-            return ("{}", "[]", "[]", 0.0, 0.0)
+            return ("{}", "[]", 0.0, 0.0)
 
         if not isinstance(width, int) or isinstance(width, bool) or width <= 0:
-            return ("{}", "[]", "[]", 0.0, 0.0)
+            return ("{}", "[]", 0.0, 0.0)
         if not isinstance(height, int) or isinstance(height, bool) or height <= 0:
-            return ("{}", "[]", "[]", 0.0, 0.0)
+            return ("{}", "[]", 0.0, 0.0)
 
         params = get_stock_params(film_stock)
         lut = build_lut(film_stock, iso_c)
@@ -281,14 +265,8 @@ class PSN_FilmEmulation:
             seed = _deterministic_seed(film_stock, iso_c, width, height, grain_c, hal_c)
 
         grain_mask = generate_grain_mask(width, height, grain_scale, seed)
-        hal_mask = generate_halation_mask(width, height, hal_c, hal_threshold, seed)
-
-        lut_json = json.dumps(lut)
-        grain_json = json.dumps(grain_mask)
-        hal_json = json.dumps(hal_mask)
-
-        return (lut_json, grain_json, hal_json, grain_scale, hal_threshold)
+        return (json.dumps(lut), json.dumps(grain_mask), grain_scale, hal_threshold)
 
 
-NODE_CLASS_MAPPINGS = {"PSN_FilmEmulation": PSN_FilmEmulation}
-NODE_DISPLAY_NAME_MAPPINGS = {"PSN_FilmEmulation": "PSN Film Emulation"}
+NODE_CLASS_MAPPINGS = {"PSN_FilmGrainLUT": PSN_FilmGrainLUT}
+NODE_DISPLAY_NAME_MAPPINGS = {"PSN_FilmGrainLUT": "Film Grain + Tone LUT (no image input)"}

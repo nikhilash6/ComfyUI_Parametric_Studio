@@ -129,3 +129,37 @@ class TestPSNWorkflowOrchestrator:
         assert len(batches[0]) == 3
         assert len(batches[1]) == 3
         assert len(batches[2]) == 1
+
+
+class TestVramComparison:
+    def test_over_available_gives_error_and_no_ids(self):
+        wf = _make_workflow_json(["a", "b", "c"])
+        ids, status = PSN_Workflow_Orchestrator().run(wf, max_parallel=3, vram_per_instance=10.0, vram_available_gb=24.0)
+        assert ids == []
+        assert status.startswith("error:")
+        assert "needs 30.00GB" in status and "vram_available_gb=24.00GB" in status
+
+    def test_within_available_is_ok_and_says_figure_was_typed(self):
+        wf = _make_workflow_json(["a", "b"])
+        ids, status = PSN_Workflow_Orchestrator().run(wf, max_parallel=2, vram_per_instance=10.0, vram_available_gb=24.0)
+        assert ids == ["inst_0_a", "inst_0_b"]
+        assert status.startswith("ok:")
+        assert "total_vram=20.00GB" in status and "fits vram_available_gb=24.00GB (as typed)" in status
+
+    def test_exactly_equal_fits(self):
+        wf = _make_workflow_json(["a"])
+        ids, status = PSN_Workflow_Orchestrator().run(wf, max_parallel=2, vram_per_instance=12.0, vram_available_gb=24.0)
+        assert status.startswith("ok:") and ids == ["inst_0_a"]
+
+    def test_not_given_says_comparison_skipped(self):
+        wf = _make_workflow_json(["a"])
+        ids, status = PSN_Workflow_Orchestrator().run(wf, max_parallel=2, vram_per_instance=4.0)
+        assert "comparison skipped" in status and "fits" not in status
+
+    def test_bad_available_value(self):
+        wf = _make_workflow_json(["a"])
+        ids, status = PSN_Workflow_Orchestrator().run(wf, max_parallel=2, vram_per_instance=4.0, vram_available_gb=-1.0)
+        assert ids == [] and "vram_available_gb must be" in status
+
+    def test_input_is_declared_optional(self):
+        assert "vram_available_gb" in PSN_Workflow_Orchestrator.INPUT_TYPES()["optional"]

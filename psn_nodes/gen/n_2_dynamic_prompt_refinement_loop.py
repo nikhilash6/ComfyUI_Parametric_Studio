@@ -1,18 +1,22 @@
 """ParametricStudio - Dynamic Prompt Refinement Loop.
 
 Two ComfyUI custom nodes:
-  * PSN_Prompt_Refiner_Loop - iteratively refines a prompt using a mock/inline
-    LLM policy until a quality threshold is met or max iterations is reached.
+  * PSN_Prompt_Scripted_Rewrite - walks a list of (score, rewrite) turns that
+    you supply in the ``script`` input, or a length/keyword heuristic, until
+    the score reaches a threshold or max iterations is reached.  It calls no
+    LLM, so the score is not a quality judgement.
   * PSN_Prompt_Structure_Enforcer - rewrites a free-form prompt into a fixed
     structural template (subject, env, light, style).
 
-No network, no external LLM.  The 'llm_handle' input is a STRING that encodes
-a deterministic mock policy, e.g.:
+No network, no external LLM.  The 'script' input is a STRING that holds the
+turns to walk, e.g.:
 
-    mock:score=0.4,rewrite=a more detailed prompt;score=0.9,rewrite=final prompt
+    script:score=0.4,rewrite=a more detailed prompt;score=0.9,rewrite=final prompt
 
-Each semicolon-separated segment is one LLM turn.  If the handle is empty the
-node falls back to a built-in heuristic scorer.
+Each semicolon-separated segment is one turn.  If the script is empty (or runs
+out of turns) the node falls back to a built-in heuristic that scores by word
+count and detail keywords and, for short low-scoring prompts, appends a fixed
+phrase.
 """
 
 import json
@@ -46,18 +50,18 @@ def _heuristic_score(prompt: str) -> float:
     return round(0.5 * length_score + 0.5 * kw_score, 4)
 
 
-def _parse_mock_handle(handle: str):
-    """Parse a mock LLM handle string into a list of (score, rewrite) tuples.
+def _parse_script(script: str):
+    """Parse a script string into a list of (score, rewrite) tuples.
 
-    Format: mock:score=0.4,rewrite=...;score=0.9,rewrite=...
-    Returns [] if the handle is empty or not a mock handle.
+    Format: script:score=0.4,rewrite=...;score=0.9,rewrite=...
+    Returns [] if the script is empty or does not start with ``script:``.
     """
-    if not handle or not handle.strip():
+    if not script or not script.strip():
         return []
-    h = handle.strip()
-    if not h.startswith("mock:"):
+    h = script.strip()
+    if not h.startswith("script:"):
         return []
-    body = h[len("mock:"):]
+    body = h[len("script:"):]
     turns = []
     for seg in body.split(";"):
         seg = seg.strip()
@@ -73,18 +77,17 @@ def _parse_mock_handle(handle: str):
     return turns
 
 
-def _llm_critique(prompt: str, turns, turn_index: int):
-    """Simulate one LLM critique turn.
+def _scripted_turn(prompt: str, turns, turn_index: int):
+    """Take one turn from the script, or from the heuristic when it is exhausted.
 
     Returns (score: float, new_prompt: str).
-    If turn_index is beyond the available turns, fall back to heuristic.
     """
     if turns and turn_index < len(turns):
         score, rewrite = turns[turn_index]
         return score, (rewrite if rewrite else prompt)
     # fallback: heuristic
     score = _heuristic_score(prompt)
-    # heuristic "rewrite": append a detail phrase if prompt is short
+    # heuristic rewrite: append a fixed detail phrase if the prompt is short
     if score < 0.5 and len(prompt.split()) < 15:
         new_prompt = prompt.rstrip(".") + ", cinematic lighting, detailed texture, dramatic mood"
     else:
@@ -93,34 +96,38 @@ def _llm_critique(prompt: str, turns, turn_index: int):
 
 
 # ---------------------------------------------------------------------------
-# Node 1: PSN_Prompt_Refiner_Loop
+# Node 1: PSN_Prompt_Scripted_Rewrite
 # ---------------------------------------------------------------------------
 
-class PSN_Prompt_Refiner_Loop:
-    """Iteratively refine a prompt using a mock LLM until quality threshold is met."""
+class PSN_Prompt_Scripted_Rewrite:
+    """Walk a supplied list of (score, rewrite) turns, or a length/keyword heuristic, until the threshold is met."""
+
+    DESCRIPTION = ("Walks the (score, rewrite) turns you supply, or a length/keyword heuristic "
+                   "that appends a fixed phrase to short prompts, until the score reaches the "
+                   "threshold. It calls no LLM, so the score is not a quality judgement.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "initial_prompt": ("STRING", {"default": "a cat", "multiline": True}),
-                "llm_handle": ("STRING", {"default": "", "multiline": True}),
+                "script": ("STRING", {"default": "", "multiline": True}),
                 "max_iterations": ("INT", {"default": 5, "min": 1, "max": 50}),
                 "quality_threshold": ("FLOAT", {"default": 0.7, "min": 0.0, "max": 1.0, "step": 0.05}),
             }
         }
 
     RETURN_TYPES = ("STRING", "INT", "FLOAT")
-    RETURN_NAMES = ("refined_prompt", "iteration_count", "final_score")
+    RETURN_NAMES = ("rewritten_prompt", "iteration_count", "score")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, initial_prompt, llm_handle, max_iterations, quality_threshold):
+    def run(self, initial_prompt, script, max_iterations, quality_threshold):
         prompt = (initial_prompt or "").strip()
         if not prompt:
             return ("", 0, 0.0)
 
-        turns = _parse_mock_handle(llm_handle)
+        turns = _parse_script(script)
         threshold = float(quality_threshold)
         max_iter = int(max_iterations)
 
@@ -128,7 +135,7 @@ class PSN_Prompt_Refiner_Loop:
         iteration = 0
         for i in range(max_iter):
             iteration = i + 1
-            score, new_prompt = _llm_critique(prompt, turns, i)
+            score, new_prompt = _scripted_turn(prompt, turns, i)
             prompt = new_prompt.strip()
             if score >= threshold:
                 break
@@ -237,11 +244,11 @@ class PSN_Prompt_Structure_Enforcer:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Prompt_Refiner_Loop": PSN_Prompt_Refiner_Loop,
+    "PSN_Prompt_Scripted_Rewrite": PSN_Prompt_Scripted_Rewrite,
     "PSN_Prompt_Structure_Enforcer": PSN_Prompt_Structure_Enforcer,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Prompt_Refiner_Loop": "PSN Prompt Refiner Loop",
+    "PSN_Prompt_Scripted_Rewrite": "Scripted Prompt Rewrite (calls no LLM)",
     "PSN_Prompt_Structure_Enforcer": "PSN Prompt Structure Enforcer",
 }

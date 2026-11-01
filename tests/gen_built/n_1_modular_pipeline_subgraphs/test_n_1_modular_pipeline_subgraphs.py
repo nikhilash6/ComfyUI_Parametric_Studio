@@ -1,16 +1,23 @@
 import torch
 
+import n_1_modular_pipeline_subgraphs as mod
 from n_1_modular_pipeline_subgraphs import (
     PSN_SubgraphPort,
-    PSN_SubgraphWrapper,
+    PSN_Dict_Router,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
 )
 
 
 def test_module_mappings():
-    assert set(NODE_CLASS_MAPPINGS) == {"PSN_SubgraphPort", "PSN_SubgraphWrapper"}
-    assert NODE_DISPLAY_NAME_MAPPINGS["PSN_SubgraphWrapper"] == "Subgraph Wrapper"
+    assert set(NODE_CLASS_MAPPINGS) == {"PSN_SubgraphPort", "PSN_Dict_Router"}
+    assert NODE_DISPLAY_NAME_MAPPINGS["PSN_Dict_Router"] == "Dict Router"
+    # the stage-running wrapper claim is gone: no stage registry, no old name
+    assert not hasattr(mod, "PSN_SubgraphWrapper")
+    assert not hasattr(PSN_Dict_Router, "register_stage")
+    assert not hasattr(PSN_Dict_Router, "_stages")
+    assert PSN_Dict_Router.RETURN_NAMES == ("routed_dict", "status")
+    assert "Runs no stages" in PSN_Dict_Router.DESCRIPTION
     for cls in NODE_CLASS_MAPPINGS.values():
         assert cls.FUNCTION == "run"
         assert cls.CATEGORY.startswith("ParametricStudio/")
@@ -41,35 +48,52 @@ def test_port_ok_and_type_safety():
     assert status.startswith("error")
 
 
-def test_wrapper_routes_and_validates():
-    PSN_SubgraphWrapper.clear_stages()
-    w = PSN_SubgraphWrapper()
-
-    def stage(inputs):
-        # simulate a KSampler-like stage: scale the image and echo a mask
-        return {"img_out": inputs["img"] * 0.5, "mask_out": inputs["mask"]}
-
-    PSN_SubgraphWrapper.register_stage("sg_test", stage)
+def test_router_renames_and_validates():
+    w = PSN_Dict_Router()
 
     img = torch.rand(2, 8, 8, 3)
     mask = torch.rand(2, 8, 8)
     handle, status = w.run(
         "sg_test",
         {"in_img": ("img", "IMAGE"), "in_mask": ("mask", "MASK")},
-        {"out_img": ("img_out", "IMAGE"), "out_mask": ("mask_out", "MASK")},
+        {"out_img": ("img", "IMAGE"), "out_mask": ("mask", "MASK")},
         {"in_img": img, "in_mask": mask},
     )
-    assert status == "ok"
-    assert torch.equal(handle["out_img"], img * 0.5)
+    assert status == "routed 2 entries"
+    assert set(handle) == {"out_img", "out_mask"}
+    # values are copied unchanged: no stage ran, nothing was scaled
+    assert torch.equal(handle["out_img"], img)
     assert torch.equal(handle["out_mask"], mask)
     # no in-place mutation of the inputs
     handle["out_img"].fill_(1.0)
-    assert not torch.equal(handle["out_img"], img * 0.5)
+    assert not torch.equal(handle["out_img"], img)
 
 
-def test_wrapper_bad_inputs():
-    PSN_SubgraphWrapper.clear_stages()
-    w = PSN_SubgraphWrapper()
+def test_router_only_returns_outputs_named_in_output_map():
+    w = PSN_Dict_Router()
+    handle, status = w.run(
+        "sg_sub",
+        {"a": "INT", "b": "STRING"},
+        {"only_b": ("b", "STRING")},
+        {"a": 3, "b": "hi"},
+    )
+    assert handle == {"only_b": "hi"}
+    assert status == "routed 1 entries"
+
+
+def test_router_registered_stage_is_not_run():
+    """Stage functions are no longer a thing: nothing user-registered can run."""
+    ran = []
+    PSN_Dict_Router._stages = {"sg_s": lambda i: ran.append(1) or {"x": 1}}
+    handle, status = PSN_Dict_Router().run(
+        "sg_s", {"a": "INT"}, {"x": ("a", "INT")}, {"a": 7}
+    )
+    assert ran == []
+    assert handle == {"x": 7}
+
+
+def test_router_bad_inputs():
+    w = PSN_Dict_Router()
 
     # missing input
     _, status = w.run("sg_x", {"a": "IMAGE"}, {}, {})
@@ -83,24 +107,21 @@ def test_wrapper_bad_inputs():
     _, status = w.run("sg_x", {"a": 123}, {}, {})
     assert status.startswith("error")
 
-    # bad subgraph id
+    # bad router id
     _, status = w.run("", {}, {}, {})
     assert status.startswith("error")
 
-    # stage that raises
-    PSN_SubgraphWrapper.register_stage("sg_boom", lambda i: 1 / 0)
-    _, status = w.run("sg_boom", {}, {}, {})
-    assert status.startswith("error")
+    # output names an internal entry that no input produced
+    handle, status = w.run("sg_x", {"a": "INT"}, {"o": ("nope", "INT")}, {"a": 1})
+    assert handle == {} and "no routed entry" in status
 
-    # stage returning non-dict
-    PSN_SubgraphWrapper.register_stage("sg_nodict", lambda i: [1, 2])
-    _, status = w.run("sg_nodict", {}, {}, {})
-    assert status.startswith("error")
+    # output type does not match the routed value
+    handle, status = w.run("sg_x", {"a": "INT"}, {"o": ("a", "IMAGE")}, {"a": 1})
+    assert handle == {} and status.startswith("error")
 
 
-def test_wrapper_latent_passthrough():
-    PSN_SubgraphWrapper.clear_stages()
-    w = PSN_SubgraphWrapper()
+def test_router_latent_passthrough():
+    w = PSN_Dict_Router()
     latent = {"samples": torch.rand(1, 4, 16, 16)}
     handle, status = w.run(
         "sg_latent",
@@ -108,7 +129,7 @@ def test_wrapper_latent_passthrough():
         {"lat_out": ("lat", "LATENT")},
         {"lat": latent},
     )
-    assert status == "ok"
+    assert status == "routed 1 entries"
     assert isinstance(handle["lat_out"], dict)
     assert torch.equal(handle["lat_out"]["samples"], latent["samples"])
     # clone check: mutating the handle must not touch the original
@@ -119,9 +140,11 @@ def test_wrapper_latent_passthrough():
 def main():
     test_module_mappings()
     test_port_ok_and_type_safety()
-    test_wrapper_routes_and_validates()
-    test_wrapper_bad_inputs()
-    test_wrapper_latent_passthrough()
+    test_router_renames_and_validates()
+    test_router_only_returns_outputs_named_in_output_map()
+    test_router_registered_stage_is_not_run()
+    test_router_bad_inputs()
+    test_router_latent_passthrough()
     print("ok")
 
 

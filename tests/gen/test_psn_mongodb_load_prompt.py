@@ -3,8 +3,8 @@
 import json
 
 from psn_nodes.gen.psn_mongodb_load_prompt import (
-    PSN_MongoDB_Load_Prompt,
-    _parse_db_session,
+    PSN_Prompt_Document_Lookup,
+    _parse_documents_json,
     _fetch_document,
     _extract_prompt,
     _extract_params,
@@ -12,7 +12,7 @@ from psn_nodes.gen.psn_mongodb_load_prompt import (
 
 
 def _node():
-    return PSN_MongoDB_Load_Prompt()
+    return PSN_Prompt_Document_Lookup()
 
 
 def _session(docs):
@@ -83,14 +83,14 @@ def test_run_missing_params_defaults_to_empty_object():
     assert json.loads(params) == {}
 
 
-def test_parse_db_session_non_string_input():
-    data, err = _parse_db_session(123)
+def test_parse_documents_json_non_string_input():
+    data, err = _parse_documents_json(123)
     assert data is None
     assert err is not None
 
 
 def test_fetch_document_non_dict_doc():
-    data, err = _parse_db_session(json.dumps({"abc": "notadict"}))
+    data, err = _parse_documents_json(json.dumps({"abc": "notadict"}))
     assert err is None
     doc, err = _fetch_document(data, "abc")
     assert doc is None
@@ -104,10 +104,15 @@ def test_extract_params_serializes_deterministically():
 
 
 def test_node_metadata_is_well_formed():
-    cls = PSN_MongoDB_Load_Prompt
+    cls = PSN_Prompt_Document_Lookup
     it = cls.INPUT_TYPES()
-    assert "db_session" in it["required"]
+    assert "documents_json" in it["required"]
     assert "doc_id" in it["required"]
     assert cls.RETURN_TYPES == ("STRING", "STRING", "BOOLEAN", "STRING")
     assert cls.FUNCTION == "run"
     assert cls.CATEGORY.startswith("ParametricStudio/")
+
+
+def test_no_database_claim():
+    assert "database" in PSN_Prompt_Document_Lookup.DESCRIPTION
+    assert "Uses no database" in PSN_Prompt_Document_Lookup.DESCRIPTION

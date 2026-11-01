@@ -6,9 +6,10 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import n_7_structured_continuity_rules_engine as mod
 from n_7_structured_continuity_rules_engine import (
     PSN_ContinuityRuleDefiner,
-    PSN_ContinuityEnforcer,
+    PSN_ContinuityColourCheck,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
     _parse_rule_text,
@@ -71,7 +72,7 @@ assert len(result["all_rules"]) == 2
 print("test 5 passed: RuleDefiner node")
 
 # ---------------------------------------------------------------------------
-# 6. PSN_ContinuityEnforcer: image WITH red hair -> PASS
+# 6. PSN_ContinuityColourCheck: image WITH red hair -> PASS
 # ---------------------------------------------------------------------------
 # Create a small 8x8x3 image that is mostly red
 red_img = torch.zeros(1, 8, 8, 3)
@@ -85,57 +86,89 @@ rule_set_red = {
     "all_rules": [{"polarity": "+", "attr": "hair", "colour": "red", "raw": "must have red hair"}],
 }
 
-enforcer = PSN_ContinuityEnforcer()
-pass_fail, report = enforcer.run(red_img, rule_set_red)
+enforcer = PSN_ContinuityColourCheck()
+pass_fail, unverified, report = enforcer.run(red_img, rule_set_red)
 assert pass_fail is True, f"Expected PASS for red image, got FAIL. Report: {report}"
+assert unverified == 0
+assert "red pixel fraction over whole image=1.000 -> PASS" in report
+assert "checked=1 failed=0 unverified=0" in report
 print("test 6 passed: Enforcer PASS on matching image")
 
 # ---------------------------------------------------------------------------
-# 7. PSN_ContinuityEnforcer: image WITHOUT red hair -> FAIL
+# 7. PSN_ContinuityColourCheck: image WITHOUT red hair -> FAIL
 # ---------------------------------------------------------------------------
 blue_img = torch.zeros(1, 8, 8, 3)
 blue_img[0, :, :, 0] = 0.15
 blue_img[0, :, :, 1] = 0.25
 blue_img[0, :, :, 2] = 0.85
 
-pass_fail2, report2 = enforcer.run(blue_img, rule_set_red)
+pass_fail2, _, report2 = enforcer.run(blue_img, rule_set_red)
 assert pass_fail2 is False, f"Expected FAIL for blue image, got PASS. Report: {report2}"
+assert "red pixel fraction over whole image=0.000 -> FAIL" in report2
 print("test 7 passed: Enforcer FAIL on non-matching image")
 
 # ---------------------------------------------------------------------------
-# 8. PSN_ContinuityEnforcer: bad input (not a tensor)
+# 8. PSN_ContinuityColourCheck: bad input (not a tensor)
 # ---------------------------------------------------------------------------
-pass_fail3, report3 = enforcer.run("not a tensor", rule_set_red)
+pass_fail3, _, report3 = enforcer.run("not a tensor", rule_set_red)
 assert pass_fail3 is False, "Non-tensor input should FAIL"
 assert "ERROR" in report3, f"Expected ERROR in report, got: {report3}"
 print("test 8 passed: bad input (non-tensor)")
 
 # ---------------------------------------------------------------------------
-# 9. PSN_ContinuityEnforcer: bad input (wrong dims)
+# 9. PSN_ContinuityColourCheck: bad input (wrong dims)
 # ---------------------------------------------------------------------------
 bad_img = torch.zeros(8, 8, 3)  # 3-D, missing batch dim
-pass_fail4, report4 = enforcer.run(bad_img, rule_set_red)
+pass_fail4, _, report4 = enforcer.run(bad_img, rule_set_red)
 assert pass_fail4 is False, "3-D image should FAIL"
 assert "ERROR" in report4
 print("test 9 passed: bad input (wrong dims)")
 
 # ---------------------------------------------------------------------------
-# 10. PSN_ContinuityEnforcer: empty rule set -> vacuous PASS
+# 10. PSN_ContinuityColourCheck: empty rule set -> nothing checked, not a pass
 # ---------------------------------------------------------------------------
 empty_rules = {"character_rules": [], "scene_rules": [], "all_rules": []}
-pass_fail5, report5 = enforcer.run(red_img, empty_rules)
-assert pass_fail5 is True, "Empty rule set should vacuously PASS"
+pass_fail5, unv5, report5 = enforcer.run(red_img, empty_rules)
+assert pass_fail5 is False, "Empty rule set must not report a pass"
+assert "nothing was checked" in report5
 print("test 10 passed: empty rule set")
+
+# ---------------------------------------------------------------------------
+# 10b. Non-colour rules are UNVERIFIED and never count as passed
+# ---------------------------------------------------------------------------
+hat_rule = {"polarity": "+", "attr": "hat", "colour": None, "raw": "must have hat"}
+only_hat = {"all_rules": [hat_rule]}
+pf, unv, rep = enforcer.run(red_img, only_hat)
+assert pf is False and unv == 1
+assert "UNVERIFIED" in rep and "assumed PASS" not in rep
+assert "checked=0 failed=0 unverified=1" in rep
+# a colour rule that passes plus a hat rule: pass reflects the colour rule
+# only, and the unverified hat is counted separately
+mixed = {"all_rules": [rule_set_red["all_rules"][0], hat_rule]}
+pf2, unv2, rep2 = enforcer.run(red_img, mixed)
+assert pf2 is True and unv2 == 1
+assert "checked=1 failed=0 unverified=1" in rep2
+# a failing colour rule still fails
+pf3, unv3, rep3 = enforcer.run(blue_img, mixed)
+assert pf3 is False and unv3 == 1
+# negative colour rule: red image must not have red -> FAIL; blue image -> PASS
+no_red = {"all_rules": [{"polarity": "-", "attr": "shirt", "colour": "red", "raw": "no red shirt"}]}
+assert enforcer.run(red_img, no_red)[0] is False
+assert enforcer.run(blue_img, no_red)[0] is True
+# the old class and its assumed-pass behaviour are gone
+assert not hasattr(mod, "PSN_ContinuityEnforcer")
+assert "PSN_ContinuityEnforcer" not in NODE_CLASS_MAPPINGS
+print("test 10b passed: unverified rules")
 
 # ---------------------------------------------------------------------------
 # 11. NODE_CLASS_MAPPINGS and NODE_DISPLAY_NAME_MAPPINGS exist and are correct
 # ---------------------------------------------------------------------------
 assert "PSN_ContinuityRuleDefiner" in NODE_CLASS_MAPPINGS
-assert "PSN_ContinuityEnforcer" in NODE_CLASS_MAPPINGS
+assert "PSN_ContinuityColourCheck" in NODE_CLASS_MAPPINGS
 assert NODE_CLASS_MAPPINGS["PSN_ContinuityRuleDefiner"] is PSN_ContinuityRuleDefiner
-assert NODE_CLASS_MAPPINGS["PSN_ContinuityEnforcer"] is PSN_ContinuityEnforcer
+assert NODE_CLASS_MAPPINGS["PSN_ContinuityColourCheck"] is PSN_ContinuityColourCheck
 assert "PSN_ContinuityRuleDefiner" in NODE_DISPLAY_NAME_MAPPINGS
-assert "PSN_ContinuityEnforcer" in NODE_DISPLAY_NAME_MAPPINGS
+assert "PSN_ContinuityColourCheck" in NODE_DISPLAY_NAME_MAPPINGS
 print("test 11 passed: node mappings")
 
 # ---------------------------------------------------------------------------
@@ -146,7 +179,7 @@ assert "required" in it1
 assert "character_profile" in it1["required"]
 assert "scene_rules" in it1["required"]
 
-it2 = PSN_ContinuityEnforcer.INPUT_TYPES()
+it2 = PSN_ContinuityColourCheck.INPUT_TYPES()
 assert "required" in it2
 assert "generated_asset" in it2["required"]
 assert "rule_set" in it2["required"]
@@ -157,8 +190,8 @@ print("test 12 passed: INPUT_TYPES")
 # ---------------------------------------------------------------------------
 assert PSN_ContinuityRuleDefiner.RETURN_TYPES == ("PSN_RULE_SET",)
 assert PSN_ContinuityRuleDefiner.FUNCTION == "run"
-assert PSN_ContinuityEnforcer.RETURN_TYPES == ("BOOLEAN", "STRING")
-assert PSN_ContinuityEnforcer.FUNCTION == "run"
+assert PSN_ContinuityColourCheck.RETURN_TYPES == ("BOOLEAN", "INT", "STRING")
+assert PSN_ContinuityColourCheck.FUNCTION == "run"
 print("test 13 passed: RETURN_TYPES / FUNCTION")
 
 # ---------------------------------------------------------------------------
@@ -179,7 +212,7 @@ rgba_img[0, :, :, 1] = 0.15
 rgba_img[0, :, :, 2] = 0.15
 rgba_img[0, :, :, 3] = 1.0  # alpha
 
-pass_fail6, report6 = enforcer.run(rgba_img, rule_set_red)
+pass_fail6, _, report6 = enforcer.run(rgba_img, rule_set_red)
 assert pass_fail6 is True, f"RGBA red image should PASS. Report: {report6}"
 print("test 15 passed: RGBA image handling")
 

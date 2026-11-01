@@ -192,7 +192,7 @@ class PSN_Metadata_Editor:
 # ---------------------------------------------------------------------------
 
 class PSN_Metadata_Decryptor:
-    """Extract metadata from an image payload and XOR-decrypt the values of
+    """Extract metadata from an image payload and Fernet-decrypt the values of
     selected keys.
 
     Inputs are plain values (dict, string) -- no GPU, no file I/O.

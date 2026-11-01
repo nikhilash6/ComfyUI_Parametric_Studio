@@ -1,16 +1,13 @@
-"""ParametricStudio - PBR Texture Generation from Images.
+"""ParametricStudio - PBR maps from an albedo image.
 
-Core delighting pipeline implemented with pure torch (CPU) so it runs
-without any external model weights.  The node estimates a roughness map
-and a normal map from a flat albedo image using classical image
-processing (Sobel gradients, local contrast, blur) and optionally
-applies seamless tiling corrections (edge blending) to the outputs.
+Pure torch (CPU), no model weights.  The node estimates a roughness map
+and a normal map from an albedo image using classical image processing
+(Sobel gradients, local variance, blur) and optionally applies edge
+blending so the outputs tile.
 
-A real neural delighting model (e.g. a CNN or diffusion based one) would
-be loaded from ``model_path`` in a full deployment; that part is NOT
-implemented here because no model files or heavy libraries are
-available in this environment.  The procedural estimator below is a
-deterministic stand-in that produces physically plausible maps.
+It does NOT delight: the albedo output is the input RGB unchanged (edge
+blended only when ``tiled`` is on).  Roughness and normal are heuristics
+computed from the image luminance, not physically measured values.
 """
 
 import torch
@@ -145,22 +142,24 @@ def _to_image3(x):
 # node
 # ---------------------------------------------------------------------------
 
-class PSN_PBR_Delight:
-    """Convert a flat albedo image into a PBR material set (Albedo,
-    Roughness, Normal) using a procedural delighting estimator.
+class PSN_PBR_From_Albedo:
+    """Estimate roughness and normal maps from an albedo image with Sobel and
+    local-variance heuristics, optionally edge-blending the outputs to tile.
 
-    A real neural delighting model would be loaded from ``model_path``;
-    that is not implemented here (no model files available).  The
-    estimator uses Sobel gradients and local contrast to produce
-    physically plausible roughness and normal maps.
+    The albedo output passes the input RGB through unchanged (no delighting).
     """
+
+    DESCRIPTION = (
+        "Estimates roughness and normal maps from an albedo image with Sobel and "
+        "local-variance heuristics and can edge-blend them for tiling. The albedo "
+        "output is the input unchanged: this node does not delight."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "albedo_image": ("IMAGE",),
-                "model_path": ("STRING", {"default": ""}),
                 "tiled": ("BOOLEAN", {"default": False}),
             }
         }
@@ -170,7 +169,7 @@ class PSN_PBR_Delight:
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, albedo_image, model_path="", tiled=False):
+    def run(self, albedo_image, tiled=False):
         img = _as_image(albedo_image, "albedo_image")
         rgb = _rgb(img)
         lum = _gray(rgb)
@@ -192,9 +191,9 @@ class PSN_PBR_Delight:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_PBR_Delight": PSN_PBR_Delight,
+    "PSN_PBR_From_Albedo": PSN_PBR_From_Albedo,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_PBR_Delight": "PBR Delight (Albedo -> Roughness + Normal)",
+    "PSN_PBR_From_Albedo": "PBR Maps from Albedo (heuristic, no delighting)",
 }

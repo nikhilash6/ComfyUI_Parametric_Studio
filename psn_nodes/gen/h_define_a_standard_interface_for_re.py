@@ -11,13 +11,15 @@ resolution:
 * ``PSN_InterpreterResolve`` / ``PSN_InterpreterRegistryBuild`` -- ComfyUI nodes that
   expose the interface to the graph.
 
-No filesystem access is performed here: paths are *computed* from the spec (root dir,
-platform, family name) so the module stays pure and testable.  A real deployment would
-plug a ``probe`` callable into the registry to verify the interpreter actually exists.
+Paths are *computed* from the spec (root dir, platform, family name).  The registry
+itself does no filesystem access unless given a ``probe`` callable; the
+``PSN_InterpreterRegistryBuild`` node supplies ``os.path.exists`` as the probe, so
+``PSN_InterpreterResolve`` only reports ``found`` when the interpreter file exists.
 """
 
 from __future__ import annotations
 
+import os
 import posixpath
 
 CAT = "ParametricStudio/Environments"
@@ -198,7 +200,7 @@ class PSN_InterpreterRegistryBuild:
     CATEGORY = CAT
 
     def run(self, root, platform, families, venv_name, default_family):
-        reg = InterpreterRegistry()
+        reg = InterpreterRegistry(probe=os.path.exists)
         names = [f.strip() for f in families.split(",") if f.strip()]
         if not names:
             raise ValueError("families must contain at least one name")
@@ -213,8 +215,9 @@ class PSN_InterpreterRegistryBuild:
 class PSN_InterpreterResolve:
     """Resolve the interpreter path for a given tool family.
 
-    Returns the path as a STRING plus a boolean ``found`` flag so the graph can
-    branch on missing environments without crashing.
+    Returns the path as a STRING plus a boolean ``found`` flag, true only when the
+    interpreter file exists on disk, so the graph can branch on missing
+    environments without crashing.
     """
 
     @classmethod

@@ -1,9 +1,8 @@
-"""ComfyUI custom node: Multi-View Consistent Image Generation.
+"""ComfyUI custom node: Multi-View 2D Shift Preview.
 
-Generates multiple consistent views of a subject from a single image using
-deterministic geometric transformations (rotation, perspective shifts) to
-simulate different viewing angles. This is a core implementation that can be
-extended with real multi-view models (MVAdapter, MVDream, etc.).
+Makes several copies of an image, each rolled (rotated in the image plane)
+and/or shifted sideways or up and down with plain 2D geometry. There is no
+model and no 3D, so the copies are not new camera views of the subject.
 """
 
 import json
@@ -98,8 +97,8 @@ def _apply_rotation_2d(img, angle_deg):
     return rotated
 
 
-def _apply_perspective_shift(img, shift_x, shift_y):
-    """Apply a simple perspective-like shift to simulate camera movement.
+def _apply_shift(img, shift_x, shift_y):
+    """Translate the image by shifting the sampling grid (zeros fill the border).
     
     shift_x, shift_y are in range [-1, 1] representing how much to shift.
     """
@@ -129,8 +128,8 @@ def _apply_perspective_shift(img, shift_x, shift_y):
     return shifted
 
 
-def _generate_view(image_single, angle_spec, view_index, num_views):
-    """Generate a single view from the input image using the angle spec.
+def _make_view(image_single, angle_spec, view_index, num_views):
+    """Make one rolled/shifted copy of the input image from the angle spec.
     
     image_single: [H, W, C] tensor
     angle_spec: dict with optional 'yaw', 'pitch', 'roll' keys (degrees)
@@ -153,15 +152,15 @@ def _generate_view(image_single, angle_spec, view_index, num_views):
     if roll != 0.0:
         result = _apply_rotation_2d(result, roll)
     
-    # Apply yaw as horizontal perspective shift
+    # Apply yaw as a horizontal shift
     if yaw != 0.0:
         shift_x = math.sin(math.radians(yaw)) * 0.5
-        result = _apply_perspective_shift(result, shift_x, 0.0)
+        result = _apply_shift(result, shift_x, 0.0)
     
-    # Apply pitch as vertical perspective shift
+    # Apply pitch as a vertical shift
     if pitch != 0.0:
         shift_y = math.sin(math.radians(pitch)) * 0.5
-        result = _apply_perspective_shift(result, 0.0, shift_y)
+        result = _apply_shift(result, 0.0, shift_y)
     
     # Clamp to [0, 1]
     result = torch.clamp(result, 0.0, 1.0)
@@ -169,14 +168,19 @@ def _generate_view(image_single, angle_spec, view_index, num_views):
     return result
 
 
-class PSN_MultiView_Generator:
-    """Generate multiple consistent views of a subject from a single image.
-    
-    Uses geometric transformations (rotation, perspective shifts) to simulate
-    different viewing angles. This is a core implementation that can be
-    extended with real multi-view models.
+class PSN_MultiView_Shift_Preview:
+    """Make several rolled/shifted copies of an image with 2D geometry.
+
+    Roll rotates in the image plane; yaw and pitch only translate the image
+    horizontally and vertically (zeros fill the border). No model, no 3D.
     """
-    
+
+    DESCRIPTION = (
+        "Rolls and shifts the input image once per view with 2D geometry. "
+        "Runs no model and no 3D, so the outputs are not new camera views of "
+        "the subject."
+    )
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -185,18 +189,15 @@ class PSN_MultiView_Generator:
                 "num_views": ("INT", {"default": 4, "min": 1, "max": 32}),
                 "angles": ("STRING", {"default": "[]", "multiline": True}),
             },
-            "optional": {
-                "vae": ("VAE",),
-            },
         }
     
     RETURN_TYPES = ("IMAGE",)
-    RETURN_NAMES = ("views",)
+    RETURN_NAMES = ("shifted_copies",)
     FUNCTION = "run"
     CATEGORY = CAT
     
-    def run(self, image, num_views, angles, vae=None):
-        """Generate multiple views from the input image."""
+    def run(self, image, num_views, angles):
+        """Make num_views rolled/shifted copies of each input image."""
         # Validate image
         img = _validate_image(image)
         
@@ -230,7 +231,7 @@ class PSN_MultiView_Generator:
         
         for b in range(B):
             for v in range(num_views):
-                view = _generate_view(img[b], angle_specs[v], v, num_views)
+                view = _make_view(img[b], angle_specs[v], v, num_views)
                 views.append(view)
         
         # Stack into batch [B * num_views, H, W, C]
@@ -240,9 +241,9 @@ class PSN_MultiView_Generator:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_MultiView_Generator": PSN_MultiView_Generator,
+    "PSN_MultiView_Shift_Preview": PSN_MultiView_Shift_Preview,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_MultiView_Generator": "Multi-View Consistent Image Generator",
+    "PSN_MultiView_Shift_Preview": "Multi-View 2D Shift Preview",
 }

@@ -1,3 +1,6 @@
+import os
+import tempfile
+
 import torch
 import n_6_3d_model_processing_pipeline as mod
 
@@ -23,8 +26,9 @@ def test_module_structure():
     assert "lighting" in it2["required"]
 
     # Check RETURN_TYPES and FUNCTION
-    assert mod.PSN_Load_3D_Mesh.RETURN_TYPES == ("MESH", "IMAGE")
-    assert mod.PSN_Load_3D_Mesh.RETURN_NAMES == ("mesh", "uv_map")
+    assert mod.PSN_Load_3D_Mesh.RETURN_TYPES == ("MESH",)
+    assert mod.PSN_Load_3D_Mesh.RETURN_NAMES == ("mesh",)
+    assert not hasattr(mod, "_uv_from_vertices")
     assert mod.PSN_Load_3D_Mesh.FUNCTION == "run"
     assert mod.PSN_Load_3D_Mesh.CATEGORY == "ParametricStudio/3D"
 
@@ -37,7 +41,9 @@ def test_module_structure():
 def test_load_cube_mesh():
     """Load default cube and verify vertices/faces."""
     node = mod.PSN_Load_3D_Mesh()
-    mesh, uv = node.run("cube", True)
+    out = node.run("cube", True)
+    assert len(out) == 1, "no constant uv_map output"
+    mesh = out[0]
 
     assert isinstance(mesh, dict)
     assert "vertices" in mesh
@@ -55,17 +61,12 @@ def test_load_cube_mesh():
     # Center should be near origin
     assert v.mean(dim=0).abs().max().item() < 1e-5
 
-    # UV map should be [1, 64, 64, 4]
-    assert uv.shape == (1, 64, 64, 4), f"Expected UV shape (1,64,64,4), got {uv.shape}"
-    assert uv.min().item() >= 0.0
-    assert uv.max().item() <= 1.0
-
 
 def test_load_obj_text():
     """Load a simple triangle from inline OBJ text."""
     obj_text = "obj:v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3"
     node = mod.PSN_Load_3D_Mesh()
-    mesh, uv = node.run(obj_text, False)
+    mesh = node.run(obj_text, False)[0]
 
     v = mesh["vertices"]
     f = mesh["faces"]
@@ -81,7 +82,7 @@ def test_load_obj_text():
 def test_render_cube():
     """Render a cube and verify image properties."""
     load_node = mod.PSN_Load_3D_Mesh()
-    mesh, _ = load_node.run("cube", True)
+    mesh = load_node.run("cube", True)[0]
 
     render_node = mod.PSN_3D_To_Image()
     img = render_node.run(mesh, 0.0, "studio")[0]
@@ -98,7 +99,7 @@ def test_render_cube():
 def test_render_different_angles():
     """Different camera angles should produce different images."""
     load_node = mod.PSN_Load_3D_Mesh()
-    mesh, _ = load_node.run("cube", True)
+    mesh = load_node.run("cube", True)[0]
 
     render_node = mod.PSN_3D_To_Image()
     img0 = render_node.run(mesh, 0.0, "studio")[0]
@@ -112,7 +113,7 @@ def test_render_different_angles():
 def test_render_lighting_modes():
     """Studio and natural lighting should produce different images."""
     load_node = mod.PSN_Load_3D_Mesh()
-    mesh, _ = load_node.run("cube", True)
+    mesh = load_node.run("cube", True)[0]
 
     render_node = mod.PSN_3D_To_Image()
     img_studio = render_node.run(mesh, 0.0, "studio")[0]
@@ -158,7 +159,7 @@ def test_bad_mesh_input():
 def test_bad_lighting():
     """Invalid lighting mode should raise ValueError."""
     load_node = mod.PSN_Load_3D_Mesh()
-    mesh, _ = load_node.run("cube", True)
+    mesh = load_node.run("cube", True)[0]
 
     render_node = mod.PSN_3D_To_Image()
     try:
@@ -172,7 +173,7 @@ def test_normalize_false():
     """With normalize=False, vertices should not be centered/scaled."""
     obj_text = "obj:v 10 20 30\nv 11 20 30\nv 10 21 30\nf 1 2 3"
     node = mod.PSN_Load_3D_Mesh()
-    mesh, _ = node.run(obj_text, False)
+    mesh = node.run(obj_text, False)[0]
     v = mesh["vertices"]
     # Vertices should be as given (not normalized)
     assert v[0].tolist() == [10.0, 20.0, 30.0]
@@ -195,6 +196,54 @@ def test_no_in_place_modification():
     assert torch.equal(f_orig, f_copy), "Faces were modified in place"
 
 
+def test_load_obj_file_from_disk():
+    """A real .obj file on disk is read and parsed (with a v/vt/vn style face)."""
+    with tempfile.TemporaryDirectory() as d:
+        p = os.path.join(d, "tri.obj")
+        with open(p, "w") as fh:
+            fh.write("# tri\nv 2 0 0\nv 0 4 0\nv 0 0 6\nvt 0 0\nf 1/1 2/1 3/1\n")
+        mesh = mod.PSN_Load_3D_Mesh().run(p, False)[0]
+        assert mesh["vertices"].tolist() == [[2.0, 0.0, 0.0], [0.0, 4.0, 0.0], [0.0, 0.0, 6.0]]
+        assert mesh["faces"].tolist() == [[0, 1, 2]]
+        # normalize=True centres at the mean and scales max |coord| to 1
+        mn = mod.PSN_Load_3D_Mesh().run(p, True)[0]["vertices"]
+        assert abs(mn.abs().max().item() - 1.0) < 1e-6
+        assert mn.mean(dim=0).abs().max().item() < 1e-6
+
+
+def test_unreadable_paths_raise_instead_of_cube():
+    """Missing file, non-OBJ text, an OBJ file with no faces, and a non-.obj file all raise."""
+    node = mod.PSN_Load_3D_Mesh()
+    for bad in ("/no/such/file.obj", "hello world", "random garbage", ""):
+        try:
+            node.run(bad, True)
+            assert False, f"{bad!r} should have raised ValueError"
+        except ValueError:
+            pass
+    with tempfile.TemporaryDirectory() as d:
+        empty = os.path.join(d, "empty.obj")
+        with open(empty, "w") as fh:
+            fh.write("# nothing here\n")
+        try:
+            node.run(empty, True)
+            assert False, "OBJ with no faces should raise"
+        except ValueError:
+            pass
+        txt = os.path.join(d, "secret.txt")
+        with open(txt, "w") as fh:
+            fh.write("v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n")
+        try:
+            node.run(txt, True)
+            assert False, "non-.obj file should raise"
+        except ValueError as e:
+            assert ".obj" in str(e)
+
+
+def test_bare_obj_text_still_parses():
+    mesh = mod.PSN_Load_3D_Mesh().run("v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3", False)[0]
+    assert mesh["faces"].tolist() == [[0, 1, 2]]
+
+
 if __name__ == "__main__":
     test_module_structure()
     test_load_cube_mesh()
@@ -206,4 +255,7 @@ if __name__ == "__main__":
     test_bad_lighting()
     test_normalize_false()
     test_no_in_place_modification()
+    test_load_obj_file_from_disk()
+    test_unreadable_paths_raise_instead_of_cube()
+    test_bare_obj_text_still_parses()
     print("ok")

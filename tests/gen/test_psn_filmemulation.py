@@ -1,9 +1,9 @@
-"""Tests for psn_nodes.gen.psn_filmemulation (pure-logic film emulation)."""
+"""Tests for psn_nodes.gen.psn_filmemulation (PSN_FilmGrainLUT: LUT, grain noise, halation threshold; no image)."""
 
 import json
 
 from psn_nodes.gen.psn_filmemulation import (
-    PSN_FilmEmulation,
+    PSN_FilmGrainLUT,
     validate_film_stock,
     validate_iso,
     validate_grain,
@@ -12,7 +12,6 @@ from psn_nodes.gen.psn_filmemulation import (
     compute_grain_scale,
     compute_halation_threshold,
     generate_grain_mask,
-    generate_halation_mask,
     combine_masks,
     apply_lut_to_pixel,
     FILM_STOCKS,
@@ -117,30 +116,33 @@ def test_apply_lut_to_pixel_bounds_and_bad_input():
 
 
 def test_node_run_valid_and_invalid_inputs():
-    node = PSN_FilmEmulation()
-    lut_json, grain_json, hal_json, grain_scale, hal_thr = node.run(
+    node = PSN_FilmGrainLUT()
+    lut_json, grain_json, grain_scale, hal_thr = node.run(
         "Kodak_Portra_400", 400, 0.5, 0.3, 8, 8
     )
     lut = json.loads(lut_json)
     assert len(lut) == 256
     grain = json.loads(grain_json)
-    hal = json.loads(hal_json)
     assert len(grain) == 64
-    assert len(hal) == 64
+    assert all(0.0 <= v <= grain_scale + 1e-12 for v in grain)
     assert grain_scale > 0.0
-    assert 0.0 <= hal_thr <= 1.0
+    # threshold = 0.85 - 0.3*0.5 - 0.05 (Portra halation bias)
+    assert abs(hal_thr - 0.65) < 1e-9
+    # same inputs give the same noise
+    assert node.run("Kodak_Portra_400", 400, 0.5, 0.3, 8, 8)[1] == grain_json
+    assert node.run("Kodak_Portra_400", 400, 0.5, 0.3, 8, 8, seed_override=7)[1] != grain_json
 
-    lut_json2, grain_json2, hal_json2, gs2, ht2 = node.run(
-        "Bad_Film", 400, 0.5, 0.3, 8, 8
-    )
-    assert lut_json2 == "{}"
-    assert grain_json2 == "[]"
-    assert hal_json2 == "[]"
-    assert gs2 == 0.0
-    assert ht2 == 0.0
+    assert node.run("Bad_Film", 400, 0.5, 0.3, 8, 8) == ("{}", "[]", 0.0, 0.0)
+    assert node.run("Kodak_Portra_400", "not_an_int", 0.5, 0.3, 8, 8) == ("{}", "[]", 0.0, 0.0)
 
-    lut_json3, grain_json3, hal_json3, gs3, ht3 = node.run(
-        "Kodak_Portra_400", "not_an_int", 0.5, 0.3, 8, 8
-    )
-    assert lut_json3 == "{}"
-    assert gs3 == 0.0
+
+def test_no_image_and_no_halation_mask():
+    inputs = PSN_FilmGrainLUT.INPUT_TYPES()
+    assert "image" not in inputs["required"] and "image" not in inputs["optional"]
+    assert PSN_FilmGrainLUT.RETURN_NAMES == ("lut_json", "grain_mask_json", "grain_scale", "halation_threshold")
+    assert "halation_mask_json" not in PSN_FilmGrainLUT.RETURN_NAMES
+    assert len(PSN_FilmGrainLUT().run("Ilford_HP5", 800, 0.4, 0.2, 4, 4)) == 4
+    from psn_nodes.gen import psn_filmemulation as m
+    assert not hasattr(m, "generate_halation_mask")
+    assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_FilmGrainLUT"]
+    assert "processes no image" in PSN_FilmGrainLUT.DESCRIPTION

@@ -7,9 +7,9 @@ pyloudnorm and local model weights (YuE2 / MiniMax Music 3) plus Mzikart
 mixer DSP.  None of that is available here, so we implement only the
 deterministic, side-effect-free parts:
 
-  * PSN_Music_Generate  -> validates prompt/duration/seed/model_id and
-    returns a *deterministic* raw-audio *plan* (a JSON string describing the
-    generation request).  It never touches a socket, file, or model.
+  * PSN_Music_Plan      -> validates prompt/duration/seed/model_id and
+    returns a JSON string describing the generation request.  It generates no
+    audio and never touches a socket, file, or model.
   * PSN_Music_Master    -> applies a *pure-Python* mastering chain (EQ
     normalization, soft-knee compression, brick-wall limiting) to a plain
     list-of-lists "audio" payload (stereo frames of floats in [-1, 1]),
@@ -114,7 +114,7 @@ def _validate_model(model_id):
 
 
 def _build_generation_plan(prompt, duration, seed, model_id):
-    """Build a deterministic JSON plan for the (external) generator."""
+    """Build the request as deterministic JSON text."""
     plan = {
         "backend": model_id,
         "prompt": prompt,
@@ -240,17 +240,19 @@ def _list_to_frames(audio):
 
 
 # ---------------------------------------------------------------------------
-# Node 1: PSN_Music_Generate
+# Node 1: PSN_Music_Plan
 # ---------------------------------------------------------------------------
 
-class PSN_Music_Generate:
-    """Validate a music-generation request and emit a deterministic plan.
+class PSN_Music_Plan:
+    """Validate a music-generation request and emit it as a JSON plan.
 
-    Pure-logic stand-in for the YuE2 / MiniMax Music 3 backend.  It does NOT
-    generate audio; it validates inputs and returns a JSON plan that a real
-    backend would consume.  The 'raw_audio' output is the JSON plan string
-    (typed AUDIO in the real graph; here it is a STRING payload).
+    Generates no audio and runs no YuE2 / MiniMax Music 3 model.  It only
+    validates prompt, duration, seed and model id, and returns the request as
+    JSON text for a separate generator to read.
     """
+
+    DESCRIPTION = ("Validates a music request (prompt, duration, seed, model id) and emits it as "
+                   "a JSON plan. It generates no audio and runs no music model.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -264,27 +266,25 @@ class PSN_Music_Generate:
             "optional": {},
         }
 
-    RETURN_TYPES = ("AUDIO", "STRING", "BOOLEAN")
-    RETURN_NAMES = ("raw_audio", "plan_json", "valid")
+    RETURN_TYPES = ("STRING", "BOOLEAN")
+    RETURN_NAMES = ("plan_json", "valid")
     FUNCTION = "run"
     CATEGORY = "ParametricStudio/Music"
 
     def run(self, prompt, duration, seed, model_id):
         ok, reason = _validate_prompt(prompt)
         if not ok:
-            return ("", "", False)
+            return ("", False)
         ok, reason = _validate_duration(duration)
         if not ok:
-            return ("", "", False)
+            return ("", False)
         ok, reason = _validate_seed(seed)
         if not ok:
-            return ("", "", False)
+            return ("", False)
         ok, reason = _validate_model(model_id)
         if not ok:
-            return ("", "", False)
-        plan = _build_generation_plan(prompt, duration, seed, model_id)
-        # raw_audio is the plan (stand-in for actual audio bytes).
-        return (plan, plan, True)
+            return ("", False)
+        return (_build_generation_plan(prompt, duration, seed, model_id), True)
 
 
 # ---------------------------------------------------------------------------
@@ -350,11 +350,11 @@ class PSN_Music_Master:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Music_Generate": PSN_Music_Generate,
+    "PSN_Music_Plan": PSN_Music_Plan,
     "PSN_Music_Master": PSN_Music_Master,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Music_Generate": "PSN Music Generate",
+    "PSN_Music_Plan": "Music Request Plan (generates no audio)",
     "PSN_Music_Master": "PSN Music Master",
 }

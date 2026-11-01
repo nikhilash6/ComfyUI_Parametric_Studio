@@ -1,32 +1,27 @@
-"""ParametricStudio VRAM reservation system.
+"""ParametricStudio VRAM planning ledger.
 
-A small, dependency-light reservation ledger that models GPU memory (VRAM)
-before a heavy task is launched.  It keeps track of:
+An in-process planning ledger for GPU memory (VRAM) figures.  It reserves
+nothing on the GPU: it does arithmetic on numbers the caller types in and
+remembers per-task entries in a module-level dict.  It keeps track of:
 
-* the total VRAM of the device,
-* a fixed system/OS reservation,
-* per-task reservations (keyed by a task id),
-* and a live "used" figure that can be refreshed from a probe.
+* the total VRAM figure typed in (default 24 GB, an assumption, not read from a device),
+* a fixed system/OS figure typed in,
+* per-task entries (keyed by a task id),
+* and a "live used" figure typed in or wired from elsewhere (default 0).
 
-The node exposes two operations:
+The nodes expose two operations:
 
-* ``reserve``  - try to reserve ``need_gb`` GB for a task.  If the free
-  memory (after the system reservation and all other live reservations)
-  is insufficient the node reports ``granted=False`` and the task id is
-  NOT added to the ledger.  The LATENT/IMAGE inputs pass through
-  unchanged so the node can sit in a workflow as a gate.
+* ``PSN_VramLedgerReserve`` - add ``need_gb`` GB for a task to the ledger.  If
+  the ledger's free figure (typed total minus system, live-used and other
+  entries) is too small the node reports ``ledger_granted=False`` and the task
+  id is NOT added.  The IMAGE input passes through unchanged so the node can
+  sit in a workflow as a gate on the ledger result.
 
-* ``release``  - drop a previous reservation by task id.
+* ``PSN_VramLedgerRelease`` - remove a task id from the ledger.  No GPU memory
+  is freed.
 
-Because ComfyUI nodes must be pure functions of their inputs, the ledger
-is a module-level singleton that the node mutates.  This mirrors the
-``vram_problem`` / ``reserve`` helpers from the original studio's
-``worldkit/blender.py`` (which checked live VRAM before launching a
-headless Blender render) but is written from scratch.
-
-No GPU is required: the "live usage" figure is supplied by the caller
-(e.g. a probe node that reads ``nvidia-smi``) or defaults to 0.  All
-tensor inputs are passed through untouched (never modified in place).
+The ledger is a module-level singleton that the nodes mutate.  All tensor
+inputs are passed through untouched (never modified in place).
 """
 
 import torch
@@ -35,7 +30,7 @@ CAT = "ParametricStudio/VRAM"
 
 
 class _Ledger:
-    """In-process VRAM reservation ledger (singleton per process)."""
+    """In-process VRAM planning ledger (singleton per process); touches no GPU."""
 
     def __init__(self):
         self.total_gb = 24.0
@@ -117,12 +112,17 @@ def _passthrough_latent(latent):
     return out
 
 
-class PSN_VramReserve:
-    """Reserve VRAM for a task; pass IMAGE/LATENT through as a gate.
+class PSN_VramLedgerReserve:
+    """Add a task's typed GB figure to the planning ledger; pass IMAGE through.
 
-    If the reservation cannot be granted (not enough free VRAM) the node
-    raises a RuntimeError so the workflow fails fast instead of OOMing.
+    Reserves no GPU memory.  If the ledger has too little free (by the typed
+    figures) and fail_on_denied is set, the node raises a RuntimeError.
     """
+
+    DESCRIPTION = (
+        "Keeps an in-process planning ledger of typed GB figures (total, system, live used, need). "
+        "Reserves no GPU memory and reads no device."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -139,7 +139,7 @@ class PSN_VramReserve:
         }
 
     RETURN_TYPES = ("IMAGE", "BOOLEAN", "FLOAT")
-    RETURN_NAMES = ("image", "granted", "free_gb")
+    RETURN_NAMES = ("image", "ledger_granted", "ledger_free_gb")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -149,14 +149,18 @@ class PSN_VramReserve:
         granted, free_after = LEDGER.reserve(task_id, need_gb)
         if not granted and fail_on_denied:
             raise RuntimeError(
-                "VRAM reservation denied for %r: need %.2f GB, free %.2f GB"
+                "VRAM ledger entry denied for %r: need %.2f GB, ledger free %.2f GB"
                 % (task_id, need_gb, free_after)
             )
         return (_passthrough_image(image), granted, free_after)
 
 
-class PSN_VramRelease:
-    """Release a previous VRAM reservation by task id."""
+class PSN_VramLedgerRelease:
+    """Remove a task id from the planning ledger.  Frees no GPU memory."""
+
+    DESCRIPTION = (
+        "Removes a task id from the in-process planning ledger. Frees no GPU memory."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -169,7 +173,7 @@ class PSN_VramRelease:
         }
 
     RETURN_TYPES = ("IMAGE", "BOOLEAN")
-    RETURN_NAMES = ("image", "released")
+    RETURN_NAMES = ("image", "ledger_entry_removed")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -211,13 +215,13 @@ class PSN_VramReport:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_VramReserve": PSN_VramReserve,
-    "PSN_VramRelease": PSN_VramRelease,
+    "PSN_VramLedgerReserve": PSN_VramLedgerReserve,
+    "PSN_VramLedgerRelease": PSN_VramLedgerRelease,
     "PSN_VramReport": PSN_VramReport,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_VramReserve": "VRAM Reserve (gate)",
-    "PSN_VramRelease": "VRAM Release",
+    "PSN_VramLedgerReserve": "VRAM Ledger Reserve (planning only, reserves no GPU memory)",
+    "PSN_VramLedgerRelease": "VRAM Ledger Release (planning only, frees no GPU memory)",
     "PSN_VramReport": "VRAM Report",
 }

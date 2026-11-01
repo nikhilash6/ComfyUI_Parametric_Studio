@@ -1,178 +1,114 @@
 """Tests for psn_nodes.gen.n_1_auto_generate_pipeline_docs_from_pdfs."""
 
-import json
-
+import psn_nodes.gen.n_1_auto_generate_pipeline_docs_from_pdfs as mod
 from psn_nodes.gen.n_1_auto_generate_pipeline_docs_from_pdfs import (
-    PSN_PDF_Structured_Extractor,
-    PSN_LLM_Doc_Generator,
+    PSN_Text_Block_Splitter,
+    PSN_Text_Blocks_To_Markdown,
     _is_safe_pdf_path,
     _split_text_blocks,
-    _compute_confidence,
     _generate_markdown,
 )
 
 
+def test_registration_and_removed_fabrications():
+    assert sorted(mod.NODE_CLASS_MAPPINGS) == ["PSN_Text_Block_Splitter", "PSN_Text_Blocks_To_Markdown"]
+    for gone in ("PSN_PDF_Structured_Extractor", "PSN_LLM_Doc_Generator"):
+        assert gone not in mod.NODE_CLASS_MAPPINGS
+        assert not hasattr(mod, gone)
+    assert not hasattr(mod, "_compute_confidence")
+    assert not hasattr(mod, "_build_metadata_json")
+    assert PSN_Text_Block_Splitter.RETURN_NAMES == ("text_content", "status")
+    assert PSN_Text_Blocks_To_Markdown.RETURN_NAMES == ("markdown_doc",)
+    assert "does not read any PDF" in PSN_Text_Block_Splitter.DESCRIPTION
+    req = PSN_Text_Blocks_To_Markdown.INPUT_TYPES()
+    assert set(req["required"]) == {"raw_text", "doc_style"}
+    assert "optional" not in req
+    assert "llm_model" not in req["required"]
+
+
 # ---------------------------------------------------------------------------
-# PSN_PDF_Structured_Extractor
+# PSN_Text_Block_Splitter
 # ---------------------------------------------------------------------------
 
-def test_extractor_valid_path_returns_blocks_and_metadata():
-    node = PSN_PDF_Structured_Extractor()
+def test_splitter_valid_path_returns_blocks():
+    node = PSN_Text_Block_Splitter()
     raw = "First block.\n\nSecond block.\n\nThird block."
-    text, meta, status = node.run(
-        pdf_path="docs/pipeline_guide.pdf",
-        extract_images=False,
-        extract_metadata=True,
-        raw_text=raw,
-    )
-    assert "First block." in text
-    assert "Second block." in text
-    assert "Third block." in text
-    meta_obj = json.loads(meta)
-    assert meta_obj["source"] == "docs/pipeline_guide.pdf"
-    assert "blocks=3" in status
+    text, status = node.run(pdf_path="docs/pipeline_guide.pdf", raw_text=raw)
+    assert text == "First block.\n\nSecond block.\n\nThird block."
+    assert status == "blocks=3"
 
 
-def test_extractor_rejects_path_traversal():
-    node = PSN_PDF_Structured_Extractor()
-    text, meta, status = node.run(
-        pdf_path="../../etc/passwd.pdf",
-        extract_images=False,
-        extract_metadata=False,
-        raw_text="hello",
-    )
+def test_splitter_never_opens_the_file(tmp_path):
+    # a real, readable PDF-named file is ignored: only raw_text is used
+    pdf = tmp_path / "real.pdf"
+    pdf.write_bytes(b"%PDF-1.4 secret content")
+    text, status = PSN_Text_Block_Splitter().run(pdf_path="real.pdf", raw_text="")
+    assert text == ""
+    assert status == "blocks=0"
+
+
+def test_splitter_rejects_path_traversal():
+    text, status = PSN_Text_Block_Splitter().run(pdf_path="../../etc/passwd.pdf", raw_text="hello")
     assert text == ""
     assert "ERROR" in status
     assert "path traversal" in status
 
 
-def test_extractor_rejects_non_pdf_extension():
-    node = PSN_PDF_Structured_Extractor()
-    text, meta, status = node.run(
-        pdf_path="notes.txt",
-        extract_images=False,
-        extract_metadata=False,
-        raw_text="hello",
-    )
+def test_splitter_rejects_non_pdf_extension():
+    text, status = PSN_Text_Block_Splitter().run(pdf_path="notes.txt", raw_text="hello")
     assert text == ""
-    assert "ERROR" in status
     assert "safe extension" in status
 
 
-def test_extractor_rejects_absolute_path():
-    node = PSN_PDF_Structured_Extractor()
-    text, meta, status = node.run(
-        pdf_path="/etc/shadow.pdf",
-        extract_images=False,
-        extract_metadata=False,
-        raw_text="hello",
-    )
+def test_splitter_rejects_absolute_path():
+    text, status = PSN_Text_Block_Splitter().run(pdf_path="/etc/shadow.pdf", raw_text="hello")
     assert text == ""
-    assert "ERROR" in status
     assert "absolute" in status
 
 
-def test_extractor_empty_raw_text_returns_empty_blocks():
-    node = PSN_PDF_Structured_Extractor()
-    text, meta, status = node.run(
-        pdf_path="empty.pdf",
-        extract_images=False,
-        extract_metadata=True,
-        raw_text="",
-    )
+def test_splitter_empty_raw_text_returns_empty_blocks():
+    text, status = PSN_Text_Block_Splitter().run(pdf_path="empty.pdf", raw_text="")
     assert text == ""
-    assert "blocks=0" in status
-    meta_obj = json.loads(meta)
-    assert meta_obj["source"] == "empty.pdf"
-
-
-def test_extractor_metadata_disabled_returns_empty_json():
-    node = PSN_PDF_Structured_Extractor()
-    text, meta, status = node.run(
-        pdf_path="ok.pdf",
-        extract_images=False,
-        extract_metadata=False,
-        raw_text="some text",
-    )
-    assert json.loads(meta) == {}
+    assert status == "blocks=0"
 
 
 # ---------------------------------------------------------------------------
-# PSN_LLM_Doc_Generator
+# PSN_Text_Blocks_To_Markdown
 # ---------------------------------------------------------------------------
 
-def test_generator_produces_valid_markdown_with_key_terms():
-    node = PSN_LLM_Doc_Generator()
-    raw = "Load a model.\n\nRun the sampler.\n\nSave the image."
-    md, conf = node.run(
-        raw_text=raw,
-        llm_model="gpt-4",
-        doc_style="Detailed",
+def test_markdown_detailed_exact_output():
+    node = PSN_Text_Blocks_To_Markdown()
+    raw = "Load a model.\n\nRun the sampler."
+    (md,) = node.run(raw_text=raw, doc_style="Detailed")
+    assert md == (
+        "# Pipeline Documentation\n\n"
+        "### Section 1\n\nLoad a model.\n\n"
+        "### Section 2\n\nRun the sampler.\n\n"
+        "---\n\n*End of document.*\n"
     )
-    assert md.startswith("# Pipeline Documentation")
-    assert "Load a model." in md
-    assert "Run the sampler." in md
-    assert "Save the image." in md
-    assert "### Section 1" in md
-    assert "### Section 2" in md
-    assert "### Section 3" in md
-    assert 0.0 <= conf <= 1.0
+    # no model banner and no invented model name
+    assert "Generated by" not in md and "gpt-4" not in md
 
 
-def test_generator_concise_style_truncates_long_blocks():
-    node = PSN_LLM_Doc_Generator()
+def test_markdown_concise_style_truncates_long_blocks():
     long_block = "A" * 500
-    md, conf = node.run(
-        raw_text=long_block,
-        llm_model="llama3",
-        doc_style="Concise",
-    )
-    # Concise style should truncate to ~200 chars + ellipsis.
-    assert "…" in md
-    # The full 500-char block should NOT appear verbatim.
+    (md,) = PSN_Text_Blocks_To_Markdown().run(raw_text=long_block, doc_style="Concise")
+    assert "## Summary" in md
+    assert "A" * 200 + "…" in md
     assert long_block not in md
 
 
-def test_generator_tutorial_style_uses_step_headings():
-    node = PSN_LLM_Doc_Generator()
-    raw = "Step one text.\n\nStep two text."
-    md, conf = node.run(
-        raw_text=raw,
-        llm_model="claude-3",
-        doc_style="Tutorial",
-    )
+def test_markdown_tutorial_style_uses_step_headings():
+    (md,) = PSN_Text_Blocks_To_Markdown().run(raw_text="Step one text.\n\nStep two text.", doc_style="Tutorial")
     assert "## Tutorial Overview" in md
-    assert "### Step 1" in md
-    assert "### Step 2" in md
+    assert "### Step 1\n\nStep one text." in md
+    assert "### Step 2\n\nStep two text." in md
 
 
-def test_generator_confidence_zero_for_empty_input():
-    node = PSN_LLM_Doc_Generator()
-    md, conf = node.run(
-        raw_text="",
-        llm_model="gpt-4",
-        doc_style="Detailed",
-    )
-    assert conf == 0.0
+def test_markdown_empty_input_has_header_only():
+    (md,) = PSN_Text_Blocks_To_Markdown().run(raw_text="", doc_style="Detailed")
     assert md.startswith("# Pipeline Documentation")
-
-
-def test_generator_confidence_penalises_very_large_input():
-    node = PSN_LLM_Doc_Generator()
-    # Create a large input (> 200k chars) to trigger the penalty.
-    big_block = "x" * 250_000
-    md, conf = node.run(
-        raw_text=big_block,
-        llm_model="gpt-4",
-        doc_style="Concise",
-    )
-    # Confidence should be lower than for a small input.
-    small_md, small_conf = node.run(
-        raw_text="small text",
-        llm_model="gpt-4",
-        doc_style="Concise",
-    )
-    assert conf < small_conf
+    assert "### Section" not in md
 
 
 # ---------------------------------------------------------------------------
@@ -181,8 +117,7 @@ def test_generator_confidence_penalises_very_large_input():
 
 def test_split_text_blocks_handles_crlf_and_extra_blank_lines():
     raw = "Block A\r\n\r\n\r\nBlock B\n\n\n\nBlock C"
-    blocks = _split_text_blocks(raw)
-    assert blocks == ["Block A", "Block B", "Block C"]
+    assert _split_text_blocks(raw) == ["Block A", "Block B", "Block C"]
 
 
 def test_split_text_blocks_non_string_returns_empty():
@@ -202,8 +137,5 @@ def test_is_safe_pdf_path_empty_string():
     assert "empty" in reason
 
 
-def test_compute_confidence_detailed_style_with_few_blocks():
-    # Detailed style with only 1 block should get a penalty.
-    conf = _compute_confidence(["short"], "Detailed")
-    conf_concise = _compute_confidence(["short"], "Concise")
-    assert conf < conf_concise
+def test_generate_markdown_helper_signature():
+    assert _generate_markdown(["x"], "Detailed").count("### Section") == 1

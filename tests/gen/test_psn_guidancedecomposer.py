@@ -1,11 +1,11 @@
-"""Tests for PSN_GuidanceDecomposer."""
+"""Tests for PSN_Vector2D_Decompose (plain 2-D vector math; not CFG)."""
 
 import json
 import math
 import pytest
 
 from psn_nodes.gen.psn_guidancedecomposer import (
-    PSN_GuidanceDecomposer,
+    PSN_Vector2D_Decompose,
     _parse_vector,
     _parse_axis,
     _magnitude,
@@ -155,7 +155,7 @@ class TestComposite:
 
 class TestNodeRun:
     def test_basic_run(self):
-        node = PSN_GuidanceDecomposer()
+        node = PSN_Vector2D_Decompose()
         mag, ang, dir_str, scale, proj, res_str, comp = node.run(
             vec_json="[3.0, 4.0]",
             axis_json="[1.0, 0.0]",
@@ -176,7 +176,7 @@ class TestNodeRun:
         assert comp_data["Magnitude"] == pytest.approx(5.0)
 
     def test_zero_vector(self):
-        node = PSN_GuidanceDecomposer()
+        node = PSN_Vector2D_Decompose()
         mag, ang, dir_str, scale, proj, res_str, comp = node.run(
             vec_json="[0.0, 0.0]",
             axis_json="[1.0, 0.0]",
@@ -192,7 +192,7 @@ class TestNodeRun:
         assert res_data == [0.0, 0.0]
 
     def test_bad_vec_json(self):
-        node = PSN_GuidanceDecomposer()
+        node = PSN_Vector2D_Decompose()
         with pytest.raises(ValueError):
             node.run(
                 vec_json="invalid",
@@ -202,7 +202,7 @@ class TestNodeRun:
             )
 
     def test_bad_axis_json(self):
-        node = PSN_GuidanceDecomposer()
+        node = PSN_Vector2D_Decompose()
         with pytest.raises(ValueError):
             node.run(
                 vec_json="[1.0, 0.0]",
@@ -212,7 +212,7 @@ class TestNodeRun:
             )
 
     def test_bad_scale_mode(self):
-        node = PSN_GuidanceDecomposer()
+        node = PSN_Vector2D_Decompose()
         with pytest.raises(ValueError):
             node.run(
                 vec_json="[1.0, 0.0]",
@@ -222,7 +222,7 @@ class TestNodeRun:
             )
 
     def test_normalized_scale_mode(self):
-        node = PSN_GuidanceDecomposer()
+        node = PSN_Vector2D_Decompose()
         mag, ang, dir_str, scale, proj, res_str, comp = node.run(
             vec_json="[3.0, 4.0]",
             axis_json="[1.0, 0.0]",
@@ -232,7 +232,7 @@ class TestNodeRun:
         assert scale == pytest.approx(5.0 / (5.0 + 5.0))
 
     def test_clamped_scale_mode(self):
-        node = PSN_GuidanceDecomposer()
+        node = PSN_Vector2D_Decompose()
         mag, ang, dir_str, scale, proj, res_str, comp = node.run(
             vec_json="[3.0, 4.0]",
             axis_json="[1.0, 0.0]",
@@ -242,7 +242,7 @@ class TestNodeRun:
         assert scale == pytest.approx(1.0)
 
     def test_negative_vector(self):
-        node = PSN_GuidanceDecomposer()
+        node = PSN_Vector2D_Decompose()
         mag, ang, dir_str, scale, proj, res_str, comp = node.run(
             vec_json="[-3.0, -4.0]",
             axis_json="[-1.0, 0.0]",
@@ -251,3 +251,21 @@ class TestNodeRun:
         )
         assert mag == pytest.approx(5.0)
         assert proj == pytest.approx(3.0)
+
+
+class TestHonestIdentity:
+    def test_description_and_mappings(self):
+        from psn_nodes.gen import psn_guidancedecomposer as m
+        assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_Vector2D_Decompose"]
+        assert "not connected to CFG" in PSN_Vector2D_Decompose.DESCRIPTION
+        assert "CFG" in m.NODE_DISPLAY_NAME_MAPPINGS["PSN_Vector2D_Decompose"]  # says "not CFG"
+        assert "not CFG" in m.NODE_DISPLAY_NAME_MAPPINGS["PSN_Vector2D_Decompose"]
+
+    def test_inputs_are_typed_numbers_not_tensors(self):
+        req = PSN_Vector2D_Decompose.INPUT_TYPES()["required"]
+        assert req["vec_json"][0] == "STRING" and req["axis_json"][0] == "STRING"
+
+    def test_oblique_axis_projection_and_residual_are_orthogonal(self):
+        _, _, _, _, proj, res_str, _ = PSN_Vector2D_Decompose().run("[2.0, 2.0]", "[1.0, 0.0]", 1.0, "absolute")
+        rx, ry = json.loads(res_str)
+        assert proj == pytest.approx(2.0) and rx == pytest.approx(0.0) and ry == pytest.approx(2.0)

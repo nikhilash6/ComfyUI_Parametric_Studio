@@ -7,7 +7,7 @@ import pytest
 
 from psn_nodes.gen.n_3_2_5d_parallax_video_effect import (
     PSN_Depth_Parallax_Generator,
-    PSN_Parallax_Video_Assembler,
+    PSN_Parallax_Filename_Builder,
     CAMERA_PATHS,
     CODECS,
 )
@@ -148,13 +148,13 @@ class TestDepthParallaxGenerator:
             assert m == [[0, 1], [1, 0]]
 
 
-class TestParallaxVideoAssembler:
+class TestParallaxFilenameBuilder:
     def test_returns_valid_path_for_mp4(self):
         gen = PSN_Depth_Parallax_Generator()
         depth = _make_depth_json(2, 2, 0.5)
         frames_json, _ = gen.run(depth, 1.0, 5, "pan_left")
-        asm = PSN_Parallax_Video_Assembler()
-        (path,) = asm.run(frames_json, 30, "mp4")
+        asm = PSN_Parallax_Filename_Builder()
+        (path,) = asm.run(frames_json, "mp4")
         assert path.endswith(".mp4")
         assert "5_frames" in path
 
@@ -162,46 +162,50 @@ class TestParallaxVideoAssembler:
         gen = PSN_Depth_Parallax_Generator()
         depth = _make_depth_json(2, 2, 0.5)
         frames_json, _ = gen.run(depth, 1.0, 3, "zoom_in")
-        asm = PSN_Parallax_Video_Assembler()
-        (path,) = asm.run(frames_json, 60, "webm")
+        asm = PSN_Parallax_Filename_Builder()
+        (path,) = asm.run(frames_json, "webm")
         assert path.endswith(".webm")
         assert "3_frames" in path
 
-    def test_invalid_fps_raises(self):
-        asm = PSN_Parallax_Video_Assembler()
-        frames = json.dumps([[[[0.0, 0.0]]]])
-        with pytest.raises(ValueError):
-            asm.run(frames, 0, "mp4")
-        with pytest.raises(ValueError):
-            asm.run(frames, 241, "mp4")
+    def test_exact_filename_and_no_file_written(self, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        gen = PSN_Depth_Parallax_Generator()
+        frames_json, _ = gen.run(_make_depth_json(2, 2, 0.5), 1.0, 5, "pan_left")
+        (name,) = PSN_Parallax_Filename_Builder().run(frames_json, "mp4")
+        # each frame is a 2x2 grid of [dx, dy] pixels: 4 elements; 5 frames -> 20
+        assert name == "parallax_video_5_frames_20_elems.mp4"
+        assert list(tmp_path.iterdir()) == [], "nothing is written"
+        assert PSN_Parallax_Filename_Builder.RETURN_NAMES == ("filename",)
+        assert "fps" not in PSN_Parallax_Filename_Builder.INPUT_TYPES()["required"]
+        assert "writes no video file" in PSN_Parallax_Filename_Builder.DESCRIPTION
 
     def test_invalid_codec_raises(self):
-        asm = PSN_Parallax_Video_Assembler()
+        asm = PSN_Parallax_Filename_Builder()
         frames = json.dumps([[[[0.0, 0.0]]]])
         with pytest.raises(ValueError):
-            asm.run(frames, 30, "avi")
+            asm.run(frames, "avi")
 
     def test_invalid_frames_json_raises(self):
-        asm = PSN_Parallax_Video_Assembler()
+        asm = PSN_Parallax_Filename_Builder()
         with pytest.raises(ValueError):
-            asm.run("not json", 30, "mp4")
+            asm.run("not json", "mp4")
         with pytest.raises(ValueError):
-            asm.run("[]", 30, "mp4")  # empty list
+            asm.run("[]", "mp4")  # empty list
         with pytest.raises(ValueError):
-            asm.run("[1, 2, 3]", 30, "mp4")  # not a list of frames
+            asm.run("[1, 2, 3]", "mp4")  # not a list of frames
 
     def test_frames_must_be_list_of_lists(self):
-        asm = PSN_Parallax_Video_Assembler()
+        asm = PSN_Parallax_Filename_Builder()
         # Each frame must be a list of rows, each row a list.
         bad = json.dumps([42])  # frame is not a list
         with pytest.raises(ValueError):
-            asm.run(bad, 30, "mp4")
+            asm.run(bad, "mp4")
 
     def test_path_is_deterministic(self):
         gen = PSN_Depth_Parallax_Generator()
         depth = _make_depth_json(2, 2, 0.5)
         frames_json, _ = gen.run(depth, 1.0, 5, "pan_left")
-        asm = PSN_Parallax_Video_Assembler()
-        (path1,) = asm.run(frames_json, 30, "mp4")
-        (path2,) = asm.run(frames_json, 30, "mp4")
+        asm = PSN_Parallax_Filename_Builder()
+        (path1,) = asm.run(frames_json, "mp4")
+        (path2,) = asm.run(frames_json, "mp4")
         assert path1 == path2

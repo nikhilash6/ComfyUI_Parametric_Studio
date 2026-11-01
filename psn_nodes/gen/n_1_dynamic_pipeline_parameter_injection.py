@@ -55,7 +55,9 @@ class PSN_JSON_Config_Loader:
 
     Outputs:
         config_dict (DICT): The parsed JSON dict, or the extracted value
-                            if key_path is provided and valid.
+                            if key_path is provided and valid. A non-dict
+                            value (number, string, list, ...) comes back as
+                            {"value": <that value>}.
         success (BOOLEAN): Whether parsing and extraction succeeded.
         reason (STRING): Human-readable explanation of success or failure.
     """
@@ -95,8 +97,8 @@ class PSN_JSON_Config_Loader:
             found, value, reason = _resolve_key_path(parsed, key_path)
             if not found:
                 return ({}, False, reason)
-            # Return the extracted value wrapped in a dict for consistent output type
-            return ({}, True, reason) if not isinstance(value, dict) else (value, True, reason)
+            # A dict is returned as is; any other value is wrapped as {"value": value}
+            return (value if isinstance(value, dict) else {"value": value}, True, reason)
 
         return (parsed, True, "parsed full JSON dict")
 

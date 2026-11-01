@@ -1,14 +1,16 @@
 """Tests for psn_nodes.gen.n_2_local_song_generation_mastering."""
 
+import json
 import math
 
 from psn_nodes.gen.n_2_local_song_generation_mastering import (
-    PSN_Music_Generate,
+    PSN_Music_Plan,
     PSN_Music_Master,
     _linear_to_db,
     _db_to_linear,
     _compute_peak_db,
     _list_to_frames,
+    NODE_CLASS_MAPPINGS,
 )
 
 
@@ -24,34 +26,38 @@ def _sine_frames(freq=440.0, duration=1.0, sample_rate=44100, amplitude=0.5):
 
 
 def test_generate_valid_returns_plan():
-    node = PSN_Music_Generate()
-    raw, plan, valid = node.run("a calm piano piece", 30, 12345, "yue2")
+    node = PSN_Music_Plan()
+    plan, valid = node.run("a calm piano piece", 30, 12345, "yue2")
     assert valid is True
-    assert raw == plan
-    assert "yue2" in plan
-    assert "a calm piano piece" in plan
-    assert "12345" in plan
+    assert json.loads(plan) == {
+        "backend": "yue2", "prompt": "a calm piano piece", "duration_seconds": 30,
+        "seed": 12345, "channels": 2, "sample_rate": 44100, "format": "stereo_float32",
+    }
+    # no audio is produced: the AUDIO-typed output and its duplicate are gone
+    assert PSN_Music_Plan.RETURN_TYPES == ("STRING", "BOOLEAN")
+    assert PSN_Music_Plan.RETURN_NAMES == ("plan_json", "valid")
+    assert "generates no audio" in PSN_Music_Plan.DESCRIPTION
+    assert "PSN_Music_Generate" not in NODE_CLASS_MAPPINGS
 
 
 def test_generate_rejects_bad_model():
-    node = PSN_Music_Generate()
-    raw, plan, valid = node.run("test", 30, 0, "not_a_real_model")
+    node = PSN_Music_Plan()
+    plan, valid = node.run("test", 30, 0, "not_a_real_model")
     assert valid is False
-    assert raw == ""
     assert plan == ""
 
 
 def test_generate_rejects_empty_prompt():
-    node = PSN_Music_Generate()
-    raw, plan, valid = node.run("", 30, 0, "yue2")
+    node = PSN_Music_Plan()
+    plan, valid = node.run("", 30, 0, "yue2")
     assert valid is False
 
 
 def test_generate_rejects_bad_duration():
-    node = PSN_Music_Generate()
-    raw, plan, valid = node.run("test", 0, 0, "yue2")
+    node = PSN_Music_Plan()
+    plan, valid = node.run("test", 0, 0, "yue2")
     assert valid is False
-    raw, plan, valid = node.run("test", 99999, 0, "yue2")
+    plan, valid = node.run("test", 99999, 0, "yue2")
     assert valid is False
 
 

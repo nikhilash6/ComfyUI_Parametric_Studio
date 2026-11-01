@@ -1,5 +1,5 @@
 """
-Tests for PSN_ELLA_Semantic_Connector.
+Tests for PSN_ELLA_Request_Formatter.
 
 All tests use only the Python standard library. No files, no network,
 no torch, no comfy imports.
@@ -9,17 +9,18 @@ import json
 import pytest
 
 from psn_nodes.gen.n_5_dynamic_semantic_adaptation_with_ella import (
-    PSN_ELLA_Semantic_Connector,
+    PSN_ELLA_Request_Formatter,
     _validate_sigma,
     _validate_strength,
     _validate_model,
     _redact_sensitive,
-    _deterministic_transform,
     _format_request_payload,
     _parse_response,
     _ella_rate_limiter,
     ALLOWED_ELLA_MODELS,
+    NODE_CLASS_MAPPINGS,
 )
+from psn_nodes.gen import n_5_dynamic_semantic_adaptation_with_ella as mod
 
 
 @pytest.fixture(autouse=True)
@@ -104,37 +105,6 @@ class TestRedaction:
         assert redacted["conditioning"]["value"] == 1.0
 
 
-class TestDeterministicTransform:
-    def test_transform_is_deterministic(self):
-        cond = {"a": 1.0, "b": 2.0}
-        result1 = _deterministic_transform(cond, 0.5, 0.5, "ella_v1_small")
-        result2 = _deterministic_transform(cond, 0.5, 0.5, "ella_v1_small")
-        assert result1 == result2
-
-    def test_transform_changes_with_sigma(self):
-        cond = {"a": 1.0}
-        r1 = _deterministic_transform(cond, 0.1, 0.5, "ella_v1_small")
-        r2 = _deterministic_transform(cond, 0.9, 0.5, "ella_v1_small")
-        assert r1["a"] != r2["a"]
-
-    def test_transform_changes_with_strength(self):
-        cond = {"a": 1.0}
-        r1 = _deterministic_transform(cond, 0.5, 0.1, "ella_v1_small")
-        r2 = _deterministic_transform(cond, 0.5, 0.9, "ella_v1_small")
-        assert r1["a"] != r2["a"]
-
-    def test_transform_preserves_non_numeric(self):
-        cond = {"a": 1.0, "label": "cat"}
-        result = _deterministic_transform(cond, 0.5, 0.5, "ella_v1_small")
-        assert result["label"] == "cat"
-
-    def test_transform_zero_strength_no_scale_change(self):
-        cond = {"a": 10.0}
-        result = _deterministic_transform(cond, 0.0, 0.0, "ella_v1_small")
-        # With strength=0, scale=1.0, sigma_shift=0.0, so value unchanged
-        assert result["a"] == 10.0
-
-
 class TestFormatRequestPayload:
     def test_format_includes_required_fields(self):
         payload = _format_request_payload({"a": 1}, 0.5, 0.3, "ella_v1_small")
@@ -175,116 +145,75 @@ class TestParseResponse:
         assert "string" in result
 
 
+def _run(node, conditioning="{}", sigma=0.5, ella_model="ella_v1_small", strength=0.5):
+    return node.run(conditioning=conditioning, sigma=sigma,
+                    ella_model=ella_model, strength=strength)
+
+
 class TestNodeRun:
-    def test_run_success(self):
-        node = PSN_ELLA_Semantic_Connector()
-        cond_json = json.dumps({"a": 1.0, "b": 2.0})
-        result_cond, status, request_payload = node.run(
-            conditioning=cond_json,
-            sigma=0.5,
-            ella_model="ella_v1_small",
-            strength=0.5,
-        )
-        assert status == "ok"
-        parsed_cond = json.loads(result_cond)
-        assert "a" in parsed_cond
-        assert "b" in parsed_cond
-        # Request payload should be valid JSON
-        parsed_req = json.loads(request_payload)
-        assert parsed_req["model"] == "ella_v1_small"
+    def test_run_formats_exact_payload(self):
+        node = PSN_ELLA_Request_Formatter()
+        out = _run(node, json.dumps({"a": 1.0, "b": 2.0}), 0.5, "ella_v1_small", 0.25)
+        assert len(out) == 1
+        # Conditioning is copied unchanged (no hash-scaled numbers).
+        assert json.loads(out[0]) == {
+            "type": "ella_semantic_connector",
+            "model": "ella_v1_small",
+            "sigma": 0.5,
+            "strength": 0.25,
+            "conditioning": {"a": 1.0, "b": 2.0},
+        }
+
+    def test_run_redacts_sensitive_fields(self):
+        node = PSN_ELLA_Request_Formatter()
+        (payload,) = _run(node, json.dumps({"api_key": "xyz", "v": 3}))
+        assert "xyz" not in payload
+        assert json.loads(payload)["conditioning"]["api_key"] == "***REDACTED***"
 
     def test_run_invalid_sigma(self):
-        node = PSN_ELLA_Semantic_Connector()
-        result_cond, status, _ = node.run(
-            conditioning="{}",
-            sigma=-1.0,
-            ella_model="ella_v1_small",
-            strength=0.5,
-        )
-        assert status.startswith("error:")
-        assert "non-negative" in status
+        with pytest.raises(ValueError, match="non-negative"):
+            _run(PSN_ELLA_Request_Formatter(), sigma=-1.0)
 
     def test_run_invalid_strength(self):
-        node = PSN_ELLA_Semantic_Connector()
-        result_cond, status, _ = node.run(
-            conditioning="{}",
-            sigma=0.5,
-            ella_model="ella_v1_small",
-            strength=2.0,
-        )
-        assert status.startswith("error:")
-        assert "[0, 1]" in status
+        with pytest.raises(ValueError, match=r"\[0, 1\]"):
+            _run(PSN_ELLA_Request_Formatter(), strength=2.0)
 
     def test_run_invalid_model(self):
-        node = PSN_ELLA_Semantic_Connector()
-        result_cond, status, _ = node.run(
-            conditioning="{}",
-            sigma=0.5,
-            ella_model="bad_model",
-            strength=0.5,
-        )
-        assert status.startswith("error:")
-        assert "allow-list" in status
+        with pytest.raises(ValueError, match="allow-list"):
+            _run(PSN_ELLA_Request_Formatter(), ella_model="bad_model")
 
     def test_run_invalid_conditioning_json(self):
-        node = PSN_ELLA_Semantic_Connector()
-        result_cond, status, _ = node.run(
-            conditioning="not valid json",
-            sigma=0.5,
-            ella_model="ella_v1_small",
-            strength=0.5,
-        )
-        assert status.startswith("error:")
-        assert "invalid JSON" in status
+        with pytest.raises(ValueError, match="invalid JSON"):
+            _run(PSN_ELLA_Request_Formatter(), conditioning="not valid json")
 
     def test_run_conditioning_not_object(self):
-        node = PSN_ELLA_Semantic_Connector()
-        result_cond, status, _ = node.run(
-            conditioning="[1, 2, 3]",
-            sigma=0.5,
-            ella_model="ella_v1_small",
-            strength=0.5,
-        )
-        assert status.startswith("error:")
-        assert "JSON object" in status
+        with pytest.raises(ValueError, match="JSON object"):
+            _run(PSN_ELLA_Request_Formatter(), conditioning="[1, 2, 3]")
 
     def test_run_rate_limit(self):
-        node = PSN_ELLA_Semantic_Connector()
-        # Exhaust the rate limiter
+        node = PSN_ELLA_Request_Formatter()
         for _ in range(10):
-            node.run(
-                conditioning="{}",
-                sigma=0.5,
-                ella_model="ella_v1_small",
-                strength=0.5,
-            )
-        # Next call should be rate-limited
-        result_cond, status, _ = node.run(
-            conditioning="{}",
-            sigma=0.5,
-            ella_model="ella_v1_small",
-            strength=0.5,
-        )
-        assert status == "error: rate limit exceeded"
+            _run(node)
+        with pytest.raises(ValueError, match="rate limit exceeded"):
+            _run(node)
 
-    def test_run_conditioning_changes_with_sigma(self):
-        node = PSN_ELLA_Semantic_Connector()
-        cond_json = json.dumps({"a": 1.0})
-        r1, s1, _ = node.run(cond_json, 0.1, "ella_v1_small", 0.5)
-        r2, s2, _ = node.run(cond_json, 0.9, "ella_v1_small", 0.5)
-        assert s1 == "ok" and s2 == "ok"
-        c1 = json.loads(r1)
-        c2 = json.loads(r2)
-        assert c1["a"] != c2["a"]
+    def test_sigma_does_not_alter_conditioning(self):
+        node = PSN_ELLA_Request_Formatter()
+        cond = json.dumps({"a": 1.0})
+        (p1,) = _run(node, cond, 0.1)
+        (p2,) = _run(node, cond, 0.9)
+        assert json.loads(p1)["conditioning"] == json.loads(p2)["conditioning"] == {"a": 1.0}
 
     def test_run_empty_conditioning(self):
-        node = PSN_ELLA_Semantic_Connector()
-        result_cond, status, _ = node.run(
-            conditioning="{}",
-            sigma=0.5,
-            ella_model="ella_v1_small",
-            strength=0.5,
-        )
-        assert status == "ok"
-        parsed = json.loads(result_cond)
-        assert parsed == {}
+        (payload,) = _run(PSN_ELLA_Request_Formatter())
+        assert json.loads(payload)["conditioning"] == {}
+
+
+class TestHonestNaming:
+    def test_renamed_and_fabricated_parts_gone(self):
+        assert "PSN_ELLA_Semantic_Connector" not in NODE_CLASS_MAPPINGS
+        assert "PSN_ELLA_Request_Formatter" in NODE_CLASS_MAPPINGS
+        assert not hasattr(mod, "_deterministic_transform")
+        assert not hasattr(mod, "hashlib")
+        assert PSN_ELLA_Request_Formatter.RETURN_NAMES == ("request_payload",)
+        assert "does not run ELLA" in PSN_ELLA_Request_Formatter.DESCRIPTION

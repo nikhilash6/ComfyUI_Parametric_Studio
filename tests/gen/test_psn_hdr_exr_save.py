@@ -1,9 +1,9 @@
-"""Tests for psn_nodes.gen.psn_hdr_exr_save (pure-logic EXR save planner)."""
+"""Tests for psn_nodes.gen.psn_hdr_exr_save (PSN_EXR_Save_Plan: EXR path check and size estimate; writes nothing)."""
 
 import json
 
 from psn_nodes.gen.psn_hdr_exr_save import (
-    PSN_HDR_EXR_Save,
+    PSN_EXR_Save_Plan,
     _psn_validate_path,
     _psn_validate_compression,
     _psn_estimate_bytes,
@@ -42,15 +42,15 @@ def test_psn_estimate_bytes_math():
     assert _psn_estimate_bytes(2, 3, 3) == 72
 
 
-def test_psn_run_success_returns_saved_and_plan():
-    node = PSN_HDR_EXR_Save()
+def test_psn_run_success_returns_planned_and_plan():
+    node = PSN_EXR_Save_Plan()
     status, plan_json = node.run(
         height=2, width=3, channels=3,
         file_path="out/frame.exr",
         compression="Piz",
         free_space=1000.0,
     )
-    assert status == "Saved"
+    assert status == "Planned"
     plan = json.loads(plan_json)
     assert plan["required_bytes"] == 72
     assert plan["fits"] is True
@@ -58,7 +58,7 @@ def test_psn_run_success_returns_saved_and_plan():
 
 
 def test_psn_run_insufficient_space_reports_error():
-    node = PSN_HDR_EXR_Save()
+    node = PSN_EXR_Save_Plan()
     status, plan_json = node.run(
         height=100, width=100, channels=3,
         file_path="out/frame.exr",
@@ -72,7 +72,7 @@ def test_psn_run_insufficient_space_reports_error():
 
 
 def test_psn_run_bad_path_returns_error():
-    node = PSN_HDR_EXR_Save()
+    node = PSN_EXR_Save_Plan()
     status, plan_json = node.run(
         height=2, width=2, channels=3,
         file_path="../../evil.exr",
@@ -85,7 +85,7 @@ def test_psn_run_bad_path_returns_error():
 
 
 def test_psn_run_bad_compression_returns_error():
-    node = PSN_HDR_EXR_Save()
+    node = PSN_EXR_Save_Plan()
     status, plan_json = node.run(
         height=2, width=2, channels=3,
         file_path="out/frame.exr",
@@ -97,7 +97,7 @@ def test_psn_run_bad_compression_returns_error():
 
 
 def test_psn_run_null_byte_path_rejected():
-    node = PSN_HDR_EXR_Save()
+    node = PSN_EXR_Save_Plan()
     status, _ = node.run(
         height=2, width=2, channels=3,
         file_path="out/bad\x00name.exr",
@@ -106,3 +106,22 @@ def test_psn_run_null_byte_path_rejected():
     )
     assert status.startswith("Error:")
     assert "null byte" in status
+
+
+def test_nothing_is_written_and_status_never_says_saved(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    status, plan_json = PSN_EXR_Save_Plan().run(
+        height=4, width=4, channels=3, file_path="out/exr/frame.exr", compression="Zip", free_space=1e6)
+    assert status == "Planned" and "Saved" not in status
+    assert list(tmp_path.iterdir()) == []           # no file and no directory created
+    plan = json.loads(plan_json)
+    assert plan["required_bytes"] == 4 * 4 * 3 * 4 and plan["file_path"] == "out/exr/frame.exr"
+
+
+def test_no_image_input_and_mappings():
+    from psn_nodes.gen import psn_hdr_exr_save as m
+    inputs = PSN_EXR_Save_Plan.INPUT_TYPES()
+    assert "image" not in inputs["required"] and "image" not in inputs["optional"]
+    assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_EXR_Save_Plan"]
+    assert "writes nothing" in m.NODE_DISPLAY_NAME_MAPPINGS["PSN_EXR_Save_Plan"]
+    assert "writes no file" in PSN_EXR_Save_Plan.DESCRIPTION

@@ -1,10 +1,10 @@
 """
-Tests for PSN_Motion_Position_Effector
+Tests for PSN_Motion_Position_Curve
 """
 
 import pytest
 from psn_nodes.gen.psn_motion_position_effector import (
-    PSN_Motion_Position_Effector,
+    PSN_Motion_Position_Curve,
     validate_motion_config,
     compute_frame_offsets,
     compute_trajectory,
@@ -147,34 +147,35 @@ class TestComputeTrajectory:
 
 class TestNodeRun:
     def test_run_success(self):
-        node = PSN_Motion_Position_Effector()
+        node = PSN_Motion_Position_Curve()
         offsets_str, traj_str, status = node.run(0, 0, 100, 50, 11, "linear")
-        assert status == "success"
-        assert "0, 0" in offsets_str
-        assert "100, 50" in offsets_str
+        assert status == "computed"
+        assert offsets_str == str(compute_frame_offsets((0, 0), (100, 50), 11, "linear"))
+        assert traj_str == str([(i * 10, i * 5) for i in range(11)])
+        assert status != "success"
 
     def test_run_invalid_duration(self):
-        node = PSN_Motion_Position_Effector()
+        node = PSN_Motion_Position_Curve()
         offsets_str, traj_str, status = node.run(0, 0, 100, 50, 0, "linear")
         assert status.startswith("Error:")
         assert offsets_str == ""
         assert traj_str == ""
 
     def test_run_invalid_easing(self):
-        node = PSN_Motion_Position_Effector()
+        node = PSN_Motion_Position_Curve()
         offsets_str, traj_str, status = node.run(0, 0, 100, 50, 30, "bounce")
         assert status.startswith("Error:")
         assert "easing" in status
 
     def test_run_ease_in_out(self):
-        node = PSN_Motion_Position_Effector()
+        node = PSN_Motion_Position_Curve()
         offsets_str, traj_str, status = node.run(0, 0, 100, 0, 3, "ease_in_out")
-        assert status == "success"
+        assert status == "computed"
         # ease_in_out at t=0.5 -> 0.5, so dx=50
         assert "(50, 0)" in offsets_str
 
     def test_input_types_structure(self):
-        input_types = PSN_Motion_Position_Effector.INPUT_TYPES()
+        input_types = PSN_Motion_Position_Curve.INPUT_TYPES()
         assert "required" in input_types
         assert "start_pos_x" in input_types["required"]
         assert "end_pos_x" in input_types["required"]
@@ -183,7 +184,7 @@ class TestNodeRun:
         assert "optional" in input_types
 
     def test_return_types(self):
-        assert PSN_Motion_Position_Effector.RETURN_TYPES == ("STRING", "STRING", "STRING")
-        assert PSN_Motion_Position_Effector.RETURN_NAMES == ("animated_offsets", "trajectory", "status")
-        assert PSN_Motion_Position_Effector.FUNCTION == "run"
-        assert PSN_Motion_Position_Effector.CATEGORY == "ParametricStudio/Motion"
+        assert PSN_Motion_Position_Curve.RETURN_TYPES == ("STRING", "STRING", "STRING")
+        assert PSN_Motion_Position_Curve.RETURN_NAMES == ("frame_offsets", "trajectory", "status")
+        assert PSN_Motion_Position_Curve.FUNCTION == "run"
+        assert PSN_Motion_Position_Curve.CATEGORY == "ParametricStudio/Motion"

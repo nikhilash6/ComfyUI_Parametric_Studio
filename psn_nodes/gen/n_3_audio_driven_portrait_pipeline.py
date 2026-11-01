@@ -14,9 +14,9 @@ and expose the deterministic, testable logic that the GPU stage would rely on:
   and emits a JSON ``MOUTH_TRACK`` plus a ``TIMING`` list.  The openness is a
   pure function of the waveform amplitude, so a "peak amplitude" frame yields
   the widest mouth (this is what the unit test asserts).
-* :class:`PSN_MouthComposite` -- validates the batched base video, mouth
-  track and mask payloads and computes a per-frame blend weight (the mask
-  coverage) that the GPU stage would use to composite the mouth region.
+* :class:`PSN_Mask_Weight_Check` -- checks that the base video, mouth track
+  and mask payloads have the same frame count and returns the mask's
+  per-frame coverage clamped to 0..1.  It composites nothing.
 
 All inputs are plain Python values; no sockets, files, subprocesses,
 eval/exec or dunder tricks are used.
@@ -28,9 +28,6 @@ import math
 from psn import expr, orchestration as _orch
 
 CAT = "ParametricStudio/AudioPortrait"
-
-# Allowed blend modes for the composite stage.
-_BLEND_MODES = ("alpha", "multiply", "add")
 
 # Allowed audio sample-rate presets (Hz).  Anything else is rejected so the
 # downstream resampler has a known, bounded set of targets.
@@ -200,14 +197,16 @@ class PSN_AudioToMouthTrack:
         return (mouth_track, timing)
 
 
-class PSN_MouthComposite:
-    """Compute per-frame blend weights for compositing a mouth track.
+class PSN_Mask_Weight_Check:
+    """Check that base video, mouth track and mask have the same frame count; clamp mask coverage to 0..1.
 
-    Pure-logic stand-in for the GPU compositing stage.  Validates the batched
-    base video, mouth track and mask payloads and returns a JSON list of
-    per-frame blend weights (the mask coverage) that the GPU stage would use
-    to blend the generated mouth region into the base frames.
+    Composites nothing and returns no video.  The base video and mouth track
+    payloads are only counted, not read.
     """
+
+    DESCRIPTION = ("Clamps per-frame mask coverage to 0..1 and checks that the base video, "
+                   "mouth track and mask lists have the same frame count. It composites "
+                   "nothing and returns no video.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -217,20 +216,15 @@ class PSN_MouthComposite:
                 "mouth_track": ("STRING", {"default": "[]", "multiline": True}),
                 "mask": ("STRING", {"default": "[]", "multiline": True}),
             },
-            "optional": {
-                "blend_mode": (list(_BLEND_MODES),),
-            },
+            "optional": {},
         }
 
-    RETURN_TYPES = ("STRING", "FLOAT")
-    RETURN_NAMES = ("VIDEO", "BLEND_WEIGHTS")
+    RETURN_TYPES = ("FLOAT",)
+    RETURN_NAMES = ("mask_weights",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, base_video, mouth_track, mask, blend_mode="alpha"):
-        if blend_mode not in _BLEND_MODES:
-            raise ValueError("blend_mode must be one of %s" % (list(_BLEND_MODES),))
-
+    def run(self, base_video, mouth_track, mask):
         n_base = _frame_count(base_video)
         n_track = _frame_count(mouth_track)
         n_mask = _frame_count(mask)
@@ -265,16 +259,15 @@ class PSN_MouthComposite:
                 raise ValueError("mask frame %d is not finite" % i)
             weights.append(max(0.0, min(1.0, v)))
 
-        video = json.dumps(weights)
-        return (video, weights)
+        return (weights,)
 
 
 NODE_CLASS_MAPPINGS = {
     "PSN_AudioToMouthTrack": PSN_AudioToMouthTrack,
-    "PSN_MouthComposite": PSN_MouthComposite,
+    "PSN_Mask_Weight_Check": PSN_Mask_Weight_Check,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_AudioToMouthTrack": "Audio To Mouth Track",
-    "PSN_MouthComposite": "Mouth Composite",
+    "PSN_Mask_Weight_Check": "Mask Weight Check (composites nothing)",
 }

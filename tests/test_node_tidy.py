@@ -53,7 +53,7 @@ def test_network_nodes_say_so_and_the_list_is_current(pack):
     for k in T.NETWORK: assert re.search(r"network|internet|online|http|api|webhook|url|remote|download|upload|server|bridge", pack.NODE_CLASS_MAPPINGS[k].DESCRIPTION, re.I), k
 
 def test_old_categories_stay_searchable(pack):
-    c = pack.NODE_CLASS_MAPPINGS["PSN_Semantic_Mask_Gen"]; assert c.CATEGORY == "Parametric/Image" and c.SEARCH_ALIASES == ["semanticmasking"]
+    c = pack.NODE_CLASS_MAPPINGS["PSN_LuminanceSaturationMask"]; assert c.CATEGORY == "Parametric/Image" and c.SEARCH_ALIASES == ["semanticmasking"]
 
 def test_lazy_libraries_are_not_imported_by_loading_the_pack():
     code = f"import importlib.util,sys;r={ROOT!r};s=importlib.util.spec_from_file_location('p',r+'/__init__.py',submodule_search_locations=[r]);m=importlib.util.module_from_spec(s);sys.modules['p']=m;s.loader.exec_module(m);print(sorted({{'matplotlib','pandas','pyarrow','cryptography'}}&set(sys.modules)))"

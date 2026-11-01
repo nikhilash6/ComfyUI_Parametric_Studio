@@ -1,18 +1,17 @@
-"""PSN_GuidanceDecomposer: decompose a CFG guidance vector into seven pure-logic stages.
+"""PSN_Vector2D_Decompose: plain 2-D vector arithmetic on numbers you type in.
 
-This module implements ONLY the pure-logic, secure-by-design part of the spec.
-It takes plain values (numbers, strings, JSON text) and performs no GPU/torch/ComfyUI
-internals, no network, no file/OS access, and no eval/exec.
+It takes no guidance tensor and is not connected to CFG or any sampler: the vector and the axis are
+JSON text such as "[3.0, 4.0]". No GPU/torch/ComfyUI internals, no network, no file/OS access, no
+eval/exec.
 
-The node splits a guidance vector (represented as a 2D vector [x, y] or a scalar
-magnitude with an angle) into seven distinct stages:
-  1. Magnitude   - the length of the guidance vector
+The node splits a 2D vector [x, y] into these results:
+  1. Magnitude   - the length of the vector
   2. Angle       - the direction angle in radians
   3. Direction   - the unit direction vector [dx, dy]
-  4. Scale       - a normalized scale factor (magnitude relative to a reference)
-  5. Projection  - projection onto a user-supplied axis
+  4. Scale       - a scale factor (magnitude relative to a reference)
+  5. Projection  - scalar projection onto a user-supplied axis
   6. Residual    - the component orthogonal to the projection axis
-  7. Composite   - a JSON summary of all stages
+  7. Composite   - a JSON summary of all of the above
 
 All inputs are plain Python numbers or JSON strings. No external dependencies.
 """
@@ -22,7 +21,7 @@ import math
 
 CAT = "ParametricStudio/Guidance"
 
-# Seven stage names, in order
+# Result names, in order
 STAGES = (
     "Magnitude",
     "Angle",
@@ -181,11 +180,12 @@ def _composite(magnitude, angle, dir_x, dir_y, scale, proj, res_x, res_y):
     return json.dumps(summary, sort_keys=True)
 
 
-class PSN_GuidanceDecomposer:
-    """Decompose a CFG guidance vector into seven distinct stages.
+class PSN_Vector2D_Decompose:
+    """Decompose a typed 2-D vector into magnitude, angle, direction, scale, projection, residual and a JSON summary.
+    Not tied to CFG; it reads no tensor.
 
-    Stages:
-      1. Magnitude   - Euclidean length of the guidance vector
+    Results:
+      1. Magnitude   - Euclidean length of the vector
       2. Angle       - Direction angle in radians
       3. Direction   - Unit direction vector [dx, dy]
       4. Scale       - Normalized scale factor relative to a reference
@@ -196,6 +196,9 @@ class PSN_GuidanceDecomposer:
     All inputs are plain values (numbers, strings, JSON text). No GPU, network,
     file, or OS access is performed.
     """
+
+    DESCRIPTION = ("Computes magnitude, angle, unit direction, scale, projection onto an axis and residual of a "
+                   "2-D vector typed as JSON. It reads no guidance tensor and is not connected to CFG.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -249,9 +252,9 @@ class PSN_GuidanceDecomposer:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_GuidanceDecomposer": PSN_GuidanceDecomposer,
+    "PSN_Vector2D_Decompose": PSN_Vector2D_Decompose,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_GuidanceDecomposer": "PSN Guidance Decomposer",
+    "PSN_Vector2D_Decompose": "2D Vector Decompose (typed numbers, not CFG)",
 }

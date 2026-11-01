@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from n_6_workflow_preset_management import (
     PSN_PresetLoader,
-    PSN_PresetSaver,
+    PSN_Preset_Json_Build,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
     _validate_graph,
@@ -29,11 +29,11 @@ def make_sample_graph():
 def test_module_structure():
     """Check module-level mappings exist and are correct."""
     assert "PSN_PresetLoader" in NODE_CLASS_MAPPINGS
-    assert "PSN_PresetSaver" in NODE_CLASS_MAPPINGS
+    assert "PSN_Preset_Json_Build" in NODE_CLASS_MAPPINGS
     assert "PSN_PresetLoader" in NODE_DISPLAY_NAME_MAPPINGS
-    assert "PSN_PresetSaver" in NODE_DISPLAY_NAME_MAPPINGS
+    assert "PSN_Preset_Json_Build" in NODE_DISPLAY_NAME_MAPPINGS
     assert NODE_CLASS_MAPPINGS["PSN_PresetLoader"] is PSN_PresetLoader
-    assert NODE_CLASS_MAPPINGS["PSN_PresetSaver"] is PSN_PresetSaver
+    assert NODE_CLASS_MAPPINGS["PSN_Preset_Json_Build"] is PSN_Preset_Json_Build
 
 
 def test_input_types():
@@ -44,11 +44,9 @@ def test_input_types():
     assert "preset_dir" in lt["required"]
     assert "preset_json" in lt["required"]
 
-    st = PSN_PresetSaver.INPUT_TYPES()
+    st = PSN_Preset_Json_Build.INPUT_TYPES()
     assert "required" in st
-    assert "graph" in st["required"]
-    assert "preset_name" in st["required"]
-    assert "preset_dir" in st["required"]
+    assert list(st["required"]) == ["graph"]
 
 
 def test_loader_valid_preset():
@@ -135,59 +133,50 @@ def test_loader_bad_types():
         pass
 
 
-def test_saver_valid_graph():
-    """Saver should return a valid path string."""
-    saver = PSN_PresetSaver()
+def test_builder_returns_json_text_not_path():
+    """Builder returns the serialized graph, and no path."""
+    builder = PSN_Preset_Json_Build()
     graph = make_sample_graph()
-    result = saver.run(graph, "my_preset", "./presets")
+    result = builder.run(graph)
     assert len(result) == 1
-    path = result[0]
-    assert isinstance(path, str)
-    assert path == "./presets/my_preset.json"
+    text = result[0]
+    assert isinstance(text, str)
+    assert text == json.dumps(graph, sort_keys=True, indent=2)
+    assert json.loads(text) == graph
+    assert not text.endswith(".json")
+    assert "preset_dir" not in PSN_Preset_Json_Build.INPUT_TYPES()["required"]
 
 
-def test_saver_trailing_slash():
-    """Saver should handle trailing slash in preset_dir."""
-    saver = PSN_PresetSaver()
-    graph = make_sample_graph()
-    result = saver.run(graph, "my_preset", "./presets/")
-    assert result[0] == "./presets/my_preset.json"
-
-
-def test_saver_bad_graph():
-    """Saver should reject invalid graph."""
-    saver = PSN_PresetSaver()
+def test_builder_writes_no_file():
+    """Builder touches no files in the working directory."""
+    import tempfile
+    d = tempfile.mkdtemp()
+    old = os.getcwd()
+    os.chdir(d)
     try:
-        saver.run("not a dict", "name", "./presets")
-        assert False, "Should have raised ValueError"
-    except ValueError:
-        pass
+        PSN_Preset_Json_Build().run(make_sample_graph())
+        assert os.listdir(d) == []
+    finally:
+        os.chdir(old)
 
 
-def test_saver_bad_types():
-    """Saver should reject non-string preset_name/preset_dir."""
-    saver = PSN_PresetSaver()
-    graph = make_sample_graph()
-    try:
-        saver.run(graph, 123, "./presets")
-        assert False, "Should have raised ValueError"
-    except ValueError:
-        pass
-    try:
-        saver.run(graph, "name", 456)
-        assert False, "Should have raised ValueError"
-    except ValueError:
-        pass
+def test_builder_bad_graph():
+    """Builder should reject invalid graph."""
+    builder = PSN_Preset_Json_Build()
+    for bad in ("not a dict", {"links": []}, {"nodes": [{"type": "K"}]}):
+        try:
+            builder.run(bad)
+            assert False, "Should have raised ValueError"
+        except ValueError:
+            pass
 
 
 def test_roundtrip():
     """Save then load should produce equivalent graph."""
-    saver = PSN_PresetSaver()
+    builder = PSN_Preset_Json_Build()
     loader = PSN_PresetLoader()
     graph = make_sample_graph()
-    # Saver returns path; we need to reconstruct the JSON for loader
-    # Since saver doesn't return JSON, we test roundtrip via JSON directly
-    json_str = json.dumps(graph, sort_keys=True, indent=2)
+    json_str = builder.run(graph)[0]
     loaded = loader.run("rt", "./presets", json_str)[0]
     assert loaded == graph
 
@@ -204,12 +193,12 @@ def test_return_types_and_names():
     """Check RETURN_TYPES and RETURN_NAMES."""
     assert PSN_PresetLoader.RETURN_TYPES == ("GRAPH",)
     assert PSN_PresetLoader.RETURN_NAMES == ("GRAPH",)
-    assert PSN_PresetSaver.RETURN_TYPES == ("STRING",)
-    assert PSN_PresetSaver.RETURN_NAMES == ("preset_path",)
+    assert PSN_Preset_Json_Build.RETURN_TYPES == ("STRING",)
+    assert PSN_Preset_Json_Build.RETURN_NAMES == ("preset_json",)
     assert PSN_PresetLoader.FUNCTION == "run"
-    assert PSN_PresetSaver.FUNCTION == "run"
+    assert PSN_Preset_Json_Build.FUNCTION == "run"
     assert PSN_PresetLoader.CATEGORY == "ParametricStudio/PresetManagement"
-    assert PSN_PresetSaver.CATEGORY == "ParametricStudio/PresetManagement"
+    assert PSN_Preset_Json_Build.CATEGORY == "ParametricStudio/PresetManagement"
 
 
 if __name__ == "__main__":
@@ -221,10 +210,9 @@ if __name__ == "__main__":
     test_loader_missing_nodes_key()
     test_loader_node_missing_id()
     test_loader_bad_types()
-    test_saver_valid_graph()
-    test_saver_trailing_slash()
-    test_saver_bad_graph()
-    test_saver_bad_types()
+    test_builder_returns_json_text_not_path()
+    test_builder_writes_no_file()
+    test_builder_bad_graph()
     test_roundtrip()
     test_empty_graph()
     test_return_types_and_names()

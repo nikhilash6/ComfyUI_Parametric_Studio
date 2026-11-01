@@ -1,18 +1,15 @@
 """
-PSN_AutoRescaleCFG: Pure-logic implementation of dynamic CFG rescaling for video stability.
+PSN_CFG_Rescale_Calculator: arithmetic that reduces a CFG number inside a step window.
 
-This module implements the core mathematical logic for automatically rescaling the
-Classifier-Free Guidance (CFG) scale during diffusion sampling to prevent over-saturation
-and "burn-in" artifacts in long video generations.
+Given a base CFG, a step window and a noise magnitude that you type in, this
+computes a reduced CFG value (linear, exponential or clamp mode) and says why.
+It takes no MODEL, patches no model, hooks no sampler and measures no noise:
+the step and the noise magnitude are plain inputs, so nothing here runs per
+sampling step on its own.
 
-Since this environment does not allow importing `torch` or `comfy`, this node does NOT
-patch an actual model object. Instead, it computes the *effective* CFG scale for a given
-sampling step based on the predicted noise magnitude. In a full ComfyUI environment, this
-logic would be wrapped in a model patcher that intercepts the forward pass, measures the
-noise magnitude, and applies the computed scale.
-
-The node takes plain values (numbers, strings) and returns the computed effective CFG
-scale, a boolean indicating whether rescaling was applied, and a human-readable reason.
+The node takes plain values (numbers, strings) and returns the calculated CFG
+value, a boolean saying whether a reduction was applied, and a human-readable
+reason.
 
 Dependencies: Pure Python standard library only.
 """
@@ -26,7 +23,7 @@ CAT = "ParametricStudio/Video"
 _MODES = ("linear", "exponential", "clamp")
 
 
-def _compute_effective_cfg(
+def _compute_reduced_cfg(
     base_cfg: float,
     rescale_strength: float,
     step: int,
@@ -37,7 +34,7 @@ def _compute_effective_cfg(
     mode: str,
 ) -> tuple[float, bool, str]:
     """
-    Compute the effective CFG scale for a given step.
+    Compute a reduced CFG value for a given step and typed-in noise magnitude.
 
     Args:
         base_cfg: The initial CFG scale.
@@ -50,7 +47,7 @@ def _compute_effective_cfg(
         mode: Rescaling mode ("linear", "exponential", "clamp").
 
     Returns:
-        Tuple of (effective_cfg, rescaled, reason).
+        Tuple of (reduced_cfg, reduction_applied, reason).
     """
     # Validate inputs
     if not (0.0 <= rescale_strength <= 1.0):
@@ -101,22 +98,27 @@ def _compute_effective_cfg(
     effective_cfg = base_cfg * scale_factor
 
     reason = (
-        f"Rescaled from {base_cfg:.4f} to {effective_cfg:.4f} "
+        f"Reduced from {base_cfg:.4f} to {effective_cfg:.4f} "
         f"(mode={mode}, excess_ratio={excess_ratio:.4f}, scale_factor={scale_factor:.4f})"
     )
 
     return (effective_cfg, True, reason)
 
 
-class PSN_AutoRescaleCFG:
+class PSN_CFG_Rescale_Calculator:
     """
-    Dynamically adjusts the CFG scale per sampling step to prevent over-saturation
-    and "burn-in" artifacts in long video generations.
+    Calculates a reduced CFG number from base_cfg, a step window and a noise
+    magnitude you type in.
 
-    This node computes the effective CFG scale based on the predicted noise magnitude.
-    In a full ComfyUI environment, this logic would be used to patch the model's forward
-    pass. Here, it operates on plain values for testability and safety.
+    It does not patch a model or run per sampling step: wire its output into
+    a sampler's cfg yourself, for the step you want.
     """
+
+    DESCRIPTION = (
+        "Computes a reduced CFG number from base_cfg, a step window and a "
+        "typed-in noise magnitude. It does not patch a model or run per "
+        "sampling step."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -135,7 +137,7 @@ class PSN_AutoRescaleCFG:
         }
 
     RETURN_TYPES = ("FLOAT", "BOOLEAN", "STRING")
-    RETURN_NAMES = ("effective_cfg", "rescaled", "reason")
+    RETURN_NAMES = ("calculated_cfg", "reduction_applied", "reason")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -151,7 +153,7 @@ class PSN_AutoRescaleCFG:
         mode: str,
     ) -> tuple[float, bool, str]:
         """
-        Compute the effective CFG scale for the given step and noise magnitude.
+        Compute the reduced CFG value for the given step and noise magnitude.
 
         Args:
             base_cfg: The initial CFG scale.
@@ -164,9 +166,9 @@ class PSN_AutoRescaleCFG:
             mode: Rescaling mode ("linear", "exponential", "clamp").
 
         Returns:
-            Tuple of (effective_cfg, rescaled, reason).
+            Tuple of (reduced_cfg, reduction_applied, reason).
         """
-        return _compute_effective_cfg(
+        return _compute_reduced_cfg(
             base_cfg=base_cfg,
             rescale_strength=rescale_strength,
             step=step,
@@ -180,9 +182,9 @@ class PSN_AutoRescaleCFG:
 
 # Module-level mappings for ComfyUI
 NODE_CLASS_MAPPINGS = {
-    "PSN_AutoRescaleCFG": PSN_AutoRescaleCFG,
+    "PSN_CFG_Rescale_Calculator": PSN_CFG_Rescale_Calculator,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_AutoRescaleCFG": "Auto Rescale CFG for Video Stability",
+    "PSN_CFG_Rescale_Calculator": "CFG Rescale Calculator",
 }

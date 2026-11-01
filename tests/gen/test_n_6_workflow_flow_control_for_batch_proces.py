@@ -4,7 +4,7 @@ Tests for psn_nodes.gen.n_6_workflow_flow_control_for_batch_proces
 
 import pytest
 from psn_nodes.gen.n_6_workflow_flow_control_for_batch_proces import (
-    PSN_Conditioning_Variation_Generator,
+    PSN_Prompt_Weight_Variation_Specs,
     PSN_Batch_Conditioning_Loop,
     _normalize_conditioning,
     _validate_positive_int,
@@ -14,12 +14,12 @@ from psn_nodes.gen.n_6_workflow_flow_control_for_batch_proces import (
 )
 
 
-class TestConditioningVariationGenerator:
-    """Tests for PSN_Conditioning_Variation_Generator."""
+class TestPromptWeightVariationSpecs:
+    """Tests for PSN_Prompt_Weight_Variation_Specs."""
 
     def test_basic_generation(self):
         """Generate 4 variations of a base prompt with noise type."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         (result,) = node.run(
             base_conditioning="a cat",
             variation_type="noise",
@@ -37,14 +37,14 @@ class TestConditioningVariationGenerator:
 
     def test_deterministic_with_same_seed(self):
         """Same seed produces identical variations."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         (r1,) = node.run("a dog", "scale", 3, 0.2, seed=123)
         (r2,) = node.run("a dog", "scale", 3, 0.2, seed=123)
         assert r1 == r2
 
     def test_different_seeds_differ(self):
         """Different seeds produce different variations (with high probability)."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         (r1,) = node.run("a bird", "noise", 5, 0.5, seed=1)
         (r2,) = node.run("a bird", "noise", 5, 0.5, seed=2)
         # At least one variation should differ
@@ -52,7 +52,7 @@ class TestConditioningVariationGenerator:
 
     def test_scale_variation(self):
         """Scale variation modifies weight."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         (result,) = node.run(
             base_conditioning="a tree",
             variation_type="scale",
@@ -69,7 +69,7 @@ class TestConditioningVariationGenerator:
 
     def test_shift_variation(self):
         """Shift variation modifies bias."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         (result,) = node.run(
             base_conditioning="a mountain",
             variation_type="shift",
@@ -85,37 +85,37 @@ class TestConditioningVariationGenerator:
 
     def test_invalid_variation_type(self):
         """Invalid variation_type raises ValueError."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         with pytest.raises(ValueError, match="variation_type"):
             node.run("a cat", "invalid_type", 3, 0.1, seed=1)
 
     def test_invalid_num_variations_zero(self):
         """num_variations=0 raises ValueError."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         with pytest.raises(ValueError, match="num_variations"):
             node.run("a cat", "noise", 0, 0.1, seed=1)
 
     def test_invalid_num_variations_negative(self):
         """num_variations=-1 raises ValueError."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         with pytest.raises(ValueError, match="num_variations"):
             node.run("a cat", "noise", -1, 0.1, seed=1)
 
     def test_invalid_magnitude_out_of_range(self):
         """magnitude > 1.0 raises ValueError."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         with pytest.raises(ValueError, match="magnitude"):
             node.run("a cat", "noise", 3, 1.5, seed=1)
 
     def test_invalid_seed_negative(self):
         """Negative seed raises ValueError."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         with pytest.raises(ValueError, match="seed"):
             node.run("a cat", "noise", 3, 0.1, seed=-1)
 
     def test_dict_base_conditioning(self):
         """Base conditioning as dict is handled correctly."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         base = {"prompt": "a river", "weight": 1.5, "bias": 0.5}
         (result,) = node.run(base, "noise", 2, 0.1, seed=10)
         assert len(result) == 2
@@ -124,10 +124,29 @@ class TestConditioningVariationGenerator:
 
     def test_single_variation(self):
         """num_variations=1 returns exactly one variation."""
-        node = PSN_Conditioning_Variation_Generator()
+        node = PSN_Prompt_Weight_Variation_Specs()
         (result,) = node.run("a sky", "scale", 1, 0.1, seed=5)
         assert len(result) == 1
         assert result[0]["variation_index"] == 0
+
+
+class TestHonestNaming:
+    """The old conditioning-variation name must be gone and the output honest."""
+
+    def test_renamed_and_described(self):
+        import psn_nodes.gen.n_6_workflow_flow_control_for_batch_proces as m
+        assert "PSN_Conditioning_Variation_Generator" not in m.NODE_CLASS_MAPPINGS
+        assert m.NODE_CLASS_MAPPINGS["PSN_Prompt_Weight_Variation_Specs"] is PSN_Prompt_Weight_Variation_Specs
+        assert PSN_Prompt_Weight_Variation_Specs.RETURN_NAMES == ("variation_specs",)
+        assert "produces no ComfyUI CONDITIONING" in PSN_Prompt_Weight_Variation_Specs.DESCRIPTION
+
+    def test_specs_feed_batch_loop_with_real_values(self):
+        (specs,) = PSN_Prompt_Weight_Variation_Specs().run("a cat", "shift", 3, 0.2, seed=7)
+        plan, n = PSN_Batch_Conditioning_Loop().run(specs, 20, 7.0, 100)
+        assert n == 3
+        assert [p["seed"] for p in plan] == [100, 101, 102]
+        assert [p["bias"] for p in plan] == [s["bias"] for s in specs]
+        assert all(p["prompt"] == "a cat" for p in plan)
 
 
 class TestBatchConditioningLoop:

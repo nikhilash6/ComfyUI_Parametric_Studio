@@ -16,19 +16,10 @@ What IS implemented (torch/stdlib only, CPU-safe):
     frequency mask, attenuates or boosts high frequencies according to
     the config, and adds the shaped noise to the latent.  Never modifies
     the input in place.
-  * PSN_SpectralSampler    - a stand-in sampler that performs a simple
-    Euler-style denoising loop using the provided sigmas and the
-    spectral noise at the first step.  It does NOT call a real diffusion
-    model (that would require a MODEL object and a full KSampler
-    backend, which are out of scope for a CPU-only torch module).  It
-    instead treats the "model" input as an optional callable that maps
-    (latent, sigma) -> latent; if none is provided it simply scales the
-    latent by the sigma schedule (a no-op denoiser).  This lets the
-    data-flow be exercised end-to-end in tests without a GPU model.
 
 What is NOT implemented:
-  * Real MODEL / CONDITIONING / KSampler integration (would need a live
-    ComfyUI diffusion model and the k_diffusion sampler library).
+  * Any sampler.  No node here runs a diffusion model; PSN_SpectralNoise only
+    adds shaped noise to a latent.
   * GPU smoke test (CPU-only here; the FFT path is identical on GPU).
   * numpy-based FFT (torch.fft is used instead; numpy is not required).
 """
@@ -217,74 +208,12 @@ class PSN_SpectralNoise:
         return ({"samples": out},)
 
 
-class PSN_SpectralSampler:
-    """Euler-style denoising loop with spectral noise at the first step.
-
-    The `model` input is an optional callable (latent_dict, sigma) ->
-    latent_dict that acts as the denoiser.  If None, the latent is simply
-    scaled by (1 - sigma) each step (a trivial denoiser).  This is a
-    stand-in for a real KSampler; it exercises the data flow and the
-    spectral-noise path without requiring a GPU diffusion model.
-    """
-
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "latent": ("LATENT",),
-                "sigmas": ("SIGMAS",),
-                "noise_config": ("PSN_NOISE_CONFIG",),
-                "sampler": ("euler", "euler_ancestral"),
-                "noise_scale": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0}),
-            },
-            "optional": {
-                "model": ("MODEL",),
-                "positive": ("CONDITIONING",),
-                "negative": ("CONDITIONING",),
-                "config": ("PSN_CONFIG",),
-            },
-        }
-
-    RETURN_TYPES = ("LATENT",)
-    RETURN_NAMES = ("latent",)
-    FUNCTION = "run"
-    CATEGORY = CAT
-
-    def run(self, latent, sigmas, noise_config, sampler, noise_scale,
-            model=None, positive=None, negative=None, config=None):
-        lat = _as_latent(latent)
-        x = lat["samples"]
-        if not torch.is_tensor(sigmas):
-            raise ValueError("sigmas must be a 1-D torch tensor")
-        if sigmas.dim() != 1:
-            raise ValueError("sigmas must be 1-D")
-        if sigmas.numel() < 2:
-            raise ValueError("sigmas must have at least 2 entries")
-        if not isinstance(noise_config, dict):
-            raise ValueError("noise_config must be a dict (PSN_NOISE_CONFIG)")
-
-        noise = _spectral_noise(tuple(x.shape), noise_config, x.device, x.dtype)
-        x = x + float(noise_scale) * noise
-
-        for i in range(sigmas.numel() - 1):
-            sigma = sigmas[i].item()
-            next_sigma = sigmas[i + 1].item()
-            if model is not None and callable(model):
-                x = model({"samples": x}, sigma)["samples"]
-            else:
-                x = x * (next_sigma / sigma) if sigma > 0 else torch.zeros_like(x)
-
-        return ({"samples": x},)
-
-
 NODE_CLASS_MAPPINGS = {
     "PSN_SpectralScheduler": PSN_SpectralScheduler,
     "PSN_SpectralNoise": PSN_SpectralNoise,
-    "PSN_SpectralSampler": PSN_SpectralSampler,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_SpectralScheduler": "PSN Spectral Scheduler",
     "PSN_SpectralNoise": "PSN Spectral Noise",
-    "PSN_SpectralSampler": "PSN Spectral Sampler",
 }

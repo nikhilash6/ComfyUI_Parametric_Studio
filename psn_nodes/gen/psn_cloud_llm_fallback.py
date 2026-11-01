@@ -1,12 +1,12 @@
-"""PSN_Cloud_LLM_Fallback: routes a task to a local or cloud LLM based on complexity and resource guard.
+"""PSN_LLM_Route_Decision: decides whether a prompt should go to a local or a cloud LLM. It calls no LLM.
 
-This module implements ONLY the pure-logic, secure-by-design part of the spec:
-- complexity estimation (token count + keyword density)
-- routing decision (local vs cloud) based on complexity threshold and a resource guard flag
-- payload formatting for the chosen backend (no actual network calls)
+What it does:
+- scores prompt complexity (whitespace token count + keyword density, 0.0 to 1.0)
+- returns the route: "cloud" if the score is above the threshold or the resource guard flag is off, else "local"
+- returns the prompt prefixed with "[LOCAL] " or "[CLOUD] " so a downstream node can see the route
 
+What it does not do: send the prompt anywhere, load a model, or produce an answer.
 No torch, no ComfyUI imports, no network, no file/OS access.
-The node takes plain values (strings, floats, booleans) and returns plain values.
 """
 
 from psn import expr, orchestration as _orch
@@ -46,17 +46,20 @@ def _estimate_complexity(task_prompt: str) -> float:
 
 
 def _format_local_payload(task_prompt: str) -> str:
-    """Format the payload that would be sent to the local model."""
+    """Prefix the prompt with the local route tag."""
     return f"[LOCAL] {task_prompt}"
 
 
 def _format_cloud_payload(task_prompt: str) -> str:
-    """Format the payload that would be sent to the cloud API."""
+    """Prefix the prompt with the cloud route tag."""
     return f"[CLOUD] {task_prompt}"
 
 
-class PSN_Cloud_LLM_Fallback:
-    """Routes a task prompt to local or cloud LLM based on complexity and resource guard."""
+class PSN_LLM_Route_Decision:
+    """Scores prompt complexity and returns "local" or "cloud" plus the prompt tagged with that route. Calls no LLM."""
+
+    DESCRIPTION = ("Scores prompt complexity (length + keywords) and returns the route 'local' or 'cloud' "
+                   "plus the prompt prefixed with [LOCAL] or [CLOUD]. It calls no LLM and produces no answer.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -66,25 +69,22 @@ class PSN_Cloud_LLM_Fallback:
                 "complexity_threshold": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.01}),
             },
             "optional": {
-                "local_handle": ("STRING", {"default": "local_model"}),
-                "cloud_handle": ("STRING", {"default": "cloud_model"}),
                 "resource_guard_ok": ("BOOLEAN", {"default": True}),
             },
         }
 
     RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("response", "source")
+    RETURN_NAMES = ("route", "tagged_prompt")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, task_prompt, complexity_threshold, local_handle="local_model",
-            cloud_handle="cloud_model", resource_guard_ok=True):
+    def run(self, task_prompt, complexity_threshold, resource_guard_ok=True):
         """
-        Estimate complexity and route to local or cloud.
+        Estimate complexity and pick local or cloud.
 
         Returns:
-            response (str): formatted payload for the chosen backend
-            source (str): "local" or "cloud"
+            route (str): "local" or "cloud"
+            tagged_prompt (str): the prompt prefixed with "[LOCAL] " or "[CLOUD] "
         """
         # Validate inputs
         if not isinstance(task_prompt, str):
@@ -97,23 +97,18 @@ class PSN_Cloud_LLM_Fallback:
 
         complexity = _estimate_complexity(task_prompt)
 
-        # Route to cloud if complexity exceeds threshold OR resource guard says local is unavailable
+        # Cloud if complexity exceeds threshold OR resource guard says local is unavailable
         use_cloud = (complexity > complexity_threshold) or (not resource_guard_ok)
 
         if use_cloud:
-            response = _format_cloud_payload(task_prompt)
-            source = "cloud"
-        else:
-            response = _format_local_payload(task_prompt)
-            source = "local"
-
-        return (response, source)
+            return ("cloud", _format_cloud_payload(task_prompt))
+        return ("local", _format_local_payload(task_prompt))
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Cloud_LLM_Fallback": PSN_Cloud_LLM_Fallback,
+    "PSN_LLM_Route_Decision": PSN_LLM_Route_Decision,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Cloud_LLM_Fallback": "PSN Cloud LLM Fallback",
+    "PSN_LLM_Route_Decision": "LLM Route Decision (local or cloud, calls no LLM)",
 }

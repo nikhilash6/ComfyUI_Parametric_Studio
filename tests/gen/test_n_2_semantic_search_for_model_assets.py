@@ -5,10 +5,10 @@ import json
 import pytest
 
 from psn_nodes.gen.n_2_semantic_search_for_model_assets import (
-    PSN_Semantic_Index_Builder,
-    PSN_Semantic_Search_Query,
+    PSN_Keyword_Index_Builder,
+    PSN_Keyword_Search_Query,
     _psn_build_index,
-    _psn_embed,
+    _psn_bow_vector,
     _psn_search,
     _psn_validate_folder_path,
     _psn_validate_index_name,
@@ -25,11 +25,10 @@ def _make_assets():
 
 
 def test_index_builder_creates_index_with_stats():
-    node = PSN_Semantic_Index_Builder()
+    node = PSN_Keyword_Index_Builder()
     assets_json = json.dumps(_make_assets())
     index, stats = node.run(
         folder_path="/assets",
-        embedding_model="Qwen3-VL-Embedding",
         index_name="test_index",
         assets_json=assets_json,
     )
@@ -45,7 +44,7 @@ def test_index_builder_creates_index_with_stats():
 def test_index_builder_rejects_bad_kind():
     bad_assets = [{"name": "x", "path": "/x", "kind": "video", "text": ""}]
     with pytest.raises(ValueError, match="kind"):
-        _psn_build_index("/assets", "Qwen3-VL-Embedding", "idx", bad_assets)
+        _psn_build_index("/assets", "idx", bad_assets)
 
 
 def test_index_builder_rejects_duplicate_paths():
@@ -54,7 +53,7 @@ def test_index_builder_rejects_duplicate_paths():
         {"name": "b", "path": "/a.png", "kind": "image", "text": ""},
     ]
     with pytest.raises(ValueError, match="duplicate"):
-        _psn_build_index("/assets", "Qwen3-VL-Embedding", "idx", dup_assets)
+        _psn_build_index("/assets", "idx", dup_assets)
 
 
 def test_index_builder_rejects_empty_index_name():
@@ -69,11 +68,11 @@ def test_index_builder_rejects_path_separator_in_name():
 
 def test_search_returns_correct_top_result():
     assets = _make_assets()
-    index = _psn_build_index("/assets", "Qwen3-VL-Embedding", "idx", assets)
-    node = PSN_Semantic_Search_Query()
+    index = _psn_build_index("/assets", "idx", assets)
+    node = PSN_Keyword_Search_Query()
     result, _ = node.run(
         query_text="red car",
-        semantic_index=index,
+        keyword_index=index,
         top_k=3,
         min_score=-1.0,
     )
@@ -85,12 +84,12 @@ def test_search_returns_correct_top_result():
 
 def test_search_respects_min_score_threshold():
     assets = _make_assets()
-    index = _psn_build_index("/assets", "Qwen3-VL-Embedding", "idx", assets)
-    node = PSN_Semantic_Search_Query()
+    index = _psn_build_index("/assets", "idx", assets)
+    node = PSN_Keyword_Search_Query()
     # Very high threshold should filter out most results.
     result, _ = node.run(
         query_text="red car",
-        semantic_index=index,
+        keyword_index=index,
         top_k=3,
         min_score=0.99,
     )
@@ -104,11 +103,11 @@ def test_search_respects_min_score_threshold():
 
 def test_search_respects_top_k():
     assets = _make_assets()
-    index = _psn_build_index("/assets", "Qwen3-VL-Embedding", "idx", assets)
-    node = PSN_Semantic_Search_Query()
+    index = _psn_build_index("/assets", "idx", assets)
+    node = PSN_Keyword_Search_Query()
     result, _ = node.run(
         query_text="anything",
-        semantic_index=index,
+        keyword_index=index,
         top_k=1,
         min_score=-1.0,
     )
@@ -118,44 +117,44 @@ def test_search_respects_top_k():
 
 def test_search_rejects_invalid_top_k():
     assets = _make_assets()
-    index = _psn_build_index("/assets", "Qwen3-VL-Embedding", "idx", assets)
-    node = PSN_Semantic_Search_Query()
+    index = _psn_build_index("/assets", "idx", assets)
+    node = PSN_Keyword_Search_Query()
     with pytest.raises(ValueError, match="top_k"):
-        node.run(query_text="q", semantic_index=index, top_k=0, min_score=0.0)
+        node.run(query_text="q", keyword_index=index, top_k=0, min_score=0.0)
 
 
 def test_search_rejects_invalid_min_score():
     assets = _make_assets()
-    index = _psn_build_index("/assets", "Qwen3-VL-Embedding", "idx", assets)
-    node = PSN_Semantic_Search_Query()
+    index = _psn_build_index("/assets", "idx", assets)
+    node = PSN_Keyword_Search_Query()
     with pytest.raises(ValueError, match="min_score"):
-        node.run(query_text="q", semantic_index=index, top_k=1, min_score=2.0)
+        node.run(query_text="q", keyword_index=index, top_k=1, min_score=2.0)
 
 
 def test_search_rejects_non_dict_index():
-    node = PSN_Semantic_Search_Query()
-    with pytest.raises(ValueError, match="semantic_index"):
-        node.run(query_text="q", semantic_index="not a dict", top_k=1, min_score=0.0)
+    node = PSN_Keyword_Search_Query()
+    with pytest.raises(ValueError, match="keyword_index"):
+        node.run(query_text="q", keyword_index="not a dict", top_k=1, min_score=0.0)
 
 
 def test_embed_is_deterministic():
-    v1 = _psn_embed("hello world")
-    v2 = _psn_embed("hello world")
+    v1 = _psn_bow_vector("hello world")
+    v2 = _psn_bow_vector("hello world")
     assert v1 == v2
-    v3 = _psn_embed("different text")
+    v3 = _psn_bow_vector("different text")
     assert v1 != v3
 
 
 def test_embed_dimension():
-    v = _psn_embed("test")
+    v = _psn_bow_vector("test")
     assert len(v) == 64
 
 
 def test_embed_similarity_for_shared_tokens():
     # Texts sharing tokens should have higher cosine similarity than disjoint texts.
-    v_shared = _psn_embed("red car")
-    v_same = _psn_embed("red car")
-    v_diff = _psn_embed("blue sky")
+    v_shared = _psn_bow_vector("red car")
+    v_same = _psn_bow_vector("red car")
+    v_diff = _psn_bow_vector("blue sky")
     sim_same = sum(a * b for a, b in zip(v_shared, v_same))
     sim_diff = sum(a * b for a, b in zip(v_shared, v_diff))
     assert sim_same > sim_diff
@@ -170,33 +169,53 @@ def test_folder_path_validation():
 
 
 def test_builder_rejects_invalid_json():
-    node = PSN_Semantic_Index_Builder()
+    node = PSN_Keyword_Index_Builder()
     with pytest.raises(ValueError, match="JSON"):
         node.run(
             folder_path="/assets",
-            embedding_model="Qwen3-VL-Embedding",
-            index_name="idx",
+                index_name="idx",
             assets_json="not valid json",
         )
 
 
 def test_builder_rejects_non_list_json():
-    node = PSN_Semantic_Index_Builder()
+    node = PSN_Keyword_Index_Builder()
     with pytest.raises(ValueError, match="JSON list"):
         node.run(
             folder_path="/assets",
-            embedding_model="Qwen3-VL-Embedding",
-            index_name="idx",
+                index_name="idx",
             assets_json='{"not": "a list"}',
         )
 
 
-def test_builder_rejects_bad_embedding_model():
-    node = PSN_Semantic_Index_Builder()
-    with pytest.raises(ValueError, match="embedding_model"):
-        node.run(
-            folder_path="/assets",
-            embedding_model="Unknown-Model",
-            index_name="idx",
-            assets_json="[]",
-        )
+def test_builder_has_no_embedding_model_input_or_field():
+    assert "embedding_model" not in PSN_Keyword_Index_Builder.INPUT_TYPES()["required"]
+    node = PSN_Keyword_Index_Builder()
+    index, stats = node.run("/assets", "idx", json.dumps(_make_assets()))
+    assert "embedding_model" not in index and "embedding_model" not in json.loads(stats)
+    assert "embedding" not in index["items"][0]
+    assert len(index["items"][0]["vector"]) == 64
+    assert "no embedding model" in PSN_Keyword_Index_Builder.DESCRIPTION
+
+
+def test_registry_renamed():
+    from psn_nodes.gen import n_2_semantic_search_for_model_assets as m
+    assert "PSN_Semantic_Index_Builder" not in m.NODE_CLASS_MAPPINGS
+    assert "PSN_Semantic_Search_Query" not in m.NODE_CLASS_MAPPINGS
+    assert m.NODE_CLASS_MAPPINGS["PSN_Keyword_Index_Builder"] is PSN_Keyword_Index_Builder
+    assert m.NODE_CLASS_MAPPINGS["PSN_Keyword_Search_Query"] is PSN_Keyword_Search_Query
+    assert PSN_Keyword_Search_Query.RETURN_TYPES[0] == "SEARCH_RESULTS"
+    assert "not meaning" in PSN_Keyword_Search_Query.DESCRIPTION
+
+
+def test_search_is_word_overlap_not_meaning():
+    # synonyms do not match; shared words do. exact cosine for a one-token overlap.
+    index = _psn_build_index("/assets", "idx", [
+        {"name": "a", "path": "/x", "kind": "image", "text": "automobile"},
+        {"name": "a", "path": "/y", "kind": "image", "text": "car"},
+    ])
+    result, _ = PSN_Keyword_Search_Query().run("car", index, 2, -1.0)
+    by_path = {r["path"]: r["score"] for r in result["results"]}
+    assert result["results"][0]["path"] == "/y"
+    assert abs(by_path["/y"] - 1.0) < 1e-5   # identical single token -> identical vector
+    assert by_path["/x"] < 0.5               # 'automobile' is not treated as 'car'

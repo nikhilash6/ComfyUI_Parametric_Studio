@@ -1,14 +1,10 @@
-"""PSN_MongoDB_Save_Prompt: pure-logic prompt/params serialization and document-ID generation.
+"""PSN_Prompt_Document_Build: builds a canonical prompt+params document and a hashed id.
 
-This module implements ONLY the secure, pure-Python part of the "save prompt to MongoDB"
-workflow. It does NOT open sockets, import pymongo, or perform any network/file I/O.
-Instead it:
+Pure Python. It stores nothing: no database, pymongo, network or file I/O. It:
   * validates and parses the JSON `params` string,
   * builds a canonical document dict (with schema-version and timestamp fields),
-  * generates a deterministic, collision-resistant document ID string,
-  * returns the ID plus a JSON-serializable payload that a real driver could insert.
-
-The node wrapper takes plain values (strings) and returns plain values (strings).
+  * generates a deterministic hash-based id string,
+  * returns the id plus the document as JSON text that a caller could store.
 """
 
 import json
@@ -60,7 +56,7 @@ def _psn_generate_doc_id(prompt, params_dict, timestamp):
 
 
 def _psn_build_document(prompt, params_dict, timestamp, doc_id):
-    """Build the canonical document dict that would be inserted into MongoDB."""
+    """Build the canonical document dict that a caller could store."""
     return {
         "_id": doc_id,
         "prompt": prompt,
@@ -70,11 +66,16 @@ def _psn_build_document(prompt, params_dict, timestamp, doc_id):
     }
 
 
-class PSN_MongoDB_Save_Prompt:
-    """Saves a prompt and its parameters by building a canonical document and returning its ID.
+class PSN_Prompt_Document_Build:
+    """Builds a canonical prompt+params document and its hashed id. Stores nothing.
 
-    Pure-logic implementation: no network, no pymongo, no file I/O.
+    No network, no pymongo, no file I/O.
     """
+
+    DESCRIPTION = (
+        "Builds a canonical prompt+params document as JSON with a hashed id. "
+        "Stores nothing: no database or file is written."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -111,9 +112,9 @@ class PSN_MongoDB_Save_Prompt:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_MongoDB_Save_Prompt": PSN_MongoDB_Save_Prompt,
+    "PSN_Prompt_Document_Build": PSN_Prompt_Document_Build,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_MongoDB_Save_Prompt": "PSN MongoDB Save Prompt",
+    "PSN_Prompt_Document_Build": "PSN Prompt Document Build (stores nothing)",
 }

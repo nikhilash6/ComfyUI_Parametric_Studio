@@ -1,34 +1,15 @@
-"""Tests for n_1_automated_lora_dataset_captioning.py."""
+import inspect
 
 import torch
 
+import n_1_automated_lora_dataset_captioning as mod
 from n_1_automated_lora_dataset_captioning import (
-    PSN_VLM_Caption_Generator,
+    PSN_Image_Stats_Caption,
     PSN_Caption_Auditor,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
+    _image_stats,
 )
-
-
-class MockLLM:
-    """Mock VLM handle that returns a fixed caption."""
-
-    def __init__(self, response):
-        self._response = response
-        self.last_prompt = None
-        self.last_stats = None
-
-    def generate(self, prompt, image_stats):
-        self.last_prompt = prompt
-        self.last_stats = image_stats
-        return self._response
-
-
-class FailingLLM:
-    """Mock VLM handle that raises an exception."""
-
-    def generate(self, prompt, image_stats):
-        raise RuntimeError("boom")
 
 
 def make_image(b=1, h=8, w=8, c=3, value=0.5):
@@ -36,93 +17,76 @@ def make_image(b=1, h=8, w=8, c=3, value=0.5):
 
 
 # ---------------------------------------------------------------------------
-# 1. Module-level registration
+# 1. Module-level registration; the VLM claim and its fabricated outputs are gone
 # ---------------------------------------------------------------------------
-assert "PSN_VLM_Caption_Generator" in NODE_CLASS_MAPPINGS
+assert "PSN_Image_Stats_Caption" in NODE_CLASS_MAPPINGS
 assert "PSN_Caption_Auditor" in NODE_CLASS_MAPPINGS
-assert NODE_DISPLAY_NAME_MAPPINGS["PSN_VLM_Caption_Generator"] == "VLM Caption Generator"
+assert "PSN_VLM_Caption_Generator" not in NODE_CLASS_MAPPINGS
+assert not hasattr(mod, "PSN_VLM_Caption_Generator")
+for gone in ("_confidence_score", "_build_system_prompt", "_parse_caption"):
+    assert not hasattr(mod, gone), gone
+assert NODE_DISPLAY_NAME_MAPPINGS["PSN_Image_Stats_Caption"] == "Image Stats Caption (no VLM)"
 assert NODE_DISPLAY_NAME_MAPPINGS["PSN_Caption_Auditor"] == "Caption Auditor"
+assert "No vision-language model runs" in PSN_Image_Stats_Caption.DESCRIPTION
 
 # ---------------------------------------------------------------------------
-# 2. INPUT_TYPES structure
+# 2. INPUT_TYPES / RETURN_TYPES
 # ---------------------------------------------------------------------------
-it = PSN_VLM_Caption_Generator.INPUT_TYPES()
-assert "image" in it["required"]
-assert "caption_style" in it["required"]
-assert PSN_VLM_Caption_Generator.RETURN_TYPES == ("STRING", "FLOAT")
-assert PSN_VLM_Caption_Generator.FUNCTION == "run"
-assert PSN_VLM_Caption_Generator.CATEGORY.startswith("ParametricStudio/")
+it = PSN_Image_Stats_Caption.INPUT_TYPES()
+assert set(it["required"]) == {"image", "caption_style"}
+assert "optional" not in it  # llm_handle and negative_prompt_hint removed
+assert PSN_Image_Stats_Caption.RETURN_TYPES == ("STRING",)
+assert PSN_Image_Stats_Caption.RETURN_NAMES == ("caption",)
+assert PSN_Image_Stats_Caption.FUNCTION == "run"
+assert PSN_Image_Stats_Caption.CATEGORY.startswith("ParametricStudio/")
+assert "llm_handle" not in inspect.signature(PSN_Image_Stats_Caption.run).parameters
 
 it2 = PSN_Caption_Auditor.INPUT_TYPES()
 assert "caption" in it2["required"]
 assert PSN_Caption_Auditor.RETURN_TYPES == ("BOOLEAN", "STRING")
 
 # ---------------------------------------------------------------------------
-# 3. Caption generator: template fallback, detailed style
+# 3. Template captions: exact text from known statistics
 # ---------------------------------------------------------------------------
-gen = PSN_VLM_Caption_Generator()
-img = make_image(value=0.3)  # dim, neutral
-caption, conf = gen.run(img, "detailed")
-assert isinstance(caption, str) and len(caption) > 0
-assert isinstance(conf, float)
-assert 0.0 <= conf <= 1.0
-assert "dim" in caption  # brightness word for 0.3
+gen = PSN_Image_Stats_Caption()
+(caption,) = gen.run(make_image(value=0.3), "detailed")
+assert caption == (
+    "A dim image of size 8x8. The overall lighting is dim with low contrast. "
+    "The dominant color tone is neutral."
+)
+assert "VLM" not in caption
+
+(caption,) = gen.run(make_image(value=0.3), "concise")
+assert caption == "A dim image with low contrast, neutral tones."
+(caption,) = gen.run(make_image(value=0.3), "natural_language")
+assert caption == "This is a dim image (8x8) with low contrast and neutral color tones."
 
 # ---------------------------------------------------------------------------
-# 4. Caption generator: booru_tags style normalisation
+# 4. booru_tags style: lowercase, underscore tags
 # ---------------------------------------------------------------------------
-caption_b, conf_b = gen.run(make_image(value=0.8), "booru_tags")
-assert isinstance(caption_b, str) and len(caption_b) > 0
-# booru tags should be lowercase, comma-separated, no spaces
-for tag in caption_b.split(","):
-    assert " " not in tag.strip(), "booru tag contains space: %r" % tag
-    assert tag.strip() == tag.strip().lower(), "booru tag not lowercase: %r" % tag
-assert conf_b > 0.0
+(caption_b,) = gen.run(make_image(value=0.8), "booru_tags")
+assert caption_b == "image, 8x8, very_bright, low_contrast"
+red_img = torch.zeros(1, 4, 4, 3, dtype=torch.float32)
+red_img[..., 0] = 0.9
+red_img[..., 1] = 0.1
+red_img[..., 2] = 0.1
+(caption_r,) = gen.run(red_img, "booru_tags")
+assert caption_r.endswith("red_tone")
+assert "red" in gen.run(red_img, "concise")[0]
 
 # ---------------------------------------------------------------------------
-# 5. Caption generator: mock LLM handle is used
-# ---------------------------------------------------------------------------
-mock = MockLLM("a red fox in a snowy forest")
-caption_m, conf_m = gen.run(make_image(), "natural_language", llm_handle=mock)
-assert caption_m == "a red fox in a snowy forest"
-assert mock.last_prompt is not None
-assert "natural-language" in mock.last_prompt or "captioner" in mock.last_prompt
-assert mock.last_stats is not None
-assert mock.last_stats["width"] == 8
-assert mock.last_stats["height"] == 8
-
-# ---------------------------------------------------------------------------
-# 6. Caption generator: failing LLM falls back to template
-# ---------------------------------------------------------------------------
-caption_f, conf_f = gen.run(make_image(), "concise", llm_handle=FailingLLM())
-assert isinstance(caption_f, str) and len(caption_f) > 0
-assert conf_f > 0.0
-
-# ---------------------------------------------------------------------------
-# 7. Caption generator: bad input (wrong shape) raises
+# 7. Bad input raises
 # ---------------------------------------------------------------------------
 try:
     gen.run(torch.zeros(4, 4, 3), "detailed")  # 3D, not 4D
     assert False, "expected ValueError for 3D tensor"
 except ValueError:
     pass
-
-# ---------------------------------------------------------------------------
-# 8. Caption generator: bad input (non-tensor) raises
-# ---------------------------------------------------------------------------
 try:
     gen.run("not a tensor", "detailed")
     assert False, "expected TypeError for non-tensor"
 except TypeError:
     pass
-
-# ---------------------------------------------------------------------------
-# 9. Caption generator: negative_prompt_hint appears in system prompt
-# ---------------------------------------------------------------------------
-mock2 = MockLLM("some caption")
-gen.run(make_image(), "detailed", llm_handle=mock2, negative_prompt_hint="blur, watermark")
-assert "blur" in mock2.last_prompt
-assert "watermark" in mock2.last_prompt
 
 # ---------------------------------------------------------------------------
 # 10. Caption auditor: valid caption
@@ -160,23 +124,8 @@ is_valid5, _ = aud.run("A CAT with GORE", allowed_terms="", banned_terms="gore")
 assert is_valid5 is False
 
 # ---------------------------------------------------------------------------
-# 15. Confidence score: empty caption -> 0.0
-# ---------------------------------------------------------------------------
-from n_1_automated_lora_dataset_captioning import _confidence_score
-assert _confidence_score("", "detailed") == 0.0
-assert _confidence_score("   ", "detailed") == 0.0
-
-# ---------------------------------------------------------------------------
-# 16. Confidence score: booru style with bad tags -> lower confidence
-# ---------------------------------------------------------------------------
-conf_good = _confidence_score("1girl, solo, red_hair", "booru_tags")
-conf_bad = _confidence_score("Hello World, !@#$", "booru_tags")
-assert conf_good > conf_bad
-
-# ---------------------------------------------------------------------------
 # 17. Image stats: bright vs dark image
 # ---------------------------------------------------------------------------
-from n_1_automated_lora_dataset_captioning import _image_stats
 stats_bright = _image_stats(make_image(value=0.9))
 stats_dark = _image_stats(make_image(value=0.1))
 assert stats_bright["mean_brightness"] > stats_dark["mean_brightness"]
@@ -195,9 +144,8 @@ assert stats_red["dominant_hue"] == "red"
 # ---------------------------------------------------------------------------
 # 19. Batch image works
 # ---------------------------------------------------------------------------
-caption_batch, conf_batch = gen.run(make_image(b=3, value=0.5), "concise")
-assert isinstance(caption_batch, str) and len(caption_batch) > 0
-assert conf_batch > 0.0
+(caption_batch,) = gen.run(make_image(b=3, value=0.5), "concise")
+assert caption_batch == "A bright image with low contrast, neutral tones."
 
 # ---------------------------------------------------------------------------
 # 20. Input not modified in place

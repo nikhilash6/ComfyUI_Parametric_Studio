@@ -5,7 +5,9 @@ Must print 'ok' and exit 0.
 """
 
 import json
+import os
 import posixpath
+import tempfile
 
 from h_define_a_standard_interface_for_re import (
     InterpreterSpec,
@@ -102,11 +104,19 @@ assert reg.families() == ["scrape", "train"], reg.families()
 assert len(reg) == 2
 
 # ---------------------------------------------------------------------------
-# 11. Node: PSN_InterpreterRegistryBuild
+# 11. Node: PSN_InterpreterRegistryBuild (real files in a temp dir)
 # ---------------------------------------------------------------------------
+tmp = tempfile.mkdtemp()
+for fam in ("scrape", "train"):
+    bin_dir = os.path.join(tmp, fam, "venv", "bin")
+    os.makedirs(bin_dir)
+    with open(os.path.join(bin_dir, "python"), "w") as fh:
+        fh.write("")
+# "eval" is registered below but has no interpreter file on disk
+
 node = PSN_InterpreterRegistryBuild()
 (reg_obj,) = node.run(
-    root="/opt/psn/tools",
+    root=tmp,
     platform="linux",
     families="scrape, train, eval",
     venv_name="venv",
@@ -114,21 +124,26 @@ node = PSN_InterpreterRegistryBuild()
 )
 assert isinstance(reg_obj, InterpreterRegistry)
 assert reg_obj.families() == ["eval", "scrape", "train"]
-assert reg_obj.resolve("train") == "/opt/psn/tools/train/venv/bin/python"
-assert reg_obj.resolve("anything") == "/opt/psn/tools/scrape/venv/bin/python"  # default
+assert reg_obj.resolve("train") == tmp + "/train/venv/bin/python"
+assert reg_obj.resolve("anything") == tmp + "/scrape/venv/bin/python"  # default
 
 # ---------------------------------------------------------------------------
-# 12. Node: PSN_InterpreterResolve (found + not found)
+# 12. Node: PSN_InterpreterResolve (file exists / registered but missing / unknown)
 # ---------------------------------------------------------------------------
 res_node = PSN_InterpreterResolve()
 path, found = res_node.run(reg_obj, "train")
 assert found is True
-assert path == "/opt/psn/tools/train/venv/bin/python"
+assert path == tmp + "/train/venv/bin/python"
 
+# 'nonexistent' falls back to default 'scrape', whose file exists
 path2, found2 = res_node.run(reg_obj, "nonexistent")
-# 'nonexistent' falls back to default 'scrape', so found should be True
 assert found2 is True
-assert path2 == "/opt/psn/tools/scrape/venv/bin/python"
+assert path2 == tmp + "/scrape/venv/bin/python"
+
+# 'eval' is registered but its interpreter file does not exist: not found
+path_eval, found_eval = res_node.run(reg_obj, "eval")
+assert found_eval is False
+assert path_eval == ""
 
 # registry with no default: unknown family -> found=False
 reg_nod = InterpreterRegistry()
@@ -153,7 +168,7 @@ info_node = PSN_InterpreterSpecInfo()
 (spec_json,) = info_node.run(reg_obj, "scrape")
 d = json.loads(spec_json)
 assert d["family"] == "scrape"
-assert d["interpreter"] == "/opt/psn/tools/scrape/venv/bin/python"
+assert d["interpreter"] == tmp + "/scrape/venv/bin/python"
 assert d["platform"] == "linux"
 
 # unknown family -> empty dict

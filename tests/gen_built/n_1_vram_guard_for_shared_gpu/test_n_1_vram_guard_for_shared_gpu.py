@@ -8,6 +8,7 @@ from n_1_vram_guard_for_shared_gpu import (
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
     _estimate_step_gb,
+    _current_vram_gb,
 )
 
 
@@ -147,6 +148,49 @@ def test_no_in_place_mutation():
     assert set(lat.keys()) == {"samples"}
 
 
+def test_usage_is_device_wide_not_process_allocated():
+    # total 96 GB, free 30 GB -> 66 GB used by all processes; this process allocated 0
+    gb = 1024.0 ** 3
+    orig_avail, orig_info, orig_alloc = torch.cuda.is_available, torch.cuda.mem_get_info, torch.cuda.memory_allocated
+    torch.cuda.is_available = lambda: True
+    torch.cuda.mem_get_info = lambda *a, **k: (int(30 * gb), int(96 * gb))
+    torch.cuda.memory_allocated = lambda *a, **k: 0
+    try:
+        assert abs(_current_vram_gb() - 66.0) < 1e-6
+        node = PSN_VRAM_Budget_Gate()
+        _, _, usage = node.run(_tiny_model(), _latent(), max_vram_gb=100.0, run_id="t9")
+        assert abs(usage - 66.0) < 1e-6
+        try:
+            node.run(_tiny_model(), _latent(), max_vram_gb=60.0, run_id="t9b", hard_stop=True)
+        except RuntimeError as e:
+            assert "current=66.000" in str(e)
+        else:
+            raise AssertionError("66 GB used card-wide must breach a 60 GB budget")
+    finally:
+        torch.cuda.is_available, torch.cuda.mem_get_info, torch.cuda.memory_allocated = orig_avail, orig_info, orig_alloc
+
+
+def test_offload_only_for_module_and_reports_otherwise():
+    class Recorder(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.l = torch.nn.Linear(2, 2)
+            self.moved_to = None
+
+        def to(self, *a, **k):
+            self.moved_to = a[0]
+            return self
+
+    node = PSN_VRAM_Budget_Gate()
+    rec = Recorder()
+    out, _, _ = node.run(rec, _latent(), max_vram_gb=0.5, run_id="t10", probe_gb=100.0)
+    assert out is rec and rec.moved_to == "cpu", "an nn.Module is offloaded to cpu on breach"
+    patcher = object()  # stands in for a ComfyUI ModelPatcher: not an nn.Module
+    out2, _, usage = node.run(patcher, _latent(), max_vram_gb=0.5, run_id="t11", probe_gb=100.0)
+    assert out2 is patcher and usage == 100.0, "non-Module MODEL is passed through, breach only reported"
+    assert "ModelPatcher" in PSN_VRAM_Budget_Gate.DESCRIPTION
+
+
 def main():
     test_registry()
     test_input_types_shape()
@@ -160,6 +204,8 @@ def main():
     test_bad_run_id()
     test_estimate_monotonic_in_latent_size()
     test_no_in_place_mutation()
+    test_usage_is_device_wide_not_process_allocated()
+    test_offload_only_for_module_and_reports_otherwise()
     print("ok")
 
 

@@ -4,11 +4,10 @@ This module implements the *decision* logic for choosing between a lightweight
 and a heavy pipeline based on available VRAM.  It does NOT touch the GPU,
 torch, psutil, or any network/file/OS resource.  Instead it exposes:
 
-  * PSN_VRAM_Query        -- a pure function that takes a *pre-supplied*
-                             (free_gb, total_gb) pair and computes utilization.
-                             In a real ComfyUI build the caller would feed the
-                             numbers obtained from torch.cuda / psutil; here
-                             the numbers are plain floats passed in as inputs.
+  * PSN_VRAM_Utilization_Calc -- a pure function that takes a (free_gb, total_gb)
+                             pair that you type in and computes utilization.
+                             It reads no GPU: the numbers are plain floats
+                             passed in as inputs.
   * PSN_Pipeline_Selector -- compares free_vram_gb against two thresholds and
                              returns the selected pipeline id plus a human-
                              readable reason.
@@ -69,31 +68,20 @@ def _validate_pipeline_id(value: Any, name: str) -> str:
     return s
 
 
-def _validate_device_index(value: Any) -> int:
-    """Validate device index is a non-negative integer."""
-    if isinstance(value, bool):  # bool is subclass of int – reject explicitly
-        raise ValueError("device_index must be an integer, not a bool")
-    if not isinstance(value, int):
-        raise ValueError(f"device_index must be an integer, got {type(value).__name__}")
-    if value < 0:
-        raise ValueError(f"device_index must be >= 0, got {value}")
-    return value
-
-
 # ---------------------------------------------------------------------------
-# Node 1: PSN_VRAM_Query
+# Node 1: PSN_VRAM_Utilization_Calc
 # ---------------------------------------------------------------------------
 
-class PSN_VRAM_Query:
-    """Query (or use cached) VRAM status and compute utilization.
+class PSN_VRAM_Utilization_Calc:
+    """Compute utilization percent from free and total GB that you type in.
 
-    In a full ComfyUI build the caller would obtain *free_gb* and *total_gb*
-    from torch.cuda.mem_get_info() or psutil.  This node accepts those numbers
-    as plain float inputs so the logic is testable without a GPU.
-
-    *refresh* is accepted for API compatibility; in this pure-logic build it
-    has no side-effect (there is no cache to invalidate).
+    It queries no GPU, torch.cuda or psutil: both numbers are plain inputs.
     """
+
+    DESCRIPTION = (
+        "Computes utilization percent from the free and total GB you type. "
+        "Reads no GPU."
+    )
 
     @classmethod
     def INPUT_TYPES(cls) -> Dict[str, Any]:
@@ -101,13 +89,11 @@ class PSN_VRAM_Query:
             "required": {
                 "free_vram_gb": ("FLOAT", {"default": 0.0, "min": _MIN_VRAM_GB, "max": _MAX_VRAM_GB, "step": 0.1}),
                 "total_vram_gb": ("FLOAT", {"default": 96.0, "min": _MIN_VRAM_GB, "max": _MAX_VRAM_GB, "step": 0.1}),
-                "device_index": ("INT", {"default": 0, "min": 0, "max": 64}),
-                "refresh": ("BOOLEAN", {"default": True}),
             },
         }
 
-    RETURN_TYPES = ("FLOAT", "FLOAT", "FLOAT")
-    RETURN_NAMES = ("free_vram_gb", "total_vram_gb", "utilization_pct")
+    RETURN_TYPES = ("FLOAT",)
+    RETURN_NAMES = ("utilization_pct",)
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -115,12 +101,9 @@ class PSN_VRAM_Query:
         self,
         free_vram_gb: float,
         total_vram_gb: float,
-        device_index: int,
-        refresh: bool,
-    ) -> Tuple[float, float, float]:
+    ) -> Tuple[float]:
         free = _validate_vram(free_vram_gb, "free_vram_gb")
         total = _validate_vram(total_vram_gb, "total_vram_gb")
-        _validate_device_index(device_index)
 
         if total == 0.0:
             raise ValueError("total_vram_gb must be > 0 to compute utilization")
@@ -130,7 +113,7 @@ class PSN_VRAM_Query:
             )
 
         utilization_pct = ((total - free) / total) * 100.0
-        return (free, total, utilization_pct)
+        return (utilization_pct,)
 
 
 # ---------------------------------------------------------------------------
@@ -205,11 +188,11 @@ class PSN_Pipeline_Selector:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS: Dict[str, type] = {
-    "PSN_VRAM_Query": PSN_VRAM_Query,
+    "PSN_VRAM_Utilization_Calc": PSN_VRAM_Utilization_Calc,
     "PSN_Pipeline_Selector": PSN_Pipeline_Selector,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS: Dict[str, str] = {
-    "PSN_VRAM_Query": "PSN VRAM Query",
+    "PSN_VRAM_Utilization_Calc": "VRAM Utilization Calculator",
     "PSN_Pipeline_Selector": "PSN Pipeline Selector",
 }

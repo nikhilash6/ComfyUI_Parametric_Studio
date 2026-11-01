@@ -1,30 +1,22 @@
 import math
-import xml.etree.ElementTree as ET
 
 import torch
 
 from n_1_text_to_motion_pipeline_validation import (
-    PSN_TextToMotion_Generate,
+    PSN_Random_Motion_Test_Fixture,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
     STATUS_OK,
-    STATUS_BAD_PROMPT,
     STATUS_BAD_DURATION,
-    STATUS_BAD_MODEL,
     STATUS_BAD_SEED,
     NUM_JOINTS,
     FPS,
 )
 
-node = PSN_TextToMotion_Generate()
+node = PSN_Random_Motion_Test_Fixture()
 
 # 1. Basic successful run: check output types, shapes, and status
-motion_data, bvh_string, status = node.run(
-    prompt="a person walking forward",
-    duration=2.0,
-    seed=42,
-    model_type="MDM",
-)
+motion_data, bvh_string, status = node.run(duration=2.0, seed=42)
 
 assert status == STATUS_OK, "status should be 0 on success, got %r" % status
 assert isinstance(motion_data, dict), "motion_data should be a dict"
@@ -51,8 +43,8 @@ assert "Frames: %d" % expected_frames in bvh_string, \
     "BVH should declare the correct frame count"
 
 # 3. Reproducibility: same seed + params -> identical output
-md1, bvh1, st1 = node.run("jump", 1.0, 123, "Kimodo")
-md2, bvh2, st2 = node.run("jump", 1.0, 123, "Kimodo")
+md1, bvh1, st1 = node.run(1.0, 123)
+md2, bvh2, st2 = node.run(1.0, 123)
 assert st1 == STATUS_OK and st2 == STATUS_OK
 assert torch.equal(md1["rotations"], md2["rotations"]), \
     "same seed should give identical rotations"
@@ -61,80 +53,69 @@ assert torch.equal(md1["translations"], md2["translations"]), \
 assert bvh1 == bvh2, "same seed should give identical BVH string"
 
 # 4. Different seed -> different output
-md3, _, _ = node.run("jump", 1.0, 999, "Kimodo")
+md3, _, _ = node.run(1.0, 999)
 assert not torch.equal(md1["rotations"], md3["rotations"]), \
     "different seeds should give different rotations"
 
-# 5. Bad prompt (empty string) -> STATUS_BAD_PROMPT
-_, _, st = node.run("", 2.0, 42, "MDM")
-assert st == STATUS_BAD_PROMPT, "empty prompt should give STATUS_BAD_PROMPT, got %r" % st
-
-# 6. Bad prompt (non-string) -> STATUS_BAD_PROMPT
-_, _, st = node.run(12345, 2.0, 42, "MDM")
-assert st == STATUS_BAD_PROMPT, "non-string prompt should give STATUS_BAD_PROMPT, got %r" % st
-
 # 7. Bad duration (zero) -> STATUS_BAD_DURATION
-_, _, st = node.run("walk", 0.0, 42, "MDM")
+_, _, st = node.run(0.0, 42)
 assert st == STATUS_BAD_DURATION, "zero duration should give STATUS_BAD_DURATION, got %r" % st
 
 # 8. Bad duration (negative) -> STATUS_BAD_DURATION
-_, _, st = node.run("walk", -1.0, 42, "MDM")
+_, _, st = node.run(-1.0, 42)
 assert st == STATUS_BAD_DURATION, "negative duration should give STATUS_BAD_DURATION, got %r" % st
 
-# 9. Bad model_type -> STATUS_BAD_MODEL
-_, _, st = node.run("walk", 2.0, 42, "NonExistentModel")
-assert st == STATUS_BAD_MODEL, "bad model_type should give STATUS_BAD_MODEL, got %r" % st
-
 # 10. Bad seed (negative) -> STATUS_BAD_SEED
-_, _, st = node.run("walk", 2.0, -1, "MDM")
+_, _, st = node.run(2.0, -1)
 assert st == STATUS_BAD_SEED, "negative seed should give STATUS_BAD_SEED, got %r" % st
 
-# 11. Different model_type gives different latent (model offset)
-md_mdm, _, _ = node.run("walk", 1.0, 42, "MDM")
-md_kimodo, _, _ = node.run("walk", 1.0, 42, "Kimodo")
-assert not torch.equal(md_mdm["rotations"], md_kimodo["rotations"]), \
-    "different model_type should give different rotations"
+# 11. Output is exactly the seeded noise: re-derive it independently and compare
+g = torch.Generator(device="cpu"); g.manual_seed(42)
+expect = torch.randn(30, NUM_JOINTS, 6, generator=g) * 0.25
+md, bvh, st = node.run(1.0, 42)
+assert torch.equal(md["rotations"], expect[:, :, :3]), "rotations must equal the seeded noise"
+assert torch.equal(md["translations"], expect[:, :, 3:]), "translations must equal the seeded noise"
+# BVH first frame carries the hips Zrotation from that noise
+first = bvh.strip().split("\n")[-30].split()
+assert abs(float(first[0]) - float(expect[0, 0, 2])) < 1e-5
 
 # 12. Node registration: NODE_CLASS_MAPPINGS and DISPLAY_NAME_MAPPINGS
-assert "PSN_TextToMotion_Generate" in NODE_CLASS_MAPPINGS
-assert NODE_CLASS_MAPPINGS["PSN_TextToMotion_Generate"] is PSN_TextToMotion_Generate
-assert "PSN_TextToMotion_Generate" in NODE_DISPLAY_NAME_MAPPINGS
+assert "PSN_Random_Motion_Test_Fixture" in NODE_CLASS_MAPPINGS
+assert NODE_CLASS_MAPPINGS["PSN_Random_Motion_Test_Fixture"] is PSN_Random_Motion_Test_Fixture
+assert "PSN_Random_Motion_Test_Fixture" in NODE_DISPLAY_NAME_MAPPINGS
 
 # 13. INPUT_TYPES classmethod returns expected structure
-it = PSN_TextToMotion_Generate.INPUT_TYPES()
+it = PSN_Random_Motion_Test_Fixture.INPUT_TYPES()
 assert "required" in it
-assert "prompt" in it["required"]
-assert "duration" in it["required"]
-assert "seed" in it["required"]
-assert "model_type" in it["required"]
+assert set(it["required"]) == {"duration", "seed"}, "ignored prompt/model_type inputs must be gone"
 
 # 14. RETURN_TYPES and RETURN_NAMES
-assert PSN_TextToMotion_Generate.RETURN_TYPES == ("ANIMOFLOW_NPZ", "ANIMOFLOW_BVH", "INT")
-assert PSN_TextToMotion_Generate.RETURN_NAMES == ("motion_data", "rigged_animation", "status")
-assert PSN_TextToMotion_Generate.FUNCTION == "run"
-assert PSN_TextToMotion_Generate.CATEGORY == "ParametricStudio/Motion"
+assert PSN_Random_Motion_Test_Fixture.RETURN_TYPES == ("RANDOM_MOTION_DICT", "STRING", "INT")
+assert PSN_Random_Motion_Test_Fixture.RETURN_NAMES == ("random_motion", "bvh_text", "status")
+assert "not real motion" in PSN_Random_Motion_Test_Fixture.DESCRIPTION
+assert "PSN_TextToMotion_Generate" not in NODE_CLASS_MAPPINGS
+assert PSN_Random_Motion_Test_Fixture.FUNCTION == "run"
+assert PSN_Random_Motion_Test_Fixture.CATEGORY == "ParametricStudio/Motion"
 
 # 15. Inputs are not modified in place
-orig_prompt = "a person running"
 orig_duration = 3.0
-md, bvh, st = node.run(orig_prompt, orig_duration, 7, "MoMask")
+md, bvh, st = node.run(orig_duration, 7)
 assert st == STATUS_OK
-assert orig_prompt == "a person running", "prompt was modified in place"
 assert orig_duration == 3.0, "duration was modified in place"
 
 # 16. Edge case: very short duration (0.1s -> 3 frames)
-md, bvh, st = node.run("blink", 0.1, 0, "MDM")
+md, bvh, st = node.run(0.1, 0)
 assert st == STATUS_OK
 expected_frames = max(1, int(round(0.1 * FPS)))
 assert md["rotations"].shape[0] == expected_frames, \
     "frame count for 0.1s should be %d, got %d" % (expected_frames, md["rotations"].shape[0])
 
 # 17. Edge case: seed = 0 is valid
-_, _, st = node.run("idle", 1.0, 0, "MDM")
+_, _, st = node.run(1.0, 0)
 assert st == STATUS_OK, "seed=0 should be valid"
 
 # 18. BVH frame data line count matches expected frames
-md, bvh, st = node.run("dance", 1.0, 55, "MDM")
+md, bvh, st = node.run(1.0, 55)
 assert st == STATUS_OK
 lines = bvh.strip().split("\n")
 motion_idx = None

@@ -3,8 +3,10 @@
 Nodes:
   - PSN_ContinuityRuleDefiner: parses natural-language rules into a structured
     rule set ("must have" / "must not have" attribute constraints).
-  - PSN_ContinuityEnforcer: checks a generated IMAGE against the rule set using
-    lightweight, deterministic color/attribute heuristics (no VLM dependency).
+  - PSN_ContinuityColourCheck: checks only the rules that name a colour, by the
+    fraction of pixels near that RGB colour anywhere in the image. It does not
+    locate the attribute (hair, shirt, ...) and no vision model is used. Rules
+    without a colour are reported UNVERIFIED and are not counted as passed.
 
 The rule set is a plain Python dict (JSON-serialisable) so it can be passed
 between nodes without any custom tensor plumbing.
@@ -136,31 +138,26 @@ def _colour_fraction(image, colour_name, threshold=0.35):
 def _check_rule_on_image(image, rule):
     """Check a single rule against an image tensor.
 
-    Returns (passed: bool, detail: str).
+    Returns (status, detail) where status is "PASS", "FAIL" or "UNVERIFIED".
+    Only rules with a colour are checked; the colour is looked for over the
+    whole image, not on the named attribute.
     """
     attr = rule["attr"]
     colour = rule["colour"]
     polarity = rule["polarity"]
 
-    if colour is not None:
-        frac = _colour_fraction(image, colour)
-        # Consider the colour "present" if at least 2 % of pixels match
-        present = frac >= 0.02
-        if polarity == "+":
-            passed = present
-            detail = (f"must have {colour} {attr}: "
-                      f"{colour} fraction={frac:.3f} -> {'PASS' if passed else 'FAIL'}")
-        else:
-            passed = not present
-            detail = (f"must not have {colour} {attr}: "
-                      f"{colour} fraction={frac:.3f} -> {'PASS' if passed else 'FAIL'}")
-        return passed, detail
-    else:
-        # Non-colour attribute: we cannot verify presence from pixels alone.
-        # Treat as PASS with a note (heuristic limitation).
-        note = (f"{polarity} {attr}: non-colour attribute, "
-                f"assumed PASS (heuristic limitation)")
-        return True, note
+    if colour is None:
+        return ("UNVERIFIED",
+                f"{polarity} {attr}: no colour in rule, not checked -> UNVERIFIED")
+
+    frac = _colour_fraction(image, colour)
+    # Colour counts as present if at least 2 % of pixels are near it.
+    present = frac >= 0.02
+    passed = present if polarity == "+" else not present
+    verb = "must have" if polarity == "+" else "must not have"
+    detail = (f"{verb} {colour} {attr}: {colour} pixel fraction over whole image="
+              f"{frac:.3f} -> {'PASS' if passed else 'FAIL'}")
+    return ("PASS" if passed else "FAIL", detail)
 
 
 # ---------------------------------------------------------------------------
@@ -204,19 +201,30 @@ class PSN_ContinuityRuleDefiner:
         return (rule_set,)
 
 
-class PSN_ContinuityEnforcer:
-    """Check a generated IMAGE against a structured rule set.
+class PSN_ContinuityColourCheck:
+    """Check the colour rules of a rule set against an IMAGE.
 
-    Uses lightweight colour-fraction heuristics (no VLM).
+    Each rule that names a colour is tested by the fraction of pixels (first
+    batch item, RGB distance < 0.35) near that colour over the whole image;
+    at least 2 % means present. The attribute (hair, shirt, ...) is not
+    located. Rules without a colour are reported UNVERIFIED and are not
+    counted as passed. No vision model is used.
 
     Inputs:
       generated_asset (IMAGE): float tensor [B, H, W, C] in 0..1
       rule_set        (PSN_RULE_SET): dict from PSN_ContinuityRuleDefiner
 
     Outputs:
-      pass_fail        (BOOLEAN): True if all rules pass
-      violation_report (STRING):  human-readable report
+      colour_rules_pass (BOOLEAN): True only if at least one colour rule was
+                                   checked and every checked rule passed
+      unverified_count  (INT):     number of rules that were not checked
+      report            (STRING):  one line per rule
     """
+
+    DESCRIPTION = ("Checks only colour rules, by the share of pixels near the "
+                   "named RGB colour anywhere in the image. Rules without a "
+                   "colour are reported UNVERIFIED and are not counted as "
+                   "passed. Does not locate hair, shirts or other attributes.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -227,26 +235,26 @@ class PSN_ContinuityEnforcer:
             }
         }
 
-    RETURN_TYPES = ("BOOLEAN", "STRING")
-    RETURN_NAMES = ("pass_fail", "violation_report")
+    RETURN_TYPES = ("BOOLEAN", "INT", "STRING")
+    RETURN_NAMES = ("colour_rules_pass", "unverified_count", "report")
     FUNCTION = "run"
     CATEGORY = CAT
 
     def run(self, generated_asset, rule_set):
         # Validate image
         if not isinstance(generated_asset, torch.Tensor):
-            return (False, "ERROR: generated_asset is not a torch.Tensor")
+            return (False, 0, "ERROR: generated_asset is not a torch.Tensor")
         if generated_asset.dim() != 4:
-            return (False, f"ERROR: expected 4-D image [B,H,W,C], got {generated_asset.dim()}-D")
+            return (False, 0, f"ERROR: expected 4-D image [B,H,W,C], got {generated_asset.dim()}-D")
         if generated_asset.shape[-1] not in (1, 3, 4):
-            return (False, f"ERROR: expected C in (1,3,4), got {generated_asset.shape[-1]}")
+            return (False, 0, f"ERROR: expected C in (1,3,4), got {generated_asset.shape[-1]}")
 
         # Validate rule_set
         if not isinstance(rule_set, dict):
-            return (False, "ERROR: rule_set is not a dict")
+            return (False, 0, "ERROR: rule_set is not a dict")
         all_rules = rule_set.get("all_rules", [])
         if not all_rules:
-            return (True, "No rules defined; vacuously PASS.")
+            return (False, 0, "No rules defined; nothing was checked.")
 
         # Use only the first batch element for the check
         img = generated_asset[0:1]  # [1, H, W, C]
@@ -256,15 +264,21 @@ class PSN_ContinuityEnforcer:
             img = img.expand(-1, -1, -1, 3)  # replicate grey to RGB
 
         lines = []
-        all_pass = True
+        checked = 0
+        failed = 0
+        unverified = 0
         for rule in all_rules:
-            passed, detail = _check_rule_on_image(img, rule)
+            status, detail = _check_rule_on_image(img, rule)
             lines.append(detail)
-            if not passed:
-                all_pass = False
+            if status == "UNVERIFIED":
+                unverified += 1
+            else:
+                checked += 1
+                if status == "FAIL":
+                    failed += 1
 
-        report = "\n".join(lines) if lines else "No rules to check."
-        return (all_pass, report)
+        lines.append(f"checked={checked} failed={failed} unverified={unverified}")
+        return (checked > 0 and failed == 0, unverified, "\n".join(lines))
 
 
 # ---------------------------------------------------------------------------
@@ -273,10 +287,10 @@ class PSN_ContinuityEnforcer:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_ContinuityRuleDefiner": PSN_ContinuityRuleDefiner,
-    "PSN_ContinuityEnforcer": PSN_ContinuityEnforcer,
+    "PSN_ContinuityColourCheck": PSN_ContinuityColourCheck,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_ContinuityRuleDefiner": "Continuity Rule Definer",
-    "PSN_ContinuityEnforcer": "Continuity Enforcer",
+    "PSN_ContinuityColourCheck": "Continuity Colour Check",
 }

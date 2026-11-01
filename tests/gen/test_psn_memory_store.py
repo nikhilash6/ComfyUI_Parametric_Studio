@@ -1,11 +1,12 @@
 """Tests for PSN_Memory_Store node."""
 
+import json
+
 import pytest
 
 from psn_nodes.gen.psn_memory_store import (
     PSN_Memory_Store,
     _STORE,
-    _make_handle,
     _validate_agent_id,
     _validate_key,
     _validate_value,
@@ -24,7 +25,7 @@ def clear_store():
 def test_set_mode_stores_value():
     node = PSN_Memory_Store()
     handle = node.run("agent1", "style", "watercolor", "SET")[0]
-    assert handle == _make_handle("agent1", "style")
+    assert json.loads(handle) == [{"key": "style", "text": "watercolor"}]
     assert _STORE[("agent1", "style")] == "watercolor"
 
 
@@ -86,17 +87,29 @@ def test_non_string_value_raises():
         node.run("agent1", "key", 42, "SET")
 
 
-def test_handle_is_deterministic():
-    h1 = _make_handle("agent1", "key1")
-    h2 = _make_handle("agent1", "key1")
-    assert h1 == h2
-    assert h1.startswith("mem:agent1:key1:")
+def test_handle_is_json_list_scoped_to_agent():
+    node = PSN_Memory_Store()
+    node.run("agentA", "k1", "one", "SET")
+    node.run("agentB", "k1", "other", "SET")
+    handle = node.run("agentA", "k2", "two", "SET")[0]
+    assert json.loads(handle) == [
+        {"key": "k1", "text": "one"},
+        {"key": "k2", "text": "two"},
+    ]
+    assert PSN_Memory_Store.RETURN_TYPES == ("MEMORY_HANDLE",)
 
 
-def test_handle_differs_for_different_keys():
-    h1 = _make_handle("agent1", "key1")
-    h2 = _make_handle("agent1", "key2")
-    assert h1 != h2
+def test_recall_can_filter_the_handle():
+    from psn_nodes.gen.psn_memory_recall import PSN_Memory_Recall
+
+    node = PSN_Memory_Store()
+    node.run("agent1", "style", "watercolor landscape", "SET")
+    handle = node.run("agent1", "mood", "dark and moody", "SET")[0]
+    (out,) = PSN_Memory_Recall().run(handle, "moody")
+    assert json.loads(out) == [{"key": "mood", "text": "dark and moody"}]
+    assert "error" not in json.loads(out) if isinstance(json.loads(out), dict) else True
+    # the old hashed "mem:..." handle is gone
+    assert not handle.startswith("mem:")
 
 
 def test_long_agent_id_raises():

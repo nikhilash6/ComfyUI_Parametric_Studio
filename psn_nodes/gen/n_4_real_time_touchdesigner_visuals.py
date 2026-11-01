@@ -1,14 +1,14 @@
 """ParametricStudio - Real-Time TouchDesigner Visuals.
 
 Core (offline, torch/stdlib only):
-  - PSN_TD_FrameEncode: encode an IMAGE tensor to a deterministic byte payload
-    (header + raw RGBA bytes) and report its size. This is the exact payload
-    that a real OSC-blob / WebSocket-binary transport would send to TouchDesigner.
+  - PSN_TD_FrameEncode_Size: encode an IMAGE tensor to a deterministic byte
+    payload (24-byte header + raw uint8 bytes) and report its size. It does NOT
+    transmit anything: the payload is built, counted and discarded.
   - PSN_TD_Control_Parse: parse an incoming OSC-style control message
     ("/control/<command> <value>") into a command string and a float value.
 
-NOT implemented (needs network / external libs, forbidden here):
-  - Actual OSC (python-osc) or WebSocket (websocket-client) transmission.
+NOT implemented (needs network / external libs):
+  - Any OSC (python-osc) or WebSocket (websocket-client) transmission.
   - Blocking listener socket for PSN_TD_Control_In (no network allowed).
     Instead the parsing logic is exposed as a pure function so it can be
     unit-tested and wired to a real listener later.
@@ -33,7 +33,7 @@ def encode_frame(image, channel="video_in"):
     """Encode an IMAGE tensor [B,H,W,C] in 0..1 to a byte payload.
 
     Layout:
-      4s  magic b"PSNTD1"
+      4s  magic b"PSND"
       4s  channel (padded/truncated to 4 bytes)
       4B  B (uint32 LE)
       4B  H (uint32 LE)
@@ -119,11 +119,13 @@ def parse_control_message(message):
     return command, value
 
 
-class PSN_TD_FrameEncode:
-    """Encode an IMAGE tensor into the byte payload that would be streamed to
-    TouchDesigner over OSC-blob or WebSocket-binary. Returns the payload size
-    and a boolean 'frame_sent' (True when encoding succeeded, i.e. the frame
-    is ready to transmit)."""
+class PSN_TD_FrameEncode_Size:
+    """Encode an IMAGE tensor into the TouchDesigner byte payload and report its
+    size and channel tag. Nothing is transmitted: no OSC or WebSocket message is
+    sent and the payload is discarded."""
+
+    DESCRIPTION = ("Encodes an IMAGE to the TouchDesigner byte payload and "
+                   "reports its size in bytes. It does not transmit anything.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -131,22 +133,17 @@ class PSN_TD_FrameEncode:
             "required": {
                 "image": ("IMAGE",),
                 "channel": ("STRING", {"default": "video_in"}),
-                "protocol": (["osc", "websocket"],),
             }
         }
 
-    RETURN_TYPES = ("BOOLEAN", "INT", "STRING")
-    RETURN_NAMES = ("frame_sent", "payload_bytes", "channel")
+    RETURN_TYPES = ("INT", "STRING")
+    RETURN_NAMES = ("payload_bytes", "channel")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, image, channel="video_in", protocol="osc"):
-        if protocol not in ("osc", "websocket"):
-            raise ValueError("protocol must be 'osc' or 'websocket'")
+    def run(self, image, channel="video_in"):
         payload, meta = encode_frame(image, channel=channel)
-        # In a real deployment we would hand `payload` to python-osc / websocket.
-        # Here we only report that the frame is ready and how big it is.
-        return (True, meta["total_bytes"], meta["channel"])
+        return (meta["total_bytes"], meta["channel"])
 
 
 class PSN_TD_Control_Parse:
@@ -173,11 +170,11 @@ class PSN_TD_Control_Parse:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_TD_FrameEncode": PSN_TD_FrameEncode,
+    "PSN_TD_FrameEncode_Size": PSN_TD_FrameEncode_Size,
     "PSN_TD_Control_Parse": PSN_TD_Control_Parse,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_TD_FrameEncode": "TD Stream Out (Frame Encode)",
+    "PSN_TD_FrameEncode_Size": "TD Frame Encode (size only, does not send)",
     "PSN_TD_Control_Parse": "TD Control In (Parse)",
 }

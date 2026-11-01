@@ -1,7 +1,8 @@
 """PSN Workflow Preset Management nodes for ComfyUI.
 
-Provides PSN_PresetLoader and PSN_PresetSaver nodes that manage
-workflow preset graphs as JSON-serializable Python dicts.
+Provides PSN_PresetLoader (JSON text -> graph dict) and
+PSN_Preset_Json_Build (graph dict -> JSON text). Neither reads or writes
+files.
 """
 
 import json
@@ -74,51 +75,40 @@ class PSN_PresetLoader:
         return (_deep_copy(graph),)
 
 
-class PSN_PresetSaver:
-    """Saves a workflow graph as a JSON string (preset).
+class PSN_Preset_Json_Build:
+    """Serializes a workflow graph to preset JSON text.
 
-    Serializes the graph dict to a JSON string. The preset_dir is
-    accepted for compatibility but not used for actual I/O.
+    Returns the JSON string (sorted keys, 2-space indent) for the next node
+    to use. Writes no file and chooses no path.
     """
+
+    DESCRIPTION = ("Builds preset JSON text from a workflow graph and returns "
+                   "it. Writes no file and returns no path.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "graph": ("GRAPH",),
-                "preset_name": ("STRING", {"default": "default"}),
-                "preset_dir": ("STRING", {"default": "./presets"}),
             }
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("preset_path",)
+    RETURN_NAMES = ("preset_json",)
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, graph, preset_name, preset_dir):
-        if not isinstance(preset_name, str):
-            raise ValueError("preset_name must be a string")
-        if not isinstance(preset_dir, str):
-            raise ValueError("preset_dir must be a string")
-
+    def run(self, graph):
         _validate_graph(graph)
-
-        # Serialize to JSON string
-        json_str = json.dumps(graph, sort_keys=True, indent=2)
-
-        # Simulate a file path (no actual I/O)
-        path = preset_dir.rstrip("/") + "/" + preset_name + ".json"
-
-        return (path,)
+        return (json.dumps(graph, sort_keys=True, indent=2),)
 
 
 NODE_CLASS_MAPPINGS = {
     "PSN_PresetLoader": PSN_PresetLoader,
-    "PSN_PresetSaver": PSN_PresetSaver,
+    "PSN_Preset_Json_Build": PSN_Preset_Json_Build,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_PresetLoader": "PSN Preset Loader",
-    "PSN_PresetSaver": "PSN Preset Saver",
+    "PSN_Preset_Json_Build": "PSN Build Preset JSON Text",
 }

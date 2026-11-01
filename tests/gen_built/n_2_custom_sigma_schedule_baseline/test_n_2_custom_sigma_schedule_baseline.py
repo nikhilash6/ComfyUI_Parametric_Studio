@@ -8,7 +8,7 @@ import torch
 
 from n_2_custom_sigma_schedule_baseline import (
     PSN_CustomSigmaGenerator,
-    PSN_BaselineSampler,
+    PSN_KSampler_Graph_Builder,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
     _linear_sigmas,
@@ -22,11 +22,12 @@ from n_2_custom_sigma_schedule_baseline import (
 def test_module_mappings():
     """Check that NODE_CLASS_MAPPINGS and NODE_DISPLAY_NAME_MAPPINGS exist and are correct."""
     assert "PSN_CustomSigmaGenerator" in NODE_CLASS_MAPPINGS
-    assert "PSN_BaselineSampler" in NODE_CLASS_MAPPINGS
+    assert "PSN_KSampler_Graph_Builder" in NODE_CLASS_MAPPINGS
     assert NODE_CLASS_MAPPINGS["PSN_CustomSigmaGenerator"] is PSN_CustomSigmaGenerator
-    assert NODE_CLASS_MAPPINGS["PSN_BaselineSampler"] is PSN_BaselineSampler
+    assert NODE_CLASS_MAPPINGS["PSN_KSampler_Graph_Builder"] is PSN_KSampler_Graph_Builder
     assert "PSN_CustomSigmaGenerator" in NODE_DISPLAY_NAME_MAPPINGS
-    assert "PSN_BaselineSampler" in NODE_DISPLAY_NAME_MAPPINGS
+    assert "PSN_KSampler_Graph_Builder" in NODE_DISPLAY_NAME_MAPPINGS
+    assert "PSN_BaselineSampler" not in NODE_CLASS_MAPPINGS
     print("  [1] module mappings ok")
 
 
@@ -125,110 +126,42 @@ def test_bad_scheduler_type():
     print("  [7] bad scheduler type ok")
 
 
-def test_baseline_sampler_basic():
-    """BaselineSampler should return a latent of the same shape and a valid JSON graph."""
+def test_graph_builder_basic():
+    """Builder returns only a JSON node entry carrying the sigmas; no latent, no sampling."""
     gen = PSN_CustomSigmaGenerator()
     (sigmas,) = gen.run(scheduler_type="Linear", steps=5, start_sigma=1.0, end_sigma=0.0)
-
-    # Create a tiny latent: [B=1, C=4, H=8, W=8]
-    latent = {"samples": torch.randn(1, 4, 8, 8)}
-    model = object()  # placeholder
-    positive = object()
-    negative = object()
-
-    sampler = PSN_BaselineSampler()
-    (out_latent, graph_json) = sampler.run(
-        model=model,
-        positive=positive,
-        negative=negative,
-        latent=latent,
-        sigmas=sigmas,
-        sampler="euler",
-        seed=42,
-    )
-
-    # Check output latent shape
-    assert "samples" in out_latent
-    assert out_latent["samples"].shape == latent["samples"].shape
-    # Check output is not NaN
-    assert torch.isfinite(out_latent["samples"]).all(), "output latent contains NaN/Inf"
-    # Check input was not modified
-    assert not torch.equal(latent["samples"], out_latent["samples"]), "input should not equal output"
-
-    # Check graph JSON is valid and contains the sigmas
-    graph = json.loads(graph_json)
-    assert "3" in graph
+    builder = PSN_KSampler_Graph_Builder()
+    out = builder.run(sigmas=sigmas, sampler="euler", seed=42)
+    assert len(out) == 1 and PSN_KSampler_Graph_Builder.RETURN_TYPES == ("STRING",)
+    assert PSN_KSampler_Graph_Builder.RETURN_NAMES == ("node_entry_json",)
+    graph = json.loads(out[0])
+    assert list(graph) == ["3"], "no invented extra nodes"
+    inputs = graph["3"]["inputs"]
     assert graph["3"]["class_type"] == "KSampler"
-    assert graph["3"]["inputs"]["custom_sigmas"] == sigmas.tolist()
-    assert graph["3"]["inputs"]["steps"] == 5
-    assert graph["3"]["inputs"]["sampler_name"] == "euler"
-    print("  [8] baseline sampler basic ok")
+    assert inputs["custom_sigmas"] == sigmas.tolist()
+    assert inputs["steps"] == 5 and inputs["seed"] == 42 and inputs["sampler_name"] == "euler"
+    # fabricated pieces are gone: no dangling links, no invented node entries
+    assert not any(isinstance(v, list) and len(v) == 2 and isinstance(v[0], str) for v in inputs.values())
+    assert "PLACEHOLDER" not in out[0]
+    assert "no sampling" in PSN_KSampler_Graph_Builder.DESCRIPTION
+    assert "LATENT" not in str(PSN_KSampler_Graph_Builder.INPUT_TYPES())
+    print("  [8] graph builder basic ok")
 
 
-def test_baseline_sampler_bad_latent():
-    """BaselineSampler should raise ValueError for invalid latent."""
-    gen = PSN_CustomSigmaGenerator()
-    (sigmas,) = gen.run(scheduler_type="Linear", steps=3, start_sigma=1.0, end_sigma=0.0)
-    sampler = PSN_BaselineSampler()
-
-    # Latent without 'samples' key
+def test_graph_builder_bad_inputs():
+    builder = PSN_KSampler_Graph_Builder()
+    for bad in (torch.randn(2, 3), torch.tensor([1.0, float("nan"), 0.0]), torch.tensor([1.0, -0.5, 0.0])):
+        try:
+            builder.run(sigmas=bad, sampler="euler")
+            assert False, "should have raised ValueError for bad sigmas"
+        except ValueError:
+            pass
     try:
-        sampler.run(model=object(), positive=object(), negative=object(),
-                    latent={"wrong_key": torch.randn(1, 4, 8, 8)},
-                    sigmas=sigmas, sampler="euler")
-        assert False, "should have raised ValueError for missing 'samples'"
+        builder.run(sigmas=torch.tensor([1.0, 0.0]), sampler="nope")
+        assert False, "should have raised ValueError for unknown sampler"
     except ValueError:
         pass
-
-    # Latent with 3D tensor (wrong dims)
-    try:
-        sampler.run(model=object(), positive=object(), negative=object(),
-                    latent={"samples": torch.randn(1, 4, 8)},
-                    sigmas=sigmas, sampler="euler")
-        assert False, "should have raised ValueError for 3D latent"
-    except ValueError:
-        pass
-
-    # Latent that is not a dict
-    try:
-        sampler.run(model=object(), positive=object(), negative=object(),
-                    latent=torch.randn(1, 4, 8, 8),
-                    sigmas=sigmas, sampler="euler")
-        assert False, "should have raised ValueError for non-dict latent"
-    except ValueError:
-        pass
-    print("  [9] baseline sampler bad latent ok")
-
-
-def test_baseline_sampler_bad_sigmas():
-    """BaselineSampler should raise ValueError for invalid sigmas."""
-    sampler = PSN_BaselineSampler()
-    latent = {"samples": torch.randn(1, 4, 8, 8)}
-
-    # 2D sigmas
-    try:
-        sampler.run(model=object(), positive=object(), negative=object(),
-                    latent=latent, sigmas=torch.randn(2, 3), sampler="euler")
-        assert False, "should have raised ValueError for 2D sigmas"
-    except ValueError:
-        pass
-
-    # Sigmas with NaN
-    try:
-        sampler.run(model=object(), positive=object(), negative=object(),
-                    latent=latent, sigmas=torch.tensor([1.0, float("nan"), 0.0]), sampler="euler")
-        assert False, "should have raised ValueError for NaN sigmas"
-    except ValueError:
-        pass
-
-    # Negative sigmas
-    try:
-        sampler.run(model=object(), positive=object(), negative=object(),
-                    latent=latent, sigmas=torch.tensor([1.0, -0.5, 0.0]), sampler="euler")
-        assert False, "should have raised ValueError for negative sigmas"
-    except ValueError:
-        pass
-    print("  [10] baseline sampler bad sigmas ok")
+    print("  [9] graph builder bad inputs ok")
 
 
 def test_edge_case_single_step():
@@ -258,9 +191,8 @@ def main():
     test_custom_sigmas_string()
     test_bad_custom_string()
     test_bad_scheduler_type()
-    test_baseline_sampler_basic()
-    test_baseline_sampler_bad_latent()
-    test_baseline_sampler_bad_sigmas()
+    test_graph_builder_basic()
+    test_graph_builder_bad_inputs()
     test_edge_case_single_step()
     test_edge_case_zero_start()
     print("ok")

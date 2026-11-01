@@ -1,12 +1,12 @@
-"""PSN_Model_Merger: pure-logic model merging and inspection.
+"""PSN_Merge_JSON_Weights / PSN_Inspect_JSON_Weights: weight-list merging and inspection.
 
-This module implements the *pure-logic, secure-by-design* part of a model
-merger. It does NOT import torch, ComfyUI, or any GPU/IO library. Instead it
-operates on plain Python values:
+These nodes work on weights written as JSON text. They cannot read, merge or
+inspect real checkpoint files. They import no torch, ComfyUI or GPU/IO
+library and operate on plain Python values:
 
-  * A "model" is represented as a JSON text string mapping layer names to
+  * A set of weights is represented as a JSON text string mapping layer names to
     flat lists of numeric weights (e.g. '{"conv1": [1.0, 2.0], "fc": [0.5]}').
-  * Merging is a linear interpolation (lerp) of the weight vectors.
+  * Merging is a weighted sum (lerp) of the weight vectors.
   * Inspection lists layer names and counts total parameters.
 
 All functions take plain values (strings, numbers) and return plain values
@@ -20,7 +20,7 @@ CAT = "ParametricStudio/Model"
 
 
 def _parse_model(model_text):
-    """Parse a JSON model string into a dict of layer -> list of floats.
+    """Parse a JSON weights string into a dict of layer -> list of floats.
 
     Returns (model_dict, error_string). On success error_string is None.
     """
@@ -98,8 +98,13 @@ def inspect_model(model_text):
     return layer_names, param_count, None
 
 
-class PSN_Merge_Checkpoints:
-    """Linearly interpolates the weights of two models represented as JSON text."""
+class PSN_Merge_JSON_Weights:
+    """Weighted sum of two sets of weights given as JSON text."""
+
+    DESCRIPTION = (
+        "Weighted sum of two weight sets written as JSON text (layer name to list of numbers). "
+        "Cannot read or merge checkpoint files."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -113,7 +118,7 @@ class PSN_Merge_Checkpoints:
         }
 
     RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("merged_model", "error")
+    RETURN_NAMES = ("merged_weights_json", "error")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -122,8 +127,13 @@ class PSN_Merge_Checkpoints:
         return (merged if merged is not None else "{}", err if err else "")
 
 
-class PSN_Inspect_Model:
-    """Lists all layer names and counts total parameters for a model JSON string."""
+class PSN_Inspect_JSON_Weights:
+    """Lists layer names and counts parameters for a JSON description of weights."""
+
+    DESCRIPTION = (
+        "Lists layer names and counts the numbers in a JSON description of weights. "
+        "Opens no model file."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -148,11 +158,11 @@ class PSN_Inspect_Model:
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Merge_Checkpoints": PSN_Merge_Checkpoints,
-    "PSN_Inspect_Model": PSN_Inspect_Model,
+    "PSN_Merge_JSON_Weights": PSN_Merge_JSON_Weights,
+    "PSN_Inspect_JSON_Weights": PSN_Inspect_JSON_Weights,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Merge_Checkpoints": "PSN Merge Checkpoints",
-    "PSN_Inspect_Model": "PSN Inspect Model",
+    "PSN_Merge_JSON_Weights": "PSN Merge JSON Weights (weighted sum, no checkpoint files)",
+    "PSN_Inspect_JSON_Weights": "PSN Inspect JSON Weights (no checkpoint files)",
 }

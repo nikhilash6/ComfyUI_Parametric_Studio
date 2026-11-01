@@ -1,9 +1,11 @@
 """PSN_Workflow_Orchestrator: pure-logic planning for parallel workflow segments.
 
 This module implements ONLY the safe, pure-Python planning logic for splitting a
-workflow into independent segments and checking VRAM budget feasibility. It does
-NOT spawn processes, touch the GPU, or perform any I/O. It takes plain values
-(strings, numbers, JSON text) and returns plain values (lists, strings).
+workflow into independent segments and comparing the VRAM it would need
+(max_parallel * vram_per_instance) with a vram_available_gb number you type. It does
+NOT spawn processes, touch the GPU, or perform any I/O: nothing is started, the
+instance ids are plan labels, and available VRAM is whatever you type in. It takes
+plain values (strings, numbers, JSON text) and returns plain values (lists, strings).
 """
 
 import json
@@ -97,11 +99,13 @@ def _split_into_batches(segments, max_parallel):
 
 
 class PSN_Workflow_Orchestrator:
-    """Plan parallel workflow segments and check VRAM feasibility.
+    """Plan parallel workflow segments and compare the VRAM needed with a typed number.
 
     Pure-logic node: parses workflow JSON, validates segments, splits them
-    into parallel batches, and reports VRAM budget status. No processes,
-    no GPU, no I/O.
+    into parallel batches (the instance ids are plan labels; nothing is started),
+    and returns an error status when max_parallel * vram_per_instance is more than
+    vram_available_gb. The available figure is typed in, never read from the GPU;
+    leave it at 0 to skip the comparison. No processes, no GPU, no I/O.
     """
 
     @classmethod
@@ -112,7 +116,10 @@ class PSN_Workflow_Orchestrator:
                 "max_parallel": ("INT", {"default": 2, "min": 1, "max": _MAX_SEGMENTS, "step": 1}),
                 "vram_per_instance": ("FLOAT", {"default": 4.0, "min": 0.0, "max": 1e6, "step": 0.1}),
             },
-            "optional": {},
+            "optional": {
+                "vram_available_gb": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1e6, "step": 0.1,
+                                                "tooltip": "VRAM you have free, typed in. 0 = not given, comparison skipped."}),
+            },
         }
 
     RETURN_TYPES = ("LIST", "STRING")
@@ -120,7 +127,7 @@ class PSN_Workflow_Orchestrator:
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def run(self, workflow_json, max_parallel, vram_per_instance):
+    def run(self, workflow_json, max_parallel, vram_per_instance, vram_available_gb=0.0):
         # Validate inputs.
         segments, err = _validate_workflow_json(workflow_json)
         if err:
@@ -129,6 +136,17 @@ class PSN_Workflow_Orchestrator:
         total_vram, err = _compute_vram_budget(max_parallel, vram_per_instance)
         if err:
             return ([], f"error: {err}")
+
+        # Compare the VRAM needed with the figure typed in (0 = not given).
+        if not isinstance(vram_available_gb, (int, float)) or isinstance(vram_available_gb, bool) or vram_available_gb < 0:
+            return ([], "error: vram_available_gb must be a number >= 0")
+        if vram_available_gb > 0 and total_vram > vram_available_gb:
+            return ([], f"error: needs {total_vram:.2f}GB (max_parallel={max_parallel} x {float(vram_per_instance):.2f}GB) "
+                        f"but vram_available_gb={float(vram_available_gb):.2f}GB")
+        vram_note = (
+            f"fits vram_available_gb={float(vram_available_gb):.2f}GB (as typed)"
+            if vram_available_gb > 0 else "vram_available_gb not given, comparison skipped"
+        )
 
         # Split into batches.
         batches = _split_into_batches(segments, max_parallel)
@@ -144,7 +162,7 @@ class PSN_Workflow_Orchestrator:
         num_batches = len(batches)
         status = (
             f"ok: {num_segments} segments in {num_batches} batch(es), "
-            f"max_parallel={max_parallel}, total_vram={total_vram:.2f}GB"
+            f"max_parallel={max_parallel}, total_vram={total_vram:.2f}GB, {vram_note}"
         )
 
         return (instance_ids, status)

@@ -4,7 +4,7 @@ import json
 import torch
 
 from h_create_scripted_headless_smoke_tes import (
-    PSN_SmokeTestWorkflow,
+    PSN_TensorExpectationCheck,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
     run_smoke_test,
@@ -17,22 +17,35 @@ def _make_image(h=4, w=4, c=3, val=0.5):
 
 def test_node_class_mappings():
     """Module-level mappings exist and are consistent."""
-    assert "PSN_SmokeTestWorkflow" in NODE_CLASS_MAPPINGS
-    assert NODE_CLASS_MAPPINGS["PSN_SmokeTestWorkflow"] is PSN_SmokeTestWorkflow
-    assert "PSN_SmokeTestWorkflow" in NODE_DISPLAY_NAME_MAPPINGS
-    assert isinstance(NODE_DISPLAY_NAME_MAPPINGS["PSN_SmokeTestWorkflow"], str)
+    assert "PSN_TensorExpectationCheck" in NODE_CLASS_MAPPINGS
+    assert NODE_CLASS_MAPPINGS["PSN_TensorExpectationCheck"] is PSN_TensorExpectationCheck
+    assert "PSN_TensorExpectationCheck" in NODE_DISPLAY_NAME_MAPPINGS
+    assert isinstance(NODE_DISPLAY_NAME_MAPPINGS["PSN_TensorExpectationCheck"], str)
 
 
 def test_input_types():
     """INPUT_TYPES returns the expected structure."""
-    it = PSN_SmokeTestWorkflow.INPUT_TYPES()
+    it = PSN_TensorExpectationCheck.INPUT_TYPES()
     assert "required" in it
-    assert "workflow_json" in it["required"]
+    assert "script_json" in it["required"]
+    assert "workflow_json" not in it["required"]
     assert "image" in it["required"]
     assert it["required"]["image"] == ("IMAGE",)
-    assert PSN_SmokeTestWorkflow.RETURN_TYPES == ("STRING", "STRING", "IMAGE")
-    assert PSN_SmokeTestWorkflow.FUNCTION == "run"
-    assert PSN_SmokeTestWorkflow.CATEGORY.startswith("ParametricStudio/")
+    assert PSN_TensorExpectationCheck.RETURN_TYPES == ("STRING", "STRING", "IMAGE")
+    assert PSN_TensorExpectationCheck.FUNCTION == "run"
+    assert PSN_TensorExpectationCheck.CATEGORY.startswith("ParametricStudio/")
+
+
+def test_default_script_checks_range_only():
+    """The default script is only a 0..1 range check, and says so."""
+    default = json.loads(PSN_TensorExpectationCheck.INPUT_TYPES()["required"]["script_json"][1]["default"])
+    assert [st["op"] for st in default["steps"]] == ["identity"]
+    node = PSN_TensorExpectationCheck()
+    result, report, _ = node.run(json.dumps(default), _make_image(val=0.5))
+    assert result == "PASS" and "min ok" in report and "max ok" in report
+    result, report, _ = node.run(json.dumps(default), _make_image(val=1.5))
+    assert result == "FAIL" and "max check failed" in report
+    assert "does not run" in PSN_TensorExpectationCheck.DESCRIPTION.lower()
 
 
 def test_pass_identity():
@@ -45,7 +58,7 @@ def test_pass_identity():
         ],
         "inputs": {"img": "img"},
     }
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     result, report, out = node.run(json.dumps(wf), img)
     assert result == "PASS", "expected PASS, got %s; report: %s" % (result, report)
     assert out.shape == img.shape
@@ -62,7 +75,7 @@ def test_fail_mean_mismatch():
         ],
         "inputs": {"img": "img"},
     }
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     result, report, out = node.run(json.dumps(wf), img)
     assert result == "FAIL", "expected FAIL, got %s" % result
     assert "mean check failed" in report
@@ -80,7 +93,7 @@ def test_scale_and_add():
         ],
         "inputs": {"img": "img"},
     }
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     result, report, out = node.run(json.dumps(wf), img)
     assert result == "PASS", "expected PASS, got %s; report: %s" % (result, report)
     assert torch.allclose(out, torch.full_like(img, 0.75))
@@ -100,7 +113,7 @@ def test_threshold():
         ],
         "inputs": {"img": "img"},
     }
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     result, report, out = node.run(json.dumps(wf), img)
     assert result == "PASS", "expected PASS, got %s; report: %s" % (result, report)
     expected = torch.tensor([[[[1.0], [0.0]], [[1.0], [0.0]]]], dtype=torch.float32)
@@ -110,17 +123,17 @@ def test_threshold():
 def test_bad_json():
     """Invalid JSON should return FAIL with an error message."""
     img = _make_image()
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     result, report, out = node.run("not valid json {{{", img)
     assert result == "FAIL"
-    assert "invalid workflow JSON" in report
+    assert "invalid script JSON" in report
 
 
 def test_empty_steps():
     """Workflow with no steps should FAIL."""
     img = _make_image()
     wf = {"steps": [], "inputs": {"img": "img"}}
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     result, report, out = node.run(json.dumps(wf), img)
     assert result == "FAIL"
     assert "non-empty" in report
@@ -135,7 +148,7 @@ def test_missing_input_tensor():
         ],
         "inputs": {"img": "nonexistent_key"},
     }
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     result, report, out = node.run(json.dumps(wf), img)
     assert result == "FAIL"
     assert "not provided" in report
@@ -150,7 +163,7 @@ def test_unknown_op():
         ],
         "inputs": {"img": "img"},
     }
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     result, report, out = node.run(json.dumps(wf), img)
     assert result == "FAIL"
     assert "unknown op" in report
@@ -166,7 +179,7 @@ def test_no_in_place_modification():
         ],
         "inputs": {"img": "img"},
     }
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     node.run(json.dumps(wf), img)
     assert torch.allclose(img, original), "input tensor was modified in place!"
 
@@ -185,7 +198,7 @@ def test_mean_op():
         ],
         "inputs": {"img": "img"},
     }
-    node = PSN_SmokeTestWorkflow()
+    node = PSN_TensorExpectationCheck()
     result, report, out = node.run(json.dumps(wf), img)
     assert result == "PASS", "expected PASS, got %s; report: %s" % (result, report)
     assert torch.allclose(out, torch.full_like(img, 0.5))
@@ -218,6 +231,7 @@ def test_non_dict_workflow():
 if __name__ == "__main__":
     test_node_class_mappings()
     test_input_types()
+    test_default_script_checks_range_only()
     test_pass_identity()
     test_fail_mean_mismatch()
     test_scale_and_add()

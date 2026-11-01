@@ -1,0 +1,34 @@
+# Honest uses of the words and calls tests/test_node_honesty.py looks for. Each row needs a reason and has to keep matching.
+node	rule	token	reason
+PSN_AudioDrivenNoise	random	random.Random	seeded noise is the node's stated product
+PSN_Battlemap_Generate	random	random.Random	seeded procedural map; description says generated
+PSN_BlockOffloadManager	word	simulat	description says it plans offloading; helper name only
+PSN_Camera_Degradation	description	simulat	really degrades the IMAGE tensor to imitate a lens and sensor
+PSN_Camera_Degradation	output	simulated_image	really degrades the IMAGE tensor to imitate a lens and sensor
+PSN_Camera_Degradation	random	torch.rand_like	sensor noise is the effect
+PSN_Camera_Degradation	random	torch.randn_like	sensor noise is the effect
+PSN_Folder_Batch_Queue	random	random.Random	fixed-seed shuffle for sort_order=random
+PSN_IntermediateInspector	random	torch.randn	seeded branch of a latent; description says perturbed copy
+PSN_LatentNoiseInject	random	torch.randn	adding noise is the node's job
+PSN_Live_State_Loop	description	simulat	description says it only imitates a wait and timeout decision
+PSN_LoRA_Job_Payload_HunYuan	path	hunyuan_lora_rank{}_step{}.safetensors	the output is named expected_output_path and the description says nothing is written
+PSN_MultiGPU_Sync	description	simulat	description says it imitates all-reduce on tensors it is given
+PSN_One_Click_Prompt_Generator	random	random.Random	seeded choice from word lists; reproducible text builder
+PSN_Prompt_Generator	random	random.Random	seeded template substitution
+PSN_Prompt_Generator	word	placeholder	template {placeholders}, not faked output
+PSN_Prompt_Weight_Variation_Specs	random	random.Random	seeded variation specs; description says specs only
+PSN_RVC_Train_Model	random	torch.randperm	shuffles the real training data
+PSN_Random_Asset_Selector	random	random.Random	random selection is the node's job
+PSN_Random_Image_Selector	random	random.Random	random selection is the node's job
+PSN_Random_Motion_Test_Fixture	random	torch.randn	named and described as seeded test noise, not motion
+PSN_Regional_Noise_Perturbation	random	random.Random	noise is the node's job
+PSN_RoundTripAssetValidation	description	simulat	description says the export is imitated by quantizing; the error is measured for real
+PSN_Seed_Generator	random	random.Random	seed generation
+PSN_Seed_Generator	word	pseudo	Pseudo-Random is a seed mode name
+PSN_SiteBuilder	description	placeholder	says it refuses invented contact details; real build
+PSN_SpectralNoise	random	torch.rand	noise is the node's job
+PSN_SpectralNoise	random	torch.randn	noise is the node's job
+PSN_StyleGAN_Direction_Discover	random	random.Random	seeded power-iteration start vector for real PCA
+PSN_Synthetic_Latent_Frame	random	torch.randn	named and described as a test latent from seeded noise
+PSN_Uncond_Zero_Patch	output	simulation	output is a computed list of steps that would skip; description says no patch is applied
+PSN_Uncond_Zero_Patch	word	simulat	helper name for that computed list

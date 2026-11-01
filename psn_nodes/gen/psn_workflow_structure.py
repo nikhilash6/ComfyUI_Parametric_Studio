@@ -1,11 +1,12 @@
-"""PSN_Workflow_Structure: Enforce a logical structure (Loader, Controller, Sampler) in complex workflows.
+"""PSN_WorkflowBundle: bundle a loader output, a controller dict and a sampler input into one dict.
 
-This module provides a pure-logic, secure-by-design node that validates the presence of expected
-inputs and organizes them into a standard dictionary for the next stage. It acts as a pass-through
-node that ensures the data flow follows the pattern: Loader -> Controller -> Sampler.
+This is a pass-through node. It checks only that controller_settings is a dict and
+that loader_output and sampler_input are not None, then returns them together as
+{"loader", "controller", "sampler"}. It does not check what the loader or sampler
+values are, and it enforces no workflow order or structure.
 
 No GPU, torch, ComfyUI internals, network, file I/O, or subprocess usage. Only pure Python standard
-library (json) is used for serialization/validation.
+library (json) is used for serialization.
 """
 
 import json
@@ -19,11 +20,17 @@ ANY = _AnyType("*")
 CAT = "ParametricStudio/Structure"
 
 
-class PSN_WorkflowStructure:
-    """Enforce a logical structure (Loader, Controller, Sampler) in complex workflows.
+class PSN_WorkflowBundle:
+    """Bundle a loader output, a controller dict and a sampler input into one dict.
 
-    Validates the presence of expected inputs and organizes them into a standard dictionary.
+    The only checks: controller_settings is a dict, and loader_output and
+    sampler_input are not None. Nothing else about the values is validated.
     """
+
+    DESCRIPTION = (
+        "Bundles loader output, controller dict and sampler input into one dict; inputs_present only means the "
+        "controller is a dict and the other two inputs are not None."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -39,12 +46,12 @@ class PSN_WorkflowStructure:
         }
 
     RETURN_TYPES = ("DICT", "BOOLEAN")
-    RETURN_NAMES = ("structured_data", "validation_status")
+    RETURN_NAMES = ("bundled_data", "inputs_present")
     FUNCTION = "run"
     CATEGORY = CAT
 
     def run(self, loader_output, controller_settings, sampler_input, log_structure=False):
-        """Validate and organize workflow structure.
+        """Bundle the three inputs after checking the controller is a dict and the others are not None.
 
         Args:
             loader_output: Output from the Loader section.
@@ -53,17 +60,17 @@ class PSN_WorkflowStructure:
             log_structure: If True, include a serialized structure summary in the output.
 
         Returns:
-            Tuple of (structured_data, validation_status)
+            Tuple of (bundled_data, inputs_present)
         """
         # Validate controller_settings is a dict
         if not isinstance(controller_settings, dict):
             return ({}, False)
 
-        # Validate that all required inputs are present (not None)
+        # Only presence is checked (not None); the values themselves are not inspected
         if loader_output is None or sampler_input is None:
             return ({}, False)
 
-        # Build the structured data
+        # Build the bundle
         structured_data = {
             "loader": loader_output,
             "controller": controller_settings,
@@ -89,9 +96,9 @@ class PSN_WorkflowStructure:
 
 # ComfyUI node mappings
 NODE_CLASS_MAPPINGS = {
-    "PSN_WorkflowStructure": PSN_WorkflowStructure,
+    "PSN_WorkflowBundle": PSN_WorkflowBundle,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_WorkflowStructure": "PSN Workflow Structure",
+    "PSN_WorkflowBundle": "PSN Workflow Bundle (loader, controller, sampler)",
 }

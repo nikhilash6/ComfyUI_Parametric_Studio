@@ -3,8 +3,9 @@
 import math
 import pytest
 
+import psn_nodes.gen.n_1_dynamic_vram_aware_pipeline_selector as mod
 from psn_nodes.gen.n_1_dynamic_vram_aware_pipeline_selector import (
-    PSN_VRAM_Query,
+    PSN_VRAM_Utilization_Calc,
     PSN_Pipeline_Selector,
     _FALLBACK_PIPELINE_ID,
 )
@@ -14,108 +15,54 @@ from psn_nodes.gen.n_1_dynamic_vram_aware_pipeline_selector import (
 # PSN_VRAM_Query tests
 # ---------------------------------------------------------------------------
 
-class TestPSNVRAMQuery:
+class TestPSNVRAMUtilizationCalc:
+    def test_renamed_and_reads_no_gpu(self):
+        assert "PSN_VRAM_Query" not in mod.NODE_CLASS_MAPPINGS
+        assert list(mod.NODE_CLASS_MAPPINGS)[0] == "PSN_VRAM_Utilization_Calc"
+        assert not hasattr(mod, "PSN_VRAM_Query")
+        assert not hasattr(mod, "_validate_device_index")
+        req = PSN_VRAM_Utilization_Calc.INPUT_TYPES()["required"]
+        assert set(req) == {"free_vram_gb", "total_vram_gb"}  # device_index/refresh dropped
+        assert PSN_VRAM_Utilization_Calc.RETURN_NAMES == ("utilization_pct",)
+        assert "Reads no GPU" in PSN_VRAM_Utilization_Calc.DESCRIPTION
+
     def test_basic_utilization(self):
-        node = PSN_VRAM_Query()
-        free, total, util = node.run(
-            free_vram_gb=48.0,
-            total_vram_gb=96.0,
-            device_index=0,
-            refresh=True,
-        )
-        assert free == pytest.approx(48.0)
-        assert total == pytest.approx(96.0)
-        assert util == pytest.approx(50.0)
+        node = PSN_VRAM_Utilization_Calc()
+        assert node.run(free_vram_gb=48.0, total_vram_gb=96.0) == (pytest.approx(50.0),)
+        assert node.run(free_vram_gb=24.0, total_vram_gb=96.0) == (pytest.approx(75.0),)
 
     def test_full_vram_available(self):
-        node = PSN_VRAM_Query()
-        free, total, util = node.run(
-            free_vram_gb=96.0,
-            total_vram_gb=96.0,
-            device_index=0,
-            refresh=False,
-        )
-        assert util == pytest.approx(0.0)
+        node = PSN_VRAM_Utilization_Calc()
+        assert node.run(free_vram_gb=96.0, total_vram_gb=96.0) == (pytest.approx(0.0),)
 
     def test_zero_free_vram(self):
-        node = PSN_VRAM_Query()
-        free, total, util = node.run(
-            free_vram_gb=0.0,
-            total_vram_gb=96.0,
-            device_index=1,
-            refresh=True,
-        )
-        assert util == pytest.approx(100.0)
+        node = PSN_VRAM_Utilization_Calc()
+        assert node.run(free_vram_gb=0.0, total_vram_gb=96.0) == (pytest.approx(100.0),)
 
     def test_free_exceeds_total_raises(self):
-        node = PSN_VRAM_Query()
+        node = PSN_VRAM_Utilization_Calc()
         with pytest.raises(ValueError, match="cannot exceed"):
-            node.run(
-                free_vram_gb=100.0,
-                total_vram_gb=96.0,
-                device_index=0,
-                refresh=True,
-            )
+            node.run(free_vram_gb=100.0, total_vram_gb=96.0)
 
     def test_zero_total_raises(self):
-        node = PSN_VRAM_Query()
+        node = PSN_VRAM_Utilization_Calc()
         with pytest.raises(ValueError, match="must be > 0"):
-            node.run(
-                free_vram_gb=0.0,
-                total_vram_gb=0.0,
-                device_index=0,
-                refresh=True,
-            )
+            node.run(free_vram_gb=0.0, total_vram_gb=0.0)
 
     def test_negative_free_raises(self):
-        node = PSN_VRAM_Query()
+        node = PSN_VRAM_Utilization_Calc()
         with pytest.raises(ValueError, match="must be >= 0"):
-            node.run(
-                free_vram_gb=-1.0,
-                total_vram_gb=96.0,
-                device_index=0,
-                refresh=True,
-            )
+            node.run(free_vram_gb=-1.0, total_vram_gb=96.0)
 
     def test_non_numeric_input_raises(self):
-        node = PSN_VRAM_Query()
+        node = PSN_VRAM_Utilization_Calc()
         with pytest.raises(ValueError, match="must be a number"):
-            node.run(
-                free_vram_gb="48",
-                total_vram_gb=96.0,
-                device_index=0,
-                refresh=True,
-            )
+            node.run(free_vram_gb="48", total_vram_gb=96.0)
 
     def test_nan_input_raises(self):
-        node = PSN_VRAM_Query()
+        node = PSN_VRAM_Utilization_Calc()
         with pytest.raises(ValueError, match="finite"):
-            node.run(
-                free_vram_gb=float("nan"),
-                total_vram_gb=96.0,
-                device_index=0,
-                refresh=True,
-            )
-
-    def test_negative_device_index_raises(self):
-        node = PSN_VRAM_Query()
-        with pytest.raises(ValueError, match="device_index must be >= 0"):
-            node.run(
-                free_vram_gb=48.0,
-                total_vram_gb=96.0,
-                device_index=-1,
-                refresh=True,
-            )
-
-    def test_bool_device_index_raises(self):
-        node = PSN_VRAM_Query()
-        with pytest.raises(ValueError, match="not a bool"):
-            node.run(
-                free_vram_gb=48.0,
-                total_vram_gb=96.0,
-                device_index=True,
-                refresh=True,
-            )
+            node.run(free_vram_gb=float("nan"), total_vram_gb=96.0)
 
 
 # ---------------------------------------------------------------------------

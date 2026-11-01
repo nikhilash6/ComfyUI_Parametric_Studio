@@ -1,10 +1,10 @@
 """
-PSN StyleGAN Explore - Pure logic implementation for StyleGAN2 latent space exploration.
+PSN StyleGAN Explore - latent-vector helpers for StyleGAN2 exploration. Runs no StyleGAN model.
 
-This module implements the pure-logic parts of the StyleGAN2 explorer:
-- PSN_StyleGAN_Load: Validates model path format (no actual file loading).
+This module holds three plain-Python nodes:
+- PSN_StyleGAN_Path_Check: Checks a checkpoint path string's extension. Opens and loads nothing.
 - PSN_StyleGAN_Slerp: Performs spherical linear interpolation (slerp) between two latent vectors.
-- PSN_StyleGAN_Generate: Validates latent tensor shape (no actual image generation).
+- PSN_StyleGAN_Generate_Spec: Checks latent frame shapes and returns a JSON spec. Generates no image.
 
 NOTE: This implementation does NOT use torch, ComfyUI, or any GPU operations.
 It operates on plain Python lists/tuples representing latent vectors.
@@ -103,12 +103,14 @@ def _slerp_sequence(latent_a, latent_b, num_frames, t_start, t_end):
     return frames
 
 
-class PSN_StyleGAN_Load:
+class PSN_StyleGAN_Path_Check:
     """
-    Validates a StyleGAN2 model path. Does NOT actually load the model.
-    Returns a placeholder model descriptor (JSON string) for downstream nodes.
+    Checks that a StyleGAN2 checkpoint path string ends in an allowed extension.
+    Does not open the file, load a model or check that the file exists.
     """
-    
+
+    DESCRIPTION = "Validates a StyleGAN checkpoint path string (extension only); loads nothing and does not check the file exists."
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -116,24 +118,23 @@ class PSN_StyleGAN_Load:
                 "model_path": ("STRING", {"default": "stylegan2.pt", "multiline": False}),
             }
         }
-    
+
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("model",)
+    RETURN_NAMES = ("path_check_json",)
     FUNCTION = "run"
     CATEGORY = CAT
-    
+
     def run(self, model_path):
         valid, reason = _validate_model_path(model_path)
         if not valid:
             raise ValueError(f"Invalid model path: {reason}")
-        
-        # Return a placeholder model descriptor
-        model_descriptor = json.dumps({
-            "type": "stylegan2",
+
+        result = json.dumps({
             "path": model_path,
-            "status": "validated"
+            "extension_ok": True,
+            "file_opened": False,
         })
-        return (model_descriptor,)
+        return (result,)
 
 
 class PSN_StyleGAN_Slerp:
@@ -195,73 +196,75 @@ class PSN_StyleGAN_Slerp:
         return (json.dumps(frames),)
 
 
-class PSN_StyleGAN_Generate:
+class PSN_StyleGAN_Generate_Spec:
     """
-    Validates latent tensor shape. Does NOT actually generate images.
-    Returns a placeholder image descriptor (JSON string).
+    Checks the shape of a list of latent vectors and returns a JSON spec of them.
+    Generates no image: no StyleGAN model runs.
     """
-    
+
+    DESCRIPTION = "Builds a generation spec (frame count and latent size) from latent vectors; generates no image."
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "model": ("STRING", {"default": "{}", "multiline": False}),
+                "path_check_json": ("STRING", {"default": "{}", "multiline": False}),
                 "latents": ("STRING", {"default": "[]", "multiline": False}),
             }
         }
-    
+
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("images",)
+    RETURN_NAMES = ("generation_spec_json",)
     FUNCTION = "run"
     CATEGORY = CAT
-    
-    def run(self, model, latents):
-        # Validate model descriptor
+
+    def run(self, path_check_json, latents):
+        # Validate the path-check JSON
         try:
-            model_data = json.loads(model)
+            model_data = json.loads(path_check_json)
         except (json.JSONDecodeError, TypeError):
-            raise ValueError("model must be a valid JSON object")
-        
+            raise ValueError("path_check_json must be a valid JSON object")
+
         if not isinstance(model_data, dict):
-            raise ValueError("model must be a JSON object")
-        
+            raise ValueError("path_check_json must be a JSON object")
+
         # Validate latents
         try:
             latent_frames = json.loads(latents)
         except (json.JSONDecodeError, TypeError):
             raise ValueError("latents must be a valid JSON array")
-        
+
         if not isinstance(latent_frames, list):
             raise ValueError("latents must be a JSON array")
-        
+
         if len(latent_frames) == 0:
             raise ValueError("latents must contain at least one frame")
-        
-        # Validate each frame is a list of numbers
+
+        # Validate each frame is a list of numbers of the same length
         for i, frame in enumerate(latent_frames):
             if not isinstance(frame, list):
                 raise ValueError(f"Frame {i} must be a JSON array of numbers")
             if not all(isinstance(x, (int, float)) for x in frame):
                 raise ValueError(f"Frame {i} must contain only numbers")
-        
-        # Return placeholder image descriptor
-        image_descriptor = json.dumps({
-            "type": "stylegan2_output",
+            if len(frame) != len(latent_frames[0]):
+                raise ValueError(f"Frame {i} has a different length from frame 0")
+
+        spec = json.dumps({
+            "model_path": model_data.get("path"),
             "num_frames": len(latent_frames),
             "latent_dim": len(latent_frames[0]),
-            "status": "validated"
         })
-        return (image_descriptor,)
+        return (spec,)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_StyleGAN_Load": PSN_StyleGAN_Load,
+    "PSN_StyleGAN_Path_Check": PSN_StyleGAN_Path_Check,
     "PSN_StyleGAN_Slerp": PSN_StyleGAN_Slerp,
-    "PSN_StyleGAN_Generate": PSN_StyleGAN_Generate,
+    "PSN_StyleGAN_Generate_Spec": PSN_StyleGAN_Generate_Spec,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_StyleGAN_Load": "PSN StyleGAN Load",
+    "PSN_StyleGAN_Path_Check": "PSN StyleGAN Checkpoint Path Check (loads nothing)",
     "PSN_StyleGAN_Slerp": "PSN StyleGAN Slerp",
-    "PSN_StyleGAN_Generate": "PSN StyleGAN Generate",
+    "PSN_StyleGAN_Generate_Spec": "PSN StyleGAN Generation Spec (makes no image)",
 }

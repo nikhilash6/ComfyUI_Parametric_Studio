@@ -1,27 +1,22 @@
 """
-PSN_ELLA_Semantic_Connector: A pure-logic, secure-by-design implementation of the
-Dynamic Semantic Adaptation (ELLA) connector.
+PSN_ELLA_Request_Formatter: validates ELLA parameters and formats a redacted JSON
+request payload.
 
-This module implements ONLY the pure-logic, secure-by-design part of the spec:
-- Message/payload formatting for the ELLA connector request
-- Config validation (sigma range, strength range, model allow-list)
-- Allow-list checks for model identifiers
-- Rate limiting for connector invocations
-- Token redaction for sensitive fields in payloads
-- Parsing of connector responses
+This module does NOT run ELLA and does NOT change any conditioning. It only:
+- Formats the ELLA connector request (model, sigma, strength, conditioning
+  JSON) as a JSON string
+- Validates config (sigma range, strength range, model allow-list)
+- Rate limits invocations
+- Redacts sensitive fields in the payload
+- Offers a helper that parses a connector response (not used by the node)
 
 It does NOT open sockets, access files, use torch, import comfy, or perform
-network I/O. All functions and node wrappers take plain values (numbers,
-strings, JSON text) and return plain values.
-
-The node simulates the ELLA semantic adaptation by applying a deterministic
-transformation to a conditioning payload based on sigma and strength, using
-only the Python standard library.
+network I/O. All functions and the node take plain values (numbers, strings,
+JSON text) and return plain values. Invalid input raises ValueError.
 """
 
 import json
 import time
-import hashlib
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -126,43 +121,6 @@ def _redact_sensitive(payload: dict) -> dict:
     return redacted
 
 
-def _deterministic_transform(conditioning: dict, sigma: float, strength: float, model_id: str) -> dict:
-    """
-    Apply a deterministic semantic adaptation to the conditioning payload.
-
-    The transformation:
-    1. Computes a hash-based offset from sigma, strength, and model_id.
-    2. Scales each numeric value in the conditioning by a factor derived
-       from the hash, modulated by strength.
-    3. Adds a small sigma-dependent shift to simulate timestep-aware
-       semantic adjustment.
-
-    This is a pure function: same inputs always produce same outputs.
-    """
-    # Build a deterministic seed from inputs
-    seed_str = f"{sigma:.6f}|{strength:.6f}|{model_id}"
-    seed_bytes = seed_str.encode("utf-8")
-    digest = hashlib.sha256(seed_bytes).digest()
-    # Use first 8 bytes as a float-like offset in [0, 1)
-    offset = int.from_bytes(digest[:8], byteorder="big") / (2 ** 64)
-
-    # Scale factor: 1.0 + strength * (offset - 0.5) * 2.0
-    # This gives a range of [1 - strength, 1 + strength]
-    scale = 1.0 + strength * (offset - 0.5) * 2.0
-
-    # Sigma-dependent shift: small, proportional to sigma
-    sigma_shift = sigma * 0.01
-
-    transformed = {}
-    for key, value in conditioning.items():
-        if isinstance(value, (int, float)) and not isinstance(value, bool):
-            transformed[key] = value * scale + sigma_shift
-        else:
-            transformed[key] = value
-
-    return transformed
-
-
 def _format_request_payload(
     conditioning: dict,
     sigma: float,
@@ -206,27 +164,30 @@ def _parse_response(response_text: str) -> tuple:
 # Node
 # ---------------------------------------------------------------------------
 
-class PSN_ELLA_Semantic_Connector:
+class PSN_ELLA_Request_Formatter:
     """
-    Dynamically adjust semantic features during the diffusion process using
-    a Timestep-Aware Semantic Connector (ELLA).
+    Validate ELLA parameters and format a redacted JSON request payload.
 
-    This is a pure-logic implementation: it validates inputs, checks the
-    model allow-list, enforces rate limiting, redacts sensitive fields,
-    and applies a deterministic transformation to the conditioning payload.
-    No GPU, torch, network, or file I/O is performed.
+    It does not run ELLA, does not touch a CONDITIONING tensor and does not
+    change the conditioning you give it; the conditioning is only copied into
+    the payload (with sensitive fields redacted). No GPU, torch, network, or
+    file I/O is performed.
 
     Inputs:
-        conditioning: JSON text representing the conditioning payload (dict)
-        sigma: Current timestep sigma (float, >= 0)
+        conditioning: JSON text of a dict, copied into the payload
+        sigma: Timestep sigma (float, >= 0)
         ella_model: Model identifier (must be in allow-list)
-        strength: Adaptation strength in [0, 1]
+        strength: Strength in [0, 1]
 
     Outputs:
-        conditioning: JSON text of the adapted conditioning payload
-        status: "ok" or an error description
         request_payload: The formatted (redacted) request JSON text
+
+    Raises ValueError on invalid input or when the rate limit is exceeded.
     """
+
+    DESCRIPTION = ("Validates ELLA parameters and formats a redacted JSON "
+                   "request payload. It does not run ELLA and does not change "
+                   "any conditioning.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -240,51 +201,30 @@ class PSN_ELLA_Semantic_Connector:
             "optional": {},
         }
 
-    RETURN_TYPES = ("STRING", "STRING", "STRING")
-    RETURN_NAMES = ("conditioning", "status", "request_payload")
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("request_payload",)
     FUNCTION = "run"
     CATEGORY = CAT
 
     def run(self, conditioning, sigma, ella_model, strength):
-        # Validate sigma
-        ok, reason = _validate_sigma(sigma)
-        if not ok:
-            return ("{}", f"error: {reason}", "")
+        for ok, reason in (_validate_sigma(sigma), _validate_strength(strength),
+                           _validate_model(ella_model)):
+            if not ok:
+                raise ValueError(reason)
 
-        # Validate strength
-        ok, reason = _validate_strength(strength)
-        if not ok:
-            return ("{}", f"error: {reason}", "")
-
-        # Validate model
-        ok, reason = _validate_model(ella_model)
-        if not ok:
-            return ("{}", f"error: {reason}", "")
-
-        # Parse conditioning JSON
         if not isinstance(conditioning, str):
-            return ("{}", "error: conditioning must be a JSON string", "")
+            raise ValueError("conditioning must be a JSON string")
         try:
             cond_dict = json.loads(conditioning)
         except (json.JSONDecodeError, ValueError):
-            return ("{}", "error: invalid JSON in conditioning", "")
+            raise ValueError("invalid JSON in conditioning")
         if not isinstance(cond_dict, dict):
-            return ("{}", "error: conditioning must be a JSON object", "")
+            raise ValueError("conditioning must be a JSON object")
 
-        # Rate limit check
         if not _ella_rate_limiter.allow():
-            return ("{}", "error: rate limit exceeded", "")
+            raise ValueError("rate limit exceeded")
 
-        # Format request payload (with redaction)
-        request_payload = _format_request_payload(cond_dict, sigma, strength, ella_model)
-
-        # Apply deterministic transformation
-        adapted = _deterministic_transform(cond_dict, sigma, strength, ella_model)
-
-        # Serialize result
-        result_json = json.dumps(adapted, sort_keys=True, separators=(",", ":"))
-
-        return (result_json, "ok", request_payload)
+        return (_format_request_payload(cond_dict, sigma, strength, ella_model),)
 
 
 # ---------------------------------------------------------------------------
@@ -292,9 +232,9 @@ class PSN_ELLA_Semantic_Connector:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_ELLA_Semantic_Connector": PSN_ELLA_Semantic_Connector,
+    "PSN_ELLA_Request_Formatter": PSN_ELLA_Request_Formatter,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_ELLA_Semantic_Connector": "ELLA Semantic Connector",
+    "PSN_ELLA_Request_Formatter": "ELLA Request Formatter (does not run ELLA)",
 }

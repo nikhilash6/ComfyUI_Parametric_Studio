@@ -1,11 +1,9 @@
-"""ParametricStudio - local LLM prompt enhancer (offline, torch/stdlib only).
+"""ParametricStudio - prompt style template (offline, torch/stdlib only).
 
-Rewrites a user prompt into a model-specific style using a small, fully local
-"enhancer" (template + rule based). No network, no external models: the
-"LLM" here is a deterministic local rewriter that applies style profiles,
-quality/weighting tokens and negative-prompt defaults. It is meant to be the
-offline core of a larger llm-fleet pipeline: the same node interface can later
-be swapped for a real local model without changing the graph.
+Rewrites a user prompt with fixed rules: it strips a list of filler words and
+appends a style profile's fixed quality tokens and default negative prompt
+(optionally weighted).  No LLM or other model is involved, nothing is
+generated or rephrased, and there is no network access.
 """
 
 import re
@@ -89,8 +87,8 @@ def _weight_tokens(quality, weight):
     return ["(%s:%.2f)" % (q, weight) for q in quality]
 
 
-def enhance_prompt(prompt, style="generic", weight=1.0, add_negative=True):
-    """Deterministic local 'LLM' rewrite of a prompt for a target style.
+def apply_style_template(prompt, style="generic", weight=1.0, add_negative=True):
+    """Strip filler words and append a style profile's fixed tokens (no model involved).
 
     Returns dict with keys: prompt, negative, style, changed.
     """
@@ -135,12 +133,17 @@ def _s(x):
     return x
 
 
-class PSN_LocalLLMPromptEnhancer:
-    """Rewrite a user prompt into a model-specific style using a local enhancer.
+class PSN_PromptStyleTemplate:
+    """Strip filler words and append a style profile's fixed tokens and default negative.
 
-    Offline core of an llm-fleet prompt pipeline: applies a style profile
-    (quality tokens, weighting, negative prompt) to the raw user prompt.
+    Applies a style profile (quality tokens, weighting, negative prompt) to the
+    raw user prompt.  No LLM is involved.
     """
+
+    DESCRIPTION = (
+        "Strips filler words and appends a style profile's fixed quality tokens and default "
+        "negative prompt. No LLM involved: nothing is rewritten beyond that."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -159,14 +162,14 @@ class PSN_LocalLLMPromptEnhancer:
     CATEGORY = CAT
 
     def run(self, prompt, style, weight, add_negative):
-        res = enhance_prompt(prompt, style=style, weight=weight, add_negative=add_negative)
+        res = apply_style_template(prompt, style=style, weight=weight, add_negative=add_negative)
         return (res["prompt"], res["negative"], 1 if res["changed"] else 0)
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_LocalLLMPromptEnhancer": PSN_LocalLLMPromptEnhancer,
+    "PSN_PromptStyleTemplate": PSN_PromptStyleTemplate,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_LocalLLMPromptEnhancer": "Local LLM Prompt Enhancer",
+    "PSN_PromptStyleTemplate": "Prompt Style Template (filler words stripped, fixed tokens added, no LLM)",
 }

@@ -1,35 +1,21 @@
-"""PSN_Memory_Store: in-process, pure-logic memory store for agent preferences.
+"""PSN_Memory_Store: in-process memory store for agent preferences.
 
-This module implements the secure-by-design, pure-logic portion of a file-based
-memory store. It does NOT perform any file I/O, OS access, or network calls.
-Instead, it maintains an in-memory dictionary keyed by (agent_id, key) and
-returns a handle string that can be used for future recall. The actual file
-persistence (writing to output/memory/<agent_id>.json with file locking) is
-left to the host environment; this node only manages the logical store and
-validates inputs.
+Keeps an in-memory dictionary keyed by (agent_id, key). It does no file I/O,
+OS access or network calls, so the store lives only as long as the ComfyUI
+process. The output is a MEMORY_HANDLE: a JSON list of {"key", "text"} entries
+for the given agent_id, which PSN_Memory_Recall reads and filters directly.
 
 Supported modes:
   - "SET":    Replace the value for the given (agent_id, key).
   - "APPEND": Append the value to the existing value (newline-separated if
               the existing value is non-empty).
-
-The returned handle is a deterministic string encoding the agent_id and key,
-suitable for passing to a companion recall node.
 """
 
 import json
-import hashlib
 
 CAT = "ParametricStudio/Memory"
 
 _MODES = ("SET", "APPEND")
-
-
-def _make_handle(agent_id: str, key: str) -> str:
-    """Build a deterministic handle string for a (agent_id, key) pair."""
-    raw = f"{agent_id}::{key}"
-    digest = hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
-    return f"mem:{agent_id}:{key}:{digest}"
 
 
 def _validate_agent_id(agent_id: str) -> str:
@@ -75,7 +61,12 @@ _STORE: dict = {}
 
 
 class PSN_Memory_Store:
-    """Stores a key-value pair in an in-process memory store and returns a handle."""
+    """Stores a key-value pair in an in-process memory store and returns all of the agent's entries."""
+
+    DESCRIPTION = (
+        "Stores a key-value pair in this process's memory (lost when ComfyUI restarts) and "
+        "outputs the agent's entries as a JSON list for Memory Recall. Writes no file."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -89,7 +80,7 @@ class PSN_Memory_Store:
             "optional": {},
         }
 
-    RETURN_TYPES = ("STRING",)
+    RETURN_TYPES = ("MEMORY_HANDLE",)
     RETURN_NAMES = ("store_handle",)
     FUNCTION = "run"
     CATEGORY = CAT
@@ -111,8 +102,12 @@ class PSN_Memory_Store:
             else:
                 _STORE[store_key] = value
 
-        handle = _make_handle(agent_id, key)
-        return (handle,)
+        entries = [
+            {"key": k, "text": v}
+            for (a_id, k), v in _STORE.items()
+            if a_id == agent_id
+        ]
+        return (json.dumps(entries, ensure_ascii=False),)
 
 
 NODE_CLASS_MAPPINGS = {

@@ -1,18 +1,19 @@
 """
-PSN Deterministic Camera Motion (pure-logic, secure-by-design).
+PSN Deterministic Camera Motion.
 
-This module implements the *pure-logic* parts of the "Deterministic Camera Motion"
-spec. It does NOT touch torch, torchvision, numpy, yaml, or any GPU/CUDA kernels,
-and it performs no file, network, or OS access.
+The curve nodes use only the Python standard library.  PSN_Camera_Apply also
+uses torch (CPU is enough) to resample an image.  Nothing here does file,
+network or OS access.
 
-What it does (pure Python standard library only):
+What it does:
   * PSN_Camera_Path_Definer: parses a JSON keyframe string, validates it, and
     builds a deterministic, multi-dimensional (x, y, z, rot) keyframed curve
     with linear / cubic (Catmull-Rom) / step interpolation. It also emits a
-    small ASCII "preview" plot of the path (a stand-in for the IMAGE debug plot).
-  * PSN_Camera_Apply: evaluates the curve at a frame index and computes the
-    affine transform parameters (pan x/y, zoom, rotation) that a downstream
-    image renderer would apply. It returns the numeric transform, not pixels.
+    small ASCII text plot of the path (a string, not an image).
+  * PSN_Camera_Apply: evaluates the curve at a frame index, computes the
+    affine transform (pan x/y in pixels, zoom, rotation) and applies it to the
+    given IMAGE with torch affine_grid + grid_sample (bilinear, zero fill
+    outside the source). It also returns the numeric parameters.
 
 The "KEYFRAMED_CURVE" output is a plain dict (JSON-serializable) so it can be
 passed between nodes without any external dependency.
@@ -20,6 +21,9 @@ passed between nodes without any external dependency.
 
 import json
 import math
+
+import torch
+import torch.nn.functional as F
 
 CAT = "ParametricStudio/Camera"
 
@@ -216,8 +220,44 @@ class PSN_Camera_Path_Definer:
         return (curve, preview)
 
 
+def _affine_theta(width, height, pan_x, pan_y, zoom, rotation_deg):
+    """Build the 2x3 affine_grid theta for a camera move.
+
+    Content is scaled by zoom (>1 zooms in), turned clockwise on screen by
+    rotation_deg about the image centre, then shifted by (pan_x, pan_y)
+    pixels (+x right, +y down).  affine_grid wants the inverse map from output
+    to input in normalised coordinates; the maths is done in pixel space so
+    non-square images do not shear.
+    """
+    a = math.radians(rotation_deg)
+    c, s = math.cos(a), math.sin(a)
+    # inverse content rotation (y-down screen coordinates)
+    inv = [[c, s], [-s, c]]
+    sx, sy = width / 2.0, height / 2.0
+    A = [[inv[0][0] / zoom, inv[0][1] / zoom * sy / sx],
+         [inv[1][0] / zoom * sx / sy, inv[1][1] / zoom]]
+    # b = -S^-1 * inv * t / zoom
+    tx = inv[0][0] * pan_x + inv[0][1] * pan_y
+    ty = inv[1][0] * pan_x + inv[1][1] * pan_y
+    b = [-tx / zoom / sx, -ty / zoom / sy]
+    return torch.tensor([[A[0][0], A[0][1], b[0]], [A[1][0], A[1][1], b[1]]], dtype=torch.float32)
+
+
+def _apply_camera(image, pan_x, pan_y, zoom, rotation_deg):
+    """Resample an IMAGE tensor [B,H,W,C] with the camera transform."""
+    if not isinstance(image, torch.Tensor) or image.dim() != 4:
+        raise ValueError("base_image must be an IMAGE tensor [B,H,W,C]")
+    b, h, w, _ = image.shape
+    theta = _affine_theta(w, h, pan_x, pan_y, zoom, rotation_deg).to(image.device, image.dtype)
+    theta = theta.unsqueeze(0).expand(b, 2, 3)
+    chw = image.permute(0, 3, 1, 2)
+    grid = F.affine_grid(theta, list(chw.shape), align_corners=False)
+    out = F.grid_sample(chw, grid, mode="bilinear", padding_mode="zeros", align_corners=False)
+    return out.permute(0, 2, 3, 1).contiguous()
+
+
 class PSN_Camera_Apply:
-    """Evaluate a KEYFRAMED_CURVE at a frame and compute the affine transform."""
+    """Evaluate a KEYFRAMED_CURVE at a frame and apply the camera move to an image."""
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -225,36 +265,30 @@ class PSN_Camera_Apply:
             "required": {
                 "camera_curve": ("KEYFRAMED_CURVE",),
                 "frame_index": ("INT", {"default": 0, "min": 0, "max": 100000, "step": 1}),
-            },
-            "optional": {
-                "base_image": (None,),  # placeholder; pixel work is out of scope here
+                "base_image": ("IMAGE",),
             },
         }
 
-    RETURN_TYPES = ("STRING", "FLOAT", "FLOAT", "FLOAT", "FLOAT")
+    RETURN_TYPES = ("IMAGE", "FLOAT", "FLOAT", "FLOAT", "FLOAT")
     RETURN_NAMES = ("transformed_image", "pan_x", "pan_y", "zoom", "rotation_deg")
     FUNCTION = "run"
     CATEGORY = CAT
+    DESCRIPTION = ("Evaluates the camera curve at a frame and resamples the image with it: "
+                   "x/y pan in pixels, z as zoom factor (1.0 = none, must be above 0), rot as "
+                   "degrees clockwise. Bilinear; areas outside the source are black.")
 
-    def run(self, camera_curve, frame_index, base_image=None):
+    def run(self, camera_curve, frame_index, base_image):
         if not isinstance(camera_curve, dict) or camera_curve.get("type") != "KEYFRAMED_CURVE":
-            return ("ERROR: invalid camera_curve", 0.0, 0.0, 1.0, 0.0)
+            raise ValueError("invalid camera_curve")
         if not camera_curve.get("frames"):
-            return ("ERROR: empty camera_curve", 0.0, 0.0, 1.0, 0.0)
+            raise ValueError("empty camera_curve")
         state = _evaluate_curve(camera_curve, int(frame_index))
-        # z is treated as a zoom factor (1.0 == no zoom).
+        # z is treated as a zoom factor (1.0 == no zoom); 0 means "unset".
         zoom = state["z"] if state["z"] != 0.0 else 1.0
-        # The "transformed_image" output is a JSON description of the affine
-        # transform (pure-logic stand-in for the rendered pixels).
-        transform = {
-            "type": "AFFINE_TRANSFORM",
-            "frame_index": int(frame_index),
-            "pan_x": state["x"],
-            "pan_y": state["y"],
-            "zoom": zoom,
-            "rotation_deg": state["rot"],
-        }
-        return (json.dumps(transform), state["x"], state["y"], zoom, state["rot"])
+        if zoom < 0.0:
+            raise ValueError("zoom (z) must be above 0, got %r" % zoom)
+        image = _apply_camera(base_image, state["x"], state["y"], zoom, state["rot"])
+        return (image, state["x"], state["y"], zoom, state["rot"])
 
 
 NODE_CLASS_MAPPINGS = {

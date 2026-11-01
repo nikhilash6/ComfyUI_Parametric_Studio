@@ -7,8 +7,9 @@ loading, GPU execution, or any I/O. Instead, it provides:
 
 1. PSN_Agent_Loop_Init: Initializes loop state from a list of model IDs and
    a JSON agent configuration.
-2. PSN_Agent_Executor: Simulates executing an agent for a given model ID using
-   a deterministic, safe transformation (no dynamic code execution). It
+2. PSN_Agent_Transform_Sim: Applies the configured string transform (identity,
+   prefix, suffix, uppercase, lowercase or reverse) to the fixed text
+   ``input_for_<model_id>``. It calls no model and executes no agent. It
    advances the index and reports loop completion.
 3. PSN_Agent_Aggregator: Combines a list of results into a single structured
    output.
@@ -60,7 +61,7 @@ def _validate_agent_config(config_json: str) -> Dict[str, Any]:
 
 def _execute_agent(model_id: str, agent_type: str, input_value: Any) -> Any:
     """
-    Safely execute a deterministic agent transformation.
+    Apply a deterministic string transformation.
     No dynamic code execution.
     """
     if agent_type == "identity":
@@ -126,12 +127,18 @@ class PSN_Agent_Loop_Init:
         return (loop_state, 0)
 
 
-class PSN_Agent_Executor:
+class PSN_Agent_Transform_Sim:
     """
-    Executes the agent for the current model ID in the loop.
-    Takes the loop state, current index, and model ID, and returns the
-    result, next index, and whether the loop is done.
+    Applies the configured string transform to the fixed text
+    ``input_for_<model_id>`` for the current model ID in the loop.
+    Calls no model and executes no agent. Takes the loop state, current
+    index, and model ID, and returns the transformed text, next index, and
+    whether the loop is done.
     """
+
+    DESCRIPTION = ("Applies a configured string transform (identity, prefix, suffix, "
+                   "uppercase, lowercase, reverse) to the fixed text input_for_<model_id> "
+                   "for each model id in turn. It calls no model and runs no agent.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -173,7 +180,7 @@ class PSN_Agent_Executor:
         if agent_type is None:
             raise ValueError(f"No agent configured for model '{actual_model_id}'")
 
-        # Execute the agent with a deterministic input derived from the model ID
+        # Transform a fixed input derived from the model ID (no model is called)
         input_value = f"input_for_{actual_model_id}"
         result = _execute_agent(actual_model_id, agent_type, input_value)
 
@@ -220,12 +227,12 @@ class PSN_Agent_Aggregator:
 # Module-level mappings
 NODE_CLASS_MAPPINGS = {
     "PSN_Agent_Loop_Init": PSN_Agent_Loop_Init,
-    "PSN_Agent_Executor": PSN_Agent_Executor,
+    "PSN_Agent_Transform_Sim": PSN_Agent_Transform_Sim,
     "PSN_Agent_Aggregator": PSN_Agent_Aggregator,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_Agent_Loop_Init": "Agent Loop Init",
-    "PSN_Agent_Executor": "Agent Executor",
+    "PSN_Agent_Transform_Sim": "Agent String Transform (calls no model)",
     "PSN_Agent_Aggregator": "Agent Aggregator",
 }

@@ -1,20 +1,18 @@
 """
-PSN_Motion_Position_Effector
+PSN_Motion_Position_Curve
 
-Pure-logic implementation of a position animation effector for video frames.
+Computes a per-frame position curve from a start point to an end point. It
+takes no video or image input and moves no pixels.
 
-Because the original spec requires torch/numpy for actual pixel translation,
-this module implements ONLY the secure, pure-Python logic:
   - Config validation (positions, duration, easing)
   - Easing curve evaluation (linear, ease_in, ease_out, ease_in_out)
   - Per-frame offset computation (dx, dy for each frame index)
-  - Trajectory generation (list of (x, y) offsets for all frames)
+  - Trajectory generation (list of (x, y) positions for all frames)
 
 The node accepts plain values (ints, strings) and returns:
-  - animated_offsets: A list of (dx, dy) tuples representing the translation
-    offset for each frame in the animation.
-  - trajectory: A list of (x, y) absolute positions for each frame.
-  - status: A string indicating success or error.
+  - frame_offsets: text of a list of (dx, dy) tuples, one per frame.
+  - trajectory: text of a list of (x, y) positions, one per frame.
+  - status: "computed", or "Error: <reason>".
 
 No GPU, no torch, no numpy, no file I/O, no network.
 """
@@ -145,26 +143,29 @@ def compute_trajectory(start_pos, end_pos, duration, easing):
     return trajectory
 
 
-class PSN_Motion_Position_Effector:
+class PSN_Motion_Position_Curve:
     """
-    Applies position animation trajectory computation to video frames.
-    
-    This node computes the per-frame translation offsets and absolute positions
-    for a motion animation from start_pos to end_pos over a given duration
-    with a specified easing curve.
-    
+    Computes per-frame x/y offsets and positions from start to end with an easing curve.
+
+    It applies nothing to frames: there is no image or video input.
+
     Inputs:
         start_pos_x, start_pos_y: Starting x, y position (int)
         end_pos_x, end_pos_y: Ending x, y position (int)
-        duration: Number of frames for the animation (int)
+        duration: Number of frames for the curve (int)
         easing: Easing mode (combo)
-    
+
     Outputs:
-        animated_offsets: List of (dx, dy) tuples for each frame
-        trajectory: List of (x, y) absolute positions for each frame
-        status: String indicating success or error
+        frame_offsets: text of (dx, dy) tuples for each frame
+        trajectory: text of (x, y) positions for each frame
+        status: "computed" or "Error: <reason>"
     """
-    
+
+    DESCRIPTION = (
+        "Computes per-frame x/y offsets and the trajectory from a start point, end point, "
+        "duration and easing curve. Moves no pixels: it has no image or video input."
+    )
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -180,7 +181,7 @@ class PSN_Motion_Position_Effector:
         }
     
     RETURN_TYPES = ("STRING", "STRING", "STRING")
-    RETURN_NAMES = ("animated_offsets", "trajectory", "status")
+    RETURN_NAMES = ("frame_offsets", "trajectory", "status")
     FUNCTION = "run"
     CATEGORY = "ParametricStudio/Motion"
     
@@ -199,13 +200,13 @@ class PSN_Motion_Position_Effector:
         offsets_str = str(offsets)
         trajectory_str = str(trajectory)
         
-        return (offsets_str, trajectory_str, "success")
+        return (offsets_str, trajectory_str, "computed")
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Motion_Position_Effector": PSN_Motion_Position_Effector,
+    "PSN_Motion_Position_Curve": PSN_Motion_Position_Curve,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Motion_Position_Effector": "PSN Motion Position Effector",
+    "PSN_Motion_Position_Curve": "PSN Motion Position Curve (offsets only, moves no pixels)",
 }

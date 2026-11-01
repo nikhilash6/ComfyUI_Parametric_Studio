@@ -12,7 +12,7 @@ import math
 import pytest
 
 from psn_nodes.gen.n_8_audio_source_separation_remixing import (
-    PSN_Sep_Split,
+    PSN_Sep_Plan,
     PSN_Sep_Mix,
     SPLIT_MODELS,
     STEM_NAMES,
@@ -23,57 +23,67 @@ from psn_nodes.gen.n_8_audio_source_separation_remixing import (
 
 
 # ---------------------------------------------------------------------------
-# PSN_Sep_Split
+# PSN_Sep_Plan
 # ---------------------------------------------------------------------------
 
-def test_split_valid_model_returns_four_stems():
-    node = PSN_Sep_Split()
+def test_plan_valid_request_returns_plan_not_stems():
+    node = PSN_Sep_Plan()
     audio = json.dumps([0.1, -0.2, 0.3, 0.0])
-    vocals, drums, bass, other, status = node.run(audio, "htdemucs")
-    assert status.startswith("ok:")
-    assert "model=htdemucs" in status
-    # Each stem is a JSON list of zeros with the same length as input.
-    for stem in (vocals, drums, bass, other):
-        parsed = json.loads(stem)
-        assert len(parsed) == 4
-        assert all(v == 0.0 for v in parsed)
+    out = node.run(audio, "htdemucs", sample_rate=48000)
+    assert len(out) == 2  # plan_json, status; no stem outputs
+    plan_json, status = out
+    assert status == "request valid: nothing was separated"
+    assert json.loads(plan_json) == {
+        "model": "htdemucs",
+        "samples": 4,
+        "sample_rate": 48000,
+        "stems": ["vocals", "drums", "bass", "other"],
+        "default_gain": 1.0,
+    }
+    # the all-zero stems are gone
+    assert PSN_Sep_Plan.RETURN_NAMES == ("plan_json", "status")
+    assert "separates nothing" in PSN_Sep_Plan.DESCRIPTION.lower()
+    import psn_nodes.gen.n_8_audio_source_separation_remixing as m
+    assert "PSN_Sep_Split" not in m.NODE_CLASS_MAPPINGS
+    assert m.NODE_CLASS_MAPPINGS["PSN_Sep_Plan"] is PSN_Sep_Plan
 
 
-def test_split_rejects_unknown_model():
-    node = PSN_Sep_Split()
+def test_plan_rejects_unknown_model():
+    node = PSN_Sep_Plan()
     audio = json.dumps([0.1, 0.2])
-    vocals, drums, bass, other, status = node.run(audio, "not_a_model")
+    plan, status = node.run(audio, "not_a_model")
     assert status.startswith("error:")
     assert "not in allow-list" in status
-    assert vocals == "" and drums == "" and bass == "" and other == ""
+    assert plan == ""
 
 
-def test_split_rejects_empty_audio():
-    node = PSN_Sep_Split()
-    vocals, drums, bass, other, status = node.run("[]", "mdx")
+def test_plan_rejects_empty_audio():
+    node = PSN_Sep_Plan()
+    plan, status = node.run("[]", "mdx")
     assert status.startswith("error:")
     assert "empty" in status
+    assert plan == ""
 
 
-def test_split_rejects_bad_json_audio():
-    node = PSN_Sep_Split()
-    vocals, drums, bass, other, status = node.run("not json at all", "htdemucs")
+def test_plan_rejects_bad_json_audio():
+    node = PSN_Sep_Plan()
+    plan, status = node.run("not json at all", "htdemucs")
     assert status.startswith("error:")
     assert "not valid JSON" in status
 
 
-def test_split_rejects_non_numeric_sample():
-    node = PSN_Sep_Split()
+def test_plan_rejects_non_numeric_sample():
+    node = PSN_Sep_Plan()
     audio = json.dumps([0.1, "oops", 0.3])
-    vocals, drums, bass, other, status = node.run(audio, "htdemucs")
+    plan, status = node.run(audio, "htdemucs")
     assert status.startswith("error:")
     assert "not a number" in status
 
 
-def test_split_rejects_bad_sample_rate():
-    node = PSN_Sep_Split()
+def test_plan_rejects_bad_sample_rate():
+    node = PSN_Sep_Plan()
     audio = json.dumps([0.1, 0.2])
-    vocals, drums, bass, other, status = node.run(audio, "htdemucs", sample_rate=-5)
+    plan, status = node.run(audio, "htdemucs", sample_rate=-5)
     assert status.startswith("error:")
     assert "sample_rate" in status
 

@@ -9,7 +9,7 @@ from psn_nodes.gen.psn_scrna_to_latent import (
     PSN_ScRNA_to_Latent,
     _encode_cluster_profile,
     _compute_cluster_stats,
-    _deterministic_random_projection,
+    _projection_weight,
     ALLOWED_LATENT_DIMS,
     MAX_GENES,
     MAX_CLUSTER_ID
@@ -141,6 +141,31 @@ class TestPSNScRNAtoLatent:
         latent3, _ = node.run(adata, 0, 4, seed=123)
         assert latent1 != latent3, "Different seeds should produce different outputs"
     
+    def test_latent_depends_on_gene_values_not_only_seed(self):
+        """Different expression profiles of the same length must give different vectors."""
+        node = PSN_ScRNA_to_Latent()
+        a = make_adata_json({"0": {"genes": [1.0, 2.0, 3.0, 4.0, 5.0]}})
+        b = make_adata_json({"0": {"genes": [5.0, 1.0, 4.0, 2.0, 3.0]}})
+        la, _ = node.run(a, 0, 8, seed=7)
+        lb, _ = node.run(b, 0, 8, seed=7)
+        assert la != lb
+        # the old behaviour scaled one fixed vector, so two profiles were parallel; now they are not
+        dot = sum(x * y for x, y in zip(la, lb))
+        assert abs(dot) < 0.999
+
+    def test_latent_matches_hand_computed_projection(self):
+        """Two genes, one dim: normalized = [0, 1], so latent = [sign(weight(seed,0,1))] after unit-normalising."""
+        node = PSN_ScRNA_to_Latent()
+        adata = make_adata_json({"0": {"genes": [2.0, 4.0]}})
+        latent, _ = node.run(adata, 0, 1, seed=3)
+        w = _projection_weight(3, 0, 1)
+        assert latent == [pytest.approx(1.0 if w > 0 else -1.0)]
+        assert -1.0 <= w < 1.0
+
+    def test_projection_weight_varies_per_gene(self):
+        ws = {_projection_weight(1, 0, j) for j in range(20)}
+        assert len(ws) == 20
+
     def test_cluster_stats(self):
         """Test that cluster statistics are computed correctly."""
         node = PSN_ScRNA_to_Latent()

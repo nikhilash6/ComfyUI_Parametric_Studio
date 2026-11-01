@@ -8,9 +8,10 @@ bounding boxes (ints), region dictionaries (JSON-able), and prompt strings.
 It provides:
   - PSN_RegionalMask: builds a normalized region mask (as a list of row strings)
     from a bounding box and image dimensions, with clamping and validation.
-  - PSN_RegionalPrompt: validates a regions dictionary, computes per-region
-    attention weights, and produces a deterministic "regional plan" describing
-    which prompt applies to which region and with what strength.
+  - PSN_RegionalPrompt_Plan: validates a regions dictionary and emits a JSON
+    plan listing each region's box and prompt, with the requested strength
+    split evenly across regions. It applies no attention masks and does not
+    touch a model or conditioning.
 
 All functions take plain values (numbers, strings, dicts) and return plain
 values (numbers, strings, lists, dicts). No sockets, no file I/O, no eval.
@@ -108,11 +109,10 @@ def _validate_regions(regions, width, height):
     return entries
 
 
-def _compute_attention_weights(entries, attention_strength):
+def _split_strength(entries, attention_strength):
     """
-    Compute per-region attention weights.
-    Each region gets weight = attention_strength / num_regions,
-    so total attention is distributed evenly.
+    Split the requested strength evenly: each region gets
+    attention_strength / num_regions. A number in the plan only.
     """
     n = len(entries)
     if n == 0:
@@ -176,23 +176,28 @@ class PSN_RegionalMask:
 # Node: PSN_RegionalPrompt
 # ---------------------------------------------------------------------------
 
-class PSN_RegionalPrompt:
+class PSN_RegionalPrompt_Plan:
     """
-    Applies different prompts to different regions of the image using
-    attention masks. In this pure-logic implementation, it validates the
-    regions, computes attention weights, and produces a regional plan.
+    Validates regions (box + prompt per region) and emits a JSON plan.
+    Applies no attention masks and changes no conditioning; the plan is text
+    for other tooling to use.
 
     Inputs:
       - image_width (INT): Width of the base image.
       - image_height (INT): Height of the base image.
       - regions (STRING): JSON dict of regions with bboxes and prompts.
-      - attention_strength (FLOAT): Strength of regional attention.
+      - attention_strength (FLOAT): Strength, split evenly across regions.
 
     Outputs:
-      - regional_plan (STRING): JSON describing the regional prompting plan.
+      - regional_plan (STRING): JSON plan (boxes clamped to the image, prompts,
+        and each region's even share of the strength).
       - total_regions (INT): Number of regions.
-      - status (STRING): "ok" or error message.
+      - status (STRING): "regions valid" or an error message.
     """
+
+    DESCRIPTION = ("Validates regions (box + prompt) and emits a JSON plan with "
+                   "the strength split evenly across regions. Applies no "
+                   "attention masks and changes no conditioning.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -221,7 +226,7 @@ class PSN_RegionalPrompt:
         except ValueError as e:
             return ("", 0, f"error: {e}")
 
-        weights = _compute_attention_weights(entries, attention_strength)
+        weights = _split_strength(entries, attention_strength)
 
         plan = {
             "image_width": image_width,
@@ -234,11 +239,11 @@ class PSN_RegionalPrompt:
                 "name": entry["name"],
                 "bbox": list(entry["bbox"]),
                 "prompt": entry["prompt"],
-                "attention_weight": round(weight, 6),
+                "strength_share": round(weight, 6),
             })
 
         plan_json = json.dumps(plan, indent=2)
-        return (plan_json, len(entries), "ok")
+        return (plan_json, len(entries), "regions valid")
 
 
 # ---------------------------------------------------------------------------
@@ -247,10 +252,10 @@ class PSN_RegionalPrompt:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_RegionalMask": PSN_RegionalMask,
-    "PSN_RegionalPrompt": PSN_RegionalPrompt,
+    "PSN_RegionalPrompt_Plan": PSN_RegionalPrompt_Plan,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_RegionalMask": "PSN Regional Mask",
-    "PSN_RegionalPrompt": "PSN Regional Prompt",
+    "PSN_RegionalPrompt_Plan": "PSN Regional Prompt Plan (JSON)",
 }

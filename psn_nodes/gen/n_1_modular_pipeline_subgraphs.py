@@ -1,20 +1,15 @@
-"""ParametricStudio - Modular Pipeline Subgraphs.
+"""ParametricStudio - Subgraph Port and Dict Router.
 
-Wraps groups of pipeline stages into reusable, named subgraph blocks with
-typed ports, so a complex video/image workflow can be collapsed into a
-single node on the canvas while keeping per-stage testing possible.
-
-Implemented core (torch / stdlib only):
+Implemented (torch / stdlib only):
   * PSN_SubgraphPort   - typed entry/exit point; validates data types and
                          passes values through unchanged (no in-place edits).
-  * PSN_SubgraphWrapper - defines a subgraph boundary: registers named
-                         input/output ports, routes values through a
-                         registered pure-Python stage function, aggregates
-                         outputs and reports execution status.
+  * PSN_Dict_Router    - validates the entries of an input dict against an
+                         input_map, renames them according to an output_map and
+                         returns the result.  It runs no stages and no nested
+                         graph: values are only checked, copied and renamed.
 
-NOT implemented (needs the real ComfyUI execution engine / pydantic):
-  * Actual interception of internal ComfyUI nodes (KSampler etc.) - the
-    wrapper runs user-registered pure functions instead of a nested graph.
+NOT implemented:
+  * Any execution of pipeline stages or nested ComfyUI nodes.
   * "Use Everywhere" auto-linking for MODEL/CLIP/VAE.
   * pydantic schema validation of input/output maps (lightweight manual
     validation is used instead).
@@ -125,36 +120,28 @@ class PSN_SubgraphPort:
         return (_clone(value), "ok")
 
 
-class PSN_SubgraphWrapper:
-    """Boundary around a set of pipeline stages.
+class PSN_Dict_Router:
+    """Validate and rename dict entries between an input_map and an output_map.
 
     `input_map`  : {external_name: (internal_name, data_type)}
     `output_map` : {external_name: (internal_name, data_type)}
 
-    A pure-Python stage function can be registered per subgraph_id via
-    `register_stage(subgraph_id, fn)`. The stage receives a dict of
-    validated inputs and returns a dict of outputs; the wrapper validates
-    every output against the declared types and reports a status string.
+    Each entry of `inputs` named in input_map is type-checked and copied under
+    its internal name.  Each output_map entry then takes the value held under
+    its internal name (type-checked again) and appears under its external
+    name.  No stage, model or nested graph is run.
     """
 
-    _stages = {}
-
-    @classmethod
-    def register_stage(cls, subgraph_id, fn):
-        """Register the internal stage function for a subgraph id."""
-        if not callable(fn):
-            raise TypeError("stage must be callable")
-        cls._stages[subgraph_id] = fn
-
-    @classmethod
-    def clear_stages(cls):
-        cls._stages.clear()
+    DESCRIPTION = (
+        "Validates and renames dict entries between input_map and output_map. "
+        "Runs no stages."
+    )
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "subgraph_id": ("STRING", {"default": "sg_0"}),
+                "router_id": ("STRING", {"default": "sg_0"}),
                 "input_map": ("DICT", {"default": {}}),
                 "output_map": ("DICT", {"default": {}}),
                 "inputs": ("DYNAMIC",),
@@ -162,7 +149,7 @@ class PSN_SubgraphWrapper:
         }
 
     RETURN_TYPES = ("DYNAMIC", "STRING")
-    RETURN_NAMES = ("subgraph_handle", "status")
+    RETURN_NAMES = ("routed_dict", "status")
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -186,9 +173,9 @@ class PSN_SubgraphWrapper:
                 raise ValueError("%s map values must be a type string or (name, type)" % kind)
         return parsed
 
-    def run(self, subgraph_id, input_map, output_map, inputs):
-        if not isinstance(subgraph_id, str) or not subgraph_id.strip():
-            return ({}, "error: subgraph_id must be a non-empty string")
+    def run(self, router_id, input_map, output_map, inputs):
+        if not isinstance(router_id, str) or not router_id.strip():
+            return ({}, "error: router_id must be a non-empty string")
         try:
             in_spec = self._parse_map(input_map, "input")
             out_spec = self._parse_map(output_map, "output")
@@ -198,7 +185,7 @@ class PSN_SubgraphWrapper:
         if not isinstance(inputs, dict):
             return ({}, "error: inputs must be a dict")
 
-        # Validate and route inputs.
+        # Validate and copy inputs under their internal names.
         routed = {}
         for ext, (internal, dtype) in in_spec.items():
             if ext not in inputs:
@@ -208,45 +195,25 @@ class PSN_SubgraphWrapper:
                 return ({}, "error: input %r: %s" % (ext, msg))
             routed[internal] = _clone(inputs[ext])
 
-        fn = self._stages.get(subgraph_id)
-        def _wrap(v, dtype):
-            if dtype == "LATENT" and not isinstance(v, dict):
-                return {"samples": v}
-            return v
-
-        if fn is None:
-            # No stage registered: pass routed inputs straight through to
-            # outputs that share a name, so the wrapper is still useful as
-            # a pure routing block.
-            def fn(routed_inputs):
-                return dict(routed_inputs)
-
-        try:
-            raw_out = fn(routed)
-        except Exception as exc:  # noqa: BLE001 - report, don't crash canvas
-            return ({}, "error: stage raised %s: %s" % (type(exc).__name__, exc))
-
-        if not isinstance(raw_out, dict):
-            return ({}, "error: stage must return a dict")
-
-        handle = {}
+        # Rename to the external output names.
+        result = {}
         for ext, (internal, dtype) in out_spec.items():
-            if internal not in raw_out:
-                return ({}, "error: stage did not produce output %r" % internal)
-            ok, msg = _validate(dtype, _wrap(raw_out[internal], dtype))
+            if internal not in routed:
+                return ({}, "error: no routed entry named %r" % internal)
+            ok, msg = _validate(dtype, routed[internal])
             if not ok:
                 return ({}, "error: output %r: %s" % (ext, msg))
-            handle[ext] = _clone(_wrap(raw_out[internal], dtype))
+            result[ext] = _clone(routed[internal])
 
-        return (handle, "ok")
+        return (result, "routed %d entries" % len(result))
 
 
 NODE_CLASS_MAPPINGS = {
     "PSN_SubgraphPort": PSN_SubgraphPort,
-    "PSN_SubgraphWrapper": PSN_SubgraphWrapper,
+    "PSN_Dict_Router": PSN_Dict_Router,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_SubgraphPort": "Subgraph Port",
-    "PSN_SubgraphWrapper": "Subgraph Wrapper",
+    "PSN_Dict_Router": "Dict Router",
 }

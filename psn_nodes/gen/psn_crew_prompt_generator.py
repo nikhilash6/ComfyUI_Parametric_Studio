@@ -1,26 +1,15 @@
 """
-PSN_Crew_Prompt_Generator: Simulates a CrewAI-style multi-agent workflow for prompt refinement.
+PSN_Role_Text_Concat: appends user-supplied text for each listed role to a brief, in role order.
 
-This module implements the pure-logic, secure-by-design part of a role-based agent
-collaboration system. It does NOT make network calls, import torch, or access files.
-Instead, it accepts a pre-formatted JSON string of mock LLM responses (or a callable
-placeholder) and simulates the sequential refinement process.
+No agents and no LLM are involved. The user supplies a JSON object that maps role names to
+the text each role should contribute. The node checks each role against an allow-list and
+appends "[Role]: text" lines to the brief in the order the roles are listed. A role with no
+supplied text, or one that is not on the allow-list, adds nothing and is named in the report.
 
-The 'llm_connection' input is treated as a STRING containing JSON that maps role names
-to their generated contributions. This allows the node to be tested and used in
-environments without a live LLM backend, while maintaining the interface shape.
-
-Data Flow: Brief -> Agent 1 (contribution) -> Agent 2 (refinement) -> ... -> Final Prompt
+No network, no torch, no file access.
 """
 
 import json
-import re
-
-# Placeholder for the safe evaluator/orchestration helpers if available in the PSN ecosystem.
-# Since we are restricted to stdlib and cannot import external PSN modules that might not exist
-# in this isolated context, we implement the necessary logic locally but keep the structure
-# compatible with the requested style.
-# from psn import expr, orchestration
 
 CAT = "ParametricStudio/Crew"
 
@@ -38,130 +27,80 @@ ALLOWED_ROLES = [
     "CreativeDirector"
 ]
 
-class PSN_Crew_Prompt_Generator:
-    """
-    Simulates a CrewAI-style workflow where multiple role-based agents
-    collaboratively draft and refine a prompt.
-    """
+
+def _split_roles(roles):
+    """Roles arrive as a comma-separated string (or a list); return a clean list of names."""
+    if isinstance(roles, str):
+        roles = roles.split(",")
+    return [str(r).strip() for r in (roles or []) if str(r).strip()]
+
+
+class PSN_Role_Text_Concat:
+    """Appends user-supplied per-role text (JSON) to a brief, in role order. No agents, no LLM."""
+
+    DESCRIPTION = ("Appends the text you supply for each listed role (from a JSON object) to the brief, in role order. "
+                   "No agents and no LLM: it writes nothing itself, and a role with no supplied text adds nothing.")
 
     @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
                 "brief": ("STRING", {"default": "", "multiline": True}),
-                "roles": (["Lyricist", "Composer", "Producer", "Vocalist", "SoundEngineer", "Director", "Editor", "MixingEngineer", "MasteringEngineer", "CreativeDirector"], {"default": ["Lyricist", "Composer", "Producer"], "multi": True}),
-                "llm_connection": ("STRING", {"default": "{}", "multiline": True, "tooltip": "JSON string mapping role names to their mock LLM responses. Example: {\"Lyricist\": \"Verse 1...\", \"Composer\": \"Key of C...\"}"})
-            },
-            "optional": {
-                "max_iterations": ("INT", {"default": 1, "min": 1, "max": 10, "step": 1})
+                "roles": ("STRING", {"default": "Lyricist, Composer, Producer", "tooltip": "Comma-separated role names, appended in this order. Allowed: " + ", ".join(ALLOWED_ROLES)}),
+                "role_text_json": ("STRING", {"default": "{}", "multiline": True, "tooltip": "JSON object mapping role name to the text to append. Example: {\"Lyricist\": \"Verse 1...\", \"Composer\": \"Key of C...\"}"})
             }
         }
 
     RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("final_prompt", "agent_dialogue")
+    RETURN_NAMES = ("combined_text", "role_report")
     FUNCTION = "run"
     CATEGORY = CAT
 
-    def _validate_roles(self, roles):
-        """Validate that all roles are in the allow-list."""
-        valid_roles = []
-        for role in roles:
-            if role in ALLOWED_ROLES:
-                valid_roles.append(role)
-            else:
-                # Silently ignore invalid roles or raise? Spec says allow-list checks.
-                # We'll filter them out to be secure-by-design, but log it in dialogue.
-                pass
-        return valid_roles
-
-    def _parse_llm_responses(self, llm_connection_json):
-        """
-        Parse the JSON string of LLM responses.
-        Returns a dict mapping role -> response string.
-        """
-        if not llm_connection_json or not llm_connection_json.strip():
-            return {}
-        
+    @staticmethod
+    def _parse_role_text(role_text_json):
+        """Parse the JSON object of role -> text. Returns (dict of str->str, error or None)."""
+        if not role_text_json or not role_text_json.strip():
+            return {}, None
         try:
-            data = json.loads(llm_connection_json)
-            if not isinstance(data, dict):
-                return {}
-            
-            # Ensure values are strings
-            clean_data = {}
-            for key, value in data.items():
-                if isinstance(key, str) and isinstance(value, str):
-                    clean_data[key] = value
-            return clean_data
+            data = json.loads(role_text_json)
         except json.JSONDecodeError:
-            return {}
+            return {}, "role_text_json is not valid JSON"
+        if not isinstance(data, dict):
+            return {}, "role_text_json must be a JSON object"
+        return {k: v for k, v in data.items() if isinstance(k, str) and isinstance(v, str)}, None
 
-    def _simulate_agent_contribution(self, role, current_prompt, llm_responses, iteration):
-        """
-        Simulates an agent's contribution.
-        In a real system, this would call the LLM. Here, we use the mock response
-        from the llm_connection JSON. If the role isn't in the JSON, we generate
-        a placeholder contribution based on the role and current prompt.
-        """
-        if role in llm_responses:
-            response = llm_responses[role]
-        else:
-            # Fallback: Generate a deterministic placeholder
-            response = f"[{role} Contribution] Refining prompt for iteration {iteration}."
-        
-        # Simple refinement logic: Append the contribution to the current prompt
-        # In a real LLM, the agent would rewrite the whole prompt.
-        # Here, we simulate by appending to show the flow.
-        if current_prompt:
-            new_prompt = f"{current_prompt}\n[{role}]: {response}"
-        else:
-            new_prompt = f"[{role}]: {response}"
-            
-        return new_prompt
-
-    def run(self, brief, roles, llm_connection, max_iterations=1):
-        # 1. Validate Roles
-        valid_roles = self._validate_roles(roles)
-        
+    def run(self, brief, roles, role_text_json):
+        role_list = _split_roles(roles)
+        valid_roles = [r for r in role_list if r in ALLOWED_ROLES]
+        rejected = [r for r in role_list if r not in ALLOWED_ROLES]
         if not valid_roles:
-            return ("No valid roles provided.", "Error: No valid roles from allow-list were provided.")
+            return (brief, "Error: no roles from the allow-list were given; brief returned unchanged.")
 
-        # 2. Parse LLM Responses
-        llm_responses = self._parse_llm_responses(llm_connection)
+        texts, err = self._parse_role_text(role_text_json)
 
-        # 3. Initialize Dialogue Log
-        dialogue_log = []
-        dialogue_log.append(f"=== Crew Prompt Generation Started ===")
-        dialogue_log.append(f"Creative Brief: {brief}")
-        dialogue_log.append(f"Active Roles: {', '.join(valid_roles)}")
-        dialogue_log.append("-" * 40)
+        combined = brief
+        appended, skipped = [], []
+        for role in valid_roles:
+            text = texts.get(role)
+            if not text:
+                skipped.append(role)
+                continue
+            line = f"[{role}]: {text}"
+            combined = f"{combined}\n{line}" if combined else line
+            appended.append(role)
 
-        # 4. Simulate Sequential Agent Workflow
-        current_prompt = brief
-        
-        for i, role in enumerate(valid_roles):
-            # Each agent refines the prompt
-            previous_prompt = current_prompt
-            current_prompt = self._simulate_agent_contribution(role, current_prompt, llm_responses, i + 1)
-            
-            # Log the interaction
-            dialogue_log.append(f"Agent: {role}")
-            dialogue_log.append(f"Input: {previous_prompt[:100]}...")
-            dialogue_log.append(f"Output: {current_prompt[:100]}...")
-            dialogue_log.append("-" * 40)
-
-        dialogue_log.append(f"=== Final Prompt Generated ===")
-        
-        final_prompt = current_prompt
-        agent_dialogue = "\n".join(dialogue_log)
-
-        return (final_prompt, agent_dialogue)
+        report = [f"Appended: {', '.join(appended) or 'none'}",
+                  f"No text supplied: {', '.join(skipped) or 'none'}",
+                  f"Not on allow-list: {', '.join(rejected) or 'none'}"]
+        if err:
+            report.append(f"Error: {err}")
+        return (combined, "\n".join(report))
 
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Crew_Prompt_Generator": PSN_Crew_Prompt_Generator
+    "PSN_Role_Text_Concat": PSN_Role_Text_Concat
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Crew_Prompt_Generator": "PSN Crew Prompt Generator"
+    "PSN_Role_Text_Concat": "Role Text Concatenator (no agents, no LLM)"
 }

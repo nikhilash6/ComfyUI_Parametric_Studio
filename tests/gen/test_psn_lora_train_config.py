@@ -5,7 +5,7 @@ import pytest
 
 from psn_nodes.gen.psn_lora_train_config import (
     PSN_LoRA_Param_Set,
-    PSN_LoRA_Train_HunYuan,
+    PSN_LoRA_Job_Payload_HunYuan,
     _is_power_of_two,
     _validate_params,
 )
@@ -86,7 +86,7 @@ def test_psn_lora_param_set_rejects_invalid_network_module():
     assert "network_module" in status
 
 
-def test_psn_lora_train_hunyuan_valid_payload():
+def test_psn_lora_job_payload_valid():
     param_node = PSN_LoRA_Param_Set()
     config, _ = param_node.run(
         learning_rate=1e-4,
@@ -96,35 +96,42 @@ def test_psn_lora_train_hunyuan_valid_payload():
         alpha=32.0,
         network_module="lora",
     )
-    train_node = PSN_LoRA_Train_HunYuan()
-    lora_path, loss_curve, status = train_node.run(
+    node = PSN_LoRA_Job_Payload_HunYuan()
+    payload_json, expected_path, status = node.run(
         config=config,
         base_model_path="/models/hunyuan",
         output_dir="/outputs",
     )
-    assert status == "payload_ready"
-    assert lora_path == "/outputs/hunyuan_lora_rank32_step500.safetensors"
-    loss_data = json.loads(loss_curve)
-    assert loss_data["type"] == "synthetic"
-    assert loss_data["steps"] == 500
+    assert status == "payload_formatted"
+    assert expected_path == "/outputs/hunyuan_lora_rank32_step500.safetensors"
+    payload = json.loads(payload_json)
+    assert payload["base_model_path"] == "/models/hunyuan"
+    assert payload["output_dir"] == "/outputs"
+    assert payload["params"]["rank"] == 32
+    assert payload["params"]["steps"] == 500
+    assert payload["params"]["learning_rate"] == pytest.approx(1e-4)
+    assert payload["params"]["network_module"] == "lora"
+    # the fabricated loss curve and lora_path outputs are gone
+    assert PSN_LoRA_Job_Payload_HunYuan.RETURN_NAMES == ("job_payload_json", "expected_output_path", "status")
+    assert "loss" not in payload_json and "synthetic" not in payload_json
 
 
 def test_psn_lora_train_hunyuan_rejects_missing_config_keys():
-    train_node = PSN_LoRA_Train_HunYuan()
+    train_node = PSN_LoRA_Job_Payload_HunYuan()
     bad_config = {"learning_rate": 1e-4}  # missing many keys
-    lora_path, loss_curve, status = train_node.run(
+    payload_json, expected_path, status = train_node.run(
         config=bad_config,
         base_model_path="/models/hunyuan",
         output_dir="/outputs",
     )
     assert status.startswith("error")
     assert "missing keys" in status
-    assert lora_path == ""
+    assert expected_path == "" and payload_json == ""
 
 
 def test_psn_lora_train_hunyuan_rejects_non_dict_config():
-    train_node = PSN_LoRA_Train_HunYuan()
-    lora_path, loss_curve, status = train_node.run(
+    train_node = PSN_LoRA_Job_Payload_HunYuan()
+    payload_json, expected_path, status = train_node.run(
         config="not a dict",
         base_model_path="/models/hunyuan",
         output_dir="/outputs",

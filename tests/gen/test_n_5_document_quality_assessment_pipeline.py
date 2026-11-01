@@ -1,5 +1,5 @@
 """
-Tests for PSN_Document_Quality_Assessor.
+Tests for PSN_Document_Quality_Score_From_Metrics (scores typed numbers; reads no image).
 
 Covers the pure-logic assessment: good documents pass, blurry/low-res
 documents fail, edge cases (zero/negative/invalid inputs, out-of-range
@@ -12,7 +12,7 @@ import json
 import pytest
 
 from psn_nodes.gen.n_5_document_quality_assessment_pipeline import (
-    PSN_Document_Quality_Assessor,
+    PSN_Document_Quality_Score_From_Metrics,
     assess_document,
     NODE_CLASS_MAPPINGS,
     NODE_DISPLAY_NAME_MAPPINGS,
@@ -21,7 +21,7 @@ from psn_nodes.gen.n_5_document_quality_assessment_pipeline import (
 
 def _run(width_px, height_px, dpi, sharpness, contrast,
          min_resolution=300, blur_threshold=0.4):
-    node = PSN_Document_Quality_Assessor()
+    node = PSN_Document_Quality_Score_From_Metrics()
     return node.run(width_px, height_px, dpi, sharpness, contrast,
                     min_resolution, blur_threshold)
 
@@ -145,17 +145,32 @@ def test_assess_document_invalid_returns_zero_score():
 
 def test_node_registration_present():
     """The node is registered under its PSN_ id with a display name."""
-    assert "PSN_Document_Quality_Assessor" in NODE_CLASS_MAPPINGS
-    assert NODE_CLASS_MAPPINGS["PSN_Document_Quality_Assessor"] is PSN_Document_Quality_Assessor
-    assert "PSN_Document_Quality_Assessor" in NODE_DISPLAY_NAME_MAPPINGS
+    assert "PSN_Document_Quality_Score_From_Metrics" in NODE_CLASS_MAPPINGS
+    assert NODE_CLASS_MAPPINGS["PSN_Document_Quality_Score_From_Metrics"] is PSN_Document_Quality_Score_From_Metrics
+    assert "PSN_Document_Quality_Score_From_Metrics" in NODE_DISPLAY_NAME_MAPPINGS
 
 
 def test_input_types_schema_shape():
     """INPUT_TYPES exposes the expected required fields with sane defaults."""
-    spec = PSN_Document_Quality_Assessor.INPUT_TYPES()
+    spec = PSN_Document_Quality_Score_From_Metrics.INPUT_TYPES()
     required = spec["required"]
     for key in ("width_px", "height_px", "dpi", "sharpness", "contrast",
                 "min_resolution", "blur_threshold"):
         assert key in required
     assert required["min_resolution"][0] == "INT"
     assert required["blur_threshold"][0] == "FLOAT"
+
+
+def test_renamed_and_has_no_image_input():
+    assert "PSN_Document_Quality_Assessor" not in NODE_CLASS_MAPPINGS
+    required = PSN_Document_Quality_Score_From_Metrics.INPUT_TYPES()["required"]
+    assert "image" not in required
+    assert "does not look at any image" in PSN_Document_Quality_Score_From_Metrics.DESCRIPTION
+
+
+def test_exact_score_from_metrics():
+    """0.4*res + 0.35*sharp + 0.25*contrast with res = dpi/min_resolution clamped."""
+    score, _, passed = _run(width_px=1000, height_px=1000, dpi=150.0,
+                            sharpness=0.8, contrast=0.6, min_resolution=300)
+    assert score == pytest.approx(0.4 * 0.5 + 0.35 * 0.8 + 0.25 * 0.6)
+    assert passed is False  # low_resolution is a critical issue

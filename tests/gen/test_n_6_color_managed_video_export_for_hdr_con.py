@@ -1,12 +1,12 @@
 """
-Tests for PSN_HDR_Color_Manager node.
+Tests for PSN_HDR_Color_Config node.
 """
 
 import json
 import pytest
 
 from psn_nodes.gen.n_6_color_managed_video_export_for_hdr_con import (
-    PSN_HDR_Color_Manager,
+    PSN_HDR_Color_Config,
     validate_icc_profile,
     validate_target_colorspace,
     compute_tone_mapping_params,
@@ -19,7 +19,7 @@ from psn_nodes.gen.n_6_color_managed_video_export_for_hdr_con import (
 
 def test_valid_srgb_to_srgb_no_hdr():
     """Test valid sRGB to sRGB conversion with HDR disabled."""
-    node = PSN_HDR_Color_Manager()
+    node = PSN_HDR_Color_Config()
     valid, config_json, reason = node.run(
         icc_profile="sRGB",
         target_colorspace="sRGB",
@@ -31,12 +31,13 @@ def test_valid_srgb_to_srgb_no_hdr():
     assert config["target_colorspace"] == "sRGB"
     assert config["hdr_mode"] is False
     assert config["tone_mapping"]["enabled"] is False
-    assert config["color_conversion"]["method"] == "matrix"
+    assert config["color_conversion"]["needs_conversion"] is False
+    assert "method" not in config["color_conversion"]
 
 
 def test_valid_p3_to_rec2020_with_hdr():
     """Test valid Display P3 to Rec.2020 conversion with HDR enabled."""
-    node = PSN_HDR_Color_Manager()
+    node = PSN_HDR_Color_Config()
     valid, config_json, reason = node.run(
         icc_profile="Display P3",
         target_colorspace="Rec.2020",
@@ -54,12 +55,12 @@ def test_valid_p3_to_rec2020_with_hdr():
     assert config["tone_mapping"]["mode"] == "ACES"
     assert config["tone_mapping"]["exposure"] == 1.5
     assert config["tone_mapping"]["gamma"] == 2.2
-    assert config["color_conversion"]["method"] == "lut"
+    assert config["color_conversion"]["needs_conversion"] is True
 
 
 def test_invalid_icc_profile():
     """Test that an invalid ICC profile is rejected."""
-    node = PSN_HDR_Color_Manager()
+    node = PSN_HDR_Color_Config()
     valid, config_json, reason = node.run(
         icc_profile="InvalidProfile",
         target_colorspace="sRGB",
@@ -72,7 +73,7 @@ def test_invalid_icc_profile():
 
 def test_invalid_target_colorspace():
     """Test that an invalid target colorspace is rejected."""
-    node = PSN_HDR_Color_Manager()
+    node = PSN_HDR_Color_Config()
     valid, config_json, reason = node.run(
         icc_profile="sRGB",
         target_colorspace="InvalidSpace",
@@ -85,7 +86,7 @@ def test_invalid_target_colorspace():
 
 def test_exposure_clamping():
     """Test that exposure values are clamped to valid range."""
-    node = PSN_HDR_Color_Manager()
+    node = PSN_HDR_Color_Config()
     # Test high exposure clamping
     valid, config_json, reason = node.run(
         icc_profile="sRGB",
@@ -111,7 +112,7 @@ def test_exposure_clamping():
 
 def test_gamma_clamping():
     """Test that gamma values are clamped to valid range."""
-    node = PSN_HDR_Color_Manager()
+    node = PSN_HDR_Color_Config()
     # Test high gamma clamping
     valid, config_json, reason = node.run(
         icc_profile="sRGB",
@@ -137,7 +138,7 @@ def test_gamma_clamping():
 
 def test_invalid_tone_mapping_mode_fallback():
     """Test that an invalid tone mapping mode falls back to Reinhard."""
-    node = PSN_HDR_Color_Manager()
+    node = PSN_HDR_Color_Config()
     valid, config_json, reason = node.run(
         icc_profile="sRGB",
         target_colorspace="sRGB",
@@ -269,3 +270,10 @@ def test_all_tone_mapping_modes():
             gamma=1.0,
         )
         assert params["mode"] == mode
+
+
+def test_registration_and_honest_description():
+    import psn_nodes.gen.n_6_color_managed_video_export_for_hdr_con as m
+    assert list(m.NODE_CLASS_MAPPINGS) == ["PSN_HDR_Color_Config"]
+    assert "PSN_HDR_Color_Manager" not in m.NODE_CLASS_MAPPINGS
+    assert "does not convert any pixels" in PSN_HDR_Color_Config.DESCRIPTION

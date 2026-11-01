@@ -1,5 +1,5 @@
 """
-Tests for PSN_ScheduledCFG node.
+Tests for PSN_CFG_Schedule_Interpolator node (interpolates one value; patches no model).
 """
 
 import json
@@ -7,12 +7,13 @@ import math
 import pytest
 
 from psn_nodes.gen.n_5_scheduled_cfg_for_complex_prompts import (
-    PSN_ScheduledCFG,
+    PSN_CFG_Schedule_Interpolator,
     _validate_schedule,
     compute_cfg_at_step,
     _interpolate_linear,
     _interpolate_smoothstep,
     _interpolate_cosine,
+    NODE_CLASS_MAPPINGS,
 )
 
 
@@ -173,10 +174,10 @@ class TestComputeCfgAtStep:
 
 
 class TestPSNScheduledCFGNode:
-    """Tests for the PSN_ScheduledCFG node class."""
+    """Tests for the PSN_CFG_Schedule_Interpolator node class."""
 
     def test_node_run_valid(self):
-        node = PSN_ScheduledCFG()
+        node = PSN_CFG_Schedule_Interpolator()
         cfg_value, parsed_schedule, status = node.run(
             schedule='[[0.0, 7.5], [0.5, 5.0], [1.0, 2.5]]',
             interpolation="Linear",
@@ -188,7 +189,7 @@ class TestPSNScheduledCFGNode:
         assert parsed == [[0.0, 7.5], [0.5, 5.0], [1.0, 2.5]]
 
     def test_node_run_midpoint(self):
-        node = PSN_ScheduledCFG()
+        node = PSN_CFG_Schedule_Interpolator()
         cfg_value, parsed_schedule, status = node.run(
             schedule='[[0.0, 7.5], [1.0, 2.5]]',
             interpolation="Linear",
@@ -197,7 +198,7 @@ class TestPSNScheduledCFGNode:
         assert abs(cfg_value - 5.0) < 1e-9
 
     def test_node_run_invalid_schedule(self):
-        node = PSN_ScheduledCFG()
+        node = PSN_CFG_Schedule_Interpolator()
         cfg_value, parsed_schedule, status = node.run(
             schedule='invalid json',
             interpolation="Linear",
@@ -207,7 +208,7 @@ class TestPSNScheduledCFGNode:
         assert "Error" in status
 
     def test_node_run_invalid_interpolation(self):
-        node = PSN_ScheduledCFG()
+        node = PSN_CFG_Schedule_Interpolator()
         cfg_value, parsed_schedule, status = node.run(
             schedule='[[0.0, 7.5], [1.0, 2.5]]',
             interpolation="InvalidMode",
@@ -217,7 +218,7 @@ class TestPSNScheduledCFGNode:
         assert "Unknown interpolation mode" in status
 
     def test_node_run_smoothstep(self):
-        node = PSN_ScheduledCFG()
+        node = PSN_CFG_Schedule_Interpolator()
         cfg_value, parsed_schedule, status = node.run(
             schedule='[[0.0, 10.0], [1.0, 0.0]]',
             interpolation="Smoothstep",
@@ -227,7 +228,7 @@ class TestPSNScheduledCFGNode:
         assert abs(cfg_value - 5.0) < 1e-9
 
     def test_node_run_cosine(self):
-        node = PSN_ScheduledCFG()
+        node = PSN_CFG_Schedule_Interpolator()
         cfg_value, parsed_schedule, status = node.run(
             schedule='[[0.0, 10.0], [1.0, 0.0]]',
             interpolation="Cosine",
@@ -237,7 +238,7 @@ class TestPSNScheduledCFGNode:
         assert abs(cfg_value - 5.0) < 1e-9
 
     def test_node_run_step_clamped(self):
-        node = PSN_ScheduledCFG()
+        node = PSN_CFG_Schedule_Interpolator()
         # Step percent > 1.0 should be clamped to 1.0
         cfg_value, parsed_schedule, status = node.run(
             schedule='[[0.0, 7.5], [1.0, 2.5]]',
@@ -247,7 +248,7 @@ class TestPSNScheduledCFGNode:
         assert cfg_value == 2.5
 
     def test_node_run_step_negative_clamped(self):
-        node = PSN_ScheduledCFG()
+        node = PSN_CFG_Schedule_Interpolator()
         # Step percent < 0.0 should be clamped to 0.0
         cfg_value, parsed_schedule, status = node.run(
             schedule='[[0.0, 7.5], [1.0, 2.5]]',
@@ -257,15 +258,30 @@ class TestPSNScheduledCFGNode:
         assert cfg_value == 7.5
 
     def test_node_return_types(self):
-        assert PSN_ScheduledCFG.RETURN_TYPES == ("FLOAT", "STRING", "STRING")
-        assert PSN_ScheduledCFG.RETURN_NAMES == ("cfg_value", "parsed_schedule", "status")
-        assert PSN_ScheduledCFG.FUNCTION == "run"
-        assert PSN_ScheduledCFG.CATEGORY == "ParametricStudio/ScheduledCFG"
+        assert PSN_CFG_Schedule_Interpolator.RETURN_TYPES == ("FLOAT", "STRING", "STRING")
+        assert PSN_CFG_Schedule_Interpolator.RETURN_NAMES == ("cfg_value", "parsed_schedule", "status")
+        assert PSN_CFG_Schedule_Interpolator.FUNCTION == "run"
+        assert PSN_CFG_Schedule_Interpolator.CATEGORY == "ParametricStudio/ScheduledCFG"
 
     def test_node_input_types(self):
-        input_types = PSN_ScheduledCFG.INPUT_TYPES()
+        input_types = PSN_CFG_Schedule_Interpolator.INPUT_TYPES()
         assert "schedule" in input_types["required"]
         assert "interpolation" in input_types["required"]
         assert "step_percent" in input_types["required"]
         # The interpolation input is a tuple containing the list of modes
         assert input_types["required"]["interpolation"] == (["Linear", "Smoothstep", "Cosine"],)
+
+
+class TestHonestNaming:
+    def test_renamed_and_description(self):
+        assert "PSN_ScheduledCFG" not in NODE_CLASS_MAPPINGS
+        assert NODE_CLASS_MAPPINGS["PSN_CFG_Schedule_Interpolator"] is PSN_CFG_Schedule_Interpolator
+        assert "does not patch a model" in PSN_CFG_Schedule_Interpolator.DESCRIPTION
+        assert "MODEL" not in str(PSN_CFG_Schedule_Interpolator.RETURN_TYPES)
+
+    def test_three_point_cosine_value(self):
+        # Segment (0.5,5.0)->(1.0,2.5) at step 0.625: t=0.25, cosine ease = (1-cos(pi/4))/2
+        cfg, _, _ = PSN_CFG_Schedule_Interpolator().run(
+            '[[0.0, 7.5], [0.5, 5.0], [1.0, 2.5]]', "Cosine", 0.625)
+        ease = (1.0 - math.cos(math.pi * 0.25)) / 2.0
+        assert cfg == pytest.approx(5.0 + (2.5 - 5.0) * ease)

@@ -6,7 +6,7 @@ import json
 import pytest
 from psn_nodes.gen.psn_tensor_debug import (
     PSN_Tensor_Inspect,
-    PSN_Tensor_Save,
+    PSN_Tensor_Save_Plan,
     _validate_tensor_data,
     _flatten_tensor,
     _get_shape,
@@ -96,42 +96,52 @@ class TestPSNTensorInspect:
 
 
 class TestPSNTensorSave:
-    """Tests for PSN_Tensor_Save node."""
+    """Tests for PSN_Tensor_Save_Plan node."""
     
     def test_valid_path(self):
         """Test with a valid path."""
-        node = PSN_Tensor_Save()
+        node = PSN_Tensor_Save_Plan()
         result = node.run(path="output/tensor.pt")
         assert result[0] == "output/tensor.pt"
+        assert PSN_Tensor_Save_Plan.RETURN_NAMES == ("planned_path",)
+        assert "writes nothing" in PSN_Tensor_Save_Plan.DESCRIPTION
+
+    def test_nothing_is_written(self, tmp_path):
+        """The planned path is not created, even with tensor data and an existing directory."""
+        target = tmp_path / "tensor.pt"
+        result = PSN_Tensor_Save_Plan().run(path=str(target), tensor_data=json.dumps([[1.0, 2.0]]))
+        assert result[0] == str(target)
+        assert not target.exists()
+        assert list(tmp_path.iterdir()) == []
     
     def test_empty_path(self):
         """Test with empty path."""
-        node = PSN_Tensor_Save()
+        node = PSN_Tensor_Save_Plan()
         result = node.run(path="")
         assert result[0].startswith("error")
     
     def test_path_with_null_byte(self):
         """Test with path containing null byte."""
-        node = PSN_Tensor_Save()
+        node = PSN_Tensor_Save_Plan()
         result = node.run(path="bad\x00path.pt")
         assert result[0].startswith("error")
     
     def test_non_string_path(self):
         """Test with non-string path."""
-        node = PSN_Tensor_Save()
+        node = PSN_Tensor_Save_Plan()
         result = node.run(path=12345)
         assert result[0].startswith("error")
     
     def test_path_with_tensor_data(self):
         """Test with valid tensor data provided."""
-        node = PSN_Tensor_Save()
+        node = PSN_Tensor_Save_Plan()
         tensor_data = json.dumps([[1.0, 2.0]])
         result = node.run(path="test.pt", tensor_data=tensor_data)
         assert result[0] == "test.pt"
     
     def test_path_with_invalid_tensor_data(self):
         """Test with invalid tensor data."""
-        node = PSN_Tensor_Save()
+        node = PSN_Tensor_Save_Plan()
         result = node.run(path="test.pt", tensor_data="invalid json")
         assert result[0].startswith("error")
 

@@ -9,10 +9,11 @@ GPU memory and file access, which are intentionally NOT used here.
 What IS implemented (standard library only, no torch / comfy / network /
 file / subprocess / eval):
 
-  * PSN_Sep_Split  -- validates the separation request (model allow-list,
-                      audio payload shape) and returns the *planned* stem
-                      layout (names, order, per-stem gain defaults) plus a
-                      status/reason string. It does NOT run a model.
+  * PSN_Sep_Plan   -- validates the separation request (model allow-list,
+                      audio payload shape) and returns a JSON plan (model,
+                      sample count, sample rate, stem names and default
+                      gains) plus a status string. It separates nothing and
+                      returns no stem audio.
   * PSN_Sep_Mix    -- performs the actual gain-mixing math on plain numeric
                       sample lists: applies per-stem gain, sums the stems,
                       and reports clipping / peak information.
@@ -171,17 +172,22 @@ def _mix_stems(stem_lists, gains):
 
 
 # ---------------------------------------------------------------------------
-# Node 1: PSN_Sep_Split
+# Node 1: PSN_Sep_Plan
 # ---------------------------------------------------------------------------
 
-class PSN_Sep_Split:
+class PSN_Sep_Plan:
     """
-    Validate a source-separation request and return the planned stem layout.
+    Validate a source-separation request and return a JSON plan.
 
-    This node does NOT run a separation model (that requires torch/demucs/GPU).
-    It validates the model choice and the audio payload, then emits the
-    canonical 4-stem plan (names, order, default gains) plus a status string.
+    This node separates nothing and outputs no stem audio. It validates the
+    model choice and the audio payload, then emits a plan (model, sample
+    count, sample rate, stem names in order, default gain) as JSON text.
     """
+
+    DESCRIPTION = ("Validates a source-separation request and returns a JSON "
+                   "plan (model, sample count, sample rate, stem names, "
+                   "default gains). Separates nothing and returns no stem "
+                   "audio.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -195,38 +201,36 @@ class PSN_Sep_Split:
             },
         }
 
-    RETURN_TYPES = ("STRING", "STRING", "STRING", "STRING", "STRING")
-    RETURN_NAMES = ("vocals", "drums", "bass", "other", "status")
+    RETURN_TYPES = ("STRING", "STRING")
+    RETURN_NAMES = ("plan_json", "status")
     FUNCTION = "run"
     CATEGORY = "ParametricStudio/Audio"
 
     def run(self, audio, model, sample_rate=44100):
         # Validate model against allow-list.
         if model not in SPLIT_MODELS:
-            return ("", "", "", "", f"error: model '{model}' not in allow-list {SPLIT_MODELS}")
+            return ("", f"error: model '{model}' not in allow-list {SPLIT_MODELS}")
 
         # Validate audio payload (plain list of numbers or JSON text).
         try:
             samples = _coerce_sample_list(audio, "audio")
         except ValueError as exc:
-            return ("", "", "", "", f"error: {exc}")
+            return ("", f"error: {exc}")
 
         if len(samples) == 0:
-            return ("", "", "", "", "error: audio payload is empty")
+            return ("", "error: audio payload is empty")
 
         if not _is_number(sample_rate) or sample_rate <= 0:
-            return ("", "", "", "", f"error: sample_rate must be a positive number, got {sample_rate!r}")
+            return ("", f"error: sample_rate must be a positive number, got {sample_rate!r}")
 
-        # Build the planned stem layout. Each stem is represented as a JSON
-        # list of zeros (placeholder for the real separated signal) with the
-        # same length as the input, so downstream pure-logic nodes can operate
-        # on the shape. The real signal would come from the GPU model.
-        placeholder = json.dumps([0.0] * len(samples))
-        status = (
-            f"ok: model={model} samples={len(samples)} sample_rate={int(sample_rate)} "
-            f"stems={','.join(STEM_NAMES)} (placeholder zeros; run GPU model for real signal)"
-        )
-        return (placeholder, placeholder, placeholder, placeholder, status)
+        plan = {
+            "model": model,
+            "samples": len(samples),
+            "sample_rate": int(sample_rate),
+            "stems": list(STEM_NAMES),
+            "default_gain": DEFAULT_GAIN,
+        }
+        return (json.dumps(plan), "request valid: nothing was separated")
 
 
 # ---------------------------------------------------------------------------
@@ -319,11 +323,11 @@ class PSN_Sep_Mix:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_Sep_Split": PSN_Sep_Split,
+    "PSN_Sep_Plan": PSN_Sep_Plan,
     "PSN_Sep_Mix": PSN_Sep_Mix,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_Sep_Split": "PSN Sep Split (Source Separation Plan)",
+    "PSN_Sep_Plan": "PSN Source Separation Plan (JSON)",
     "PSN_Sep_Mix": "PSN Sep Mix (Stem Gain Mixing)",
 }

@@ -1,69 +1,23 @@
-"""ParametricStudio - LLM Agent Chat Interface (offline core).
+"""ParametricStudio - LLM agent config and chat request builder.
 
-This module implements the *core* of an LLM agent chat interface for ComfyUI.
-Because network access and third-party SDKs (openai, ollama, griptape) are not
-available in this environment, the module ships with a deterministic, fully
-offline **mock provider** that emulates the provider/client/response contract.
+Nothing here contacts an LLM: no network, no SDK.
 
-What IS implemented (torch/stdlib only):
-  * PSN_LLM_Agent_Init  - builds a provider client object (mock) with config.
-  * PSN_LLM_Agent_Chat  - sends a message + history to the client and returns
-                          a response string plus a JSON usage string.
-  * A small in-memory AgentInstance dataclass that carries the config and a
-    conversation history.
-
-What is NOT implemented (requires network / SDKs):
-  * Real HTTP calls to OpenAI / Azure / Ollama endpoints.
-  * Token counting via provider tokenizers (usage is estimated with a simple
-    character-based heuristic).
-  * Streaming responses.
-  * Advanced griptape agent features (tools, memory backends, etc.).
+  * PSN_LLM_Agent_Init          - holds provider, model, system prompt and
+                                  optional api key in an AgentInstance.
+  * PSN_LLM_Chat_Request_Build  - turns an AgentInstance plus a user message
+                                  into an OpenAI-style chat request as JSON
+                                  text. It sends nothing and returns no reply
+                                  or token usage. The api key is never put in
+                                  the request text.
 """
 
 import json
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 CAT = "ParametricStudio/LLM"
 
-# ---------------------------------------------------------------------------
-# Provider registry (mock implementations only - no network)
-# ---------------------------------------------------------------------------
-
 _PROVIDERS = ("openai", "ollama", "azure")
-
-
-def _estimate_tokens(text: str) -> int:
-    """Rough token estimate: ~4 chars per token (common heuristic)."""
-    if not text:
-        return 0
-    return max(1, len(text) // 4)
-
-
-def _mock_completion(provider: str, model: str, system_prompt: str,
-                     history: List[str], user_message: str) -> Dict[str, Any]:
-    """Deterministic offline stand-in for a real LLM completion call.
-
-    Returns a dict shaped like a minimal provider response:
-        {"response": str, "prompt_tokens": int, "completion_tokens": int}
-    """
-    # Build a deterministic, inspectable reply so tests can assert on it.
-    parts = [f"[{provider}:{model}]"]
-    if system_prompt:
-        parts.append(f"sys={system_prompt!r}")
-    for h in history:
-        parts.append(f"h={h!r}")
-    parts.append(f"q={user_message!r}")
-    reply = " | ".join(parts)
-
-    prompt_text = system_prompt + "\n" + "\n".join(history) + "\n" + user_message
-    prompt_tokens = _estimate_tokens(prompt_text)
-    completion_tokens = _estimate_tokens(reply)
-    return {
-        "response": reply,
-        "prompt_tokens": prompt_tokens,
-        "completion_tokens": completion_tokens,
-    }
 
 
 # ---------------------------------------------------------------------------
@@ -72,30 +26,13 @@ def _mock_completion(provider: str, model: str, system_prompt: str,
 
 @dataclass
 class AgentInstance:
-    """Holds the configuration for one LLM agent.
-
-    In a full implementation this would wrap a real SDK client; here it is a
-    lightweight config carrier plus a mock completion function.
-    """
+    """Holds the configuration for one LLM agent (plain data, no client)."""
     provider: str
     model_name: str
     api_key: Optional[str]
     system_prompt: str
-    # conversation history maintained across chat calls (list of strings)
+    # prior conversation lines, sent as user-role messages by the builder
     history: List[str] = field(default_factory=list)
-
-    def complete(self, user_message: str) -> Dict[str, Any]:
-        """Run one completion turn (mock, offline)."""
-        result = _mock_completion(
-            self.provider,
-            self.model_name,
-            self.system_prompt,
-            list(self.history),
-            user_message,
-        )
-        # update internal history (never mutate caller's list)
-        self.history = self.history + [user_message, result["response"]]
-        return result
 
 
 # ---------------------------------------------------------------------------
@@ -138,8 +75,17 @@ class PSN_LLM_Agent_Init:
         return (agent,)
 
 
-class PSN_LLM_Agent_Chat:
-    """Send a message to an LLM agent and get a response + usage JSON."""
+class PSN_LLM_Chat_Request_Build:
+    """Build an OpenAI-style chat request (JSON text) from an agent config.
+
+    Calls no LLM and returns no reply. Messages are the system prompt (if
+    any), the agent's history lines and the extra history lines (each as a
+    user-role message, since history carries no roles), then the user message.
+    """
+
+    DESCRIPTION = ("Builds an OpenAI-style chat request as JSON text from an "
+                   "agent config and a message. Calls no LLM and returns no "
+                   "reply or token usage.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -154,8 +100,8 @@ class PSN_LLM_Agent_Chat:
             },
         }
 
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("response", "usage")
+    RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("request_json",)
     FUNCTION = "run"
     CATEGORY = CAT
 
@@ -166,33 +112,22 @@ class PSN_LLM_Agent_Chat:
         if user_message is None:
             raise ValueError("user_message must not be None")
 
-        # Build the full history: agent's internal history + optional extra lines
-        extra: List[str] = []
+        lines = list(agent_instance.history)
         if history:
-            extra = [line for line in history.splitlines() if line.strip()]
+            lines += [ln for ln in history.splitlines() if ln.strip()]
 
-        # We pass the combined history to the mock completion but keep the
-        # agent's internal history as the source of truth for future turns.
-        full_history = list(agent_instance.history) + extra
-        result = _mock_completion(
-            agent_instance.provider,
-            agent_instance.model_name,
-            agent_instance.system_prompt,
-            full_history,
-            user_message,
-        )
+        messages = []
+        if agent_instance.system_prompt:
+            messages.append({"role": "system", "content": agent_instance.system_prompt})
+        messages += [{"role": "user", "content": ln} for ln in lines]
+        messages.append({"role": "user", "content": user_message})
 
-        # Update the agent's internal history (do not mutate in place)
-        agent_instance.history = agent_instance.history + [user_message, result["response"]]
-
-        usage = json.dumps({
+        request = {
             "provider": agent_instance.provider,
             "model": agent_instance.model_name,
-            "prompt_tokens": result["prompt_tokens"],
-            "completion_tokens": result["completion_tokens"],
-            "total_tokens": result["prompt_tokens"] + result["completion_tokens"],
-        })
-        return (result["response"], usage)
+            "messages": messages,
+        }
+        return (json.dumps(request),)
 
 
 # ---------------------------------------------------------------------------
@@ -201,10 +136,10 @@ class PSN_LLM_Agent_Chat:
 
 NODE_CLASS_MAPPINGS = {
     "PSN_LLM_Agent_Init": PSN_LLM_Agent_Init,
-    "PSN_LLM_Agent_Chat": PSN_LLM_Agent_Chat,
+    "PSN_LLM_Chat_Request_Build": PSN_LLM_Chat_Request_Build,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PSN_LLM_Agent_Init": "LLM Agent Init (ParametricStudio)",
-    "PSN_LLM_Agent_Chat": "LLM Agent Chat (ParametricStudio)",
+    "PSN_LLM_Chat_Request_Build": "Build LLM Chat Request JSON (ParametricStudio)",
 }
