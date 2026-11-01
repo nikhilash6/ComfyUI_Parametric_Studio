@@ -45,8 +45,8 @@ def test_proof_is_only_what_was_recorded_and_nothing_claims_tested_here():
         v = R.view(r); assert v["status"] == "untested" and v["tested"] is None
     assert all("never" in r["proof"]["note"].lower() or "not" in r["proof"]["note"].lower() for r in R.library() if r["proof"]["level"] == "recipe")
     assert all("earlier studio" in r["proof"]["note"] and "Not re-rendered" in r["proof"]["note"] for r in L.curated() if r["proof"]["level"] == "verified")
-def test_the_page_says_recipe_means_never_rendered():
-    js = (ROOT / "studio/web/recipes.js").read_text(); assert "Recipe: never rendered" in js and "Verified on the earlier studio" in js and "None of these has been rendered in this studio yet" in js
+def test_the_page_says_a_card_without_a_picture_has_no_render_to_show():
+    js = (ROOT / "studio/web/recipes.js").read_text(); assert "Recipe: no render shown" in js and "Verified on the earlier studio" in js and "A card without one has no render to show you yet" in js
 def test_every_lora_records_a_licence_and_non_commercial_is_labelled():
     for r in L.curated(): assert r["licence"] and r["licence_class"] in ("open", "community", "unverified", "non-commercial"), r["id"]
     for r in L.curated():

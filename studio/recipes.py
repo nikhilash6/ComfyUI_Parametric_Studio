@@ -8,14 +8,19 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from studio import sfw
 
-HERE = Path(__file__).resolve().parent; DATA = HERE / "recipes.json"; LIB_DIR = HERE / "recipe_library"; HEADROOM = 4.0; VRAM_WAIT = 600; POLL = 2.0; STEP_LIMIT = 1800
+HERE = Path(__file__).resolve().parent; DATA = HERE / "recipes.json"; LIB_DIR = HERE / "recipe_library"; RENDERS_DATA = HERE / "recipe_renders.json"; HEADROOM = 4.0; VRAM_WAIT = 600; POLL = 2.0; STEP_LIMIT = 1800
 FPS = 24; FF_TIMEOUT = 600
 class StepError(Exception): pass
 class Cancelled(Exception): pass
 
 def load():
     return json.load(open(DATA))
-_LIB = {"sig": None, "rows": []}
+_LIB = {"sig": None, "rows": []}; _RENDERS = {"sig": None, "rows": {}}
+def renders():
+    """Our own renders of library recipes, by recipe id: real files from a passed run that a person reviewed. A recipe not listed here has no picture to show."""
+    sig = os.path.getmtime(RENDERS_DATA)
+    if _RENDERS["sig"] != sig: _RENDERS.update(sig=sig, rows=json.load(open(RENDERS_DATA, encoding="utf-8"))["renders"])
+    return _RENDERS["rows"]
 def library():
     """The recipe library: the founders' earlier recipes, ported, in this same format, plus one recipe per curated LoRA. Each carries the proof level that studio recorded; none says tested until it has rendered here."""
     from studio import loras
@@ -557,7 +562,7 @@ def _step_view(s, d):
     return out
 def view(rec, d=None):
     d = d or load(); steps = [_step_view(s, d) for s in rec["steps"]]; t = rec.get("tested") or None; exp_s = sum(int(s["seconds"] or 0) for s in steps); gpu = [s["peak_gib"] for s in steps if s["peak_gib"]]
-    return {**{k: rec.get(k) for k in ("id", "title", "pitch", "why", "tags", "fields", "models", "licence_summary", "tips", "variations", "kind", "group", "proof", "library", "reference", "why_not", "waiting")}, "steps": steps, "status": "tested" if t else "untested", "tested": t, "expected": {"seconds": exp_s, "peak_gib": max(gpu) if gpu else 0, "basis": "sum of each step's measured time on this box, with a cold start per step" if exp_s else "not measured"}}
+    return {**{k: rec.get(k) for k in ("id", "title", "pitch", "why", "tags", "fields", "models", "licence_summary", "tips", "variations", "kind", "group", "proof", "library", "reference", "why_not", "waiting")}, "steps": steps, "status": "tested" if t else "untested", "tested": t, "render": renders().get(rec["id"]), "expected": {"seconds": exp_s, "peak_gib": max(gpu) if gpu else 0, "basis": "sum of each step's measured time on this box, with a cold start per step" if exp_s else "not measured"}}
 def validate(d=None):
     """Problems in recipes.json or the library. A test keeps them clean; the page never has to guess."""
     from studio.goals import GOALS
@@ -618,7 +623,7 @@ def recipes_list():
     d = load(); rows = [view(r, d) for r in d["recipes"]]; return {"recipes": rows, "measured": d.get("measured", {}), "tested": sum(1 for r in rows if r["status"] == "tested"), "untested": sum(1 for r in rows if r["status"] != "tested"), "busy": CURRENT["run"], "queued": len(_pending())}
 def _light(r):
     """A library row: what a card needs. The steps' names only show how long the chain is."""
-    return {**{k: r.get(k) for k in ("id", "title", "pitch", "kind", "group", "tags", "proof", "reference", "why_not", "waiting")}, "n_steps": len(r["steps"]), "models": [{"name": m["name"], "licence": m["licence"], "licence_class": m["licence_class"]} for m in r["models"]]}
+    return {**{k: r.get(k) for k in ("id", "title", "pitch", "kind", "group", "tags", "proof", "reference", "why_not", "waiting")}, "n_steps": len(r["steps"]), "render": renders().get(r["id"]), "models": [{"name": m["name"], "licence": m["licence"], "licence_class": m["licence_class"]} for m in r["models"]]}
 @router.get("/api/recipe-library")
 def recipe_library(kind: str = "", q: str = "", ready_only: bool = False, offset: int = 0, limit: int = 60):
     """The ported library, filtered and paged. Whether a recipe can run comes from a real check of its graphs against ComfyUI's /object_info and the model files on disk."""
@@ -633,7 +638,7 @@ def recipe_library(kind: str = "", q: str = "", ready_only: bool = False, offset
         if ready_only and not st["ready"]: continue
         shown.append((r, st))
     page = shown[max(0, offset):max(0, offset) + max(1, min(limit, 200))]
-    return {"recipes": [{**_light(r), "ready": st["ready"], "ready_why": st["why"]} for r, st in page], "total": len(shown), "counts": counts, "ready": sum(1 for _, st in shown if st["ready"])}
+    return {"recipes": [{**_light(r), "ready": st["ready"], "ready_why": st["why"]} for r, st in page], "total": len(shown), "counts": counts, "ready": sum(1 for _, st in shown if st["ready"]), "rendered": sum(1 for r, _ in shown if r["id"] in renders())}
 @router.get("/api/recipe-ready/{rid}")
 def recipe_ready(rid: str):
     from studio import recipe_check as C
