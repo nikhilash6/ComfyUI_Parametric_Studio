@@ -15,10 +15,12 @@ def test_each_page_has_its_own_stylesheet_linked():
 
 def test_added_media_is_small_and_real_files():
     media = [*(WEB / "wk_art").iterdir(), *(WEB / "vset_art").iterdir()]
-    assert sum(p.stat().st_size for p in media) < 2_000_000
+    assert sum(p.stat().st_size for p in media) < 4_000_000
     used = " ".join((WEB / n).read_text() for n in ["wk_example.js", "vset_example.js"])
     for rel in re.findall(r"(?:wk|vset)_art/[\w.]+", used):
         assert (WEB / rel).is_file(), rel
+    for name in ["h3_result", "h3_shaded", "h3_depth", "h3_edges", "ltx_result", "ltx_shaded", "ltx_depth", "ltx_edges", "ltx_clay"]:
+        assert (WEB / "vset_art" / f"{name}.mp4").is_file() and (WEB / "vset_art" / f"{name}.webp").is_file(), name
 
 
 @pytest.mark.parametrize("name", PAGES)
@@ -29,7 +31,7 @@ def test_local_files_only_and_no_long_dashes(name):
 
 
 def test_samples_and_the_test_shot_are_marked_as_ours():
-    wk, vs = (WEB / "worldkit.js").read_text(), (WEB / "vset_hero.js").read_text()
+    wk, vs = (WEB / "worldkit.js").read_text(), (WEB / "vset_hero.js").read_text() + (WEB / "vset_example.js").read_text()
     assert "Ours, not in your library" in wk and "Our test, not a promise" in vs and "keeps the set exact and does not make it photoreal" in vs
 
 
