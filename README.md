@@ -4,10 +4,15 @@
 
 ### Every open model. One studio. Your GPU.
 
-The creative suite the closed apps promised, rebuilt in the open on ComfyUI.
-Direct films, swap characters, make music videos and talk to a crew of AI specialists, with **0 credits** and the **real graph behind every frame**.
+**Start here: [Shot Board](#shot-board-one-clip-in-a-whole-shoot-out).** One clip in, a whole shoot out: reshoot it, orbit it, recast the lead and add LTX-2.5 VFX, with the exact graph and seed kept for every result.
+
+![Shot Board: one source clip, reshot, orbited, recast and run through four LTX-2.5 effects](docs/img/shotboard.jpg)
 
 **[▶ Try the live demo](https://parametricparadigm.github.io/ComfyUI_Parametric_Studio/)** &nbsp;·&nbsp; **[🎬 Watch the 2-minute video](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_demo.mp4)** &nbsp;·&nbsp; **[⚡ Install](#install)** &nbsp;·&nbsp; **[🧠 What's inside](#whats-inside)**
+<!-- shot board demo link -->
+
+The creative suite the closed apps promised, rebuilt in the open on ComfyUI.
+Direct films, swap characters, make music videos and talk to a crew of AI specialists, with **0 credits** and the **real graph behind every frame**.
 
 ![The Create page: a draggable 3D wall of real renders](docs/img/hero.webp)
 
@@ -82,8 +87,6 @@ Whole concept sheets from a few choices: **Character, Fashion, Vehicle**, plus s
 Remove objects, upscale, slow motion, extend a clip, restyle with pose or depth, change the camera, fill and outpaint, edit by instruction, then cut it together on a timeline.
 
 ### Shot Board: one clip in, a whole shoot out
-![Shot Board: one source clip, reshot, orbited, recast and run through four LTX-2.5 effects](docs/img/shotboard.jpg)
-
 Bring one clip and queue the lot: reshoot it with a new camera, orbit around the subject, recast the lead from a single picture, then run LTX-2.5 VFX for water, a clean plate, day to night and a matte. Jobs run one at a time on your GPU, the queue survives a reload, and every result keeps its exact graph and seed. Export the grid as one captioned contact video. Seven jobs on one clip took about 14 minutes on our 96 GB card. A clean plate can leave a small smear when the subject fills the frame, and the page says so.
 
 ### ComfyUniversity
@@ -106,7 +109,7 @@ The installer and planner look at your GPU, RAM and disk and offer what fits: GP
 - **Attach your ComfyUI:** already have one? Point the studio at it.
 - **Set and forget:** schedule creations with cron, on idle only.
 - **On your phone:** add it to your home screen over Tailscale, with private HTTPS and a QR code. Your GPU does the work.
-- **Comfy SDK:** the same graphs through Comfy's official SDK, on your own server, Comfy Cloud or a deployment, with one setting.
+- **Comfy SDK:** the default is your local ComfyUI. Set `STUDIO_BACKEND=sdk` to send the same graphs through Comfy's official SDK, to Comfy Cloud, a deployment or your own proxy. Cloud and deployments spend Comfy credits.
 
 ### 578 custom nodes, including a new V3 pack
 339 of the 578 are lightweight helpers that plan, validate or write metadata and load no model. The new V3 flagship pack does the heavy lifting:
