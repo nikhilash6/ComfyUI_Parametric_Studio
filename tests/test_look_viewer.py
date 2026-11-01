@@ -49,3 +49,9 @@ def test_family_mesh_is_served(instances):
 def test_family_mesh_path_is_checked(instances, family, path):
     with pytest.raises(HTTPException):
         server.family3d(family, path)
+
+
+def test_the_stage_opens_on_a_strong_build_facing_the_camera():
+    rows = json.loads((WEB / "mesh_art" / "index.json").read_text())
+    assert rows[0]["id"] == "knot" and all("yaw" in r for r in rows)
+    assert "item.yaw" in JS

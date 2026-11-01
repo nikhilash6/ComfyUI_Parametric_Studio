@@ -19,7 +19,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "product",
@@ -81,8 +81,8 @@
 "goal": "h3_video",
 "label": "Demo",
 "peak_gib": 46,
-"seed": 748789,
-"prompt": "integrated_multimodal_description: [Shot 1] the {product} shown in use, close detail. Slow orbit around the product. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"seed": 149027,
+"prompt": "integrated_multimodal_description: [Shot 1] {product} shown in use, close detail. Slow orbit around the product. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -96,8 +96,8 @@
 "goal": "h3_video",
 "label": "Cta",
 "peak_gib": 46,
-"seed": 618047,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} holds up the {product} and gives the call to action: {offer}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 149027,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds up {product} and gives the call to action: {offer}. They speak directly to the camera. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -208,7 +208,7 @@
 "label": "Discovery",
 "peak_gib": 46,
 "seed": 242581,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} unboxes the {product} and reacts with surprise. Medium shot, gentle push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} unboxes {product} and reacts with surprise. Medium shot, gentle push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -223,7 +223,7 @@
 "label": "Demo",
 "peak_gib": 46,
 "seed": 180063,
-"prompt": "integrated_multimodal_description: [Shot 1] the {product} in use, the key detail visible. Macro slide across the product. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} in use, the key detail visible. Macro slide across the product. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -335,7 +335,7 @@
 "label": "Reveal",
 "peak_gib": 46,
 "seed": 623404,
-"prompt": "integrated_multimodal_description: [Shot 1] the {product} revealed in dramatic light. Slow push in, shallow depth of field. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} revealed in dramatic light. Slow push in, shallow depth of field. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "1:1",
 "quality": "high",
@@ -350,7 +350,7 @@
 "label": "Detail",
 "peak_gib": 46,
 "seed": 381658,
-"prompt": "integrated_multimodal_description: [Shot 1] a close detail of the {product} that shows {benefit}. Macro slide. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] a close detail of {product} that shows {benefit}. Macro slide. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "1:1",
 "quality": "high",
@@ -429,7 +429,7 @@
 "label": "Arrival",
 "peak_gib": 46,
 "seed": 411883,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a sealed package with the {product}, excited. Medium shot, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a sealed package with {product}, excited. Medium shot, handheld. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -444,7 +444,7 @@
 "label": "Open",
 "peak_gib": 46,
 "seed": 435421,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} opens the box and lifts out the {product}. Close-up on the hands, slight handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} opens the box and lifts out {product}. Close-up on the hands, slight handheld. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -459,7 +459,7 @@
 "label": "Reaction",
 "peak_gib": 46,
 "seed": 548407,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to the {product} with a short honest first impression. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {product} with a short honest first impression. They speak directly to the camera. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -474,7 +474,7 @@
 "label": "Verdict",
 "peak_gib": 46,
 "seed": 185281,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on the {product}. They speak directly to the camera. Handheld selfie, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. Handheld selfie, push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -575,7 +575,7 @@
 "label": "Fix",
 "peak_gib": 46,
 "seed": 179440,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} uses the {product} to solve it. Close-up on the action, slow push. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} uses {product} to solve it. Close-up on the action, slow push. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -632,7 +632,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "product",
@@ -690,8 +690,8 @@
 "goal": "h3_video",
 "label": "Turn",
 "peak_gib": 46,
-"seed": 614375,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains how the {product} helped: {benefit}. They speak directly to the camera. Seated medium close-up, very slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 844849,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains how {product} helped: {benefit}. They speak directly to the camera. Seated medium close-up, very slow push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -705,7 +705,7 @@
 "goal": "h3_video",
 "label": "Close",
 "peak_gib": 46,
-"seed": 519309,
+"seed": 844849,
 "prompt": "integrated_multimodal_description: [Shot 1] {who} recommends it warmly in one line. They speak directly to the camera. Seated medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
@@ -958,7 +958,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -1016,7 +1016,7 @@
 "goal": "h3_video",
 "label": "Point 1",
 "peak_gib": 46,
-"seed": 178156,
+"seed": 755354,
 "prompt": "integrated_multimodal_description: [Shot 1] {who} explains the first point from: {points}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
@@ -1031,7 +1031,7 @@
 "goal": "h3_video",
 "label": "Point 2",
 "peak_gib": 46,
-"seed": 467110,
+"seed": 755354,
 "prompt": "integrated_multimodal_description: [Shot 1] {who} explains the second point from: {points}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
@@ -1046,7 +1046,7 @@
 "goal": "h3_video",
 "label": "Point 3",
 "peak_gib": 46,
-"seed": 688272,
+"seed": 755354,
 "prompt": "integrated_multimodal_description: [Shot 1] {who} explains the third point from: {points}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
@@ -1061,7 +1061,7 @@
 "goal": "h3_video",
 "label": "Wrap",
 "peak_gib": 46,
-"seed": 265491,
+"seed": 755354,
 "prompt": "integrated_multimodal_description: [Shot 1] {who} wraps up and asks viewers to follow: {offer}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
@@ -3674,7 +3674,7 @@
 "label": "Hero",
 "peak_gib": 46,
 "seed": 391318,
-"prompt": "integrated_multimodal_description: [Shot 1] the {product} turning in dramatic light. Slow orbit. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} turning in dramatic light. Slow orbit. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3732,7 +3732,7 @@
 "label": "Open",
 "peak_gib": 46,
 "seed": 644534,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} opens a box with the {product} and gasps. Close-up, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} opens a box with {product} and gasps. Close-up, handheld. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3995,7 +3995,7 @@
 "label": "Bite",
 "peak_gib": 46,
 "seed": 614245,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} takes a first bite of the {product} and reacts. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} takes a first bite of {product} and reacts. Close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4480,7 +4480,7 @@
 "label": "Make",
 "peak_gib": 46,
 "seed": 368161,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} makes the {product} in quick steps. Top-down close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} makes {product} in quick steps. Top-down close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4654,7 +4654,7 @@
 "label": "Verdict",
 "peak_gib": 46,
 "seed": 330566,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on the {product}. They speak directly to the camera. Medium close-up, product in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. Medium close-up, product in hand. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4944,7 +4944,7 @@
 "label": "Quote",
 "peak_gib": 46,
 "seed": 327074,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says one honest line about the {product}. They speak directly to the camera. Seated medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one honest line about {product}. They speak directly to the camera. Seated medium close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4997,7 +4997,7 @@
 "label": "Sting",
 "peak_gib": 46,
 "seed": 193752,
-"prompt": "integrated_multimodal_description: [Shot 1] an abstract swirl of coffee and steam for {product}. Macro, slow. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] an abstract swirl of coffee and steam for {product}. Macro, slow. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5050,7 +5050,7 @@
 "label": "Asmr",
 "peak_gib": 46,
 "seed": 189203,
-"prompt": "integrated_multimodal_description: [Shot 1] the {product} breaking apart in close-up. Macro, static. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} breaking apart in close-up. Macro, static. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5161,7 +5161,7 @@
 "label": "Reveal",
 "peak_gib": 46,
 "seed": 873791,
-"prompt": "integrated_multimodal_description: [Shot 1] the {product} revealed under spotlights. Slow orbit. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} revealed under spotlights. Slow orbit. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5714,7 +5714,7 @@
 "label": "Ad",
 "peak_gib": 46,
 "seed": 693506,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} sells {product} with full infomercial energy. They speak directly to the camera. Bright TV-style. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} sells {product} with full infomercial energy. They speak directly to the camera. Bright TV-style. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6472,7 +6472,7 @@
 "label": "Pour",
 "peak_gib": 46,
 "seed": 306279,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} puts {product} and smiles. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} puts {product} and smiles. Close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",

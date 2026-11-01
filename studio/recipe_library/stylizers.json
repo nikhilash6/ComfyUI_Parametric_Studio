@@ -1726,7 +1726,7 @@
 },
 "set": {
 "75:74": {
-"text": "Redraw this image as a Japanese sumi-e ink wash painting on rice paper. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+"text": "Redraw this image as a Japanese sumi-e ink wash painting on rice paper. The paper stays blank apart from the picture. Keep the same composition, people, faces, poses and objects; change only the rendering style."
 },
 "75:66": {
 "width": 1024,
@@ -1737,7 +1737,7 @@
 "height": 1024
 }
 },
-"prompt_note": "Redraw this image as a Japanese sumi-e ink wash painting on rice paper. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"prompt_note": "Redraw this image as a Japanese sumi-e ink wash painting on rice paper. The paper stays blank apart from the picture. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
 "final": true
 }
 ],
@@ -2473,7 +2473,7 @@
 },
 "set": {
 "75:74": {
-"text": "Redraw this image as a Japanese ukiyo-e woodblock print with flat colours and wave patterns. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+"text": "Redraw this image as a Japanese ukiyo-e woodblock print with flat colours and wave patterns. The sky is clear open colour, with no inscription, seal or title box anywhere. Keep the same composition, people, faces, poses and objects; change only the rendering style."
 },
 "75:66": {
 "width": 1024,
@@ -2484,7 +2484,7 @@
 "height": 1024
 }
 },
-"prompt_note": "Redraw this image as a Japanese ukiyo-e woodblock print with flat colours and wave patterns. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"prompt_note": "Redraw this image as a Japanese ukiyo-e woodblock print with flat colours and wave patterns. The sky is clear open colour, with no inscription, seal or title box anywhere. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
 "final": true
 }
 ],
@@ -2971,7 +2971,7 @@
 },
 "set": {
 "75:74": {
-"text": "Redraw this image as a cyberpunk digital painting with neon lights and rain reflections. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+"text": "Redraw this image as a cyberpunk digital painting with plain neon light bars and rain reflections, and every building front blank. Keep the same composition, people, faces, poses and objects; change only the rendering style."
 },
 "75:66": {
 "width": 1024,
@@ -2982,7 +2982,7 @@
 "height": 1024
 }
 },
-"prompt_note": "Redraw this image as a cyberpunk digital painting with neon lights and rain reflections. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"prompt_note": "Redraw this image as a cyberpunk digital painting with plain neon light bars and rain reflections, and every building front blank. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
 "final": true
 }
 ],
@@ -3552,7 +3552,7 @@
 },
 "set": {
 "75:74": {
-"text": "Redraw this image as a scene built from plastic toy bricks. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+"text": "Redraw this image as a scene built from plain unbranded plastic toy bricks, showing only the landscape and buildings, with no people or figures at all, and leaving out any people in the source. Keep the same composition, people, faces, poses and objects; change only the rendering style."
 },
 "75:66": {
 "width": 1024,
@@ -3563,7 +3563,7 @@
 "height": 1024
 }
 },
-"prompt_note": "Redraw this image as a scene built from plastic toy bricks. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"prompt_note": "Redraw this image as a scene built from plain unbranded plastic toy bricks, showing only the landscape and buildings, with no people or figures at all, and leaving out any people in the source. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
 "final": true
 }
 ],

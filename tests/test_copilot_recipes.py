@@ -151,3 +151,7 @@ def test_the_sound_step_writes_audio_the_chain_can_pass_on(tmp_path, monkeypatch
 
 def test_provenance_records_the_port_and_the_licence():
     t = (ROOT / "PROVENANCE.md").read_text(); assert "studio/recipe_library" in t and "studio/sound" in t and "lora_recipes.json" in t and "AGPL-3.0-or-later" in t
+def test_downloaded_lora_rows_are_reference_cards_that_claim_nothing():
+    rows = [r for r in L.curated() if r.get("mode") == "reference"]
+    assert rows and all(not r["run"] and r["proof"]["level"] == "recipe" and "Never rendered" in r["proof"]["note"] and r["why_not"] for r in rows)
+    assert not [r["path"] for r in rows if re.search("faceid|infl8", r["path"], re.I)]

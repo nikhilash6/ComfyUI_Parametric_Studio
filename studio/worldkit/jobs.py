@@ -79,13 +79,24 @@ def _submit_graph(req: dict) -> str:
     return jid
 
 
+def _matte_on_white(image, dest: Path) -> bool:
+    """A cut-out's transparent pixels read as black in a loader that drops alpha, and Hunyuan3D then builds that black as a wall behind the object. Put a cut-out on white. -> whether it had alpha."""
+    from PIL import Image
+    with Image.open(image) as im:
+        if im.mode not in ("RGBA", "LA"):
+            return False
+        bg = Image.new("RGB", im.size, "white"); bg.paste(im.convert("RGB"), mask=im.getchannel("A")); bg.save(dest)
+    return True
+
+
 def _family_image(info: dict, image: str, values: dict, tpl_path: str) -> None:
     """A template's LoadImage takes a name in the instance's own input folder."""
     from psn import instances as I
     d = Path(I.INSTANCES) / info["slug"] / "input"
     d.mkdir(parents=True, exist_ok=True)
     name = "wk_" + uuid.uuid4().hex[:10] + Path(image).suffix.lower()
-    shutil.copy2(image, d / name)
+    if not _matte_on_white(image, d / name):
+        shutil.copy2(image, d / name)
     ui = json.load(open(tpl_path, encoding="utf-8"))
     if "nodes" not in ui:                                    # the studio's own templates are API graphs: node id -> class_type
         nid = next((k for k, n in ui.items() if isinstance(n, dict) and n.get("class_type") == "LoadImage"), None)

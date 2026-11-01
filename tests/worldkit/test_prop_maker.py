@@ -117,7 +117,9 @@ def test_a_missing_model_stops_the_step_with_a_plain_sentence(tmp_path):
     assert state["state"] == "failed" and "still downloading or missing" in state["error"] and state["error"].startswith("Image")
 
 
-def test_the_mesh_step_says_what_is_missing_when_no_route_is_ready(tmp_path):
+def test_the_mesh_step_says_what_is_missing_when_no_route_is_ready(tmp_path, monkeypatch):
+    from studio.worldkit import capabilities as C
+    monkeypatch.setattr(C, "MESH_ROUTES", ("sam3d_objects",))             # family routes read the box's shared model list: keep this test off it
     glb = {"kind": "image", "image": _input_picture(tmp_path, "cut.png", "RGBA")}
     lib = L.Library()
     meta = lib.create(L.new_meta("prop", "x", source=glb))

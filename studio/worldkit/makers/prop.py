@@ -47,6 +47,9 @@ def recipe(given: dict | None, name: str) -> tuple[dict, list[str]]:
     s = r["size_m"]
     if isinstance(s, bool) or not isinstance(s, (int, float)) or not lo <= s <= hi:
         bad.append(f"size_m is {lo}-{hi} m (the object's longest side)")
+    pick = r.get("mesh_model")
+    if pick is not None and pick not in (*C.MESH_ROUTES, *C.TEXT_MESH_ROUTES):
+        bad.append(f"mesh_model is one of {', '.join((*C.MESH_ROUTES, *C.TEXT_MESH_ROUTES))}")
     if as_prop_of is not None:
         if isinstance(as_prop_of, str) and as_prop_of.strip():
             r["as_prop_of"] = as_prop_of.strip()
@@ -100,9 +103,11 @@ def steps(meta: dict) -> list[S.Step]:
     bad = source_problem(src)
     if bad:
         raise ValueError(bad)
+    chosen = (meta.get("recipe") or {}).get("mesh_model") or ""
+    direct = chosen in C.TEXT_MESH_ROUTES and src["kind"] == "text"       # a words-to-mesh model needs no picture and no cut-out
 
     def image(ctx):
-        if src["kind"] != "text":
+        if src["kind"] != "text" or direct:
             return None
         route = ctx["text_route"]() if ctx.get("text_route") else C.text_image_route()
         prompt = TEXT_TO_IMAGE.format(text=src["prompt"].strip())
@@ -119,7 +124,7 @@ def steps(meta: dict) -> list[S.Step]:
 
     def cutout(ctx):
         """A mesh model has to be told which object to build, so the object is cut out first and its alpha is the mask. A picture with its own cut-out and a mesh skip this."""
-        if src["kind"] == "mesh" or _has_alpha(_picture(ctx)):
+        if src["kind"] == "mesh" or direct or _has_alpha(_picture(ctx)):
             return None
         tools.require("cutout")
         name = (ctx.get("to_input") or jobs.to_input)(_picture(ctx))
@@ -128,13 +133,19 @@ def steps(meta: dict) -> list[S.Step]:
     def mesh(ctx):
         if src["kind"] == "mesh":
             return None
-        route = ctx["mesh_route"]() if ctx.get("mesh_route") else C.mesh_route()
+        work = ctx["work"] / "mesh"
+        if direct:
+            return {"main": {"path": str((ctx.get("runner") or _runner)(chosen, ["--prompt", src["prompt"].strip(), "--seed", int(ctx.get("seed") or 42)], work)), "route": chosen}}
+        route = chosen or (ctx["mesh_route"]() if ctx.get("mesh_route") else C.mesh_route())
         if not route:
             raise S.StepError(C.route("prop_image")["problems"][-1])
+        if chosen and not ctx.get("mesh_route"):
+            tools.require(chosen)
         pic = S.out_path(ctx, "cutout") if "cutout" in ctx["outputs"] else str(_picture(ctx))
-        work = ctx["work"] / "mesh"
         if route == "sam3d_objects":
             path = (ctx.get("sam3d") or tools.sam3d_objects)(pic, work)
+        elif route == "triposr":
+            path = (ctx.get("runner") or _runner)(route, ["--image", pic], work)
         else:
             fam, tid = C.NEEDS[route]["family"]
             res = ctx["wait"](ctx["submit"](jobs.family(fam, tid, image=pic)))
@@ -147,6 +158,16 @@ def steps(meta: dict) -> list[S.Step]:
             S.Step("cutout", "Cut-out (BiRefNet)", request=cutout, pick=S.pick_first(media_type=("image",))),
             S.Step("mesh", "Mesh (picture to 3D)", local=mesh),
             S.Step(BUILD_STEP, "Cleanup (Blender)", local=cleanup)]
+
+
+def _runner(route: str, args: list, work: Path) -> Path:
+    """A model with its own small runner, in its own process (studio/model3d.py)."""
+    from studio import model3d
+    work = Path(work); work.mkdir(parents=True, exist_ok=True)
+    try:
+        return model3d._run_runner(model3d.model(route), args, work / "mesh.glb", work / f"{route}.log")
+    except RuntimeError as e:
+        raise S.StepError(str(e)) from None
 
 
 def cleanup(ctx: dict, *, blender=None) -> dict:

@@ -7,13 +7,35 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 PLANS = ("3d_models", "three", "3d2", "small", "families", "fibo", "hyenc", "ming", "layout", "prio")
+LATER_PLANS = ("planned", "media_models", "support")
 COLUMNS = ["file", "gb", "repo", "path_in_repo", "on_disk", "disk_path", "function", "family", "does", "does_source", "status", "used_by", "proof", "next_step", "sha"]
 #: Non-ComfyUI runners that read a model folder directly: what the file is read by, from each tool's own launcher.
 RUNNERS = [("_complete_pipelines/SAM-3D-Objects/", "tool sam3d-objects, World Kit prop route (worldkit/tools.py sam3d_objects)"),
            ("3d/sam-3d-objects/", "tool sam3d-objects, World Kit prop route (worldkit/tools.py sam3d_objects)"),
            ("3d/SkinTokens/", "tool skintokens, World Kit rig step (worldkit/tools.py skintokens)"),
            ("motion/kimodo/", "tool kimodo, World Kit motion step (worldkit/tools.py kimodo)"),
-           ("motion/text-encoders/", "tool kimodo text encoder, World Kit motion step (worldkit/tools.py kimodo)")]
+           ("motion/text-encoders/", "tool kimodo text encoder, World Kit motion step (worldkit/tools.py kimodo)"),
+           ("_complete_pipelines/TripoSR/", "runner triposr_image.py, 3D page and World Kit prop route"),
+           ("3d/shap-e/", "runner shap_e_text.py, 3D page and World Kit prop route"),
+           ("3d/moge-vitl/", "tool sam3d-objects (reads MoGe for its depth), World Kit prop route"),
+           ("AniGen/ckpts/dinov2/", "tool sam3d-objects (reads this DINOv2), World Kit prop route")]
+#: Why a file is still not used, written after trying it. A pattern on the path decides the row's next step.
+WHY_UNUSED = [("AniGen/", "AniGen: the launcher wants dsine.pt, which is not on disk (only its .sha256-ok marker). Needs a fetch and a pickle scan, founder's call."),
+              ("Pixal3D/", "Pixal3D: the ComfyUI file pixal3d_int8_convrot is not on disk and the standalone tool lacks its shape and texture decoders. Needs a fetch."),
+              ("TRELLIS-2-4B/", "TRELLIS.2 raw per-stage weights: ComfyUI uses its single file trellis_2_int8_convrot, which is proven. These are only for a standalone runner, none exists here."),
+              ("microsoft/ckpts/", "TRELLIS v1 weights: no runner here."), ("TRELLIS-image-large/", "TRELLIS v1 weights: no runner here."),
+              ("Matrix-3D/", "Matrix-3D: no runner for its panorama video and LRM checkpoints. Not run."),
+              ("3d/instantmesh/", "InstantMesh: its code needs Zero123++ weights that are not on disk. Not run."),
+              ("Stable-Fast-3D/", "Stable-Fast-3D: its sf3d code is not on this box. Not run."),
+              ("PartCrafter/", "PartCrafter: its VAE weights did not land (config only) and torch_cluster is not in the venv. Not run."),
+              ("MIDI-3D", "MIDI-3D: only the image encoders landed; transformer and VAE are markers. Needs a fetch."),
+              ("UniRig/", "UniRig: no venv; spconv, torch_scatter, torch_cluster missing. Needs a pip into a new venv, founder's call."),
+              ("veichta__zipsplat", "ZipSplat: a tar with no runner here. Not run."),
+              ("FitDiT/", "FitDiT: virtual try-on code is not on this box. Not run."),
+              ("ipadapter/", "IP-Adapter: needs a pack that is not on live ComfyUI (Pack Lab first)."), ("geometry_estimation/Fast3R", "Fast3R: no node or runner here. Not run."), ("geometry_estimation/VGGT", "VGGT: no node or runner here. Not run."), ("geometry_estimation/STream3R", "STream3R: no node or runner here. Not run."),
+              ("hunyuan3d-paintpbr", "Hunyuan3D paint: no node or runner for the texture model here. Not run."), ("hunyuan3d-dit-v2-1", "Hunyuan3D 2.1 raw checkpoint: ComfyUI reads the converted repackaged files instead. Not run."), ("hunyuan3d-vae-v2-1", "Hunyuan3D 2.1 raw VAE: same."),
+              ("LDM3D-4C/pipeline/unet", "LDM3D-4C: wrapped for its family instance; level render recorded earlier."),
+              ("flownet", "Frame-interpolation weights for a pack not on live ComfyUI."), ("rife", "RIFE: the frame-interpolation template picks FILM, so these have no graph yet.")]
 
 
 def read_plan(path):
@@ -150,7 +172,7 @@ def first_paragraph(text):
     t = re.sub(r"^---\n.*?\n---\n", "", text or "", flags=re.S)
     for p in re.split(r"\n\s*\n", t):
         p = re.sub(r"<[^>]+>|!\[[^\]]*\]\([^)]*\)|\[([^\]]*)\]\([^)]*\)", r"\1", p).strip()
-        if len(p) < 40 or p.startswith(("#", "|", "```", "<", ">", "*", "-")): continue
+        if len(p) < 40 or p.startswith(("#", "|", "```", "<", ">", "*", "-", "Place the files", "Original model repository", "https://", "see github")) or p.endswith(":"): continue
         return " ".join(p.split())[:220]
     return ""
 
@@ -176,20 +198,31 @@ def decide(row, ok, reachable, used, proof):
     return "unreachable", "no ComfyUI folder lists it and no runner reads it: wire a runner or map the folder"
 
 
-def build(repo_root, models_root, workbench, yaml_path, all_json, template_dir=None, cards=None, plans=PLANS):
+def plans_landed(workbench, models_root, have, names=LATER_PLANS):
+    """Rows of the later fetch plans that have landed: those plans list far more than has arrived, so only files on disk count."""
+    return [r for r in load_plans(workbench, names) if r.get("sha") not in have and on_disk(models_root, r)[0]]
+
+
+def build(repo_root, models_root, workbench, yaml_path, all_json, template_dir=None, cards=None, plans=PLANS, arrivals=()):
     status = json.load(open(Path(repo_root) / "studio" / "family_status.json"))["families"]
     from studio.names import model_key
     uses = index_uses(repo_root, template_dir); by_key = {}
     for n, w in uses.items(): by_key.setdefault(model_key(n), []).extend(w)
     folders = comfy_folders(yaml_path); proofs = proof_index(all_json, status); rows = []
-    for r in load_plans(workbench, plans):
+    planned = load_plans(workbench, plans); planned += plans_landed(workbench, models_root, {r.get("sha") for r in planned}); known = {os.path.normpath(os.path.join(models_root, r["rel"])) for r in planned}
+    for path, size in arrivals:                                  # landed with no plan row naming it: all that is known is the file
+        if os.path.normpath(path) not in known and not path.endswith(".sha256-ok"):
+            planned.append({"sha": "", "bytes": size, "function": "arrived, no plan row", "repo": "", "path": "", "rel": os.path.relpath(path, models_root) if path.startswith(str(models_root)) else path})
+    for r in planned:
         ok, path = on_disk(models_root, r); name = os.path.basename(r["rel"]); used = list(uses.get(name) or by_key.get(model_key(name)) or [])
         for pre, label in RUNNERS:
             if pre in r["rel"] and label not in used: used.append(label)
         typ = reach(r["rel"], folders)
         proof = next((proofs[t] for u in used for t in [u.rsplit(" / ", 1)[-1]] if t in proofs), "")
         st, nxt = decide(r, ok, bool(typ), used, proof)
-        does, src = (fetch_card(r["repo"], cards) if cards else ("", ""))
+        if st in ("reachable", "unreachable"):
+            nxt = next((w for pat, w in WHY_UNUSED if pat in r["rel"]), nxt)
+        does, src = (fetch_card(r["repo"], cards) if cards and r["repo"] else ("", ""))
         rows.append({"file": name, "gb": round(int(r.get("bytes") or 0) / 1e9, 2), "repo": r["repo"], "path_in_repo": r["path"], "on_disk": "yes" if ok else "no", "disk_path": path, "function": r.get("function", ""), "family": family_of(r, status),
                      "does": does or f"not read: plan says {r.get('function', '')}", "does_source": src or "plan function only, card not read", "status": st, "used_by": "; ".join(used[:6]) + (f"; +{len(used) - 6} more" if len(used) > 6 else ""), "proof": proof, "next_step": nxt, "sha": r.get("sha", "")})
     return rows
@@ -201,11 +234,11 @@ def write_tsv(rows, out):
 
 
 def main(argv=None):
-    a = argparse.ArgumentParser(); a.add_argument("--out", required=True); a.add_argument("--models", required=True); a.add_argument("--yaml", required=True); a.add_argument("--all-json", required=True); a.add_argument("--cards"); a = a.parse_args(argv)
+    a = argparse.ArgumentParser(); a.add_argument("--out", required=True); a.add_argument("--models", required=True); a.add_argument("--yaml", required=True); a.add_argument("--all-json", required=True); a.add_argument("--cards"); a.add_argument("--arrivals", help="TSV of path and size from scan_new_models.py"); a = a.parse_args(argv)
     try:
         import comfyui_workflow_templates_json as t; td = os.path.join(os.path.dirname(t.__file__), "templates")
     except ImportError: td = None
-    rows = build(ROOT, a.models, os.path.join(a.models, "_workbench"), a.yaml, json.load(open(a.all_json)), td, a.cards)
+    rows = build(ROOT, a.models, os.path.join(a.models, "_workbench"), a.yaml, json.load(open(a.all_json)), td, a.cards, arrivals=[(l.split("\t")[0], int(l.split("\t")[1])) for l in open(a.arrivals)] if a.arrivals else ())
     write_tsv(rows, a.out)
     n = {}
     for r in rows: n[r["status"]] = n.get(r["status"], 0) + 1

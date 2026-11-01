@@ -1,0 +1,1 @@
+"""Small programs that run a 3D model outside ComfyUI, one process per run, so a model with no ComfyUI node still works and nothing it imports reaches the server. Each writes one file and exits 0, or exits non-zero with the reason on stderr."""

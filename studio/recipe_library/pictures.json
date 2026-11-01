@@ -4734,7 +4734,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 711380,
-"prompt": "An open sketchbook page with several pencil studies of {subject} from different angles, small notes without legible text, arrows, loose shading and a coffee ring stain on cream paper. Overlapping sketches, spiral binding at the edge, and a lived-in artist's working-notes feel. {variation}.",
+"prompt": "An open sketchbook page with several pencil studies of {subject} from different angles, clean blank margins, arrows, loose shading and a coffee ring stain on cream paper. Overlapping sketches, spiral binding at the edge, and a lived-in artist's working feel. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -4964,7 +4964,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 856224,
-"prompt": "A black-and-white manga page showing {subject}, laid out in dynamic panels of different sizes with speed lines, screentone shading, expressive eyes, fine ink linework and dramatic close-ups. Crisp inking, large gutters, no readable text in the speech bubbles, and a tense {mood} mood on clean white paper. {variation}.",
+"prompt": "A silent black-and-white ink comic page with no speech balloons at all, showing {subject}, laid out in dynamic panels of different sizes with speed lines, screentone shading, fine ink linework and dramatic close-ups of the subject. Crisp inking, large gutters, every panel a pure wordless picture of the flowers and plain white gutters, and a tense {mood} mood on clean white paper. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -5055,6 +5055,7 @@
 },
 {
 "id": "pic_art_comic_golden_age",
+"text_note": "Leaves a blank band for your title.",
 "kind": "picture",
 "group": "Comics and manga",
 "section": "art",
@@ -5116,7 +5117,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 326944,
-"prompt": "A Golden Age American comic book cover style illustration of {subject}, with bold flat colour, thick black outlines, four-colour dot printing, dramatic lettering-free title space, saturated {palette} palette, exaggerated action poses and a pulpy, adventurous mood on aged newsprint paper. {variation}.",
+"prompt": "A Golden Age American comic book cover style illustration of {subject}, with bold flat colour, thick black outlines, four-colour dot printing, a plain blank solid-colour band across the top, saturated {palette} palette, exaggerated action poses and a pulpy, adventurous mood on aged newsprint paper. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -5269,7 +5270,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 94424,
-"prompt": "A quiet indie comic illustration of {subject}, drawn with wobbly confident ink lines, flat muted {palette} colours, hand-lettered feel without legible text, simple expressive characters and detailed everyday background objects. A gentle slice-of-life mood on lightly textured paper. Small imperfect details like uneven panel borders and a faint coffee-stain tint add a handmade charm. {variation}.",
+"prompt": "A quiet indie comic illustration of {subject}, drawn with wobbly confident ink lines, flat muted {palette} colours, a wordless page told by pictures alone, simple expressive characters and plain blank everyday background objects. A gentle slice-of-life mood on lightly textured paper. Small imperfect details like uneven panel borders and a faint coffee-stain tint add a handmade charm. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -5649,7 +5650,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 53957,
-"prompt": "A children's picture book illustration of {subject}, painted in soft watercolour with warm outlines in coloured pencil, rounded friendly shapes, a gentle {palette} palette, a cosy detailed setting and expressive animal or character faces. Plenty of open space for text, sunlit and reassuring. {variation}.",
+"prompt": "A children's picture book illustration of {subject}, painted in soft watercolour with warm outlines in coloured pencil, rounded friendly shapes, a gentle {palette} palette, a cosy detailed setting and expressive animal or character faces. A single painted picture with plenty of open blank paper, sunlit and reassuring. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -6161,7 +6162,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 717805,
-"prompt": "An illustrated children's adventure map of {subject}, drawn in coloured pencil and gouache with tiny houses, winding rivers, little boats, mountains, forests and a dotted trail. A compass rose in the corner, a cheerful hand-lettered look without legible text, and a bright treasure-map mood. {variation}.",
+"prompt": "An illustrated children's adventure map of {subject}, drawn in coloured pencil and gouache with tiny houses, winding rivers, little boats, mountains, forests and a dotted trail. A compass rose in the corner, clean blank paper, and a bright treasure-map mood. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -6469,7 +6470,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 555200,
-"prompt": "A surreal photographic collage about {subject}, cut from vintage magazine textures and combined with painted shapes. Mismatched scale, a floating object, a strong flat {colour} background, rough cut edges, drop shadows and halftone dots, with a playful and puzzling mood. {variation}.",
+"prompt": "A surreal photographic collage about {subject}, cut from plain vintage paper and blank solid colour and combined with painted shapes. Mismatched scale, a floating object, a strong flat {colour} background, rough cut edges, drop shadows and halftone dots, with a playful and puzzling mood. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -7080,7 +7081,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 294137,
-"prompt": "A concept design sheet of {subject}, an original fantasy weapon or armour piece, shown from three angles on a neutral grey background. Intricate engraved details, layered metal and leather, a subtle {colour} glow in the gems, a clear silhouette, material callouts without text and a clean professional presentation. {variation}.",
+"prompt": "A concept design sheet of {subject}, an original fantasy weapon or armour piece, shown from three angles on a neutral grey background. Intricate engraved details, layered metal and leather, a subtle {colour} glow in the gems, a clear silhouette, clean blank space around the views and a clean professional presentation. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -7525,7 +7526,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 567176,
-"prompt": "A vehicle design concept of {subject}, an original sci-fi vehicle shown in a three-quarter view on a clean studio floor. Panel lines, rivets, hinges and exhausts rendered carefully, a bold {colour} paint scheme with wear marks, subtle rim lighting and a neutral gradient background. {variation}.",
+"prompt": "A vehicle design concept of {subject}, an original sci-fi vehicle with a smooth plain front and blank unmarked panels, shown in a three-quarter view on a clean studio floor. Panel lines, rivets, hinges and exhausts rendered carefully, a bold {colour} paint scheme with wear marks, subtle rim lighting and a neutral gradient background. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -7881,7 +7882,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 180574,
-"prompt": "A character design sheet of {subject}, an original fictional character, shown in a front, side and back turnaround standing in a neutral pose, plus small head expression studies and costume detail callouts without text. Clean consistent linework, flat base colours with simple shading and a light grey background. {variation}.",
+"prompt": "A character design sheet of {subject}, an original fictional character, shown in a front, side and back turnaround standing in a neutral pose, plus small head expression studies and costume detail studies on clean blank space. Clean consistent linework, flat base colours with simple shading and a light grey background. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -7957,7 +7958,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 187967,
-"prompt": "A prop design sheet of {subject}, an original game prop shown from three angles with a material breakdown, wear and tear, and small construction details. {material} surfaces, a soft studio light, a neutral background, painterly digital rendering and a clean professional style. {variation}.",
+"prompt": "Three plain studio views of {subject}, an original game prop shown from three angles side by side on one clean blank backdrop, wear and tear, and small construction details. {material} surfaces, a soft studio light, a neutral background, painterly digital rendering and a clean professional style. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -10489,7 +10490,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 360802,
-"prompt": "An instant-film snapshot of {subject} with a white border, slightly faded colours, a soft vignette, a little blur, a warm flash falling off in the corners and a handwritten-looking blank strip at the bottom. Casual framing, a candid memory and the chemical texture of an old instant print. {variation}.",
+"prompt": "An instant-film snapshot of {subject} with a white border, slightly faded colours, a soft vignette, a little blur, a warm flash falling off in the corners and a clean empty white strip at the bottom. Casual framing, a candid memory and the chemical texture of an old instant print. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -12420,6 +12421,7 @@
 },
 {
 "id": "pic_art_type_brush_calligraphy",
+"text_note": "Paints a picture, not words. The picture model can't spell.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
@@ -12440,9 +12442,9 @@
 {
 "key": "variation",
 "label": "Variation",
-"default": "centred word",
+"default": "centred picture",
 "options": [
-"centred word",
+"centred picture",
 "word running diagonally",
 "vertical stacked word",
 "word with a large first stroke",
@@ -12469,7 +12471,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 205123,
-"prompt": "A single word written in expressive brush calligraphy: {subject}. Black ink on handmade cream paper, with bold thick-to-thin strokes, dry-brush streaks, a few ink splashes and a vermilion seal stamp. Generous empty margins and a calm, confident artistic feel. Fine paper fibres show through the ink and the whole composition feels spontaneous yet balanced. {variation}.",
+"prompt": "A picture of {subject} painted in expressive brush strokes on blank paper. Black ink on handmade cream paper, with bold thick-to-thin strokes, dry-brush streaks, a few ink splashes and a vermilion seal stamp. Generous empty margins and a calm, confident artistic feel. Fine paper fibres show through the ink and the whole composition feels spontaneous yet balanced. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -12484,6 +12486,7 @@
 },
 {
 "id": "pic_art_type_gothic_blackletter",
+"text_note": "The script on the page is decorative and has no meaning.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
@@ -12560,6 +12563,7 @@
 },
 {
 "id": "pic_art_type_neon_sign",
+"text_note": "Draws a neon outline, not words. The picture model can't spell.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
@@ -12622,7 +12626,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 343279,
-"prompt": "A glowing neon tube sign spelling {subject} in smooth script lettering, mounted on a dark brick wall, with {colour} light bloom, reflections on wet pavement, tiny cables and brackets visible. Night street atmosphere and sharp glass tube detail. A faint hum of glow bleeds onto nearby bricks, and some tubes are slightly dimmer than others. {variation}.",
+"prompt": "A glowing neon tube outline drawing {subject} in smooth lines, on a blank wall, mounted on a dark brick wall, with {colour} light bloom, reflections on wet pavement, tiny cables and brackets visible. Night street atmosphere and sharp glass tube detail. A faint hum of glow bleeds onto nearby bricks, and some tubes are slightly dimmer than others. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -12637,6 +12641,7 @@
 },
 {
 "id": "pic_art_type_sign_painting",
+"text_note": "Paints the sign with a picture, not words. Add your own lettering afterwards.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
@@ -12698,7 +12703,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 842296,
-"prompt": "A hand-painted shop sign reading {subject}, in bold brush lettering with a drop shadow, gold outline, and small decorative flourishes on a {colour} painted wooden board. Weathered paint, slightly faded edges and sunlight on a brick wall. Brush marks show in the lettering and fine pinstripes finish the edges of the board. {variation}.",
+"prompt": "A hand-painted shop sign showing a plain picture of {subject}, blank otherwise, in bold brush strokes with a drop shadow, gold outline, and small decorative flourishes on a {colour} painted wooden board. Weathered paint, slightly faded edges and sunlight on a brick wall. Brush marks show in the paint and fine pinstripes finish the edges of the board. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -12713,6 +12718,7 @@
 },
 {
 "id": "pic_art_type_chalk_lettering",
+"text_note": "Draws the board and leaves it blank for your own lettering. The picture model can't spell.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
@@ -12775,7 +12781,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 177870,
-"prompt": "A cafe chalkboard with the word {subject} in decorative hand lettering, white and {colour} chalk, flourishes, small leaves and dots, a hand-drawn border, smudged chalk dust and a wooden frame. Warm indoor light. Small stars, leaves and dots decorate the border, while chalk dust sits along the frame and the board shows faint ghosting from earlier writing. {variation}.",
+"prompt": "A cafe chalkboard with a drawing of {subject} and a blank clear centre, white and {colour} chalk, flourishes, small leaves and dots, a hand-drawn border, smudged chalk dust and a wooden frame. Warm indoor light. Small stars, leaves and dots decorate the border, while chalk dust sits along the frame and the board shows faint ghosting from earlier cleaning. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -12790,6 +12796,7 @@
 },
 {
 "id": "pic_art_type_swiss_poster",
+"text_note": "Leaves blank space for your title. The picture model can't spell.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
@@ -12851,7 +12858,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 18837,
-"prompt": "A minimalist Swiss-style typographic poster using the word {subject} in a bold sans-serif typeface, set large on a strict grid with asymmetric layout, generous white space, one {colour} accent shape and fine grain. Crisp geometry and an editorial design calm. {variation}.",
+"prompt": "A minimalist Swiss-style graphic layout of {subject} as one bold simple shape, set large on a strict grid with asymmetric layout, generous blank white space, one {colour} accent shape and fine grain. Crisp geometry and an editorial design calm. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -12866,6 +12873,7 @@
 },
 {
 "id": "pic_art_type_graffiti_lettering",
+"text_note": "Draws the look with shapes, not real letters. The picture model can't spell.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
@@ -12927,7 +12935,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 721134,
-"prompt": "A graffiti lettering study of the word {subject}, drawn in thick bubble letters with outlines, highlights, drop shadows and arrows, in {palette} markers on white paper. Clean fast confident lines and playful energy. Highlight marks, small stars and a few dripping marker lines add energy, and the paper shows tiny marker bleed. {variation}.",
+"prompt": "A graffiti-style study of {subject}, drawn in thick bubble shapes on blank paper with outlines, highlights, drop shadows and arrows, in {palette} markers on white paper. Clean fast confident lines and playful energy. Highlight marks, small stars and a few dripping marker lines add energy, and the paper shows tiny marker bleed. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -12942,6 +12950,7 @@
 },
 {
 "id": "pic_art_type_ornamental_monogram",
+"text_note": "Draws the ornament with a blank centre for your own letter.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
@@ -13003,7 +13012,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 411275,
-"prompt": "An ornamental monogram of the letter {subject} in a Victorian style, surrounded by foliage, flowers, scrolls and ribbon, engraved in fine lines with {colour} accents on cream paper. Symmetrical, detailed and elegant. Delicate shading, tiny leaves, flowing ribbon ends and fine decorative dots frame the letter, with a faint paper grain and a hand-engraved quality in every curve. {variation}.",
+"prompt": "An ornamental medallion of {subject} in a Victorian style, surrounded by foliage, flowers, scrolls and ribbon, engraved in fine lines with {colour} accents on cream paper. Symmetrical, detailed and elegant. Delicate shading, tiny leaves, flowing ribbon ends and fine decorative dots frame the blank centre, with a faint paper grain and a hand-engraved quality in every curve. {variation}.",
 "options": {
 "aspect": "1:1",
 "mode": "quality"
@@ -13397,7 +13406,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 894200,
-"prompt": "A mockup of an invented logo for {subject}, shown on a shop sign, a paper bag and a business card on a table. Simple geometric mark, one flat {colour} colour, generous whitespace, soft daylight and subtle shadows. No readable words. {variation}.",
+"prompt": "A mockup of a simple wordless emblem for {subject}, shown on a framed board and a paper bag on a table. Simple geometric shape, one flat {colour} colour, generous whitespace, soft daylight and subtle shadows. The board and bag carry only that shape and are otherwise plain and blank. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -13640,6 +13649,7 @@
 },
 {
 "id": "pic_art_gd_magazine_cover",
+"text_note": "Leaves a blank band for your masthead.",
 "kind": "picture",
 "group": "Graphic design",
 "section": "art",
@@ -13701,7 +13711,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 785656,
-"prompt": "A magazine cover composition around {subject}, with a large striking hero image, a strong colour block, empty masthead space at the top, small unreadable text-block placeholders and a clean grid. A confident editorial design in {palette} colours. Colour blocks, thin rules and fine details sit on a crisp white margin, with no readable words anywhere. {variation}.",
+"prompt": "A magazine cover composition around {subject}, with a large striking hero image, a strong colour block, a plain empty band at the top, blank colour bands at the sides and a clean grid. A confident editorial design in {palette} colours. Colour blocks, thin rules and fine details sit on a crisp white margin, and every area clear and blank. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -13778,7 +13788,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 844272,
-"prompt": "A postage stamp design of {subject}, with a perforated edge, a fine engraved illustration, an ornate border, a {colour} limited palette, and a blank denomination area. Slightly worn paper, a faint postmark circle and a collectible feel. Fine hatching fills the image, and the design is framed by a thin line inside the perforations. {variation}.",
+"prompt": "A postage stamp design of {subject}, with a perforated edge, a fine engraved illustration, an ornate border, a {colour} limited palette, and a plain empty corner. Slightly worn paper, a faint plain wavy line and a collectible feel. Fine hatching fills the image, and the design is framed by a thin line inside the perforations. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -15123,7 +15133,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 19795,
-"prompt": "A black-and-white stencil street art piece of {subject}, sprayed on a rough concrete wall with sharp layered stencil shapes, one spot of {colour}, spray mist edges and peeling posters around it. Gritty urban texture and a quiet political-free cleverness. Small bridging gaps in the stencil are visible, and the grey wall shows stains, cracks and old paint. {variation}.",
+"prompt": "A black-and-white stencil street art piece of {subject}, sprayed on a rough concrete wall with sharp layered stencil shapes, one spot of {colour}, spray mist edges and peeling blank paint around it. Gritty urban texture and a quiet political-free cleverness. Small bridging gaps in the stencil are visible, and the grey wall shows stains, cracks and old paint. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -15199,7 +15209,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 655664,
-"prompt": "A wildstyle graffiti piece with interlocking arrows and sharp abstract letter forms, glossy highlights, {palette} gradient fills and thick outlines, painted on a corrugated metal shutter. The theme of {subject} appears through small shapes and background imagery, with no readable words. Sunlight rakes across the ridges of the shutter and a few drips run from the bottom. {variation}.",
+"prompt": "A wildstyle graffiti piece with interlocking arrows and sharp abstract blank shapes, glossy highlights, {palette} gradient fills and thick outlines, painted on a corrugated metal shutter. The theme of {subject} appears through small shapes and background imagery, built purely from shapes. Sunlight rakes across the ridges of the shutter and a few drips run from the bottom. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -15264,7 +15274,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 559505,
-"prompt": "A wall covered in layers of stickers, wheat-pasted posters and tags showing {subject}, with torn edges, faded colours, peeling corners and overlapping patterns. Gritty urban texture in soft overcast light. Layers of tape, scratched marker tags and bleached sticker colours build a dense urban collage. Rain stains run down the lower part of the wall. {variation}.",
+"prompt": "A wall covered in layers of plain blank colour stickers and pasted paper showing {subject}, with torn edges, faded colours, peeling corners and overlapping patterns. Gritty urban texture in soft overcast light. Layers of tape, scratched plain marks and bleached sticker colours build a dense urban collage. Rain stains run down the lower part of the wall. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -15480,7 +15490,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 890902,
-"prompt": "A neon-lit alley covered in mural art of {subject}, with painted glow effects, real neon tubes, wet cobbles reflecting {colour} light, and a lone silhouette walking. Night atmosphere, steam rising from a vent and a lively urban feel. Steam, puddles and layered signs fill the space, while the mural glows softly under the lights. {variation}.",
+"prompt": "A neon-lit alley covered in mural art of {subject}, with painted glow effects, real neon tubes, wet cobbles reflecting {colour} light, and a lone silhouette walking. Night atmosphere, steam rising from a vent and a lively urban feel. Steam, puddles and plain blank bars of neon light fill the space, while the mural glows softly under the lights. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -16935,7 +16945,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 175984,
-"prompt": "A natural-history anatomical plate of {subject}, an animal, shown in side view and with a cutaway of key structures, drawn in fine engraved lines with soft colour wash, labelled with unreadable tiny marks and surrounded by an ornamental border on cream paper. {variation}.",
+"prompt": "A natural-history anatomical plate of {subject}, an animal, shown in side view and with a cutaway of key structures, drawn in fine engraved lines with soft colour wash, on clean blank paper and surrounded by an ornamental border on cream paper. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -17369,7 +17379,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 377129,
-"prompt": "A hand-drawn fantasy world map of {subject}, on parchment with inked coastlines, tiny mountain ranges, forests drawn as clusters of trees, winding rivers, compass rose, sea monsters in the ocean and a decorative border. Sepia and watercolour washes, with unreadable calligraphic labels. {variation}.",
+"prompt": "A hand-drawn fantasy world map of {subject}, on parchment with inked coastlines, tiny mountain ranges, forests drawn as clusters of trees, winding rivers, compass rose, sea monsters in the ocean and a decorative border. Sepia and watercolour washes, with clear blank land and sea and a border of plain ornament only. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -17575,7 +17585,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 528694,
-"prompt": "A metro transit diagram for {subject}, an invented city, with coloured lines running at forty-five and ninety degrees, round interchange nodes, a river in pale blue, subtle grid and clear spacing, with unreadable small placeholder labels. Clean and modern. Station ticks, round interchange circles and a pale river give structure, and the background is a calm off-white. {variation}.",
+"prompt": "A metro transit diagram for {subject}, an invented city, with coloured lines running at forty-five and ninety degrees, round interchange nodes, a river in pale blue, subtle grid and clear spacing, as a pure line drawing of coloured lines and plain round dots on clean empty paper. Clean and modern. Plain round circles and a pale river give structure, and the background is a calm off-white. {variation}.",
 "options": {
 "aspect": "1:1",
 "mode": "quality"
@@ -17667,6 +17677,7 @@
 },
 {
 "id": "pic_art_map_infographic_icons",
+"text_note": "Leaves blank bars and circles for your own words.",
 "kind": "picture",
 "group": "Maps and infographics",
 "section": "art",
@@ -17729,7 +17740,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 5591,
-"prompt": "A clean visual explainer infographic about {subject}, with a central illustration, simple arrows, numbered circles, small icons, colour-coded sections in {palette} and ample white space. Unreadable placeholder lines instead of text, clear hierarchy and a friendly educational feel. Soft shadows lift the icons from the background, and spacing between sections is generous and balanced. {variation}.",
+"prompt": "A clean picture diagram of {subject}, with a central illustration, simple arrows, plain blank circles, small icons, colour-coded sections in {palette} and ample white space. Plain blank solid colour bars, a plain empty top with nothing on it and a friendly educational feel. Soft shadows lift the icons from the background, and spacing between sections is generous and balanced. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -19323,7 +19334,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 257590,
-"prompt": "A cyberpunk rainy street scene of {subject}, packed with glowing signs in invented symbols, steam, wet reflective pavement, holograms, overhead cables, a lone figure with an umbrella and dense layered buildings. Dominant {colour} neon with warm contrasting accents. Steam, wet reflections and tiny silhouettes of people walking with umbrellas fill the street, and every sign uses invented symbols rather than words. {variation}.",
+"prompt": "A cyberpunk rainy street scene of {subject}, packed with blank glowing panels of plain colour, steam, wet reflective pavement, holograms, overhead cables, a lone figure with an umbrella and dense layered buildings. Dominant {colour} neon with warm contrasting accents. Steam, wet reflections and tiny silhouettes of people walking with umbrellas fill the street, and every panel is a plain block of light. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -19616,7 +19627,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 882139,
-"prompt": "A Y2K aesthetic image of {subject}, with glossy chrome shapes, translucent plastic, bubble letters as blank shapes, butterflies, stars, soft gradients of {palette} and a shiny, optimistic early-2000s digital look. Smooth reflections and sparkle. Sticker-like shapes, lens flares and thin glitter trails float around the main subject, which has deep glossy reflections. {variation}.",
+"prompt": "A Y2K aesthetic image of {subject}, with glossy chrome shapes, translucent plastic, smooth round blank bubbles, butterflies, stars, soft gradients of {palette} and a shiny, optimistic early-2000s digital look. Smooth reflections and sparkle. Sticker-like shapes, lens flares and thin glitter trails float around the main subject, which has deep glossy reflections. {variation}.",
 "options": {
 "aspect": "1:1",
 "mode": "quality"
@@ -21143,7 +21154,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 282825,
-"prompt": "A trompe-l'oeil still life of {subject} on a narrow wooden shelf, with paper notes pinned to the wall, a hanging key, a small bottle and a feather, painted with such precision that the objects seem to project from the surface. Soft shadows, aged paper and wood detail. {variation}.",
+"prompt": "A trompe-l'oeil still life of {subject} on a narrow wooden shelf, with blank sheets of plain paper pinned to the wall, a hanging key, a small bottle and a feather, painted with such precision that the objects seem to project from the surface. Soft shadows, aged paper and wood detail. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -22610,7 +22621,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 367811,
-"prompt": "An oil painting of {subject}, a busy city street at night, with glowing shop windows, wet pavement reflecting car lights, umbrellas, soft haze and thick brushwork in {palette} colours. Bold impasto highlights and a lively urban mood. Pedestrians are suggested by a few quick strokes, and the signs glow with abstract shapes instead of words. {variation}.",
+"prompt": "An oil painting of {subject}, a busy city street at night, with glowing blank shop windows of plain warm colour, wet pavement reflecting car lights, umbrellas, soft haze and thick brushwork in {palette} colours. Bold impasto highlights and a lively urban mood. Pedestrians are suggested by a few quick strokes, and the shop fronts glow as plain blank panels of colour. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -22816,7 +22827,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 301502,
-"prompt": "A pen and ink sketch of {subject}, a crowded street corner with leaning buildings, wires, signs without text, parked bicycles and tiny people, drawn with energetic hatching and a light grey wash. Lively linework on cream paper. A few areas are left unfinished with loose lines trailing away, which keeps the drawing fresh and spontaneous. {variation}.",
+"prompt": "A pen and ink sketch of {subject}, a crowded street corner with leaning buildings, wires, blank plain boards, parked bicycles and tiny people, drawn with energetic hatching and a light grey wash. Lively linework on cream paper. A few areas are left unfinished with loose lines trailing away, which keeps the drawing fresh and spontaneous. {variation}.",
 "options": {
 "aspect": "3:2",
 "mode": "quality"
@@ -25179,7 +25190,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 158142,
-"prompt": "An adult woman at a music festival wearing {outfit}, with {accessory}, standing in a crowd before a large stage. Colourful lights, banners and confetti glow in the background, {time} light, and a joyful energy shows on her face. 35mm lens, vibrant colours, slight motion blur around her, documentary-style festival photograph. {variation}.",
+"prompt": "An adult woman at a music festival wearing {outfit}, with {accessory}, standing in a crowd before a large stage. Colourful lights, plain solid-colour flags and confetti glow in the background, and the stage is bare and blank, {time} light, and a joyful energy shows on her face. 35mm lens, vibrant colours, slight motion blur around her, documentary-style festival photograph. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -25538,7 +25549,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 498860,
-"prompt": "An adult woman trains with a punching bag in {gym}, wearing {outfit} and wrapped hands. Dust and sweat catch the light, she is mid-punch with a focused stare, and chain-hung bags and posters create a gritty background. 50mm lens, high contrast, detailed skin and fabric, energetic mood. {variation}.",
+"prompt": "An adult woman trains with a punching bag in {gym}, wearing {outfit} and wrapped hands. Dust and sweat catch the light, she is mid-punch with a focused stare, and chain-hung plain black bags and bare, blank concrete walls create a gritty background. 50mm lens, high contrast, detailed skin and fabric, energetic mood. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -26992,7 +27003,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 678718,
-"prompt": "An adult woman tries on {item} in front of a mirror at home, tags still hanging from the sleeve, looking pleased. The room has a bed with folded clothes and shopping bags, bright soft daylight, and she holds her phone up for a quick check. 35mm lens, natural colours, clear fabric detail. {variation}.",
+"prompt": "An adult woman tries on {item} in front of a mirror at home, looking pleased. The room has a bed with folded clothes and plain blank paper bags, bright soft daylight, and she holds up a plain matte black phone with no markings for a quick check. 35mm lens, natural colours, clear fabric detail. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -30632,6 +30643,7 @@
 },
 {
 "id": "pic_inf_social_carousel",
+"text_note": "Leaves a blank space for your text; add the words yourself afterwards.",
 "kind": "picture",
 "group": "Social post formats",
 "section": "lifestyle",
@@ -30712,7 +30724,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 78652,
-"prompt": "A square portrait of an adult woman in {setting}, her pose and gaze directed to the right, wearing {outfit}, with a gentle bokeh background. Soft window light, a muted {palette} palette, calm expression, and room on the left side of the frame for a text overlay. 85mm lens. {variation}.",
+"prompt": "A square portrait of an adult woman in {setting}, her pose and gaze directed to the right, wearing {outfit}, with a gentle bokeh background. Soft window light, a muted {palette} palette, calm expression, and a plain empty colour area on the left side of the frame, left blank. 85mm lens. {variation}.",
 "options": {
 "aspect": "1:1",
 "mode": "quality"
@@ -30727,6 +30739,7 @@
 },
 {
 "id": "pic_inf_social_short_video_cover",
+"text_note": "Leaves a blank space for your captions; add the words yourself afterwards.",
 "kind": "picture",
 "group": "Social post formats",
 "section": "lifestyle",
@@ -30795,7 +30808,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 397657,
-"prompt": "A vertical cover frame of an adult woman in {outfit}, caught mid-motion in {place}, with her hair and clothes moving. Slightly tilted camera, warm sunlight, saturated colour, shallow depth of field, and clean areas at top and bottom for captions. 35mm lens, energetic, trend-aware social look. {variation}.",
+"prompt": "A vertical cover frame of an adult woman in {outfit}, caught mid-motion in {place}, with her hair and clothes moving. Slightly tilted camera, warm sunlight, saturated colour, shallow depth of field, and plain empty sky and ground at the top and bottom of the frame, left blank. 35mm lens, energetic, trend-aware social look. {variation}.",
 "options": {
 "aspect": "9:16",
 "mode": "quality"
@@ -31054,7 +31067,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 392867,
-"prompt": "An adult woman sits in the driver's seat of {car}, hands on the steering wheel, wearing {outfit}. Sunlight enters through the windscreen, a dashboard with an unbranded design is visible, and her face is lit warmly. 35mm lens, shallow depth, relaxed confident mood. {variation}.",
+"prompt": "An adult woman sits in the driver's seat of {car}, hands on the steering wheel, wearing {outfit}. Sunlight enters through the windscreen, a plain smooth dashboard with blank unmarked dials is visible, and her face is lit warmly. 35mm lens, shallow depth, relaxed confident mood. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"
@@ -31167,9 +31180,9 @@
 {
 "key": "outfit",
 "label": "Outfit",
-"default": "a tracksuit and sneakers",
+"default": "a plain solid navy jacket and trousers with plain white shoes",
 "options": [
-"a tracksuit and sneakers",
+"a plain solid navy jacket and trousers with plain white shoes",
 "a trench and jeans",
 "a knit set",
 "a hoodie and wide trousers",
@@ -31179,9 +31192,9 @@
 {
 "key": "variation",
 "label": "Variation",
-"default": "checking the departure board",
+"default": "looking out at the aircraft",
 "options": [
-"checking the departure board",
+"looking out at the aircraft",
 "looking out of the window",
 "walking with the suitcase",
 "sitting with coffee",
@@ -31209,7 +31222,7 @@
 "label": "The picture",
 "peak_gib": 23,
 "seed": 624412,
-"prompt": "An adult woman waits at an airport gate, wearing {outfit}, with a carry-on and a passport in hand. Large windows show aircraft on the tarmac, soft daylight, and the clean modern terminal with rows of seats blurred behind her. 35mm lens, travel-blog look, relaxed expression, natural skin and fabric detail. {variation}.",
+"prompt": "An adult woman waits at an airport gate, wearing {outfit}, with a carry-on and a passport in hand. Her clothing is one plain solid colour and her luggage is plain and unbranded. Large windows show plain all-white aircraft with blank tails on the tarmac, soft daylight, and the clean modern terminal with rows of seats blurred behind her. 35mm lens, travel-blog look, relaxed expression, natural skin and fabric detail. {variation}.",
 "options": {
 "aspect": "2:3",
 "mode": "quality"

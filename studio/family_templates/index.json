@@ -1595,6 +1595,81 @@
    ],
    "source": "Official image_fibo2_edit_dev_pe settings and negative, with the reference image and prompt enhancer left out",
    "note": "Not rendered yet. The size and the no-image path are read from ComfyUI's TextEncodeFibo2 source."
+  },
+  {
+   "family": "TRELLIS-2-4B",
+   "name": "trellis2_image_to_mesh",
+   "title": "TRELLIS.2: Picture to textured mesh",
+   "desc": "One picture to a textured GLB through ComfyUI's core Trellis.2 nodes: background cut-out, structure, shape, texture stages, remesh, UV, PBR bake. The Trellis.2 branch of ComfyUI's combined Pixal3D template, without the Pixal3D loader.",
+   "media": "3d",
+   "cat": "3D",
+   "gb": 6.0,
+   "tags": [
+    "Studio template",
+    "Picture to mesh"
+   ],
+   "models": [
+    {
+     "name": "trellis_2_int8_convrot.safetensors",
+     "dir": "diffusion_models"
+    },
+    {
+     "name": "trellis_2_shape_vae_bf16.safetensors",
+     "dir": "vae"
+    },
+    {
+     "name": "trellis_2_texture_vae_bf16.safetensors",
+     "dir": "vae"
+    },
+    {
+     "name": "dino_v3_L_naf_fp32.safetensors",
+     "dir": "clip_vision"
+    },
+    {
+     "name": "birefnet.safetensors",
+     "dir": "background_removal"
+    }
+   ],
+   "source": "derived from ComfyUI template 3d_pixal3d_trellis2_image_to_model"
+  },
+  {
+   "family": "SVD",
+   "name": "svd_xt_1_1_i2v",
+   "title": "SVD XT 1.1: Picture to Video",
+   "desc": "One picture to a 25-frame clip at 1024x576 through ComfyUI's core nodes. The settings are those of ComfyUI's own SVD step in its txt_to_image_to_video template.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 4.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "svd_xt_1_1.safetensors",
+     "dir": "checkpoints"
+    }
+   ],
+   "source": "from ComfyUI template txt_to_image_to_video"
+  },
+  {
+   "family": "SD15",
+   "name": "sd15_instruct_pix2pix",
+   "title": "InstructPix2Pix: Edit a picture with words",
+   "desc": "An SD 1.5 model trained to follow an edit instruction. Core nodes.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 7.7,
+   "tags": [
+    "Studio template",
+    "Edit"
+   ],
+   "models": [
+    {
+     "name": "instruct-pix2pix-00-22000.safetensors",
+     "dir": "checkpoints"
+    }
+   ],
+   "source": "studio"
   }
  ]
 }

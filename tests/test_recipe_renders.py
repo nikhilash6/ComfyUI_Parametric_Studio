@@ -70,3 +70,26 @@ def test_the_files_are_served_from_the_web_folder(client, kind, mime):
     r = client.get("/" + next(iter(of(kind).values()))["file"]); assert r.status_code == 200 and r.headers["content-type"].startswith(mime), r.headers["content-type"]
 def test_the_page_labels_a_render_and_only_shows_one_when_there_is_one():
     js = JS.read_text(); assert '"Our own render"' in js and "if (!x) return" in js and "recipe.proof && !recipe.render" in js and "!run && recipe.render" in js and "not yet judged by ear" in js
+
+# ---------- recipes rewritten so the model is never asked to draw lettering it can't spell
+ASKS_FOR_TEXT = re.compile(r"\b(words?|text|letter\w*|lettered|hand-lettered|spelling|reading|logos?|labels?|labelled|captions?|handwritten\w*|typefaces?|typographic|calligraph\w*|tags?|posters?|symbols?|speech bubbles?|masthead|headline|monogram|denomination|postmark|notes)\b", re.I)
+SAYS_BLANK = re.compile(r"\b(blank|plain|unlabelled|wordless|empty)\b", re.I)
+TEXT_FREE = ["pic_inf_social_carousel", "pic_inf_social_short_video_cover", "pic_inf_fit_boxing", "pic_inf_car_driver_seat", "pic_inf_life_festival", "pic_inf_travel_airport", "pic_inf_prod_fashion_try", "pic_art_con_scifi_vehicle", "pic_art_street_neon_alley", "pic_art_city_oil_night", "pic_art_city_ink_sketch", "pic_art_comic_manga_page", "pic_art_comic_indie", "pic_art_cyber_street", "pic_art_photo_instant_snapshot", "pic_art_edit_surreal_collage", "pic_art_gd_magazine_cover", "pic_art_gd_logo_mockup", "pic_art_gd_postage_stamp", "pic_art_map_fantasy", "pic_art_map_metro", "pic_art_con_fantasy_hero_gear", "pic_art_con_character_sheet", "pic_art_draw_sketchbook_page", "pic_art_still_trompe", "pic_art_street_stencil", "pic_art_street_sticker_wall", "pic_art_street_wildstyle", "pic_art_kids_map_adventure", "pic_art_sci_anatomy_plate", "pic_art_type_chalk_lettering", "pic_art_type_graffiti_lettering", "pic_art_type_sign_painting", "pic_art_type_swiss_poster", "pic_art_type_neon_sign", "pic_art_type_brush_calligraphy", "pic_art_type_ornamental_monogram", "pic_art_comic_golden_age", "pic_art_con_prop_design", "pic_art_map_infographic_icons", "pic_art_kids_watercolour_story", "pic_art_y2k", "vid_product_hero_10", "lora_7149bee562"]
+def visual_part(prompt): return prompt.split("overall_soundscape")[0]
+def filled(rid):
+    r = R.find(rid); vals = R.field_defaults(r)
+    return [visual_part(R._fill(s["prompt"], vals)) for s in r["steps"] if s.get("prompt")]
+@pytest.mark.parametrize("rid", TEXT_FREE)
+def test_a_rewritten_recipe_asks_for_no_text_and_says_so(rid):
+    ps = filled(rid); assert ps, rid
+    for p in ps: assert not ASKS_FOR_TEXT.search(p), (rid, ASKS_FOR_TEXT.search(p).group(0), p)
+    assert SAYS_BLANK.search(" ".join(ps)), rid
+def test_every_product_shot_says_the_product_is_blank():
+    for r in R.library():
+        for s in r["steps"]:
+            if r["id"].startswith("vid_") and "{product}" in str(s.get("prompt", "")): assert "plain and unlabelled" in s["prompt"] and "the {product}" not in s["prompt"], (r["id"], s["id"])
+def test_rewritten_stylizers_ask_for_blank_and_unbranded():
+    for rid, word in (("style_ukiyo_e", "no inscription"), ("style_cyberpunk", "blank"), ("style_toy_bricks", "unbranded"), ("style_ink_wash", "blank")):
+        assert word in json.dumps(R.find(rid)["steps"]), rid
+def test_a_recipe_about_lettering_says_it_leaves_that_to_you():
+    assert all(R.find(i).get("text_note") for i in ("pic_inf_social_carousel", "pic_art_type_chalk_lettering", "pic_art_type_gothic_blackletter")) and "text_note" in JS.read_text()

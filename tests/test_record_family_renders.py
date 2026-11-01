@@ -38,3 +38,10 @@ def test_a_failed_try_changes_nothing(tmp_path):
 def test_demote_keeps_only_the_library_sample():
     r = row(level="render", media=[{"own": True, "tpl": "w"}, {"library": True}]); R.demote(r, "why")
     assert r["level"] == "nodes" and r["media"] == [{"library": True}] and r["test"]["note"] == "why"
+
+
+def test_a_listed_sample_person_is_recorded_but_not_shown(tmp_path):
+    f = tmp_path / "o.png"; f.write_bytes(b"x")
+    r = row(); tries = {"tries": [{"template": "video_minimax_h3_r2v", "status": "done", "files": [str(f)], "wall_s": 5}]}
+    R.apply_family("MiniMax-H3", r, tries, {}, web=tmp_path, copy=lambda s, b: {"kind": "image", "src": b.name})
+    assert r["media"] == [] and r["level"] == "render"

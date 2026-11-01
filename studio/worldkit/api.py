@@ -21,7 +21,7 @@ _SESSION = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 #: Informational only: licences are recorded per asset, never a gate.
 LICENCE_NOTES = {
     "character": "SAM 3D Body / SAM 3D Objects: SAM License; SkinTokens: MIT; Kimodo: NVIDIA Open Model License (its text encoder: Llama 3 Community Licence); retarget tools GPL (tools only)",
-    "prop": "SAM 3D Objects: SAM License; a text prop's picture comes from FLUX.2 Klein 4B (Apache-2.0)",
+    "prop": "by mesh model: SAM 3D Objects, SAM License; TRELLIS.2, TripoSR, Shap-E, MIT; Hunyuan3D, Tencent community licence. A text prop's picture comes from FLUX.2 Klein 4B (Apache-2.0)",
     "place": "procedural (Blender scripts in this repo); textures procedural, or from FLUX.2 Klein 4B (Apache-2.0)",
     "look": "Blender's bundled studio-light HDRIs (their licence not checked)",
 }
@@ -141,7 +141,15 @@ def create(lib, payload, *, get_character, start, capability=C.route) -> tuple[i
         bad = prop.source_problem(source)
         if bad:
             return _err(400, bad)
-        bad = _route_problem(f"prop_{kind}", capability)
+        pick = given.get("mesh_model")
+        if pick in C.TEXT_MESH_ROUTES and kind == "text":
+            r_ = C.route_of([pick])                     # words straight to a mesh: no picture model and no cut-out needed
+            bad = "" if r_["ready"] else " ".join(r_["problems"])
+        elif pick and kind != "mesh" and pick in C.MESH_ROUTES:
+            r_ = C.route_of(["text_image", "cutout", pick] if kind == "text" else ["cutout", pick])
+            bad = "" if r_["ready"] else " ".join(r_["problems"])
+        else:
+            bad = _route_problem(f"prop_{kind}", capability)
         if bad:
             return _err(409, bad)
         name = name or str(src.get("prompt") or "prop")[:60]

@@ -353,7 +353,7 @@ def _browse_download(b):
 
 # ---------- lanes built in parallel: presets, website builder, crew, 3D
 OUTPUT = Path(paths.output_dir())
-for _mod in ("shot_board", "presets", "site_api", "crew_api", "voice", "packs", "apps", "edits", "prime", "schedule", "github_link", "calibrate", "attach", "models_api", "phone", "families_api", "recipes", "loras", "live_api", "atlas", "processes", "rotation", "worldkit.api", "vset.api", "music_styles", "train", "sampling_lab"):
+for _mod in ("shot_board", "presets", "site_api", "crew_api", "voice", "packs", "apps", "edits", "prime", "schedule", "github_link", "calibrate", "attach", "models_api", "phone", "families_api", "model3d", "recipes", "loras", "live_api", "atlas", "processes", "rotation", "worldkit.api", "vset.api", "music_styles", "train", "sampling_lab"):
     try: app.include_router(__import__(f"studio.{_mod}", fromlist=["router"]).router)
     except Exception as e: print(f"[studio] {_mod} not loaded: {type(e).__name__}: {e}")
 

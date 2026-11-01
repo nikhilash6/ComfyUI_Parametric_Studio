@@ -562,7 +562,7 @@ def _step_view(s, d):
     return out
 def view(rec, d=None):
     d = d or load(); steps = [_step_view(s, d) for s in rec["steps"]]; t = rec.get("tested") or None; exp_s = sum(int(s["seconds"] or 0) for s in steps); gpu = [s["peak_gib"] for s in steps if s["peak_gib"]]
-    return {**{k: rec.get(k) for k in ("id", "title", "pitch", "why", "tags", "fields", "models", "licence_summary", "tips", "variations", "kind", "group", "proof", "library", "reference", "why_not", "waiting")}, "steps": steps, "status": "tested" if t else "untested", "tested": t, "render": renders().get(rec["id"]), "expected": {"seconds": exp_s, "peak_gib": max(gpu) if gpu else 0, "basis": "sum of each step's measured time on this box, with a cold start per step" if exp_s else "not measured"}}
+    return {**{k: rec.get(k) for k in ("id", "title", "pitch", "why", "tags", "fields", "models", "licence_summary", "tips", "variations", "kind", "group", "proof", "library", "reference", "why_not", "waiting", "text_note")}, "steps": steps, "status": "tested" if t else "untested", "tested": t, "render": renders().get(rec["id"]), "expected": {"seconds": exp_s, "peak_gib": max(gpu) if gpu else 0, "basis": "sum of each step's measured time on this box, with a cold start per step" if exp_s else "not measured"}}
 def validate(d=None):
     """Problems in recipes.json or the library. A test keeps them clean; the page never has to guess."""
     from studio.goals import GOALS
@@ -623,7 +623,7 @@ def recipes_list():
     d = load(); rows = [view(r, d) for r in d["recipes"]]; return {"recipes": rows, "measured": d.get("measured", {}), "tested": sum(1 for r in rows if r["status"] == "tested"), "untested": sum(1 for r in rows if r["status"] != "tested"), "busy": CURRENT["run"], "queued": len(_pending())}
 def _light(r):
     """A library row: what a card needs. The steps' names only show how long the chain is."""
-    return {**{k: r.get(k) for k in ("id", "title", "pitch", "kind", "group", "tags", "proof", "reference", "why_not", "waiting")}, "n_steps": len(r["steps"]), "render": renders().get(r["id"]), "models": [{"name": m["name"], "licence": m["licence"], "licence_class": m["licence_class"]} for m in r["models"]]}
+    return {**{k: r.get(k) for k in ("id", "title", "pitch", "kind", "group", "tags", "proof", "reference", "why_not", "waiting", "text_note")}, "n_steps": len(r["steps"]), "render": renders().get(r["id"]), "models": [{"name": m["name"], "licence": m["licence"], "licence_class": m["licence_class"]} for m in r["models"]]}
 @router.get("/api/recipe-library")
 def recipe_library(kind: str = "", q: str = "", ready_only: bool = False, rendered_only: bool = False, offset: int = 0, limit: int = 60):
     """The ported library, filtered and paged, recipes with our own render first. Whether a recipe can run comes from a real check of its graphs against ComfyUI's /object_info and the model files on disk."""

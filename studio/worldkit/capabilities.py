@@ -31,7 +31,12 @@ NEEDS: dict[str, dict] = {
         ("_complete_pipelines/SAM-3D-Objects/checkpoints/slat_decoder_gs.ckpt", 100_000_000), ("_libraries/models-legacy-layout/3d/sam-3d-objects/checkpoints/slat_decoder_gs_4.ckpt", 100_000_000),
         ("_libraries/models-legacy-layout/3d/moge-vitl/model.pt", GB), ("_libraries/models-legacy-layout/3d/AniGen/ckpts/dinov2/dinov2_vitl14/dinov2_vitl14_reg4_pretrain.pth", GB)]},
     "pixal3d": {"label": "Pixal3D", "family": ("Pixal3D", "3d_pixal3d_trellis2_image_to_model")},
-    "hunyuan3d": {"label": "Hunyuan3D 2.1", "family": ("Hunyuan3D-2.1", "3d_hunyuan3d-v2.1")},
+    "hunyuan3d": {"label": "Hunyuan3D 2", "family": ("Hunyuan3D-2.1", "3d_hunyuan3d_image_to_model")},
+    "trellis2": {"label": "TRELLIS.2", "family": ("TRELLIS-2-4B", "trellis2_image_to_mesh")},
+    "triposplat": {"label": "TripoSplat", "family": ("TripoSplat", "3d_triposplat_image_to_gaussian_splat")},
+    "moge": {"label": "MoGe 2", "family": ("MoGe", "3d_moge_perspective_to_mesh")},
+    "triposr": {"label": "TripoSR", "tool": "triposr", "files": [("_complete_pipelines/TripoSR/checkpoints/model.ckpt", GB)]},
+    "shap_e": {"label": "Shap-E (words to mesh)", "files": [("3d/shap-e/prior/diffusion_pytorch_model.fp16.safetensors", 500_000_000), ("3d/shap-e/shap_e_renderer/diffusion_pytorch_model.bin", 700_000_000), ("text_encoders/clip-vit-large-patch14.safetensors", 1_000_000_000)]},
     "sam3d_body": {"label": "SAM 3D Body", "files": [("detection/sam_3d_body_dinov3_bf16.safetensors", 2 * GB), ("checkpoints/SAM 3.1/sam3.1_multiplex_fp16.safetensors", GB), ("geometry_estimation/moge_2_vitl_normal_fp16.safetensors", 500_000_000)]},
     "skintokens": {"label": "SkinTokens (rig)", "tool": "skintokens", "files": [
         ("_libraries/models-legacy-layout/3d/SkinTokens/experiments/articulation_xl_quantization_256_token_4/grpo_1400.ckpt", GB),
@@ -71,7 +76,8 @@ NEEDS: dict[str, dict] = {
 #: What each way of making something needs. A place's textures are not listed: with no image model it uses procedural ones.
 ROUTES = {"place": [], "look": [], "prop_mesh": [], "prop_image": ["cutout", "mesh"], "prop_text": ["text_image", "cutout", "mesh"],
           "character": ["krea2", "picturecheck", "sam3d_body", "skintokens", "kimodo", "retarget"]}
-MESH_ROUTES = ("sam3d_objects", "pixal3d", "hunyuan3d")
+MESH_ROUTES = ("sam3d_objects", "trellis2", "pixal3d", "hunyuan3d", "triposr")
+TEXT_MESH_ROUTES = ("shap_e",)
 TEXT_IMAGE_ROUTES = ("image", "krea2")
 PARTIAL = (".part", ".tmp", ".incomplete", ".partial", ".aria2", ".lock")
 
@@ -83,12 +89,13 @@ def models_root() -> Path:
 def tool_home(tool: str) -> Path:
     """A tool's folder: STUDIO_TOOL_<NAME>, or under the home folder where the earlier studio's installers put it."""
     default = {"sam3d_objects": paths.home("tools", "sam3d-objects"), "skintokens": paths.home("tools", "skintokens"), "autoremesher": paths.home("tools", "autoremesher"),
-               "kimodo": paths.home("tools", "kimodo"), "retarget": paths.home("tools", "blender-retarget"), "unirig": paths.home("ai", "UniRig"), "picturecheck": paths.home("tools", "picturecheck")}[tool]
+               "kimodo": paths.home("tools", "kimodo"), "retarget": paths.home("tools", "blender-retarget"), "unirig": paths.home("ai", "UniRig"), "picturecheck": paths.home("tools", "picturecheck"),
+               "triposr": os.path.join(paths.setting("PSN_REPO_LIB", default=paths.home("nodepack_library", "repos")), "MixLabPro__comfyui-mixlab-nodes", "nodes", "tsr")}[tool]
     return Path(os.path.expanduser(paths.setting(f"STUDIO_TOOL_{tool.upper()}", default=default)))
 
 
 TOOL_FILES = {"sam3d_objects": ("run_sam3d.sh", ".venv/bin/python"), "skintokens": ("run_skintokens.sh", ".venv/bin/python"), "autoremesher": ("run_autoremesher.sh", "build/autoremesher"),
-              "kimodo": ("run_kimodo.sh", ".venv/bin/kimodo_gen"), "retarget": ("retarget.py",), "unirig": ("pp_run.py", ".venv/bin/python"), "picturecheck": ("run_picturecheck.sh",)}
+              "kimodo": ("run_kimodo.sh", ".venv/bin/kimodo_gen"), "retarget": ("retarget.py",), "unirig": ("pp_run.py", ".venv/bin/python"), "picturecheck": ("run_picturecheck.sh",), "triposr": ("system.py", "config.yaml")}
 #: Files in a tool's folder that name where it reads its weights from. A launcher that points at a folder that is gone will fail, whatever is on disk elsewhere.
 TOOL_ENV = {"sam3d_objects": ("env.sh",), "skintokens": ("run_skintokens.sh",), "kimodo": ("env.sh",)}
 _ENV_PATH = re.compile(r"""(?:^|[\s;])(?:export\s+)?(?:\w*(?:WEIGHTS|MOGE|DINOV2_REPO|CHECKPOINT_DIR|TEXT_ENCODERS_DIR)\w*|W)=["']?(/[^\s"';]+)""", re.M)
