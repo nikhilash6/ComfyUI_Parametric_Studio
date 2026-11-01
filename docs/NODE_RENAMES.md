@@ -4,6 +4,7 @@ These nodes implied work they did not do, so they were renamed to say what they 
 
 | Old id | New id |
 |---|---|
+| `PSN_RES4LYF_Sampler` | `PSN_Fast_Sampler_Plan` |
 | `PSN_ACES_OutputTransform` | `PSN_ACES_OutputConfig_Check` |
 | `PSN_Agent_Executor` | `PSN_Agent_Transform_Sim` |
 | `PSN_Anime_Segmentor` | `PSN_BandColorThresholdMask` |

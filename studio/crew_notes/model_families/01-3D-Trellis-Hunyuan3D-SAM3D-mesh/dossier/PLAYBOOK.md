@@ -31,7 +31,7 @@
 
 *   **SAM 3D Body Settings:**
     *   **Smoothing:** SAM3DBody_Smooth uses gaussian/savgol with window ≤ 51. Official template values are gaussian/7/15 [SAM3D_BODY_HELPERS_SCOUT_2026-10-11.md].
-    *   **Weights:** sam3/SAM 3D BODY/model.safetensors (2.13 GB) is byte-identical to the Pozzetti repack but may be rejected by the core loader due to missing keys (1053 missing keys reported in HANDOFF) [SAM3D_BODY_HELPERS_SCOUT_2026-10-11.md].
+    *   **Weights:** sam3/SAM 3D BODY/model.safetensors (2.13 GB) is byte-identical to the Pozzetti repack but may be rejected by the core loader due to missing keys (1053 missing keys reported) [SAM3D_BODY_HELPERS_SCOUT_2026-10-11.md].
     *   **BodyMod Pack:** Uses SAM3DBodyMod_DetectShape to build a shape profile from 1–4 reference images to remove shape flicker [SAM3D_BODY_HELPERS_SCOUT_2026-10-11.md].
 
 *   **General Environment:**

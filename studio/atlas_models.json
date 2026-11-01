@@ -1505,6 +1505,23 @@
    "licence_verified": false,
    "source_url": "",
    "note": "The Hugging Face repository answers 401 without a login, so its date and licence are not verified here."
+  },
+  {
+   "name": "FIBO 2.0",
+   "kinds": [
+    "image"
+   ],
+   "date": "2026-10-18",
+   "date_verified": true,
+   "status": "instance",
+   "model": "fibo-2",
+   "family": "Fibo-2.0",
+   "goals": [],
+   "in_comfy_lists": true,
+   "licence": "CC BY-NC 4.0, non-commercial",
+   "licence_verified": true,
+   "source_url": "https://huggingface.co/Comfy-Org/Fibo-2.0",
+   "note": ""
   }
  ],
  "coverage_sources": [
@@ -6241,6 +6258,41 @@
     "unknown": 0
    },
    "instance_check": "starts and loads nodes"
+  },
+  {
+   "id": "fibo-2",
+   "name": "FIBO 2.0",
+   "org": "Bria",
+   "family": "Fibo-2.0",
+   "era": "today",
+   "kinds": [
+    "image"
+   ],
+   "date": "2026-10-18",
+   "date_precision": "day",
+   "date_basis": "Hugging Face repo created",
+   "date_verified": true,
+   "licence": "CC BY-NC 4.0, non-commercial",
+   "licence_class": "noncommercial",
+   "licence_note": "Commercial use needs a separate agreement with Bria.",
+   "licence_verified": true,
+   "source": {
+    "title": "FIBO 2.0 repackage model card",
+    "url": "https://huggingface.co/Comfy-Org/Fibo-2.0"
+   },
+   "what": "Bria's open-weights image model for instruction-based editing and text-to-image, trained on structured captions.",
+   "why": "",
+   "featured": false,
+   "run": {
+    "goals": []
+   },
+   "proof": {
+    "tested": 0,
+    "mixed": 0,
+    "untested": 0,
+    "unknown": 0
+   },
+   "instance_check": null
   }
  ]
 }

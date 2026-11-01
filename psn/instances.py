@@ -18,7 +18,7 @@ REPO_LIB = paths.setting("PSN_REPO_LIB", default=paths.home("nodepack_library", 
 FAMILY_PACKS = {"PartCrafter": ["tungthedev__ComfyUI-TripoSG"], "LTX-2.5": ["Lightricks__ComfyUI-LTXVideo"], "Wan2.1": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2-Animate": ["kijai__ComfyUI-WanVideoWrapper"],
                 "Wan2.2-Dancer": ["kijai__ComfyUI-WanVideoWrapper"], "TurboWan2.2-I2V": ["kijai__ComfyUI-WanVideoWrapper"], "Wan-SCAIL-2": ["kijai__ComfyUI-WanVideoWrapper"],
                 "MiniMax-H3": ["Larryvrh__ComfyUI-MiniMax-H3-Turbo", "TripleHeadedMonkey__ComfyUI-MiniMaxH3_LatentUpscaler", "T8mars__comfyui-minimax-h3-audio-T8", "vizart-vj__ComfyUI-MiniMax-H3-LongMedia", "YJX-Research__comfyui-controlfoley-official"],
-                "SeedVR2": ["bbaudio-2025__Comfyui-MMH3-UltimateUpscale"]}                                      # a pack is its directory name, owner__Repo: a bare repo name never resolves (MiniMax-H3 once got no packs that way)
+                "SeedVR2": ["bbaudio-2025__Comfyui-MMH3-UltimateUpscale"], "dwpose": ["kijai__ComfyUI-WanVideoWrapper"]}                                      # a pack is its directory name, owner__Repo: a bare repo name never resolves (MiniMax-H3 once got no packs that way)
 ALIASES = {"LTX-2.5": ["ltx 2.5", "ltx"], "Flux.3-Klein": ["flux3-klein", "flux3_klein"], "Flux.1": ["flux"], "Flux.2": ["flux2"], "Qwen-Image-2.1": ["qwen-image", "qwen_image"], "Wan2.2": ["wan2.2"], "Wan2.1": ["wan2.1"]}
 
 # Families whose weights are not laid out the way ComfyUI's loaders expect. Each file is shown to the instance under a loader-friendly name through a symlink view (instance/models/<type>/<name>).
@@ -35,6 +35,10 @@ WRAPS = {
  "PartCrafter": {"loader": "pack", "files": [("diffusion_models", "partcrafter_transformer.safetensors", "_complete_pipelines/PartCrafter/pipeline/transformer/diffusion_pytorch_model.safetensors"),
                  ("clip_vision", "partcrafter_dinov2.safetensors", "_complete_pipelines/PartCrafter/pipeline/image_encoder_dinov2/model.safetensors"), ("vae", "partcrafter_vae.safetensors", "_complete_pipelines/PartCrafter/pipeline/vae/diffusion_pytorch_model.safetensors")],
                  "note": "core ComfyUI cannot detect this model; its nodes come from the ComfyUI-TripoSG pack (PartCrafter module, import-tested with this venv); original source: wgsxm/PartCrafter"},
+ "Stable-Cascade": {"loader": "core", "files": [("checkpoints", "stable_cascade_stage_c.safetensors", "diffusion_models/stable_cascade/stable_cascade_stage_c.safetensors"), ("checkpoints", "stable_cascade_stage_b.safetensors", "diffusion_models/stable_cascade/stable_cascade_stage_b.safetensors")],
+                    "note": "the full stage checkpoints download into diffusion_models but CheckpointLoaderSimple reads checkpoints"},
+ "Fibo-2.0": {"loader": "core", "files": [("text_encoders", "qwen3vl_4b_bf16.safetensors", "text_encoders/qwen3vl_4b_bf16.safetensors"), ("text_encoders", "qwen3vl_8b_int8_convrot.safetensors", "text_encoders/qwen3vl_8b_int8_convrot.safetensors"), ("vae", "flux2-vae.safetensors", "vae/flux2-vae.safetensors")],
+              "note": "the Qwen3-VL 4B encoder (8B only for the optional prompt enhancer) and the FLUX.2 VAE are shared from the library, so the working-set estimate counts them; CC BY-NC 4.0, non-commercial"},
  "Stable-Fast-3D": {"loader": "needs-pack", "files": [("checkpoints", "stable-fast-3d_model.safetensors", "_complete_pipelines/Stable-Fast-3D/pipeline/model.safetensors")],
                     "note": "core ComfyUI cannot detect this model; it needs the Stable-Fast-3D inference code wrapped as nodes"},
 }

@@ -55,7 +55,7 @@ or a `.rules.json` sidecar):
 
 ## Time and VRAM
 - Warm: a chat completion with a 180 s timeout; H3 build bounded to 60 s. Not measured per job.
-- **VRAM cost:** at render time `enhance_job` calls `ensure_ready` on the chain, which can cold-start muse-glimmer (~20.9 GB)
+- **VRAM cost:** at render time `enhance_job` calls `ensure_ready` on the chain, which can cold-start a local language model (~20.9 GB)
   still start  a local port. With VRAM tight, untick ✨ enhance or use ✨ Preview while the LLM is already up.
 
 ## Known pitfalls / failure modes

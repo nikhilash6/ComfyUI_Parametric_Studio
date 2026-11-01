@@ -116,7 +116,7 @@ n_3_audio_driven_portrait_pipeline	16	merged	PSN_AudioToMouthTrack,PSN_Mask_Weig
 n_3_canvas_layout_standardization	45	merged	PSN_LayoutEnforcer,PSN_Route_Record		Changed by the node audit of 2026-11-01; the original statement no longer applies.
 n_3_conditional_model_loading	28	rejected	scan: compile(		Qwen node factory (qwen-gen branch), pure logic, no tensor types
 n_3_deterministic_seed_based_conditioning	8	merged	PSN_SeedHashVector		Changed by the node audit of 2026-11-01; the original statement no longer applies.
-n_3_fast_sampling_with_res4lyf	36	merged	PSN_RES4LYF_Sampler		Qwen node factory (qwen-gen branch), pure logic, no tensor types
+n_3_fast_sampling_with_res4lyf	36	merged	PSN_Fast_Sampler_Plan		Qwen node factory (qwen-gen branch), pure logic, no tensor types
 n_3_interactive_ai_world_demo_for_marketin	18	merged	PSN_MatrixGame_ParamCheck		Changed by the node audit of 2026-11-01; the original statement no longer applies.
 n_3_multi_character_dialogue_synthesis	2	rejected	scan: compile(		Qwen node factory (qwen-gen branch), pure logic, no tensor types
 n_3_ocr_based_prompt_extraction_from_tutor	50	merged	PSN_TextLinesToRegions,PSN_Prompt_Cleaner		Changed by the node audit of 2026-11-01; the original statement no longer applies.
@@ -129,7 +129,7 @@ n_4_batch_size_optimization	28	merged	PSN_Batch_Calculator		Qwen node factory (q
 n_4_fbx_to_video_motion_transfer	10	merged	PSN_FBX_Pose_Extractor,PSN_Pose_Video_Driver		Qwen node factory (qwen-gen branch), pure logic, no tensor types
 n_4_freeu_patching_for_efficiency	36	merged	PSN_FreeU_Patch		Qwen node factory (qwen-gen branch), pure logic, no tensor types
 n_4_local_multimodal_prompting	9	rejected	scan: compile(		Qwen node factory (qwen-gen branch), pure logic, no tensor types
-n_4_low_step_high_quality_sampling	39	rejected	node name already taken: PSN_RES4LYF_Sampler		Qwen node factory (qwen-gen branch), pure logic, no tensor types
+n_4_low_step_high_quality_sampling	39	rejected	node name already taken: PSN_Fast_Sampler_Plan		Qwen node factory (qwen-gen branch), pure logic, no tensor types
 n_4_modular_pipeline_organization_for_per_	40	rejected	scan: compile(		Qwen node factory (qwen-gen branch), pure logic, no tensor types
 n_4_multi_scene_video_storyboarder	34	merged	PSN_Video_Storyboarder		Qwen node factory (qwen-gen branch), pure logic, no tensor types
 n_4_multi_shot_timeline_direction	3	merged	PSN_TimelineDirector,PSN_SceneTransition		Qwen node factory (qwen-gen branch), pure logic, no tensor types

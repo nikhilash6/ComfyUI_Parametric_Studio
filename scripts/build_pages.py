@@ -24,13 +24,17 @@ def get(base, path):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--from", dest="base", default="http://127.0.0.1:8310"); ap.add_argument("--out", default=os.path.join(ROOT, "site")); ap.add_argument("--repo", default="https://github.com/parametricparadigm/ComfyUI_Parametric_Studio"); a = ap.parse_args()
-    shutil.rmtree(a.out, ignore_errors=True); shutil.copytree(os.path.join(ROOT, "studio", "web"), a.out, ignore=shutil.ignore_patterns("sw.js", "__pycache__")); d = os.path.join(a.out, "demo-api"); os.makedirs(d); open(os.path.join(a.out, ".nojekyll"), "w").close(); saved = 0
+    shutil.rmtree(a.out, ignore_errors=True); shutil.copytree(os.path.join(ROOT, "studio", "web"), a.out, ignore=shutil.ignore_patterns("sw.js", "__pycache__")); d = os.path.join(a.out, "demo-api"); os.makedirs(d); open(os.path.join(a.out, ".nojekyll"), "w").close(); shutil.copy(os.path.join(ROOT, "studio", "LICENSE-MiniMax-Music3.txt"), a.out); saved = 0
     def save(path, obj=None):
         nonlocal saved
         try: data = get(a.base, "/api/" + path) if obj is None else obj
         except Exception as e: print("  skipped", path, type(e).__name__); return None
         open(os.path.join(d, re.sub(r"[^\w.-]+", "__", path.split("?")[0]) + ".json"), "w").write(json.dumps(clean(data))); saved += 1; return data
-    for p in ("goals", "atlas", "crew", "edits", "models", "models/readiness", "models3d", "packs", "apps", "processes", "recipes", "schedules", "calibrate", "voice", "user"): save(p)
+    for p in ("goals", "atlas", "crew", "edits", "models", "models/readiness", "models3d", "packs", "apps", "processes", "recipes", "schedules", "calibrate", "voice", "user", "recipe-library?limit=2000", "sampling/measures", "sampling/renders", "vset/capabilities", "vset/meta", "vset/lists", "vset/shots", "worldkit/assets", "worldkit/capabilities", "worldkit/looks", "worldkit/meshes", "worldkit/characters", "train/info", "train/datasets", "train/jobs", "train/loras"): save(p)
+    for e in ((save("sampling/atlas") or {}).get("entries") or []): save("sampling/entry/" + e["id"])
+    for f in ((save("music-styles") or {}).get("families") or []):
+        for s in f.get("styles") or []: save("music-styles/" + s["id"])
+    for r in ((save("recipes") or {}).get("recipes") or []): save("recipes/" + r["id"])
     save("health", {"comfy": True, "comfy_url": "read-only demo", "edition": "demo", "backend": {"backend": "local", "target": "local", "spends_credits": False}})
     show = json.load(open(os.path.join(ROOT, "studio", "web", "showcase", "showcase.json")))
     save("history", [{"job": x["id"], "goal": x["goal"], "prompt": x["prompt"], "options": x.get("options", {}), "seed": 11, "files": [{"filename": os.path.basename(x["src"]), "kind": x["kind"], "url": x["src"]}]} for x in show])

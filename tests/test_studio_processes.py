@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 from studio import processes as P, sfw
 
 ROOT = Path(__file__).resolve().parent.parent; STUDIO = ROOT / "studio"
+if not (ROOT / "scripts" / "build_processes.py").exists(): pytest.skip("build script is not in the public tree", allow_module_level=True)
 _spec = importlib.util.spec_from_file_location("build_processes", ROOT / "scripts" / "build_processes.py"); B = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(B)
 DATA = json.load(open(STUDIO / "processes.json", encoding="utf-8")); ROWS = DATA["processes"]; BY_ID = {r["id"]: r for r in ROWS}
 

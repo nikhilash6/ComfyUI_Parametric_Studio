@@ -630,7 +630,7 @@ Outputs: `value` (any (output follows input)), `free_gb` (FLOAT), `status` (STRI
 | Model-Aware Sigma Scheduler<br>`PSN_ModelAwareScheduler` | Generate model-aware sigma schedules for Krea2, Flux1, and SD3 models. | `steps`, `model_family`, `config` | LIST, STRING |
 | One Click Prompt Generator<br>`PSN_One_Click_Prompt_Generator` | Generate a curated, reproducible SD prompt + negative prompt from theme, complexity, and seed. | `theme`, `complexity`, `seed` | STRING, STRING |
 | PSN Prompt Adherence Checker<br>`PSN_Prompt_Adherence_Checker` | Verifies that a generated prompt matches intended style/content constraints before execution. | `prompt`, `constraints`, `llm_handle` | BOOLEAN, STRING |
-| RES4LYF Fast Sampler (Config)<br>`PSN_RES4LYF_Sampler` | Validate and plan a RES4LYF fast-sampling configuration. | `steps`, `solver`, `scheduler` | BOOLEAN, STRING, STRING, STRING |
+| Fast Sampler Plan (Config)<br>`PSN_Fast_Sampler_Plan` | Validate and plan a RES4LYF fast-sampling configuration. | `steps`, `solver`, `scheduler` | BOOLEAN, STRING, STRING, STRING |
 | RES Fast Sampler (logic)<br>`PSN_RESFastSampler` | Plan a RES fast-sampling run (pure logic; no GPU/torch). | `steps`, `cfg`, `seed` | STRING, STRING, INT, BOOLEAN |
 | PSN Region Definition<br>`PSN_RegionDefinition` | Create a binary MASK for a rectangle, ellipse or polygon region. | `image`, `region_type`, `coords` | MASK |
 | PSN Regional Mask<br>`PSN_RegionalMask` | Creates a binary mask for a specific region of the image. | `image_width`, `image_height`, `bbox` | STRING, STRING |

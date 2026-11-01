@@ -32,7 +32,7 @@ def _find_member(members: List[Dict[str, Any]], member_id: str) -> Optional[Dict
     return None
 
 
-INTERNAL_PATH = re.compile(r"`?(?:(?:~|\.{1,2})?/(?:home|mnt|tmp)/\S+|earlier-studio/\S*|(?:[\w.-]+/)+[\w.-]+\.(?:md|py|jsonl?|txt|ya?ml|sh|js|ts|safetensors|gguf))`?")
+INTERNAL_PATH = re.compile(r"`?(?:(?:~|\.{1,2})?/(?:home|mnt|tmp)/\S+|(?:[\w.-]+/)+[\w.-]+\.(?:md|py|jsonl?|txt|ya?ml|sh|js|ts|safetensors|gguf))`?")
 def public_text(t: Any) -> Any:
     """What a user reads: no paths from the machine the notes were written on, no markdown symbols."""
     if not isinstance(t, str): return t

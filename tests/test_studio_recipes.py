@@ -148,6 +148,10 @@ def test_the_vram_rule_unloads_then_waits_then_refuses_with_the_numbers(rig, mon
     rig.free = 30.0; monkeypatch.setattr(R, "VRAM_WAIT", 0); run = client.post("/api/recipes/t/run", json={}).json()["run"]; r = wait(client, "t", run)
     assert r["status"] == "error" and "30 GiB free" in r["error"] and "needs 50 GiB" in r["error"] and [x["status"] for x in r["steps"]] == ["done", "error", "pending"]      # the still fits (23 + 4), the H3 step does not (46 + 4)
     assert [b["goal"] for b in rig.bodies] == ["image"] and rig.free_calls >= 2                                                                                                   # unloaded after the still, and once more when it came up short
+def test_the_vram_rule_fires_the_llm_handoff_before_it_waits(rig, monkeypatch):
+    sent = []; free = iter([(5.0, 96.0), (80.0, 96.0)]); monkeypatch.setattr(R, "_vram", lambda: next(free)); monkeypatch.setattr(R, "POLL", 0)
+    real = S.comfy; monkeypatch.setattr(S, "comfy", lambda path, payload=None, **k: sent.append((path, payload)) or real(path, payload, **k) if path != "/prompt" else sent.append((path, payload)) or {})
+    R._vram_gate({"_cancel": False, "steps": [], "run": "0" * 12}, {}, 23.0); assert ("/prompt", {"prompt": {}}) in sent     # with Qwen awake, only a prompt arriving at ComfyUI frees the card
 def test_the_vram_rule_lets_a_small_card_run_on_offload(rig, monkeypatch):
     monkeypatch.setattr(R, "_vram", lambda: (21.7, 24.0)); R._vram_gate({"_cancel": False, "steps": [], "run": "0" * 12}, {}, 46.0); assert rig.free_calls == 0          # 90% of a 24 GB card is enough, however large the step's peak on a bigger card
 def test_runs_are_queued_one_at_a_time(rig):

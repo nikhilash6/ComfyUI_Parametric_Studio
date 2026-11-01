@@ -152,3 +152,14 @@ def test_no_box_path_is_left_in_python_defaults():
     for top in ("psn", "studio", "scripts", "psn_nodes"):
         for f in (ROOT / top).rglob("*.py"):
             if "/skills/" not in str(f) and f.name != "repo_checks.py": assert not box.search(f.read_text(encoding="utf-8", errors="ignore")), f
+
+
+def test_the_readme_only_claims_what_exists():
+    from studio import calibrate
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert "heavy lifting" not in readme and "real seconds and VRAM" not in readme and "seven goals" in readme and len(calibrate.SAMPLES) == 7
+    assert "not yet against a live server" in readme and "does not measure VRAM" in readme
+    flagship = {"PSN_VRAMGate", "PSN_DirectorPrompt", "PSN_RecastPrompt", "PSN_ShotCard", "PSN_ShotList", "PSN_LatentInspector", "PSN_GraphProof"}
+    graphs = list((ROOT / "workflows").glob("*.json")) + list((ROOT / "studio" / "family_templates").glob("*.json"))
+    used = {n.get("class_type") for g in graphs for n in json.loads(g.read_text()).values() if isinstance(n, dict)}
+    assert not used & flagship, "a built-in graph uses a flagship node now: say so in the README"

@@ -63,5 +63,5 @@ Not offered: files with no job record, character sheet shots (their retry keeps 
 
 ## Evidence
 - Code and tests: `tests/studio/test_qsweep.py` (generated clean / grainy / blurry / duplicate / black / broken pictures, tiny ffmpeg clips, seed-4242 job records, incremental index, one-at-a-time, pause / resume / cancel, never auto-started, mark / hide, reroll through a fake retry), `tests/chatbox/test_qsweep_routes.py` (the routes and the real retry route with a fake runner), `tests/chatbox/js/qsweep_helpers.test.mjs`.
-- Research behind the grain rule: `earlier_studio/studio/grain.py` and `seeds.py` (the 2026-10-17 seed sweep: 20 seeds, 60 files).
+- Research behind the grain rule: the earlier studio's grain.py and `seeds.py` (the 2026-10-17 seed sweep: 20 seeds, 60 files).
 - Readiness: `finish.quality_sweep` / route `qsweep_cpu` (recipe).

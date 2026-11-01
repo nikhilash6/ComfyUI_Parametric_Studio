@@ -9,7 +9,7 @@ author request 2026-10-17: "make guaranteed deliverables for all of those as wel
 production ready". The repo rule applies: "guaranteed" is a PROOF LEVEL, never a promise. Every seed makes a different picture; what is
 repeatable is the setup.
 
-Code: `earlier_studio/studio/readiness.py` (pure CPU: load, validate, report), data `earlier_studio/studio/data/readiness.json`, route
+Code: the earlier studio's readiness.py (pure CPU: load, validate, report), data the earlier studio's readiness.json, route
 `GET /api/studio/readiness` (read-only, `scripts/chatbox/server.py`), plain list page `static/studio/Readiness.js` + `readiness_helpers.js`
 (**not wired into the sidebar**: add `ws === "readiness"` in `app.js` and a rail entry in `modes.js` to show it), proof plan
 `scripts/readiness_proof.py`. Research: `the author's research notes`. Plan files:
@@ -33,7 +33,7 @@ Two more fields keep the level honest:
 - **gap**: what is still missing. `none` = verified at family scope. `family` = the route is proven, the deliverable's own prompts and
   wiring never rendered. `route` = the route itself is not proven. A family can never rank above its weakest route (the validator checks).
 
-Example: the Pictures "Mirror selfies" family is `recipe / none / gap family`: Krea 2 Turbo and Qwen 2.1 are verified routes (KB best-options
+Example: one Pictures family is `recipe / none / gap family`: Krea 2 Turbo and Qwen 2.1 are verified routes (KB best-options
 run), but no picture has been rendered through the Pictures page. That is the truth the registry shows, and exactly what the proof plan fixes.
 
 ## What is in the data

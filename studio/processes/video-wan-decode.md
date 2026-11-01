@@ -4,7 +4,7 @@
 
 
 author 2026-10-11: "im sure you can wire one up for light vae", then "yes to all of them" for the studio chip.
-Code: `earlier_studio/tools/lightvae_decode.py`. Box side: ComfyUI pack `ComfyUI-ComfyUI-LightVAE`
+Code: the earlier studio's lightvae_decode.py. Box side: ComfyUI pack `ComfyUI-ComfyUI-LightVAE`
 
 ## What it changes
 Only the VAE **decode** at the end of the graph. The chip swaps the graph's core `VAELoader wan/wan_2.1_vae` for

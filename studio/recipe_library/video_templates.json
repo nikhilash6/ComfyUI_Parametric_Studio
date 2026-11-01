@@ -1,0 +1,6780 @@
+{
+"version": 1,
+"kind": "video_templates",
+"note": "Ported from the founders' earlier studio. Proof levels are as that studio recorded them; nothing here counts as tested until it is rendered here.",
+"recipes": [
+{
+"id": "vid_ugc_ad_15",
+"kind": "video",
+"group": "Ads",
+"rating": "sfw",
+"title": "UGC product ad, 15 s",
+"pitch": "Hook, show the product in use, a punchy call to action. The classic creator-style ad.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"ads"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product (what it is)",
+"default": "a stainless steel insulated water bottle"
+},
+{
+"key": "benefit",
+"label": "Main benefit",
+"default": "keeps drinks ice cold for 24 hours"
+},
+{
+"key": "brand",
+"label": "Brand name",
+"default": "Northpeak"
+},
+{
+"key": "offer",
+"label": "Offer / call to action",
+"default": "20% off this week, link in bio"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hook",
+"peak_gib": 46,
+"seed": 149027,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} looks into the camera and opens with a surprising one-line hook about {benefit}. They speak directly to the camera. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Demo",
+"peak_gib": 46,
+"seed": 748789,
+"prompt": "integrated_multimodal_description: [Shot 1] the {product} shown in use, close detail. Slow orbit around the product. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Cta",
+"peak_gib": 46,
+"seed": 618047,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds up the {product} and gives the call to action: {offer}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_ugc_ad_30",
+"kind": "video",
+"group": "Ads",
+"rating": "sfw",
+"title": "UGC product ad, 30 s",
+"pitch": "Problem, discovery, demo, proof, call to action: the long creator ad.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"ads"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product (what it is)",
+"default": "a stainless steel insulated water bottle"
+},
+{
+"key": "problem",
+"label": "The problem",
+"default": "cables everywhere on the desk"
+},
+{
+"key": "benefit",
+"label": "Main benefit",
+"default": "keeps drinks ice cold for 24 hours"
+},
+{
+"key": "brand",
+"label": "Brand name",
+"default": "Northpeak"
+},
+{
+"key": "offer",
+"label": "Offer / call to action",
+"default": "20% off this week, link in bio"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"A 10 s shot of the original is 8 s here, this studio's longest H3 option."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Problem",
+"peak_gib": 46,
+"seed": 880867,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} complains to camera about {problem}, frustrated. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Discovery",
+"peak_gib": 46,
+"seed": 242581,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} unboxes the {product} and reacts with surprise. Medium shot, gentle push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Demo",
+"peak_gib": 46,
+"seed": 180063,
+"prompt": "integrated_multimodal_description: [Shot 1] the {product} in use, the key detail visible. Macro slide across the product. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Proof",
+"peak_gib": 46,
+"seed": 895273,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains to camera how {benefit} changed their day, convinced. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot5",
+"type": "goal",
+"goal": "h3_video",
+"label": "Cta",
+"peak_gib": 46,
+"seed": 73322,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} smiles and gives the call to action: {offer}. They speak directly to the camera. Handheld selfie, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4",
+"@shot5"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_product_hero_10",
+"kind": "video",
+"group": "Ads",
+"rating": "sfw",
+"title": "Product hero, 10 s (no person)",
+"pitch": "Two cinematic product shots, no presenter. For shops and catalogues.",
+"why": "A fixed shot list from the earlier studio (Shop / Instagram feed): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"ads"
+],
+"fields": [
+{
+"key": "product",
+"label": "Product (what it is)",
+"default": "a stainless steel insulated water bottle"
+},
+{
+"key": "benefit",
+"label": "Main benefit",
+"default": "keeps drinks ice cold for 24 hours"
+},
+{
+"key": "brand",
+"label": "Brand name",
+"default": "Northpeak"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Reveal",
+"peak_gib": 46,
+"seed": 623404,
+"prompt": "integrated_multimodal_description: [Shot 1] the {product} revealed in dramatic light. Slow push in, shallow depth of field. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "1:1",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Detail",
+"peak_gib": 46,
+"seed": 381658,
+"prompt": "integrated_multimodal_description: [Shot 1] a close detail of the {product} that shows {benefit}. Macro slide. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "1:1",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_unboxing_20",
+"kind": "video",
+"group": "Ads",
+"rating": "sfw",
+"title": "Unboxing, 20 s",
+"pitch": "Box arrives, opening, first reaction, verdict.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"ads"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product (what it is)",
+"default": "a stainless steel insulated water bottle"
+},
+{
+"key": "brand",
+"label": "Brand name",
+"default": "Northpeak"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Arrival",
+"peak_gib": 46,
+"seed": 411883,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a sealed package with the {product}, excited. Medium shot, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Open",
+"peak_gib": 46,
+"seed": 435421,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} opens the box and lifts out the {product}. Close-up on the hands, slight handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Reaction",
+"peak_gib": 46,
+"seed": 548407,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to the {product} with a short honest first impression. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Verdict",
+"peak_gib": 46,
+"seed": 185281,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on the {product}. They speak directly to the camera. Handheld selfie, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_before_after_15",
+"kind": "video",
+"group": "Ads",
+"rating": "sfw",
+"title": "Before / after, 15 s",
+"pitch": "The problem, the fix, the result.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"ads"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "problem",
+"label": "The problem",
+"default": "cables everywhere on the desk"
+},
+{
+"key": "product",
+"label": "Product (what it is)",
+"default": "a stainless steel insulated water bottle"
+},
+{
+"key": "result",
+"label": "The result",
+"default": "a clean desk in two minutes"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Before",
+"peak_gib": 46,
+"seed": 477574,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} struggles with {problem}, exasperated. Medium shot, static. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Fix",
+"peak_gib": 46,
+"seed": 179440,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} uses the {product} to solve it. Close-up on the action, slow push. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "After",
+"peak_gib": 46,
+"seed": 798650,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shows off {result} and says one proud line. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_testimonial_20",
+"kind": "video",
+"group": "Ads",
+"rating": "sfw",
+"title": "Customer testimonial, 20 s",
+"pitch": "A calm, believable customer story.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"ads"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product (what it is)",
+"default": "a stainless steel insulated water bottle"
+},
+{
+"key": "story",
+"label": "The story in a sentence",
+"default": "I quit my job to open a bakery"
+},
+{
+"key": "benefit",
+"label": "Main benefit",
+"default": "keeps drinks ice cold for 24 hours"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"A 10 s shot of the original is 8 s here, this studio's longest H3 option."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Intro",
+"peak_gib": 46,
+"seed": 844849,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces themself and their situation: {story}. They speak directly to the camera. Seated medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Turn",
+"peak_gib": 46,
+"seed": 614375,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains how the {product} helped: {benefit}. They speak directly to the camera. Seated medium close-up, very slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Close",
+"peak_gib": 46,
+"seed": 519309,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} recommends it warmly in one line. They speak directly to the camera. Seated medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_app_promo_20",
+"kind": "video",
+"group": "Ads",
+"rating": "sfw",
+"title": "App promo, 20 s",
+"pitch": "Hook, the feature in action, call to action.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"ads"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "app",
+"label": "App / tool",
+"default": "a habit-tracker app"
+},
+{
+"key": "feature",
+"label": "Feature to show",
+"default": "one-tap streak reminders"
+},
+{
+"key": "offer",
+"label": "Offer / call to action",
+"default": "20% off this week, link in bio"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"A 10 s shot of the original is 8 s here, this studio's longest H3 option."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hook",
+"peak_gib": 46,
+"seed": 593402,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the viewer a question the {app} answers. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Feature",
+"peak_gib": 46,
+"seed": 633548,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} uses a phone and smiles as {feature} works. Over-the-shoulder, slow push toward the phone. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Cta",
+"peak_gib": 46,
+"seed": 13542,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the call to action: {offer}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_sale_announcement_10",
+"kind": "video",
+"group": "Ads",
+"rating": "sfw",
+"title": "Sale announcement, 10 s",
+"pitch": "Fast, energetic offer reveal.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"ads"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "offer",
+"label": "Offer / call to action",
+"default": "20% off this week, link in bio"
+},
+{
+"key": "brand",
+"label": "Brand name",
+"default": "Northpeak"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hook",
+"peak_gib": 46,
+"seed": 559719,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly that the sale is on: {offer}. They speak directly to the camera. Fast push in, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Cta",
+"peak_gib": 46,
+"seed": 185585,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} points down and tells viewers where to get it. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_talking_head_3pt",
+"kind": "video",
+"group": "Creator",
+"rating": "sfw",
+"title": "Talking head, hook, 3 points, CTA",
+"pitch": "The workhorse explainer: hook, three points, wrap-up.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"creator"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic",
+"default": "three habits that fixed my sleep"
+},
+{
+"key": "points",
+"label": "Key points (one per line)",
+"default": "no screens after 10\nsame wake time\ncold dark room",
+"multiline": true
+},
+{
+"key": "offer",
+"label": "Offer / call to action",
+"default": "20% off this week, link in bio"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hook",
+"peak_gib": 46,
+"seed": 755354,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} opens with a bold hook about {topic}. They speak directly to the camera. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Point 1",
+"peak_gib": 46,
+"seed": 178156,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the first point from: {points}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Point 2",
+"peak_gib": 46,
+"seed": 467110,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the second point from: {points}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Point 3",
+"peak_gib": 46,
+"seed": 688272,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the third point from: {points}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot5",
+"type": "goal",
+"goal": "h3_video",
+"label": "Wrap",
+"peak_gib": 46,
+"seed": 265491,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} wraps up and asks viewers to follow: {offer}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4",
+"@shot5"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_day_in_life_30",
+"kind": "video",
+"group": "Creator",
+"rating": "sfw",
+"title": "Day in the life, 30 s",
+"pitch": "Morning to evening in six quick moments.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"creator"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "story",
+"label": "The story in a sentence",
+"default": "I quit my job to open a bakery"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a small coffee shop in Lisbon"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Morning",
+"peak_gib": 46,
+"seed": 101453,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} wakes up and stretches by the window, {story}. Wide shot, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Coffee",
+"peak_gib": 46,
+"seed": 785371,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} makes coffee in the kitchen. Close-up, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Work",
+"peak_gib": 46,
+"seed": 340497,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} works focused at a desk in {place}. Medium shot, slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Outside",
+"peak_gib": 46,
+"seed": 258823,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} walks outside through {place}. Tracking shot alongside. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot5",
+"type": "goal",
+"goal": "h3_video",
+"label": "Evening",
+"peak_gib": 46,
+"seed": 456804,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} cooks dinner, relaxed. Medium shot, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot6",
+"type": "goal",
+"goal": "h3_video",
+"label": "Night",
+"peak_gib": 46,
+"seed": 15026,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one reflective line about the day. They speak directly to the camera. Close-up, warm light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4",
+"@shot5",
+"@shot6"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_storytime_25",
+"kind": "video",
+"group": "Creator",
+"rating": "sfw",
+"title": "Storytime, 25 s",
+"pitch": "A personal story told straight to camera.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"creator"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "story",
+"label": "The story in a sentence",
+"default": "I quit my job to open a bakery"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"A 10 s shot of the original is 8 s here, this studio's longest H3 option."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hook",
+"peak_gib": 46,
+"seed": 332922,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} teases the story: {story}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Build",
+"peak_gib": 46,
+"seed": 457996,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tells what happened, animated. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Punchline",
+"peak_gib": 46,
+"seed": 641446,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} delivers the twist and how it ended. They speak directly to the camera. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_tutorial_steps",
+"kind": "video",
+"group": "Creator",
+"rating": "sfw",
+"title": "Quick tutorial, steps",
+"pitch": "Show and tell, one step per shot.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"creator"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic",
+"default": "three habits that fixed my sleep"
+},
+{
+"key": "steps",
+"label": "Steps (one per line)",
+"default": "boil pasta\nsear shrimp\ntoss with butter",
+"multiline": true
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Intro",
+"peak_gib": 46,
+"seed": 509985,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says what they will show: {topic}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Step 1",
+"peak_gib": 46,
+"seed": 115095,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does the first step from: {steps}. Close-up on the hands. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Step 2",
+"peak_gib": 46,
+"seed": 43165,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does the second step from: {steps}. Close-up on the hands. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Step 3",
+"peak_gib": 46,
+"seed": 361067,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does the third step from: {steps}. Close-up on the hands. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot5",
+"type": "goal",
+"goal": "h3_video",
+"label": "Result",
+"peak_gib": 46,
+"seed": 845864,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shows the result and says one line. They speak directly to the camera. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4",
+"@shot5"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_recipe_30",
+"kind": "video",
+"group": "Food",
+"rating": "sfw",
+"title": "Recipe, 30 s",
+"pitch": "Ingredients, cooking steps, the bite.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"food"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "recipe",
+"label": "Dish",
+"default": "15-minute garlic butter shrimp pasta"
+},
+{
+"key": "steps",
+"label": "Steps (one per line)",
+"default": "boil pasta\nsear shrimp\ntoss with butter",
+"multiline": true
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Intro",
+"peak_gib": 46,
+"seed": 650632,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {recipe} with excitement. They speak directly to the camera. Medium shot in a kitchen. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Ingredients",
+"peak_gib": 46,
+"seed": 311454,
+"prompt": "integrated_multimodal_description: [Shot 1] the ingredients for {recipe} laid out on a counter. Top-down slow slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Cook 1",
+"peak_gib": 46,
+"seed": 225716,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} cooks the first step from: {steps}. Close-up over the pan. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Cook 2",
+"peak_gib": 46,
+"seed": 20930,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} cooks the next step from: {steps}. Close-up over the pan. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot5",
+"type": "goal",
+"goal": "h3_video",
+"label": "Plate",
+"peak_gib": 46,
+"seed": 273281,
+"prompt": "integrated_multimodal_description: [Shot 1] the finished {recipe} plated, steam rising. Slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot6",
+"type": "goal",
+"goal": "h3_video",
+"label": "Bite",
+"peak_gib": 46,
+"seed": 855127,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tastes it and reacts. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4",
+"@shot5",
+"@shot6"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_motivational_quote_15",
+"kind": "video",
+"group": "Creator",
+"rating": "sfw",
+"title": "Motivational quote, 15 s",
+"pitch": "Mood shots under a spoken quote.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"creator"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "quote",
+"label": "Quote / message",
+"default": "Small steps every day beat big steps once"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a small coffee shop in Lisbon"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Open",
+"peak_gib": 46,
+"seed": 667014,
+"prompt": "integrated_multimodal_description: [Shot 1] a quiet sunrise over {place}. Slow drone push forward. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Quote",
+"peak_gib": 46,
+"seed": 85392,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says the quote with calm conviction: {quote}. They speak directly to the camera. Close-up, golden light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Close",
+"peak_gib": 46,
+"seed": 127450,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} walks forward into the light, determined. Tracking shot from behind. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_podcast_clip_20",
+"kind": "video",
+"group": "Creator",
+"rating": "sfw",
+"title": "Podcast clip, 20 s",
+"pitch": "Two hosts at a desk with microphones, one exchange.",
+"why": "A fixed shot list from the earlier studio (YouTube / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"creator"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "who2",
+"label": "The second person",
+"default": "A fictional adult in a dark blue jacket"
+},
+{
+"key": "topic",
+"label": "Topic",
+"default": "three habits that fixed my sleep"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"A 10 s shot of the original is 8 s here, this studio's longest H3 option."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Question",
+"peak_gib": 46,
+"seed": 676279,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a sharp question about {topic} into a podcast microphone. They speak directly to the camera. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Answer",
+"peak_gib": 46,
+"seed": 328353,
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers with a strong opinion into a podcast microphone. They speak directly to the camera. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Reaction",
+"peak_gib": 46,
+"seed": 852203,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} laughs and reacts in one line. They speak directly to the camera. Two-shot, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_interview_2p_25",
+"kind": "video",
+"group": "Creator",
+"rating": "sfw",
+"title": "Street interview, 25 s",
+"pitch": "Interviewer asks, guest answers, a reaction.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"creator"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "who2",
+"label": "The second person",
+"default": "A fictional adult in a dark blue jacket"
+},
+{
+"key": "topic",
+"label": "Topic",
+"default": "three habits that fixed my sleep"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a small coffee shop in Lisbon"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"A 10 s shot of the original is 8 s here, this studio's longest H3 option."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Ask",
+"peak_gib": 46,
+"seed": 115555,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a microphone out and asks about {topic} in {place}. They speak directly to the camera. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Answer",
+"peak_gib": 46,
+"seed": 278005,
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers the question honestly, then grins. They speak directly to the camera. Handheld medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Follow",
+"peak_gib": 46,
+"seed": 232991,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a quick follow-up. They speak directly to the camera. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Final",
+"peak_gib": 46,
+"seed": 409609,
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} gives a funny final answer. They speak directly to the camera. Handheld close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_local_business_20",
+"kind": "video",
+"group": "Business",
+"rating": "sfw",
+"title": "Local business promo, 20 s",
+"pitch": "Owner welcome, the place, the offer.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"business"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "name",
+"label": "Name (person / business)",
+"default": "Maya's Plant Studio"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a small coffee shop in Lisbon"
+},
+{
+"key": "offer",
+"label": "Offer / call to action",
+"default": "20% off this week, link in bio"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Welcome",
+"peak_gib": 46,
+"seed": 566681,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} welcomes viewers to {name}. They speak directly to the camera. Medium shot at the entrance, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Place",
+"peak_gib": 46,
+"seed": 585999,
+"prompt": "integrated_multimodal_description: [Shot 1] the inside of {place}, warm and inviting. Slow gimbal walk-through. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Craft",
+"peak_gib": 46,
+"seed": 53893,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} works with care behind the counter. Close-up, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Offer",
+"peak_gib": 46,
+"seed": 86067,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} invites people in: {offer}. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_real_estate_tour_30",
+"kind": "video",
+"group": "Business",
+"rating": "sfw",
+"title": "Property tour, 30 s",
+"pitch": "Exterior, rooms, the agent's pitch.",
+"why": "A fixed shot list from the earlier studio (YouTube / listings): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"business"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a small coffee shop in Lisbon"
+},
+{
+"key": "offer",
+"label": "Offer / call to action",
+"default": "20% off this week, link in bio"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Exterior",
+"peak_gib": 46,
+"seed": 209860,
+"prompt": "integrated_multimodal_description: [Shot 1] the exterior of {place} on a sunny day. Slow drone push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Intro",
+"peak_gib": 46,
+"seed": 880114,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} stands at the door and introduces {place}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Living",
+"peak_gib": 46,
+"seed": 757848,
+"prompt": "integrated_multimodal_description: [Shot 1] the bright living room of {place}. Slow gimbal glide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Kitchen",
+"peak_gib": 46,
+"seed": 648462,
+"prompt": "integrated_multimodal_description: [Shot 1] the kitchen of {place}. Slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot5",
+"type": "goal",
+"goal": "h3_video",
+"label": "View",
+"peak_gib": 46,
+"seed": 265997,
+"prompt": "integrated_multimodal_description: [Shot 1] the view from the best window of {place}. Slow push toward the window. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot6",
+"type": "goal",
+"goal": "h3_video",
+"label": "Pitch",
+"peak_gib": 46,
+"seed": 562043,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the price and how to book a viewing: {offer}. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4",
+"@shot5",
+"@shot6"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_travel_montage_25",
+"kind": "video",
+"group": "Travel",
+"rating": "sfw",
+"title": "Travel montage, 25 s",
+"pitch": "Arrive, explore, the hero moment.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"travel"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a small coffee shop in Lisbon"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Arrive",
+"peak_gib": 46,
+"seed": 798282,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} arrives in {place} with a backpack, looking around. Wide shot, slow push. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Streets",
+"peak_gib": 46,
+"seed": 88540,
+"prompt": "integrated_multimodal_description: [Shot 1] the streets of {place} alive with people. Handheld tracking. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Food",
+"peak_gib": 46,
+"seed": 806038,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tastes local food in {place} and smiles. Close-up, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "View",
+"peak_gib": 46,
+"seed": 693280,
+"prompt": "integrated_multimodal_description: [Shot 1] a breathtaking view over {place}. Slow drone pull back. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot5",
+"type": "goal",
+"goal": "h3_video",
+"label": "Moment",
+"peak_gib": 46,
+"seed": 405763,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one line about why {place} is special. They speak directly to the camera. Medium close-up, golden hour. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4",
+"@shot5"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_event_teaser_15",
+"kind": "video",
+"group": "Business",
+"rating": "sfw",
+"title": "Event teaser, 15 s",
+"pitch": "Hype for an upcoming event.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"business"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "event",
+"label": "Event",
+"default": "a rooftop launch party on Friday at 8 pm"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hook",
+"peak_gib": 46,
+"seed": 282495,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} teases {event} with excitement. They speak directly to the camera. Handheld, fast push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Vibe",
+"peak_gib": 46,
+"seed": 711657,
+"prompt": "integrated_multimodal_description: [Shot 1] the venue for {event} lit up, crowd energy. Sweeping crane move. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Cta",
+"peak_gib": 46,
+"seed": 745091,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the date and tells viewers to come: {event}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_fitness_tip_15",
+"kind": "video",
+"group": "Fitness",
+"rating": "sfw",
+"title": "Fitness tip, 15 s",
+"pitch": "Mistake, the right form, encouragement.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"fitness"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic",
+"default": "three habits that fixed my sleep"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Mistake",
+"peak_gib": 46,
+"seed": 270775,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} names the common mistake in {topic}. They speak directly to the camera. Medium shot in a gym. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Form",
+"peak_gib": 46,
+"seed": 553057,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} demonstrates the correct form for {topic}. Full-body side angle, slow orbit. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Push",
+"peak_gib": 46,
+"seed": 774059,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} encourages the viewer in one line. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_grwm_25",
+"kind": "video",
+"group": "Beauty",
+"rating": "sfw",
+"title": "Get ready with me, 25 s",
+"pitch": "Routine steps with chatty lines.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"beauty"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic",
+"default": "three habits that fixed my sleep"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Intro",
+"peak_gib": 46,
+"seed": 743658,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says they're getting ready for {topic}. They speak directly to the camera. Handheld mirror framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Step 1",
+"peak_gib": 46,
+"seed": 60796,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} applies skincare, relaxed. Close-up, mirror framing. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Step 2",
+"peak_gib": 46,
+"seed": 635894,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does their hair. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Chat",
+"peak_gib": 46,
+"seed": 121504,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} chats about the plans while finishing up. They speak directly to the camera. Mirror framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot5",
+"type": "goal",
+"goal": "h3_video",
+"label": "Reveal",
+"peak_gib": 46,
+"seed": 716547,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} steps back and shows the finished look, confident. Full body, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4",
+"@shot5"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_explainer_30",
+"kind": "video",
+"group": "Education",
+"rating": "sfw",
+"title": "Explainer, 30 s",
+"pitch": "Question, answer with visuals, the takeaway.",
+"why": "A fixed shot list from the earlier studio (YouTube): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"education"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic",
+"default": "three habits that fixed my sleep"
+},
+{
+"key": "points",
+"label": "Key points (one per line)",
+"default": "no screens after 10\nsame wake time\ncold dark room",
+"multiline": true
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"A 10 s shot of the original is 8 s here, this studio's longest H3 option."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Question",
+"peak_gib": 46,
+"seed": 606946,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the question behind {topic}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Visual 1",
+"peak_gib": 46,
+"seed": 859156,
+"prompt": "integrated_multimodal_description: [Shot 1] a clear visual of the first idea from: {points}. Slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Explain",
+"peak_gib": 46,
+"seed": 795614,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the answer simply using: {points}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Visual 2",
+"peak_gib": 46,
+"seed": 449512,
+"prompt": "integrated_multimodal_description: [Shot 1] a clear visual of the second idea from: {points}. Slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot5",
+"type": "goal",
+"goal": "h3_video",
+"label": "Takeaway",
+"peak_gib": 46,
+"seed": 516747,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the one-line takeaway. They speak directly to the camera. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4",
+"@shot5"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_news_brief_20",
+"kind": "video",
+"group": "Education",
+"rating": "sfw",
+"title": "News brief, 20 s",
+"pitch": "Anchor intro, the story, the sign-off.",
+"why": "A fixed shot list from the earlier studio (YouTube): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"education"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic",
+"default": "three habits that fixed my sleep"
+},
+{
+"key": "points",
+"label": "Key points (one per line)",
+"default": "no screens after 10\nsame wake time\ncold dark room",
+"multiline": true
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Headline",
+"peak_gib": 46,
+"seed": 458982,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reads the headline about {topic} like a news anchor. They speak directly to the camera. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Detail",
+"peak_gib": 46,
+"seed": 172656,
+"prompt": "integrated_multimodal_description: [Shot 1] footage that illustrates {topic}. Slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Facts",
+"peak_gib": 46,
+"seed": 108858,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the key facts: {points}. They speak directly to the camera. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot4",
+"type": "goal",
+"goal": "h3_video",
+"label": "Signoff",
+"peak_gib": 46,
+"seed": 301804,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} signs off. They speak directly to the camera. Medium shot, slow pull back. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3",
+"@shot4"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_corporate_intro_20",
+"kind": "video",
+"group": "Business",
+"rating": "sfw",
+"title": "Company intro, 20 s",
+"pitch": "Founder intro, the team at work, the mission.",
+"why": "A fixed shot list from the earlier studio (LinkedIn / website): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"business"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "name",
+"label": "Name (person / business)",
+"default": "Maya's Plant Studio"
+},
+{
+"key": "story",
+"label": "The story in a sentence",
+"default": "I quit my job to open a bakery"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"A 10 s shot of the original is 8 s here, this studio's longest H3 option."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Founder",
+"peak_gib": 46,
+"seed": 432771,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {name} warmly. They speak directly to the camera. Medium shot in a bright office. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Team",
+"peak_gib": 46,
+"seed": 540629,
+"prompt": "integrated_multimodal_description: [Shot 1] a team working together in a bright office. Slow gimbal glide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Mission",
+"peak_gib": 46,
+"seed": 774751,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the mission: {story}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "16:9",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_job_posting_15",
+"kind": "video",
+"group": "Business",
+"rating": "sfw",
+"title": "Hiring post, 15 s",
+"pitch": "We're hiring: the role, the vibe, how to apply.",
+"why": "A fixed shot list from the earlier studio (LinkedIn / TikTok): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"business"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "name",
+"label": "Name (person / business)",
+"default": "Maya's Plant Studio"
+},
+{
+"key": "role",
+"label": "Role",
+"default": "a senior designer"
+},
+{
+"key": "offer",
+"label": "Offer / call to action",
+"default": "20% off this week, link in bio"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hook",
+"peak_gib": 46,
+"seed": 207572,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} announces that {name} is hiring {role}. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Vibe",
+"peak_gib": 46,
+"seed": 815842,
+"prompt": "integrated_multimodal_description: [Shot 1] the workplace of {name}, people collaborating. Slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Apply",
+"peak_gib": 46,
+"seed": 222632,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says how to apply: {offer}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_birthday_10",
+"kind": "video",
+"group": "Personal",
+"rating": "sfw",
+"title": "Birthday greeting, 10 s",
+"pitch": "A warm personal birthday message.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"personal"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "for_who",
+"label": "For who",
+"default": "my brother Sam"
+},
+{
+"key": "message",
+"label": "Message",
+"default": "you're the best, see you Saturday"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Greet",
+"peak_gib": 46,
+"seed": 799038,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} wishes {for_who} a happy birthday, beaming. They speak directly to the camera. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Message",
+"peak_gib": 46,
+"seed": 381640,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says the personal message: {message}. They speak directly to the camera. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_thank_you_10",
+"kind": "video",
+"group": "Personal",
+"rating": "sfw",
+"title": "Thank-you message, 10 s",
+"pitch": "Thanks to customers, followers or a team.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"personal"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "for_who",
+"label": "Thanking who",
+"default": "our first 1,000 customers"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Thanks",
+"peak_gib": 46,
+"seed": 412894,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks {for_who} sincerely. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Promise",
+"peak_gib": 46,
+"seed": 734088,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} promises what comes next, smiling. They speak directly to the camera. Close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_music_teaser_15",
+"kind": "video",
+"group": "Music",
+"rating": "sfw",
+"title": "Song release teaser, 15 s",
+"pitch": "Moody artist shots announcing a release.",
+"why": "A fixed shot list from the earlier studio (TikTok / Reels / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"music"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "song",
+"label": "Song title",
+"default": "Midnight Line"
+},
+{
+"key": "date",
+"label": "Release date",
+"default": "Friday"
+},
+{
+"key": "music",
+"label": "Music mood",
+"default": "upbeat lo-fi"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Mood",
+"peak_gib": 46,
+"seed": 435788,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} stands alone under neon light, looking up. Slow push in, moody. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Detail",
+"peak_gib": 46,
+"seed": 181242,
+"prompt": "integrated_multimodal_description: [Shot 1] a vinyl record spinning in low light. Macro slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot3",
+"type": "goal",
+"goal": "h3_video",
+"label": "Announce",
+"peak_gib": 46,
+"seed": 248304,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says the song {song} is out {date}. They speak directly to the camera. Close-up, neon light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2",
+"@shot3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_hook_question",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Hook question",
+"pitch": "Hook question: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "the one habit that changed my mornings"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hook",
+"peak_gib": 46,
+"seed": 612739,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a bold question about {topic}. They speak directly to the camera. Handheld selfie, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_product_flash",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Product flash",
+"pitch": "Product flash: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "product",
+"label": "Product",
+"default": "a matte black water bottle"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hero",
+"peak_gib": 46,
+"seed": 391318,
+"prompt": "integrated_multimodal_description: [Shot 1] the {product} turning in dramatic light. Slow orbit. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_unbox_reaction",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Unbox reaction",
+"pitch": "Unbox reaction: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product",
+"default": "new wireless earbuds"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Open",
+"peak_gib": 46,
+"seed": 644534,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} opens a box with the {product} and gasps. Close-up, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_pov_walk",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "POV walk-in",
+"pitch": "POV walk-in: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a cosy café on a rainy day"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Walk",
+"peak_gib": 46,
+"seed": 175834,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} walks into {place} and looks around smiling. Tracking from behind. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_glow_up",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Glow-up transition",
+"pitch": "Glow-up transition: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "look",
+"label": "Look / setting",
+"default": "sweatpants to evening outfit"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Before",
+"peak_gib": 46,
+"seed": 285299,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shrugs in the before outfit of {look}. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "After",
+"peak_gib": 46,
+"seed": 425765,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} strikes a pose in the after outfit of {look}. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_quick_tip",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Quick tip",
+"pitch": "Quick tip: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "keep herbs fresh for two weeks"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Tip",
+"peak_gib": 46,
+"seed": 661127,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shares one quick tip: {topic}. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_food_bite",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "First bite",
+"pitch": "First bite: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product",
+"default": "a cheesy pizza slice"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Bite",
+"peak_gib": 46,
+"seed": 614245,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} takes a first bite of the {product} and reacts. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_dance_hook",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Dance hook",
+"pitch": "Dance hook: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "a viral 8-count move"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Dance",
+"peak_gib": 46,
+"seed": 121394,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} dances {topic} with energy. Full body, steady. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_motivation",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Motivation line",
+"pitch": "Motivation line: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "start before you're ready"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Line",
+"peak_gib": 46,
+"seed": 735990,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says a motivational line about {topic}. They speak directly to the camera. Close-up, golden light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_outfit_check",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Outfit check",
+"pitch": "Outfit check: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "look",
+"label": "Look / setting",
+"default": "a smart-casual autumn fit"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Spin",
+"peak_gib": 46,
+"seed": 582443,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does a slow spin showing {look}. Full body, mirror angle. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_cta_follow",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Follow call",
+"pitch": "Follow call: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "daily cooking hacks"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Cta",
+"peak_gib": 46,
+"seed": 446572,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks viewers to follow for {topic}. They speak directly to the camera. Handheld selfie. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_scenery_mood",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Scenery mood shot",
+"pitch": "Scenery mood shot: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "place",
+"label": "Place",
+"default": "misty mountains at dawn"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "View",
+"peak_gib": 46,
+"seed": 681759,
+"prompt": "integrated_multimodal_description: [Shot 1] {place}. Slow drone push forward. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_before_after_room",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Room before/after",
+"pitch": "Room before/after: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "place",
+"label": "Place",
+"default": "a messy desk"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Before",
+"peak_gib": 46,
+"seed": 424447,
+"prompt": "integrated_multimodal_description: [Shot 1] {place} before cleaning. Static wide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "After",
+"peak_gib": 46,
+"seed": 799273,
+"prompt": "integrated_multimodal_description: [Shot 1] {place} after cleaning, tidy. Static wide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_pet_moment",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Pet moment",
+"pitch": "Pet moment: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "a golden retriever puppy"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Pet",
+"peak_gib": 46,
+"seed": 95033,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} laughs as {topic} jumps into their lap. Medium shot, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_recipe_teaser",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Recipe teaser",
+"pitch": "Recipe teaser: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product",
+"default": "a five-minute matcha latte"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Make",
+"peak_gib": 46,
+"seed": 368161,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} makes the {product} in quick steps. Top-down close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_fitness_rep",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Exercise demo",
+"pitch": "Exercise demo: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "a perfect squat"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Rep",
+"peak_gib": 46,
+"seed": 110639,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} demonstrates {topic}. Full body side angle. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_announcement",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Announcement",
+"pitch": "Announcement: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "our new shop opens Saturday"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "News",
+"peak_gib": 46,
+"seed": 733576,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly: {topic}. They speak directly to the camera. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_review_verdict",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "One-line review",
+"pitch": "One-line review: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product",
+"default": "a budget mechanical keyboard"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Verdict",
+"peak_gib": 46,
+"seed": 330566,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on the {product}. They speak directly to the camera. Medium close-up, product in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_travel_reveal",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Travel reveal",
+"pitch": "Travel reveal: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a cliffside town in Greece"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Reveal",
+"peak_gib": 46,
+"seed": 893041,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} turns around to reveal {place} behind them. Medium shot, slow pull back. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_makeup_flash",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Make-up flash",
+"pitch": "Make-up flash: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "look",
+"label": "Look / setting",
+"default": "a bold red lip"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Apply",
+"peak_gib": 46,
+"seed": 579739,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} applies {look} in one smooth move. Tight close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_joke",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Skit punchline",
+"pitch": "Skit punchline: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "when the Wi-Fi drops during a meeting"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Skit",
+"peak_gib": 46,
+"seed": 412277,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out a funny moment: {topic}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_greeting",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Greeting card",
+"pitch": "Greeting card: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "happy birthday, Sam"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Wish",
+"peak_gib": 46,
+"seed": 131513,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says {topic} warmly. They speak directly to the camera. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_testimonial",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Mini testimonial",
+"pitch": "Mini testimonial: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product",
+"default": "a meal-kit subscription"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Quote",
+"peak_gib": 46,
+"seed": 327074,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one honest line about the {product}. They speak directly to the camera. Seated medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_logo_sting",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Brand sting (no person)",
+"pitch": "Brand sting (no person): one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "product",
+"label": "Product",
+"default": "a coffee brand"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Sting",
+"peak_gib": 46,
+"seed": 193752,
+"prompt": "integrated_multimodal_description: [Shot 1] an abstract swirl of coffee and steam for {product}. Macro, slow. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_asmr_detail",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "ASMR detail",
+"pitch": "ASMR detail: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "product",
+"label": "Product",
+"default": "a crisp croissant"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Asmr",
+"peak_gib": 46,
+"seed": 189203,
+"prompt": "integrated_multimodal_description: [Shot 1] the {product} breaking apart in close-up. Macro, static. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_street_interview",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Street question",
+"pitch": "Street question: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "what is the best advice you ever got"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Ask",
+"peak_gib": 46,
+"seed": 33070,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a passer-by: {topic}. They speak directly to the camera. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_car_reveal",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Car reveal",
+"pitch": "Car reveal: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "product",
+"label": "Product",
+"default": "a vintage red convertible"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Reveal",
+"peak_gib": 46,
+"seed": 873791,
+"prompt": "integrated_multimodal_description: [Shot 1] the {product} revealed under spotlights. Slow orbit. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_workspace_flow",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Work vibe",
+"pitch": "Work vibe: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a sunny home studio"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Work",
+"peak_gib": 46,
+"seed": 387658,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} works happily in {place}. Slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_sunset_moment",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Sunset moment",
+"pitch": "Sunset moment: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "place",
+"label": "Place",
+"default": "a quiet beach"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Sunset",
+"peak_gib": 46,
+"seed": 375629,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} walks along {place} at sunset. Tracking, golden hour. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_thank_you",
+"kind": "video",
+"group": "Short (SFW)",
+"rating": "sfw",
+"title": "Thank you",
+"pitch": "Thank you: one quick moment.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"short-sfw"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "10,000 followers"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Thanks",
+"peak_gib": 46,
+"seed": 507634,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks everyone for {topic}. They speak directly to the camera. Close-up, warm light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_expectation",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Expectation vs reality",
+"pitch": "Expectation vs reality: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "my morning routine"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Expect",
+"peak_gib": 46,
+"seed": 900290,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} a glamorous version of {topic}. Cinematic, slow motion. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Reality",
+"peak_gib": 46,
+"seed": 161460,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} the chaotic real version of {topic}. Handheld, messy. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_deadpan",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Deadpan one-liner",
+"pitch": "Deadpan one-liner: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "I'm not lazy, I'm on energy-saving mode"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Line",
+"peak_gib": 46,
+"seed": 894070,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says deadpan: {topic}. They speak directly to the camera. Static close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_pov",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "POV: you…",
+"pitch": "POV: you…: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "you said 'you too' when the waiter said enjoy your meal"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Pov",
+"peak_gib": 46,
+"seed": 346975,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out {topic} with growing regret. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_double_take",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Double take",
+"pitch": "Double take: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "seeing your own price tag on a shirt"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Take",
+"peak_gib": 46,
+"seed": 739891,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does a huge double take at {topic}. Medium shot, quick push. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_when_you",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "When you…",
+"pitch": "When you…: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "when the email starts with 'per my last email'"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "When",
+"peak_gib": 46,
+"seed": 381284,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {topic} with silent fury. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_fake_ad",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Fake ad for nothing",
+"pitch": "Fake ad for nothing: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product",
+"default": "an empty box"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Ad",
+"peak_gib": 46,
+"seed": 693506,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} sells {product} with full infomercial energy. They speak directly to the camera. Bright TV-style. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_slow_mo_fail",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Slow-motion fail",
+"pitch": "Slow-motion fail: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "a dramatic hair flip"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Fail",
+"peak_gib": 46,
+"seed": 771386,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} attempts {topic} and fails in slow motion. Slow motion, medium. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_dramatic_reading",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Dramatic reading",
+"pitch": "Dramatic reading: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "the instructions on a shampoo bottle"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Read",
+"peak_gib": 46,
+"seed": 411412,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reads {topic} like Shakespeare. They speak directly to the camera. Low angle, spotlight. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_villain_reveal",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Petty villain reveal",
+"pitch": "Petty villain reveal: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "I'm the one who never refills the ice tray"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Reveal",
+"peak_gib": 46,
+"seed": 452652,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} confesses with an evil smile: {topic}. They speak directly to the camera. Low angle, dramatic. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_narrator",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Narrator: it was not fine",
+"pitch": "Narrator: it was not fine: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "I'll just fix the Wi-Fi myself"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Say",
+"peak_gib": 46,
+"seed": 685260,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says confidently: {topic}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Chaos",
+"peak_gib": 46,
+"seed": 503002,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} everything goes wrong after {topic}. Handheld, chaos. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_awkward_wave",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Waving back at someone else",
+"pitch": "Waving back at someone else: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "the person was waving at someone behind me"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Wave",
+"peak_gib": 46,
+"seed": 869656,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} waves back happily, then realises {topic}. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_overreaction",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Over-reaction",
+"pitch": "Over-reaction: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "the Wi-Fi password is on the back of the router"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Over",
+"peak_gib": 46,
+"seed": 612011,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} over-reacts wildly to {topic}. Push in fast. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_mime",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Silent physical gag",
+"pitch": "Silent physical gag: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "fighting a fitted sheet"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Gag",
+"peak_gib": 46,
+"seed": 27639,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} loses a silent battle with {topic}. Wide, static. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_interview",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Fake street interview",
+"pitch": "Fake street interview: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "what's the worst way to say hello"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Ask",
+"peak_gib": 46,
+"seed": 796413,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks seriously: {topic}. They speak directly to the camera. Handheld mic framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_comedy_plot_twist",
+"kind": "video",
+"group": "Comedy short",
+"rating": "sfw",
+"title": "Plot twist",
+"pitch": "Plot twist: a quick comedy beat.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"comedy-short"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "the 'intruder' is the cat"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Setup",
+"peak_gib": 46,
+"seed": 654498,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tiptoes tensely toward a noise. Dark, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "shot2",
+"type": "goal",
+"goal": "h3_video",
+"label": "Twist",
+"peak_gib": 46,
+"seed": 193524,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} discovers {topic}. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@shot1",
+"@shot2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_rage_pineapple",
+"kind": "video",
+"group": "Rage bait",
+"rating": "sfw",
+"title": "Pineapple pizza is the best",
+"pitch": "Pineapple pizza is the best: a harmless hot take built for comments.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"rage-bait"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "pineapple belongs on every pizza"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Take",
+"peak_gib": 46,
+"seed": 786232,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} insists, eating a slice: {topic}. They speak directly to the camera. Close-up, smug. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_rage_cereal",
+"kind": "video",
+"group": "Rage bait",
+"rating": "sfw",
+"title": "Milk first",
+"pitch": "Milk first: a harmless hot take built for comments.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"rage-bait"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "milk goes in the bowl before cereal"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Pour",
+"peak_gib": 46,
+"seed": 677674,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} pours milk first, then cereal, staring at camera: {topic}. Top-down then close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_rage_ketchup",
+"kind": "video",
+"group": "Rage bait",
+"rating": "sfw",
+"title": "Ketchup on everything",
+"pitch": "Ketchup on everything: a harmless hot take built for comments.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"rage-bait"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "product",
+"label": "Product",
+"default": "ketchup on a steak"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Pour",
+"peak_gib": 46,
+"seed": 306279,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} puts {product} and smiles. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_rage_socks_sandals",
+"kind": "video",
+"group": "Rage bait",
+"rating": "sfw",
+"title": "Socks with sandals forever",
+"pitch": "Socks with sandals forever: a harmless hot take built for comments.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"rage-bait"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "look",
+"label": "Look / setting",
+"default": "white socks and sandals"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Strut",
+"peak_gib": 46,
+"seed": 771109,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} struts proudly in {look}. Full body, low angle. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_rage_wrong_fold",
+"kind": "video",
+"group": "Rage bait",
+"rating": "sfw",
+"title": "Folding laundry wrong",
+"pitch": "Folding laundry wrong: a harmless hot take built for comments.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"rage-bait"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "rolling everything into a ball"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Fold",
+"peak_gib": 46,
+"seed": 495078,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} folds laundry by {topic}, satisfied. Top-down. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_rage_reply_all",
+"kind": "video",
+"group": "Rage bait",
+"rating": "sfw",
+"title": "Reply-all champion",
+"pitch": "Reply-all champion: a harmless hot take built for comments.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"rage-bait"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "I reply-all to every company email"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Brag",
+"peak_gib": 46,
+"seed": 577064,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} brags: {topic}. They speak directly to the camera. Desk, medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_rage_gym_hog",
+"kind": "video",
+"group": "Rage bait",
+"rating": "sfw",
+"title": "Gym equipment hog",
+"pitch": "Gym equipment hog: a harmless hot take built for comments.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"rage-bait"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "scrolling on the bench for 20 minutes"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Hog",
+"peak_gib": 46,
+"seed": 147762,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} sits on a gym bench {topic}, ignoring the queue. Wide, gym. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "vid_short_rage_spoiler",
+"kind": "video",
+"group": "Rage bait",
+"rating": "sfw",
+"title": "Spoiler energy",
+"pitch": "Spoiler energy: a harmless hot take built for comments.",
+"why": "A fixed shot list from the earlier studio (Reels / TikTok / Shorts): the shape stays, you fill in the words.",
+"tags": [
+"video",
+"rage-bait"
+],
+"fields": [
+{
+"key": "who",
+"label": "Who is in it",
+"default": "A fictional adult presenter in a plain mustard sweater"
+},
+{
+"key": "topic",
+"label": "Topic / line",
+"default": "I always read the last page first"
+}
+],
+"models": [
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+}
+],
+"tips": [
+"Every shot is its own render, so keep the description of the person the same.",
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+],
+"steps": [
+{
+"id": "shot1",
+"type": "goal",
+"goal": "h3_video",
+"label": "Say",
+"peak_gib": 46,
+"seed": 283554,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says proudly: {topic}. They speak directly to the camera. Close-up, book in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"options": {
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+}
+]
+}

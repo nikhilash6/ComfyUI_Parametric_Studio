@@ -8,13 +8,45 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from studio import sfw
 
-HERE = Path(__file__).resolve().parent; DATA = HERE / "recipes.json"; HEADROOM = 4.0; VRAM_WAIT = 600; POLL = 2.0; STEP_LIMIT = 1800
+HERE = Path(__file__).resolve().parent; DATA = HERE / "recipes.json"; LIB_DIR = HERE / "recipe_library"; HEADROOM = 4.0; VRAM_WAIT = 600; POLL = 2.0; STEP_LIMIT = 1800
 FPS = 24; FF_TIMEOUT = 600
 class StepError(Exception): pass
 class Cancelled(Exception): pass
 
 def load():
     return json.load(open(DATA))
+_LIB = {"sig": None, "rows": []}
+def library():
+    """The recipe library: the founders' earlier recipes, ported, in this same format, plus one recipe per curated LoRA. Each carries the proof level that studio recorded; none says tested until it has rendered here."""
+    from studio import loras
+    files = sorted(LIB_DIR.glob("*.json")); sig = tuple(f.stat().st_mtime for f in files) + (os.path.getmtime(loras.DATA),)
+    if _LIB["sig"] != sig:
+        rows = []
+        for f in files: rows += [{**r, "library": True} for r in json.load(open(f))["recipes"]]
+        _LIB.update(sig=sig, rows=rows + [lora_recipe(r) for r in loras.curated()])
+    return _LIB["rows"]
+H3_MODEL = {"name": "MiniMax H3", "licence": "MiniMax H3 Community License", "licence_class": "community", "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."}
+def _tuned(row):
+    s = row.get("settings") or {}; bits = []
+    if s.get("steps"): bits.append(f"{s['steps']} steps")
+    if s.get("sampler"): bits.append(f"{s['sampler']}/{s.get('scheduler') or 'simple'}")
+    if s.get("strength") is not None: bits.append(f"strength {s['strength']}" + (f" (range {s['strength_range'][0]} to {s['strength_range'][1]})" if (s.get("strength_range") or [None])[0] is not None else ""))
+    if s.get("loader"): bits.append(f"{s['loader']} loader")
+    if s.get("width"): bits.append(f"{s['width']}x{s['height']}" + (f", {s['frames']} frames" if s.get("frames") else ""))
+    return "Tuned: " + ", ".join(bits) + "." if bits else ""
+def lora_recipe(row):
+    """One curated LoRA as a recipe. With no way to run it here it stays a reference card that says why."""
+    run = row.get("run"); note = row.get("licence_note"); lic = {"name": row["title"], "licence": row["licence"], "licence_class": row["licence_class"], **({"note": note} if note else {})}
+    tips = [t for t in [_tuned(row), (row.get("settings") or {}).get("other"), f"Expect: {row['expected_effect']}" if row.get("expected_effect") else ""] if t] + list(row.get("rules") or []) + [f"Avoid: {a}" for a in row.get("avoid") or []]
+    base = {"id": row["id"], "kind": "lora", "group": "LoRA: " + (row.get("purpose_label") or "other"), "rating": "sfw", "title": row["title"], "pitch": row["summary"] or row["title"], "why": f"A third-party LoRA with the settings its own notes ask for ({'MiniMax H3' if row['family'] == 'h3' else 'Wan 2.2'}). The weights are not part of this project.", "tags": ["lora", row["family"]], "models": [H3_MODEL if row["family"] == "h3" else {"name": "Wan 2.2 A14B", "licence": "Apache-2.0", "licence_class": "open"}, lic], "tips": tips[:9], "proof": row["proof"], "library": True, "lora_path": row["path"], "licence_class": row["licence_class"]}
+    if not run: return {**base, "fields": [], "steps": [], "reference": True, "why_not": row.get("why_not") or "", **({"waiting": row["waiting"]} if row.get("waiting") else {})}
+    words = [w for w in ((row.get("trigger") or {}).get("words") or []) if w]; scene = row.get("scene") or ""; lead = " ".join(w for w in words if (row.get("trigger") or {}).get("mandatory") and w.lower() not in scene.lower())
+    fields = [{"key": "scene", "label": "The shot", "default": scene, "multiline": True}, {"key": "strength", "label": "LoRA strength", "default": str(run["strength"])}]; shot = {"id": "shot", "type": "goal", "goal": run["goal"], "label": row["title"], "peak_gib": 48, "seed": sum(map(ord, row["id"])) * 7, "prompt": (lead + " " if lead else "") + "{scene}", "options": run["options"], "lora": {"id": row["id"], "strength": "{strength}"}, "final": True}
+    steps = [shot]; models = base["models"]
+    if run["goal"] == "h3_animate":
+        still = re.sub(r"\s+", " ", re.sub(r"^.*?\[Shot 1\]\s*", "", scene.split("overall_soundscape")[0], flags=re.S)).strip(); fields.insert(0, {"key": "still", "label": "The first frame", "default": re.split(r"(?<=[.!?])\s", still)[0]})
+        steps = [{"id": "still", "type": "goal", "goal": "image", "label": "The first frame", "peak_gib": 23, "seed": shot["seed"] + 1, "prompt": "Film still. {still} No text, no logos.", "options": {"aspect": run["options"]["aspect"], "mode": "quality"}, "swappable": True, "accepts": "image"}, {**shot, "image": "@still"}]; models = [{"name": "FLUX.2 Klein 4B", "licence": "Apache-2.0", "licence_class": "open"}] + models
+    return {**base, "fields": fields, "steps": steps, "models": models}
 def _srv():
     """The running server module, whichever way it was started (python -m studio.server makes it __main__)."""
     m = sys.modules.get("__main__")
@@ -333,6 +365,10 @@ def _used_gib():
 def _unload():
     try: _srv().comfy("/free", {"unload_models": True, "free_memory": True}, timeout=15)
     except Exception: pass
+def _move_llm_off():
+    """ComfyUI's VRAM handoff moves a local LLM to RAM as a prompt arrives, before validation. The gate runs before anything is queued, so with Qwen awake it would wait for memory nothing was freeing. An empty prompt fires the hook and gets a 400: nothing joins the queue or the history."""
+    try: _srv().comfy("/prompt", {"prompt": {}}, timeout=200)
+    except Exception: pass
 def _check_cancel(run):
     if run.get("_cancel"): raise Cancelled()
 def _vram_gate(run, st, peak):
@@ -344,7 +380,7 @@ def _vram_gate(run, st, peak):
             time.sleep(POLL); _check_cancel(run)
     need = min(peak + HEADROOM, total * 0.9) if total else peak + HEADROOM
     if free >= need: return
-    _unload(); t0 = time.time()
+    _unload(); _move_llm_off(); t0 = time.time()
     while True:
         time.sleep(POLL); _check_cancel(run)
         try: free, total = _vram()
@@ -378,6 +414,7 @@ def _input_name(run, ctx, ref, kind):
     return f["upload"]
 def goal_body(spec, values, seed_add=0):
     b = {"goal": spec["goal"], "prompt": _fill(spec.get("prompt", ""), values), "options": dict(spec.get("options") or {})}
+    if spec.get("lora"): b["lora"] = {k: _fill(v, values) if isinstance(v, str) else v for k, v in spec["lora"].items()}
     for k in ("lyrics", "target", "scene", "negative"):
         if k in spec: b[k] = _fill(spec[k], values)
     if "seed" in spec: b["seed"] = int(spec["seed"]) + seed_add
@@ -431,7 +468,7 @@ def _run_template(run, st, spec, ctx):
     _keep_graph(run, st, lambda: g); jid = r["prompt_id"]; S.JOBS[jid] = {"goal": "template:" + spec["template"], "prompt": _fill(spec.get("prompt_note", spec["template"]), ctx["values"]), "started": time.time(), "options": {}}
     return _wait_job(run, st, jid)
 def _cpu(run, st, spec, ctx):
-    op = spec["op"]; d = _root() / run["run"]; d.mkdir(parents=True, exist_ok=True); out = d / f"{spec['id']}.{'png' if op == 'frame' else 'mp4'}"
+    op = spec["op"]; d = _root() / run["run"]; d.mkdir(parents=True, exist_ok=True); out = d / f"{spec['id']}.{'png' if op == 'frame' else 'wav' if op == 'sound' else 'mp4'}"
     cl = lambda refs, kind="video": [_pick(ctx, r, kind)["local"] for r in refs]; a = spec.get("args") or {}
     if op == "frame": r = frame(_pick(ctx, spec["clip"], "video")["local"], out, a.get("which", "last"))
     elif op == "join": r = join(cl(spec["clips"]), out, float(a.get("crossfade", 0)), bool(a.get("keep_audio", True)))
@@ -440,6 +477,11 @@ def _cpu(run, st, spec, ctx):
     elif op == "loop": r = loop_seam(_pick(ctx, spec["clip"], "video")["local"], out, float(a.get("crossfade", 0.5)))
     elif op == "compare": r = compare(cl(spec["clips"]), out, a.get("labels"), a.get("audio_from"), a.get("height"), a.get("mode", "grid"))
     elif op == "mux": r = mux(_pick(ctx, spec["clip"], "video")["local"], _pick(ctx, spec["audio"], "audio")["local"], out)
+    elif op == "sound":
+        from studio.sound import render as SND
+        try: SND.to_wav(spec["sound"], out)
+        except SND.SoundError as e: raise StepError(str(e)) from None
+        r = {"file": str(out), "kind": "audio", "note": "made on the CPU, no model"}
     else: raise StepError(f"unknown step {op}")
     st["note"] = r.get("note", ""); st["facts"] = r.get("facts") or {}
     return [{"filename": out.name, "subfolder": "", "type": "recipe", "kind": r["kind"], "local": str(out), "url": f"/api/recipes/files/{run['run']}/{out.name}"}]
@@ -503,29 +545,31 @@ def library_rows(limit=40):
     rows = []
     for r in list_runs(None, limit):
         o = r.get("output")
-        if r.get("status") == "done" and o: rows.append({"job": r["run"], "files": [{"filename": o.get("filename"), "subfolder": "", "type": "recipe", "url": o.get("url"), "kind": o.get("kind", "video")}], "goal": "recipe", "prompt": (r.get("values") or {}).get("sentence") or r.get("title"), "options": {}, "recipe": {"id": r.get("recipe"), "run": r["run"], "title": r.get("title")}})
+        if r.get("status") == "done" and o: rows.append({"job": r["run"], "files": [{"filename": o.get("filename"), "subfolder": "", "type": "recipe", "url": o.get("url"), "kind": o.get("kind", "video")}], "goal": "recipe", "prompt": (r.get("values") or {}).get("sentence") or r.get("title"), "options": {}, "started": r.get("created", 0), "recipe": {"id": r.get("recipe"), "run": r["run"], "title": r.get("title")}})
     return rows
 
 # ---------- what the page shows
 def find(rid):
-    return next((r for r in load()["recipes"] if r["id"] == rid), None)
+    return next((r for r in load()["recipes"] if r["id"] == rid), None) or next((r for r in library() if r["id"] == rid), None)
 def _step_view(s, d):
     kind = s["type"]; m = d.get("measured", {}); key = s.get("goal") if kind == "goal" else s.get("template") if kind == "template" else None; me = m.get(key or "", {}); ops = d.get("cpu_ops", {})
     out = {"id": s["id"], "label": s.get("label", s["id"]), "type": kind, "goal": s.get("goal"), "template": s.get("template"), "op": s.get("op"), "model": s.get("model") or me.get("model") or ("ffmpeg, on the CPU" if kind == "cpu" else ""), "seconds": me.get("seconds"), "peak_gib": s.get("peak_gib") or me.get("peak_gib") or None, "swappable": bool(s.get("swappable")), "accepts": s.get("accepts"), "final": bool(s.get("final")), "what": s.get("what") or ops.get(s.get("op") or "", "")}
     return out
 def view(rec, d=None):
     d = d or load(); steps = [_step_view(s, d) for s in rec["steps"]]; t = rec.get("tested") or None; exp_s = sum(int(s["seconds"] or 0) for s in steps); gpu = [s["peak_gib"] for s in steps if s["peak_gib"]]
-    return {**{k: rec.get(k) for k in ("id", "title", "pitch", "why", "tags", "fields", "models", "licence_summary", "tips", "variations")}, "steps": steps, "status": "tested" if t else "untested", "tested": t, "expected": {"seconds": exp_s, "peak_gib": max(gpu) if gpu else 0, "basis": "sum of each step's measured time on this box, with a cold start per step" if exp_s else "not measured"}}
+    return {**{k: rec.get(k) for k in ("id", "title", "pitch", "why", "tags", "fields", "models", "licence_summary", "tips", "variations", "kind", "group", "proof", "library", "reference", "why_not", "waiting")}, "steps": steps, "status": "tested" if t else "untested", "tested": t, "expected": {"seconds": exp_s, "peak_gib": max(gpu) if gpu else 0, "basis": "sum of each step's measured time on this box, with a cold start per step" if exp_s else "not measured"}}
 def validate(d=None):
-    """Problems in recipes.json. A test keeps it clean; the page never has to guess."""
+    """Problems in recipes.json or the library. A test keeps them clean; the page never has to guess."""
     from studio.goals import GOALS
+    from studio import loras
     d = d or load(); probs = []; seen = set()
     for r in d["recipes"]:
         rid = r.get("id", "?"); done = set()
         if rid in seen: probs.append(f"{rid}: duplicate id")
         seen.add(rid)
         for k in ("title", "pitch", "why", "steps", "models", "tags"):
-            if not r.get(k): probs.append(f"{rid}: no {k}")
+            if not r.get(k) and not (k == "steps" and r.get("reference")): probs.append(f"{rid}: no {k}")
+        if r.get("library") and (r.get("proof") or {}).get("level") not in ("verified", "load-tested", "recipe", "warned"): probs.append(f"{rid}: no proof level")
         keys = {f["key"] for f in r.get("fields", [])}
         for s in r.get("steps", []):
             sid = s.get("id")
@@ -541,11 +585,12 @@ def validate(d=None):
                 if g["needs_last_image"] and not s.get("last_image"): probs.append(f"{rid}/{sid}: {s['goal']} needs a last image")
                 if not g["prompt_optional"] and not s.get("prompt"): probs.append(f"{rid}/{sid}: {s['goal']} needs a prompt")
                 if not s.get("peak_gib"): probs.append(f"{rid}/{sid}: no peak_gib for the VRAM gate")
+                if s.get("lora") and not (loras.by_id(s["lora"].get("id")) or {}).get("run"): probs.append(f"{rid}/{sid}: LoRA {s['lora'].get('id')} is not a runnable curated one")
             elif ty == "template":
                 if not s.get("template"): probs.append(f"{rid}/{sid}: no template")
                 if not s.get("peak_gib"): probs.append(f"{rid}/{sid}: no peak_gib for the VRAM gate")
             elif ty == "cpu":
-                if s.get("op") not in ("frame", "join", "beat_cut", "cut_between", "loop", "compare", "mux"): probs.append(f"{rid}/{sid}: unknown op {s.get('op')}")
+                if s.get("op") not in ("frame", "join", "beat_cut", "cut_between", "loop", "compare", "mux", "sound"): probs.append(f"{rid}/{sid}: unknown op {s.get('op')}")
             elif ty != "plan": probs.append(f"{rid}/{sid}: unknown type {ty}")
             refs = [v for k, v in s.items() if k in ("image", "last_image", "video", "clip", "audio") and isinstance(v, str)] + list(s.get("clips") or []) + [v for v in (s.get("values") or {}).values() if isinstance(v, str) and v.startswith("@")]
             for x in refs:
@@ -571,6 +616,30 @@ class PlanReq(BaseModel): sentence: str
 @router.get("/api/recipes")
 def recipes_list():
     d = load(); rows = [view(r, d) for r in d["recipes"]]; return {"recipes": rows, "measured": d.get("measured", {}), "tested": sum(1 for r in rows if r["status"] == "tested"), "untested": sum(1 for r in rows if r["status"] != "tested"), "busy": CURRENT["run"], "queued": len(_pending())}
+def _light(r):
+    """A library row: what a card needs. The steps' names only show how long the chain is."""
+    return {**{k: r.get(k) for k in ("id", "title", "pitch", "kind", "group", "tags", "proof", "reference", "why_not", "waiting")}, "n_steps": len(r["steps"]), "models": [{"name": m["name"], "licence": m["licence"], "licence_class": m["licence_class"]} for m in r["models"]]}
+@router.get("/api/recipe-library")
+def recipe_library(kind: str = "", q: str = "", ready_only: bool = False, offset: int = 0, limit: int = 60):
+    """The ported library, filtered and paged. Whether a recipe can run comes from a real check of its graphs against ComfyUI's /object_info and the model files on disk."""
+    from studio import recipe_check as C
+    rows = library(); counts = {}
+    for r in rows: counts[r["kind"]] = counts.get(r["kind"], 0) + 1
+    words = q.lower().split(); oi, files = C.context(); shown = []
+    for r in rows:
+        if kind and r["kind"] != kind: continue
+        if words and not all(w in " ".join([r["title"], r["pitch"], r.get("group") or ""]).lower() for w in words): continue
+        st = C.check_recipe(r, oi, files)
+        if ready_only and not st["ready"]: continue
+        shown.append((r, st))
+    page = shown[max(0, offset):max(0, offset) + max(1, min(limit, 200))]
+    return {"recipes": [{**_light(r), "ready": st["ready"], "ready_why": st["why"]} for r, st in page], "total": len(shown), "counts": counts, "ready": sum(1 for _, st in shown if st["ready"])}
+@router.get("/api/recipe-ready/{rid}")
+def recipe_ready(rid: str):
+    from studio import recipe_check as C
+    r = find(rid)
+    if not r: raise HTTPException(404, "no such recipe")
+    oi, files = C.context(); return C.check_recipe(r, oi, files)
 @router.get("/api/recipes/files/{rid}/{name}")
 def recipe_file(rid: str, name: str):
     if not re.fullmatch(r"[0-9a-f]{12}", rid) or not re.fullmatch(r"[A-Za-z0-9_.-]+", name) or name.startswith("."): raise HTTPException(400, "bad path")
@@ -593,6 +662,11 @@ def recipe_plan(rid: str, b: PlanReq):
 def recipe_run(rid: str, b: RunReq):
     rec = find(rid)
     if not rec: raise HTTPException(404, "no such recipe")
+    if rec.get("reference"): raise HTTPException(400, rec.get("why_not") or "this recipe is a reference card and cannot run here yet")
+    if rec.get("library"):
+        from studio import recipe_check as C
+        oi, files = C.context(); st = C.check_recipe(rec, oi, files)
+        if st["ready"] is False: raise HTTPException(409, st["why"])
     for name in b.uploads.values():
         if not isinstance(name, str) or os.path.basename(name) != name or not re.search(r"\.(png|jpe?g|webp|mp4|webm|mov|mkv|wav|mp3|flac)$", name, re.I): raise HTTPException(400, "uploads must be names returned by /api/upload")
     bad = [k for k in b.uploads if k not in {s["id"] for s in rec["steps"] if s.get("swappable")}]

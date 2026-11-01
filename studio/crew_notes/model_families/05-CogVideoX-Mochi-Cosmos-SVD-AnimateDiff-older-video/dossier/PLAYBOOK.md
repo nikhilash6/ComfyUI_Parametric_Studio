@@ -4,7 +4,7 @@
 Not in notes: The provided documents do not contain specific prompt structure guidelines, syntax rules, or template examples for the 05-CogVideoX-Mochi-Cosmos-SVD-AnimateDiff-older-video family. The documents focus on audits of model file integrity, deletion candidates, and quantization settings for other model families (Wan, HunyuanVideo, LTX, MiniMax, FLUX, etc.).
 
 ## Words and phrasing that work
-Not in notes: The provided documents do not list specific keywords, phrasing, or prompt engineering techniques that work for this model family. The only prompt-related content in the documents pertains to dfserve image generation modes (e.g., flux_fill instructions to "describe only the new content") [earlier-studio/docs/processes/image-dfserve-modes.md], which is unrelated to the video model family in question.
+Not in notes: The provided documents do not list specific keywords, phrasing, or prompt engineering techniques that work for this model family. The only prompt-related content in the documents pertains to dfserve image generation modes (e.g., flux_fill instructions to "describe only the new content"), which is unrelated to the video model family in question.
 
 ## Settings that worked
 Not in notes: The provided documents do not specify working settings (such as steps, guidance scale, resolution, or precision) for the 05-CogVideoX-Mochi-Cosmos-SVD-AnimateDiff-older-video family. The QUANT_BEST_OPTIONS_2026-10-10.md file lists settings for other families (e.g., MiniMax H3, LTX-2.5, Wan 2.2) [QUANT_BEST_OPTIONS_2026-10-10.md], but the specific family requested is not included in the summary table or detailed sections.

@@ -1,0 +1,2394 @@
+[
+{
+"node": "AdvancedNoise",
+"group": "Noise",
+"does": "Creates a NOISE object holding a seed, noise type, alpha and k, and generates the noise only when a sampler asks for it. Alpha and k are only applied when the type is exactly fractal.",
+"use": "When a sampler takes a NOISE input and you want one of the pack's noise types.",
+"sure": true,
+"source": "nodes_latents.py:29"
+},
+{
+"node": "Base64ToConditioning",
+"group": "Conditioning tools",
+"does": "Turns a base64 string from ConditioningToBase64 back into conditioning. It uses a restricted unpickler that only allows listed tensor and collection classes, and refuses anything else to block code execution from crafted workflows.",
+"use": "To load conditioning that was encoded elsewhere.",
+"sure": true,
+"source": "conditioning.py:523"
+},
+{
+"node": "BongSampler",
+"group": "Samplers",
+"does": "Simplified sampler with a short list of res samplers, where the _sde names set eta to 0.5 and the others set it to 0. It builds the sampler with Bongmath on and runs SharkSampler, returning the latent.",
+"use": "For a basic res sampler run with few settings.",
+"sure": true,
+"source": "beta/samplers.py:2357"
+},
+{
+"node": "CLIPTextEncodeFluxUnguided",
+"group": "Conditioning tools",
+"does": "Encodes separate CLIP-L and T5 prompts without adding a guidance value, and also outputs where each prompt's tokens end. A code comment asks whether the T5 search loop has a bug, because it loops over the CLIP-L length.",
+"use": "When you want Flux text encoding with no guidance value attached.",
+"sure": true,
+"source": "conditioning.py:97"
+},
+{
+"node": "ClownGuide_AdaIN_MMDiT_Beta",
+"group": "Style guides",
+"does": "Stores a reference latent, a strength schedule, a mask and per-block weights for AdaIN, which the sampler passes to the model. In this copy, no file in the model folders reads those AdaIN block settings for HiDream, so the node may have no effect there.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:2750"
+},
+{
+"node": "ClownGuide_AttnInj_MMDiT_Beta",
+"group": "Style guides",
+"does": "Stores a reference latent, per-block weights and attention injection strengths (q, k, v), which the sampler passes to the model. No file in the model folders of this copy reads these attention injection settings, so it looks unused.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:2886"
+},
+{
+"node": "ClownGuide_Beta",
+"group": "Image guides",
+"does": "Single-guide front end to ClownGuides: takes one guide latent, mode, strength schedule, step range and mask, inverts the mask, and returns a guides bundle.",
+"use": "When one reference latent should steer sampling.",
+"sure": true,
+"source": "beta/samplers_extensions.py:2151"
+},
+{
+"node": "ClownGuide_FrequencySeparation",
+"group": "Style guides",
+"does": "Adds low-pass method, sigma, kernel sizes, stride and low and high frequency weights to the guides, for style methods that treat image detail and broad tone separately. The model code then blends low frequencies from the guide with high frequencies from the output.",
+"use": "Tooltips say low sigma stays closer to the guide and the weights can sharpen or blur.",
+"sure": true,
+"source": "beta/samplers_extensions.py:1135"
+},
+{
+"node": "ClownGuide_Mean_Beta",
+"group": "Image guides",
+"does": "Adds a guide that matches only the average value of the reference. During each substep the sampler shifts the prediction's overall mean toward the guide's, with strength set by the weight schedule and mask.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:1057"
+},
+{
+"node": "ClownGuide_SelfRefine",
+"group": "Image guides",
+"does": "Sets up a self-refine guide with no reference image. The sampler compares its current result with an earlier one, builds a certainty mask from a threshold, and guides only the stable areas, or the changing areas when inverted.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:2403"
+},
+{
+"node": "ClownGuide_Style_Beta",
+"group": "Style guides",
+"does": "Adds a reference latent, method (such as WCT), strength schedule and mask to the guides, aimed at positive, negative, denoised or all. The model code then pulls its internal features toward the reference's statistics.",
+"use": "When you want the lighting, colour or style of a reference image; the node description suggests chaining two copies if CFG causes burn.",
+"sure": true,
+"source": "beta/samplers_extensions.py:1196"
+},
+{
+"node": "ClownGuide_Style_EdgeWidth",
+"group": "Style guides",
+"does": "Makes an edge mask of the chosen width from the style guide's existing positive and negative masks and adds it to the guides.",
+"use": "The description says it can help reduce seams with style types such as scattersort.",
+"sure": true,
+"source": "beta/samplers_extensions.py:1315"
+},
+{
+"node": "ClownGuide_Style_TileSize",
+"group": "Style guides",
+"does": "Stores a tile height, width and padding for the style guide, each divided by 16.",
+"use": "The description says it can improve adherence to the input image with style types such as scattersort.",
+"sure": true,
+"source": "beta/samplers_extensions.py:1353"
+},
+{
+"node": "ClownGuide_StyleNorm_Advanced_HiDream",
+"group": "Style guides",
+"does": "Stores a reference latent, block weights, a mode and a long list of on/off switches for HiDream layers, which the sampler passes to the model. No file in the model folders of this copy reads the resulting sort_and_scatter settings, so it looks unused.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:3073"
+},
+{
+"node": "ClownGuides_Beta",
+"group": "Image guides",
+"does": "Packs two guide latents, one for the masked area and one for the unmasked area, with separate strengths, schedules and step ranges. The chosen mode gets _projection or _cw added to its name when those switches are on.",
+"use": "When different regions should follow different reference latents.",
+"sure": true,
+"source": "beta/samplers_extensions.py:2251"
+},
+{
+"node": "ClownGuides_Sync",
+"group": "Image guides",
+"does": "Sets up sync guide mode with masked and unmasked guide latents, each with a guide weight schedule and a separate sync weight schedule. In sync mode the sampler also runs the model on a noised copy of the guide and combines the two results.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:1397"
+},
+{
+"node": "ClownGuides_Sync_Advanced",
+"group": "Image guides",
+"does": "Sync guide setup with extra schedules and masks. Drift moves the guide target toward model predictions, and lure re-runs the model on latents shifted toward the other path's prediction.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:1613"
+},
+{
+"node": "ClownGuides_VideoAudioMask",
+"group": "Image guides",
+"does": "Builds a mask for packed video and audio latents that selects a start-to-end time range, using each model preset's frame and audio rates. An optional spatial mask can limit the video part, and the result is flattened for packed latents.",
+"use": "When a guide should affect only part of a clip's time range, or only its video or audio.",
+"sure": true,
+"source": "beta/samplers_extensions.py:4770"
+},
+{
+"node": "ClownGuidesAB_Beta",
+"group": "Image guides",
+"does": "Same output as ClownGuides but with A and B naming and a mask for each guide. If only B is given it becomes A, and a missing mask A is made by inverting mask B.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:2484"
+},
+{
+"node": "ClownInpaint",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Sets up inpainting by using the latent as both guides, building regional conditioning from inpaint and background prompts with the mask, patching the model with ReFlux, and outputting an empty latent. The guide mode is fixed to epsilon because its widget is commented out.",
+"use": "For older Flux-oriented inpainting workflows.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:115"
+},
+{
+"node": "ClownInpaintSimple",
+"group": "Legacy samplers and options",
+"does": "Deprecated. A reduced ClownInpaint with only an inpaint prompt and one guide weight. The background prompt falls back to zeros, and its self-attention floor is 1.0 where ClownInpaint uses 0.0.",
+"use": "For older Flux-oriented inpainting workflows with fewer settings.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:193"
+},
+{
+"node": "ClownModelLoader",
+"group": "Loaders",
+"does": "A general loader for a model, up to four text encoders and a VAE, where text encoders and VAE can each be left out. The encoder type can be picked by hand or set to .auto, which guesses it from the model's class.",
+"use": "Use it for model families that have no dedicated loader in the pack.",
+"sure": true,
+"source": "loaders.py:324"
+},
+{
+"node": "ClownOptions_Automation_Beta",
+"group": "General options",
+"does": "Bundles optional per-step lists for eta, substep eta, s_noise, substep s_noise and epsilon scale, plus custom frame weights, so each step can use its own value.",
+"use": "When a value should change step by step from a sigmas-type input.",
+"sure": true,
+"source": "beta/samplers_extensions.py:751"
+},
+{
+"node": "ClownOptions_Combine",
+"group": "General options",
+"does": "Merges a group of connected option inputs into one options output.",
+"use": "To tidy several option nodes into one connection.",
+"sure": true,
+"source": "beta/samplers_extensions.py:2630"
+},
+{
+"node": "ClownOptions_Cycles_Beta",
+"group": "Noise and step options",
+"does": "Makes the sampler repeat a run back and forth, with two passes per cycle alternating unsample and resample. It can set separate eta, CFG, sampler and step count for the unsample passes, decay eta after each cycle, and switch Bongmath on or off for unsampling.",
+"use": "The eta_decay_scale tooltip says decaying eta may help drive convergence.",
+"sure": true,
+"source": "beta/samplers_extensions.py:524"
+},
+{
+"node": "ClownOptions_DetailBoost_Beta",
+"group": "Noise and step options",
+"does": "Builds per-step weight and eta lists, zero outside the start and end steps, that make the sampler or model work from a shifted noise level. Tooltips say positive weights give a sharper, grittier, more detailed image.",
+"use": "When you want more or less fine detail over a chosen range of steps.",
+"sure": true,
+"source": "beta/samplers_extensions.py:225"
+},
+{
+"node": "ClownOptions_ExtraOptions_Beta",
+"group": "General options",
+"does": "Adds free-form text to the sampler's extra options, which code throughout the pack looks up by name. Chaining appends the text on new lines.",
+"use": "When setting one of the pack's named switches that has no widget.",
+"sure": true,
+"source": "beta/samplers_extensions.py:675"
+},
+{
+"node": "ClownOptions_FlowGuide",
+"group": "Image guides",
+"does": "Sets the amount by which flow guide mode blends its step direction with the direction toward the current prediction. It does nothing outside flow mode.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:422"
+},
+{
+"node": "ClownOptions_Frameweights",
+"group": "Image guides",
+"does": "Adds a per-frame guide weight curve to a shared manager, built from a dynamics type, schedule and scale, or taken from a custom list or string. The guide code reads these weights by name for video frames.",
+"use": "When a guide should fade across video frames.",
+"sure": true,
+"source": "beta/samplers_extensions.py:2657"
+},
+{
+"node": "ClownOptions_FrameWeights",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Puts a per-frame weight list into options, used for both the main and background guide masks when the latent is video.",
+"use": "To vary guide strength by frame in older video workflows.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:562"
+},
+{
+"node": "ClownOptions_ImplicitSteps_Beta",
+"group": "Noise and step options",
+"does": "Sets how many extra refinement passes implicit sampling runs per step and substep, and how each pass picks its starting point (rebound, retro-eta, bongmath or predictor-corrector). The README warns that more implicit steps multiply the runtime.",
+"use": "When using implicit refinement; the README says gains usually fade after 2-3 implicit steps.",
+"sure": true,
+"source": "beta/samplers_extensions.py:484"
+},
+{
+"node": "ClownOptions_LatentNormalize",
+"group": "Noise and step options",
+"does": "Sets scale factors for the first and second tensors of a packed latent. One value is applied once before sampling, and comma-separated lists are applied per step.",
+"use": "With packed multi-part latents such as video plus audio.",
+"sure": true,
+"source": "beta/samplers_extensions.py:164"
+},
+{
+"node": "ClownOptions_Momentum_Beta",
+"group": "Noise and step options",
+"does": "Sets a momentum value that pushes each prediction further away from the previous one, then recalculates the step direction from it.",
+"use": "The tooltip says positive values speed convergence when sampling and negative values when unsampling.",
+"sure": true,
+"source": "beta/samplers_extensions.py:453"
+},
+{
+"node": "ClownOptions_SDE_Beta",
+"group": "Noise and step options",
+"does": "Sets the noise type, noise scaling mode, eta and seed used for the noise added during sampling, with separate values for steps and substeps. Optional per-step eta inputs are passed along, and choosing 'none' for a type or mode sets that eta to 0.",
+"use": "When steps and substeps need different noise settings.",
+"sure": true,
+"source": "beta/samplers_extensions.py:52"
+},
+{
+"node": "ClownOptions_SDE_Mask_Beta",
+"group": "Noise and step options",
+"does": "Rescales a mask to a chosen minimum and maximum and stores it, so added noise can vary by region. The mask is passed to the substep noise swap, and the sampler pads the schedule when it is present.",
+"use": "When noise should differ between regions.",
+"sure": true,
+"source": "beta/samplers_extensions.py:1015"
+},
+{
+"node": "ClownOptions_SDE_Noise",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Puts saved SDE noise and a step count into an options value, which the older sampler reads per step. The noise input is marked optional, but the function requires it.",
+"use": "To reuse saved SDE noise in older workflows.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:531"
+},
+{
+"node": "ClownOptions_SigmaScaling_Beta",
+"group": "Noise and step options",
+"does": "Sets extra noise multipliers, a noise anchor, and factors that scale the sigma schedule down or up from chosen steps. Tooltips say lowering the schedule adds detail and raising it softens the image and deepens colours.",
+"use": "Tooltips suggest s_noise around 1.03-1.07 and lying around 0.98-0.95 for more detail.",
+"sure": true,
+"source": "beta/samplers_extensions.py:356"
+},
+{
+"node": "ClownOptions_StepSize_Beta",
+"group": "Noise and step options",
+"does": "Sets overshoot amounts and scaling modes for steps and substeps. Tooltips describe it as making each denoising step larger and then rescaling to match the original.",
+"use": "The tooltips say it has a softening effect.",
+"sure": true,
+"source": "beta/samplers_extensions.py:124"
+},
+{
+"node": "ClownOptions_SwapSampler_Beta",
+"group": "Noise and step options",
+"does": "Adds a rule that switches to another sampler at a chosen step, or earlier when the difference between res_2m and res_3m estimates falls below a threshold. Several rules can be chained.",
+"use": "When one sampler should take over part way through a run.",
+"sure": true,
+"source": "beta/samplers_extensions.py:966"
+},
+{
+"node": "ClownOptions_Tile_Advanced_Beta",
+"group": "General options",
+"does": "Sets the same tile size list from text with one or more sizes, replacing any list already in the options.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:642"
+},
+{
+"node": "ClownOptions_Tile_Beta",
+"group": "General options",
+"does": "Adds one tile size to a list. The sampler then runs the model tile by tile and stitches the results, moving to the next listed size on each tiled call.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:607"
+},
+{
+"node": "ClownpileModelWanVideo",
+"group": "Compile for speed",
+"does": "Compiles a WAN model's transformer blocks one by one, leaving out the blocks in skip_self_attn_blocks; force_recompile clears the once-only guard. The tooltip says blocks chosen for regional WAN should be listed there, because compiling them with their large masks takes too much VRAM, and the class is marked experimental.",
+"use": "Use it to compile WAN while regional self-attention masks are on for some blocks.",
+"sure": true,
+"source": "models.py:1564"
+},
+{
+"node": "ClownRegionalConditioning",
+"group": "Regional prompting",
+"does": "Adds one prompt and mask to a growing region list that can be chained from node to node. With no mask, it uses whatever area earlier regions left uncovered, and the spineless switch turns off that region's self-attention masking.",
+"use": "When you need more regions than the fixed two or three input nodes offer.",
+"sure": true,
+"source": "conditioning.py:1684"
+},
+{
+"node": "ClownRegionalConditioning2",
+"group": "Regional prompting",
+"does": "Regional prompting with one mask: one prompt for the masked area and another for everything else, using the inverted mask. It is a thin wrapper around ClownRegionalConditioning_AB.",
+"use": "When an image splits into a subject area and the rest.",
+"sure": true,
+"source": "conditioning.py:1607"
+},
+{
+"node": "ClownRegionalConditioning3",
+"group": "Regional prompting",
+"does": "Regional prompting with two masks and a third prompt for the leftover area, computed as one minus both masks and floored at zero. It is a thin wrapper around ClownRegionalConditioning_ABC.",
+"use": "When two masked areas plus a background each need a prompt.",
+"sure": true,
+"source": "conditioning.py:1642"
+},
+{
+"node": "ClownRegionalConditioning_AB",
+"group": "Regional prompting",
+"does": "Regional prompting with two prompts and two explicit masks, set up through a callback that runs when the sampler supplies the model. Missing prompts are replaced with empty conditioning, pooled outputs are averaged, and mask_type chooses gradient or boolean masks and which region's pixels may attend to the whole image.",
+"use": "When two regions need their own hand-made masks.",
+"sure": true,
+"source": "conditioning.py:1158"
+},
+{
+"node": "ClownRegionalConditioning_ABC",
+"group": "Regional prompting",
+"does": "The three-prompt, three-mask version of the AB node, working the same way through a sampler-time callback. Pooled outputs from the three prompts are averaged.",
+"use": "When three regions need their own hand-made masks.",
+"sure": true,
+"source": "conditioning.py:1377"
+},
+{
+"node": "ClownRegionalConditionings",
+"group": "Regional prompting",
+"does": "Takes the chained region list and returns a blank conditioning holding a callback, which builds the attention masks once the sampler supplies the model. Weight and region bleed can change per step, and the mask class is picked by model type (WAN, HiDream, SDXL/SD1.5, or a default).",
+"use": "To finish a chain of ClownRegionalConditioning nodes before the sampler; the README says over 10 zones have been used in one image.",
+"sure": true,
+"source": "conditioning.py:1740"
+},
+{
+"node": "ClownSampler",
+"group": "Legacy samplers and options",
+"does": "Deprecated, shown as Legacy2_ClownSampler. Calls ClownSamplerAdvanced with the substep noise settings copied from the main ones.",
+"use": "For workflows built on the second-generation samplers.",
+"sure": true,
+"source": "legacy/samplers.py:162"
+},
+{
+"node": "ClownSampler_Beta",
+"group": "Samplers",
+"does": "Builds the pack's sampler from eta, sampler name, seed, Bongmath, guides and options, and outputs it as a SAMPLER without running it.",
+"use": "To feed SharkSampler or another node with a SAMPLER input.",
+"sure": true,
+"source": "beta/samplers.py:2071"
+},
+{
+"node": "ClownSamplerAdvanced",
+"group": "Legacy samplers and options",
+"does": "Deprecated, shown as Legacy2_ClownSamplerAdvanced. Builds a sampler object for the rk sampler, with separate main and substep noise settings and implicit steps, merging values from options, automation and guides inputs.",
+"use": "For workflows built on the second-generation samplers.",
+"sure": true,
+"source": "legacy/samplers.py:47"
+},
+{
+"node": "ClownSamplerAdvanced_Beta",
+"group": "Samplers",
+"does": "The underlying sampler builder, with widgets for noise, overshoot, detail boost and implicit settings, marked experimental in its schema. It outputs a SAMPLER and is what the other Clown sampler nodes call.",
+"use": "When you want these settings as widgets rather than option nodes.",
+"sure": true,
+"source": "beta/samplers.py:1199"
+},
+{
+"node": "ClownSamplerSelector_Beta",
+"group": "Samplers",
+"does": "Lets you pick a sampler from the pack's categorized list and outputs its name as a value, without the category prefix.",
+"use": "To drive several nodes' sampler choice from one place.",
+"sure": true,
+"source": "beta/samplers_extensions.py:23"
+},
+{
+"node": "ClownScheduler",
+"group": "Schedule makers",
+"does": "Makes a list of values over steps: one pad value before scheduler_start_step, a named scheduler's shape stretched between start_value and end_value (or a straight line for constant), then another pad value to total_steps. As written it needs a model connected, despite the input being optional, because with no model the values are never set; its callback path is unfinished, and it creates tensors on the cuda device.",
+"use": "To set a value that changes over only part of a run.",
+"sure": true,
+"source": "sigmas.py:1269"
+},
+{
+"node": "ClownsharkChainsampler_Beta",
+"group": "Samplers",
+"does": "Continues from an earlier sampler's output by running ClownsharKSampler with the schedule and step count stored in the latent, using seed -1. You can change sampler type, eta, CFG, guides and options for this stage.",
+"use": "To change sampler or settings part way through a generation; the README's workflow demonstrates chainsamplers.",
+"sure": true,
+"source": "beta/samplers.py:1988"
+},
+{
+"node": "ClownsharKSampler",
+"group": "Legacy samplers and options",
+"does": "Deprecated, shown as Legacy2_ClownsharKSampler. Builds the sampler through ClownSamplerAdvanced and runs it through the older SharkSamplerAlpha, returning output, denoised and SDE noise.",
+"use": "For workflows built on the second-generation samplers.",
+"sure": true,
+"source": "legacy/samplers.py:596"
+},
+{
+"node": "ClownsharKSampler_Beta",
+"group": "Samplers",
+"does": "All-in-one sampler: builds the pack's custom sampler from its settings, guides and options, then runs it through SharkSampler. It covers explicit, multistep, hybrid and implicit samplers, optional noise (eta), Bongmath and sampler modes.",
+"use": "The README calls it the all-in-one node; only model and latent_image are mandatory.",
+"sure": true,
+"source": "beta/samplers.py:1554"
+},
+{
+"node": "ClownsharKSamplerAutomation",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Packs per-step eta, s_noise and unsample/resample schedules into a plain tuple. The legacy2 sampler reads automation by dictionary key, so these values do not appear to be read from a tuple.",
+"use": "",
+"sure": true,
+"source": "legacy/samplers_extensions.py:392"
+},
+{
+"node": "ClownsharKSamplerAutomation_Advanced",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Puts per-step eta, substep eta, s_noise, unsample/resample scale and frame-weight schedules into a dictionary. The legacy2 sampler reads most of these; the substep eta key was not read in the code checked.",
+"use": "To change noise settings step by step in older workflows.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:420"
+},
+{
+"node": "ClownsharKSamplerGuide",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Packages a single guide latent with its mask, weights, schedule and end step, leaving background values empty or at zero.",
+"use": "To guide sampling with one latent in older workflows.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:268"
+},
+{
+"node": "ClownsharKSamplerGuides",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Packages a main guide and a background guide, with their masks, weights, schedules and end steps. Modes that need two latents fall back to epsilon if there is no background guide.",
+"use": "To guide the masked area and background differently in older workflows.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:329"
+},
+{
+"node": "ClownsharKSamplerOptions",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Collects noise settings, eta, s_noise, d_noise, RK c1/c2/c3 values and t/sigma formulas into an options value that the older samplers read.",
+"use": "To set less common sampler settings in older workflows.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:461"
+},
+{
+"node": "ClownStyle_Attn_MMDiT",
+"group": "Style layer controls",
+"does": "Sets style transfer strengths inside the attention layers of chosen MMDiT blocks (q, k, v projections, q and k norms, and output), for image and text streams.",
+"use": "When style should act on attention layers specifically.",
+"sure": true,
+"source": "beta/samplers_extensions.py:3734"
+},
+{
+"node": "ClownStyle_Attn_UNet",
+"group": "Style layer controls",
+"does": "Sets style transfer strengths inside the self-attention or cross-attention layers (q, k, v, output) of chosen UNet blocks.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:4135"
+},
+{
+"node": "ClownStyle_Block_MMDiT",
+"group": "Style layer controls",
+"does": "Sets style transfer mode and strengths for parts of chosen double or single blocks in MMDiT-type models (attention, feed-forward, norms, residuals), for image and text streams. Block lists and per-block weights can be given, and results collect in a BLOCKS output.",
+"use": "When style should act on specific transformer blocks.",
+"sure": true,
+"source": "beta/samplers_extensions.py:3566"
+},
+{
+"node": "ClownStyle_Block_UNet",
+"group": "Style layer controls",
+"does": "Sets style transfer mode and strengths for the resample, res and spatial parts of chosen input, middle or output UNet blocks.",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:4002"
+},
+{
+"node": "ClownStyle_Boost",
+"group": "Style layer controls",
+"does": "Adds strength settings to the style setup: a noise mode, a recon_lure method, and a data shock that restyles the image or prediction over chosen steps.",
+"use": "Tooltips say data shock greatly raises strength at low denoise in img2img, and recon_lure can raise style strength in recon noise mode.",
+"sure": true,
+"source": "beta/samplers_extensions.py:3398"
+},
+{
+"node": "ClownStyle_MMDiT",
+"group": "Style layer controls",
+"does": "Creates or extends the MMDiT style setup with a reference latent, mask, mode, input and output projection strengths, tile size and optional conditioning, and adds connected block settings to the guides. Repeated use merges weights.",
+"use": "As the node that feeds block-level MMDiT style settings into the guides.",
+"sure": true,
+"source": "beta/samplers_extensions.py:3472"
+},
+{
+"node": "ClownStyle_ResBlock_UNet",
+"group": "Style layer controls",
+"does": "Sets style transfer strengths for the individual layers of the residual section in chosen UNet blocks (input, timestep embedding, output and residual).",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:4294"
+},
+{
+"node": "ClownStyle_SpatialBlock_UNet",
+"group": "Style layer controls",
+"does": "Sets style transfer strengths for the spatial transformer section of chosen UNet blocks (input norm and projection, transformer, output projection and residual).",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:4460"
+},
+{
+"node": "ClownStyle_TransformerBlock_UNet",
+"group": "Style layer controls",
+"does": "Sets style transfer strengths for the layers inside the transformer block of chosen UNet blocks (norms, self-attention, cross-attention, feed-forward and their residuals).",
+"use": "",
+"sure": true,
+"source": "beta/samplers_extensions.py:4612"
+},
+{
+"node": "ClownStyle_UNet",
+"group": "Style layer controls",
+"does": "The UNet version of ClownStyle_MMDiT: sets up style with a reference latent, mask, mode, projection strengths, tile size and optional conditioning, and adds connected block settings to the guides.",
+"use": "As the node that feeds block-level UNet style settings into the guides.",
+"sure": true,
+"source": "beta/samplers_extensions.py:3897"
+},
+{
+"node": "Conditioning Recast FP64",
+"group": "Precision",
+"does": "Converts the main tensor and pooled output of the first entry in one or two conditioning inputs to 64-bit floats, changing them in place. Later entries in a conditioning list are left alone, and the node is flagged experimental.",
+"use": "When conditioning needs to match a 64-bit sampling workflow.",
+"sure": true,
+"source": "conditioning.py:407"
+},
+{
+"node": "ConditioningAdd",
+"group": "Conditioning tools",
+"does": "Adds a scaled copy of the second conditioning to the first, for both the text embedding and the pooled output. It works on the first entry only and changes the first input in place.",
+"use": "When you want to add one prompt's embedding on top of another.",
+"sure": true,
+"source": "conditioning.py:222"
+},
+{
+"node": "ConditioningAverageScheduler",
+"group": "Conditioning tools",
+"does": "Averages two conditionings at a different ratio for each entry in a schedule, giving each result an equal slice of the sampling timeline. It is marked experimental, and a code comment says the author does not think it is implemented correctly and that it needs reworking.",
+"use": "",
+"sure": true,
+"source": "conditioning.py:317"
+},
+{
+"node": "ConditioningBatch4",
+"group": "Conditioning tools",
+"does": "Collects up to four conditionings into a list, keeping each one as its own element rather than merging their entries.",
+"use": "",
+"sure": true,
+"source": "conditioning.py:604"
+},
+{
+"node": "ConditioningBatch8",
+"group": "Conditioning tools",
+"does": "Collects up to eight conditionings into a list, keeping each one as its own element rather than merging their entries.",
+"use": "",
+"sure": true,
+"source": "conditioning.py:640"
+},
+{
+"node": "ConditioningDownsample (T5)",
+"group": "Conditioning tools",
+"does": "Shrinks a text embedding to a token limit by padding it to a square grid, resizing that grid with bicubic interpolation, and flattening it back. It changes only the first entry's embedding and is marked experimental.",
+"use": "When a long text embedding must be reduced to fewer tokens.",
+"sure": true,
+"source": "conditioning.py:544"
+},
+{
+"node": "ConditioningOrthoCollin",
+"group": "Conditioning tools",
+"does": "Mixes two conditionings by splitting them into parts that point the same way (collinear) and parts at right angles (orthogonal). The text embedding blends the two collinear parts by t5_strength, and the pooled output moves toward a collinear-plus-orthogonal mix by clip_strength. It is marked experimental and changes its first input in place.",
+"use": "",
+"sure": true,
+"source": "conditioning.py:53"
+},
+{
+"node": "ConditioningToBase64",
+"group": "Conditioning tools",
+"does": "Pickles a conditioning and encodes it as a base64 string, showing the string on the node and saving it into the workflow's widget values.",
+"use": "A code comment gives the purpose: API use, offloading T5 processing to another machine to avoid model shuffling.",
+"sure": true,
+"source": "conditioning.py:434"
+},
+{
+"node": "ConditioningTruncate",
+"group": "Conditioning tools",
+"does": "Deprecated. Cuts SD3 conditioning to 154 tokens and 2048 pooled values, and raises an error for any other model.",
+"use": "Its error message says to remove it or use ConditioningZeroAndTruncate for negatives.",
+"sure": true,
+"source": "conditioning.py:182"
+},
+{
+"node": "ConditioningZeroAndTruncate",
+"group": "Conditioning tools",
+"does": "Zeroes the text embeddings and keeps every other key. If the model or the conditioning's shape indicates SD3, it also cuts the result to the 154-token empty-prompt length.",
+"use": "To make an empty negative prompt; a code comment says extra zeroed tokens shift the unconditional prediction on joint-attention models.",
+"sure": true,
+"source": "conditioning.py:165"
+},
+{
+"node": "Constant Scheduler",
+"group": "Schedule makers",
+"does": "Makes a list of steps + 1 values that holds value_start until cutoff_percent of the way through, then holds value_end.",
+"use": "To switch a value at one point in a run.",
+"sure": true,
+"source": "sigmas.py:1237"
+},
+{
+"node": "CrossAttn_EraseReplace_HiDream",
+"group": "Conditioning tools",
+"does": "Encodes HiDream T5 and Llama prompts for an erase text and a replace text, returning replace as positive and erase as negative. The four *_token inputs are tokenized but never used in the output, and the node is marked experimental.",
+"use": "",
+"sure": true,
+"source": "conditioning.py:2023"
+},
+{
+"node": "EmptyLatentImage64",
+"group": "Create and move",
+"does": "Creates an all-zero 4-channel latent at one eighth of the given size, stored in 64-bit.",
+"use": "When you start a 4-channel image workflow at 64-bit precision.",
+"sure": true,
+"source": "nodes_latents.py:1971"
+},
+{
+"node": "EmptyLatentImageCustom",
+"group": "Create and move",
+"does": "Creates an all-zero latent with 4 or 16 channels and 16, 32 or 64-bit precision. The size is divided by 8 for sdxl, 4 for cascade_b, the compression value for cascade_c, or left exact.",
+"use": "When you need an empty latent with a specific channel count, precision or compression, including Stable Cascade stages.",
+"sure": true,
+"source": "nodes_latents.py:1907"
+},
+{
+"node": "Film Grain",
+"group": "Image filters and frequency separation",
+"does": "Adds grain by scattering random gray values over an upscaled grayscale copy, blurring and shrinking it, enhancing edges, then blending it with the image and adjusting brightness. A code comment describes it as a rewrite of the WAS Film Grain node.",
+"use": "To add film-style grain with control over density, intensity and brightness.",
+"sure": true,
+"source": "images.py:307"
+},
+{
+"node": "FluxGuidanceDisable",
+"group": "Flux conditioning tweaks",
+"does": "Turns off Flux's guidance embedding flag on a copy of the model, and can also blank the CLIP-L pooled vector to zeros on every model call. The two switches work separately.",
+"use": "Use it to run Flux without its guidance embedding or CLIP-L pooled input.",
+"sure": true,
+"source": "models.py:1009"
+},
+{
+"node": "FluxLoader",
+"group": "Loaders",
+"does": "Loads a Flux model, one or two text encoders, a VAE, and optionally a CLIP Vision and a style model, all from one node. It sets the random seed to 42 before loading, can use the encoder and VAE inside a checkpoint, and offers TAESD preview VAEs when both their files exist.",
+"use": "Use it to load a full Flux setup, including Redux-style parts, without separate loader nodes.",
+"sure": true,
+"source": "loaders.py:224"
+},
+{
+"node": "FluxOrthoCFGPatcher",
+"group": "Flux conditioning tweaks",
+"does": "Before each Flux model call, it repeats 500 times the step of removing from the first batch entry's T5 and CLIP-L conditioning whatever points along the second entry's. It can then zero the first entry's CLIP-L vector; the class is marked experimental.",
+"use": "",
+"sure": true,
+"source": "models.py:961"
+},
+{
+"node": "Frame Select",
+"group": "Video frames and temporal masks",
+"does": "Picks one frame from an image batch by index and returns it as a one-image batch.",
+"use": "To pull a single frame out of a video or batch.",
+"sure": true,
+"source": "images.py:530"
+},
+{
+"node": "Frame Select Latent",
+"group": "Video frames",
+"does": "Picks one frame from a video latent by index and returns it as a one-frame latent with only samples. The input is declared as IMAGE, but the code reads it as a latent.",
+"use": "When you want one frame from a video latent.",
+"sure": true,
+"source": "nodes_latents.py:943"
+},
+{
+"node": "Frame Select Latent Raw",
+"group": "Video frames",
+"does": "Picks one frame by index from state_info's raw_x rather than from samples. It returns a bare tensor instead of the usual latent dictionary even though the output is labeled LATENT, and its input is declared as IMAGE.",
+"use": "",
+"sure": true,
+"source": "nodes_latents.py:862"
+},
+{
+"node": "Frames Concat",
+"group": "Video frames and temporal masks",
+"does": "Joins two image batches into one, first batch first.",
+"use": "To put two runs of frames end to end.",
+"sure": true,
+"source": "images.py:584"
+},
+{
+"node": "Frames Concat Latent",
+"group": "Video frames",
+"does": "Joins two video latents along the frame dimension and returns a new latent with only samples.",
+"use": "When you want to join two video latents end to end.",
+"sure": true,
+"source": "nodes_latents.py:997"
+},
+{
+"node": "Frames Concat Latent Raw",
+"group": "Video frames",
+"does": "Joins two inputs along the frame dimension and returns a bare tensor. It concatenates the inputs directly, so it works with the tensors the other Raw frame nodes output and not with an ordinary latent dictionary.",
+"use": "When you want to join frame ranges taken with the Raw select and slice nodes.",
+"sure": true,
+"source": "nodes_latents.py:916"
+},
+{
+"node": "Frames Concat Masks",
+"group": "Video frames and temporal masks",
+"does": "Joins 2 to 10 masks along the frame dimension and adds a leading dimension if the result has only three.",
+"use": "To build a mask that changes over time from several pieces.",
+"sure": true,
+"source": "nodes_latents.py:1026"
+},
+{
+"node": "Frames Latent ReverseOrder",
+"group": "Video frames and temporal masks",
+"does": "Returns a video latent with its frames in reverse order. It expects a 5-dimensional latent and outputs only the samples, dropping other latent keys.",
+"use": "When a video latent needs to play backward.",
+"sure": true,
+"source": "nodes_latents.py:1137"
+},
+{
+"node": "Frames Masks Uninterpolate",
+"group": "Video frames and temporal masks",
+"does": "Reduces a per-frame mask to fewer frames by picking evenly spaced frames, using (frames - 1) / chunk size + 1 as the new count.",
+"use": "When a mask made per video frame needs to match compressed latent frames.",
+"sure": true,
+"source": "nodes_latents.py:1077"
+},
+{
+"node": "Frames Masks ZeroOut",
+"group": "Video frames and temporal masks",
+"does": "Changes one chosen frame of a time mask in place. Despite the name, the code sets that frame to 1.0, not 0.",
+"use": "",
+"sure": true,
+"source": "nodes_latents.py:1111"
+},
+{
+"node": "Frames Slice",
+"group": "Video frames and temporal masks",
+"does": "Returns the images from a start index up to, but not including, a stop index.",
+"use": "To take a range of frames from a video or batch.",
+"sure": true,
+"source": "images.py:557"
+},
+{
+"node": "Frames Slice Latent",
+"group": "Video frames",
+"does": "Cuts a range of frames from a video latent, from start up to but not including stop, and returns them as a new latent with only samples.",
+"use": "When you want a section of a video latent.",
+"sure": true,
+"source": "nodes_latents.py:970"
+},
+{
+"node": "Frames Slice Latent Raw",
+"group": "Video frames",
+"does": "Cuts a frame range from state_info's raw_x rather than from samples. It returns a bare tensor instead of the usual latent dictionary even though the output is labeled LATENT.",
+"use": "",
+"sure": true,
+"source": "nodes_latents.py:889"
+},
+{
+"node": "Frequency Separation Hard Light",
+"group": "Image filters and frequency separation",
+"does": "Works both ways: original and low-pass give the high-pass layer, and low-pass and high-pass rebuild the original, using hard light math at 64-bit precision. The code moves this math to CUDA explicitly.",
+"use": "To edit coarse tones and fine detail separately, then recombine.",
+"sure": true,
+"source": "images.py:448"
+},
+{
+"node": "Frequency Separation Hard Light LAB",
+"group": "Image filters and frequency separation",
+"does": "The same hard light split and rebuild, carried out on normalized LAB values and converted back to RGB.",
+"use": "To do hard light separation in LAB instead of RGB.",
+"sure": true,
+"source": "images.py:480"
+},
+{
+"node": "Frequency Separation Linear Light",
+"group": "Image filters and frequency separation",
+"does": "Works both ways: original and low-pass give the high-pass detail layer, and low-pass and high-pass rebuild the original, using linear light math at 64-bit precision. The code moves this math to CUDA explicitly.",
+"use": "To edit coarse tones and fine detail separately, then recombine.",
+"sure": true,
+"source": "images.py:677"
+},
+{
+"node": "Image Channels LAB",
+"group": "Image filters and frequency separation",
+"does": "Converts an RGB image to separate L, A and B channels, or rebuilds RGB from those channels when no RGB input is given. The channel outputs use raw LAB values in channel-first layout, not normal image values.",
+"use": "To work on brightness and color separately.",
+"sure": true,
+"source": "images.py:611"
+},
+{
+"node": "Image Crop Location Exact",
+"group": "Image size and cropping",
+"does": "Crops an image at given x and y coordinates and size, clamped to the image's edges, and also outputs the crop details. The edge option can force a square from the shorter or longer side.",
+"use": "When you know the exact pixel area you want.",
+"sure": true,
+"source": "images.py:935"
+},
+{
+"node": "Image Gaussian Blur",
+"group": "Image filters and frequency separation",
+"does": "Applies OpenCV gaussian blur per channel after converting to 8-bit, with a kernel of the size setting minus one.",
+"use": "To soften an image or make a low-pass layer.",
+"sure": true,
+"source": "images.py:820"
+},
+{
+"node": "Image Get Color Swatches",
+"group": "Color-swatch masks",
+"does": "Reads the distinct colors in a swatch image, ignoring any color much rarer than the most common one, and lists them from top to bottom as they first appear.",
+"use": "To set the order of regions for the color mask nodes.",
+"sure": true,
+"source": "images.py:1045"
+},
+{
+"node": "Image Grain Add",
+"group": "Image filters and frequency separation",
+"does": "Makes the same kind of grain with fixed settings, combines it with the image in a hard light blend, and mixes the result back by a weight.",
+"use": "For one-slider grain control.",
+"sure": true,
+"source": "images.py:375"
+},
+{
+"node": "Image Median Blur",
+"group": "Image filters and frequency separation",
+"does": "Applies OpenCV median blur per channel after converting to 8-bit, with a kernel of the size setting minus one.",
+"use": "To blur while keeping edges, or to make a low-pass layer.",
+"sure": true,
+"source": "images.py:792"
+},
+{
+"node": "Image Pair Split",
+"group": "Image size and cropping",
+"does": "Cuts an image batch into two halves and sends each to its own output.",
+"use": "To separate a batch holding a pair of images.",
+"sure": true,
+"source": "images.py:915"
+},
+{
+"node": "Image Repeat Tile To Size",
+"group": "Image size and cropping",
+"does": "Repeats an image as tiles until it covers a target size, then either crops to that size or resizes to it (default lanczos stretch).",
+"use": "To fill a larger canvas with a repeated image.",
+"sure": true,
+"source": "images.py:258"
+},
+{
+"node": "Image Sharpen FS",
+"group": "Image filters and frequency separation",
+"does": "Sharpens by blurring the image (median or gaussian), taking the fine detail left over using hard or linear light math, and blending that detail back onto the original.",
+"use": "For sharpening based on frequency separation.",
+"sure": true,
+"source": "images.py:745"
+},
+{
+"node": "Latent Batcher",
+"group": "Create and move",
+"does": "Repeats a single latent into a batch of the given size, keeping only the samples. The channel count is hard-coded to 4, so other latents will not fit.",
+"use": "When you want several copies of one 4-channel latent.",
+"sure": true,
+"source": "nodes_latents.py:754"
+},
+{
+"node": "Latent Channels From To",
+"group": "Channel edits",
+"does": "Replaces each channel's average in latent_to with the matching average from latent_from, leaving the variation around that average unchanged.",
+"use": "When you want one latent to take on another's overall channel levels.",
+"sure": true,
+"source": "nodes_latents.py:638"
+},
+{
+"node": "Latent Clear State Info",
+"group": "Sampler state",
+"does": "Returns a latent containing only its samples, removing state_info and every other key such as a noise mask.",
+"use": "When you want the next sampler to start without any carried-over state.",
+"sure": true,
+"source": "nodes_latents.py:436"
+},
+{
+"node": "Latent CropGuides State Info",
+"group": "Sampler state",
+"does": "Reads the keyframe count from LTX conditioning, removes that many frames from the end of the video latent, its noise mask and matching state_info tensors, and clears the keyframe data from the conditioning and any stored guider. It can take the conditioning from the stored guider if none is connected, and it is flagged experimental.",
+"use": "When you strip LTX guide frames from a latent that still carries sampler state.",
+"sure": true,
+"source": "nodes_latents.py:291"
+},
+{
+"node": "Latent Display State Info",
+"group": "Sampler state",
+"does": "Lists everything in a latent's state_info as text, showing shape, type, mean and spread for tensors, and shows the text on the node as well as outputting it. If there is none it reports that.",
+"use": "When you want to inspect what a sampler left in a latent.",
+"sure": true,
+"source": "nodes_latents.py:512"
+},
+{
+"node": "Latent Extract State Info",
+"group": "Sampler state",
+"does": "Pulls values out of state_info as separate outputs: the sigmas, the sigmas still left after end_step, sigma_next, end_step, sampler_mode and whether the run completed. It strips the zero padding the samplers add to unsample and resample schedules.",
+"use": "When you want to continue from where a previous sampler stopped using its own schedule.",
+"sure": true,
+"source": "nodes_latents.py:565"
+},
+{
+"node": "Latent Get Channel Means",
+"group": "Channel edits",
+"does": "Averages a latent over its height and width to get one number per channel and returns them as a SIGMAS-type list. With a batch larger than one, the result has a row per batch item.",
+"use": "When you want a latent's per-channel averages as numbers to pass along.",
+"sure": true,
+"source": "nodes_latents.py:662"
+},
+{
+"node": "Latent Match Channelwise",
+"group": "Channel edits",
+"does": "Intended to shift a target latent's channels to match a source latent's mean, and optionally spread, inside masked areas, with extra_options flags for changing the behavior. As written it reads exclude_channels before assigning it at line 2566, which raises an error, and its optional masks and extra_options have no default values in the function signature.",
+"use": "",
+"sure": true,
+"source": "nodes_latents.py:2531"
+},
+{
+"node": "Latent Normalize Channels",
+"group": "Channel edits",
+"does": "Normalizes (mean 0, spread 1), centers (mean 0) or standardizes (spread 1) a latent, either across the whole tensor or separately for each channel of each batch item. In channels mode it changes the input tensor directly, and the output keeps only the samples.",
+"use": "When you want to reset a latent's mean or spread.",
+"sure": true,
+"source": "nodes_latents.py:2481"
+},
+{
+"node": "Latent Replace State Info",
+"group": "Sampler state",
+"does": "Overwrites start_step, end_step, raw_x or sigmas in state_info, each behind its own on/off switch, and removes the entry if the switch is on but the matching input is empty. The raw_x input is stored as the whole connected latent object, not just its tensor, while the sampler reads raw_x as a tensor.",
+"use": "When you want to change where a chained sampler resumes.",
+"sure": true,
+"source": "nodes_latents.py:459"
+},
+{
+"node": "Latent to Cuda",
+"group": "Create and move",
+"does": "Moves a latent to the GPU or CPU, either every tensor nested anywhere inside it or just the samples. In full mode everything that is not a tensor is deep-copied.",
+"use": "When you need to control which device a latent and its stored state sit on.",
+"sure": true,
+"source": "nodes_latents.py:687"
+},
+{
+"node": "Latent to RawX",
+"group": "Sampler state",
+"does": "Copies the latent's current samples into state_info as raw_x, in 64-bit. The pack's sampler uses raw_x in place of the latent in unsample and resample modes when the shapes match.",
+"use": "When you edited a latent and want the sampler's next unsample or resample run to start from that edit.",
+"sure": true,
+"source": "nodes_latents.py:241"
+},
+{
+"node": "Latent Transfer State Info",
+"group": "Sampler state",
+"does": "Gives one latent a deep copy of another latent's state_info while keeping its own samples. The source latent must have state_info or the node fails.",
+"use": "When you processed a latent separately and need to restore its sampler state.",
+"sure": true,
+"source": "nodes_latents.py:610"
+},
+{
+"node": "Latent TrimVideo State Info",
+"group": "Sampler state",
+"does": "Removes frames from the start of a video latent, and also from every tensor of the same shape stored in its state_info so they stay aligned. Adapted from a ComfyUI core node, as a code comment says, and flagged experimental.",
+"use": "When you trim a video latent that will go back into a chained sampler.",
+"sure": true,
+"source": "nodes_latents.py:266"
+},
+{
+"node": "Latent Upscale State Info",
+"group": "Sampler state",
+"does": "Rescales a latent by a factor using a chosen method and applies the same resize to matching tensors in state_info. The helper it uses only changes tensors with 5 or more dimensions, so an ordinary 4-dimensional image latent passes through at its original size.",
+"use": "When you upscale a video latent that will go back into a chained sampler.",
+"sure": true,
+"source": "nodes_latents.py:412"
+},
+{
+"node": "LatentBatch_channels",
+"group": "Channel edits",
+"does": "Applies an offset, multiply or power to each of the 4 latent channels, named luminosity, cyan-red, lime-purple and pattern structure, for every item in the batch. Optional schedules are multiplied by the slider values to give each batch item its own amount.",
+"use": "When you want to shift or scale individual channels of a 4-channel latent.",
+"sure": true,
+"source": "nodes_latents.py:2239"
+},
+{
+"node": "LatentBatch_channels_16",
+"group": "Channel edits",
+"does": "Does the same offset, multiply or power per channel and per batch item, but for 16-channel latents with numbered channels. The sliders default to 0, so multiply zeroes a channel and power turns it to ones unless the values are changed.",
+"use": "When you want to adjust individual channels of a 16-channel latent.",
+"sure": true,
+"source": "nodes_latents.py:2329"
+},
+{
+"node": "LatentNoiseBatch_fractal",
+"group": "Noise",
+"does": "Creates a batch of fractal noise the same size as the input latent, with alpha and k settable per item from schedules. The latent only sets the size, so its content is not added to the result, and steps defaults to 0, which gives an empty batch unless steps or steps_ is set.",
+"use": "When you want a batch of noise with a chosen frequency falloff.",
+"sure": true,
+"source": "nodes_latents.py:2185"
+},
+{
+"node": "LatentNoiseBatch_gaussian",
+"group": "Noise",
+"does": "Creates a batch of Gaussian noise the same size as the input latent, without adding the latent's content. The mean and std inputs are stored on the generator but its generate method ignores them, so every item comes out normalized to mean 0 and spread 1.",
+"use": "When you want a batch of plain normalized Gaussian noise.",
+"sure": true,
+"source": "nodes_latents.py:2144"
+},
+{
+"node": "LatentNoiseBatch_gaussian_channels",
+"group": "Noise",
+"does": "Adds Gaussian noise to a 4-channel latent to make a batch, shifting each channel by its own luminosity, cyan-red, lime-purple or pattern value per item. The overall mean and std inputs have no effect because the generator ignores them, and with steps at 0 the means schedule must be connected.",
+"use": "When you want noisy copies of a latent with a color or brightness bias per channel.",
+"sure": true,
+"source": "nodes_latents.py:2073"
+},
+{
+"node": "LatentNoiseBatch_perlin",
+"group": "Noise",
+"does": "Builds a new 4-channel noise latent at one eighth of the given size, starting from Perlin noise, scrambling it with a remainder step and reshaping the values to a bell curve clamped to plus or minus 5. The detail setting scales the result slightly, and no input latent is used.",
+"use": "",
+"sure": true,
+"source": "nodes_latents.py:1997"
+},
+{
+"node": "LatentNoised",
+"group": "Noise",
+"does": "Adds noise to a latent, either generated from a chosen noise type and seed or taken from a connected latent, scaled by a strength value and optionally limited by a mask. It can also rescale the noise to the latent's mean and spread, or blend the latent into the noise and renormalize.",
+"use": "When you want a latent with a controlled amount of a specific kind of noise added.",
+"sure": true,
+"source": "nodes_latents.py:64"
+},
+{
+"node": "LatentNoiseList",
+"group": "Noise",
+"does": "Adds fractal noise to a latent repeatedly and outputs the results as a list of separate latents rather than one batch. Each item can have its own alpha and k from optional schedules, and with steps at 0 the count comes from the alphas schedule.",
+"use": "When you want a list of noisy variations of one latent.",
+"sure": true,
+"source": "nodes_latents.py:161"
+},
+{
+"node": "LatentPhaseMagnitude",
+"group": "Frequency edits",
+"does": "Meant to convert two latents to the frequency domain with a 64-bit FFT and blend their phase and magnitude separately for each of 4 channels, then convert back. As written the function requires a latent_1_repeat argument the node does not declare, and its normalize options call a class rather than a function, so both look like they would raise errors.",
+"use": "",
+"sure": true,
+"source": "nodes_latents.py:1171"
+},
+{
+"node": "LatentPhaseMagnitudeMultiply",
+"group": "Frequency edits",
+"does": "Converts a latent to the frequency domain with a 64-bit FFT, multiplies phase and magnitude by a value per channel, and converts back, with defaults of 1.0 leaving it unchanged. Only the first 4 channels are processed, any further channels come out as zero, and turning on a normalize option looks like it would raise an error because the name points at a class.",
+"use": "When you want to scale a latent's phase or magnitude channel by channel.",
+"sure": true,
+"source": "nodes_latents.py:1391"
+},
+{
+"node": "LatentPhaseMagnitudeOffset",
+"group": "Frequency edits",
+"does": "Works like the multiply version but adds a value per channel to phase and magnitude. The defaults are 1.0, so the untouched settings do change the latent, and the same 4-channel limit and normalize problem apply.",
+"use": "When you want to shift a latent's phase or magnitude channel by channel.",
+"sure": true,
+"source": "nodes_latents.py:1523"
+},
+{
+"node": "LatentPhaseMagnitudePower",
+"group": "Frequency edits",
+"does": "Works like the multiply version but raises phase and magnitude to a power per channel, with defaults of 1.0 leaving it unchanged. Phase values can be negative and the code has no guard for fractional powers of them, and the same 4-channel limit and normalize problem apply.",
+"use": "When you want to apply a power curve to a latent's phase or magnitude.",
+"sure": true,
+"source": "nodes_latents.py:1655"
+},
+{
+"node": "LatentUpscaleWithVAE",
+"group": "VAE and images",
+"does": "Decodes a latent to pixels, resizes it with lanczos to the given size and encodes it again with a fixed seed of 42. If the latent has state_info it uses the stored denoised result and also re-encodes the stored previous-step data, so a chained sampler receives them at the new size.",
+"use": "When you want a pixel-space upscale that also carries multistep sampler state.",
+"sure": true,
+"source": "helper_sigma_preview_image_preproc.py:618"
+},
+{
+"node": "LayerPatcher",
+"group": "Swap and save weights",
+"does": "Loads three weight files and writes them directly into a model: its input embedder, any layers named in the gates file, and its final layer, all at the chosen precision. It changes the loaded model in place rather than a copy, has no option to skip a file, and has a commented-out Retrojector option.",
+"use": "",
+"sure": true,
+"source": "loaders.py:382"
+},
+{
+"node": "Legacy_ClownSampler",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Builds a sampler object for the old legacy_rk Runge-Kutta sampler, with settings for SDE noise, implicit steps, CFG++ and latent guides.",
+"use": "For older workflows; the README says previous versions stay available with Legacy prepended.",
+"sure": true,
+"source": "legacy/legacy_samplers.py:378"
+},
+{
+"node": "Legacy_ClownsharKSampler",
+"group": "Legacy samplers and options",
+"does": "Deprecated. An all-in-one old sampler that applies model shift for SD3, AuraFlow, Stable Cascade and Flux, prepares noise and sigmas, and runs legacy_rk with optional guides and options.",
+"use": "For older workflows.",
+"sure": true,
+"source": "legacy/legacy_samplers.py:97"
+},
+{
+"node": "Legacy_ClownsharKSamplerGuides",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Packages guide latents, a mask, a guide mode and weight settings into a GUIDES value for the old sampler.",
+"use": "For older workflows using latent guides.",
+"sure": true,
+"source": "legacy/legacy_samplers.py:444"
+},
+{
+"node": "Legacy_SharkSampler",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Runs sampling with a supplied sampler: it builds sigmas and starting noise, supports unsample and resample modes, can truncate conditioning, and returns normal and 64-bit outputs.",
+"use": "For older workflows that pair it with a legacy sampler node.",
+"sure": true,
+"source": "legacy/legacy_samplers.py:494"
+},
+{
+"node": "Linear Quadratic Advanced",
+"group": "Schedule makers",
+"does": "Calls ComfyUI's linear-quadratic scheduler for the connected model, exposing how far through the linear part runs (inflection_percent) and the noise threshold where it ends. Denoise works by building a longer schedule and keeping the end of it.",
+"use": "To adjust the linear-quadratic schedule's two internal settings.",
+"sure": true,
+"source": "sigmas.py:1208"
+},
+{
+"node": "Mask Bounding Box Aspect Ratio",
+"group": "Mask tools",
+"does": "Finds the box around a mask, adds padding, and grows the box to a chosen aspect ratio, then crops the image and mask to it. It also outputs a version of the mask faded outward only, plus the crop's x, y, width and height; a code comment says it is based on ComfyUI_essentials.",
+"use": "To crop to a masked area at a set shape, for example before working on just that region.",
+"sure": true,
+"source": "images.py:1442"
+},
+{
+"node": "Mask Sketch",
+"group": "Mask tools",
+"does": "Shows an image-file picker, but the code that runs ignores the chosen file and returns a fixed 512x512 white image with an empty mask. The real loader remains as an unused method, load_image_orig, so this node looks unfinished.",
+"use": "",
+"sure": true,
+"source": "images.py:1348"
+},
+{
+"node": "MaskEdge",
+"group": "Mask tools",
+"does": "Makes a band around a mask's outline, with separate multipliers for how far it reaches inside and outside. Width is either in pixels or a percent of the square root of the mask's area, and a side whose width comes to zero uses that whole side instead of a band.",
+"use": "When you need to target only the area around a mask's edge.",
+"sure": true,
+"source": "nodes_latents.py:808"
+},
+{
+"node": "MaskFloatToBoolean",
+"group": "Mask tools",
+"does": "Turns any non-zero mask value into 1 and leaves zeros as 0, keeping the original number type.",
+"use": "When a soft mask needs hard edges.",
+"sure": true,
+"source": "nodes_latents.py:781"
+},
+{
+"node": "Masks From Color Swatches",
+"group": "Color-swatch masks",
+"does": "Splits a multicolor painted image into one mask per swatch color, allowing small color differences and sending near-matching painted pixels to the nearest swatch. It then removes small specks and gives leftover pixels to the mask with the most neighbors around them.",
+"use": "To turn one painted color map into many region masks.",
+"sure": true,
+"source": "images.py:1066"
+},
+{
+"node": "Masks From Colors",
+"group": "Color-swatch masks",
+"does": "Does both swatch steps in one node: reads colors from a swatch image, then splits the painted image into masks. Unlike Masks From Color Swatches, it also removes any masks that end up empty.",
+"use": "To go straight from a swatch image and a painted map to masks.",
+"sure": true,
+"source": "images.py:1090"
+},
+{
+"node": "Masks Unpack 16",
+"group": "Color-swatch masks",
+"does": "Sends each mask in a batch to its own output, for up to sixteen outputs. The code does not check that the count matches.",
+"use": "To wire masks from the color nodes into separate regional inputs.",
+"sure": true,
+"source": "images.py:1023"
+},
+{
+"node": "Masks Unpack 4",
+"group": "Color-swatch masks",
+"does": "Sends each mask in a batch to its own output, for up to four outputs. The code does not check that the count matches.",
+"use": "To wire masks from the color nodes into separate regional inputs.",
+"sure": true,
+"source": "images.py:989"
+},
+{
+"node": "Masks Unpack 8",
+"group": "Color-swatch masks",
+"does": "Sends each mask in a batch to its own output, for up to eight outputs. The code does not check that the count matches.",
+"use": "To wire masks from the color nodes into separate regional inputs.",
+"sure": true,
+"source": "images.py:1006"
+},
+{
+"node": "MaskToggle",
+"group": "Mask tools",
+"does": "Passes a mask through when enabled and outputs nothing (None) when disabled.",
+"use": "To switch a mask on or off without rewiring.",
+"sure": true,
+"source": "nodes_latents.py:216"
+},
+{
+"node": "ModelSamplingAdvanced",
+"group": "Timestep shift",
+"does": "Replaces the model's sampling object and rebuilds its sigma table from a shift value, using exponential or linear scaling. It supports Flux, Chroma, AuraFlow, SD3, HiDream, HunyuanVideo, WAN, Cosmos and LTXV, and raises an error for anything else.",
+"use": "Use it to set shift by hand and choose the scaling; a code comment says exponential is the default for SD3.5M and Flux, linear for SD3.5L.",
+"sure": true,
+"source": "models.py:1045"
+},
+{
+"node": "ModelSamplingAdvancedResolution",
+"group": "Timestep shift",
+"does": "Works like ModelSamplingAdvanced but calculates the shift from a latent's height and width using max_shift and base_shift. It reads the size from the latent tensor, and its formula divides by 8*8*2*2, the same divisor ComfyUI's own Flux node applies to pixel sizes, so the result differs from that node for the same image.",
+"use": "Use it when shift should follow the latent's size.",
+"sure": true,
+"source": "models.py:1147"
+},
+{
+"node": "ModelTimestepPatcher",
+"group": "Timestep shift",
+"does": "Another registered name for the same class as ModelSamplingAdvanced, so it behaves identically. It rebuilds the model's sigma table from a shift value using exponential or linear scaling.",
+"use": "",
+"sure": true,
+"source": "models.py:1045"
+},
+{
+"node": "PrepForUnsampling",
+"group": "VAE and images",
+"does": "The same class as VAEEncodeAdvanced registered under a second name, so it behaves identically.",
+"use": "",
+"sure": true,
+"source": "__init__.py:184"
+},
+{
+"node": "ReAuraPatcher",
+"group": "Regional and style patchers",
+"does": "Switches an AuraFlow model, its layers and their attention to the pack's versions on all layers, and adds StyleWCT and Retrojector objects. It accepts only AuraFlow.",
+"use": "Use it before regional or style-guided AuraFlow sampling.",
+"sure": true,
+"source": "models.py:939"
+},
+{
+"node": "ReAuraPatcherAdvanced",
+"group": "Regional and style patchers",
+"does": "The AuraFlow patcher with comma-separated lists of which double and single layers use regional masks. Left-out single layers ignore the mask, but the stand-in for left-out double layers does not match how those layers call it, so a partial double list looks like it would raise an error; this was not run.",
+"use": "Use it to limit regional masks to some AuraFlow layers.",
+"sure": true,
+"source": "models.py:883"
+},
+{
+"node": "ReChromaPatcher",
+"group": "Regional and style patchers",
+"does": "Does the same job as ReFluxPatcher for Chroma models, on all blocks, and adds the StyleWCT and Retrojector objects. It accepts only Chroma.",
+"use": "Use it before regional or style-guided Chroma sampling.",
+"sure": true,
+"source": "models.py:486"
+},
+{
+"node": "ReChromaPatcherAdvanced",
+"group": "Regional and style patchers",
+"does": "The Chroma patcher with comma-separated lists of which double and single blocks use regional masks; the value all covers every block. From reading the code, the stand-in class used for left-out blocks only accepts (c, mask) while the model calls blocks with other arguments, so a partial list looks like it would raise an error; this was not run.",
+"use": "Use it to try limiting regional masks to some Chroma blocks.",
+"sure": true,
+"source": "models.py:432"
+},
+{
+"node": "ReFluxPatcher",
+"group": "Regional and style patchers",
+"does": "Switches a Flux model to the pack's versions of its model and blocks for all blocks, which can use regional masks and style guides. It also adds a StyleWCT object and a Retrojector, which is a pseudo-inverse of the model's input layer used to move data back out of the model's embedding space.",
+"use": "Use it before regional or style-guided Flux sampling.",
+"sure": true,
+"source": "models.py:358"
+},
+{
+"node": "ReFluxPatcherAdvanced",
+"group": "Regional and style patchers",
+"does": "The Flux patcher with comma-separated lists of which double and single blocks use regional masks; the value all covers every block. From reading the code, the stand-in class used for left-out blocks only accepts (c, mask) while the model calls blocks with other arguments, so a partial list looks like it would raise an error; this was not run.",
+"use": "Use it to try limiting regional masks to some Flux blocks.",
+"sure": true,
+"source": "models.py:303"
+},
+{
+"node": "ReHiDreamPatcher",
+"group": "Regional and style patchers",
+"does": "Switches a HiDream model and all its blocks, attention, feed-forward and gate parts to the pack's versions, and adds StyleWCT, WaveletStyleWCT and Retrojector objects. It also converts the final layer's weights to bfloat16 and attaches a shared sort_buffer dictionary, which nothing else in the pack's Python references.",
+"use": "Use it before regional or style-guided HiDream sampling.",
+"sure": true,
+"source": "models.py:780"
+},
+{
+"node": "ReHiDreamPatcherAdvanced",
+"group": "Regional and style patchers",
+"does": "The HiDream patcher with comma-separated lists of which double and single stream blocks use regional masks; the value all covers every block. From reading the code, the stand-in class used for left-out blocks only accepts (c, mask) while the model calls blocks with other arguments, so a partial list looks like it would raise an error; this was not run.",
+"use": "Use it to try limiting regional masks to some HiDream blocks.",
+"sure": true,
+"source": "models.py:667"
+},
+{
+"node": "ReLTXVPatcher",
+"group": "Regional and style patchers",
+"does": "Switches an LTXV model's top-level class to the pack's version and adds StyleWCT and Retrojector objects; it does not change individual blocks. The pack's LTXV model has style-guide code but no regional mask code, and the README lists LTXV under style transfer only, though the node's error text says regional.",
+"use": "Use it before style-guided LTXV sampling.",
+"sure": true,
+"source": "models.py:565"
+},
+{
+"node": "ReLTXVPatcherAdvanced",
+"group": "Regional and style patchers",
+"does": "Does the same as ReLTXVPatcher. Its doublestream_blocks and singlestream_blocks inputs are read but never used to choose blocks, so they have no effect unless their text fails to parse.",
+"use": "",
+"sure": true,
+"source": "models.py:521"
+},
+{
+"node": "ReReduxPatcher",
+"group": "Regional and style patchers",
+"does": "Makes a deep copy of a Flux Redux style model and switches the copy to the pack's encoder class, whose extra feature_match method is what the pack's StyleModelApplyStyle node calls. The class is marked experimental.",
+"use": "Use it to prepare a Redux model for StyleModelApplyStyle.",
+"sure": true,
+"source": "models.py:384"
+},
+{
+"node": "ReSD35Patcher",
+"group": "Regional and style patchers",
+"does": "Switches an SD3.5 model and all its joint blocks to the pack's versions and adds StyleWCT and Retrojector objects. It accepts only SD3.5.",
+"use": "Use it before regional or style-guided SD3.5 sampling.",
+"sure": true,
+"source": "models.py:855"
+},
+{
+"node": "ReSD35PatcherAdvanced",
+"group": "Regional and style patchers",
+"does": "The SD3.5 patcher with a comma-separated list of joint blocks to switch; the value all covers every block. Left-out blocks stay as ComfyUI's JointBlock, but the pack's model still passes them a mask argument, so from reading this box's ComfyUI core a partial list looks like it would raise an error; this was not run.",
+"use": "Use it to try limiting the patch to some SD3.5 joint blocks.",
+"sure": true,
+"source": "models.py:807"
+},
+{
+"node": "ReSDPatcher",
+"group": "Regional and style patchers",
+"does": "Walks the input, middle and output blocks of an SD1.5 or SDXL UNet and switches its transformer, attention and ResBlock parts to the pack's versions. It adds StyleWCT and a Retrojector built from the first input layer, and has no Advanced version.",
+"use": "Use it before regional or style-guided SD1.5 or SDXL sampling.",
+"sure": true,
+"source": "models.py:590"
+},
+{
+"node": "ReWanPatcher",
+"group": "Regional and style patchers",
+"does": "Switches a WAN model to the pack's versions of its model, blocks and attention layers for all blocks, which can use regional masks and style guides from other nodes. It accepts only WAN, and the off switch returns a plain copy. Unlike the patchers for other models, it does not add a Retrojector or StyleWCT object.",
+"use": "Use it before regional or style-guided WAN sampling; the README lists WAN for both.",
+"sure": true,
+"source": "models.py:276"
+},
+{
+"node": "ReWanPatcherAdvanced",
+"group": "Regional and style patchers",
+"does": "The WAN patcher with lists of which blocks get the mask-aware self-attention and cross-attention; other blocks get plain self-attention or keep their original cross-attention. It can also make each frame attend only to a window of nearby frames, either stopping at the ends of the clip (standard) or wrapping around (circular), with window size set by sliding_window_frames divided by 4.",
+"use": "Use it to limit regional masks to some WAN blocks, or to use windowed self-attention on long clips.",
+"sure": true,
+"source": "models.py:200"
+},
+{
+"node": "SamplerOptions_GarbageCollection",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Copies a sampler and sets a flag to clean up memory after each step, trading speed for fewer out-of-memory errors according to its description. Only legacy_rk acts on the flag in the code; the newer rk sampler accepts it without using it.",
+"use": "With the oldest legacy sampler when memory runs short on large models.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:66"
+},
+{
+"node": "SamplerOptions_TimestepScaling",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Copies a sampler and sets custom formulas for converting between sigma and timestep. Its description says this lets you pick Runge-Kutta midpoints with different scaling.",
+"use": "To try different RK midpoint scaling in older workflows.",
+"sure": true,
+"source": "legacy/samplers_extensions.py:33"
+},
+{
+"node": "SD35Loader",
+"group": "Loaders",
+"does": "Loads an SD3.5 model with up to three text encoders and a VAE, treating the encoders as SD3 type. It also sets the seed to 42 first, and can take the encoders and VAE from a checkpoint.",
+"use": "Use it to load an SD3.5 setup from one node.",
+"sure": true,
+"source": "loaders.py:277"
+},
+{
+"node": "SeedGenerator",
+"group": "Text and seeds",
+"does": "Outputs the seed you enter and that seed plus one.",
+"use": "When two parts of a workflow need related but different seeds.",
+"sure": true,
+"source": "nodes_misc.py:373"
+},
+{
+"node": "Set Precision",
+"group": "Precision",
+"does": "Converts a latent to 16, 32 or 64-bit floats and can also set that as PyTorch's global default number type. The output holds only the samples, so any other latent data such as a noise mask is dropped.",
+"use": "When you want a latent at a chosen precision before sampling.",
+"sure": true,
+"source": "nodes_precision.py:5"
+},
+{
+"node": "Set Precision Advanced",
+"group": "Precision",
+"does": "Always sets PyTorch's global default type from global_precision and the pack's shared cast type from shark_precision. It also outputs the latent unchanged, cast to the global type, and as separate 16, 32 and 64-bit copies.",
+"use": "When PyTorch's default type and the pack's internal cast type need different settings.",
+"sure": true,
+"source": "nodes_precision.py:123"
+},
+{
+"node": "Set Precision Universal",
+"group": "Precision",
+"does": "Converts any connected positive and negative conditioning, sigmas and latent to bf16, fp16, fp32 or fp64, or passes them through untouched, and can set the global default type. For conditioning it only handles the first entry and expects a pooled_output to be present.",
+"use": "When you want one node to set precision on all the sampler inputs together.",
+"sure": true,
+"source": "nodes_precision.py:47"
+},
+{
+"node": "SetImageSize",
+"group": "Image size and cropping",
+"does": "Outputs the width and height numbers you enter.",
+"use": "To set one size for several nodes.",
+"sure": true,
+"source": "nodes_misc.py:8"
+},
+{
+"node": "SetImageSizeWithScale",
+"group": "Image size and cropping",
+"does": "Outputs a width and height plus those values multiplied by a scale and rounded down to whole numbers.",
+"use": "When one size setting should feed both a base and a scaled pass.",
+"sure": true,
+"source": "nodes_misc.py:31"
+},
+{
+"node": "SharkChainsampler_Beta",
+"group": "Samplers",
+"does": "Continues from an earlier sampler's output by running SharkSampler with the schedule and step count stored in the latent, using seed -1. It can reuse the sampler carried in the latent, and its mode is unsample or resample.",
+"use": "To run the next stage after an earlier sampler node with a connected sampler.",
+"sure": true,
+"source": "beta/samplers.py:1127"
+},
+{
+"node": "SharkOptions_Beta",
+"group": "General options",
+"does": "Stores settings for the starting noise (type and strength), an alternate denoise value that multiplies the sigma schedule, and a channelwise CFG switch, for a sampler node to read.",
+"use": "When you want a different starting noise type or the multiply-style denoise.",
+"sure": true,
+"source": "beta/samplers_extensions.py:892"
+},
+{
+"node": "SharkOptions_GuideCond_Beta",
+"group": "General options",
+"does": "Stores a separate positive, negative and CFG for model calls made on the guide path (latent type yt) in flow and sync modes.",
+"use": "When the guide path needs its own prompt or CFG.",
+"sure": true,
+"source": "beta/samplers_extensions.py:806"
+},
+{
+"node": "SharkOptions_GuideConds_Beta",
+"group": "General options",
+"does": "Same as SharkOptions Guide Cond, with separate conditioning and CFG for the masked and unmasked guides.",
+"use": "When masked and unmasked guides need different prompts or CFG.",
+"sure": true,
+"source": "beta/samplers_extensions.py:844"
+},
+{
+"node": "SharkOptions_GuiderInput",
+"group": "General options",
+"does": "Stores an external ComfyUI guider in the options. The sampler then takes its model, CFG and conditioning from that guider, and logs a warning that flow guide mode does not work with it.",
+"use": "When conditioning or CFG comes from another guider node.",
+"sure": true,
+"source": "beta/samplers_extensions.py:2715"
+},
+{
+"node": "SharkOptions_StartStep_Beta",
+"group": "General options",
+"does": "Sets the step number where sampling begins, overriding the start step worked out from chained state.",
+"use": "When a run should begin at a specific step.",
+"sure": true,
+"source": "beta/samplers_extensions.py:574"
+},
+{
+"node": "SharkOptions_UltraCascade_Latent_Beta",
+"group": "General options",
+"does": "Stores a latent width and height that the sampler uses for UltraCascade model stages, including the size of the empty starting latent.",
+"use": "With UltraCascade workflows.",
+"sure": true,
+"source": "beta/samplers_extensions.py:932"
+},
+{
+"node": "SharkSampler_Beta",
+"group": "Samplers",
+"does": "Runs sampling with a sampler you connect, or one carried in the latent, using its own scheduler, steps, denoise, CFG and seed. It can sample, unsample or resample, and outputs the result, the denoised result and the options.",
+"use": "When the sampler settings are built separately, such as with ClownSampler.",
+"sure": true,
+"source": "beta/samplers.py:1015"
+},
+{
+"node": "Sigmas Abs",
+"group": "Arithmetic",
+"does": "Makes every value positive.",
+"use": "To remove negative values.",
+"sure": true,
+"source": "sigmas.py:714"
+},
+{
+"node": "Sigmas AdaptiveNoiseFloor",
+"group": "Floors and cleanup",
+"does": "For each step, looks at the original values just before it and sets a minimum from min_noise_level plus a share of their variance divided by their mean, then raises the step if it is below that. A closing 0 is raised too.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3416"
+},
+{
+"node": "Sigmas AdaptiveStep",
+"group": "Reshaping curves",
+"does": "Builds new values whose spacing is tighter where the schedule changes fastest, sits far from its mean, or is most crowded, depending on the mode. As written, curvature mode pads a 1D tensor in a way torch rejects, so it would raise an error, and the target_steps resampling blends a value with itself rather than with its neighbour.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:1937"
+},
+{
+"node": "Sigmas Add",
+"group": "Arithmetic",
+"does": "Adds a number to every value.",
+"use": "To shift a whole schedule up or down.",
+"sure": true,
+"source": "sigmas.py:674"
+},
+{
+"node": "Sigmas Append",
+"group": "Cutting and joining",
+"does": "Adds a chosen value to the end a set number of times, then optionally adds a second schedule after that.",
+"use": "To extend a schedule with repeated values.",
+"sure": true,
+"source": "sigmas.py:2838"
+},
+{
+"node": "Sigmas ArcCosine",
+"group": "Arithmetic",
+"does": "Clamps values to between -1 and 1, takes the arccosine, and can rescale the result to out_min and out_max. The normalize_input switch makes no difference, since both branches do the same clamp.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2873"
+},
+{
+"node": "Sigmas ArcSine",
+"group": "Arithmetic",
+"does": "Clamps values to between -1 and 1, takes the arcsine, and can rescale the result to out_min and out_max. The normalize_input switch makes no difference, since both branches do the same clamp.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2766"
+},
+{
+"node": "Sigmas ArcTangent",
+"group": "Arithmetic",
+"does": "Takes the arctangent of each value and can rescale the result to out_min and out_max.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2911"
+},
+{
+"node": "Sigmas Attractor",
+"group": "Chaos and science-themed curves",
+"does": "Uses the schedule and shifted copies of it as x, y, z starting points, runs Lorenz, Rossler, Aizawa, Chen or Thomas equations for a few small steps, and returns one component or the magnitude.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2202"
+},
+{
+"node": "Sigmas CatmullRom",
+"group": "Reshaping curves",
+"does": "Draws a smooth spline through the schedule and samples it at a chosen number of points, using plain linear interpolation for fewer than 4 values. As written, a final 0.5 factor makes the spline output half the size of the input values; rescale it afterwards if that isn't wanted.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2301"
+},
+{
+"node": "Sigmas Chaos",
+"group": "Chaos and science-themed curves",
+"does": "Runs a chaotic map (logistic, simplified henon, tent, sine or cubic) for a set number of rounds, starting from the schedule's values or, by default, from each step's position. In the default case the input's values only set the output range, and the result is not a falling curve.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2058"
+},
+{
+"node": "Sigmas Cleanup",
+"group": "Floors and cleanup",
+"does": "Removes values below sigmin, collapses runs of identical values, and adds a 0 at the end.",
+"use": "To tidy a schedule that has been edited so it ends in 0 again.",
+"sure": true,
+"source": "sigmas.py:582"
+},
+{
+"node": "Sigmas CNFInverse",
+"group": "Reshaping curves",
+"does": "Resamples a schedule to time_steps values by reading along it on a linear, quadratic, sigmoid or exponential curve, optionally backwards. Despite the name, it uses a fixed curve, with no network or differential equation.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3646"
+},
+{
+"node": "Sigmas CollatzIteration",
+"group": "Chaos and science-themed curves",
+"does": "Applies the Collatz rule (halve if even, 3n + 1 if odd) to scaled values for a set number of rounds. Because values are decimals, almost none count as even, so nearly all take the 3n + 1 branch.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3455"
+},
+{
+"node": "Sigmas Concat",
+"group": "Cutting and joining",
+"does": "Joins two schedules end to end.",
+"use": "To chain two schedules into one.",
+"sure": true,
+"source": "sigmas.py:365"
+},
+{
+"node": "Sigmas ConwaySequence",
+"group": "Chaos and science-themed curves",
+"does": "Makes a list from a number sequence (look-and-say term lengths, an audioactive-style digit count, paper folding or Thue-Morse) and can scale it to a range. It takes no schedule input, the result does not fall steadily, and it can be shorter than steps.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3496"
+},
+{
+"node": "Sigmas Count",
+"group": "Viewing and counting",
+"does": "Outputs how many values are in the schedule as an integer.",
+"use": "To feed a schedule's length into another node.",
+"sure": true,
+"source": "sigmas.py:802"
+},
+{
+"node": "Sigmas CrossProduct",
+"group": "Arithmetic",
+"does": "Treats the first three values of each schedule as 3D vectors and returns their cross product, always three values. Shorter inputs are padded with zeros and later values are ignored.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2942"
+},
+{
+"node": "Sigmas DeleteBelowFloor",
+"group": "Floors and cleanup",
+"does": "Removes every value below floor, which also removes a closing 0 unless floor is 0 or lower.",
+"use": "To remove the lowest steps of a schedule.",
+"sure": true,
+"source": "sigmas.py:517"
+},
+{
+"node": "Sigmas DeleteDuplicates",
+"group": "Floors and cleanup",
+"does": "Removes a value when the next value is identical, so runs of repeats collapse to one. Repeats that aren't next to each other stay.",
+"use": "To remove repeated steps after joining or clamping schedules.",
+"sure": true,
+"source": "sigmas.py:560"
+},
+{
+"node": "Sigmas DotProduct",
+"group": "Arithmetic",
+"does": "Multiplies two schedules value by value and adds the results up, returning a single number, using only as many values as the shorter one has. It can normalize both first.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2980"
+},
+{
+"node": "Sigmas Easing",
+"group": "Reshaping curves",
+"does": "Applies an animation-style easing curve (sine, quad, cubic, quart, quint, expo, circ, back, elastic or bounce; in, out or both) to the values, after raising them to the strength power. A code comment above this group of nodes names Adam Kormendi and says they were inspired by Unreal Engine maths.",
+"use": "To reshape a schedule with familiar animation curves.",
+"sure": true,
+"source": "sigmas.py:1479"
+},
+{
+"node": "Sigmas Fmod",
+"group": "Arithmetic",
+"does": "Gives the remainder of each value after dividing by divisor, using torch.fmod, where the result takes the sign of the value being divided. This is the difference from Sigmas Modulus.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3019"
+},
+{
+"node": "Sigmas Frac",
+"group": "Arithmetic",
+"does": "Keeps only the part of each value after the decimal point (value minus its floor).",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3045"
+},
+{
+"node": "Sigmas From Text",
+"group": "Cutting and joining",
+"does": "Reads numbers typed into a text box, separated by commas or spaces, and turns them into a schedule.",
+"use": "To hand-write an exact list of noise levels.",
+"sure": true,
+"source": "sigmas.py:338"
+},
+{
+"node": "Sigmas GammaBeta",
+"group": "Special maths functions",
+"does": "Runs offset and scaled values through scipy's gamma, log-gamma, beta, incomplete gamma or incomplete beta function, turning infinite results into very large numbers, then by default stretches the result back to the input's range.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2573"
+},
+{
+"node": "Sigmas Gaussian",
+"group": "Reshaping curves",
+"does": "Applies a bell-curve operation: density, cumulative, re-centering to a new mean and spread, or fading values by distance from the mean. As written, the inverse_cdf option calls torch.sqrt on a plain number, which torch rejects, so it would raise an error.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:1702"
+},
+{
+"node": "Sigmas GaussianCDF",
+"group": "Reshaping curves",
+"does": "Runs values through the cumulative bell curve with chosen mu and sigma, which gives an S-shaped mapping, then by default stretches the result back to the input's range.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3286"
+},
+{
+"node": "Sigmas GilbreathSequence",
+"group": "Chaos and science-themed curves",
+"does": "Starts from prime numbers, repeatedly takes absolute differences for the chosen number of levels, fills any shortfall with 1s, and can scale the result to a range. It takes no schedule input and the result does not fall steadily.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3583"
+},
+{
+"node": "Sigmas HarmonicDecay",
+"group": "Schedule makers",
+"does": "Makes a schedule from start_value to end_value shaped by the series 1/(n + offset)^rate, with an optional closing 0.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3377"
+},
+{
+"node": "Sigmas Hyperbolic",
+"group": "Reshaping curves",
+"does": "Applies sinh, cosh, tanh or their inverses to scaled values, clamping where the inverse function isn't defined, then by default stretches the result back to the input's range.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:1657"
+},
+{
+"node": "Sigmas If",
+"group": "Formulas, ranges and blending",
+"does": "Compares each value of condition_sigmas with a threshold and takes that step from true_sigmas or false_sigmas accordingly. Inputs of different lengths are stretched to the longest with linear interpolation.",
+"use": "To choose between two schedules step by step.",
+"sure": true,
+"source": "sigmas.py:3067"
+},
+{
+"node": "Sigmas InvLerp",
+"group": "Formulas, ranges and blending",
+"does": "Maps min_value to 0 and max_value to 1, and clamps everything outside that range.",
+"use": "To turn a schedule into 0-to-1 values.",
+"sure": true,
+"source": "sigmas.py:2737"
+},
+{
+"node": "Sigmas Iteration Karras",
+"group": "Schedule makers",
+"does": "Builds a schedule that climbs and then falls using two Karras curves, and also a momentums list that is positive on the way up and negative on the way down. If schedules are connected, the new section is added after them.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:957"
+},
+{
+"node": "Sigmas Iteration Polyexp",
+"group": "Schedule makers",
+"does": "Does the same as Sigmas Iteration Karras using polyexponential curves: a climb then a fall, with a matching momentums list, added after any connected schedules.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:1005"
+},
+{
+"node": "Sigmas KernelSmooth",
+"group": "Reshaping curves",
+"does": "Smooths a schedule by averaging each value with its neighbours, using a gaussian, box, triangle, epanechnikov or cosine weighting and reflecting at the ends.",
+"use": "To soften sharp bumps in a schedule.",
+"sure": true,
+"source": "sigmas.py:1794"
+},
+{
+"node": "Sigmas LambertW",
+"group": "Special maths functions",
+"does": "Runs scaled values through the Lambert W function one at a time, using an iterative approximation on the principal or secondary branch, then by default stretches the result back to the input's range. Inputs outside a branch's valid range are clamped.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2388"
+},
+{
+"node": "Sigmas LangevinDynamics",
+"group": "Chaos and science-themed curves",
+"does": "Simulates a particle with friction and seeded random kicks being pulled from start_value toward end_value, and uses its path as the schedule. The last value is overwritten with end_value rather than reached by the simulation, and setting the seed also reseeds torch's global random generator.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3775"
+},
+{
+"node": "Sigmas Lerp",
+"group": "Formulas, ranges and blending",
+"does": "Blends two schedules, with t at 0 giving all of the first and t at 1 all of the second. With ensure_length on, the shorter one is stretched to match first.",
+"use": "To get a schedule between two others.",
+"sure": true,
+"source": "sigmas.py:2699"
+},
+{
+"node": "Sigmas LinearSine",
+"group": "Reshaping curves",
+"does": "Blends the schedule with a sine wave using linear_weight. The wave is multiplied by step position, so it grows from nothing at the start to full size at the end.",
+"use": "To add a controlled wobble to a schedule.",
+"sure": true,
+"source": "sigmas.py:2804"
+},
+{
+"node": "Sigmas Logarithm2",
+"group": "Arithmetic",
+"does": "Takes the base-2 logarithm of each value, first raising tiny values to epsilon so a 0 doesn't blow up. With handle_negative on, negative values get the negated log of their size.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3129"
+},
+{
+"node": "Sigmas Math1",
+"group": "Formulas, ranges and blending",
+"does": "Runs a typed formula through Python's eval to make a schedule, where a, b, c are connected schedules, x, y, z are constants, s is the step index, and numpy and torch are available. Because the formula is executed as code, formula text in someone else's workflow should be treated as code too.",
+"use": "To write a custom schedule or combine schedules with a formula.",
+"sure": true,
+"source": "sigmas.py:821"
+},
+{
+"node": "Sigmas Math3",
+"group": "Formulas, ranges and blending",
+"does": "Does the same as Sigmas Math1 with three separate formulas and three outputs, each with its own optional rescale. The formulas run through Python's eval, so they should be treated as code.",
+"use": "To make three related schedules from shared inputs.",
+"sure": true,
+"source": "sigmas.py:882"
+},
+{
+"node": "Sigmas Modulus",
+"group": "Arithmetic",
+"does": "Gives the remainder of each value after dividing by divisor, using Python's % rule, where the result takes the divisor's sign.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:634"
+},
+{
+"node": "Sigmas Mult",
+"group": "Arithmetic",
+"does": "Multiplies every value by a number, and also by a second schedule if one is connected.",
+"use": "To scale a schedule up or down.",
+"sure": true,
+"source": "sigmas.py:608"
+},
+{
+"node": "Sigmas Noise Inversion",
+"group": "Cutting and joining",
+"does": "Makes two schedules for unsampling: a flipped low-to-high one with a 0 added at the end, and the original with a 0 added at both ends. A code comment says the padding zeros stop the model's noise scaling, so it returns an epsilon prediction rather than a denoised image.",
+"use": "For unsampling: per the node's description, connect sigmas_fwd to the unsampling node and sigmas_rev to the sampling node after it.",
+"sure": true,
+"source": "sigmas.py:271"
+},
+{
+"node": "Sigmas NormalizingFlows",
+"group": "Chaos and science-themed curves",
+"does": "Starts from a straight line and applies several seeded random affine, planar, radial or RealNVP-style transforms, then rescales so it starts and ends on the chosen values. Nothing is trained, the transforms are random, and setting the seed also reseeds torch's global random generator.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3908"
+},
+{
+"node": "Sigmas Pad",
+"group": "Cutting and joining",
+"does": "Adds one chosen value to the end of the schedule.",
+"use": "To add a closing value such as 0.",
+"sure": true,
+"source": "sigmas.py:452"
+},
+{
+"node": "Sigmas Percentile",
+"group": "Formulas, ranges and blending",
+"does": "Finds the values at two percentiles of the schedule and maps that range to target_min and target_max. Values outside the range are clipped if clip_outliers is on and left to overshoot if not.",
+"use": "To rescale a schedule while ignoring its extremes.",
+"sure": true,
+"source": "sigmas.py:1751"
+},
+{
+"node": "Sigmas PersistentHomology",
+"group": "Chaos and science-themed curves",
+"does": "Makes a schedule from a chosen curve multiplied by a bar-count pattern built from birth and death densities; a code comment calls this a simulation, and no topology is computed from data. Because the pattern is 0 at the last step, the schedule stops short of end_value.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3844"
+},
+{
+"node": "Sigmas Power",
+"group": "Arithmetic",
+"does": "Raises every value to a chosen power.",
+"use": "To bend the curve of a schedule.",
+"sure": true,
+"source": "sigmas.py:694"
+},
+{
+"node": "Sigmas QuantileNorm",
+"group": "Reshaping curves",
+"does": "Ranks the values and replaces each with the matching point from a target distribution: uniform, normal, exponential, logistic, or a connected reference schedule. The normal, exponential and logistic targets use unseeded random numbers, so results can differ between runs.",
+"use": "To make one schedule's values follow another's distribution.",
+"sure": true,
+"source": "sigmas.py:1859"
+},
+{
+"node": "Sigmas Quotient",
+"group": "Arithmetic",
+"does": "Divides each value by divisor and rounds down to a whole number.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:654"
+},
+{
+"node": "Sigmas ReactionDiffusion",
+"group": "Chaos and science-themed curves",
+"does": "Treats the schedule as a 1D chemical pattern and simulates Gray-Scott, FitzHugh-Nagumo or Brusselator equations for a set number of rounds with wrap-around ends, returning the first component. Gray-Scott, the default, uses fixed feed and kill rates, so param_a and param_b only affect the other two.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2122"
+},
+{
+"node": "Sigmas Recast",
+"group": "Precision",
+"does": "Converts a sigma schedule to 16, 32 or 64-bit floats and can also set that as PyTorch's global default type.",
+"use": "When a noise schedule needs to match the precision of the rest of the workflow.",
+"sure": true,
+"source": "sigmas.py:27"
+},
+{
+"node": "Sigmas Resample",
+"group": "Reshaping curves",
+"does": "Changes a schedule to a new length by linear, nearest, polynomial, exponential (log space) or power-law fitting, or by training a tiny neural network for 5000 rounds on the schedule on each run. It can then rescale the result to the original start and end; the log-based modes don't suit a schedule ending in exactly 0.",
+"use": "To get a schedule of the same shape with more or fewer steps.",
+"sure": true,
+"source": "sigmas.py:121"
+},
+{
+"node": "Sigmas Rescale",
+"group": "Formulas, ranges and blending",
+"does": "Stretches a schedule so its highest value becomes start and its lowest becomes end, which flips it if those are swapped.",
+"use": "Per its description, to set denoise by noise level rather than by slicing steps, or to flip a schedule.",
+"sure": true,
+"source": "sigmas.py:773"
+},
+{
+"node": "Sigmas RiemannianFlow",
+"group": "Chaos and science-themed curves",
+"does": "Is meant to make a schedule from start_value to end_value along a curved-space path. As written only euclidean (a straight line) and lorentzian run: hyperbolic, the default, and spherical pass plain numbers to torch functions that reject them, so they would raise an error, and lorentzian reaches infinity at curvature 1 or above.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3705"
+},
+{
+"node": "Sigmas SetFloor",
+"group": "Floors and cleanup",
+"does": "Replaces every value at or below floor with new_floor.",
+"use": "To lift or reset the lowest noise levels.",
+"sure": true,
+"source": "sigmas.py:493"
+},
+{
+"node": "Sigmas Sigmoid",
+"group": "Reshaping curves",
+"does": "Runs values through a logistic, tanh, softsign, hard-swish, mish or swish function after applying gain and offset, then by default stretches the result back to the input's range.",
+"use": "To squash a schedule into an S-curve or similar shape.",
+"sure": true,
+"source": "sigmas.py:1435"
+},
+{
+"node": "Sigmas SmoothStep",
+"group": "Reshaping curves",
+"does": "Clamps values between edge0 and edge1, applies a smoothstep or smootherstep curve, and scales back to that range.",
+"use": "To soften the transition between two noise levels.",
+"sure": true,
+"source": "sigmas.py:3168"
+},
+{
+"node": "Sigmas Split",
+"group": "Cutting and joining",
+"does": "Keeps only the values from position sigmas_start up to, but not including, position sigmas_end. It returns one piece, not two.",
+"use": "To take a slice out of a schedule by step number.",
+"sure": true,
+"source": "sigmas.py:427"
+},
+{
+"node": "Sigmas Split Value",
+"group": "Cutting and joining",
+"does": "Cuts a schedule in two at a noise level instead of a step number, so the high and low outputs share the boundary value. With bias_split_up off, if the very first value is already below split_value, the low output holds only the last value.",
+"use": "To hand high-noise and low-noise parts of a schedule to different samplers or models.",
+"sure": true,
+"source": "sigmas.py:3997"
+},
+{
+"node": "Sigmas SquareRoot",
+"group": "Arithmetic",
+"does": "Takes the square root of each value. Negative values become 0, or with handle_negative on, they get the negated root of their size.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3204"
+},
+{
+"node": "Sigmas Start",
+"group": "Cutting and joining",
+"does": "Drops the values before position sigmas_until and keeps the rest.",
+"use": "To begin a schedule partway through.",
+"sure": true,
+"source": "sigmas.py:406"
+},
+{
+"node": "Sigmas StepwiseMultirate",
+"group": "Schedule makers",
+"does": "Makes a falling schedule from segments, where comma-separated boundaries set where each segment ends and comma-separated rates set each segment's curve (t to the power of rate). It can add a closing 0.",
+"use": "To give different parts of a schedule different rates of fall.",
+"sure": true,
+"source": "sigmas.py:3315"
+},
+{
+"node": "Sigmas TimeStep",
+"group": "Reshaping curves",
+"does": "Builds a new rising curve from step numbers (linear, quadratic, square root or log, with optional decay) and fits it to the input's range. The input's individual values are otherwise ignored, only its length and range are used.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:3243"
+},
+{
+"node": "Sigmas Truncate",
+"group": "Cutting and joining",
+"does": "Keeps the values before position sigmas_until and drops the rest.",
+"use": "To stop a schedule early.",
+"sure": true,
+"source": "sigmas.py:385"
+},
+{
+"node": "Sigmas Unpad",
+"group": "Cutting and joining",
+"does": "Removes the last value of the schedule.",
+"use": "To remove a closing value such as 0.",
+"sure": true,
+"source": "sigmas.py:473"
+},
+{
+"node": "Sigmas Variance Floor",
+"group": "Floors and cleanup",
+"does": "Walks through the schedule and, where the next value is lower than (-1 + sqrt(1 + 4*sigma)) / 2 and above 0, raises it to that limit plus 0.001, printing each swap to the console. Its description warns that it is very hard to get close to 0 this way, because steps become very small below about sigma 0.15 to 0.2.",
+"use": "Per its description, to keep steps from being too large for variance-locked SDE sampling.",
+"sure": true,
+"source": "sigmas.py:307"
+},
+{
+"node": "Sigmas ZetaEta",
+"group": "Special maths functions",
+"does": "Runs offset and scaled values through the Riemann zeta function (scipy) or a truncated Dirichlet eta series, then by default stretches the result back to the input's range. As written, the lerch_phi option passes two plain numbers to torch.pow, which torch rejects, so it would raise an error.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:2473"
+},
+{
+"node": "Sigmas2 Add",
+"group": "Arithmetic",
+"does": "Adds two schedules together, value by value.",
+"use": "To sum two schedules.",
+"sure": true,
+"source": "sigmas.py:753"
+},
+{
+"node": "Sigmas2 Mult",
+"group": "Arithmetic",
+"does": "Multiplies two schedules together, value by value.",
+"use": "To shape one schedule with another.",
+"sure": true,
+"source": "sigmas.py:733"
+},
+{
+"node": "SigmasPreview",
+"group": "Viewing and counting",
+"does": "Draws the list of noise levels as a line graph, saves it as a temporary image and also outputs that image. With print_as_list on, it prints a table of each step's value, normalized value and step size to the console. A code comment says it was adapted from Extraltodeus's sigmas_tools_and_the_golden_scheduler.",
+"use": "To see the shape of a schedule before sampling with it.",
+"sure": true,
+"source": "helper_sigma_preview_image_preproc.py:102"
+},
+{
+"node": "SigmasSchedulePreview",
+"group": "Viewing and counting",
+"does": "Works out, for each step, how far a noisy (SDE) sampler would step down and how much noise it would add back for the chosen noise mode and eta, then plots those curves on a black graph with the settings written on top. It uses the connected sigmas if given, otherwise builds them from the scheduler and steps, and it has no output socket.",
+"use": "To compare how noise_mode, eta and scheduler settings change the steps a sampler takes.",
+"sure": true,
+"source": "helper_sigma_preview_image_preproc.py:695"
+},
+{
+"node": "StableCascade_StageB_Conditioning64",
+"group": "Conditioning tools",
+"does": "Attaches a Stage C latent to the conditioning as the Stable Cascade prior. It is wrapped in the pack's precision casting helper, which can convert tensors to a chosen float precision.",
+"use": "When sampling Stable Cascade Stage B from a Stage C result.",
+"sure": true,
+"source": "conditioning.py:381"
+},
+{
+"node": "StableCascade_StageC_VAEEncode_Exact",
+"group": "VAE and images",
+"does": "Resizes an image with lanczos and center crop to the given width and height times the VAE's downscale ratio, then encodes it, dropping any alpha channel. You set the size in latent units rather than pixels.",
+"use": "When you want a Stable Cascade Stage C latent at a specific latent size.",
+"sure": true,
+"source": "nodes_latents.py:1786"
+},
+{
+"node": "StyleModelApplyStyle",
+"group": "Conditioning tools",
+"does": "Matches the conditioning's feature statistics to a Redux image embedding using whitening-and-coloring (WCT), rather than appending the image tokens as the commented-out older code did. It calls a method only present on the pack's patched Redux encoder, the strength input is not used, and it wraps the returned tuple in another tuple.",
+"use": "The node description says to use it with Flux Redux.",
+"sure": true,
+"source": "conditioning.py:135"
+},
+{
+"node": "Tan Scheduler",
+"group": "Schedule makers",
+"does": "Makes an S-shaped schedule from an arctangent curve, set by slope and offset and stretched between start and end, with an optional closing 0. The sgm switch adds a step and removes it again, so it doesn't change the output, and the default start and end are both 20, which gives a flat line.",
+"use": "",
+"sure": true,
+"source": "sigmas.py:1053"
+},
+{
+"node": "Tan Scheduler 2",
+"group": "Schedule makers",
+"does": "Makes a schedule from two arctangent curves joined at a midpoint step, going from start to middle and then middle to end, each with its own slope and pivot step.",
+"use": "To shape the high-noise and low-noise parts of a schedule separately.",
+"sure": true,
+"source": "sigmas.py:1095"
+},
+{
+"node": "Tan Scheduler 2 Simple",
+"group": "Schedule makers",
+"does": "Makes the same two-curve schedule with pivots given as fractions of the total steps, the midpoint set to their average, and slopes adjusted for step count relative to 40 steps. The same maths is in the pack's bong_tangent scheduler; with both pivots at their default of 1 the second curve is empty, so the schedule stops at middle.",
+"use": "To keep a two-part curve's shape when the step count changes.",
+"sure": true,
+"source": "sigmas.py:1148"
+},
+{
+"node": "TemporalCrossAttnMask",
+"group": "Video frames and temporal masks",
+"does": "Makes a time mask that sets a start and stop frame for cross-attention only. The self-attention slot is an all-zero placeholder, which a code comment says exists to satisfy the stack.",
+"use": "When only the prompt's active frame range needs setting.",
+"sure": true,
+"source": "conditioning.py:1055"
+},
+{
+"node": "TemporalMaskGenerator",
+"group": "Video frames and temporal masks",
+"does": "Makes a small on/off mask over time that is on until a chosen frame and off afterward, or the reverse if inverted. Frame numbers are divided by 4 to convert to latent frames, and the node is marked experimental.",
+"use": "When a video prompt should switch at one frame; the README lists WAN as the temporal conditioning model.",
+"sure": true,
+"source": "conditioning.py:905"
+},
+{
+"node": "TemporalSplitAttnMask",
+"group": "Video frames and temporal masks",
+"does": "Makes a time mask with separate start and stop frames for cross-attention and self-attention, stacked into one output with cross-attention first. Frame numbers are converted to latent frames.",
+"use": "When the prompt and the video's self-attention should be active over different frame ranges.",
+"sure": true,
+"source": "conditioning.py:1003"
+},
+{
+"node": "TemporalSplitAttnMask (Midframe)",
+"group": "Video frames and temporal masks",
+"does": "Makes stacked cross-attention and self-attention time masks that each turn off at a chosen middle frame, with separate invert switches. It is marked experimental.",
+"use": "When attention should switch partway through a clip, with separate switch points.",
+"sure": true,
+"source": "conditioning.py:947"
+},
+{
+"node": "TextBox1",
+"group": "Text and seeds",
+"does": "A multiline text box that outputs what you type as one string.",
+"use": "When a workflow needs typed text on a wire.",
+"sure": true,
+"source": "nodes_misc.py:55"
+},
+{
+"node": "TextBox2",
+"group": "Text and seeds",
+"does": "Two multiline text boxes, each sent to its own string output unchanged.",
+"use": "When you want two separate prompts typed in one node.",
+"sure": true,
+"source": "nodes_misc.py:77"
+},
+{
+"node": "TextBox3",
+"group": "Text and seeds",
+"does": "Three multiline text boxes, each sent to its own string output unchanged.",
+"use": "When you want three separate prompts typed in one node.",
+"sure": true,
+"source": "nodes_misc.py:100"
+},
+{
+"node": "TextBoxConcatenate",
+"group": "Text and seeds",
+"does": "A multiline text box that adds an incoming string after or before the typed text, with an optional separator.",
+"use": "When typed text needs to be combined with text from another node.",
+"sure": true,
+"source": "nodes_misc.py:341"
+},
+{
+"node": "TextConcatenate",
+"group": "Text and seeds",
+"does": "Joins two incoming strings with an optional separator between them.",
+"use": "When two text wires need to become one.",
+"sure": true,
+"source": "nodes_misc.py:316"
+},
+{
+"node": "TextLoadFile",
+"group": "Text and seeds",
+"does": "Lists the .txt files in ComfyUI's input folder and outputs the chosen file's contents as a string. If the file is missing, it prints an error and returns an empty string.",
+"use": "When a prompt lives in a text file.",
+"sure": true,
+"source": "nodes_misc.py:126"
+},
+{
+"node": "TextShuffle",
+"group": "Text and seeds",
+"does": "Splits text on a separator, shuffles the pieces using a seed, and joins them back with the same separator.",
+"use": "When you want a repeatable random reordering of words or phrases.",
+"sure": true,
+"source": "nodes_misc.py:156"
+},
+{
+"node": "TextShuffleAndTruncate",
+"group": "Text and seeds",
+"does": "Shuffles the text by seed, cuts it to a word limit, then outputs versions trimmed to a token limit for CLIP-L, CLIP-G and T5. The clip input is marked optional, but the code reads clip.tokenizer without checking for it being empty.",
+"use": "When a shuffled prompt must also fit text encoder token limits.",
+"sure": true,
+"source": "nodes_misc.py:226"
+},
+{
+"node": "TextTruncateTokens",
+"group": "Text and seeds",
+"does": "Cuts text to a word limit and outputs versions trimmed to separate token limits for CLIP-L, CLIP-G and T5, dropping one word at a time until the tokenized length fits. CLIP-L and CLIP-G start from the full text, T5 from the word-limited text, and the clip input is read before its empty check.",
+"use": "When a prompt must fit each text encoder's token limit.",
+"sure": true,
+"source": "nodes_misc.py:271"
+},
+{
+"node": "TorchCompileModelAura",
+"group": "Compile for speed",
+"does": "Runs torch.compile on every double and single layer of an AuraFlow model and also sets PyTorch's dynamo cache size limit. It raises an error if the model has no such layers.",
+"use": "Use it to compile an AuraFlow model.",
+"sure": true,
+"source": "models.py:1461"
+},
+{
+"node": "TorchCompileModelFluxAdv",
+"group": "Compile for speed",
+"does": "Runs torch.compile on chosen Flux double and single blocks, picked with lists such as 0-18, and attaches them as patches on a copy of the model. It compiles only once per node instance, and the code says it was adapted from kijai's ComfyUI-KJNodes.",
+"use": "Use it to compile only some Flux blocks rather than all of them.",
+"sure": true,
+"source": "models.py:1383"
+},
+{
+"node": "TorchCompileModels",
+"group": "Compile for speed",
+"does": "Looks for the block lists used by Flux, AuraFlow, HiDream, SD3.5 and WAN style models and compiles every block it finds. Any triton_max_block_x above 0 sets the TRITON_MAX_BLOCK_X environment variable to 4096, whatever number was entered.",
+"use": "Use it as the single compile node when the model is one of the listed types.",
+"sure": true,
+"source": "models.py:98"
+},
+{
+"node": "TorchCompileModelSD35",
+"group": "Compile for speed",
+"does": "Runs torch.compile on every joint block of an SD3.5 model and also sets PyTorch's dynamo cache size limit.",
+"use": "Use it to compile an SD3.5 model.",
+"sure": true,
+"source": "models.py:1513"
+},
+{
+"node": "UltraSharkSampler",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Samples Stable Cascade models, setting up the UltraCascade guide for the up stage or the prior and empty negative for Stage B. It declares three outputs but returns only two.",
+"use": "Its description says it is for Stable Cascade and UltraCascade.",
+"sure": true,
+"source": "legacy/samplers.py:681"
+},
+{
+"node": "UltraSharkSampler Tiled",
+"group": "Legacy samplers and options",
+"does": "Deprecated. Samples in tiles using padded, random, random strict or simple layouts, slicing conditioning, ControlNets and optional CLIP vision input for each tile, with batched tiles for Stage B. A code comment says the tiling code is adapted from BlenderNeko's ComfyUI_TiledKSampler.",
+"use": "Its description says it is for UltraCascade.",
+"sure": true,
+"source": "legacy/samplers_tiled.py:488"
+},
+{
+"node": "UNetSave",
+"group": "Swap and save weights",
+"does": "Saves a model to a .safetensors file under ComfyUI's output folder with no text encoder or VAE included, loading it with its patches applied first. It adds model-type metadata for some architectures and stores the workflow unless metadata is disabled.",
+"use": "Use it to save a patched or merged diffusion model on its own.",
+"sure": true,
+"source": "models.py:1255"
+},
+{
+"node": "VAEEncodeAdvanced",
+"group": "VAE and images",
+"does": "Resizes and encodes up to two images with a fixed seed of 42, picks one channel from a mask image and resizes it, and outputs the latents, mask, width, height and an empty latent. The size can come from the inputs or be copied from an image, mask or latent, and a connected latent is passed through in place of the empty one.",
+"use": "When one node should prepare matching image latents, a mask and an empty latent at the same size.",
+"sure": true,
+"source": "helper_sigma_preview_image_preproc.py:191"
+},
+{
+"node": "VAEStyleTransferLatent",
+"group": "VAE and images",
+"does": "Passes a latent and a style latent through a copy of one convolution layer from the VAE, matches their statistics with AdaIN or WCT, and uses a pseudo-inverse of that layer to get back to a latent. It prefers raw_x from state_info when present, and takes different paths for Stable Cascade stage A, standard decoder VAEs and Stage C.",
+"use": "When you want to apply a style latent's statistics without running a sampler.",
+"sure": true,
+"source": "helper_sigma_preview_image_preproc.py:322"
+}
+]

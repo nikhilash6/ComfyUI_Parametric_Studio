@@ -29,7 +29,7 @@ def select(files, excluded):
     """-> (kept, dropped by the exclusion rules, left out because they are not on the allow-list)."""
     keep, drop, off = [], [], []
     for f in files:
-        if excluded(f) or NEVER_IN_ALLOWED_DIRS.search(f) or f in ("scripts/build_processes.py", "scripts/build_crew_notes.py", "scripts/build_family_art.py", "scripts/build_designer_art.py", "scripts/build_crew_art.py", "studio/printify.py"): drop.append(f)
+        if excluded(f) or NEVER_IN_ALLOWED_DIRS.search(f) or f in ("scripts/build_processes.py", "scripts/build_music3_styles.py", "scripts/build_crew_notes.py", "scripts/build_family_art.py", "scripts/build_designer_art.py", "scripts/build_crew_art.py", "studio/printify.py"): drop.append(f)
         elif f in ALLOW_FILES or f.startswith(ALLOW_DIRS): keep.append(f)
         else: off.append(f)
     return keep, drop, off

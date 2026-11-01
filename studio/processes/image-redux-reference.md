@@ -25,8 +25,8 @@ its night test passes". Nothing can be generated. If the author flips the flag:
 ## Optimal settings
 | Setting | Value | Source |
 |---|---|---|
-| Base | `flux/flux_abliterated_transformer.safetensors`, `weight_dtype default` (bf16) | `MODEL` in `image_redux_tools.py`; template `flux1_t2i.api.json`; (earlier commit) |
-| Steps / guidance / sampler | 28 / FluxGuidance 3.5 / euler simple | `MODEL`; capability run flux1_abliterated main arm |
+| Base | a FLUX.1 dev base, `weight_dtype default` (bf16) | `MODEL` in `image_redux_tools.py`; template `flux1_t2i.api.json`; (earlier commit) |
+| Steps / guidance / sampler | 28 / FluxGuidance 3.5 / euler simple | `MODEL`; capability run, main arm |
 | Redux node | core StyleModelApply, `attn_bias`, SigLIP-384 center crop | `STRENGTH_TYPE`, `add_redux` |
 | Strength chips | light 0.3 / medium 0.6 / full 1.0 | `STRENGTHS`. Measured: no usable style window at any value (0.05-0.30) |
 | Variation | full 1.0, no prompt | `runners._run_redux` |

@@ -3,14 +3,25 @@
 > From the author's earlier studio, cleaned for publication: private paths, ports and some lines were removed, so a step may read short and a screen it names may not exist here. Status in this studio: Tested on the author's old stack.
 
 
-**MiniMax Music 3: genre fix landed (2026-10-11, branch `an earlier branch`, KB `MINIMAX_MUSIC3.md` "Genre
-adherence").** the author reported coherent songs that missed the requested genre. Measured cause: the one-line caption
-plus a lone `[Instrumental]` / empty lyric (instrumentals stop at 13-34 s of a 40 s ceiling and drift, e.g. trap came
-out as bossa nova) and the weak AR guidance; the pruned text encoder is lossless. Fix: the prompt box is built into
-the official 3-block caption (Global Metadata / Vocal Details / Arrangement, `studio/music3_caption.py`; an enhanced
-or hand-written 3-block caption is kept) and the AR guidance `cfg_scale` is 3.0 (DiT stays 1.7). CLAP zero-shot genre
-top-1 on 6 genres x 3 clips: 94 % (top-3 100 %, tempo in range 83 %) vs 67-72 % for the old inputs. dfserve was retired
-on 2026-10-12: `df:minimax_music:music` now renders this same ComfyUI graph, so it has the fix too.
+## What runs in this studio
+The **Music** goal runs MiniMax Music 3 and nothing else, through `workflows/music3_api.json`: AR `cfg_scale` 1.7, top_k 50, KSampler 30 euler/simple cfg 1.7. The prompt box goes to the model as written, whether that is one line of tags or a full caption, and the lyrics box goes as written too. No song has been rendered with the style library yet.
+
+The other engines below are the earlier studio's comparison, kept as evidence. Use them to judge the models, not as a list of what this screen offers.
+
+**Style library.** Under the prompt box you can search or browse style families and pick a style card. The card puts the style's name, voice, key and typical BPM in front of your own tags, and your own tags, BPM and key stay. Studio-authored styles are marked "studio-authored, untested". The data is `studio/music3_styles.json`, served by `studio/music_styles.py`; the picker is `studio/web/music_styles.js` with its logic in `studio/web/music_styles_logic.js`. Details: [music-video.md](music-video.md).
+
+**What the earlier studio measured on genre.** It was asked about songs that missed the requested genre, and tested 6 genres over 3 clips each (n = 18 per arm), judged only by CLAP zero-shot, with nobody listening:
+
+| Inputs | Genre top-1 (6 labels) | Genre top-1 (28 labels) | Tempo in range | Instrumentals stopping early |
+|---|---|---|---|---|
+| Prompt box as caption, empty lyrics, AR 1.7 (closest to this studio) | 72 % | 11 % | 28 % | 11 of 12 |
+| One-line caption, lone `[Instrumental]`, AR 1.7 | 67 % | 28 % | 33 % | 9 of 12 |
+| The same one-liner at AR 3.0 (n = 6, stopped early) | 50 % | 17 % | 67 % | 3 of 3 |
+| 3-block caption, instrumental tag layout, AR 1.5 | 89 % | 67 % | 44 % | 2 of 12 |
+| 3-block caption, instrumental tag layout, AR 3.0 | 94 % | 72 % | 83 % | 1 of 12 |
+| 3-block caption, instrumental tag layout, AR 4.5 | 100 % | 83 % | 56 % | 0 of 12 |
+
+So the 94 % came from three changes together, and the caption format did most of it: AR 3.0 did not rescue a one-line caption. This studio has neither the caption builder nor AR 3.0. Expect a card's genre and BPM to be followed less reliably than that 94 %, until someone tests it here.
 
 ## Which engine
 | You want | Pick | Why (evidence below) |
@@ -31,44 +42,26 @@ on 2026-10-12: `df:minimax_music:music` now renders this same ComfyUI graph, so 
 | YuE2-3B | weights CC BY-NC 4.0 + a creator permission; code Apache-2.0 | individual creators may monetise outputs; companies need a licence from M-A-P |
 | YuE2 cover (YuE2-3B + SheetSage2) | weights CC BY-NC 4.0; code Apache-2.0 | as YuE2-3B; a cover also needs a cover / mechanical licence from the source song's rights holders (informational) |
 
-## Inputs in the studio
-- **Prompt** = the sound. ACE: comma tags (genre, instruments, vocal type, mood). Music 3: the three-block caption
-  (`Global Metadata:` / `Vocal Details:` / `Arrangement:`); ✨ enhance writes it (Music 3 only: the other engines are
-  never enhanced because there is no guide for their formats). YuE2: one style line. SA3: plain description.
-- **lyrics** (not SA3) = the words with `[verse]` / `[chorus]` / `[bridge]` tags, each tag on its own line. Ordinals
-  (`[Verse 1]`) are removed and text after a tag on the same line is moved to its own line (the mm3.py rule: it is
-  not sung otherwise).
-- **vocals / instrumental** (not SA3). Vocals need lyrics (the submit is refused otherwise). Instrumental per engine:
-  Music 3 gets only `[intro]`/`[instrumental]`/`[solo]`/`[outro]` tags plus "No vocals. Purely instrumental." in the
-  caption (tested: 0 sung words); ACE gets `[Instrumental]` (template default); YuE2 gets "no vocals, instrumental"
-  in the style and non-vocal tags (community workaround: it may still sing).
-- **Dubstep family (2026-10-17, studio-authored, untested).** When a Music 3 prompt's *first* comma tag names a variant
-  (dubstep, brostep, riddim, briddim, liquid riddim, tearout, deathstep, drumstep, chillstep, hybrid trap / trapstep, colour bass, post-dubstep, future garage, moombahcore; "melodic dubstep"
-  and "future bass" are official and not routed), the studio replaces the tag builder's generic lines (Sonics, Groove, Primary)
-  with that variant's recipe from `config/music3_styles_studio.json` and adds its typical BPM when you gave none; your own tags,
-  BPM and key stay. The job text shows `studio_style` with the note. A structured (pasted or enhanced) caption is never touched.
-  When the variant's first card is instrumental-led the Vocals chip starts on Instrumental unless you picked it (`studio/music_variants.js`,
-  read in `Composer.js`).
-  The same styles are full subgenres in the Music video maker and Song recreate ([music-video.md](music-video.md)). Code:
-  `studio/music3_studio.py` (`enrich_caption`), called from `music.plan`.
-- **seconds**: exact for ACE and SA3; a ceiling for Music 3 and YuE2 (they may stop early).
-- **bpm / key**: ACE takes them as metadata (auto = "NN bpm" / "X major" in your tags, else the template's 120 / A
-  and scale is S.`; YuE2 and SA3 get ", N BPM, K" appended to the style / prompt.
-- **language** (ACE): the lyrics' language code.
+## Inputs in this studio
+- **Prompt** = the sound: comma tags (genre first, then voice, instruments, mood, key, BPM), or a full three-block caption (`Global Metadata` / `Vocal Details` / `Arrangement`). A style card fills tags. A full caption is left alone by the card.
+- **Lyrics** = the words with `[verse]` / `[chorus]` / `[bridge]` tags, each tag on its own line. They reach the model as you type them, so remove ordinals like `[Verse 1]` yourself and keep text off the tag line.
+- **Instrumental.** The box says to leave the lyrics empty. The earlier studio measured that as the weak path (see the table above). Its better layout was tags only, one per line, for example `[intro]`, `[instrumental]`, `[solo]`, `[instrumental]`, `[outro]`, plus "No vocals. Purely instrumental." in the prompt. You can type both here. It is unmeasured on this studio.
+- **Studio-authored dubstep family.** Search "dubstep" in the style library: see [music-video.md](music-video.md). The tags are the only thing a card adds. The earlier studio's automatic rewrite of a dubstep prompt is not here.
+- **Seconds** is a ceiling for Music 3, not a target: it may stop early.
+- **BPM and key** have no control of their own: they are words in the prompt. On the earlier stack Music 3 hit the BPM target on 1 of 6 styles, and the key on 5 of 6 plus one relative key.
 
-## Best settings (the defaults file; "tested" = our renders, "documented" = the official card / template)
+## Best settings ("tested" = renders on the earlier stack, "documented" = the official card / template)
 | Engine | Values | Source |
 |---|---|---|
-| Music 3 | pruned bf16 TE, AR cfg_scale 1.7, top_k 50, KSampler 30 euler/simple cfg 1.7, tiled decode (1536/64) | documented: official template `audio_minimax_music_3.json`; tested: music_knowledge 6/6, 30.2 GB peak at 130 s; bf16 over int8 tested (int8 34 % slower, audio diverges). **Genre adherence not validated.** |
-| ACE XL turbo | 8 steps euler/simple, cfg 1, AuraFlow shift 3, LM cfg 2.0 / temperature 0.85 / top_p 0.9, time signature 4 | documented: HF card (8 steps, no CFG), node defaults; tested: pp `acestep15_xl` template + music_knowledge 6/6 |
+| Music 3 | pruned bf16 TE, AR cfg_scale 1.7, top_k 50, KSampler 30 euler/simple cfg 1.7, tiled decode (1536/64) | documented: the official ComfyUI Music 3 template; tested: music_knowledge 6/6, 30.2 GB peak at 130 s; bf16 over int8 tested (int8 34 % slower, audio diverges). These are the values in this studio. **Genre adherence not validated here.** |
+| ACE XL turbo | 8 steps euler/simple, cfg 1, AuraFlow shift 3, LM cfg 2.0 / temperature 0.85 / top_p 0.9, time signature 4 | documented: HF card (8 steps, no CFG), node defaults; tested: music_knowledge 6/6 |
 | ACE XL base | 50 steps euler/simple, cfg 7, APG eta 0 / norm 2.5 / momentum -0.75, shift 3 | documented: ACE's APG constants (research music.md); tested: music_knowledge 6/6 rendered |
 | YuE2-3B | ABC full: temperature 0.7, top_p 0.9, top_k 30, repetition 1.005; music: 1.0 / 0.95 / 100 / 1.2, cfg 1.0; KSampler 32 dpm_2 sgm_uniform | documented: Comfy core YuE2 template; tested: music_knowledge 6/6 |
 | Stable Audio 3 medium | 8 steps lcm/simple, cfg 1, ZeroOut negative, t5gemma TE | documented: HF card (8 steps, cfg 1.0), Pixaroma EP19; tested: one 30 s render |
 
-Change any of these in `config/studio_music.json` (per engine, whitelisted keys, range-checked; anything else is
-ignored and named on the result as `defaults_ignored`). `COMFY_STUDIO_MUSIC_DEFAULTS` points at another copy.
+To change a Music 3 value here, edit `workflows/music3_api.json`. There is no separate defaults file and no per-engine override in this studio.
 
-## Time and VRAM (ComfyUI  a local port, studio preflight: peak + 4 GiB free, idle ports)
+## Time and VRAM (measured on the earlier stack)
 | Engine | Time | Peak used by the preflight |
 |---|---|---|
 | ACE XL turbo | 10-42 s per 2-min song | 24 GB (research estimate; card: >= 20 GB without offload) |
@@ -93,24 +86,20 @@ distractors), 3 x 10 s windows per track. Rank of the target label (1 = best):
 
 Stable Audio 3 (one render, orchestral prompt): orchestral ranked 1, margin 0.19. Reading: no engine clearly beats
 another; hip-hop (read as r&b) and metal (read as punk rock) miss for every engine, and "acoustic soul ballad" pulls
-many tracks, so part of it is label bias. **Low confidence; nobody listened.** Script:
-`scripts/chatbox/music_genre_clap.py`.
+many tracks, so part of it is label bias. **Low confidence; nobody listened.** The scoring script belongs to the earlier studio and is not part of this one.
 
 ## Not in the studio (and why)
-- HeartMuLa: removed by author 2026-10-11.
-- **Stable Audio 3 small SFX**: weights on disk, never rendered here; an SFX model.
-- **YuE2 cover** (SheetSage2 melody -> new style): built 2026-10-17 as `music:yue2_cover` and the Song recreate engine "YuE2 cover" (recipe; one 25 s smoke render measured, nobody listened): [music-yue2-cover.md](music-yue2-cover.md).
-- **SoulX-Singer**: a singing voice swap, not text-to-music; would need the Voice tab's consent gate.
-- **YuE (v1)**: not on disk (YuE2 replaced it).
+- ACE-Step, Stable Audio 3 and YuE2 are not goals here. Their rows above are evidence from the earlier stack. ACE-Step and YuE2 have family pages.
+- HeartMuLa: removed by the author on the earlier stack.
+- **Stable Audio 3 small SFX**: never rendered; an SFX model.
+- **YuE2 cover** (SheetSage2 melody -> new style): one 25 s smoke render on the earlier stack, nobody listened: [music-yue2-cover.md](music-yue2-cover.md).
+- **SoulX-Singer**: a singing voice swap, not text-to-music.
+- **YuE (v1)**: YuE2 replaced it.
 
 ## Guards
-Prompt and lyrics go through the text guard (Layer 1) at submit and again on the final prompt; every output goes
-through the output guard (exactly one audio stream); download / publish through `scrub.publish_file` (TRIBE gate on
-publish). Nothing here changes a guard.
+Prompt and lyrics go through the safe-for-work check (`studio/sfw.py`) when you submit. A style card goes through the same check as anything you type. The library itself was filtered for this edition when it was built.
 
 ## Sources
-- `a local folder`, `run_info.json` (head-to-head, graphs).
-- `a local folder` `acestep()` + `workflows/generated/acestep15_xl_api.json`.
 - https://huggingface.co/ACE-Step/acestep-v15-xl-turbo · https://github.com/ace-step/ACE-Step-1.5 ·
   https://huggingface.co/MiniMaxAI/MiniMax-Music3 · https://huggingface.co/m-a-p/YuE2-3B ·
-  https://github.com/multimodal-art-projection/YuE · https://huggingface.co/stabilityai/stable-audio-3-medium ·
+  https://github.com/multimodal-art-projection/YuE · https://huggingface.co/stabilityai/stable-audio-3-medium

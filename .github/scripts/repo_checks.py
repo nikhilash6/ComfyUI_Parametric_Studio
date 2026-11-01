@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 AGPL_SHA256 = "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"  # gnu.org/licenses/agpl-3.0.txt
 VENDOR_LICENCES = ["studio/web/vendor/LICENSE-preact.txt", "studio/web/vendor/LICENSE-htm.txt", "studio/web/vendor/LICENSE-three.txt",
-                   "psn/subagents/playbooks/LICENSE-awesome-claude-agents.txt", "studio/web/vendor/fonts/LICENSE-Archivo-OFL.txt", "studio/web/vendor/fonts/LICENSE-Inter-OFL.txt"]
+                   "psn/subagents/playbooks/LICENSE-awesome-claude-agents.txt", "studio/LICENSE-MiniMax-Music3.txt", "studio/web/vendor/fonts/LICENSE-Archivo-OFL.txt", "studio/web/vendor/fonts/LICENSE-Inter-OFL.txt"]
 SECRETS = {"hf_token": r"\bhf_[A-Za-z0-9]{30,}\b", "github_token": r"\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{36}\b|\bgithub_pat_[A-Za-z0-9_]{40,}",
            "private_key": r"-----BEGIN [A-Z ]*PRIVATE KEY-----", "aws_key": r"\bAKIA[0-9A-Z]{16}\b", "google_key": r"\bAIza[0-9A-Za-z_\-]{35}\b"}
 SKIP_SECRETS = ("tests/", "extended_candidates/tests/")     # fixtures carry fake keys on purpose
@@ -26,7 +26,7 @@ EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-
 EMAIL_OK = re.compile(r"@(?:[\w-]+\.)*(?:example\.(?:com|org|net)|example|test|invalid|localhost|api\.telegram\.org|github\.com|users\.noreply\.github\.com)$|\.service$|\.(?:png|jpe?g|webp|svg|js|mjs|css)$", re.I)
 PRIVATE_TEXT = {"business rate": r"\$\s?\d[\d,.]*\s?(?:/|per\s)\s?(?:hr|hour|day|mo|month|min|video|post|sub)\b", "owner's dated note": r"\bowner 20\d\d-\d\d", "private library entry": r"yt-thumbnail-brief",
                 "shop id": r"\b(?:shop|store|seller)[_ -]?id\s*[:=]\s*\S+|\b[\w-]+\.myshopify\.com\b"}
-EMAIL_SKIP = ("studio/web/vendor/", "psn/subagents/playbooks/")      # third-party text carries its authors' and its examples' addresses
+EMAIL_SKIP = ("studio/web/vendor/", "psn/subagents/playbooks/", "studio/LICENSE-MiniMax-Music3.txt")      # third-party text carries its authors' and its examples' addresses
 
 
 def excluded(f):

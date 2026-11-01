@@ -260,7 +260,7 @@ def test_offline_comfyui_is_not_reported_as_busy(api, monkeypatch):
 
 def test_answers_from_notes_carry_no_paths_or_markup():
     from studio.crew_api import public_text as P
-    assert P("See earlier-studio/docs/research/klein.md for **steps**") == "See for steps"
+    assert P("See old-backend/docs/research/klein.md for **steps**") == "See for steps"
     box = "/" + "home/someone/notes/a.md"; assert box not in P("from " + box) and P("# Title\n- one `two`") == "Title\none two"
     assert P("read https://example.com/a/b/c.md and and/or/else") == "read https://example.com/a/b/c.md and and/or/else"
 

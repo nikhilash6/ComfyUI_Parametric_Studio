@@ -51,7 +51,7 @@ runs: one song start to finish (its review stop included), then the next; no wri
 nothing else; **Retry** puts it back at the stage it failed in.
 
 ### Time: measured history, estimate, measured run
-The plan's step times come from **this box's own history**, not guesses (`earlier_studio/studio/data/songrecreate_timings.json`, built read-only by
+The plan's step times come from **this box's own history**, not guesses (the earlier studio's songrecreate_timings.json, built read-only by
 `tools/build_songrecreate_timings.py` from the studio job files and the song recreate runs; re-run it to refresh). Each number in the plan's fold-out says
 **"measured, n=..., date"** or **"estimate, no samples on this box"**; a step falls back to its old guess only when it has no samples. Built 2026-10-17:
 

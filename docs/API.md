@@ -8,7 +8,7 @@ Every graph the studio runs is plain ComfyUI API format, in `workflows/` and ove
 | `GET /api/graphs/{goal}` | The API-format graph, and the `${names}` the studio fills in |
 | `POST /api/graph` | The filled graph for your prompt and options, without running it |
 | `POST /api/generate` | Runs it. Returns a job id |
-| `GET /api/jobs/{id}` | Status and output files |
+| `GET /api/jobs/{id}` | Status and output files. A job ComfyUI no longer knows (it restarted) comes back as `status: "error"` with `lost: true` |
 | `POST /api/upload` | Upload an image, video or audio input |
 | `GET /api/goals` | Goals with their options and defaults |
 

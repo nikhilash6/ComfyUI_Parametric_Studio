@@ -59,7 +59,7 @@ def cancel(jid):
     try: JOBS[jid]["job"].cancel()
     except Exception: pass
 def history():
-    return [{"job": j, "files": s["files"], **{k: s[k] for k in ("goal", "prompt", "seed", "options") if k in s}} for j, s in JOBS.items() if s.get("status") == "done" and s["files"]]
+    return [{"job": j, "files": s["files"], **{k: s[k] for k in ("goal", "prompt", "seed", "options", "started") if k in s}} for j, s in JOBS.items() if s.get("status") == "done" and s["files"]]
 
 @router.get("/api/sdk_output/{jid}/{name}")
 def sdk_output(jid: str, name: str):

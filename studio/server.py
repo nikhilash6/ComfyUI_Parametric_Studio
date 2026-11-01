@@ -62,7 +62,7 @@ def graph_of(goal: str):
 def recipe_graphs(rid: str):
     """The graph behind each step of a recipe. Steps with no goal (planning, ffmpeg) have none."""
     from studio import recipes as R
-    d = R.load(); rows = d.get("recipes", d) if isinstance(d, dict) else d; r = next((x for x in rows if x.get("id") == rid), None)
+    r = R.find(rid)
     if not r: raise HTTPException(404, "no such recipe")
     return {"id": rid, "title": r.get("title"), "steps": [{"label": s.get("label") or s.get("id"), "type": s.get("type"), "goal": s.get("goal"), "graph": json.load(open(os.path.join(WF, GOALS[s["goal"]]["template"]))) if s.get("goal") in GOALS else None} for s in r.get("steps", [])]}
 
@@ -80,7 +80,7 @@ def _goal(b):
     if not isinstance(goal, str) or goal not in GOALS: raise HTTPException(400, "unknown goal")
     return goal
 
-def _graph(goal, req, image_name=None):
+def _graph(goal, req, image_name=None, running=False):
     sfw.check(*(req.get(k) for k in ("prompt", "lyrics", "target", "scene")))
     for k in ("prompt", "lyrics", "target", "scene", "negative"):
         if req.get(k) is not None and not isinstance(req[k], str): raise HTTPException(400, f"{k} must be text")
@@ -95,10 +95,19 @@ def _graph(goal, req, image_name=None):
     miss = placeholders(tpl) - set(vals)
     if miss: raise HTTPException(500, f"template needs {sorted(miss)}")
     graph = fill(tpl, vals)
+    if req.get("lora"):
+        from studio import loras
+        graph = loras.apply_to_graph(graph, req["lora"])                         # one curated LoRA and its tuned settings, by id
+    from studio import rotation
+    if running: rotation.require_local(graph)                                     # before names resolve: a cloud-only model must not get swapped for a look-alike
+    rotation.touch(graph)
+    rep = []
     try:
         from studio.names import resolve_names
-        graph, _rep = resolve_names(graph, comfy("/object_info", timeout=20))        # portable across boxes: map file names onto what is installed
+        graph, rep = resolve_names(graph, comfy("/object_info", timeout=20))         # portable across boxes: map file names onto what is installed, the same model only
     except Exception: pass
+    missing = sorted({r["was"] for r in rep if r["now"] is None})
+    if running and missing and not backends.use_sdk(): raise HTTPException(400, "This needs model files that are not installed: " + ", ".join(missing[:4]) + ". The studio will not run a different model in their place.")     # SDK graphs run elsewhere: this box's list says nothing about them
     return graph, vals, opts
 
 @app.post("/api/graph")
@@ -116,11 +125,10 @@ async def generate(req: Request):
     return await run_in_threadpool(_generate, await _body(req))
 
 def _generate(b):
-    goal = _goal(b); g, vals, opts = _graph(goal, b, b.get("image"))
+    goal = _goal(b); g, vals, opts = _graph(goal, b, b.get("image"), running=True)
     if backends.use_sdk():
-        from studio.goals import COMFY_INPUT
         meta = {"goal": goal, "prompt": vals["prompt"], "seed": vals["seed"], "options": opts, "graph_hash": hashlib.sha256(json.dumps(g, sort_keys=True).encode()).hexdigest()[:12]}
-        try: jid = backends.submit(g, [b.get("image"), b.get("video"), b.get("last_image")], COMFY_INPUT, meta)
+        try: jid = backends.submit(g, [b.get("image"), b.get("video"), b.get("last_image")], paths.comfy_input(True), meta)
         except Exception as e: raise HTTPException(402 if type(e).__name__ == "InsufficientCredits" else 400, f"Comfy SDK: {type(e).__name__}: {str(e)[:300]}") from None
         return {"job": jid, "seed": vals["seed"], "options": opts, "graph_hash": meta["graph_hash"]}
     if not comfy_up(): raise HTTPException(503, f"ComfyUI is not reachable at {COMFY}")
@@ -146,31 +154,42 @@ def _rejected(e):
     return HTTPException(400, "ComfyUI rejected the graph: " + msg + " " + nodes)
 
 def _files(hist):
+    """What a job made. ComfyUI's LoadVideo echoes the uploaded clip as an output of type "input" and previews are "temp"; neither is a result, and the first file in this list is what Create plays."""
     out = []
     for nid, o in (hist.get("outputs") or {}).items():
         for items in o.values():
             if isinstance(items, list):
                 for it in items:
-                    if isinstance(it, dict) and it.get("filename") and it.get("type") != "temp":
+                    if isinstance(it, dict) and it.get("filename") and it.get("type") not in ("temp", "input"):
                         out.append({"filename": it["filename"], "subfolder": it.get("subfolder", ""), "type": it.get("type", "output"), "url": "/api/view?" + urllib.parse.urlencode({"filename": it["filename"], "subfolder": it.get("subfolder", ""), "type": it.get("type", "output")}), "kind": "video" if it["filename"].lower().endswith((".mp4", ".webm", ".gif", ".mov")) else "audio" if it["filename"].lower().endswith((".wav", ".mp3", ".flac", ".opus", ".ogg", ".m4a")) else "image"})
     return out
+
+def _ended(h, meta):
+    """The answer for a job ComfyUI's history holds, or None if it has not ended."""
+    st = (h or {}).get("status") or {}
+    if st.get("status_str") == "error":
+        msg = next((i.get("exception_message", "") for k, i in st.get("messages", []) if k == "execution_error"), "")
+        return {"status": "error", "error": msg.strip()[:400], **meta}
+    if h and (st.get("completed") or st.get("status_str") == "success"): return {"status": "done", "files": _files(h), "seconds": round(time.time() - meta.get("started", time.time()), 1), **meta}
+    return None
 
 @app.get("/api/jobs/{jid}")
 def job(jid: str):
     if jid in backends.JOBS: return backends.status(jid)
-    meta = JOBS.get(jid, {})
-    try: h = comfy(f"/history/{urllib.parse.quote(jid)}").get(jid)
+    meta = JOBS.get(jid, {}); asked = False
+    try: h = comfy(f"/history/{urllib.parse.quote(jid)}").get(jid); asked = True
     except Exception: h = None
-    if h:
-        st = h.get("status") or {}
-        if st.get("status_str") == "error":
-            msg = next((i.get("exception_message", "") for k, i in st.get("messages", []) if k == "execution_error"), "")
-            return {"status": "error", "error": msg.strip()[:400], **meta}
-        if st.get("completed") or st.get("status_str") == "success": return {"status": "done", "files": _files(h), "seconds": round(time.time() - meta.get("started", time.time()), 1), **meta}
+    ended = _ended(h, meta)
+    if ended: return ended
     try:
         q = comfy("/queue", timeout=5); running = any(len(e) > 1 and e[1] == jid for e in q.get("queue_running", [])); pending = [i for i, e in enumerate(q.get("queue_pending", [])) if len(e) > 1 and e[1] == jid]
-        return {"status": "running" if running else "queued", "position": (pending[0] + 1) if pending else 0, "elapsed": round(time.time() - meta.get("started", time.time()), 1), **meta}
-    except Exception: return {"status": "unknown", "detail": "ComfyUI is not reachable, so this job's state is unknown", **meta}          # the page keeps polling on 'unknown' and recovers when ComfyUI is back
+        if running or pending or h: return {"status": "running" if running else "queued", "position": (pending[0] + 1) if pending else 0, "elapsed": round(time.time() - meta.get("started", time.time()), 1), **meta}
+        h = comfy(f"/history/{urllib.parse.quote(jid)}").get(jid)                  # it may have finished between the two questions above; ComfyUI moves a job from queue to history in one step
+        ended = _ended(h, meta)
+        if ended: return ended
+        if asked: return {"status": "error", "lost": True, "error": "ComfyUI no longer knows this job, most likely because it restarted. Nothing is running for it. Run it again.", **meta}      # an error, so every poller stops
+    except Exception: pass
+    return {"status": "unknown", "detail": "ComfyUI is not reachable, so this job's state is unknown", **meta}          # the page keeps polling on 'unknown' and recovers when ComfyUI is back
 
 @app.post("/api/jobs/{jid}/cancel")
 def cancel(jid: str):
@@ -182,13 +201,16 @@ def cancel(jid: str):
     return {"ok": True}
 
 @app.get("/api/view")
-def view(filename: str, subfolder: str = "", type: str = "output"):
+def view(request: Request, filename: str, subfolder: str = "", type: str = "output"):
     if type not in ("output", "input", "temp") or ".." in filename or ".." in subfolder: raise HTTPException(400, "bad path")
+    want = request.headers.get("range", "")          # a browser can only scrub a video when its byte ranges reach ComfyUI and come back
+    ask = urllib.request.Request(COMFY + "/view?" + urllib.parse.urlencode({"filename": filename, "subfolder": subfolder, "type": type}), headers={"Range": want} if re.fullmatch(r"bytes=\d*-\d*", want) else {})
     try:
-        r = urllib.request.urlopen(COMFY + "/view?" + urllib.parse.urlencode({"filename": filename, "subfolder": subfolder, "type": type}), timeout=60)
+        r = urllib.request.urlopen(ask, timeout=60)
     except urllib.error.HTTPError as e: raise HTTPException(404 if e.code == 404 else 502, "file not found" if e.code == 404 else f"ComfyUI answered HTTP {e.code}") from None
     except Exception: raise HTTPException(503, "ComfyUI is not reachable") from None
-    return StreamingResponse(r, media_type=r.headers.get("Content-Type", "application/octet-stream"), headers={"Cache-Control": "public, max-age=3600"})
+    head = {k: r.headers[k] for k in ("Accept-Ranges", "Content-Range", "Content-Length") if r.headers.get(k)}
+    return StreamingResponse(r, status_code=r.status, media_type=r.headers.get("Content-Type", "application/octet-stream"), headers={"Cache-Control": "public, max-age=3600", **head})
 
 @app.post("/api/upload")
 async def upload(file: UploadFile = File(...)):
@@ -211,19 +233,30 @@ def _family_history(limit):
         return families_api.history_rows(limit)
     except Exception: return []
 
+def _ran_at(entry):
+    """When a ComfyUI job started, from its own status messages, in seconds. 0 when it does not say."""
+    for m in (entry.get("status") or {}).get("messages") or []:
+        if isinstance(m, (list, tuple)) and len(m) > 1 and m[0] == "execution_start" and isinstance(m[1], dict) and m[1].get("timestamp"): return m[1]["timestamp"] / 1000
+    return 0
+
+def _newest_first(rows, limit): return sorted(rows, key=lambda r: -(r.get("started") or 0))[:limit]
+
 @app.get("/api/history")
-def history(limit: int = 40):
-    limit = max(1, min(limit, 500))
+def history(limit: int = 40, only: str = ""):
+    """Everything finished, newest first. only=main keeps what this ComfyUI and the SDK made, whose files sit in the studio's output folder: what the timeline can cut, however many family jobs ran since."""
+    limit = max(1, min(limit, 500)); main_only = only == "main"; family = [] if main_only else _family_history(limit)
     try: h = comfy(f"/history?max_items={int(limit)}", timeout=10)
-    except Exception: return (_family_history(limit) + backends.history()[-limit:][::-1])[:limit]
-    rows = []
-    for jid, e in h.items():
-        fs = _files(e)
-        if fs: rows.append({"job": jid, "files": fs, **{k: v for k, v in JOBS.get(jid, {}).items() if k in ("goal", "prompt", "seed", "options")}})
-    try:
-        from studio import recipes as _R; films = _R.library_rows(limit)       # finished recipe films sit next to single renders
-    except Exception: films = []
-    return (films + _family_history(limit) + backends.history()[::-1] + rows[::-1])[:limit]
+    except Exception: return _newest_first(family + backends.history(), limit)
+    rows = []; last = 0
+    for jid, e in h.items():                                                     # ComfyUI lists oldest first, so a job with no time of its own takes the one before it
+        fs = _files(e); meta = JOBS.get(jid, {}); last = _ran_at(e) or meta.get("started") or last
+        if fs: rows.append({"job": jid, "files": fs, "started": last, **{k: v for k, v in meta.items() if k in ("goal", "prompt", "seed", "options")}})
+    films = []
+    if not main_only:
+        try:
+            from studio import recipes as _R; films = _R.library_rows(limit)   # finished recipe films sit next to single renders
+        except Exception: pass
+    return _newest_first(films + family + backends.history() + rows, limit)
 
 # ---------- University
 def _uni_catalogue():
@@ -300,7 +333,7 @@ def _browse_download(b):
 
 # ---------- lanes built in parallel: presets, website builder, crew, 3D
 OUTPUT = Path(paths.output_dir())
-for _mod in ("shot_board", "presets", "site_api", "crew_api", "voice", "packs", "apps", "edits", "prime", "schedule", "github_link", "calibrate", "attach", "models_api", "phone", "families_api", "recipes", "live_api", "atlas", "processes"):
+for _mod in ("shot_board", "presets", "site_api", "crew_api", "voice", "packs", "apps", "edits", "prime", "schedule", "github_link", "calibrate", "attach", "models_api", "phone", "families_api", "recipes", "loras", "live_api", "atlas", "processes", "rotation", "worldkit.api", "vset.api", "music_styles", "train", "sampling_lab"):
     try: app.include_router(__import__(f"studio.{_mod}", fromlist=["router"]).router)
     except Exception as e: print(f"[studio] {_mod} not loaded: {type(e).__name__}: {e}")
 

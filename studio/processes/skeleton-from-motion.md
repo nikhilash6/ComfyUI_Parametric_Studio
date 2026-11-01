@@ -3,7 +3,7 @@
 > From the author's earlier studio, cleaned for publication: private paths, ports and some lines were removed, so a step may read short and a screen it names may not exist here. Status in this studio: Tested on the author's old stack.
 
 
-Status (2026-10-17): **code and tests done (CPU); nothing renders it on the GPU yet.** Code: `earlier_studio/studio/skeleton_from_motion.py`; tests `tests/studio/test_skeleton_from_motion.py` (fake BVH / NPZ fixtures, plus two checks against the real 2026-10-11 Kimodo and GEM-X clips).
+Status (2026-10-17): **code and tests done (CPU); nothing renders it on the GPU yet.** Code: the earlier studio's skeleton_from_motion.py; tests `tests/studio/test_skeleton_from_motion.py` (fake BVH / NPZ fixtures, plus two checks against the real 2026-10-11 Kimodo and GEM-X clips).
 
 ## What it is
 The pose-set "pose control" route (`img:klein_posectl`, [pose-set.md](pose-set.md), `the author's research notes` section 7) feeds Klein 9B + the RefControl pose LoRA two pictures: image 1 = an OpenPose / DWPose skeleton, image 2 = the reference. `studio/pose_skeleton.py` DRAWS that skeleton from a hand-made table of 97 bank poses (a small IK body, 18 keypoints, CPU). A motion clip already holds a real skeleton, so this module turns one frame (or a sequence) of it into the same picture with the same `draw`, colours and BODY_18 order:
@@ -25,7 +25,7 @@ Measured on the real clips (CPU, 2026-10-17): the module's forward kinematics eq
 Orthographic projection of the 3D joints; the hands are pose_skeleton's simple open-ish hands, not tracked fingers; the RefControl LoRA was trained on DWPose maps, so how well it reads any drawn or derived skeleton is **unproven** (proof level recipe; `scripts/pose_set_proof.py` arm D is the test, and the 3D batch's M4 steps produce motion skeletons to look at); a clip of someone walking away is shown walking toward the camera unless `yaw` says otherwise; SMPL needs joints (an NPZ of parameters only is refused with the reason).
 
 ## Seams (nothing below is built; the exact places, so a later change is small)
-**Pose-control route.** Two edits in `earlier_studio/studio/pose_set.py` plus the picker:
+**Pose-control route.** Two edits in the earlier studio's pose_set.py plus the picker:
 1. `Planner.plan` (the `given` poses loop, ~line 951-975): a pose the caller names is a bank id or typed text; an unknown text becomes `{"id": "custom", ...}` and `eng.kind == "posectl"` then refuses any id not in `_skeleton_ids()`. A motion pose needs `{"id": "motion:<file>@<n>", "text": "...", "motion": "<file>", "frame": n}` carried through the picture record, accepted by that check via `skeleton_from_motion.parse_motion_pose_id`.
 2. `Run._skeleton` (~line 1165-1185) calls `pose_skeleton.render_file(pic.pose_id, ...)`: dispatch to `skeleton_from_motion.render_pose_file(pic.pose_id, ...)` when `parse_motion_pose_id(pic.pose_id)` is not None (same arguments, same return shape, `mirror` supported).
 3. UI: a motion picker in the 10-poses dialog (a finished Kimodo / GEM-X / SAM 3D Body job and a frame slider). Not trivial (selection, hiding, anatomy checks assume bank poses), so it was not wired.

@@ -1,5 +1,5 @@
 """Optimize this box: a calibration run. For every goal whose models are installed and whose measured/estimated peak fits in free VRAM (+4 GiB headroom), render one small representative job twice (cold, then warm)
-through the studio itself and record seconds and peak VRAM. The result is the box profile the planner and Prime use instead of estimates. Runs only when ComfyUI is idle, one job at a time, and can be cancelled."""
+through the studio itself and record the seconds. Peak VRAM in the profile is the reference figure from SAMPLES, not a measurement, and only the Models page reads the profile so far. Runs only when ComfyUI is idle, one job at a time, and can be cancelled."""
 import json, os, subprocess, threading, time, urllib.request
 from pathlib import Path
 from fastapi import APIRouter, HTTPException

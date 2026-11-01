@@ -1,0 +1,2830 @@
+{
+"version": 1,
+"kind": "sounds",
+"note": "Ported from the founders' earlier studio. Proof levels are as that studio recorded them; nothing here counts as tested until it is rendered here.",
+"recipes": [
+{
+"id": "snd_hit_cinematic",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Cinematic boom hit",
+"pitch": "For land a reveal, a title, a shock.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Cinematic boom hit",
+"final": true,
+"sound": {
+"title": "Cinematic boom hit",
+"kind": "noise",
+"seconds": 2.2,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "boom",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"tail": 0.8
+}
+}
+],
+"chain": {
+"preset": "big_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_hit_dry",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Dry thud",
+"pitch": "For a punch, a bag drop, a door.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Dry thud",
+"final": true,
+"sound": {
+"title": "Dry thud",
+"kind": "noise",
+"seconds": 0.7,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "thud",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {
+"preset": "punchy"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_hit_double",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Boom, beat, boom",
+"pitch": "For dramatic double take.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Boom, beat, boom",
+"final": true,
+"sound": {
+"title": "Boom, beat, boom",
+"kind": "meme",
+"seconds": 2.6,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "boom",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"tail": 0.5
+}
+},
+{
+"engine": "synth",
+"sound": "boom",
+"at": 0.7,
+"gain_db": -3,
+"params": {
+"pitch": -3,
+"tail": 0.9
+}
+}
+],
+"chain": {
+"preset": "hype_hit"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_hit_blown",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Blown-out loud hit (safety-limited)",
+"pitch": "For the ruined-speaker joke.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Blown-out loud hit (safety-limited)",
+"final": true,
+"sound": {
+"title": "Blown-out loud hit (safety-limited)",
+"kind": "meme",
+"seconds": 1.6,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "slam",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"rattle": 0.9
+}
+}
+],
+"chain": {
+"preset": "blown_out"
+},
+"master": {
+"lufs": -11,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_hit_metal",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Metal pipe clang",
+"pitch": "For a falling pan or pipe.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Metal pipe clang",
+"final": true,
+"sound": {
+"title": "Metal pipe clang",
+"kind": "noise",
+"seconds": 1.8,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "clang",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"ring": 1.2
+}
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_sting_brass",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Dramatic brass stab",
+"pitch": "For a sting after a look to camera.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Dramatic brass stab",
+"final": true,
+"sound": {
+"title": "Dramatic brass stab",
+"kind": "meme",
+"seconds": 1.4,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "stab",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"chord": "minor",
+"hold": 0.4
+}
+}
+],
+"chain": {
+"preset": "big_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_sting_dundun",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Two-hit dun dun",
+"pitch": "For a legal-drama cut.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Two-hit dun dun",
+"final": true,
+"sound": {
+"title": "Two-hit dun dun",
+"kind": "meme",
+"seconds": 2.4,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "stab",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"chord": "power",
+"hold": 0.3
+}
+},
+{
+"engine": "synth",
+"sound": "stab",
+"at": 0.55,
+"gain_db": 0.0,
+"params": {
+"chord": "power",
+"pitch": -2,
+"hold": 0.8
+}
+}
+],
+"chain": {
+"preset": "cave"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_sting_rimshot",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Joke drums (ba-dum-tss)",
+"pitch": "For after a bad joke.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Joke drums (ba-dum-tss)",
+"final": true,
+"sound": {
+"title": "Joke drums (ba-dum-tss)",
+"kind": "meme",
+"seconds": 2.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "rimshot",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_sting_airhorn",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Siren-horn blast",
+"pitch": "For the over-the-top hype hit.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Siren-horn blast",
+"final": true,
+"sound": {
+"title": "Siren-horn blast",
+"kind": "meme",
+"seconds": 1.6,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "siren",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"rate": 1.6
+},
+"seconds": 1.2
+},
+{
+"engine": "synth",
+"sound": "crash",
+"at": 0.0,
+"gain_db": -6,
+"params": {}
+}
+],
+"chain": {
+"preset": "megaphone"
+},
+"master": {
+"lufs": -12,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_fail_womp",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Sad brass slide (fail)",
+"pitch": "For something goes wrong.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Sad brass slide (fail)",
+"final": true,
+"sound": {
+"title": "Sad brass slide (fail)",
+"kind": "meme",
+"seconds": 2.6,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "womp",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_fail_buzzer",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Wrong-answer buzzer",
+"pitch": "For a wrong guess.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Wrong-answer buzzer",
+"final": true,
+"sound": {
+"title": "Wrong-answer buzzer",
+"kind": "meme",
+"seconds": 0.9,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "buzzer",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_fail_bonk_womp",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Cartoon bonk, then sad slide",
+"pitch": "For slapstick fail.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Cartoon bonk, then sad slide",
+"final": true,
+"sound": {
+"title": "Cartoon bonk, then sad slide",
+"kind": "meme",
+"seconds": 3.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "bonk",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+},
+{
+"engine": "synth",
+"sound": "womp",
+"at": 0.45,
+"gain_db": -3,
+"params": {
+"tempo": 0.3
+},
+"seconds": 2.4
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_fail_slip",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Banana-peel slip",
+"pitch": "For a slip and a fall.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Banana-peel slip",
+"final": true,
+"sound": {
+"title": "Banana-peel slip",
+"kind": "meme",
+"seconds": 1.8,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "slide_whistle",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"up": 0
+},
+"seconds": 0.7
+},
+{
+"engine": "synth",
+"sound": "thud",
+"at": 0.65,
+"gain_db": -2,
+"params": {
+"pitch": -3
+}
+},
+{
+"engine": "synth",
+"sound": "boing",
+"at": 0.75,
+"gain_db": -6,
+"params": {},
+"seconds": 0.9
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_fail_dial",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Record scratch, then silence",
+"pitch": "For freeze-frame: 'you're probably wondering'.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Record scratch, then silence",
+"final": true,
+"sound": {
+"title": "Record scratch, then silence",
+"kind": "meme",
+"seconds": 2.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "scratch",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 1.1
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_cartoon_boing",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Boing",
+"pitch": "For a jump or a spring.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Boing",
+"final": true,
+"sound": {
+"title": "Boing",
+"kind": "noise",
+"seconds": 1.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "boing",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_cartoon_pop",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Bubble pop",
+"pitch": "For a thought bubble, a notification.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Bubble pop",
+"final": true,
+"sound": {
+"title": "Bubble pop",
+"kind": "noise",
+"seconds": 0.3,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "pop",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_cartoon_splat",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Splat",
+"pitch": "For a pie, a tomato.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Splat",
+"final": true,
+"sound": {
+"title": "Splat",
+"kind": "noise",
+"seconds": 0.8,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "splat",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_cartoon_honk",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Clown honk (double)",
+"pitch": "For a silly arrival.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Clown honk (double)",
+"final": true,
+"sound": {
+"title": "Clown honk (double)",
+"kind": "meme",
+"seconds": 0.9,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "honk",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"double": 1
+}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_cartoon_run",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Scurry away",
+"pitch": "For someone running off.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Scurry away",
+"final": true,
+"sound": {
+"title": "Scurry away",
+"kind": "noise",
+"seconds": 1.2,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "zip",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_tr_whoosh",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Quick whoosh",
+"pitch": "For a swipe or a cut.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Quick whoosh",
+"final": true,
+"sound": {
+"title": "Quick whoosh",
+"kind": "noise",
+"seconds": 0.7,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "whoosh",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_tr_riser_drop",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Riser into a drop",
+"pitch": "For the build before the reveal.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Riser into a drop",
+"final": true,
+"sound": {
+"title": "Riser into a drop",
+"kind": "meme",
+"seconds": 4.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "drop",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 4.0
+}
+],
+"chain": {
+"preset": "hype_hit"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_tr_riser",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Riser (ends on the cut)",
+"pitch": "For the build-up before a cut.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Riser (ends on the cut)",
+"final": true,
+"sound": {
+"title": "Riser (ends on the cut)",
+"kind": "noise",
+"seconds": 3.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "riser",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 3.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_tr_reverse_in",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Reverse suck-in",
+"pitch": "For a pull toward the next shot.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Reverse suck-in",
+"final": true,
+"sound": {
+"title": "Reverse suck-in",
+"kind": "noise",
+"seconds": 2.4,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "snare",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {
+"preset": "reverse_in"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_tr_tape_stop",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Tape stop",
+"pitch": "For the power-down record stop.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Tape stop",
+"final": true,
+"sound": {
+"title": "Tape stop",
+"kind": "noise",
+"seconds": 1.8,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "tape_stop_chord",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 1.8
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_tr_glitch",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Glitch cut",
+"pitch": "For a corrupted-video transition.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Glitch cut",
+"final": true,
+"sound": {
+"title": "Glitch cut",
+"kind": "noise",
+"seconds": 0.9,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "glitch",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"mess": 0.8
+}
+},
+{
+"engine": "synth",
+"sound": "static_burst",
+"at": 0.2,
+"gain_db": -8,
+"params": {},
+"seconds": 0.5
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_ui_notify",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Notification ping",
+"pitch": "For a message arrives.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Notification ping",
+"final": true,
+"sound": {
+"title": "Notification ping",
+"kind": "noise",
+"seconds": 1.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "ping",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_ui_success",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Task done",
+"pitch": "For a win or a level-up.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Task done",
+"final": true,
+"sound": {
+"title": "Task done",
+"kind": "noise",
+"seconds": 1.2,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "success",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_ui_error",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Error buzz",
+"pitch": "For a refused action.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Error buzz",
+"final": true,
+"sound": {
+"title": "Error buzz",
+"kind": "noise",
+"seconds": 0.7,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "error",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_ui_coin",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Coin",
+"pitch": "For a pickup.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Coin",
+"final": true,
+"sound": {
+"title": "Coin",
+"kind": "noise",
+"seconds": 0.6,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "coin",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_ui_powerup",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Power-up",
+"pitch": "For an upgrade.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Power-up",
+"final": true,
+"sound": {
+"title": "Power-up",
+"kind": "noise",
+"seconds": 0.9,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "power_up",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_ui_laser",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Laser pew",
+"pitch": "For a blaster shot.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Laser pew",
+"final": true,
+"sound": {
+"title": "Laser pew",
+"kind": "noise",
+"seconds": 0.5,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "laser",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_ui_8bit_gameover",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "8-bit game over",
+"pitch": "For a retro loss.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "8-bit game over",
+"final": true,
+"sound": {
+"title": "8-bit game over",
+"kind": "meme",
+"seconds": 2.4,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "game_over",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {
+"preset": "eight_bit"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_amb_crickets",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Awkward-silence crickets",
+"pitch": "For a joke that lands in silence.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Awkward-silence crickets",
+"final": true,
+"sound": {
+"title": "Awkward-silence crickets",
+"kind": "meme",
+"seconds": 6.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "crickets",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 6.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": true
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_amb_room",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Empty room tone",
+"pitch": "For a quiet gap.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Empty room tone",
+"final": true,
+"sound": {
+"title": "Empty room tone",
+"kind": "noise",
+"seconds": 8.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "room_tone",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 8.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -23,
+"loop": true
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_amb_rain",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Steady rain",
+"pitch": "For a mood bed.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Steady rain",
+"final": true,
+"sound": {
+"title": "Steady rain",
+"kind": "noise",
+"seconds": 10.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "rain",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 10.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -23,
+"loop": true
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_amb_tension",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Tension drone",
+"pitch": "For something is about to happen.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Tension drone",
+"final": true,
+"sound": {
+"title": "Tension drone",
+"kind": "noise",
+"seconds": 10.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "drone",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 10.0
+},
+{
+"engine": "synth",
+"sound": "heartbeat",
+"at": 0.0,
+"gain_db": -6,
+"params": {},
+"seconds": 10.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -18,
+"loop": true
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_amb_heartbeat",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Heartbeat",
+"pitch": "For fear or anticipation.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Heartbeat",
+"final": true,
+"sound": {
+"title": "Heartbeat",
+"kind": "noise",
+"seconds": 6.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "heartbeat",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"bpm": 90
+},
+"seconds": 6.0
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_amb_phone",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Phone ringing",
+"pitch": "For an unanswered call.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Phone ringing",
+"final": true,
+"sound": {
+"title": "Phone ringing",
+"kind": "noise",
+"seconds": 5.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "phone_ring",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 5.0
+}
+],
+"chain": {
+"preset": "behind_wall"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_amb_knock",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Three knocks",
+"pitch": "For someone is at the door.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Three knocks",
+"final": true,
+"sound": {
+"title": "Three knocks",
+"kind": "noise",
+"seconds": 1.6,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "knock",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {}
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_amb_typing",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Frantic typing",
+"pitch": "For hacking, deadlines.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Frantic typing",
+"final": true,
+"sound": {
+"title": "Frantic typing",
+"kind": "noise",
+"seconds": 4.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "typing",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"speed": 10
+},
+"seconds": 4.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_amb_clock",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Ticking clock",
+"pitch": "For time running out.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Ticking clock",
+"final": true,
+"sound": {
+"title": "Ticking clock",
+"kind": "noise",
+"seconds": 6.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "clock",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 6.0
+}
+],
+"chain": {
+"preset": "small_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_asmr_brush",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Soft brushing",
+"pitch": "For calm texture bed.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Soft brushing",
+"final": true,
+"sound": {
+"title": "Soft brushing",
+"kind": "noise",
+"seconds": 8.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "brush",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 8.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -23,
+"loop": true
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_asmr_tapping",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Soft tapping",
+"pitch": "For fingertip rhythm.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Soft tapping",
+"final": true,
+"sound": {
+"title": "Soft tapping",
+"kind": "noise",
+"seconds": 8.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "tapping",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 8.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -23,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_asmr_crinkle",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Crinkle",
+"pitch": "For paper or foil.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Crinkle",
+"final": true,
+"sound": {
+"title": "Crinkle",
+"kind": "noise",
+"seconds": 5.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "crinkle",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {},
+"seconds": 5.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -23,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_hook_bounce",
+"kind": "sound",
+"group": "Sound: song-hook",
+"rating": "sfw",
+"title": "Minor-pentatonic bounce (hook sketch)",
+"pitch": "For audition a rhythm for a short-video hook.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"song-hook"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Minor-pentatonic bounce (hook sketch)",
+"final": true,
+"sound": {
+"title": "Minor-pentatonic bounce (hook sketch)",
+"kind": "song-hook",
+"seconds": 8.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "hook_sketch",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"bpm": 124,
+"bars": 2,
+"scale": "minor_pentatonic"
+},
+"seconds": 8.0
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": true
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_hook_major",
+"kind": "sound",
+"group": "Sound: song-hook",
+"rating": "sfw",
+"title": "Bright major hook (sketch)",
+"pitch": "For a happy 4-bar idea.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"song-hook"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Bright major hook (sketch)",
+"final": true,
+"sound": {
+"title": "Bright major hook (sketch)",
+"kind": "song-hook",
+"seconds": 7.5,
+"seed": 11,
+"layers": [
+{
+"engine": "synth",
+"sound": "hook_sketch",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"bpm": 128,
+"bars": 2,
+"scale": "major",
+"key": 7,
+"density": 0.6
+},
+"seconds": 7.5
+}
+],
+"chain": {},
+"master": {
+"lufs": -14,
+"loop": true
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_hook_sparkle",
+"kind": "sound",
+"group": "Sound: noise",
+"rating": "sfw",
+"title": "Bell sparkle",
+"pitch": "For a magic reveal.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"noise"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Bell sparkle",
+"final": true,
+"sound": {
+"title": "Bell sparkle",
+"kind": "noise",
+"seconds": 2.6,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "chime_arp",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"count": 8,
+"speed": 0.09
+}
+}
+],
+"chain": {
+"preset": "big_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+},
+{
+"id": "snd_hook_jingle",
+"kind": "sound",
+"group": "Sound: meme",
+"rating": "sfw",
+"title": "Four-note jingle",
+"pitch": "For a tiny sonic logo.",
+"why": "Made from maths on the CPU, no model and no sample, so it is original and repeatable.",
+"tags": [
+"sound",
+"meme"
+],
+"fields": [],
+"models": [
+{
+"name": "Studio sound synth",
+"licence": "AGPL-3.0-or-later, original code, no samples",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "sound",
+"type": "cpu",
+"op": "sound",
+"label": "Four-note jingle",
+"final": true,
+"sound": {
+"title": "Four-note jingle",
+"kind": "meme",
+"seconds": 2.0,
+"seed": 7,
+"layers": [
+{
+"engine": "synth",
+"sound": "jingle",
+"at": 0.0,
+"gain_db": 0.0,
+"params": {
+"notes": "E5 G5 A5 C6",
+"voice": "bell",
+"step": 0.18
+}
+}
+],
+"chain": {
+"preset": "big_room"
+},
+"master": {
+"lufs": -14,
+"loop": false
+}
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never judged by ear through this recipe. The earlier studio recorded it as a recipe."
+}
+}
+]
+}

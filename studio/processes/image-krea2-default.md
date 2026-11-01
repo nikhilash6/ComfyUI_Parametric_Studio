@@ -45,7 +45,7 @@ portraits where Qwen 2.1 base is the KB pick (medium-low confidence).
 ## Guards and gates
 - Layer 1 text guard on the prompt (and every field) before the job is created and again on the final enhanced prompt
   (`guards-text-and-output.md`).
-  (`earlier_studio/studio/imagecheck.py` docstring).
+  (the earlier studio's imagecheck.py docstring).
 - Downloads and publish go through the scrubbed export and the TRIBE pre-post gate (`publish-download-tribe.md`).
 
 ## Time and VRAM

@@ -1,0 +1,4157 @@
+{
+"version": 1,
+"kind": "stylizers",
+"note": "Ported from the founders' earlier studio. Proof levels are as that studio recorded them; nothing here counts as tested until it is rendered here.",
+"recipes": [
+{
+"id": "style_anime_tv",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Anime (TV)",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 646609,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Anime (TV)",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 441575,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a 2D TV anime frame with clean line art and flat cel shading. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a 2D TV anime frame with clean line art and flat cel shading. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_anime_90s",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Anime (90s retro)",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 80815,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Anime (90s retro)",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 331033,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a 1990s hand-drawn anime cel with muted painted colours. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a 1990s hand-drawn anime cel with muted painted colours. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_manga_bw",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Manga (black & white)",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 860971,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Manga (black & white)",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 634397,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a black-and-white manga panel with screentone shading and ink lines. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a black-and-white manga panel with screentone shading and ink lines. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_chibi",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Chibi",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 364979,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Chibi",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 602885,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a cute chibi illustration with big heads and simple bold colours. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a cute chibi illustration with big heads and simple bold colours. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_comic_book",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Comic book",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 499408,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Comic book",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 658822,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as an American comic book panel with bold ink outlines, halftone dots and vivid flat colours. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as an American comic book panel with bold ink outlines, halftone dots and vivid flat colours. Keep the same composition, people, faces, poses and objects; change only the rendering s",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_cartoon_3d",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "3D cartoon",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 227250,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "3D cartoon",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 708292,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a glossy 3D animated-film still with soft lighting and stylised proportions. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a glossy 3D animated-film still with soft lighting and stylised proportions. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_pixar_like",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Family 3D animation",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 675667,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Family 3D animation",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 362661,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a family 3D animation still with big expressive eyes and warm lighting. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a family 3D animation still with big expressive eyes and warm lighting. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_disney_2d_like",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Classic 2D animation",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 889698,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Classic 2D animation",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 523508,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a classic hand-drawn 2D animated film frame with painted backgrounds. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a classic hand-drawn 2D animated film frame with painted backgrounds. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_storybook",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Storybook",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 857447,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Storybook",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 691345,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a soft children's storybook illustration in gouache. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a soft children's storybook illustration in gouache. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_flat_vector",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Flat vector",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 232515,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Flat vector",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 663541,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a flat vector illustration with clean geometric shapes and a limited palette. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a flat vector illustration with clean geometric shapes and a limited palette. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_line_art",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Line art",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 784152,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Line art",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 176622,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as clean black line art on white, no shading. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as clean black line art on white, no shading. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_sticker",
+"kind": "picture",
+"group": "Stylize: Illustration & anime",
+"rating": "sfw",
+"title": "Sticker",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 896976,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Sticker",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 229062,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a die-cut sticker with a thick white border and bold flat colours. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a die-cut sticker with a thick white border and bold flat colours. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_oil_painting",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Oil painting",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 19513,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Oil painting",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 549327,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a classical oil painting with visible brush strokes and rich glazes. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a classical oil painting with visible brush strokes and rich glazes. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_watercolour",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Watercolour",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 38821,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Watercolour",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 833747,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a loose watercolour painting with soft bleeding edges on textured paper. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a loose watercolour painting with soft bleeding edges on textured paper. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_impressionist",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Impressionist",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 721128,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Impressionist",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 548158,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as an impressionist painting with dappled light and short broken brush strokes. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as an impressionist painting with dappled light and short broken brush strokes. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_van_gogh_like",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Swirling post-impressionist",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 482481,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Swirling post-impressionist",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 624967,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a post-impressionist painting with thick swirling impasto strokes. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a post-impressionist painting with thick swirling impasto strokes. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_renaissance",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Renaissance",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 345993,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Renaissance",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 687839,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a Renaissance portrait painting with sfumato and warm varnish tones. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a Renaissance portrait painting with sfumato and warm varnish tones. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_baroque",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Baroque chiaroscuro",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 746779,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Baroque chiaroscuro",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 760237,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a Baroque painting with dramatic chiaroscuro lighting. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a Baroque painting with dramatic chiaroscuro lighting. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_gouache_poster",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Gouache poster",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 476464,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Gouache poster",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 581542,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a matte gouache painting with flat opaque colour areas. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a matte gouache painting with flat opaque colour areas. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_acrylic_pop",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Acrylic pop",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 616066,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Acrylic pop",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 461012,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a bright acrylic painting with bold saturated colours. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a bright acrylic painting with bold saturated colours. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_ink_wash",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Ink wash (sumi-e)",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 68151,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Ink wash (sumi-e)",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 719713,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a Japanese sumi-e ink wash painting on rice paper. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a Japanese sumi-e ink wash painting on rice paper. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_pastel",
+"kind": "picture",
+"group": "Stylize: Painting",
+"rating": "sfw",
+"title": "Soft pastel",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 369195,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Soft pastel",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 595645,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a soft chalk pastel drawing on toned paper. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a soft chalk pastel drawing on toned paper. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_pencil_sketch",
+"kind": "picture",
+"group": "Stylize: Drawing & print",
+"rating": "sfw",
+"title": "Pencil sketch",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 489433,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Pencil sketch",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 492847,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a graphite pencil sketch with cross-hatching. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a graphite pencil sketch with cross-hatching. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_charcoal",
+"kind": "picture",
+"group": "Stylize: Drawing & print",
+"rating": "sfw",
+"title": "Charcoal",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 569604,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Charcoal",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 607634,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as an expressive charcoal drawing with smudged shadows. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as an expressive charcoal drawing with smudged shadows. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_colored_pencil",
+"kind": "picture",
+"group": "Stylize: Drawing & print",
+"rating": "sfw",
+"title": "Coloured pencil",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 47402,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Coloured pencil",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 715132,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a coloured pencil drawing with visible strokes on paper. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a coloured pencil drawing with visible strokes on paper. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_woodcut",
+"kind": "picture",
+"group": "Stylize: Drawing & print",
+"rating": "sfw",
+"title": "Woodcut print",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 135839,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Woodcut print",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 235177,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a black-and-white woodcut print with carved lines. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a black-and-white woodcut print with carved lines. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_linocut",
+"kind": "picture",
+"group": "Stylize: Drawing & print",
+"rating": "sfw",
+"title": "Linocut (2 colours)",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 81715,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Linocut (2 colours)",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 759429,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a two-colour linocut print with bold carved shapes. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a two-colour linocut print with bold carved shapes. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_screenprint",
+"kind": "picture",
+"group": "Stylize: Drawing & print",
+"rating": "sfw",
+"title": "Pop-art screenprint",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 737638,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Pop-art screenprint",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 789008,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a pop-art screenprint with flat bright colours and halftones. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a pop-art screenprint with flat bright colours and halftones. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_blueprint",
+"kind": "picture",
+"group": "Stylize: Drawing & print",
+"rating": "sfw",
+"title": "Blueprint",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 308093,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Blueprint",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 630571,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a technical blueprint drawing in white lines on blue. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a technical blueprint drawing in white lines on blue. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_ukiyo_e",
+"kind": "picture",
+"group": "Stylize: Drawing & print",
+"rating": "sfw",
+"title": "Ukiyo-e",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 300624,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Ukiyo-e",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 289510,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a Japanese ukiyo-e woodblock print with flat colours and wave patterns. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a Japanese ukiyo-e woodblock print with flat colours and wave patterns. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_pixel_art",
+"kind": "picture",
+"group": "Stylize: Digital & retro",
+"rating": "sfw",
+"title": "Pixel art",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 721568,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Pixel art",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 236918,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as 16-bit pixel art with a limited palette. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as 16-bit pixel art with a limited palette. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_low_poly",
+"kind": "picture",
+"group": "Stylize: Digital & retro",
+"rating": "sfw",
+"title": "Low poly",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 788131,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Low poly",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 694389,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a low-poly 3D render with flat-shaded triangles. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a low-poly 3D render with flat-shaded triangles. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_voxel",
+"kind": "picture",
+"group": "Stylize: Digital & retro",
+"rating": "sfw",
+"title": "Voxel",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 186466,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Voxel",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 665716,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a voxel art render made of small cubes. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a voxel art render made of small cubes. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_vaporwave",
+"kind": "picture",
+"group": "Stylize: Digital & retro",
+"rating": "sfw",
+"title": "Vaporwave",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 34831,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Vaporwave",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 795417,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a vaporwave artwork with pink and teal neon gradients. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a vaporwave artwork with pink and teal neon gradients. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_synthwave",
+"kind": "picture",
+"group": "Stylize: Digital & retro",
+"rating": "sfw",
+"title": "Synthwave",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 5839,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Synthwave",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 97049,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a synthwave artwork with neon grid, sunset gradient and glow. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a synthwave artwork with neon grid, sunset gradient and glow. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_cyberpunk",
+"kind": "picture",
+"group": "Stylize: Digital & retro",
+"rating": "sfw",
+"title": "Cyberpunk neon",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 133781,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Cyberpunk neon",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 883139,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a cyberpunk digital painting with neon lights and rain reflections. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a cyberpunk digital painting with neon lights and rain reflections. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_glitch",
+"kind": "picture",
+"group": "Stylize: Digital & retro",
+"rating": "sfw",
+"title": "Glitch art",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 759636,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Glitch art",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 765442,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as glitch art with RGB channel shifts and scan lines. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as glitch art with RGB channel shifts and scan lines. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_isometric",
+"kind": "picture",
+"group": "Stylize: Digital & retro",
+"rating": "sfw",
+"title": "Isometric illustration",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 679661,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Isometric illustration",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 59163,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a clean isometric illustration. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a clean isometric illustration. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_claymation",
+"kind": "picture",
+"group": "Stylize: Craft & material",
+"rating": "sfw",
+"title": "Claymation",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 320910,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Claymation",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 650328,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a stop-motion claymation still with plasticine textures. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a stop-motion claymation still with plasticine textures. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_felt",
+"kind": "picture",
+"group": "Stylize: Craft & material",
+"rating": "sfw",
+"title": "Needle felt",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 896649,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Needle felt",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 755007,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a needle-felted wool miniature scene. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a needle-felted wool miniature scene. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_papercraft",
+"kind": "picture",
+"group": "Stylize: Craft & material",
+"rating": "sfw",
+"title": "Paper cut-out",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 45864,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Paper cut-out",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 779038,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a layered paper cut-out diorama with soft shadows. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a layered paper cut-out diorama with soft shadows. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_origami",
+"kind": "picture",
+"group": "Stylize: Craft & material",
+"rating": "sfw",
+"title": "Origami",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 410795,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Origami",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 249661,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as an origami paper-folded scene. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as an origami paper-folded scene. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_lego_like",
+"kind": "picture",
+"group": "Stylize: Craft & material",
+"rating": "sfw",
+"title": "Toy bricks",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 447317,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Toy bricks",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 305667,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a scene built from plastic toy bricks. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a scene built from plastic toy bricks. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_stained_glass",
+"kind": "picture",
+"group": "Stylize: Craft & material",
+"rating": "sfw",
+"title": "Stained glass",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 900545,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Stained glass",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 747799,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a stained glass window with lead lines and glowing coloured glass. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a stained glass window with lead lines and glowing coloured glass. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_mosaic",
+"kind": "picture",
+"group": "Stylize: Craft & material",
+"rating": "sfw",
+"title": "Mosaic",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 626939,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Mosaic",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 321037,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as an ancient tile mosaic. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as an ancient tile mosaic. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_embroidery",
+"kind": "picture",
+"group": "Stylize: Craft & material",
+"rating": "sfw",
+"title": "Embroidery",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 690871,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Embroidery",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 722849,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a hand embroidery on linen with visible stitches. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a hand embroidery on linen with visible stitches. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_bw_film",
+"kind": "picture",
+"group": "Stylize: Photo looks",
+"rating": "sfw",
+"title": "Black & white film",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 365869,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Black & white film",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 610203,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a black-and-white film photograph with fine grain and deep contrast. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a black-and-white film photograph with fine grain and deep contrast. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_vintage_70s",
+"kind": "picture",
+"group": "Stylize: Photo looks",
+"rating": "sfw",
+"title": "1970s photo",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 840470,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "1970s photo",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 437472,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a faded 1970s colour photograph with warm cast and soft focus. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a faded 1970s colour photograph with warm cast and soft focus. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_polaroid",
+"kind": "picture",
+"group": "Stylize: Photo looks",
+"rating": "sfw",
+"title": "Instant photo",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 717373,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Instant photo",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 93227,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as an instant-camera photo with washed colours and a white frame. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as an instant-camera photo with washed colours and a white frame. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "style_noir",
+"kind": "picture",
+"group": "Stylize: Photo looks",
+"rating": "sfw",
+"title": "Film noir",
+"pitch": "Redraw any picture in this style, keeping the composition.",
+"why": "One edit instruction from the earlier studio's stylizer set, run on FLUX.2 Klein image edit.",
+"tags": [
+"picture",
+"stylize"
+],
+"fields": [
+{
+"key": "picture",
+"label": "The picture to make, or upload your own",
+"default": "a quiet harbour town at sunrise with fishing boats"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+}
+],
+"tips": [
+"Upload your own picture to skip the first step."
+],
+"steps": [
+{
+"id": "source",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 702325,
+"prompt": "{picture}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "styled",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Film noir",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 495555,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@source"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "Redraw this image as a film-noir still with hard shadows and venetian-blind light. Keep the same composition, people, faces, poses and objects; change only the rendering style."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "Redraw this image as a film-noir still with hard shadows and venetian-blind light. Keep the same composition, people, faces, poses and objects; change only the rendering style.",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+}
+]
+}

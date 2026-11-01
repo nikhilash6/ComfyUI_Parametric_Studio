@@ -1,0 +1,31 @@
+{
+"note": "Repository owner for packs whose folder name carries no owner, taken from the one matching owner__name source folder in the node pack library. A pack with no single match stays out, and the page says its author is not recorded.",
+"owners": {
+"Akatz-Loop-Nodes.disabled": "akatz-ai",
+"ComfyUI-AKatz-Nodes.disabled": "akatz-ai",
+"ComfyUI-Adept-Sampler": "nawka12",
+"ComfyUI-DazzleKSampler.disabled": "DazzleNodes",
+"ComfyUI-Dynamic-Sigmas": "cozdx1",
+"ComfyUI-Easy-Use": "yolain",
+"ComfyUI-FluxSettingsNode.disabled": "Light-x02",
+"ComfyUI-Impact-Pack": "ltdrdata",
+"ComfyUI-KJNodes": "kijai",
+"ComfyUI-LG_SamplingUtils": "LAOGOU-666",
+"ComfyUI-Pixaroma": "pixaroma",
+"ComfyUI-Sigmax": "rookiestar28",
+"ComfyUI-TBG-Takeaways": "Ltamann",
+"ComfyUI-bleh": "blepping",
+"ComfyUI-ppm": "pamparamm",
+"ComfyUI-quadMoons-nodes.disabled": "traugdor",
+"ComfyUI-sonar": "blepping",
+"ComfyUI_Eclipse": "r-vage",
+"ComfyUI_MiraSubPack": "mirabarukaso",
+"DJZ-Nodes": "MushroomFleet",
+"PowerNoiseSuite": "WASasquatch",
+"RES4LYF": "ClownsharkBatwing",
+"Skoogeer-Noise": "ttulttul",
+"cgem156-ComfyUI.disabled": "laksjdjf",
+"comfyui-lopi999-nodes.disabled": "LaVie024",
+"comfyui-ralu-sampling.disabled": "Milkyawaway"
+}
+}

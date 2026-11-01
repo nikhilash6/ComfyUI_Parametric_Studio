@@ -21,7 +21,6 @@ video, a 2× upscale, or a retry after a VRAM refusal.
 - **Retry** (failed/interrupted): the same job, new seed, refs re-validated. **Queue when free**: the same, but a VRAM/lock
   refusal waits in the queue instead of failing.
 - **Copy prompt**, **prompt** details (final text; "not enhanced" if it fell back), **⤓ Download clean** (scrubbed export).
-- Character sheet cards add **✂ Faceless crops** per shot.
 
 ## Optimal settings
 | Setting | Value | Source |

@@ -1,0 +1,1651 @@
+{
+"version": 1,
+"kind": "timelapses",
+"note": "Ported from the founders' earlier studio. Proof levels are as that studio recorded them; nothing here counts as tested until it is rendered here.",
+"recipes": [
+{
+"id": "tl_scene_day_to_night_city",
+"kind": "video",
+"group": "Timelapse: Light and sky",
+"rating": "sfw",
+"title": "Day to night, city street",
+"pitch": "A quiet city street at midday turns to dusk and then to night with the streetlights and shop windows on.",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Midday",
+"peak_gib": 23,
+"seed": 75206,
+"prompt": "Live-action, time-lapse photography. a quiet city street at midday under a clear blue sky in hard white sunlight. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Dusk",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 737264,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same street at dusk, the sky orange and pink, long soft shadows, the shop windows beginning to glow. Keep the camera angle, framing, buildings, road and parked cars exactly where they are; only the light, the sky and the glowing windows change."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same street at dusk, the sky orange and pink, long soft shadows, the shop windows beginning to glow. Keep the camera angle, framing, buildings, road and parked cars exactly where they are; only th"
+},
+{
+"id": "k2",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Night",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 622682,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same street at night under a deep blue sky, streetlights and lit shop windows glowing, car lights on. Keep the camera angle, framing, buildings, road and parked cars exactly where they are; only the light, the sky and the glowing windows change."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same street at night under a deep blue sky, streetlights and lit shop windows glowing, car lights on. Keep the camera angle, framing, buildings, road and parked cars exactly where they are; only t"
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Midday to Dusk",
+"peak_gib": 46,
+"seed": 646379,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "the light slowly turns from white midday to orange dusk, the shadows lengthen and the shop windows begin to glow",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 6,
+"speed": "fast"
+}
+},
+{
+"id": "c2",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Dusk to Night",
+"peak_gib": 46,
+"seed": 9405,
+"image": "@k1",
+"last_image": "@k2",
+"prompt": "the sky darkens to deep blue while the streetlights and the lit windows come on and car lights streak past",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 6,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1",
+"@c2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_golden_to_blue_coast",
+"kind": "video",
+"group": "Timelapse: Light and sky",
+"rating": "sfw",
+"title": "Golden hour to blue hour, coast",
+"pitch": "A rocky coast in warm golden light cools into the soft blue hour after sunset.",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Golden hour",
+"peak_gib": 23,
+"seed": 248707,
+"prompt": "Live-action, time-lapse photography. a rocky coast with a calm sea in warm golden low sunlight and long shadows. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Blue hour",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 355765,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same coast after sunset in cool blue light, the sea silver-blue, the sky soft violet, a first bright star. Keep the camera angle, framing, rocks and shoreline exactly where they are; only the light and the colour of the sky and sea change."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same coast after sunset in cool blue light, the sea silver-blue, the sky soft violet, a first bright star. Keep the camera angle, framing, rocks and shoreline exactly where they are; only the ligh"
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Golden hour to Blue hour",
+"peak_gib": 46,
+"seed": 44790,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "the warm sunlight fades from gold to rose and then to cool blue as the shadows soften and the sea turns silver-blue",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_storm_rolls_in",
+"kind": "video",
+"group": "Timelapse: Weather",
+"rating": "sfw",
+"title": "Storm clouds roll in",
+"pitch": "A green meadow under a bright sky darkens as heavy storm clouds roll over it.",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Clear",
+"peak_gib": 23,
+"seed": 62263,
+"prompt": "Live-action, time-lapse photography. a green meadow with a lone oak tree under a bright blue sky with small white clouds. No text, no logos.",
+"options": {
+"aspect": "16:9",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Storm",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 832865,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same meadow under towering dark grey storm clouds, the grass bent by the wind, dramatic grey light. Keep the camera angle, framing, the meadow and the oak tree exactly where they are; only the sky, the light and the wind in the grass change."
+},
+"75:66": {
+"width": 1344,
+"height": 768
+},
+"75:62": {
+"width": 1344,
+"height": 768
+}
+},
+"prompt_note": "the same meadow under towering dark grey storm clouds, the grass bent by the wind, dramatic grey light. Keep the camera angle, framing, the meadow and the oak tree exactly where they are; only the sky"
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Clear to Storm",
+"peak_gib": 46,
+"seed": 31605,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "white clouds gather and thicken into towering dark storm clouds that sweep across the sky while the light drops and the grass bends in the wind",
+"options": {
+"camera": "locked",
+"aspect": "16:9",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_snow_arrives",
+"kind": "video",
+"group": "Timelapse: Weather",
+"rating": "sfw",
+"title": "Autumn street, snow arrives",
+"pitch": "A tree-lined street in autumn colours is slowly covered in fresh snow.",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Autumn",
+"peak_gib": 23,
+"seed": 166622,
+"prompt": "Live-action, time-lapse photography. a quiet tree-lined street in autumn with orange and red leaves on the trees and the pavement. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Snow",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 345480,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same street covered in fresh white snow, the trees bare and frosted, snow on the roofs and the parked cars, pale winter light. Keep the camera angle, framing, houses, road and parked cars exactly where they are; only the season, the leaves and the snow change."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same street covered in fresh white snow, the trees bare and frosted, snow on the roofs and the parked cars, pale winter light. Keep the camera angle, framing, houses, road and parked cars exactly "
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Autumn to Snow",
+"peak_gib": 46,
+"seed": 667766,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "the leaves fall away, the branches turn bare and soft snow settles layer by layer over the road, the cars and the roofs",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_four_seasons_tree",
+"kind": "video",
+"group": "Timelapse: Nature",
+"rating": "sfw",
+"title": "Four seasons in one tree",
+"pitch": "One oak tree on a hill goes from spring blossom to summer green, autumn gold and winter snow (four keyframes, three segments).",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Spring",
+"peak_gib": 23,
+"seed": 172740,
+"prompt": "Live-action, time-lapse photography. a large oak tree on a grassy hill in spring with fresh light green leaves and pale blossom. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Summer",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 190866,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same tree in full dark green summer leaves, the grass deep green, strong sunlight and a deep blue sky. Keep the camera angle, framing, the hill and the shape of the tree exactly the same; only the season changes."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same tree in full dark green summer leaves, the grass deep green, strong sunlight and a deep blue sky. Keep the camera angle, framing, the hill and the shape of the tree exactly the same; only the"
+},
+{
+"id": "k2",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Autumn",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 340088,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same tree with golden and orange autumn leaves, the grass turning tan, a low warm sun. Keep the camera angle, framing, the hill and the shape of the tree exactly the same; only the season changes."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same tree with golden and orange autumn leaves, the grass turning tan, a low warm sun. Keep the camera angle, framing, the hill and the shape of the tree exactly the same; only the season changes."
+},
+{
+"id": "k3",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Winter",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 636110,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same tree bare and covered in snow, the hill white, a pale grey winter sky. Keep the camera angle, framing, the hill and the shape of the tree exactly the same; only the season changes."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same tree bare and covered in snow, the hill white, a pale grey winter sky. Keep the camera angle, framing, the hill and the shape of the tree exactly the same; only the season changes."
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Spring to Summer",
+"peak_gib": 46,
+"seed": 724297,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "blossom gives way to full green leaves and the light grows strong and bright",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 6,
+"speed": "fast"
+}
+},
+{
+"id": "c2",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Summer to Autumn",
+"peak_gib": 46,
+"seed": 853919,
+"image": "@k1",
+"last_image": "@k2",
+"prompt": "the green leaves turn gold and orange and the grass fades to tan as the sun lowers",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 6,
+"speed": "fast"
+}
+},
+{
+"id": "c3",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Autumn to Winter",
+"peak_gib": 46,
+"seed": 179765,
+"image": "@k2",
+"last_image": "@k3",
+"prompt": "the leaves fall away and snow settles on the bare branches and the hill",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 6,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1",
+"@c2",
+"@c3"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_flower_bloom",
+"kind": "video",
+"group": "Timelapse: Nature",
+"rating": "sfw",
+"title": "Flower bloom",
+"pitch": "A tulip bud slowly opens into a full bloom (macro, three keyframes).",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Bud",
+"peak_gib": 23,
+"seed": 895862,
+"prompt": "Live-action, macro nature time-lapse. a single closed red tulip bud on a green stem in a macro close-up. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Opening",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 28032,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same tulip half open, the red petals parting to show the yellow centre. Keep the camera angle, framing, the stem, the leaves and the blurred background exactly the same; only the flower opens."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same tulip half open, the red petals parting to show the yellow centre. Keep the camera angle, framing, the stem, the leaves and the blurred background exactly the same; only the flower opens."
+},
+{
+"id": "k2",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Bloom",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 308810,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same tulip fully open in full bloom, the petals wide, the yellow centre and stamens visible. Keep the camera angle, framing, the stem, the leaves and the blurred background exactly the same; only the flower opens."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same tulip fully open in full bloom, the petals wide, the yellow centre and stamens visible. Keep the camera angle, framing, the stem, the leaves and the blurred background exactly the same; only "
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Bud to Opening",
+"peak_gib": 46,
+"seed": 311549,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "the red petals loosen and begin to part",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "c2",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Opening to Bloom",
+"peak_gib": 46,
+"seed": 695115,
+"image": "@k1",
+"last_image": "@k2",
+"prompt": "the petals open wide and the stamens rise into the light",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1",
+"@c2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_seed_to_sapling",
+"kind": "video",
+"group": "Timelapse: Nature",
+"rating": "sfw",
+"title": "Seed to sapling",
+"pitch": "A seed in dark soil splits and sends up a first green shoot with two leaves (the authored recipe from the H3 prompt library).",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Seed",
+"peak_gib": 23,
+"seed": 98016,
+"prompt": "Live-action, macro nature time-lapse. a single seed resting in dark damp soil. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Sapling",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 71990,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same spot with a young sapling, a thin green stem and two small leaves rising from the soil. Keep the camera angle, framing and the patch of soil exactly the same; only the seed grows."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same spot with a young sapling, a thin green stem and two small leaves rising from the soil. Keep the camera angle, framing and the patch of soil exactly the same; only the seed grows."
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Seed to Sapling",
+"peak_gib": 46,
+"seed": 762914,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "the seed splits, a pale white root pushes down into the soil and a curled green shoot rises and unfolds its first two leaves while the light shifts from cool to warm",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_ice_melts",
+"kind": "video",
+"group": "Timelapse: Change of state",
+"rating": "sfw",
+"title": "Ice melting",
+"pitch": "A clear block of ice on a dark slate slowly melts to a spreading puddle.",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Ice",
+"peak_gib": 23,
+"seed": 61492,
+"prompt": "Live-action, macro time-lapse. a clear rectangular block of ice on a dark slate tile. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Puddle",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 349346,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same slate tile with only a small sliver of ice left in a wide clear puddle of meltwater. Keep the camera angle, framing and the slate tile exactly the same; only the ice melts."
+},
+"75:66": {
+"width": 1024,
+"height": 1024
+},
+"75:62": {
+"width": 1024,
+"height": 1024
+}
+},
+"prompt_note": "the same slate tile with only a small sliver of ice left in a wide clear puddle of meltwater. Keep the camera angle, framing and the slate tile exactly the same; only the ice melts."
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Ice to Puddle",
+"peak_gib": 46,
+"seed": 161554,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "the edges of the ice round off, droplets run down the sides and the block shrinks while meltwater spreads across the slate",
+"options": {
+"camera": "locked",
+"aspect": "1:1",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_building_goes_up",
+"kind": "video",
+"group": "Timelapse: Building",
+"rating": "sfw",
+"title": "A house goes up",
+"pitch": "A building plot becomes a framed house and then a finished house (three keyframes, fixed camera).",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Empty plot",
+"peak_gib": 23,
+"seed": 471240,
+"prompt": "Live-action, construction time-lapse. an empty building plot of levelled earth with wooden stakes and string lines. No text, no logos.",
+"options": {
+"aspect": "16:9",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Frame",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 427838,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same plot with the wooden frame and roof trusses of a two-storey house standing, scaffolding around it. Keep the camera angle, framing, the street and the sky exactly the same; only the building changes."
+},
+"75:66": {
+"width": 1344,
+"height": 768
+},
+"75:62": {
+"width": 1344,
+"height": 768
+}
+},
+"prompt_note": "the same plot with the wooden frame and roof trusses of a two-storey house standing, scaffolding around it. Keep the camera angle, framing, the street and the sky exactly the same; only the building c"
+},
+{
+"id": "k2",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Finished",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 114772,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same plot with a finished two-storey house with white walls, a tiled roof, a front door, windows and a small lawn. Keep the camera angle, framing, the street and the sky exactly the same; only the building changes."
+},
+"75:66": {
+"width": 1344,
+"height": 768
+},
+"75:62": {
+"width": 1344,
+"height": 768
+}
+},
+"prompt_note": "the same plot with a finished two-storey house with white walls, a tiled roof, a front door, windows and a small lawn. Keep the camera angle, framing, the street and the sky exactly the same; only the"
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Empty plot to Frame",
+"peak_gib": 46,
+"seed": 857367,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "foundations are poured and the wooden frame rises storey by storey with the roof trusses lifted into place",
+"options": {
+"camera": "locked",
+"aspect": "16:9",
+"quality": "high",
+"seconds": 6,
+"speed": "fast"
+}
+},
+{
+"id": "c2",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Frame to Finished",
+"peak_gib": 46,
+"seed": 204193,
+"image": "@k1",
+"last_image": "@k2",
+"prompt": "walls, roof tiles, windows and the front door are added, the scaffolding comes down and a lawn appears",
+"options": {
+"camera": "locked",
+"aspect": "16:9",
+"quality": "high",
+"seconds": 6,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1",
+"@c2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_traffic_trails",
+"kind": "video",
+"group": "Timelapse: City",
+"rating": "sfw",
+"title": "Traffic light trails at dusk",
+"pitch": "A calm boulevard at dusk fills with long glowing streaks of car lights.",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Calm",
+"peak_gib": 23,
+"seed": 665187,
+"prompt": "Live-action, long-exposure time-lapse. a wide city boulevard at dusk with a few cars and lit buildings on both sides. No text, no logos.",
+"options": {
+"aspect": "16:9",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Trails",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 354741,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same boulevard at night with long continuous red and white light trails from the traffic along every lane. Keep the camera angle, framing, the road and the buildings exactly the same; only the traffic light trails and the darkness change."
+},
+"75:66": {
+"width": 1344,
+"height": 768
+},
+"75:62": {
+"width": 1344,
+"height": 768
+}
+},
+"prompt_note": "the same boulevard at night with long continuous red and white light trails from the traffic along every lane. Keep the camera angle, framing, the road and the buildings exactly the same; only the tra"
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Calm to Trails",
+"peak_gib": 46,
+"seed": 875647,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "the traffic thickens and the cars blur into long red and white ribbons of light that flow along the lanes while the sky deepens",
+"options": {
+"camera": "locked",
+"aspect": "16:9",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_tide_comes_in",
+"kind": "video",
+"group": "Timelapse: Nature",
+"rating": "sfw",
+"title": "The tide comes in",
+"pitch": "A wide sandy bay at low tide is covered by the rising sea.",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Low tide",
+"peak_gib": 23,
+"seed": 708165,
+"prompt": "Live-action, time-lapse photography. a wide sandy bay at low tide with wet rippled sand, a few rocks and a small wooden boat resting on the sand. No text, no logos.",
+"options": {
+"aspect": "16:9",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "High tide",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 348883,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same bay at high tide, the sea covering the sand, the boat afloat, only the tops of the rocks above the water. Keep the camera angle, framing and the shape of the shore exactly the same; only the water level changes."
+},
+"75:66": {
+"width": 1344,
+"height": 768
+},
+"75:62": {
+"width": 1344,
+"height": 768
+}
+},
+"prompt_note": "the same bay at high tide, the sea covering the sand, the boat afloat, only the tops of the rocks above the water. Keep the camera angle, framing and the shape of the shore exactly the same; only the "
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Low tide to High tide",
+"peak_gib": 46,
+"seed": 244765,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "the sea creeps in over the sand in slow waves, fills the ripples and lifts the boat until the rocks stand in the water",
+"options": {
+"camera": "locked",
+"aspect": "16:9",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "tl_scene_starry_night",
+"kind": "video",
+"group": "Timelapse: Light and sky",
+"rating": "sfw",
+"title": "Dusk to starry night",
+"pitch": "A lakeside campsite at dusk darkens to a sky full of stars (three keyframes).",
+"why": "A timelapse pinned to key pictures of the same place, each clip running from one key to the next.",
+"tags": [
+"timelapse"
+],
+"fields": [],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The key pictures here come from FLUX.2 Klein edits; the earlier studio used Qwen 2.1 edits."
+],
+"steps": [
+{
+"id": "k0",
+"type": "goal",
+"goal": "image",
+"label": "Dusk",
+"peak_gib": 23,
+"seed": 885488,
+"prompt": "Live-action, astro time-lapse. a lakeside campsite at dusk with a small orange tent, a glowing campfire, a calm lake and a soft orange and violet sky. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "k1",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Twilight",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 236518,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same campsite at twilight, the sky deep blue with the first stars, the campfire brighter, the lake dark. Keep the camera angle, framing, the tent, the fire and the trees exactly the same; only the sky and the light change."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same campsite at twilight, the sky deep blue with the first stars, the campfire brighter, the lake dark. Keep the camera angle, framing, the tent, the fire and the trees exactly the same; only the"
+},
+{
+"id": "k2",
+"type": "template",
+"template": "image_flux2_klein_image_edit_4b_distilled",
+"label": "Stars",
+"model": "FLUX.2 Klein 4B, with the first picture as its reference",
+"peak_gib": 23,
+"seed": 593580,
+"seed_node": "75:73",
+"seed_input": "noise_seed",
+"values": {
+"76|image": "@k0"
+},
+"swap": {
+"flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+},
+"set": {
+"75:74": {
+"text": "the same campsite under a black sky full of stars and a bright Milky Way, the tent glowing from inside, the lake reflecting the stars. Keep the camera angle, framing, the tent, the fire and the trees exactly the same; only the sky and the light change."
+},
+"75:66": {
+"width": 768,
+"height": 1344
+},
+"75:62": {
+"width": 768,
+"height": 1344
+}
+},
+"prompt_note": "the same campsite under a black sky full of stars and a bright Milky Way, the tent glowing from inside, the lake reflecting the stars. Keep the camera angle, framing, the tent, the fire and the trees "
+},
+{
+"id": "c1",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Dusk to Twilight",
+"peak_gib": 46,
+"seed": 50805,
+"image": "@k0",
+"last_image": "@k1",
+"prompt": "the last colour drains from the sky and the first stars appear while the campfire glows brighter",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 6,
+"speed": "fast"
+}
+},
+{
+"id": "c2",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "Twilight to Stars",
+"peak_gib": 46,
+"seed": 427971,
+"image": "@k1",
+"last_image": "@k2",
+"prompt": "the sky turns black and fills with stars and a band of the Milky Way that reflects in the lake",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 6,
+"speed": "fast"
+}
+},
+{
+"id": "join",
+"type": "cpu",
+"op": "join",
+"label": "Join",
+"final": true,
+"clips": [
+"@c1",
+"@c2"
+]
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+}
+]
+}

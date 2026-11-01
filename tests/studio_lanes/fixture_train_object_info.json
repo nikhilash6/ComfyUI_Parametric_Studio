@@ -1,0 +1,719 @@
+{
+"CLIPTextEncode": {
+"input": {
+"required": {
+"clip": [
+"CLIP",
+{
+"tooltip": "The CLIP model used for encoding the text."
+}
+],
+"text": [
+"STRING",
+{
+"dynamicPrompts": true,
+"multiline": true,
+"tooltip": "The text to be encoded."
+}
+]
+}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+]
+},
+"CheckpointLoaderSimple": {
+"input": {
+"required": {
+"ckpt_name": [
+[
+"sd_xl_base_1.0.safetensors",
+"v1-5-pruned-emaonly.safetensors"
+],
+{
+"tooltip": "The name of the checkpoint (model) to load."
+}
+]
+}
+},
+"output": [
+"MODEL",
+"CLIP",
+"VAE"
+],
+"output_name": [
+"MODEL",
+"CLIP",
+"VAE"
+]
+},
+"EmptyLatentImage": {
+"input": {
+"required": {
+"batch_size": [
+"INT",
+{
+"default": 1,
+"max": 4096,
+"min": 1,
+"tooltip": "The number of latent images in the batch."
+}
+],
+"height": [
+"INT",
+{
+"default": 1024,
+"max": 16384,
+"min": 16,
+"step": 8,
+"tooltip": "The height of the latent images in pixels."
+}
+],
+"width": [
+"INT",
+{
+"default": 1024,
+"max": 16384,
+"min": 16,
+"step": 8,
+"tooltip": "The width of the latent images in pixels."
+}
+]
+}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+]
+},
+"KSampler": {
+"input": {
+"required": {
+"cfg": [
+"FLOAT",
+{
+"default": 8.0,
+"max": 100.0,
+"min": 0.0,
+"round": 0.01,
+"step": 0.1,
+"tooltip": "The Classifier-Free Guidance scale balances creativity and adherence to the prompt. Higher values result in images more closely matching the prompt however too high values will negatively impact quality."
+}
+],
+"denoise": [
+"FLOAT",
+{
+"default": 1.0,
+"max": 1.0,
+"min": 0.0,
+"step": 0.01,
+"tooltip": "The amount of denoising applied, lower values will maintain the structure of the initial image allowing for image to image sampling."
+}
+],
+"latent_image": [
+"LATENT",
+{
+"tooltip": "The latent image to denoise."
+}
+],
+"model": [
+"MODEL",
+{
+"tooltip": "The model used for denoising the input latent."
+}
+],
+"negative": [
+"CONDITIONING",
+{
+"tooltip": "The conditioning describing the attributes you want to exclude from the image."
+}
+],
+"positive": [
+"CONDITIONING",
+{
+"tooltip": "The conditioning describing the attributes you want to include in the image."
+}
+],
+"sampler_name": [
+[
+"euler",
+"euler_cfg_pp",
+"euler_ancestral",
+"euler_ancestral_cfg_pp",
+"heun",
+"heunpp2",
+"exp_heun_2_x0",
+"exp_heun_2_x0_sde",
+"dpm_2",
+"dpm_2_ancestral",
+"lms",
+"dpm_fast",
+"dpm_adaptive",
+"dpmpp_2s_ancestral",
+"dpmpp_2s_ancestral_cfg_pp",
+"dpmpp_sde",
+"dpmpp_sde_gpu",
+"dpmpp_2m",
+"dpmpp_2m_cfg_pp",
+"dpmpp_2m_sde",
+"dpmpp_2m_sde_gpu",
+"dpmpp_2m_sde_heun",
+"dpmpp_2m_sde_heun_gpu",
+"dpmpp_3m_sde",
+"dpmpp_3m_sde_gpu",
+"ddpm",
+"lcm",
+"ipndm",
+"ipndm_v",
+"deis",
+"cfgpp_ud10_ab",
+"res_multistep",
+"res_multistep_cfg_pp",
+"res_multistep_ancestral",
+"res_multistep_ancestral_cfg_pp",
+"gradient_estimation",
+"gradient_estimation_cfg_pp",
+"er_sde",
+"seeds_2",
+"seeds_3",
+"sa_solver",
+"sa_solver_pece",
+"ddim",
+"uni_pc",
+"uni_pc_bh2"
+],
+{
+"tooltip": "The algorithm used when sampling, this can affect the quality, speed, and style of the generated output."
+}
+],
+"scheduler": [
+[
+"simple",
+"sgm_uniform",
+"karras",
+"exponential",
+"ddim_uniform",
+"beta",
+"normal",
+"linear_quadratic",
+"kl_optimal"
+],
+{
+"tooltip": "The scheduler controls how noise is gradually removed to form the image."
+}
+],
+"seed": [
+"INT",
+{
+"control_after_generate": true,
+"default": 0,
+"max": 18446744073709551615,
+"min": 0,
+"tooltip": "The random seed used for creating the noise."
+}
+],
+"steps": [
+"INT",
+{
+"default": 20,
+"max": 10000,
+"min": 1,
+"tooltip": "The number of steps used in the denoising process."
+}
+]
+}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+]
+},
+"LoadImageTextDataSetFromFolder": {
+"input": {
+"required": {
+"folder": [
+"COMBO",
+{
+"multiselect": false,
+"options": [
+"3d"
+],
+"tooltip": "The folder to load images and text captions from."
+}
+]
+}
+},
+"output": [
+"IMAGE",
+"STRING"
+],
+"output_name": [
+"images",
+"texts"
+]
+},
+"LoraLoaderModelOnly": {
+"input": {
+"required": {
+"lora_name": [
+[]
+],
+"model": [
+"MODEL"
+],
+"strength_model": [
+"FLOAT",
+{
+"default": 1.0,
+"max": 100.0,
+"min": -100.0,
+"step": 0.01
+}
+]
+}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+]
+},
+"LoraModelLoader": {
+"input": {
+"required": {
+"bypass": [
+"BOOLEAN",
+{
+"default": false,
+"tooltip": "When enabled, applies LoRA in bypass mode without modifying base model weights. Useful for training and when model weights are offloaded."
+}
+],
+"lora": [
+"LORA_MODEL",
+{
+"tooltip": "The LoRA model to apply to the diffusion model."
+}
+],
+"model": [
+"MODEL",
+{
+"tooltip": "The diffusion model the LoRA will be applied to."
+}
+],
+"strength_model": [
+"FLOAT",
+{
+"default": 1.0,
+"max": 100.0,
+"min": -100.0,
+"tooltip": "How strongly to modify the diffusion model. This value can be negative."
+}
+]
+}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"model"
+]
+},
+"LossGraphNode": {
+"input": {
+"hidden": {
+"extra_pnginfo": [
+"EXTRA_PNGINFO"
+],
+"prompt": [
+"PROMPT"
+]
+},
+"required": {
+"filename_prefix": [
+"STRING",
+{
+"default": "loss_graph",
+"multiline": false,
+"tooltip": "Prefix for the saved loss graph image."
+}
+],
+"loss": [
+"LOSS_MAP",
+{
+"tooltip": "Loss map from training node."
+}
+]
+}
+},
+"output": [],
+"output_name": []
+},
+"MakeTrainingDataset": {
+"input": {
+"optional": {
+"texts": [
+"STRING",
+{
+"forceInput": true,
+"multiline": false,
+"tooltip": "List of text captions. Can be length n (matching images), 1 (repeated for all), or omitted (uses empty string)."
+}
+]
+},
+"required": {
+"clip": [
+"CLIP",
+{
+"tooltip": "CLIP model for encoding text to conditioning."
+}
+],
+"images": [
+"IMAGE",
+{
+"tooltip": "List of images to encode."
+}
+],
+"vae": [
+"VAE",
+{
+"tooltip": "VAE model for encoding images to latents."
+}
+]
+}
+},
+"output": [
+"LATENT",
+"CONDITIONING"
+],
+"output_name": [
+"latents",
+"conditioning"
+]
+},
+"PreviewAny": {
+"input": {
+"required": {
+"source": [
+"*",
+{}
+]
+}
+},
+"output": [
+"STRING"
+],
+"output_name": [
+"STRING"
+]
+},
+"SaveImage": {
+"input": {
+"hidden": {
+"extra_pnginfo": "EXTRA_PNGINFO",
+"prompt": "PROMPT"
+},
+"required": {
+"filename_prefix": [
+"STRING",
+{
+"default": "ComfyUI",
+"tooltip": "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes."
+}
+],
+"images": [
+"IMAGE",
+{
+"tooltip": "The images to save."
+}
+]
+}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"images"
+]
+},
+"SaveLoRA": {
+"input": {
+"hidden": {
+"extra_pnginfo": [
+"EXTRA_PNGINFO"
+],
+"prompt": [
+"PROMPT"
+]
+},
+"optional": {
+"steps": [
+"INT",
+{
+"tooltip": "Optional: The number of steps the LoRA has been trained for, used to name the saved file."
+}
+]
+},
+"required": {
+"lora": [
+"LORA_MODEL",
+{
+"tooltip": "The LoRA model to save. Do not use the model with LoRA layers."
+}
+],
+"prefix": [
+"STRING",
+{
+"default": "loras/ComfyUI_trained_lora",
+"multiline": false,
+"tooltip": "The prefix to use for the saved LoRA file."
+}
+]
+}
+},
+"output": [],
+"output_name": []
+},
+"TrainLoraNode": {
+"input": {
+"required": {
+"algorithm": [
+"COMBO",
+{
+"default": "LoRA",
+"multiselect": false,
+"options": [
+"LoRA",
+"LoHa",
+"LoKr",
+"OFT"
+],
+"tooltip": "The algorithm to use for training."
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 1,
+"max": 10000,
+"min": 1,
+"tooltip": "The batch size to use for training."
+}
+],
+"bucket_mode": [
+"BOOLEAN",
+{
+"default": false,
+"tooltip": "Enable resolution bucket mode. When enabled, expects pre-bucketed latents from ResolutionBucket node."
+}
+],
+"bypass_mode": [
+"BOOLEAN",
+{
+"default": false,
+"tooltip": "Enable bypass mode for training. When enabled, adapters are applied via forward hooks instead of weight modification. Useful for quantized models where weights cannot be directly modified."
+}
+],
+"checkpoint_depth": [
+"INT",
+{
+"default": 1,
+"max": 5,
+"min": 1,
+"tooltip": "Depth level for gradient checkpointing."
+}
+],
+"existing_lora": [
+"COMBO",
+{
+"default": "[None]",
+"multiselect": false,
+"options": [
+"[None]"
+],
+"tooltip": "The existing LoRA to append to. Set to None for new LoRA."
+}
+],
+"grad_accumulation_steps": [
+"INT",
+{
+"default": 1,
+"max": 1024,
+"min": 1,
+"tooltip": "The number of gradient accumulation steps to use for training."
+}
+],
+"gradient_checkpointing": [
+"BOOLEAN",
+{
+"default": true,
+"tooltip": "Use gradient checkpointing for training."
+}
+],
+"latents": [
+"LATENT",
+{
+"tooltip": "The Latents to use for training, serve as dataset/input of the model."
+}
+],
+"learning_rate": [
+"FLOAT",
+{
+"default": 0.0005,
+"max": 1.0,
+"min": 1e-07,
+"step": 1e-07,
+"tooltip": "The learning rate to use for training."
+}
+],
+"lora_dtype": [
+"COMBO",
+{
+"default": "bf16",
+"multiselect": false,
+"options": [
+"bf16",
+"fp32"
+],
+"tooltip": "The dtype to use for lora."
+}
+],
+"loss_function": [
+"COMBO",
+{
+"default": "MSE",
+"multiselect": false,
+"options": [
+"MSE",
+"L1",
+"Huber",
+"SmoothL1"
+],
+"tooltip": "The loss function to use for training."
+}
+],
+"model": [
+"MODEL",
+{
+"tooltip": "The model to train the LoRA on."
+}
+],
+"offloading": [
+"BOOLEAN",
+{
+"default": false,
+"tooltip": "Offload model weights to CPU during training to save GPU memory."
+}
+],
+"optimizer": [
+"COMBO",
+{
+"default": "AdamW",
+"multiselect": false,
+"options": [
+"AdamW",
+"Adam",
+"SGD",
+"RMSprop"
+],
+"tooltip": "The optimizer to use for training."
+}
+],
+"positive": [
+"CONDITIONING",
+{
+"tooltip": "The positive conditioning to use for training."
+}
+],
+"quantized_backward": [
+"BOOLEAN",
+{
+"default": false,
+"tooltip": "When using training_dtype 'none' and training on quantized model, doing backward with quantized matmul when enabled."
+}
+],
+"rank": [
+"INT",
+{
+"default": 8,
+"max": 128,
+"min": 1,
+"tooltip": "The rank of the LoRA layers."
+}
+],
+"seed": [
+"INT",
+{
+"default": 0,
+"max": 18446744073709551615,
+"min": 0,
+"tooltip": "The seed to use for training (used in generator for LoRA weight initialization and noise sampling)"
+}
+],
+"steps": [
+"INT",
+{
+"default": 16,
+"max": 100000,
+"min": 1,
+"tooltip": "The number of steps to train the LoRA for."
+}
+],
+"training_dtype": [
+"COMBO",
+{
+"default": "bf16",
+"multiselect": false,
+"options": [
+"bf16",
+"fp32",
+"none"
+],
+"tooltip": "The dtype to use for training. 'none' preserves the model's native compute dtype instead of overriding it. For fp16 models, GradScaler is automatically enabled."
+}
+]
+}
+},
+"output": [
+"LORA_MODEL",
+"LOSS_MAP",
+"INT"
+],
+"output_name": [
+"lora",
+"loss_map",
+"steps"
+]
+},
+"VAEDecode": {
+"input": {
+"required": {
+"samples": [
+"LATENT",
+{
+"tooltip": "The latent to be decoded."
+}
+],
+"vae": [
+"VAE",
+{
+"tooltip": "The VAE model used for decoding the latent."
+}
+]
+}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+]
+}
+}

@@ -1,9 +1,11 @@
+import json
 import os
 import re
 import time
 from typing import List, Dict, Any, Optional
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from psn import paths
+from studio import sfw
 
 router = APIRouter()
 
@@ -13,6 +15,43 @@ _cache = {
     "data": None
 }
 CACHE_TTL = 60
+DATA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lora_recipes.json")
+_curated = {}
+
+def curated() -> List[Dict[str, Any]]:
+    """The tuned LoRA recipes this edition carries: safe for work, no real people, each with its licence and its proof level as recorded."""
+    m = os.path.getmtime(DATA)
+    if _curated.get("m") != m: _curated.update(m=m, rows=json.load(open(DATA))["loras"])
+    return _curated["rows"]
+
+def by_id(rid: str) -> Optional[Dict[str, Any]]:
+    return next((r for r in curated() if r["id"] == rid), None)
+
+def apply_to_graph(graph: Dict[str, Any], ask: Dict[str, Any]) -> Dict[str, Any]:
+    """Put one curated LoRA into an H3 graph with its tuned settings: its loader right after the model, the base, steps, sampler, scheduler and size its recipe names. Only a LoRA from the curated list can be asked for, by id."""
+    row = by_id(str((ask or {}).get("id") or ""))
+    if not row or not row.get("run"): raise HTTPException(400, "this LoRA is not one this studio can run")
+    run = row["run"]
+    try: strength = float(ask.get("strength", run["strength"]))
+    except (TypeError, ValueError): raise HTTPException(400, "the LoRA strength must be a number") from None
+    strength = max(-10.0, min(10.0, strength))
+    unet = next((k for k, n in graph.items() if n["class_type"] == "UNETLoader"), None)
+    if not unet: raise HTTPException(400, "this graph has no model to put a LoRA on")
+    graph[unet]["inputs"]["unet_name"] = run["base"]; nid = "lora_recipe"
+    for k, n in graph.items():
+        for key, v in n["inputs"].items():
+            if v == [unet, 0]: n["inputs"][key] = [nid, 0]
+    graph[nid] = {"class_type": run["loader"], "inputs": {"model": [unet, 0], "lora_name": row["path"], "strength_model": strength}}
+    for n in graph.values():
+        i = n["inputs"]
+        if n["class_type"] == "KSamplerSelect": i["sampler_name"] = run["sampler"]
+        elif n["class_type"] == "ResolutionSelector" and run.get("megapixels"): i["megapixels"] = run["megapixels"]
+        elif n["class_type"] == "BasicScheduler":
+            i["scheduler"] = run["scheduler"]; st = i.get("steps")
+            if isinstance(st, list) and graph.get(st[0], {}).get("class_type") == "ComfySwitchNode": st = graph[st[0]]["inputs"].get("on_false")          # the quality side of the speed switch
+            if isinstance(st, list) and graph.get(st[0], {}).get("class_type") == "PrimitiveInt": graph[st[0]]["inputs"]["value"] = int(run["steps"])
+            elif not isinstance(st, list): i["steps"] = int(run["steps"])
+    return graph
 
 def _get_models_root() -> str:
     return paths.models_root(True)
@@ -29,6 +68,9 @@ def _is_sfw(name: str) -> bool:
         "sex", "18+"
     ]
     
+    if sfw.flagged(name.replace("_", " ").replace("-", " ")):
+        return False
+
     # Keywords that can be substring matches
     substring_keywords = [
         "nsfw", "eros", "nude", "naked", "lingerie", "porn", "hentai", 
@@ -79,6 +121,8 @@ def _guess_family(name: str) -> str:
         return "Qwen-Image"
     if "sdxl" in lower_name or "pony" in lower_name or "illustrious" in lower_name:
         return "SDXL"
+    if "sd15" in lower_name or "sd1.5" in lower_name:
+        return "SD 1.5"
         
     return "Other"
 
@@ -267,14 +311,17 @@ def get_loras(
     kind: Optional[str] = Query(None),
     limit: int = Query(50, ge=1, le=5000)
 ):
+    """The LoRA files on disk that this edition has a curated recipe for. A file's name alone cannot show it is safe for work, so anything else is counted, never listed."""
     now = time.time()
     if _cache["data"] is None or (now - _cache["timestamp"]) > CACHE_TTL:
         root = _get_models_root()
         all_items = scan(root)
         _cache["data"] = all_items
         _cache["timestamp"] = now
-        
-    all_items = _cache["data"]
+
+    known = {r["path"]: r for r in curated()}
+    on_disk = _cache["data"]
+    all_items = [{**i, "recipe": known[i["name"]]["id"], "proof": known[i["name"]]["proof"]["level"], "licence": known[i["name"]]["licence"]} for i in on_disk if i["name"] in known]
     
     # Calculate families and kinds counts from ALL items (unfiltered)
     families = {}
@@ -291,5 +338,6 @@ def get_loras(
     return {
         "items": filtered,
         "families": families,
-        "kinds": kinds
+        "kinds": kinds,
+        "other_files": len(on_disk) - len(all_items),
     }

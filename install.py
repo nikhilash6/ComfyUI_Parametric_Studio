@@ -37,6 +37,9 @@ BACKENDS = {"image": ["cuda", "rocm", "mps"], "anime": ["cuda", "rocm", "mps"], 
             "animate": ["cuda", "rocm", "mps"], "music": ["cuda", "rocm", "mps"], "flux3": ["cuda"],
             "video_ltx": ["cuda"], "animate_ltx": ["cuda"], "h3_video": ["cuda"], "h3_animate": ["cuda"]}
 # The H3 text encoder is NVFP4; boxcheck reports that capability only on compute capability 10.0 and up.
+H3_NOTICE = ("MiniMax H3: this download is under the MiniMax H3 Community License, and its use restrictions apply to you and to what you make with it. "
+             "It excludes the US, EU, UK and South Korea, for outputs too. Read it first: https://huggingface.co/MiniMaxAI/MiniMax-H3/raw/main/LICENSE\n"
+             "To report suspected misuse of this project: https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/issues")
 NEEDS = {"h3_video": ["nvfp4"], "h3_animate": ["nvfp4"]}
 # Custom node packs the shipped graphs need beyond ComfyUI core: LTXFloatToInt comes from this pack.
 GOAL_PACKS = {"video_ltx": ["https://github.com/Lightricks/ComfyUI-LTXVideo.git"],
@@ -313,6 +316,8 @@ def main(argv=None):
         return EXIT_NOTHING
     size = 0.0 if args.no_models else sum(f["size_gb"] for f in files)
     print(f"Download: {size:.1f} GB of models into {Path(args.dir).resolve()}")
+    if not args.no_models and any("minimax" in str(f).lower() and "h3" in str(f).lower() for f in files):
+        print(H3_NOTICE)
 
     cmds = build_commands(result, plan_manifest, channels, args.channel, args.dir, profile.get("backend", "cpu"),
                           args.include_gated, not args.no_models)

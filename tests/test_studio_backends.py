@@ -50,3 +50,17 @@ def test_output_route_refuses_traversal():
     with pytest.raises(HTTPException): B.sdk_output("unknown", "a.mp4")
     B.JOBS["j"] = {"status": "done", "files": []}
     with pytest.raises(HTTPException): B.sdk_output("j", "../../secret")
+
+
+def test_generate_goes_through_the_sdk_with_the_input_folder(monkeypatch, tmp_path):
+    """STUDIO_BACKEND=sdk through the real /api/generate route: the input folder must resolve, or every job raises before it reaches the SDK."""
+    from fastapi.testclient import TestClient
+    from studio import server as S
+    from studio.goals import GOALS
+    (tmp_path / "clip.png").write_bytes(b"x")
+    seen = {}
+    def fake_submit(graph, uploads, input_dir, meta): seen.update(graph=graph, uploads=uploads, input_dir=input_dir, meta=meta); return "sdk-1"
+    monkeypatch.setenv("STUDIO_BACKEND", "sdk"); monkeypatch.setattr(S.backends, "submit", fake_submit); monkeypatch.setattr(S.paths, "comfy_input", lambda *a: str(tmp_path))
+    monkeypatch.setattr(S, "comfy", lambda path, *a, **k: {})
+    r = TestClient(S.app).post("/api/generate", json={"goal": next(iter(GOALS)), "prompt": "a lighthouse", "image": "clip.png"})
+    assert r.status_code == 200 and r.json()["job"] == "sdk-1" and seen["input_dir"] == str(tmp_path) and "clip.png" in seen["uploads"] and seen["meta"]["prompt"]

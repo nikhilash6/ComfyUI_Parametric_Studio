@@ -12,7 +12,7 @@
 
 *   **Danbooru tags:** The primary phrasing style is Danbooru tags. [deliverables-best-practice-2026-10-17.md]
 *   **Not in notes:** Specific high-impact quality tags (e.g., "masterpiece", "best quality") or specific style keywords are not listed in the provided documents.
-*   **Not in notes:** Negative prompt examples specific to Pony/Illustrious/NoobAI are not provided in the documents (only general SDXL photoreal negatives or Maeve's specific character negatives are shown).
+*   **Not in notes:** Negative prompt examples specific to Pony/Illustrious/NoobAI are not provided in the documents (only general SDXL photoreal negatives are shown).
 
 ## Settings that worked
 
@@ -31,7 +31,7 @@
 *   **Dialect-Isolated Retrieval:** The system prevents cross-dialect retrieval; SDXL/Pony/Illustrious/NoobAI tag lists are never offered to FLUX targets, and vice versa. [prompt-library.md]
 *   **Safety Screening:** All prompts from the library are screened by the studio text guard (`character_policy.prompt_problems`) on import and on every text served. [prompt-library.md]
 *   **Import Cap:** The studio import caps each new family (including SDXL) at 60,000 records by default to manage memory, prioritizing best-reacted prompts. [prompt-library.md]
-*   **Character Mode Integration:** Character profiles (like Maeve) can be used with these models, though the "Suggested model" field in the profile is currently blank for character mode to fill. [PROFILE.md]
+*   **Character Mode Integration:** Character profiles can be used with these models, though the "Suggested model" field in the profile is currently blank for character mode to fill.
 *   **Not in notes:** Specific workflow JSONs or ComfyUI node configurations for these models are not included in the provided documents.
 
 ## What to avoid

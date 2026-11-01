@@ -30,7 +30,7 @@ jobs:
           tests/test_recipes_camera_prompts.py
           tests/test_studio_anime.py tests/test_studio_apps.py tests/test_studio_calibrate.py
           tests/test_studio_github.py tests/test_studio_names.py tests/test_studio_packs.py
-          tests/test_studio_prime.py tests/test_studio_schedule.py tests/test_studio_regressions.py
+          tests/test_studio_prime.py tests/test_studio_schedule.py tests/test_studio_regressions.py tests/test_studio_rotation.py
       - name: The server imports with ComfyUI unreachable
         env:
           COMFYUI_URL: http://127.0.0.1:9

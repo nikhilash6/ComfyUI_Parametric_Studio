@@ -17,8 +17,8 @@
 
 ## Backend URL Misconfiguration
 - **Symptom**: The contest studio backend fails to communicate with the correct ComfyUI instance. [MODEL.md]
-- **Cause**: The backend's `COMFY_BASE_URL` currently points to an old instance instead of the Parametric Studio (PS) server on port 8200. [MODEL.md]
-- **Fix**: Repoint `COMFY_BASE_URL` to the PS server on port 8200. [MODEL.md]
+- **Cause**: The backend's `COMFY_BASE_URL` points at the wrong ComfyUI server. [MODEL.md]
+- **Fix**: Set `COMFY_BASE_URL` to the address of your running ComfyUI.
 
 ## Missing CLIP Vision Model for IP-Adapter
 - **Symptom**: The IP-Adapter workflow fails because the `CLIPVisionLoader` node cannot find the required model file. [WORKFLOW_PLAN.md]

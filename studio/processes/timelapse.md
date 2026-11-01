@@ -88,7 +88,7 @@ timelapse is silent; music and captions are optional post steps. 7. Smoothing on
 6. **Content Studio:** the `timelapse` item kind is wired AND the standalone workspace stays.
 
 ## Wan 2.2 first + last frame (`wan:flf`, 2026-10-17)
-- **Graph:** `earlier_studio/tools/graphs/wan22_flf_4s.api.json` = `wan22_i2v_4s` node for node, with `WanImageToVideo` swapped for the core `WanFirstLastFrameToVideo` (start_image = the first picture, end_image = a second `LoadImage`).
+- **Graph:** the earlier studio's wan22_flf_4s.api.json = `wan22_i2v_4s` node for node, with `WanImageToVideo` swapped for the core `WanFirstLastFrameToVideo` (start_image = the first picture, end_image = a second `LoadImage`).
   **Validated offline** with `graphcheck.validate` against GET `/object_info` of the LIVE  a local port and  a local port (both: no errors; the I2V graph the same); the classes it uses are saved as a fixture
   (`tests/studio/data/wan_flf_object_info.json`) so a test re-checks it. Nothing was submitted to ComfyUI.
 - **Tool:** `wan_tools.wan22_generate(mode="flf", image, last_frame, ...)` (no preview, creative take or LoRA preset; both pictures staged; the end picture is part of the cache key); the room check is the Wan one

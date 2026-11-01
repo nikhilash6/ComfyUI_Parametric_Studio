@@ -1,12 +1,12 @@
 # Coverage: notable open models from SD 1.5 to today
 
-Checked on 30 Oct 2026. 87 notable open models, by kind and year, each marked as a core goal here, a family instance here, or missing. The same data drives the Coverage view in the Atlas page (`studio/atlas_models.json`, key `coverage`).
+Checked on 30 Oct 2026. 88 notable open models, by kind and year, each marked as a core goal here, a family instance here, or missing. The same data drives the Coverage view in the Atlas page (`studio/atlas_models.json`, key `coverage`).
 
 - **Core goal here**: a button in Create runs it (or, for the Qwen language models, it is a crew LLM tier in `studio/llm_tiers.py`).
 - **Family instance here**: the family has a folder under the model library and its own ComfyUI instance (`python -m psn.instances start <family>`). 82 families are installed.
 - **Missing**: no family folder and no goal. That is not a claim the model cannot be added.
 
-Totals: 9 core goal, 53 family instance, 25 missing.
+Totals: 9 core goal, 54 family instance, 25 missing.
 
 ## What it was compared against
 
@@ -125,6 +125,7 @@ Notes on the missing models:
 | Pixal3D | 3D | 2026 | Pixal3D | MIT |
 | LongCat-Video-Avatar | Video | 2026 | LongCat-Avatar-15 | MIT |
 | Ideogram 4 | Image | 2026 | Ideogram4 | Ideogram 4 Non-Commercial licence |
+| FIBO 2.0 | Image | 2026 | Fibo-2.0 | CC BY-NC 4.0, non-commercial |
 | SCAIL-2 | Video | 2026 | Wan-SCAIL-2 | MIT |
 | Boogu-Image | Image | 2026 | Boogu | Apache-2.0 |
 | Krea 2 | Image | 2026 | Krea2 | Krea 2 Community License |

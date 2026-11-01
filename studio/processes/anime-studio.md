@@ -3,7 +3,7 @@
 > From the author's earlier studio, cleaned for publication: private paths, ports and some lines were removed, so a step may read short and a screen it names may not exist here. Status in this studio: Untested.
 
 
-Workspace **Anime** (left rail). Code: `earlier_studio/studio/anime.py`, UI `static/studio/Anime.js`, routes
+Workspace **Anime** (left rail). Code: the earlier studio's anime.py, UI `static/studio/Anime.js`, routes
 `/api/studio/anime/*`, CPU join engine `anime`.
 
 **Strict** = pinned to an anime look at every step: realism words (photo, photorealistic, 35mm, DSLR, film grain, skin

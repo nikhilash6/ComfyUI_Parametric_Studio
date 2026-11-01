@@ -42,7 +42,7 @@ While the studio holds the turn, chat-started GPU tools refuse.
 - ComfyUI runs `--highvram`: models stay resident; the studio tools `/free` the port after a job when it is idle (Wan
   keeps  a local port warm only for the creative take that follows).
 - LLMs: the MoE ( a local port, ~46 GB) is on-demand since 2026-10-11 (`moe up` refuses under 50 GB free unless `--force`; the
-  chatbox sweeper stops it after 20 min idle). The ✨ enhancer can wake muse-glimmer (~21 GB) or the MoE (see
+  chatbox sweeper stops it after 20 min idle). The ✨ enhancer can wake a local language model (~21 GB) or the MoE (see
   `prompt-enhancer-and-model-rules.md`). Ollama Gemma 12B (~10 GB) is the content-build LLM and unloads when idle.
 - `vram-floor-watch.service` warns on the desktop under 6 GB free and on the phone under 4 GB.
 

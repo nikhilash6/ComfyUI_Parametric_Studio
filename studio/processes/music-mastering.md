@@ -32,7 +32,7 @@ Output: 24-bit FLAC at the song's own sample rate (32-96 kHz kept, else 44.1 kHz
 | **Music video maker** | same option on a generated song (`song.master`); a library, uploaded or studio-result song is used as it is | the song stage uses the mastered file; the SHORT quality check adds the trimmed seconds back so a loop-ready cut does not trigger a new seed |
 | **Song library** | "Master this song" on every row (Details > Check this song) | a `song:master` CPU job writes a **new library song** titled "<title> (mastered, ...)", `provenance: "mastered from <id>"`, `mastered_from` block (options, before, after, steps, verified numbers), the source's analysis moved by the cut and marked derived, loudness updated; the source gets a `used_in` entry (`kind: master`). Never overwrites; the same source + options is the same copy |
 | **Check a song** | same Details panel, and `POST /api/studio/mastering/measure` for a library song or a studio result | the numbers above, plain advice (over -1 dBTP, quiet intro, no clean loop point, lead silence, clipping, mono), the suggested options, and the Sound maker checklist lines (`sound_maker_fit.score`, class hook, read-only) |
-| **Measure all** | "Measure all (report)" under the library list, `python -m earlier_studio.studio.mastering_report` | see below |
+| **Measure all** | "Measure all (report)" under the library list, the earlier studio's mastering_report module | see below |
 
 ## Routes (all under `/api/studio/mastering/`, handler `scripts/chatbox/server.py::_mastering_route`)
 
@@ -40,7 +40,7 @@ Output: 24-bit FLAC at the song's own sample rate (32-96 kHz kept, else 44.1 kHz
 
 ## Measure all (read-only, CPU, niced, resumable)
 
-`nice -n 19 .venv/bin/python -m earlier_studio.studio.mastering_report [--library DIR] [--out DIR] [--limit N]` opens each song's `audio.flac` once and measures it. It never changes a song, a `meta.json` or the library folder. `report.json` is rewritten after every song, so killing it and running it again continues; a song whose file size and mtime match its saved entry is skipped. Output (outside the library): `a local folder` (`report.json`, `report.md`, `status.json`, `run.log`; `COMFY_MASTERING_STATE_DIR` overrides).
+The earlier studio's mastering_report module (options: library, output folder, limit) opens each song's `audio.flac` once and measures it. It never changes a song, a `meta.json` or the library folder. `report.json` is rewritten after every song, so killing it and running it again continues; a song whose file size and mtime match its saved entry is skipped. Output (outside the library): `a local folder` (`report.json`, `report.md`, `status.json`, `run.log`; `COMFY_MASTERING_STATE_DIR` overrides).
 
 **Run 2026-10-17 on the real library (132 songs, all imported from long-form video, 6.1 hours, about 9 minutes niced):** 104 would clip (true peak over -1 dBTP; 87 of them over 0), 80 have the first second 6+ dB under the body, 122 have no clean loop point, 20 are quiet (under -16.5 LUFS), 93 are louder than -12.5 LUFS (median -9.9 LUFS, highest true peak +2.3 dBTP). **These are commercial masters from the author's imports, not Music 3 renders**, so they say little about the Music 3 findings above: mastering such a song to -14 LUFS would turn it *down*, and a quiet intro in a commercial song is usually intended. Fast start would cut 92 of them, median 0.35 s (so mostly dead air), longest 9.9 s. The numbers are the measure-all definitions, not a verdict on any song.
 

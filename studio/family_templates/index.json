@@ -1,0 +1,1600 @@
+{
+ "built": "2026-10-31",
+ "templates": [
+  {
+   "family": "SD15",
+   "name": "sd15_core_t2i",
+   "title": "SD 1.5: Text to Image",
+   "desc": "DreamShaper 8 through ComfyUI's core nodes.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 2.0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints",
+     "url": "https://huggingface.co/Lykon/DreamShaper/resolve/main/DreamShaper_8_pruned.safetensors",
+     "gb": 1.99
+    }
+   ],
+   "source": "family_window generic",
+   "note": "An earlier render with this graph passed (2026-10-30)."
+  },
+  {
+   "family": "HunyuanDiT-1.2",
+   "name": "hunyuandit_core_t2i",
+   "title": "HunyuanDiT 1.2: Text to Image",
+   "desc": "HunyuanDiT 1.2 through ComfyUI's core nodes.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 7.7,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "hunyuan_dit_1.2.safetensors",
+     "dir": "checkpoints",
+     "url": "https://huggingface.co/comfyanonymous/hunyuan_dit_comfyui/resolve/main/hunyuan_dit_1.2.safetensors",
+     "gb": 7.67
+    }
+   ],
+   "source": "family_window generic",
+   "note": "An earlier render with this graph passed (2026-10-30)."
+  },
+  {
+   "family": "Stable-Cascade",
+   "name": "stable_cascade_core_t2i",
+   "title": "Stable Cascade: Text to Image",
+   "desc": "Stage C then stage B through ComfyUI's core nodes.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 12.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "stable_cascade_stage_c.safetensors",
+     "dir": "checkpoints",
+     "url": "https://huggingface.co/fofr/comfyui/resolve/main/checkpoints/stable_cascade_stage_c.safetensors",
+     "gb": 8.59
+    },
+    {
+     "name": "stable_cascade_stage_b.safetensors",
+     "dir": "checkpoints",
+     "url": "https://huggingface.co/fofr/comfyui/resolve/main/checkpoints/stable_cascade_stage_b.safetensors",
+     "gb": 4.24
+    }
+   ],
+   "source": "family_window generic",
+   "note": "An earlier render with this graph passed (2026-10-30). The stage files land in diffusion_models, so instances.WRAPS now shows them as checkpoints."
+  },
+  {
+   "family": "Cosmos",
+   "name": "cosmos_core_t2i",
+   "title": "Cosmos Predict2: Text to Image",
+   "desc": "Cosmos Predict2 14B through ComfyUI's core nodes.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.4,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "cosmos_predict2_14B_t2i.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/Comfy-Org/Cosmos-Predict2/resolve/main/cosmos_predict2_14B_t2i.safetensors",
+     "gb": 26.57
+    },
+    {
+     "name": "oldt5_xxl_fp8_e4m3fn_scaled.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/comfyanonymous/cosmos_1.0_text_encoder_and_VAE_ComfyUI/resolve/main/text_encoders/oldt5_xxl_fp8_e4m3fn_scaled.safetensors",
+     "gb": 4.561
+    },
+    {
+     "name": "wan_2.1_vae.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/1038lab/FlashVSR/resolve/main/Wan2.1_VAE.safetensors",
+     "gb": 0.236
+    }
+   ],
+   "source": "family_window generic",
+   "note": "An earlier render with this graph passed (2026-10-30)."
+  },
+  {
+   "family": "Mochi",
+   "name": "mochi_core_t2v",
+   "title": "Mochi: Text to Video",
+   "desc": "Mochi preview through ComfyUI's core nodes.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 28.7,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "mochi_preview_bf16.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/Comfy-Org/mochi_preview_repackaged/resolve/main/split_files/diffusion_models/mochi_preview_bf16.safetensors",
+     "gb": 18.68
+    },
+    {
+     "name": "t5xxl_fp16.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/Aitrepreneur/FLX/resolve/main/t5xxl_fp16.safetensors",
+     "gb": 9.116
+    },
+    {
+     "name": "mochi_vae.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/mochi_preview_repackaged/resolve/main/split_files/vae/mochi_vae.safetensors",
+     "gb": 0.856
+    }
+   ],
+   "source": "family_window generic",
+   "note": "An earlier render with this graph passed (2026-10-30)."
+  },
+  {
+   "family": "PixArt-Sigma",
+   "name": "pixart_sigma_core_t2i",
+   "title": "PixArt-Sigma: Text to Image",
+   "desc": "PixArt-Sigma through ComfyUI's core nodes.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 9.4,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "pixart-sigma_transformer.safetensors",
+     "dir": "diffusion_models",
+     "url": "",
+     "gb": null
+    },
+    {
+     "name": "t5xxl_fp16.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/Aitrepreneur/FLX/resolve/main/t5xxl_fp16.safetensors",
+     "gb": 9.116
+    },
+    {
+     "name": "sdxl_vae.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/fofr/comfyui/resolve/main/vae/sdxl_vae.safetensors",
+     "gb": 0.312
+    }
+   ],
+   "source": "family_window generic",
+   "note": "An earlier render with this graph passed (2026-10-30)."
+  },
+  {
+   "family": "LDM3D-4C",
+   "name": "ldm3d_rgbd_t2i",
+   "title": "LDM3D: Text to RGB and Depth",
+   "desc": "One prompt makes a colour image and its depth map.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "ldm3d-4c_unet.safetensors",
+     "dir": "diffusion_models",
+     "url": "",
+     "gb": null
+    },
+    {
+     "name": "ldm3d-4c_text_encoder.safetensors",
+     "dir": "text_encoders",
+     "url": "",
+     "gb": null
+    },
+    {
+     "name": "ldm3d-4c_vae.safetensors",
+     "dir": "vae",
+     "url": "",
+     "gb": null
+    }
+   ],
+   "source": "core nodes plus PSN nodes named in instances.WRAPS",
+   "note": "New graph. The earlier render used a diffusers pipeline, not this graph."
+  },
+  {
+   "family": "MOVA",
+   "name": "mova_core_i2v",
+   "title": "MOVA: Image to Video",
+   "desc": "MOVA 720p high and low noise through core Wan nodes.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 33.1,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "mova_720p_high_noise_fp8_scaled.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/rzgar/MOVA-720p-360p-ComfyUI/resolve/main/MOVA-720p/diffusion_models_fp8/mova_720p_high_noise_fp8_scaled.safetensors",
+     "gb": 13.31
+    },
+    {
+     "name": "mova_720p_low_noise_fp8_scaled.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/rzgar/MOVA-720p-360p-ComfyUI/resolve/main/MOVA-720p/diffusion_models_fp8/mova_720p_low_noise_fp8_scaled.safetensors",
+     "gb": 13.31
+    },
+    {
+     "name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/Aitrepreneur/FLX/resolve/main/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+     "gb": 6.273
+    },
+    {
+     "name": "wan_2.1_vae.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/1038lab/FlashVSR/resolve/main/Wan2.1_VAE.safetensors",
+     "gb": 0.236
+    }
+   ],
+   "source": "family_window generic",
+   "note": "WARNING: this graph's last render gave blank output (2026-10-30). Treat a pass as unproven until the frames are checked."
+  },
+  {
+   "family": "dwpose",
+   "name": "dwpose_image_to_pose",
+   "title": "DWPose: Image to Pose",
+   "desc": "Draws a body, hand and face pose map from one image.",
+   "media": "image",
+   "cat": "Utility",
+   "gb": 0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [],
+   "source": "WanVideoWrapper node, as hand-tested on main 2026-10-30",
+   "note": "The pack fetches its own detector weights from Hugging Face on first use (hr16/yolox-onnx, hr16/DWPose-TorchScript-BatchSize5)."
+  },
+  {
+   "family": "HiDream",
+   "name": "hidream_o1_full_t2i",
+   "title": "HiDream O1 Full: Text to Image",
+   "desc": "HiDream O1 full, tuned: noise scale 8, patch seam smoothing, dpmpp_2m_sde_gpu, 40 steps, cfg 5, 2048 px.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 16.4,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "hidream_o1_image_bf16.safetensors",
+     "dir": "checkpoints",
+     "gb": 16.37
+    }
+   ],
+   "source": "Comfy Copilot graph hidream_o1_full",
+   "note": "The checkpoint carries its own encoder, so the official template's gemma4 prompt enhancer is not needed."
+  },
+  {
+   "family": "HiDream",
+   "name": "hidream_o1_dev_t2i",
+   "title": "HiDream O1 Dev: Text to Image",
+   "desc": "HiDream O1 dev fp8, official dev settings: noise scale 7.6, LCM sampler, 28 steps, cfg 1, 2048 px.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 8.1,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "hidream_o1_image_dev_fp8_scaled.safetensors",
+     "dir": "checkpoints",
+     "gb": 8.07
+    }
+   ],
+   "source": "Copilot graph wiring with the official image_hidream_o1_dev settings",
+   "note": ""
+  },
+  {
+   "family": "Ideogram4",
+   "name": "ideogram4_json_t2i",
+   "title": "Ideogram 4: JSON Caption to Image",
+   "desc": "Ideogram 4 from a JSON caption: dual-model guider, 20 steps, cfg 7 falling to 3 at 70 percent.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 36.4,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "ideogram4_fp8_scaled.safetensors",
+     "dir": "diffusion_models",
+     "gb": 9.28
+    },
+    {
+     "name": "ideogram4_unconditional_fp8_scaled.safetensors",
+     "dir": "diffusion_models",
+     "gb": 9.28
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph ideogram4_json",
+   "note": "Fixes 'no output': this graph uses the encoder on disk (qwen3vl_8b_bf16) and has no text-preview branch."
+  },
+  {
+   "family": "Ideogram4",
+   "name": "ideogram4_poster_t2i",
+   "title": "Ideogram 4: Poster Builder",
+   "desc": "Ideogram 4 with the KJ prompt builder: dual-model guider, 20 steps, cfg 7 falling to 3 at 70 percent.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 36.4,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "ideogram4_fp8_scaled.safetensors",
+     "dir": "diffusion_models",
+     "gb": 9.28
+    },
+    {
+     "name": "ideogram4_unconditional_fp8_scaled.safetensors",
+     "dir": "diffusion_models",
+     "gb": 9.28
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph ideogram4_poster",
+   "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein9b_t2i",
+   "title": "Flux 2 Klein 9B: Text to Image",
+   "desc": "Klein 9B, tuned: 4 steps, cfg 1, euler.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 27.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-9b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 18.16
+    },
+    {
+     "name": "qwen_3_8b_fp8mixed.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.66
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph klein9b_t2i",
+   "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein9b_edit",
+   "title": "Flux 2 Klein 9B: Image Edit",
+   "desc": "Klein 9B edit from one reference: 4 steps, cfg 1.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 27.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-9b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 18.16
+    },
+    {
+     "name": "qwen_3_8b_fp8mixed.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.66
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph klein9b_edit",
+   "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein9b_style",
+   "title": "Flux 2 Klein 9B: Style Transfer",
+   "desc": "Klein 9B with two references: 4 steps, cfg 1.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 27.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-9b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 18.16
+    },
+    {
+     "name": "qwen_3_8b_fp8mixed.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.66
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph klein9b_style",
+   "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein9b_mesh2photo",
+   "title": "Flux 2 Klein 9B: Render to Photo",
+   "desc": "Klein 9B turns a rough render into a photo: 4 steps, denoise 0.7.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 27.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-9b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 18.16
+    },
+    {
+     "name": "qwen_3_8b_fp8mixed.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.66
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph klein9b_mesh2photo",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen21_t2i",
+   "title": "Qwen Image 2.1: Text to Image",
+   "desc": "Qwen Image 2.1 bf16 with its cache, tuned: 40 steps, cfg 1, euler.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_2.1_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.23
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "qwen_image_2.1_vae_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors"
+    }
+   ],
+   "source": "Comfy Copilot graph qwen21_t2i",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen21_edit",
+   "title": "Qwen Image 2.1: Image Edit",
+   "desc": "Qwen Image 2.1 edit from one reference: 40 steps, cfg 1.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_2.1_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.23
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "qwen_image_2.1_vae_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors"
+    }
+   ],
+   "source": "Comfy Copilot graph qwen21_edit",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen21_clean_frame",
+   "title": "Qwen Image 2.1: Clean Frame",
+   "desc": "Removes overlays from a frame at its own size: 40 steps, cfg 1.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_2.1_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.23
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "qwen_image_2.1_vae_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors"
+    }
+   ],
+   "source": "Comfy Copilot graph qwen21_clean_frame",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen21_turbo_t2i",
+   "title": "Qwen Image 2.1 Turbo: Text to Image",
+   "desc": "Qwen Image 2.1 turbo bf16 with the tuned 8-step sigma list, cfg 1.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_2.1_turbo_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.23
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "qwen_image_2.1_vae_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors"
+    }
+   ],
+   "source": "Copilot qwen21_t2i with the turbo sigmas from qwen21_fusion_turbo and the tested qwen21_turbo settings",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen_image_edit_2509_int8",
+   "title": "Qwen Image Edit 2509: Image Edit",
+   "desc": "Qwen Image Edit 2509 int8 without the Lightning LoRA, which is not on disk: 20 steps, cfg 4.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 30.1,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_edit_2509_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 20.5
+    },
+    {
+     "name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+     "dir": "text_encoders",
+     "gb": 9.38
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.25
+    }
+   ],
+   "source": "Official image_qwen_image_edit_2509, its Lightning-off branch",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "mage_flow_int8_t2i",
+   "title": "Mage Flow: Text to Image",
+   "desc": "Mage Flow int8: 20 steps, cfg 5, euler, its own VAE and Qwen3-VL 4B.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 13.4,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "mage_flow_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 4.16
+    },
+    {
+     "name": "mage_flow_vae_bf16.safetensors",
+     "dir": "vae",
+     "gb": 0.35
+    },
+    {
+     "name": "qwen3vl_4b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.88
+    }
+   ],
+   "source": "Comfy core MageFlow encoder wiring; settings from capability_run mage_flow_rl",
+   "note": "Listed here because Mage Flow has no family of its own. An earlier Mage Flow setup rendered noise (looks.py, 2026-10-10), so judge this one by its image."
+  },
+  {
+   "family": "Z-Image",
+   "name": "zimage_base_t2i",
+   "title": "Z-Image Base: Text to Image (tuned)",
+   "desc": "Z-Image base bf16: res_multistep, 25 steps, cfg 4, shift 3.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 20.7,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "z_image_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 12.31
+    },
+    {
+     "name": "qwen_3_4b.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.04
+    },
+    {
+     "name": "ae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph zimage_base_t2i, official values for its open settings",
+   "note": ""
+  },
+  {
+   "family": "Z-Image",
+   "name": "zimage_turbo_t2i",
+   "title": "Z-Image Turbo: Text to Image (tuned)",
+   "desc": "Z-Image turbo: res_multistep, 8 steps, cfg 1, shift 3, loaded fp8.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 20.7,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "z_image_turbo_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 12.31
+    },
+    {
+     "name": "qwen_3_4b.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.04
+    },
+    {
+     "name": "ae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph zimage_turbo_t2i, tested values from capability_run",
+   "note": ""
+  },
+  {
+   "family": "Flux.1",
+   "name": "flux1_schnell_t2i",
+   "title": "Flux 1 Schnell: Text to Image (tuned)",
+   "desc": "Flux Schnell through split loaders: 4 steps, euler, simple. Replaces the official flux_schnell, which wants a checkpoint file that is not on disk.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 29.5,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "flux1-schnell.safetensors",
+     "dir": "diffusion_models",
+     "gb": 23.78
+    },
+    {
+     "name": "clip_l.safetensors",
+     "dir": "text_encoders",
+     "gb": 0.25
+    },
+    {
+     "name": "t5xxl_fp8_e4m3fn_scaled.safetensors",
+     "dir": "text_encoders",
+     "gb": 5.16
+    },
+    {
+     "name": "ae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph flux1_t2i",
+   "note": ""
+  },
+  {
+   "family": "upscale_models",
+   "name": "image_upscale_realesrgan_x4",
+   "title": "Real-ESRGAN x4: Upscale",
+   "desc": "Upscales one image four times with Real-ESRGAN x4 plus.",
+   "media": "image",
+   "cat": "Utility",
+   "gb": 0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "RealESRGAN_x4plus.safetensors",
+     "dir": "upscale_models",
+     "url": "https://huggingface.co/Comfy-Org/Real-ESRGAN/resolve/main/RealESRGAN_x4plus.safetensors"
+    }
+   ],
+   "source": "Comfy Copilot graph image_upscale",
+   "note": ""
+  },
+  {
+   "family": "upscale_models",
+   "name": "birefnet_cutout",
+   "title": "BiRefNet: Background Cutout",
+   "desc": "Cuts out the subject and saves the image with alpha plus its mask.",
+   "media": "image",
+   "cat": "Utility",
+   "gb": 0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "birefnet.safetensors",
+     "dir": "background_removal",
+     "url": "https://huggingface.co/Comfy-Org/BiRefNet/resolve/main/background_removal/birefnet.safetensors"
+    }
+   ],
+   "source": "Comfy Copilot graph birefnet_cutout",
+   "note": "Listed here because no family holds background removal."
+  },
+  {
+   "family": "Boogu",
+   "name": "boogu_turbo_t2i",
+   "title": "Boogu Turbo: Text to Image",
+   "desc": "Boogu Turbo hotfix int8: lcm, sgm_uniform, 4 steps, cfg 1, about 1 MP.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 29.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "boogu_image_turbo_hotfix_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 11.37
+    },
+    {
+     "name": "ae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    }
+   ],
+   "source": "Copilot image_boogu_marigold_tools boogu_t2i, tested values",
+   "note": ""
+  },
+  {
+   "family": "Boogu",
+   "name": "boogu_edit_turbo",
+   "title": "Boogu Edit Turbo: Image Edit",
+   "desc": "Boogu Edit Turbo hotfix int8: dpmpp_2m, 4 steps, cfg 1, shift 3.16.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 28.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "boogu_image_edit_turbo_hotfix_1k_20260708_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 10.33
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "ae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Copilot image_boogu_marigold_tools boogu_edit, tested values",
+   "note": ""
+  },
+  {
+   "family": "Anima",
+   "name": "anima_base_t2i",
+   "title": "Anima Base: Text to Image",
+   "desc": "Anima Base: er_sde, 30 steps, cfg 4.5, Qwen 3 0.6B encoder, Qwen Image VAE.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 5.6,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "anima-base-v1.0.safetensors",
+     "dir": "diffusion_models",
+     "gb": 4.18
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.25
+    },
+    {
+     "name": "qwen_3_06b_base.safetensors",
+     "dir": "text_encoders",
+     "gb": 1.19
+    }
+   ],
+   "source": "Official image_anima_base_v1 wiring; tested values from capability_run anima_base_t2i",
+   "note": ""
+  },
+  {
+   "family": "Anima",
+   "name": "anima_aesthetic_t2i",
+   "title": "Anima Aesthetic: Text to Image",
+   "desc": "Anima Aesthetic: euler, 30 steps, cfg 3.0, Qwen 3 0.6B encoder, Qwen Image VAE.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 5.6,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "anima-aesthetic-v1.1.safetensors",
+     "dir": "diffusion_models",
+     "gb": 4.18
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.25
+    },
+    {
+     "name": "qwen_3_06b_base.safetensors",
+     "dir": "text_encoders",
+     "gb": 1.19
+    }
+   ],
+   "source": "Official image_anima_base_v1 wiring; tested values from capability_run anima_aesthetic_t2i",
+   "note": ""
+  },
+  {
+   "family": "Anima",
+   "name": "anima_turbo_t2i",
+   "title": "Anima Turbo: Text to Image",
+   "desc": "Anima Turbo: euler, 10 steps, cfg 1.0, Qwen 3 0.6B encoder, Qwen Image VAE.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 5.6,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "anima-turbo-v1.1.safetensors",
+     "dir": "diffusion_models",
+     "gb": 4.18
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.25
+    },
+    {
+     "name": "qwen_3_06b_base.safetensors",
+     "dir": "text_encoders",
+     "gb": 1.19
+    }
+   ],
+   "source": "Official image_anima_base_v1 wiring; tested values from capability_run anima_turbo_t2i",
+   "note": ""
+  },
+  {
+   "family": "Ernie-Image",
+   "name": "ernie_image_core_t2i",
+   "title": "ERNIE Image: Text to Image",
+   "desc": "ERNIE Image without the prompt enhancer: 20 steps, cfg 4, euler.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 24.1,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "ernie-image.safetensors",
+     "dir": "diffusion_models",
+     "gb": 16.07
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    },
+    {
+     "name": "ministral-3-3b.safetensors",
+     "dir": "text_encoders",
+     "gb": 7.72
+    }
+   ],
+   "source": "Official image_ernie_image, enhancer switch off",
+   "note": ""
+  },
+  {
+   "family": "Moss-Image",
+   "name": "moss_image_core_t2i",
+   "title": "MOSS Image: Text to Image",
+   "desc": "MOSS Image int8 with stock Qwen3.5 9B int8: er_sde, 25 steps, cfg 2.5.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 15.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "moss_image_sft_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 5.41
+    },
+    {
+     "name": "flux2-vae_small.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/MOSS-Image/resolve/main/vae/flux2-vae_small.safetensors"
+    },
+    {
+     "name": "qwen3.5_9b_int8_convrot.safetensors",
+     "dir": "text_encoders",
+     "gb": 9.75
+    }
+   ],
+   "source": "Official image_moss_image_t2i, upsampler off; int8 encoder in place of the w4a8 one",
+   "note": ""
+  },
+  {
+   "family": "Flux.3-Klein",
+   "name": "flux3_klein_bf16_t2i",
+   "title": "Flux 3 Klein bf16: Text to Image",
+   "desc": "Flux 3 Klein bf16: er_sde, 15 steps, cfg 1, Qwen3-VL 4B bf16.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 20.3,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "flux3_image_klein_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 11.08
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    },
+    {
+     "name": "qwen3vl_4b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.88
+    }
+   ],
+   "source": "The studio's flux3 goal graph (workflows/flux3_klein_core_t2i_api.json), which has rendered here",
+   "note": ""
+  },
+  {
+   "family": "Flux.3-Klein",
+   "name": "flux3_klein_nvfp4_t2i",
+   "title": "Flux 3 Klein nvfp4: Text to Image",
+   "desc": "Flux 3 Klein nvfp4: er_sde, 15 steps, cfg 1, Qwen3-VL 4B bf16.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 14.5,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "flux3_image_klein_nvfp4.safetensors",
+     "dir": "diffusion_models",
+     "gb": 5.26
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    },
+    {
+     "name": "qwen3vl_4b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.88
+    }
+   ],
+   "source": "The studio's flux3 goal graph (workflows/flux3_klein_core_t2i_api.json), which has rendered here",
+   "note": ""
+  },
+  {
+   "family": "Lumina-2",
+   "name": "lumina2_core_t2i",
+   "title": "Lumina 2: Text to Image",
+   "desc": "Lumina Image 2 with Gemma 2: res_multistep, 30 steps, cfg 4, shift 4.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 10.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "lumina_2_model_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 5.22
+    },
+    {
+     "name": "ae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    },
+    {
+     "name": "gemma_2_2b_it_elm_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 5.23
+    }
+   ],
+   "source": "Official image_netayume_lumina_t2i settings with split files",
+   "note": ""
+  },
+  {
+   "family": "Lumina-2",
+   "name": "newbie_exp01_t2i",
+   "title": "NewBie Image Exp0.1: Text to Image",
+   "desc": "NewBie Image: Gemma 3 4B plus Jina CLIP, res_multistep, 20 steps, cfg 5.5, shift 6.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 16.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "NewBie-Image-Exp0.1-bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 6.97
+    },
+    {
+     "name": "ae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    },
+    {
+     "name": "gemma_3_4b_it_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 7.77
+    },
+    {
+     "name": "jina_clip_v2_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 1.12
+    }
+   ],
+   "source": "Official image_newbieimage_exp0_1-t2i settings with a neutral prompt",
+   "note": "Listed here because NewBie has no family of its own; it uses the Lumina architecture."
+  },
+  {
+   "family": "HunyuanDiT-1.2",
+   "name": "hunyuan_image_21_t2i",
+   "title": "Hunyuan Image 2.1: Text to Image",
+   "desc": "Hunyuan Image 2.1 fp8: 20 steps, cfg 3.5, 2048 px, Qwen 2.5 VL plus ByT5.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 27.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "hunyuanimage2.1_fp8_e4m3fn.safetensors",
+     "dir": "diffusion_models",
+     "gb": 17.43
+    },
+    {
+     "name": "hunyuan_image_2.1_vae_fp16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Hunyuan-Image-2.1/resolve/main/split_files/vae/hunyuan_image_2.1_vae_fp16.safetensors"
+    },
+    {
+     "name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+     "dir": "text_encoders",
+     "gb": 9.38
+    },
+    {
+     "name": "byt5_small_glyphxl_fp16.safetensors",
+     "dir": "text_encoders",
+     "gb": 0.44
+    }
+   ],
+   "source": "ComfyUI_examples hunyuan_image graph (read from its example image): 20 steps, cfg 3.5, euler, simple; fp8 file and encoder in place of bf16",
+   "note": "Listed here because Hunyuan Image has no family of its own."
+  },
+  {
+   "family": "SD3-SD3.5",
+   "name": "sd35_large_t2i",
+   "title": "SD 3.5 Large: Text to Image",
+   "desc": "SD 3.5 Large: euler, sgm_uniform, 20 steps, cfg 4, with the three shared encoders.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 23.3,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "sd3.5_large.safetensors",
+     "dir": "checkpoints",
+     "gb": 16.46
+    },
+    {
+     "name": "clip_l.safetensors",
+     "dir": "text_encoders",
+     "gb": 0.25
+    },
+    {
+     "name": "clip_g.safetensors",
+     "dir": "text_encoders",
+     "gb": 1.39
+    },
+    {
+     "name": "t5xxl_fp8_e4m3fn_scaled.safetensors",
+     "dir": "text_encoders",
+     "gb": 5.16
+    }
+   ],
+   "source": "Official sd3.5_simple_example settings; encoders split because the file carries none",
+   "note": ""
+  },
+  {
+   "family": "SD3-SD3.5",
+   "name": "sd35_medium_t2i",
+   "title": "SD 3.5 Medium: Text to Image",
+   "desc": "SD 3.5 Medium: euler, sgm_uniform, 20 steps, cfg 4, with the three shared encoders.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 11.9,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "sd3.5_medium.safetensors",
+     "dir": "checkpoints",
+     "gb": 5.11
+    },
+    {
+     "name": "clip_l.safetensors",
+     "dir": "text_encoders",
+     "gb": 0.25
+    },
+    {
+     "name": "clip_g.safetensors",
+     "dir": "text_encoders",
+     "gb": 1.39
+    },
+    {
+     "name": "t5xxl_fp8_e4m3fn_scaled.safetensors",
+     "dir": "text_encoders",
+     "gb": 5.16
+    }
+   ],
+   "source": "Official sd3.5_simple_example settings; encoders split because the file carries none",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "sdxl_revision_clip_g",
+   "title": "SDXL Revision: Two Images and Text",
+   "desc": "SDXL Revision with CLIP Vision G, which SDXL's 1280 unCLIP input needs.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 10.6,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "clip_vision_g.safetensors",
+     "dir": "text_encoders",
+     "gb": 3.69
+    },
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 6.94
+    }
+   ],
+   "source": "Official sdxl_revision_text_prompts; only the renamed retry",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen21_turbo_edit",
+   "title": "Qwen Image 2.1 Turbo: Image Edit",
+   "desc": "Qwen Image 2.1 turbo bf16 edit with the tuned 8-step sigma list, cfg 1.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_2.1_turbo_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.23
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "qwen_image_2.1_vae_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors"
+    }
+   ],
+   "source": "Copilot qwen21_edit with the turbo sigmas; replaces image_qwen_image_2_1_turbo_image_edit, whose int8 file is not on disk",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen21_background_removal",
+   "title": "Qwen Image 2.1: Background Removal",
+   "desc": "Qwen Image 2.1 bf16 asked to remove the background: 25 steps, cfg 1, at the image's own size.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_2.1_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.23
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "qwen_image_2.1_vae_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors"
+    }
+   ],
+   "source": "Official image_qwen_image_2_1_background_removal settings on the Copilot qwen21_edit graph; replaces it because its int8 file is not on disk",
+   "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein4b_edit",
+   "title": "Flux 2 Klein 4B: Image Edit",
+   "desc": "Klein 4B distilled edit: 4 steps, cfg 1, Qwen 3 4B encoder.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 16.1,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-4b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 7.75
+    },
+    {
+     "name": "qwen_3_4b.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.04
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Copilot klein9b_edit with the official 4B distilled files and settings; replaces image_flux2_klein_image_edit_4b_distilled, whose fp8 file is not on disk",
+   "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein4b_base_edit",
+   "title": "Flux 2 Klein 4B Base: Image Edit",
+   "desc": "Klein 4B base edit: 20 steps, cfg 5, small-decoder VAE.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 15.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-base-4b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 7.75
+    },
+    {
+     "name": "qwen_3_4b.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.04
+    },
+    {
+     "name": "full_encoder_small_decoder.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/black-forest-labs/FLUX.2-small-decoder/resolve/main/full_encoder_small_decoder.safetensors"
+    }
+   ],
+   "source": "Copilot klein9b_edit with the official 4B base files and settings; replaces image_flux2_klein_image_edit_4b_base, whose fp8 file is not on disk",
+   "note": ""
+  },
+  {
+   "family": "Krea2",
+   "name": "krea2_turbo_t2i",
+   "title": "Krea 2 Turbo: Text to Image",
+   "desc": "Krea 2 Turbo bf16 loaded fp8, tuned: 8 steps, cfg 1, euler, Qwen3-VL 4B encoder.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 35.4,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "krea2_turbo_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 26.28
+    },
+    {
+     "name": "qwen3vl_4b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.88
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.25
+    }
+   ],
+   "source": "Comfy Copilot graph krea2_t2i",
+   "note": ""
+  },
+  {
+   "family": "Krea2",
+   "name": "krea2_raw_t2i",
+   "title": "Krea 2 RAW: Text to Image",
+   "desc": "Krea 2 RAW bf16 loaded fp8: 52 steps, cfg 3.5, euler, with a real negative.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 35.4,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "krea2_raw_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 26.28
+    },
+    {
+     "name": "qwen3vl_4b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.88
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.25
+    }
+   ],
+   "source": "Copilot krea2_t2i wiring; steps and cfg from knowledge_base 14-Krea-2 (untuned here)",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen_image_edit_2509_lightning",
+   "title": "Qwen Image Edit 2509 Lightning: Image Edit",
+   "desc": "Qwen Image Edit 2509 int8 with the Lightning LoRA: 4 steps, cfg 1.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_edit_2509_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 20.5
+    },
+    {
+     "name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+     "dir": "text_encoders",
+     "gb": 9.38
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.25
+    },
+    {
+     "name": "Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors",
+     "dir": "loras",
+     "gb": 0.85
+    }
+   ],
+   "source": "Official image_qwen_image_edit_2509, Lightning branch on the int8 file on disk",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen_image_edit_2511_core",
+   "title": "Qwen Image Edit 2511: Image Edit",
+   "desc": "Qwen Image Edit 2511 fp8 mixed without a Lightning LoRA: 40 steps, cfg 4.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 30.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_edit_2511_fp8mixed.safetensors",
+     "dir": "diffusion_models",
+     "gb": 20.53
+    },
+    {
+     "name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+     "dir": "text_encoders",
+     "gb": 9.38
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.25
+    }
+   ],
+   "source": "Official image_qwen_image_edit_2511, Lightning-off branch, one reference",
+   "note": ""
+  },
+  {
+   "family": "Fibo-2.0",
+   "name": "fibo2_dev_t2i",
+   "title": "FIBO 2.0 Dev: Text to Image",
+   "desc": "FIBO 2.0 Dev int8 from a prompt, no reference image: 50 steps, cfg 5, euler, simple, 1024x1024. Takes plain text or a structured JSON caption. Non-commercial only (CC BY-NC 4.0).",
+   "media": "image",
+   "cat": "Image",
+   "gb": 17.6,
+   "tags": [
+    "Studio template",
+    "Non-commercial"
+   ],
+   "models": [
+    {
+     "name": "fibo2_dev_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/Comfy-Org/Fibo-2.0/resolve/main/diffusion_models/fibo2_dev_int8_convrot.safetensors",
+     "gb": 8.41
+    },
+    {
+     "name": "qwen3vl_4b_bf16.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/Comfy-Org/Fibo-2.0/resolve/main/text_encoders/qwen3vl_4b_bf16.safetensors",
+     "gb": 8.88
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Fibo-2.0/resolve/main/vae/flux2-vae.safetensors",
+     "gb": 0.34
+    }
+   ],
+   "source": "Official image_fibo2_edit_dev_pe settings and negative, with the reference image and prompt enhancer left out",
+   "note": "Not rendered yet. The size and the no-image path are read from ComfyUI's TextEncodeFibo2 source."
+  }
+ ]
+}

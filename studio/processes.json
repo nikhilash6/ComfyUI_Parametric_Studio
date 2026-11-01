@@ -389,21 +389,6 @@
    "doc": true
   },
   {
-   "id": "character-faceless-crops",
-   "name": "Faceless crops",
-   "kind": "character",
-   "role": "process",
-   "description": "Crops a fictional character's sheet images to faceless framings, optionally extending the frame with outpainting.",
-   "status": "untested",
-   "status_label": "Untested",
-   "status_note": "",
-   "models": [
-    "FLUX.1 Fill OneReward fp8"
-   ],
-   "open": null,
-   "doc": true
-  },
-  {
    "id": "character-sheet",
    "name": "Character sheet",
    "kind": "character",
@@ -1266,9 +1251,7 @@
    "status": "old",
    "status_label": "Tested on the author's old stack",
    "status_note": "",
-   "models": [
-    "muse-glimmer-30b-gguf"
-   ],
+   "models": [],
    "open": null,
    "doc": true
   },
@@ -1931,15 +1914,17 @@
    "name": "Virtual set",
    "kind": "3d",
    "role": "process",
-   "description": "Blocks shots in approved World Kit places using Blender-generated camera passes and stills, then renders photorealistic video using specific video models.",
+   "description": "Blocks a shot in an approved World Kit place, moves an exact camera through it, renders depth, pose and shaded passes in Blender on the CPU, then steers a video model with them.",
    "status": "untested",
    "status_label": "Untested",
-   "status_note": "",
+   "status_note": "The camera, the passes and the page ran here on the CPU. Every step that needs a video model is written and checked offline against ComfyUI's node definitions, but has not run on a GPU yet.",
    "models": [
-    "Wan 2.2 Fun Control A14B",
-    "H3 Fun Union",
-    "qwen21:edit",
-    "h3:fl"
+    "Blender",
+    "MiniMax H3 Fun Union 2.0",
+    "MiniMax H3 first and last frame",
+    "MiniMax H3 reference to video",
+    "Qwen-Image 2.1",
+    "Wan 2.2 Fun Control (not on this machine)"
    ],
    "open": null,
    "doc": true
@@ -2000,19 +1985,17 @@
    "name": "World kit",
    "kind": "3d",
    "role": "process",
-   "description": "Creating, rigging, and exporting 3D assets (characters, props, places) into a shared library for game engines.",
+   "description": "A library of real-scale 3D places, props and looks with colliders and turntables, approved and exported as a game-engine pack. Places need only Blender.",
    "status": "untested",
    "status_label": "Untested",
-   "status_note": "",
+   "status_note": "The place maker, looks, approve and the pack ran here on the CPU; the prop maker ran from a mesh. Steps that need a model have not run here yet.",
    "models": [
-    "SAM 3D Body",
-    "AutoRemesher",
-    "SkinTokens",
-    "Krea 2",
+    "Blender",
+    "FLUX.2 Klein 4B",
     "BiRefNet",
     "SAM 3D Objects",
-    "Blender 5.2.2",
-    "Godot 4.7.2"
+    "SAM 3D Body",
+    "SkinTokens"
    ],
    "open": null,
    "doc": true

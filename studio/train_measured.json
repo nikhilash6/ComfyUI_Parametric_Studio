@@ -1,0 +1,15 @@
+[
+ {
+  "base": "sdxl-base-1.0",
+  "size": 1024,
+  "rank": 8,
+  "batch": 1,
+  "steps": 300,
+  "s_per_step": 0.6155,
+  "setup_seconds": 13.8,
+  "peak_vram_gib": 40.25,
+  "gpu": "cuda:0 NVIDIA RTX PRO 6000 Blackwell Workstation Edition : cudaMallocAsync",
+  "date": "2026-11-01",
+  "run": "4d13a830507c"
+ }
+]

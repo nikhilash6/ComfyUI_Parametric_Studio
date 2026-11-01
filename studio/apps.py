@@ -48,21 +48,14 @@ def _title(aid): return re.sub(r"^(templates?[-_]|utility[-_])", "", aid).replac
 def _spec(oi, cls, name):
     info = oi.get(cls, {}).get("input", {}); return (info.get("required") or {}).get(name) or (info.get("optional") or {}).get(name)
 MODEL_FILE = re.compile(r"\.(safetensors|ckpt|pt|pth|gguf|bin|onnx)$")
-VARIANT = re.compile(r"^(base|distilled|turbo|lightning|t2v|i2v|ti2v|v2v|t2i|fl2v|fl2va|ref2v|ref2va|high|low|inpaint|control|camera|vace|fun|\d+(\.\d+)?b|\d+step)$")
-def variants(name):
-    """The tokens of a model file name that make it a different model (T2V or I2V, high or low noise, 14B or 5B, 4 or 8 steps); precision and resolution tags are not among them."""
-    from studio.names import norm
-    return {t for t in re.split(r"[^a-z0-9.]+", norm(name)) if VARIANT.match(t)}
 def variant_ok(was, now):
-    from studio.names import norm
-    return norm(was) == norm(now) or variants(was) == variants(now)
+    """Whether `now` is the same model as `was`: another precision or sub-folder is, another variant (T2V or I2V, high or low noise, 4B or 9B, 4 or 8 steps) is not."""
+    from studio.names import same_model
+    return same_model(was, now)
 def resolve(g, oi):
-    """names.resolve_names (a file kept in a sub-folder or under a close name is not missing), minus close names that are another variant of the model: those stay as written, so they still show as missing. -> (graph, report)"""
+    """names.resolve_names: a file kept in a sub-folder or in another precision of the same model is not missing; anything else stays as written, so it still shows as missing. -> (graph, report)"""
     from studio.names import resolve_names
-    g, rep = resolve_names(g, oi)
-    for r in rep:
-        if r["now"] is not None and not variant_ok(r["was"], r["now"]): g[r["node"]]["inputs"][r["input"]] = r["was"]; r["now"] = None
-    return g, rep
+    return resolve_names(g, oi)
 def model_refs(g, oi):
     """Every model file name a graph loads, as written (before resolve)."""
     return sorted({v for n in g.values() for k, v in n["inputs"].items() if isinstance(v, str) and MODEL_FILE.search(v) and isinstance(options_of(oi, n["class_type"], k), list)})
@@ -103,8 +96,34 @@ def infer_inputs(ui):
     for x in out:
         if x not in seen: seen.add(x); res.append(x)
     return res[:10]
+def is_api_graph(o):
+    """A graph in ComfyUI's API format (node id -> class_type and inputs), as the studio's own family templates are stored."""
+    return isinstance(o, dict) and bool(o) and all(isinstance(v, dict) and "class_type" in v for v in o.values())
+API_MEDIA = {"LoadImage": ("image", "image"), "LoadVideo": ("file", "video"), "LoadAudio": ("audio", "audio")}
+API_TEXT = {"CLIPTextEncode": "text", "TextEncodeFibo2": "prompt", "WanVideoTextEncodeCached": "positive_prompt", "WanVideoTextEncode": "positive_prompt"}
+def api_inputs(g):
+    """The form for an API-format graph: its media loaders, positive prompts and first seed."""
+    out, seeded = [], False
+    for nid in sorted(g, key=lambda x: (len(x), x)):
+        n = g[nid]; cls = n["class_type"]; inp = n["inputs"]; title = (n.get("_meta") or {}).get("title") or cls
+        if cls in API_MEDIA:
+            w, typ = API_MEDIA[cls]; out.append({"key": f"{nid}|{w}", "label": f"{title}: {w}", "type": typ, "options": None, "default": inp.get(w)})
+        elif cls in API_TEXT:
+            w = API_TEXT[cls]; txt = inp.get(w)
+            if isinstance(txt, str) and txt.strip() and "negative" not in title.lower() and not NEG.search(txt): out.append({"key": f"{nid}|{w}", "label": f"{title}: prompt", "type": "text", "options": None, "default": txt})
+        if not seeded:
+            for w in ("seed", "noise_seed"):
+                if isinstance(inp.get(w), int): out.append({"key": f"{nid}|{w}", "label": f"{title}: {w}", "type": "number", "options": None, "default": inp[w]}); seeded = True; break
+    return out
+def _describe_api(aid, g, oi):
+    models = model_refs(g, oi); unknown = sorted({n["class_type"] for n in g.values() if n["class_type"] not in oi}); g, _rep = resolve(json.loads(json.dumps(g)), oi)
+    missing = sorted({v for n in g.values() for k, v in n["inputs"].items() if isinstance(v, str) and MODEL_FILE.search(v) and isinstance(options_of(oi, n["class_type"], k), list) and v not in options_of(oi, n["class_type"], k)})
+    probs = [f"unknown node type {c}" for c in unknown]
+    return {"id": aid, "title": _title(aid), "inputs": api_inputs(g), "outputs": sum(1 for n in g.values() if oi.get(n["class_type"], {}).get("output_node")), "nodes": len(g), "runnable": not probs and not missing, "ready": not probs, "problems": probs[:4], "missing_models": missing[:8], "downloads": [], "unknown_nodes": unknown, "models": models, "hints": {}}
 def describe(aid, path, oi):
-    ui = json.load(open(path)); ex = {}; g, probs = ui_to_api(ui, oi, ex); models = model_refs(g, oi); g, _rep = resolve(g, oi); ld = (ui.get("extra") or {}).get("linearData") or {}; nodes = {str(n["id"]): n for n in ui.get("nodes", [])}; inputs = []
+    ui = json.load(open(path))
+    if is_api_graph(ui): return _describe_api(aid, ui, oi)
+    ex = {}; g, probs = ui_to_api(ui, oi, ex); models = model_refs(g, oi); g, _rep = resolve(g, oi); ld = (ui.get("extra") or {}).get("linearData") or {}; nodes = {str(n["id"]): n for n in ui.get("nodes", [])}; inputs = []
     all_ids = {str(n["id"]) for n in ui.get("nodes", [])} | {str(n["id"]) for sg in (ui.get("definitions", {}).get("subgraphs") or []) for n in sg.get("nodes", [])}
     for nid, w in (linear_inputs(ui) if linear_inputs(ui) is not None else infer_inputs(ui)):
         if str(nid) not in all_ids: continue                       # stale reference to a deleted node: the ComfyUI frontend prunes these too
@@ -137,7 +156,17 @@ def dropped_outputs(res):
         parts.append(f"{(n.get('class_type') if isinstance(n, dict) else None) or nid}: " + "; ".join(str(e.get("details") or e.get("message") or "invalid") for e in errs[:2]))
     return "ComfyUI dropped part of this graph, so its output would be missing: " + " | ".join(parts)
 def build_graph(path, values, oi):
-    ui = json.load(open(path)); ex = {}; g, probs = ui_to_api(ui, oi, ex); g, _rep = resolve(g, oi)
+    ui = json.load(open(path))
+    if is_api_graph(ui):
+        g, _rep = resolve(ui, oi)
+        for key, val in (values or {}).items():
+            nid, w = key.split("|", 1)
+            if nid not in g: raise ValueError(f"unknown input {key}")
+            g[nid]["inputs"][w] = val
+        for n in g.values():
+            if n.get("class_type") == "SaveVideo": n["inputs"].setdefault("format", "auto"); n["inputs"].setdefault("codec", "auto")
+        return g
+    ex = {}; g, probs = ui_to_api(ui, oi, ex); g, _rep = resolve(g, oi)
     if probs: raise ValueError("this app uses features the converter cannot run yet: " + probs[0])
     for key, val in (values or {}).items():
         nid, w = key.split("|", 1); tg = _targets(ex, nid, w, g)

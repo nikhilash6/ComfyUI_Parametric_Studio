@@ -571,14 +571,42 @@
 ],
 "what": "Edit images using Boogu's instruction-driven model, taking one input image and generating an edited output alongside a side-by-side comparison view.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:40:23",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "boogu_turbo_t2i rendered on this box 2026-11-01",
+"render": "ok",
+"tpl": "boogu_turbo_t2i"
 },
 "media": [
+{
+"id": "fam_boogu_0",
+"prompt": "A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 25.3,
+"tpl": "boogu_turbo_t2i",
+"own": true,
+"kind": "image",
+"src": "families/boogu_0.webp",
+"poster": "families/boogu_0.webp",
+"w": 640,
+"h": 640,
+"model": null
+},
+{
+"id": "fam_boogu_1",
+"prompt": "Boogu Edit Turbo: the rainy street test picture, edited",
+"seconds": 25.2,
+"tpl": "boogu_edit_turbo",
+"own": true,
+"kind": "image",
+"src": "families/boogu_1.webp",
+"poster": "families/boogu_1.webp",
+"w": 640,
+"h": 358,
+"model": null
+},
 {
 "id": "lib_boogu",
 "kind": "image",
@@ -863,14 +891,29 @@
 ],
 "what": "Generate images from text prompts using the ERNIE-Image model. Input a text description to produce detailed, structured visuals with a broad stylistic range.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:40:45",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "ernie_image_core_t2i rendered on this box 2026-11-01",
+"render": "ok",
+"tpl": "ernie_image_core_t2i"
 },
 "media": [
+{
+"id": "fam_ernie-image_0",
+"prompt": "A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 30.2,
+"tpl": "ernie_image_core_t2i",
+"own": true,
+"kind": "image",
+"src": "families/ernie-image_0.webp",
+"poster": "families/ernie-image_0.webp",
+"w": 640,
+"h": 640,
+"model": null
+},
 {
 "id": "lib_ernie-image",
 "kind": "image",
@@ -974,11 +1017,120 @@
 "media": [],
 "templates": []
 },
+"Fibo-2.0": {
+"slug": "fibo-2-0",
+"kind": "image",
+"era": 2026,
+"licence": "CC-BY-NC-4.0, non-commercial",
+"crew": "master",
+"repos": [
+"Comfy-Org/Fibo-2.0",
+"briaai/Fibo-2.0-dev",
+"briaai/Fibo-2.0-edit-turbo"
+],
+"what": "Bria's image model, one 8B network for instruction-based editing and text-to-image, trained on long structured captions. Weights are non-commercial only (CC BY-NC 4.0); commercial use needs a separate agreement with Bria.",
+"what_source": "notes",
+"level": "untested",
+"test": {},
+"media": [
+{
+"id": "lib_fibo-2-0",
+"kind": "image",
+"src": "families/lib_fibo-2-0.webp",
+"poster": "families/lib_fibo-2-0.webp",
+"w": 400,
+"h": 400,
+"prompt": "Fibo 2.0 Dev: Image Edit: sample from ComfyUI's template library",
+"tpl": "image_fibo2_edit_dev_pe",
+"own": false,
+"library": true,
+"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+}
+],
+"templates": [
+{
+"name": "image_fibo2_edit_dev_pe",
+"title": "Fibo 2.0 Dev: Image Edit",
+"desc": "Same graph as the Turbo template loaded with the full non-distilled Fibo 2.0 Dev weights: 50 steps at CFG 5 with Bria's structured negative, for the cleanest edits when sampling time is not the constraint. The optional prompt enhancer rewrites the instruction into a structured caption; switch it off to sample the raw prompt.",
+"media": "image",
+"cat": "Image",
+"gb": 27.0,
+"tags": [
+"Image Edit",
+"Int8"
+],
+"models": [
+{
+"name": "fibo2_dev_int8_convrot.safetensors",
+"dir": "diffusion_models",
+"url": "https://huggingface.co/Comfy-Org/Fibo-2.0/resolve/main/diffusion_models/fibo2_dev_int8_convrot.safetensors",
+"gb": 8.41
+},
+{
+"name": "qwen3vl_4b_bf16.safetensors",
+"dir": "text_encoders",
+"url": "https://huggingface.co/Comfy-Org/Fibo-2.0/resolve/main/text_encoders/qwen3vl_4b_bf16.safetensors",
+"gb": 8.88
+},
+{
+"name": "flux2-vae.safetensors",
+"dir": "vae",
+"url": "https://huggingface.co/Comfy-Org/Fibo-2.0/resolve/main/vae/flux2-vae.safetensors",
+"gb": 0.34
+},
+{
+"name": "qwen3vl_8b_int8_convrot.safetensors",
+"dir": "text_encoders",
+"url": "https://huggingface.co/Comfy-Org/Qwen3-VL/resolve/main/text_encoders/qwen3vl_8b_int8_convrot.safetensors",
+"gb": 9.35
+}
+]
+},
+{
+"name": "image_fibo2_edit_turbo_pe",
+"title": "Fibo 2.0 Turbo: Image Edit",
+"desc": "Edit an image with local open-weights Fibo 2.0 Edit Turbo (int8) and an optional prompt enhancer: a local vision LLM reads the reference image and rewrites your instruction into the structured caption Fibo 2.0 was trained on before TextEncodeFibo2 samples 4 steps at CFG 1. Switch the enhancer off to feed your raw prompt, and compare the result against the source in the built-in image compare node.",
+"media": "image",
+"cat": "Image",
+"gb": 27.0,
+"tags": [
+"Image Edit",
+"Int8"
+],
+"models": [
+{
+"name": "fibo2_edit_turbo_int8_convrot.safetensors",
+"dir": "diffusion_models",
+"url": "https://huggingface.co/Comfy-Org/Fibo-2.0/resolve/main/diffusion_models/fibo2_edit_turbo_int8_convrot.safetensors",
+"gb": 8.41
+},
+{
+"name": "qwen3vl_4b_bf16.safetensors",
+"dir": "text_encoders",
+"url": "https://huggingface.co/Comfy-Org/Fibo-2.0/resolve/main/text_encoders/qwen3vl_4b_bf16.safetensors",
+"gb": 8.88
+},
+{
+"name": "flux2-vae.safetensors",
+"dir": "vae",
+"url": "https://huggingface.co/Comfy-Org/Fibo-2.0/resolve/main/vae/flux2-vae.safetensors",
+"gb": 0.34
+},
+{
+"name": "qwen3vl_8b_int8_convrot.safetensors",
+"dir": "text_encoders",
+"url": "https://huggingface.co/Comfy-Org/Qwen3-VL/resolve/main/text_encoders/qwen3vl_8b_int8_convrot.safetensors",
+"gb": 9.35
+}
+]
+}
+]
+},
 "FitDiT": {
 "slug": "fitdit",
 "kind": "utility",
 "era": 2024,
-"licence": null,
+"licence": "CC-BY-NC-SA-4.0, non-commercial",
 "crew": "depth-normals-pose",
 "repos": [
 "BoyuanJiang/FitDiT"
@@ -1043,14 +1195,29 @@
 ],
 "what": "Smart image editing that keeps characters consistent, edits specific parts without affecting others, and preserves original styles.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:41:04",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "flux_kontext_dev_basic rendered on this box 2026-11-01",
+"render": "ok",
+"tpl": "flux_kontext_dev_basic"
 },
 "media": [
+{
+"id": "fam_flux-kontext_0",
+"prompt": "FLUX Kontext Dev: image edit, default template",
+"seconds": 25.2,
+"tpl": "flux_kontext_dev_basic",
+"own": true,
+"kind": "image",
+"src": "families/flux-kontext_0.webp",
+"poster": "families/flux-kontext_0.webp",
+"w": 640,
+"h": 346,
+"model": null
+},
 {
 "id": "lib_flux-kontext",
 "kind": "image",
@@ -1625,13 +1792,14 @@
 ],
 "what": "Generate photorealistic images with multi-reference consistency and professional text rendering.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"render": "not run",
-"tested": "06:50:55",
-"note": "start/validate pass only"
+"render": "ok",
+"tested": "2026-11-01",
+"note": "klein9b_t2i rendered on this box 2026-11-01",
+"tpl": "klein9b_t2i"
 },
 "media": [
 {
@@ -1675,6 +1843,45 @@
 "poster": "families/flux-2_2.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_flux-2_3",
+"prompt": "FLUX.2 Klein 9B: A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 20.2,
+"tpl": "klein9b_t2i",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_3.webp",
+"poster": "families/flux-2_3.webp",
+"w": 640,
+"h": 640,
+"model": "FLUX.2 Klein 9B"
+},
+{
+"id": "fam_flux-2_4",
+"prompt": "FLUX.2 Klein 9B style edit: the rainy street test picture, restyled",
+"seconds": 20.3,
+"tpl": "klein9b_style",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_4.webp",
+"poster": "families/flux-2_4.webp",
+"w": 640,
+"h": 640,
+"model": "FLUX.2 Klein 9B style edit"
+},
+{
+"id": "fam_flux-2_5",
+"prompt": "FLUX.2 Klein 4B: A hedgehog wearing a tiny party hat surrounded by confetti, early digital camera style, slight noise, flash photography, candid moment, 2000s digicam aesthetic, festive birthday celebration atmosphere\n",
+"seconds": 25.2,
+"tpl": "image_flux2_klein_text_to_image",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_5.webp",
+"poster": "families/flux-2_5.webp",
+"w": 640,
+"h": 640,
+"model": "FLUX.2 Klein 4B"
 }
 ],
 "templates": [
@@ -2322,14 +2529,42 @@
 ],
 "what": "Edit images with HiDream E1.1—superior image quality and editing accuracy compared to HiDream-E1-Full.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:41:31",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "hidream_o1_full_t2i rendered on this box 2026-11-01",
+"render": "ok",
+"tpl": "hidream_o1_full_t2i"
 },
 "media": [
+{
+"id": "fam_hidream_0",
+"prompt": "HiDream O1: A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 40.2,
+"tpl": "hidream_o1_full_t2i",
+"own": true,
+"kind": "image",
+"src": "families/hidream_0.webp",
+"poster": "families/hidream_0.webp",
+"w": 640,
+"h": 640,
+"model": "HiDream O1"
+},
+{
+"id": "fam_hidream_1",
+"prompt": "HiDream O1 Dev: A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 20.2,
+"tpl": "hidream_o1_dev_t2i",
+"own": true,
+"kind": "image",
+"src": "families/hidream_1.webp",
+"poster": "families/hidream_1.webp",
+"w": 640,
+"h": 640,
+"model": "HiDream O1 Dev"
+},
 {
 "id": "lib_hidream",
 "kind": "image",
@@ -2781,6 +3016,19 @@
 "poster": "families/hunyuandit-1-2_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_hunyuandit-1-2_2",
+"prompt": "Hunyuan Image 2.1: A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 30.2,
+"tpl": "hunyuan_image_21_t2i",
+"own": true,
+"kind": "image",
+"src": "families/hunyuandit-1-2_2.webp",
+"poster": "families/hunyuandit-1-2_2.webp",
+"w": 640,
+"h": 640,
+"model": "Hunyuan Image 2.1"
 }
 ],
 "templates": []
@@ -4607,6 +4855,19 @@
 "poster": "families/lumina-2_1.webp",
 "w": 720,
 "h": 720
+},
+{
+"id": "fam_lumina-2_2",
+"prompt": "NewBie: A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 25.2,
+"tpl": "newbie_exp01_t2i",
+"own": true,
+"kind": "image",
+"src": "families/lumina-2_2.webp",
+"poster": "families/lumina-2_2.webp",
+"w": 640,
+"h": 960,
+"model": "NewBie"
 }
 ],
 "templates": [
@@ -5447,14 +5708,29 @@
 ],
 "what": "Generate an image from a text prompt with the MOSS-Image base checkpoint, which reads a full scene caption and returns one finished image. The prompt upsampler expands a short request into that caption first. Use it for fine-tuning experiments and comparisons with the instruction-tuned checkpoint.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:43:38",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "moss_image_core_t2i rendered on this box 2026-11-01",
+"render": "ok",
+"tpl": "moss_image_core_t2i"
 },
 "media": [
+{
+"id": "fam_moss-image_0",
+"prompt": "A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 25.2,
+"tpl": "moss_image_core_t2i",
+"own": true,
+"kind": "image",
+"src": "families/moss-image_0.webp",
+"poster": "families/moss-image_0.webp",
+"w": 640,
+"h": 640,
+"model": null
+},
 {
 "id": "lib_moss-image",
 "kind": "image",
@@ -6226,6 +6502,32 @@
 "poster": "families/qwen-image-2-1_1.webp",
 "w": 720,
 "h": 434
+},
+{
+"id": "fam_qwen-image-2-1_2",
+"prompt": "Mage Flow: A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 20.3,
+"tpl": "mage_flow_int8_t2i",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_2.webp",
+"poster": "families/qwen-image-2-1_2.webp",
+"w": 640,
+"h": 640,
+"model": "Mage Flow"
+},
+{
+"id": "fam_qwen-image-2-1_3",
+"prompt": "Qwen Image 2.1: A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 30.2,
+"tpl": "qwen21_t2i",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_3.webp",
+"poster": "families/qwen-image-2-1_3.webp",
+"w": 640,
+"h": 640,
+"model": "Qwen Image 2.1"
 }
 ],
 "templates": [
@@ -7364,14 +7666,42 @@
 ],
 "what": "Generate images guided by blurred reference images using SD 3.5.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:44:42",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "sd35_large_t2i rendered on this box 2026-11-01",
+"render": "ok",
+"tpl": "sd35_large_t2i"
 },
 "media": [
+{
+"id": "fam_sd3-sd3-5_0",
+"prompt": "SD3.5 Large: A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 25.2,
+"tpl": "sd35_large_t2i",
+"own": true,
+"kind": "image",
+"src": "families/sd3-sd3-5_0.webp",
+"poster": "families/sd3-sd3-5_0.webp",
+"w": 640,
+"h": 640,
+"model": "SD3.5 Large"
+},
+{
+"id": "fam_sd3-sd3-5_1",
+"prompt": "SD3.5 Medium: A weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf, detailed photograph.",
+"seconds": 20.2,
+"tpl": "sd35_medium_t2i",
+"own": true,
+"kind": "image",
+"src": "families/sd3-sd3-5_1.webp",
+"poster": "families/sd3-sd3-5_1.webp",
+"w": 640,
+"h": 640,
+"model": "SD3.5 Medium"
+},
 {
 "id": "lib_sd3-sd3-5",
 "kind": "image",
@@ -8204,14 +8534,29 @@
 ],
 "what": "Upscalers for stills and frames.",
 "what_source": "notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:46:53",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-01",
+"note": "image_upscale_realesrgan_x4 rendered on this box 2026-11-01",
+"render": "ok",
+"tpl": "image_upscale_realesrgan_x4"
 },
 "media": [
+{
+"id": "fam_upscale-models_0",
+"prompt": "RealESRGAN x4: upscale of the rainy street test picture",
+"seconds": 15.2,
+"tpl": "image_upscale_realesrgan_x4",
+"own": true,
+"kind": "image",
+"src": "families/upscale-models_0.webp",
+"poster": "families/upscale-models_0.webp",
+"w": 640,
+"h": 354,
+"model": "RealESRGAN x4"
+},
 {
 "id": "lib_upscale-models",
 "kind": "image",

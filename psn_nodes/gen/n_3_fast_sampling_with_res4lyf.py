@@ -1,5 +1,5 @@
-"""PSN_RES4LYF_Sampler: pure-logic configuration, validation, and step-schedule
-planning for a RES4LYF-style fast sampler.
+"""PSN_Fast_Sampler_Plan: pure-logic configuration, validation, and step-schedule
+planning for a fast sampler. It is not part of the RES4LYF pack and runs none of it.
 
 This module does NOT perform any GPU/torch/ComfyUI sampling.  It implements the
 secure-by-design, pure-logic parts of the spec:
@@ -121,7 +121,7 @@ def psn_quality_estimate(steps, solver):
 # ComfyUI-style node
 # ---------------------------------------------------------------------------
 
-class PSN_RES4LYF_Sampler:
+class PSN_Fast_Sampler_Plan:
     """Validate and plan a RES4LYF fast-sampling configuration.
 
     This node does NOT run a diffusion model.  It validates the solver,
@@ -177,9 +177,9 @@ class PSN_RES4LYF_Sampler:
 # ---------------------------------------------------------------------------
 
 NODE_CLASS_MAPPINGS = {
-    "PSN_RES4LYF_Sampler": PSN_RES4LYF_Sampler,
+    "PSN_Fast_Sampler_Plan": PSN_Fast_Sampler_Plan,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "PSN_RES4LYF_Sampler": "RES4LYF Fast Sampler (Config)",
+    "PSN_Fast_Sampler_Plan": "Fast Sampler Plan (Config)",
 }

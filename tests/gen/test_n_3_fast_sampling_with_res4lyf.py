@@ -4,7 +4,7 @@ import json
 import pytest
 
 from psn_nodes.gen.n_3_fast_sampling_with_res4lyf import (
-    PSN_RES4LYF_Sampler,
+    PSN_Fast_Sampler_Plan,
     psn_validate_solver,
     psn_validate_scheduler,
     psn_validate_steps,
@@ -145,7 +145,7 @@ class TestPsnQualityEstimate:
 
 class TestPsnRes4lyfSamplerNode:
     def test_valid_config(self):
-        node = PSN_RES4LYF_Sampler()
+        node = PSN_Fast_Sampler_Plan()
         valid, schedule_json, in_band, reason = node.run(15, "RES4LYF", "Linear")
         assert valid is True
         assert in_band == "yes"
@@ -156,7 +156,7 @@ class TestPsnRes4lyfSamplerNode:
             assert 0.0 < v <= 1.0
 
     def test_invalid_solver(self):
-        node = PSN_RES4LYF_Sampler()
+        node = PSN_Fast_Sampler_Plan()
         valid, schedule_json, in_band, reason = node.run(15, "UniPC", "Linear")
         assert valid is False
         assert schedule_json == ""
@@ -164,19 +164,19 @@ class TestPsnRes4lyfSamplerNode:
         assert "not in allow-list" in reason
 
     def test_invalid_scheduler(self):
-        node = PSN_RES4LYF_Sampler()
+        node = PSN_Fast_Sampler_Plan()
         valid, _, _, reason = node.run(15, "RES4LYF", "Exponential")
         assert valid is False
         assert "not in allow-list" in reason
 
     def test_invalid_steps(self):
-        node = PSN_RES4LYF_Sampler()
+        node = PSN_Fast_Sampler_Plan()
         valid, _, _, reason = node.run(0, "RES4LYF", "Linear")
         assert valid is False
         assert "must be in" in reason
 
     def test_karras_schedule_output(self):
-        node = PSN_RES4LYF_Sampler()
+        node = PSN_Fast_Sampler_Plan()
         valid, schedule_json, in_band, reason = node.run(10, "RES4LYF", "Karras")
         assert valid is True
         sched = json.loads(schedule_json)
@@ -184,14 +184,14 @@ class TestPsnRes4lyfSamplerNode:
         assert sched[0] == pytest.approx(1.0, abs=0.01)
 
     def test_steps_out_of_band(self):
-        node = PSN_RES4LYF_Sampler()
+        node = PSN_Fast_Sampler_Plan()
         valid, _, in_band, reason = node.run(50, "RES4LYF", "Linear")
         assert valid is True
         assert in_band == "no"
         assert "above recommended" in reason
 
     def test_input_types_structure(self):
-        it = PSN_RES4LYF_Sampler.INPUT_TYPES()
+        it = PSN_Fast_Sampler_Plan.INPUT_TYPES()
         assert "required" in it
         assert "steps" in it["required"]
         assert "solver" in it["required"]
@@ -201,6 +201,6 @@ class TestPsnRes4lyfSamplerNode:
         assert isinstance(it["required"]["scheduler"][0], list)
 
     def test_return_types(self):
-        assert PSN_RES4LYF_Sampler.RETURN_TYPES == ("BOOLEAN", "STRING", "STRING", "STRING")
-        assert PSN_RES4LYF_Sampler.RETURN_NAMES == ("valid", "schedule_json", "quality_in_band", "reason")
-        assert PSN_RES4LYF_Sampler.FUNCTION == "run"
+        assert PSN_Fast_Sampler_Plan.RETURN_TYPES == ("BOOLEAN", "STRING", "STRING", "STRING")
+        assert PSN_Fast_Sampler_Plan.RETURN_NAMES == ("valid", "schedule_json", "quality_in_band", "reason")
+        assert PSN_Fast_Sampler_Plan.FUNCTION == "run"

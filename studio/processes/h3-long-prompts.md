@@ -3,7 +3,7 @@
 > From the author's earlier studio, cleaned for publication: private paths, ports and some lines were removed, so a step may read short and a screen it names may not exist here. Status in this studio: Tested on the author's old stack.
 
 
-Status: merged on `an earlier branch` (2026-10-16). Code: `earlier_studio/studio/h3_techniques.py`,
+Status: merged on `an earlier branch` (2026-10-16). Code: the earlier studio's h3_techniques.py,
 `studio/enhance.py` (long mode, `notes`, `must_keep`), `studio/deliverables.py` (`_brief`), `studio/musicvideo.py`
 (`long_brief`), `studio/fashion.py` (`design_notes`), `scripts/chatbox/server.py` (`h3_brief`, `enhance_notes`).
 
@@ -90,7 +90,7 @@ tasks, `detailed_description` is normally 350-500 English words. Dialogue-dense 
   long enhancer, so the setting does not apply there (a Content Studio long video ignores it).
 
 **A/B (prepared, NOT run): `scripts/h3_prompt_length_ab.py`** (modelled on `negative_ab.py` / `realism_ab.py`; the repo has no `scripts/h3_bench.py`, the bench is
-`earlier_studio/tools/h3_bench.py`). Arms: official 350-500, long 950-1100, mid 600-800. Cases: 3 library personas (fictional, stated age 21+, finished sheet) x 3 scene
+the earlier studio's h3_bench.py). Arms: official 350-500, long 950-1100, mid 600-800. Cases: 3 library personas (fictional, stated age 21+, finished sheet) x 3 scene
 kinds (talk to camera = lip sync and voice; act = pour tea = hands and physics; move = walk, stop, turn = motion) = 9 cases x 3 arms = **27 renders**, one fixed seed
 per case (sha256 of the case id) shared by its three arms, the same scene brief for every arm. Each arm POSTs to `/api/studio/generate` (`h3:cinematic`, Draft turbo,
 5 s, 9:16, the same brief Deliverables builds plus the arm's `length`), so the guards, the enhancer, the GPU turn and the output guard run as for a real shot; the

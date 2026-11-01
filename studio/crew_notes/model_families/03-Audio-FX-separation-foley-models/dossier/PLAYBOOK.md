@@ -26,10 +26,10 @@ Not in notes: The provided documents do not list specific keywords, tags, or phr
 
 *   **Ignoring License Restrictions:**
     *   ControlFoley is non-commercial; avoid using it in commercial pipelines. [MODEL_WEIGHTS_TAXONOMY_2026-10-28.md]
-    *   Some voice datasets (e.g., kyutai_tts_voices) have specific licenses (CC-BY-NC-4.0, CC0, CC-BY-4.0); avoid mixing them incorrectly. [MNT_FAST_STALE_30D_2026-10-27.md]
+    *   Some voice datasets (e.g., kyutai_tts_voices) have specific licenses (CC-BY-NC-4.0, CC0, CC-BY-4.0); avoid mixing them incorrectly.
 
 *   **Using Unverified Duplicates:**
-    *   Avoid assuming files with the same size are duplicates; most "same size" pairs are different weights (e.g., Wan HIGH/LOW halves). Verify with sha256 before deleting. [mnt-fast-cleanup-plan-2026-10-19.md]
+    *   Avoid assuming files with the same size are duplicates; most "same size" pairs are different weights (e.g., Wan HIGH/LOW halves). Verify with sha256 before deleting.
 
 *   **Overlooking Disk Space Impact:**
     *   Audio models contribute significantly to disk usage (628.2 GB). Be mindful of storage limits when adding new audio models or generating large outputs. [MODEL_WEIGHTS_TAXONOMY_2026-10-28.md]

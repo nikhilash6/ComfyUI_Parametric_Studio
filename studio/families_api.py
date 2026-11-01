@@ -8,17 +8,25 @@ from fastapi.responses import FileResponse
 from psn import instances as I
 from studio import apps as A
 from studio.ui2api import ui_to_api
-ROOT = Path(__file__).resolve().parent; STATUS = ROOT / "family_status.json"; WEB = ROOT / "web"
+ROOT = Path(__file__).resolve().parent; STATUS = ROOT / "family_status.json"; WEB = ROOT / "web"; EXTRA = ROOT / "family_templates"
 REAP_MIN = float(os.environ.get("STUDIO_FAMILY_REAP_MIN", "15")); RUN_TIMEOUT = int(os.environ.get("STUDIO_FAMILY_RUN_TIMEOUT", "1800")); DISK_SPARE_GB = 25
 EXT = (".safetensors", ".ckpt", ".pt", ".pth", ".bin", ".gguf", ".sft", ".onnx", ".pkl")
 GOAL_FAMILY = {"image": "Flux.2", "video": "Wan2.2", "animate": "Wan2.2", "reshoot_wan": "Wan2.2", "anime": "Anima", "flux3": "Flux.3-Klein", "video_ltx": "LTX-2.5", "animate_ltx": "LTX-2.5", "vfx_ltx": "LTX-2.5", "music": "Mini-Max-Music3", "h3_video": "MiniMax-H3", "h3_animate": "MiniMax-H3", "recast": "MiniMax-H3", "reshoot": "MiniMax-H3", "orbit360": "MiniMax-H3", "director": "MiniMax-H3", "director_keyframes": "MiniMax-H3"}
 LEVEL = {"render": "Rendered here", "validated": "Template checks out", "nodes": "Server starts, no render yet", "started": "Server starts, no render yet", "untested": "Not tested yet"}
 router = APIRouter(); _st = {"m": 0.0, "d": {"families": {}}}; _scan = {"t": 0.0, "d": {}}; _names = {"t": 0.0, "d": {}}; _dirs = {"root": None, "t": 0.0, "d": {}}; JOBS: dict = {}; _reaper = {"on": False}; _dl = {"state": None}
 
+def _with_extra(d):
+    """family_status.json plus the studio's own templates for families ComfyUI ships none for (family_templates/index.json)."""
+    try: extra = json.load(open(EXTRA / "index.json")).get("templates", [])
+    except (OSError, ValueError): return d
+    for t in extra:
+        r = d.get("families", {}).get(t.get("family"))
+        if r is not None and not any(x.get("name") == t["name"] for x in r.setdefault("templates", [])): r["templates"].append({**t, "studio": True})
+    return d
 def status_data():
     try:
         m = STATUS.stat().st_mtime
-        if m != _st["m"]: _st.update(m=m, d=json.load(open(STATUS)))
+        if m != _st["m"]: _st.update(m=m, d=_with_extra(json.load(open(STATUS))))
     except OSError: pass
     return _st["d"]
 def instance_dirs():
@@ -102,17 +110,17 @@ def shared_files():
 def free_gb():
     try: return round(I.free_vram_gb(), 1)
     except Exception: return None
-PRECISION = re.compile(r"[_.-]?(fp8|fp16|fp32|bf16|int8|convrot|scaled|e4m3fn|sft|pruned|ema|emaonly)(?=[_.-]|$)")
 _keys = {"id": None, "d": {}}
-def _key(n):
-    from studio.names import norm
-    return PRECISION.sub("", norm(n)).rsplit(".", 1)[0]
-def _have(files, name):
-    """The installed file that answers for a template's model name: the same base name, or the same name in another precision. Close-but-different names are left to the run step's resolver, which checks variants."""
+def _have(files, name, folder=None):
+    """The installed file that answers for a template's model name: the same base name, or the same model in a precision its loader handles. A close name is another model, and the run step's resolver gives the same answer."""
+    from studio.names import have, model_key
     b = os.path.basename(name)
     if b in files: return b
-    if _keys["id"] != id(files): _keys.update(id=id(files), d={_key(x): x for x in files})
-    return _keys["d"].get(_key(b))
+    if _keys["id"] != id(files):
+        d = {}
+        for x in files: d.setdefault(model_key(x), []).append(x)
+        _keys.update(id=id(files), d=d)
+    return have(_keys["d"].get(model_key(b), ()), b, folder)
 _look = {"a": None, "b": None, "d": {}}
 def _view(files):
     shared = shared_files()
@@ -120,8 +128,8 @@ def _view(files):
     return _look["d"]
 def tpl_state(t, files):
     """Which of a template's model files this family's instance can see: its own folder first, then the shared list every instance reads."""
-    look = _view(files); miss = [m for m in t.get("models", []) if not _have(look, m["name"])]; have = [m for m in t.get("models", []) if _have(look, m["name"])]
-    gb = sum(look.get(_have(look, m["name"]), 0) for m in have) / 1e9
+    look = _view(files); miss = [m for m in t.get("models", []) if not _have(look, m["name"], m.get("dir"))]; have = [m for m in t.get("models", []) if _have(look, m["name"], m.get("dir"))]
+    gb = sum(look.get(_have(look, m["name"], m.get("dir")), 0) for m in have) / 1e9
     return {"ready": not miss, "missing": miss, "missing_gb": round(sum(m.get("gb") or 0 for m in miss), 1) if all(m.get("gb") for m in miss) else None, "need_gb": round(gb * 1.15 + 2.0, 1), "weights_gb": round(gb, 1)}
 def _showcase():
     try: items = json.load(open(WEB / "showcase" / "showcase.json"))
@@ -184,9 +192,13 @@ def family_get(slug: str):
         except Exception: pass
     return r
 # ---- gate, start, stop, free ------------------------------------------------------------------------------------------------------------------------------------------
+def _wrap_stale(f, info):
+    """A wrapped file landed after this instance's view was written, and the instance is down, so the view can safely be rebuilt."""
+    return any(os.path.exists(os.path.join(I.MODELS, rel)) and not os.path.lexists(os.path.join(I.INSTANCES, info["slug"], "models", t, name)) for t, name, rel in (I.WRAPS.get(f) or {}).get("files", [])) and not I.is_up(info["port"])
 def _ensure(f):
     """The instance directory exists and carries the black, gold and green theme, whatever made it."""
     info = _info(f)
+    if info and _wrap_stale(f, info): info = I.generate(f, ports={f: info["port"]})
     if not info: ports = I.registry_ports([f]); I.write_unit(); I.subprocess.run(["systemctl", "--user", "daemon-reload"], capture_output=True); info = I.generate(f, ports=ports)
     I.apply_theme(os.path.join(I.INSTANCES, info["slug"])); return info
 def _mark(slug, on=True):
@@ -281,6 +293,10 @@ def _oi(port): return json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}
 def _tpl(f, tid):
     t = next((t for t in _meta(f).get("templates", []) if t["name"] == tid), None)
     if not t: raise HTTPException(404, "this family has no such template")
+    if t.get("studio"):
+        p = str(EXTRA / (tid + ".json"))
+        if not os.path.exists(p): raise HTTPException(503, "this studio template's graph file is missing")
+        return t, p
     d = A.template_dir(); p = os.path.join(d, tid + ".json") if d else None
     if not p or not os.path.exists(p): raise HTTPException(503, "ComfyUI's template package is not installed in this Python")
     return t, p
@@ -290,7 +306,7 @@ def template_form(slug: str, tid: str):
     try: oi = _oi(info["port"]) if up else A.object_info()
     except Exception: raise HTTPException(503, "Could not read the node list. Start this family or the main ComfyUI first.") from None
     d = A.describe(tid, p, oi); s = tpl_state(t, files)
-    return {"id": tid, "title": t.get("title"), "desc": t.get("desc"), "media": t.get("media"), "inputs": d["inputs"], "problems": d["problems"], "unknown_nodes": d["unknown_nodes"], "nodes": d["nodes"], "outputs": d["outputs"], "ready": s["ready"] and d["ready"], "missing": s["missing"], "missing_gb": s["missing_gb"], "need_gb": s["need_gb"], "weights_gb": s["weights_gb"], "gb": t.get("gb"), "checked_on": "this family" if up else "the main ComfyUI"}
+    return {"id": tid, "title": t.get("title"), "desc": t.get("desc"), "media": t.get("media"), "inputs": d["inputs"], "problems": d["problems"], "unknown_nodes": d["unknown_nodes"], "nodes": d["nodes"], "outputs": d["outputs"], "ready": s["ready"] and d["ready"] and not (up and d["missing_models"]), "missing": s["missing"], "missing_gb": s["missing_gb"], "need_gb": s["need_gb"], "weights_gb": s["weights_gb"], "gb": t.get("gb"), "checked_on": "this family" if up else "the main ComfyUI"}
 def _jobs_file(slug): return os.path.join(I.INSTANCES, slug, "studio_jobs.jsonl")
 def _persist(rec):
     try:
@@ -302,7 +318,7 @@ def _file_rows(slug, entry):
         for items in o.values():
             if not isinstance(items, list): continue
             for it in items:
-                if isinstance(it, dict) and it.get("filename") and it.get("type", "output") != "temp":
+                if isinstance(it, dict) and it.get("filename") and it.get("type", "output") not in ("temp", "input"):
                     fn = it["filename"]; out.append({"filename": fn, "subfolder": it.get("subfolder", ""), "type": it.get("type", "output"), "url": f"/api/families/{slug}/view?" + urllib.parse.urlencode({"filename": fn, "subfolder": it.get("subfolder", ""), "type": it.get("type", "output")}), "kind": "video" if fn.lower().endswith((".mp4", ".webm", ".gif", ".mov")) else "audio" if fn.lower().endswith((".wav", ".mp3", ".flac", ".opus", ".ogg", ".m4a")) else "model" if fn.lower().endswith((".glb", ".obj", ".ply", ".spz", ".splat")) else "text" if fn.lower().endswith((".txt", ".json")) else "image"})
     return out
 def _prompt_text(values):
@@ -391,7 +407,8 @@ def history_rows(limit=40):
         slug = I.slug(f)
         if not os.path.exists(_jobs_file(slug)): continue
         for r in _saved_jobs(slug):
-            if r.get("status") == "done" and any(x.get("kind") in ("image", "video", "audio") for x in r.get("files") or []): rows.append({"job": r["job"], "files": [x for x in r["files"] if x.get("kind") in ("image", "video", "audio")], "goal": f, "prompt": r.get("prompt") or r.get("title") or "", "seed": r.get("seed"), "options": {}, "family": slug, "family_name": f, "template": r.get("template"), "title": r.get("title"), "started": r.get("started", 0)})
+            shown = [x for x in r.get("files") or [] if x.get("kind") in ("image", "video", "audio") and x.get("type") != "input"]         # older records still list the uploaded source
+            if r.get("status") == "done" and shown: rows.append({"job": r["job"], "files": shown, "goal": f, "prompt": r.get("prompt") or r.get("title") or "", "seed": r.get("seed"), "options": {}, "family": slug, "family_name": f, "template": r.get("template"), "title": r.get("title"), "started": r.get("started", 0)})
     return sorted(rows, key=lambda x: -x["started"])[:limit]
 def _safe(slug, kind, sub, name):
     if kind not in ("output", "input", "temp") or ".." in name or ".." in sub or "/" in name or name.startswith("."): raise HTTPException(400, "bad path")
@@ -423,6 +440,7 @@ def family_graphs():
 def family_graph(slug: str, tid: str):
     """One family graph as real JSON: API format when a ComfyUI is reachable to convert it, the workflow as shipped otherwise. Both need ComfyUI's template package in this Python; without it the answer is a 503 that says so."""
     f = _family(slug); t, p = _tpl(f, tid); ui = json.load(open(p, encoding="utf-8")); out = {"family": f, "slug": slug, "name": tid, "title": t.get("title")}
+    if A.is_api_graph(ui): return {**out, "format": "api", "graph": ui, "problems": []}
     try:
         oi = A.object_info(); g, probs = ui_to_api(ui, oi); g, _ = A.resolve(g, oi)
         return {**out, "format": "api", "graph": g, "problems": probs[:3]}

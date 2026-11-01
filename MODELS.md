@@ -38,9 +38,6 @@ Unverified means not checked against the licence text.
 | File | Used by | Status |
 |---|---|---|
 | `flux-2-klein-base-4b.safetensors` (Comfy-Org/Flux-2-Klein-4B, Apache-2.0) | Image, quality mode | The installer does not fetch it; the fast mode works without it |
-| `minimax_h3_ref2va_pruned_int8_convrot.safetensors` (Comfy-Org/MiniMax-H3) | Recast, Reshoot (in progress) | Not in the manifest |
-| [akatz-ai/MiniMax-H3-Character-Swap-LoRA](https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA) | Recast (in progress) | Card says MiniMax H3 Community License; not in the manifest. Unverified: whether the exact file name the graph uses comes from this repository |
-| Lightricks LTX-2.5 IC-LoRAs: [Water Simulation](https://huggingface.co/Lightricks/LTX-2.5-22b-IC-LoRA-Water-Simulation), [Clean Plate](https://huggingface.co/Lightricks/LTX-2.5-22b-IC-LoRA-Clean-Plate), [Day To Night](https://huggingface.co/Lightricks/LTX-2.5-22b-IC-LoRA-Day-To-Night), [Alpha Gen](https://huggingface.co/Lightricks/LTX-2.5-22b-IC-LoRA-Alpha-Gen) | VFX (in progress) | Gated. The Clean Plate card says LTX-2.x community licence; the other three unverified. Not in the manifest |
 
 ## Language models for the crew
 

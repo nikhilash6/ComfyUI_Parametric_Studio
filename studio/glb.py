@@ -397,6 +397,33 @@ def list_glb(root, limit=50):
     return results[:limit]
 
 
+class GlbError(ValueError):
+    """Not a glTF binary this reader can use."""
+
+COLLIDER_SUFFIXES = ("-colonly", "-convcolonly", "-col")     # Godot's import names: a node "<x>-colonly" becomes a collision shape only
+
+def read_json(path):
+    """The JSON chunk of a .glb, reading only the file's head (a place can be hundreds of MB)."""
+    with open(path, "rb") as fh:
+        head = fh.read(20)
+        name = os.path.basename(str(path))
+        if len(head) < 20 or head[:4] != b"glTF": raise GlbError(f"{name} is not a glTF binary")
+        version, length = struct.unpack("<II", head[4:12])
+        if version != 2: raise GlbError(f"{name} is glTF version {version}, not 2")
+        clen, ctype = struct.unpack("<II", head[12:20])
+        if ctype != 0x4E4F534A or clen <= 0 or 20 + clen > length: raise GlbError(f"{name} has no JSON chunk")
+        data = fh.read(clen)
+    try: doc = json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError): raise GlbError(f"{name} has an unreadable JSON chunk") from None
+    if not isinstance(doc, dict): raise GlbError(f"{name} has an unreadable JSON chunk")
+    return doc
+
+def facts(path):
+    """What World Kit validation needs from a glb: node, mesh and skin counts, clip names, colliders."""
+    doc = read_json(path); nodes = [n for n in doc.get("nodes") or [] if isinstance(n, dict)]; skins = [s for s in doc.get("skins") or [] if isinstance(s, dict)]
+    return {"nodes": len(nodes), "meshes": len(doc.get("meshes") or []), "skins": len(skins), "joints": max((len(s.get("joints") or []) for s in skins), default=0), "animations": [str(a.get("name") or f"anim_{i}") for i, a in enumerate(doc.get("animations") or [])], "colliders": sum(1 for n in nodes if str(n.get("name") or "").lower().endswith(COLLIDER_SUFFIXES))}
+
+
 def knot_glb():
     """Built-in sample: a polished gold torus knot around a glowing emerald core, a real PBR glTF made from numbers."""
     import numpy as np

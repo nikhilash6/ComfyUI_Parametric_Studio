@@ -33,7 +33,7 @@
 
 ## Processes built on it
 
-*   **ComfyUI Workflow:** The primary process uses the `Comfyui-Kandinsky-T8` pack across ports :8191, :8189, and :8190 [Kandinsky-6.0-Pro-distill-5s-Diffusers/MODEL.md] [k6_lite_int8_convrot.md] [k6_pro_distill_int8_convrot.md].
+*   **ComfyUI Workflow:** The primary process uses the `Comfyui-Kandinsky-T8` pack [Kandinsky-6.0-Pro-distill-5s-Diffusers/MODEL.md] [k6_lite_int8_convrot.md] [k6_pro_distill_int8_convrot.md].
 *   **Image-to-Video (I2V) Pipeline:**
     1.  Load Image.
     2.  Scale Image to 864x480 (center).
@@ -53,7 +53,7 @@
     *   Do not run non-distilled Lite models with `Kandinsky6Sampler` (PiFlow) or CFG 1; that is the recipe for distilled models [k6_lite_int8_convrot.md].
     *   Do not add `Kandinsky6MagCache` to Lite models; it is calibrated for Pro only and will raise an error on Lite [k6_lite_int8_convrot.md].
     *   Do not add `Kandinsky6MagCache` to Distilled Pro; it auto-bypasses or is dropped by PiFlow [k6_pro_distill_int8_convrot.md].
-*   **VRAM Overload:** Do not load Distilled Pro (35 GB file, ~64 GB port usage) beside `llama.cpp` :8091 (~50 GB) without checking free VRAM [k6_pro_distill_int8_convrot.md].
+*   **VRAM Overload:** Do not load Distilled Pro (35 GB file, ~64 GB port usage) beside a large language model server (~50 GB) without checking free VRAM [k6_pro_distill_int8_convrot.md].
 *   **Known Failure Modes:**
     *   "Beautifier" tag mangling can cause speech drift (e.g., repeating words) [Kandinsky-6.0-Pro-distill-5s-Diffusers/MODEL.md].
     *   Forced portrait orientation on Text-to-Video (T2V) looks wrong [Kandinsky-6.0-Pro-distill-5s-Diffusers/MODEL.md].

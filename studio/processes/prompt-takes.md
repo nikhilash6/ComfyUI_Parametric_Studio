@@ -91,7 +91,7 @@ Every take is an ordinary job. Nothing is checked once on behalf of the whole se
 
 - Tests that run the enhancer must join their JobStore before their patches are undone. The first route tests did
   not: worker threads outlived the test and ran the REAL enhancer, and its readiness check got the conductor to start
-  muse-glimmer on the shared GPU. `tests/_live_guards.py` (autouse in tests/studio and tests/chatbox) now blocks and fails any test that touches :8088,
+  a local language model on the shared GPU. `tests/_live_guards.py` (autouse in tests/studio and tests/chatbox) now blocks and fails any test that touches a local language model port,
    a local port or  a local port, starts a model or runs `systemctl --user start/restart`; the route fixture joins its store at teardown.
 
 ## Evidence
@@ -99,7 +99,7 @@ Every take is an ordinary job. Nothing is checked once on behalf of the whole se
   unchanged byte for byte, per-take fallback), `tests/chatbox/test_prompt_takes_routes.py` (N jobs with one seed and
   distinct directions, back-to-back queueing, each take guarded on its own final prompt, one failed take, takes = 1
   identical to today, creative pairs per take, retry), `tests/chatbox/js/takes.test.mjs` (payload, feed grouping).
-- Live measurement 1, 2026-10-11, muse-glimmer-30b-gguf on :8088 (it was up, but it had been started at about 02:44 by a leak in this branch's own route tests, since fixed: see Known pitfalls), krea2 image idea "a woman in a
+- Live measurement 1, 2026-10-11, a local language model (it was up, but it had been started at about 02:44 by a leak in this branch's own route tests, since fixed: see Known pitfalls), krea2 image idea "a woman in a
   yellow raincoat walks her dog through a rainy city street at night": one call per take took 2.6 s / 4.0 s / 3.9 s
   (faithful / cinematic / artistic; 10.5 s for 3 takes). One call returning all 3 prompts took 4.9 s (545 completion
   tokens) but needs a different JSON shape, a higher token cap than the 900-token single-take cap (an H3 video take

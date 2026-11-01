@@ -8,7 +8,7 @@ Not in notes: The provided document does not contain information regarding speci
 Not in notes: The provided document does not contain information regarding settings that worked for the '04-Chroma' model family.
 
 ## Processes built on it
-Not in notes: The provided document does not describe any processes built on the '04-Chroma' model family. It describes a disk cleanup process involving `du`, `find`, and `df` commands to analyze root filesystem usage [earlier-studio/docs/research/root-disk-plan-2026-10-19.md].
+Not in notes: The provided document does not describe any processes built on the '04-Chroma' model family. It describes a disk cleanup process involving `du`, `find`, and `df` commands to analyze root filesystem usage.
 
 ## What to avoid
 Not in notes: The provided document does not contain information regarding what to avoid when prompting or running the '04-Chroma' model family.

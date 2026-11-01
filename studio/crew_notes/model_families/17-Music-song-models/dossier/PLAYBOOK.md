@@ -14,7 +14,7 @@ Not in notes: The provided documents do not contain specific inference settings,
 
 ## Processes built on it
 
-Not in notes: The provided documents do not describe specific workflows, pipelines, or processes built specifically around the '17-Music-song-models' family. While the documents reference a "music bed" for song cards in the context of sound card generation [earlier-studio/docs/research/tiktok-trending-sounds/cards/INDEX.md], they do not detail how the '17-Music-song-models' are integrated into a process.
+Not in notes: The provided documents do not describe specific workflows, pipelines, or processes built specifically around the '17-Music-song-models' family. While the documents reference a "music bed" for song cards in the context of sound card generation, they do not detail how the '17-Music-song-models' are integrated into a process.
 
 ## What to avoid
 

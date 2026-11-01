@@ -4,7 +4,7 @@
 
 A **format** presets the composer for one kind of post on one platform, and the **post steps** on a result card turn a
 S1–S37) and the preset library `PLATFORM_PRESETS_PROPOSAL_2026-10-11.json` (copied into the repo as
-`earlier_studio/studio/data/platform_presets.json`; the KB copy stays the research source).
+the earlier studio's platform_presets.json; the KB copy stays the research source).
 
 Status: **untested** as a whole. Every format is wired; none has been rendered and judged through the studio as a
 format yet. The post steps were run for real on CPU (pp's code, ffmpeg) in the tests.
@@ -39,7 +39,7 @@ Each step is a new studio job with its own card. Its result goes through the **o
 | 🎞 Assembly | 2–8 clips or stills (➕ Assembly on cards, ordered in the composer's tray), an optional music bed and voice-over (🎵 / 🎙 on audio cards) → one video. | `pp.video.assemble` itself: stills get slow pan and zoom, the bed is ducked under the voice, −14 LUFS, optional caption line per clip. No burnt AI label unless `settings.label: true` (default off, see *AI label* below). Each clip's own audio is its voice take; a voice-over replaces them, cut at the clip boundaries. pp's 0.4 s air after a take is off (the clips' lengths are the timeline). Size = the format's delivery size (1080×1920 for 9:16). |
 | 🖼 Cover frame | Pick a time with the slider → the cover at the format's size, plus the 3:4 centre crop the photo feed grid shows. | vertical short grid shows the centre 1080×1440 [V S14]; short-video and Shorts take any frame [O S1, S16]. |
 
-Every step runs pp's code under pp's venv (`earlier_studio/studio/_post_cli.py`). The CPU work runs with the GPU locks
+Every step runs pp's code under pp's venv (the earlier studio's _post_cli.py). The CPU work runs with the GPU locks
 handed back, so a long encode never blocks a render. Outputs are content-hashed, so a retry reuses the file.
 
 ## Which formats are buildable

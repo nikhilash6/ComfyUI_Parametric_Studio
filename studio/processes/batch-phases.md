@@ -7,7 +7,7 @@ Status (2026-10-17): built and unit-tested with fakes; **nothing has been timed 
 service and put a Batch phases: on / off / auto (on from 3+ units) option on every maker that has repeated units; start with Music video and Deliverables long-form."
 Plan this comes from: [the author's research notes](../research/batching-plan-2026-10-17.md) (section 5, step 1).
 
-Code: `earlier_studio/studio/batch_phases.py` (the helper), `earlier_studio/studio/timings.py` (`batch_summary`, the `batch_*` keys), `static/studio/batch_phases.js` (the shared
+Code: the earlier studio's batch_phases.py (the helper), the earlier studio's timings.py (`batch_summary`, the `batch_*` keys), `static/studio/batch_phases.js` (the shared
 select and lines). Tests: `tests/studio/test_batch_phases.py`, `test_musicvideo_batch.py`, `test_deliverables_batch_phases.py`, `tests/chatbox/js/batch_phases.test.mjs`.
 
 ## What it is

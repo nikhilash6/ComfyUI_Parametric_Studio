@@ -1,0 +1,890 @@
+{
+"version": 1,
+"kind": "loops",
+"note": "Ported from the founders' earlier studio. Proof levels are as that studio recorded them; nothing here counts as tested until it is rendered here.",
+"recipes": [
+{
+"id": "loop_breathing",
+"kind": "video",
+"group": "Loops: People",
+"rating": "sfw",
+"title": "Slow breathing",
+"pitch": "A calm portrait that breathes: chest and shoulders rise and fall, nothing else moves.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "a calm waist-up portrait of a fictional adult standing by a window in soft daylight, relaxed shoulders, looking at the camera"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Subtle motion loops best; a larger move often fails to land back on the first frame.",
+"A person is the hardest case for a loop."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 99979,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 900317,
+"image": "@still",
+"last_image": "@still",
+"prompt": "the chest and shoulders rise and fall in one slow, even breath, the clothing shifts a little with it and the head stays almost still, then everything settles back to the starting pose. A quiet room tone with the faint sound of slow breathing. Keep the framing, the pose, the background and the light the same",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "loop_hair_sway",
+"kind": "video",
+"group": "Loops: People",
+"rating": "sfw",
+"title": "Hair in a breeze",
+"pitch": "A soft breeze moves the hair one way and back, the face and body hold still.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "a head-and-shoulders portrait of a fictional adult outdoors in warm evening light, long hair, a soft blurred background"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Hair is easy to loop at a low amplitude; a strong gust tends to end in a different shape.",
+"A person is the hardest case for a loop."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 395145,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 162943,
+"image": "@still",
+"last_image": "@still",
+"prompt": "a soft breeze moves the hair gently to one side and then back again in one slow cycle while the face and body hold still. A light breeze and distant evening ambience. Keep the face, the pose, the framing and the background the same",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "loop_blink_smile",
+"kind": "video",
+"group": "Loops: People",
+"rating": "sfw",
+"title": "Blink and smile",
+"pitch": "One blink and a small smile that fades back to the starting look.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "a close portrait of a fictional adult with a calm neutral expression, soft window light, looking at the camera"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Faces are where a first = last frame clip is most likely to drift; judge the last frame against the first, and use the seam check.",
+"A person is the hardest case for a loop."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 802420,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 364994,
+"image": "@still",
+"last_image": "@still",
+"prompt": "the subject blinks once, a small smile grows and then fades back to the neutral starting expression, the head holds still. A quiet room tone. Keep the framing, the head position, the background and the light the same",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "loop_candle",
+"kind": "video",
+"group": "Loops: Light",
+"rating": "sfw",
+"title": "Candle flame",
+"pitch": "A flame that sways and flickers, the glow on the wax pulsing with it.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "a single lit candle on a dark wooden table, close up, warm glow, a dark soft background"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"A good first try: small flicker, high contrast, easy to land back on the first frame."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 180924,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 856874,
+"image": "@still",
+"last_image": "@still",
+"prompt": "the candle flame sways and flickers gently in one slow cycle, the warm glow on the wax and the nearby surface pulses softly with it and returns to the same glow. A very quiet room tone with the faint crackle of a wick. Keep the candle, the table, the framing and the background the same",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "loop_rain_window",
+"kind": "video",
+"group": "Loops: Weather",
+"rating": "sfw",
+"title": "Rain on a window",
+"pitch": "Raindrops run down the glass, the lights behind it shimmer.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "rain on a window at night, blurred warm city lights behind the glass, drops on the pane"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Rain is a pattern, not one motion: drops will not be in the same places at the end, so expect a visible reset unless you use a short crossfade."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 713554,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 220036,
+"image": "@still",
+"last_image": "@still",
+"prompt": "raindrops run down the glass at a steady rhythm and the blurred city lights behind shimmer softly, a repeating pattern that ends in the same state it began. Steady rain on glass with a soft distant city hum. Keep the window frame, the framing and the colours of the lights the same",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "loop_neon_flicker",
+"kind": "video",
+"group": "Loops: Light",
+"rating": "sfw",
+"title": "Neon flicker",
+"pitch": "A neon sign that flickers once and settles, the wet street glowing with it.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "a glowing neon sign on a brick wall at night above a wet street, saturated pink and blue light"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"A flicker is a brightness change: the seam check's brightness step shows whether the last frame is as bright as the first."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 487809,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 593335,
+"image": "@still",
+"last_image": "@still",
+"prompt": "the neon tubes flicker once and settle, the glow on the wet street pulses in one steady cycle and returns to the same brightness. A soft electric buzz and a distant city hum. Keep the sign, the wall, the framing and the colours the same",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "loop_steam_cup",
+"kind": "video",
+"group": "Loops: Everyday",
+"rating": "sfw",
+"title": "Steam from a cup",
+"pitch": "Steam curls up from a hot drink in slow spirals.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "a steaming cup of coffee on a wooden table by a window, soft morning light, shallow depth of field"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Steam is chaotic: the plume at the end rarely matches the start exactly, but it is soft enough for a short crossfade to hide."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 304661,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 68387,
+"image": "@still",
+"last_image": "@still",
+"prompt": "steam curls up from the cup in slow soft spirals in one even cycle and the plume ends in the same shape it began, the cup stays still. A quiet kitchen ambience. Keep the cup, the table, the framing and the light the same",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "loop_water_ripples",
+"kind": "video",
+"group": "Loops: Nature",
+"rating": "sfw",
+"title": "Water ripples",
+"pitch": "Gentle ripples across calm water, the reflections wobbling.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "calm water in a pond at golden hour with soft reflections of trees, a few lily pads"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"Ripples are a good loop subject; judge whether the pattern at the end resembles the pattern at the start."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 76008,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 42078,
+"image": "@still",
+"last_image": "@still",
+"prompt": "gentle ripples spread across the water surface at a regular rhythm and the reflections wobble softly, then the surface settles back to the starting pattern. Soft water lapping and distant birds. Keep the pond, the lily pads, the framing and the light the same",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "loop_cloth_wind",
+"kind": "video",
+"group": "Loops: Everyday",
+"rating": "sfw",
+"title": "Cloth in the wind",
+"pitch": "A curtain or a flag that billows and settles back.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "a long white curtain by an open window in soft daylight, a plain room behind it"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"A gentle billow loops; a strong gust ends in a different fold."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 795767,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "9:16",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 139073,
+"image": "@still",
+"last_image": "@still",
+"prompt": "the curtain billows gently in the wind and settles back to its starting shape in one slow cycle. A soft wind and a quiet room tone. Keep the window, the room, the framing and the light the same",
+"options": {
+"camera": "locked",
+"aspect": "9:16",
+"quality": "high",
+"seconds": 5,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+},
+{
+"id": "loop_turntable",
+"kind": "video",
+"group": "Loops: Product",
+"rating": "sfw",
+"title": "Product turntable",
+"pitch": "A product that turns once on a plain turntable and ends facing the way it started.",
+"why": "One picture as both the first and the last frame, a motion written to come home, and the seam measured.",
+"tags": [
+"loop"
+],
+"fields": [
+{
+"key": "scene",
+"label": "The picture",
+"default": "a sleek perfume bottle on a plain light-grey turntable, soft studio light, a clean seamless backdrop"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MiniMax H3",
+"licence": "MiniMax H3 Community License",
+"licence_class": "community",
+"note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+},
+{
+"name": "ffmpeg",
+"licence": "LGPL/GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"The least reliable preset: neither H3 nor Wan 2.2 is built for a measured 360 degree turn that lands exactly on the start. Expect a partial turn or drift; the seam score will say how close it came."
+],
+"steps": [
+{
+"id": "still",
+"type": "goal",
+"goal": "image",
+"label": "The still",
+"peak_gib": 23,
+"seed": 355394,
+"prompt": "{scene}. No text, no logos.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+}
+},
+{
+"id": "clip",
+"type": "goal",
+"goal": "director_keyframes",
+"label": "First frame = last frame",
+"peak_gib": 46,
+"seed": 89812,
+"image": "@still",
+"last_image": "@still",
+"prompt": "the product turns slowly through one full rotation on the turntable and ends facing exactly the way it started, the camera and the light stay fixed. A very quiet studio room tone. Keep the product, the turntable, the backdrop, the framing and the light the same",
+"options": {
+"camera": "locked",
+"aspect": "1:1",
+"quality": "high",
+"seconds": 8,
+"speed": "fast"
+}
+},
+{
+"id": "loop",
+"type": "cpu",
+"op": "loop",
+"label": "Close the seam",
+"final": true,
+"clip": "@clip",
+"args": {
+"crossfade": 0.5
+}
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
+}
+}
+]
+}

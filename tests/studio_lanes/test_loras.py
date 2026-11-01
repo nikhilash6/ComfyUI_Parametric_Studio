@@ -4,6 +4,7 @@ import tempfile
 import shutil
 import time
 from fastapi.testclient import TestClient
+import loras
 from loras import router, _cache
 
 # Create a temporary directory structure
@@ -56,6 +57,10 @@ os.environ["STUDIO_MODELS_ROOT"] = models_root
 _cache["data"] = None
 _cache["timestamp"] = 0
 
+# Only LoRAs with a curated recipe are listed: a file's name cannot show it is safe for work
+_row = lambda p: {"id": p, "path": p, "licence": "unverified", "proof": {"level": "recipe"}}
+loras._curated.update(m=os.path.getmtime(loras.DATA), rows=[_row(p) for p in ("flux_style.safetensors", "nested/h3_character.safetensors", "music3/jazz.safetensors", "nsfw_test.safetensors")])
+
 # Create app
 from fastapi import FastAPI
 app = FastAPI()
@@ -93,6 +98,8 @@ assert data["kinds"].get("style") == 1
 assert data["kinds"].get("character") == 1
 assert data["kinds"].get("music") == 1
 
+assert all(i["proof"] == "recipe" and i["licence"] == "unverified" for i in data["items"])
+
 # Test 2: Search
 response = client.get("/api/loras?q=flux")
 data = response.json()
@@ -114,7 +121,15 @@ names = [item["name"] for item in data["items"]]
 assert "music3/jazz.safetensors" in names
 assert "flux_style.safetensors" not in names
 
+# Test 5: a file with no curated recipe is counted, never listed
+with open(os.path.join(loras_dir, "innocent_name.safetensors"), "w") as f:
+    f.write("x" * 1024)
+_cache["data"] = None
+data = client.get("/api/loras").json()
+assert data["other_files"] == 1 and "innocent_name.safetensors" not in [i["name"] for i in data["items"]]
+
 # Cleanup
+loras._curated.clear()
 shutil.rmtree(tmp_dir)
 
 print('ok')

@@ -41,7 +41,7 @@ The result is a video: the output guard checks its frames like any studio video.
 
 ## 2x/4K A/B and 4K profiles (2026-10-16/17)
 
-> Status: **partly run, then stopped by the author (2026-10-17)**. Code: `earlier_studio/tools/video_upscale_ab.py` + `scripts/video_upscale_ab.py`
+> Status: **partly run, then stopped by the author (2026-10-17)**. Code: the earlier studio's video_upscale_ab.py + `scripts/video_upscale_ab.py`
 > (resumable, `results.jsonl`, outputs in `a local folder`), graphs `vsr_h3_*`, `vsr_mmh3_*`,
 > `vsr_flashvsr_v11`, `vsr_seedvr2_numz_4k`, `vsr_esrgan_chain4k`. Full write-up: KB `VIDEO_UPSCALER_AB_2026-10-16.md`. Tests:
 > `tests/tools/test_video_upscale_{ab,4k}.py` (fakes only). Nothing was committed by this work.

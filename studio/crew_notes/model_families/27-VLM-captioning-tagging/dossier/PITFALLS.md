@@ -38,7 +38,7 @@
 
 ## Unknown Total Sizes for Large VLMs
 - **Symptom**: Inability to accurately plan VRAM allocation for simultaneous loading of multiple large models.
-- **Cause**: The exact total size of `OpenGVLab__InternVL3-14B-Instruct` and `Huihui-Step3-VL-10B-abliterated` is not stated in the sources; only the largest individual file sizes (`1.65 GB` and `1.63 GB` respectively) are provided.
+- **Cause**: The exact total size of `OpenGVLab__InternVL3-14B-Instruct` is not stated in the sources; only its largest individual file size (`1.65 GB`) is provided.
 - **Fix**: Manually calculate total sizes from the local file system or assume significant VRAM usage for 14B and 10B parameter models, as "14B params implies significant size".
 - **Source**: [MODEL.md]
 

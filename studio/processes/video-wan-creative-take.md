@@ -25,7 +25,7 @@
 | Everything except LoRAs | identical to the LoRA half (base, accelerators, 4 steps, CFG 1, shift 5, size, 81 f, seed, prompt incl. trigger words) | CREATIVE_TAKE.md table |
 | Removed | concept LoRAs = any LoRA under `loras/wan/` not listed as an accelerator in `a local folder` or under `loras/wan/accel/`; unknown LoRAs are removed too and listed | CREATIVE_TAKE.md "Classification" |
 | Default | off; `COMFY_STUDIO_CREATIVE_TAKE=1` in the chatbox env makes it on by default | `catalog.creative_take_default` |
-| When it is worse | gesture/effect LoRAs (middle finger, slap, hip shake, big splash), camera LoRAs (camera rotation, rack focus, orbit, long lens, handheld), SVI chaining, trained motion (walking, dancing) | same |
+| When it is worse | gesture/effect LoRAs (slap, big splash), camera LoRAs (camera rotation, rack focus, orbit, long lens, handheld), SVI chaining, trained motion (walking, dancing) | same |
 
 ## Prompting rules
 - Write for the LoRA half (trigger words as trained, the LoRA's intended scene). The creative half reuses that exact final

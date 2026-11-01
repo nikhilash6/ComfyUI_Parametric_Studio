@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Add the Character and Fashion designers to studio/packs/packs.json the way the other designers were built: a read-only ast parse of the owner's designer modules (never imported, never run, never modified), constants only, then the SFW and brand filter.
-Sources, under ~/earlier-studio/earlier_studio (the SFW copy named by DESIGNER_SOURCE_SFW is used when the first is missing): studio/fashion_categories.py (garment kinds, shared style, colour, pattern and fabric lists), studio/signature_outfits.py (palettes, accents, eye colours),
+Sources, under the earlier studio's folder named by DESIGNER_SOURCE_SFW: studio/fashion_categories.py (garment kinds, shared style, colour, pattern and fabric lists), studio/signature_outfits.py (palettes, accents, eye colours),
 studio/hair_designer.py (hair lists), gamebuilder/story.py (expressions), studio/fashion.py (sheet and on-model view names); archetypes come from the cosplay pack already in packs.json. Process docs: docs/processes/character-sheet.md, sheet-engine.md, character-builder-models.md.
 Rules (owner): fully clothed, fictional adults only, no real people, no brands, no body-shape options (studio/signature_outfits.py SILHOUETTES is left out on purpose). Usage: python3 scripts/build_character_fashion_packs.py [--dry-run]"""
 import ast, json, os, re, sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent; PACKS = ROOT / "studio" / "packs" / "packs.json"; sys.path.insert(0, str(ROOT))
 from psn import paths
-SRC = next((Path(p) for p in ("~/earlier-studio/earlier_studio", paths.setting("DESIGNER_SOURCE_SFW", default="/nonexistent")) if (Path(p).expanduser() / "studio" / "fashion_categories.py").exists()), None)
+SRC = next((Path(p) for p in (paths.setting("DESIGNER_SOURCE_SFW", default="/nonexistent"),) if (Path(p).expanduser() / "studio" / "fashion_categories.py").exists()), None)
 SRC = SRC.expanduser() if SRC else None
 BAD = re.compile(r"\b(nsfw|nude|naked|lingerie|porn|hentai|explicit|erotic|sex\w*|topless|tattoo\w*|fetish|bondage|gore|bikini|swim\w*|bra|bralette|thong|panty|panties|underwear|corset\w*|negligee|babydoll|teddy|garter\w*|fishnet\w*|stocking\w*|sheer|see-through|transparent|mesh|bodysuit|bodycon|harness|latex|catsuit|cleavage|plunging|backless|strapless|micro)\b", re.I)
 BRANDISH = re.compile(r"\b(nike|adidas|gucci|prada|chanel|louis vuitton|supreme|disney|marvel|pokemon|pok[eé]mon|naruto|batman|spider-?man|star wars|harry potter|ferrari|lamborghini|porsche|bmw|mercedes|toyota|honda|ford|chevrolet|tesla|harley|levi'?s|converse|vans|rolex|hermes|hermès|dior|versace|burberry|zara|h&m|uniqlo|lululemon|patagonia|north face)\b", re.I)

@@ -102,7 +102,7 @@
 - **What it never does:** stop or restart a unit, or touch llama.cpp, vLLM or Ollama.
 - **Record:** each eviction is logged to `unload_log.jsonl` and added to the job's notes, for example
   `freed idle  a local port (63 GiB, idle 27 min, no claim)`. If the job still does not fit, it waits.
-- Code: `earlier_studio/studio/reclaim.py`. Tests: `tests/studio/test_reclaim.py`.
+- Code: the earlier studio's reclaim.py. Tests: `tests/studio/test_reclaim.py`.
 
 ## Visibility in ComfyUI
 All four ports write to one output folder (`a local folder`, the launcher's `--output-directory`). The
