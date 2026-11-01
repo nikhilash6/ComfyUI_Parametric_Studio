@@ -112,5 +112,8 @@
   "We don't name a GGUF pack here and did not test one.",
   "We did not trace which real 4-bit format moved to block scales when. The lab shows the effect, not the history."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

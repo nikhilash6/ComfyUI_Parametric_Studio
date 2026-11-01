@@ -29,5 +29,8 @@
   "The minutes in the reading plan are our suggestion, not a measured method.",
   "Two standard errors is a rule of thumb with assumptions the lab states, not a formal test on any real paper."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

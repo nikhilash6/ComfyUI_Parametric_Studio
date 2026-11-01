@@ -48,5 +48,8 @@
   "Binding as a weak spot of real encoders is widely reported, and we did not test it or cite a measurement.",
   "Whether a given pack's score is comparable to another's was not checked."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

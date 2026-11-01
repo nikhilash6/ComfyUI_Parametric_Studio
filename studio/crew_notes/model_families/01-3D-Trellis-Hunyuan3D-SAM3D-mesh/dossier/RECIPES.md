@@ -15,8 +15,6 @@
 | Hunyuan3D 2.0 | Pipeline | Two-stage | Stage 1: Shape generation (Hunyuan3D-DiT); Stage 2: Texture synthesis (Hunyuan3D-Paint) | [SOURCES.md] |
 | Hunyuan3D 2.0 | Gradio version | 3.39.0 | Version of `gradio` installed for the local app | [SOURCES.md] |
 | TripoSR | Training Hardware | 22 GPU nodes | Each node has 8 A100 40GB GPUs; trained for 5 days | [SOURCES.md] |
-| SAM-3D-Objects | Input | Image + Mask | Required inputs for `CampBSAM3DObjects` node | [WORKFLOW_PLAN.md] |
-| UniRig | Input | `FILE_3D` | Required input for `CampBUniRig` node | [WORKFLOW_PLAN.md] |
 
 Not in sources: CFG/guidance scale values for any model in this family.
 Not in sources: Specific sampler or scheduler names (e.g., Euler, DPM++).

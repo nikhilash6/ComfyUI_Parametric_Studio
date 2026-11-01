@@ -45,5 +45,8 @@
   "The simulated sizes (seed effect 5, noise 1) are our choices, so 24% and the seed counts are illustrations, not measurements.",
   "The claim that a seed moves a picture more than most sampler choices rests on our one-seed renders and general experience: it is not measured over many seeds."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

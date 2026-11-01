@@ -48,6 +48,23 @@ STOP_WORDS = {
     "out", "off", "over", "under", "again", "further", "then", "once"
 }
 
+STUDIO_NAMES = {
+    "virtual-set": "Stage Manager Stu", "world-kit": "Worldsmith Wren", "characters": "Casting Cass", "train": "Trainer Tess",
+    "sampling-lab": "Lab Tech Lux", "res4lyf": "Solver Sol", "recipes": "Cook Cora", "designers": "Art Director Ada", "university": "Dean Diffusion",
+}
+ROUTE_WORDS = {   # what a person calls each studio specialist's subject. Longest phrase wins over a model family's name only when it scores higher.
+    "virtual-set": ("virtual set", "vset", "shot list", "shotlist"),
+    "world-kit": ("world kit", "worldkit", "world-kit", "blender", "export a mesh"),
+    "characters": ("character sheet", "saved character", "characters", "character"),
+    "train": ("train a lora", "training", "train page", "train"),
+    "sampling-lab": ("sampling lab", "sampling atlas", "atlas", "sampler", "scheduler", "guidance method"),
+    "res4lyf": ("res4lyf", "clownshark", "res_2m", "bongmath"),
+    "recipes": ("recipe", "recipes", "process guide", "processes"),
+    "designers": ("designer", "designers", "design page", "design pack"),
+    "university": ("university", "lesson", "lessons", "course", "quiz"),
+}
+GENERIC_FAMILY_WORDS = {"models", "model", "video", "image", "older", "version", "not", "stated", "voice", "song", "music", "mesh", "edit", "dev", "fill", "separation", "audio", "faces", "identity", "portrait", "animation", "depth", "normals", "pose", "upscale", "restore", "segmentation", "matting", "captioning", "tagging", "foley"}
+
 def _slugify(name):
     return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
 
@@ -120,7 +137,27 @@ def roster(kb_root):
     for m in members:
         if m["tier"] == "family":
             all_dossier_files.extend(m["files"])
-    
+
+    topics_dir = os.path.join(kb_root, "studio_topics")
+    for folder in sorted(os.listdir(topics_dir)) if os.path.isdir(topics_dir) else []:
+        path = os.path.join(topics_dir, folder)
+        if not os.path.isdir(path):
+            continue
+        files = [os.path.join(path, f) for f in sorted(os.listdir(path)) if f.endswith(".md")]
+        all_dossier_files.extend(files)
+        if folder.startswith("_"):       # notes only Comfy Prime holds: the families with no specialist of their own
+            continue
+        topic = re.sub(r'^\d+-', '', folder)
+        topic_id = _slugify(topic)
+        members.append({
+            "id": topic_id,
+            "family": topic.replace("-", " "),
+            "name": STUDIO_NAMES.get(topic_id, NAMES[name_index % len(NAMES)]),
+            "tier": "studio",
+            "files": files,
+            "has_dossier": len(files) > 0
+        })
+
     members.append({
         "id": "master",
         "family": "master",
@@ -261,6 +298,12 @@ Question: {question}"""
 
     supported = len(verified_quotes) > 0   # one real quote backs the answer; the ones that did not match are simply not shown
 
+    stated = set(re.findall(r"\d+(?:\.\d+)?", " ".join(c["text"] for c in chunks) + " " + question))
+    said = re.sub(r"(?m)^\s*\d+[.)]\s", "", str(answer))      # a numbered list's own markers are not facts
+    if set(re.findall(r"\d+(?:\.\d+)?", said)) - stated:      # a number no note holds means the answer did not come from the notes
+        problems.append("The answer states a number the notes do not hold")
+        supported = False
+
     if not supported:
         answer = "I can't back that up from my notes."
     
@@ -291,30 +334,34 @@ def default_chat(messages):
 
 def route(question, members):
     q_lower = question.lower()
+    words = set(re.findall(r"[a-z0-9.]+", q_lower))
     best_id = "master"
     best_score = 0
-    
+
     for m in members:
-        if m["tier"] != "family":
-            continue
-        
-        family_lower = m["family"].lower()
-        name_lower = m["name"].lower()
-        
         score = 0
-        if family_lower in q_lower:
-            score += 10
-        if name_lower in q_lower:
-            score += 5
-        
-        for word in family_lower.split():
-            if word in q_lower:
-                score += 2
-        
+        if m["tier"] == "family":
+            family_lower = m["family"].lower()
+            if re.search(r"(?<![a-z0-9])" + re.escape(family_lower) + r"(?![a-z0-9])", q_lower):      # a whole name: Anima is not in AnimateDiff
+                score += 10
+            if m["name"].lower() in q_lower:
+                score += 5
+            for word in re.split(r"[\s-]+", family_lower):      # 'Trellis' finds the 3D specialist; a word every family shares finds nobody
+                if len(word) >= 3 and word not in GENERIC_FAMILY_WORDS and word in words:
+                    score += 4
+        elif m["tier"] == "studio":
+            if m["name"].lower() in q_lower:
+                score += 5
+            for phrase in ROUTE_WORDS.get(m["id"], ()):
+                if (phrase in q_lower) if " " in phrase else (phrase in words):
+                    score = max(score, 3 + len(phrase.split()))
+        else:
+            continue
+
         if score > best_score:
             best_score = score
             best_id = m["id"]
-    
+
     return best_id
 
 # ---------- faces and voices: lookups by member id. The roster above does not change.
@@ -358,6 +405,15 @@ CHARACTERS = {  # id: (Kokoro voice, speed, first line). Only Kokoro's 28 Englis
     "lora": ("bm_fable", 1.16, "Aha! LoRAs: little twists on a big model. I love a good twist."),
     "controlnet": ("am_echo", 1.18, "Hey, welcome to the deep end! ControlNets keep your picture in its lane."),
     "upscaler": ("bf_lily", 0.96, "Good afternoon. Upscalers, my dear: only the very finest detail."),
+    "virtual-set": ("bf_emma", 1.16, "Places, everyone. I run the Virtual Set: cameras, passes and shot lists. What are we shooting?"),
+    "world-kit": ("af_nova", 1.14, "Hello. I build with World Kit: places, props and characters you can walk around. What are we making?"),
+    "characters": ("af_kore", 0.86, "Come in, come in. I look after saved characters and their sheets. Who are we casting?"),
+    "train": ("bf_isabella", 1.1, "Right, warm up. I know the Train page: what can train here and what it really took. What's your base?"),
+    "sampling-lab": ("af_sarah", 0.92, "Good timing, the bench is free. I read the Sampling Lab: what each method really does. What are you testing?"),
+    "res4lyf": ("bf_alice", 1.12, "Oh, solvers! I look after the RES4LYF page, and I know where its licence draws the line. Ask me."),
+    "recipes": ("af_heart", 1.16, "Hi! I keep the recipe shelf: what's on it, and which ones have really been cooked here. Hungry?"),
+    "designers": ("af_bella", 0.92, "Darling, sit. I know the designers on the Design page, and what each one brings. Whose eye do you want?"),
+    "university": ("bf_lily", 1.16, "Welcome to the University. Every lesson says whether a second reader has checked it. What shall we learn?"),
 }
 def portrait(member_id):
     """Path of a member's face under the web root (scripts/build_crew_art.py renders them), or None if there is none yet."""

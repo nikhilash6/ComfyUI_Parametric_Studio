@@ -25,7 +25,7 @@ x' = shift + x × (1 + scale)                  shift and scale: one value per ch
 x  = x + gate × attention(x')                 gate: another output, how much of the block's result to keep
 ```
 
-Each channel gets one scale and one shift, shared by all tokens. So the time vector can't aim at one token. It sets the block's general behaviour for this noise level, and attention does the per-token work.
+Each channel gets one scale and one shift, shared by all tokens. So the time vector can't aim at one token. It sets the block's general behaviour for this noise level, and attention does the per-token work. That is `modulate` in SD 3. It isn't true of every model: FLUX's `apply_mod` can take `modulation_dims`, which gives different ranges of tokens different values, and `WanModel` reshapes its time embedding so that a timestep per token gives values per token.
 
 **adaLN-Zero.** DiT starts the network that makes these numbers at zero. Gate zero means the block returns its input, so at the start of training the stack is the identity. The lab checks that this is exactly true. That helps training only: a checkpoint you load has already moved on.
 

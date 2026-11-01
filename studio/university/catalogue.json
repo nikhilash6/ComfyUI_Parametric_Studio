@@ -370,9 +370,9 @@
   "lessons": 162,
   "audited": 162,
   "draft": 0,
-  "second_read": 142,
-  "second_read_pending": 20,
-  "errors_fixed": 192,
+  "second_read": 162,
+  "second_read_pending": 0,
+  "errors_fixed": 203,
   "plays": 115,
   "graphs": 93,
   "graphs_ran": 25,
@@ -2277,7 +2277,9 @@
     "wf_music3"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-505",
@@ -2299,7 +2301,9 @@
     "sdxl_txt2img"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-506",
@@ -2399,7 +2403,9 @@
     "wf_flux2_klein"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-302",
@@ -2421,7 +2427,9 @@
     "wf_flux2_klein"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-303",
@@ -2444,7 +2452,9 @@
     "wf_flux2_klein"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-304",
@@ -2593,7 +2603,9 @@
     "wf_wan22_t2v"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-310",
@@ -2664,7 +2676,9 @@
     "wf_music3"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-313",
@@ -2686,7 +2700,9 @@
     "hunyuan3d_mesh"
    ],
    "minutes": 3,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-314",
@@ -2781,7 +2797,9 @@
     "hunyuan3d_mesh"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-320",
@@ -3424,7 +3442,9 @@
     "sd35_flow"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-509",
@@ -3448,7 +3468,9 @@
     "wf_flux2_klein"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-510",
@@ -3471,7 +3493,9 @@
     "wf_wan22_t2v"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-511",
@@ -3566,7 +3590,9 @@
     "b_unet_fp8"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-401",
@@ -3663,7 +3689,9 @@
     "h_vae_roundtrip"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-405",
@@ -3711,7 +3739,9 @@
     "b_batch_pick"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-407",
@@ -3731,7 +3761,9 @@
     "sd15_txt2img"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-409",
@@ -3850,7 +3882,9 @@
     "sd15_txt2img"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-415",
@@ -3872,8 +3906,10 @@
    "graphs": [
     "sd15_txt2img"
    ],
-   "minutes": 3,
-   "second_read": null
+   "minutes": 4,
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-416",
@@ -4287,7 +4323,9 @@
     "sd15_txt2img"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-516",
@@ -4332,7 +4370,9 @@
     "sd15_two_stage"
    ],
    "minutes": 3,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   }
  ]
 }

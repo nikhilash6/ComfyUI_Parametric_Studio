@@ -5,7 +5,7 @@ It looks at this machine, decides which models fit, prints the plan, and only af
 virtual environment, clones ComfyUI, installs the Python packages, downloads the chosen model files
 (resumable, SHA-256 checked) and writes a launcher. --dry-run prints every step and does nothing.
 
-Status: tested with simulated hardware and with --dry-run. Not yet run end to end on a real Windows,
+Status: run end to end once, in a clean Ubuntu 24.04 container on NVIDIA. Not yet run on a real Windows,
 macOS or AMD machine. Run from a checkout of the repository.
 """
 import argparse
@@ -16,16 +16,19 @@ import platform
 import shutil
 import subprocess
 import sys
-import urllib.error
+import time
 import urllib.parse
-import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent
 sys.path.insert(0, str(REPO))
 from studio.boxcheck import describe, detect, plan  # noqa: E402  (standard library only)
+from studio import resumable  # noqa: E402  (standard library only)
 
 EXIT_OK, EXIT_CANCELLED, EXIT_NOTHING, EXIT_FAILED = 0, 2, 3, 4
+NETWORK_TRIES, NETWORK_WAIT_S = 3, 30
+# Measured on Linux with NVIDIA: venv with CUDA PyTorch 6.9 GB, pip's cache 2.1 GB, this clone and ComfyUI 0.3 GB. Models are on top of this.
+SOFTWARE_GB = 10.0
 STUDIO_PACKAGES = ["fastapi", "uvicorn", "python-multipart", "pydantic", "numpy", "pillow", "apscheduler"]
 
 # Peak VRAM in GiB per goal: the highest figure from the studio's showcase renders on one 96 GB NVIDIA card,
@@ -134,13 +137,7 @@ def build_commands(plan_result, plan_manifest, channels, channel, base_dir, back
     return cmds
 
 
-class _DropTokenOnRedirect(urllib.request.HTTPRedirectHandler):
-    """Hugging Face redirects large files to a CDN; the token stays on huggingface.co."""
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        new = super().redirect_request(req, fp, code, msg, headers, newurl)
-        if new is not None and not (urllib.parse.urlparse(newurl).hostname or "").endswith("huggingface.co"):
-            new.remove_header("Authorization")
-        return new
+_DropTokenOnRedirect = resumable.DropTokenOnRedirect
 
 
 def _sha256(path):
@@ -151,9 +148,8 @@ def _sha256(path):
     return h.hexdigest()
 
 
-def download_file(url, dest_path, sha256_expected, opener=None):
-    """Resume with an HTTP Range request, verify SHA-256, keep nothing that fails the check."""
-    opener = opener or urllib.request.build_opener(_DropTokenOnRedirect).open
+def download_file(url, dest_path, sha256_expected, opener=None, sleep=time.sleep):
+    """Carry on from any .part file, ride out dropped and stalled connections, verify SHA-256, keep nothing that fails the check. A run that stops for any other reason keeps its bytes for the next run."""
     dest_path = Path(dest_path)
     dest_path.parent.mkdir(parents=True, exist_ok=True)
     if dest_path.exists():
@@ -162,42 +158,65 @@ def download_file(url, dest_path, sha256_expected, opener=None):
             return True
         dest_path.unlink()
     partial = dest_path.with_name(dest_path.name + ".part")
-    start = partial.stat().st_size if partial.exists() else 0
-    headers = {}
-    if os.environ.get("HF_TOKEN"):
-        headers["Authorization"] = "Bearer " + os.environ["HF_TOKEN"]
-    if start:
-        headers["Range"] = f"bytes={start}-"
+    seen = {"bytes": 0}
+
+    def progress(n, reset=False):
+        seen["bytes"] = n if reset else seen["bytes"] + n
+        print(f"\r  {dest_path.name}: {seen['bytes'] / 2**30:.2f} GB", end="", flush=True)
+
+    def waiting(fail, tries, seconds, why):
+        print(f"\n  connection trouble ({why}); trying again in {seconds} s (try {fail} of {tries})", flush=True)
+
     try:
-        response = opener(urllib.request.Request(url, headers=headers))
-    except urllib.error.HTTPError as e:
-        if e.code == 416:          # the partial file is already complete
-            response = None
-        elif e.code in (401, 403):
-            print(f"  refused ({e.code}): {dest_path.name}. Accept the licence on Hugging Face and set HF_TOKEN.")
-            return False
-        else:
-            print(f"  download failed ({e.code}): {dest_path.name}")
-            return False
-    except OSError as e:
-        print(f"  download failed: {dest_path.name}: {e}")
-        return False
-    if response is not None:
-        if start and getattr(response, "status", 200) != 206:
-            start = 0              # the server ignored the Range header
-        done = start
-        with open(partial, "ab" if start else "wb") as out:
-            while chunk := response.read(1024 * 1024):
-                out.write(chunk)
-                done += len(chunk)
-                print(f"\r  {dest_path.name}: {done / 2**30:.2f} GB", end="", flush=True)
+        resumable.fetch_partial(url, partial, token=os.environ.get("HF_TOKEN"), progress=progress, on_wait=waiting, opener=opener, sleep=sleep)
+    except resumable.Refused as e:
         print()
+        if e.status in (401, 403):
+            print(f"  refused ({e.status}): {dest_path.name}. Accept the licence on Hugging Face and set HF_TOKEN.")
+        else:
+            print(f"  download failed ({e.status}): {dest_path.name}")
+        return False
+    except resumable.GaveUp as e:
+        print(f"\n  download stopped: {dest_path.name}: {e}. What arrived is kept; run the same command again to carry on.")
+        return False
+    except OSError as e:
+        print(f"\n  download stopped: {dest_path.name}: {e}")
+        return False
+    print()
     if _sha256(partial) != sha256_expected:
         partial.unlink()
-        print(f"  checksum mismatch, file deleted: {dest_path.name}")
+        print(f"  checksum mismatch, file deleted: {dest_path.name}. Run the same command again to fetch it afresh.")
         return False
     partial.replace(dest_path)
     return True
+
+
+def already_cloned(dest):
+    """A re-run keeps a checkout that is already there, so a failed or partial install can simply be run again, and more goals can be added later."""
+    dest = Path(dest)
+    if not (dest / ".git").exists():
+        return False
+    try:
+        return subprocess.run(["git", "-C", str(dest), "rev-parse", "HEAD"], capture_output=True).returncode == 0
+    except OSError:
+        return False
+
+
+def run_step(cmd, tries=NETWORK_TRIES, sleep=time.sleep):
+    """pip and git talk to the network, so a dropped connection gets a few more chances before the install stops."""
+    for attempt in range(1, tries + 1):
+        try:
+            subprocess.run(cmd, check=True)
+            return True
+        except OSError as e:
+            print(f"Step failed: {e}")
+            return False
+        except subprocess.CalledProcessError as e:
+            print(f"Step failed: {e}")
+            if attempt < tries:
+                print(f"Trying that step again in {NETWORK_WAIT_S} s ({attempt} of {tries - 1})", flush=True)
+                sleep(NETWORK_WAIT_S)
+    return False
 
 
 def link_nodes(src, dst):
@@ -220,6 +239,8 @@ def comfy_flags(plan_result):
 
 
 def launcher_text(system, base_dir, repo, flags, comfy_port=8200, studio_port=8310):
+    # PyTorch 2.14 compiles optional fast kernels with Triton on first use, which stops the render on any machine with no C compiler and Python headers.
+    # Its own switch falls back to the ordinary kernels, so a fresh machine needs no compiler. Set it to 0 before running this to get them back.
     base_dir, repo = Path(base_dir), Path(repo)
     models, output = base_dir / "ComfyUI" / "models", base_dir / "ComfyUI" / "output"
     comfy_input = base_dir / "ComfyUI" / "input"
@@ -227,6 +248,7 @@ def launcher_text(system, base_dir, repo, flags, comfy_port=8200, studio_port=83
     if system == "Windows":
         py = base_dir / "venv" / "Scripts" / "python.exe"
         return ("@echo off\r\n"
+                'if not defined TORCH_DISABLE_NATIVE_JIT set TORCH_DISABLE_NATIVE_JIT=1\r\n'
                 f'start "ComfyUI" /B "{py}" "{base_dir / "ComfyUI" / "main.py"}" {args}\r\n'
                 f"set COMFYUI_URL=http://127.0.0.1:{comfy_port}\r\nset STUDIO_PORT={studio_port}\r\n"
                 f'set "STUDIO_MODELS_ROOT={models}"\r\nset "PSN_MODELS_ROOT={models}"\r\n'
@@ -234,6 +256,7 @@ def launcher_text(system, base_dir, repo, flags, comfy_port=8200, studio_port=83
                 f'cd /d "{repo}"\r\n"{py}" -m studio.server\r\n')
     py = base_dir / "venv" / "bin" / "python"
     return ("#!/bin/sh\n"
+            'export TORCH_DISABLE_NATIVE_JIT="${TORCH_DISABLE_NATIVE_JIT:-1}"\n'
             f'"{py}" "{base_dir / "ComfyUI" / "main.py"}" {args} &\n'
             'COMFY_PID=$!\ntrap \'kill "$COMFY_PID"\' EXIT INT TERM\n'
             f"export COMFYUI_URL=http://127.0.0.1:{comfy_port} STUDIO_PORT={studio_port}\n"
@@ -252,6 +275,7 @@ def write_launcher(base_dir, flags):
 
 
 def print_goal_list(goal_manifest):
+    print(f"Each goal's size is its models. The software is about {SOFTWARE_GB:.0f} GB more, once. Goals that share files share the download.")
     for goal, entry in goal_manifest["goals"].items():
         size = sum(f["size_gb"] for f in entry["files"])
         gated = " [gated]" if any(f.get("gated") for f in entry["files"]) else ""
@@ -314,8 +338,16 @@ def main(argv=None):
     if not args.no_models and not files:
         print("Nothing to download for these goals. Re-run with --no-models to install the software only, or pick other goals.")
         return EXIT_NOTHING
-    size = 0.0 if args.no_models else sum(f["size_gb"] for f in files)
-    print(f"Download: {size:.1f} GB of models into {Path(args.dir).resolve()}")
+    base_dir = Path(args.dir).resolve()
+    size = 0.0 if args.no_models else sum(f["size_gb"] for f in files if not (base_dir / "ComfyUI" / "models" / f["dest"]).exists())
+    software = 0.0 if get_venv_python_path(base_dir).exists() else SOFTWARE_GB
+    print(f"Download: {size:.1f} GB of models into {base_dir}")
+    free = profile.get("disk_free_gb")
+    print(f"Disk: about {size + software:.0f} GB needed ({size:.1f} GB of models, about {software:.0f} GB of software)" + ("" if free is None else f", {free:.0f} GB free there"))
+    if free is not None and free < size + software:
+        print(f"Not enough disk space here. Free up {size + software - free:.0f} GB, pick a smaller goal (see --list), or choose another folder with --dir.")
+        if not args.dry_run:
+            return EXIT_FAILED
     if not args.no_models and any("minimax" in str(f).lower() and "h3" in str(f).lower() for f in files):
         print(H3_NOTICE)
 
@@ -329,23 +361,21 @@ def main(argv=None):
     if not args.yes and input("Proceed? [y/N] ").strip().lower() != "y":
         return EXIT_CANCELLED
 
-    base_dir = Path(args.dir).resolve()
     base_dir.mkdir(parents=True, exist_ok=True)
     for cmd in cmds:
-        print(">", cmd[0] if cmd[0] in ("download", "link") else " ".join(map(str, cmd[:4])), "...")
+        print(">", cmd[0] if cmd[0] in ("download", "link") else " ".join(map(str, cmd[:4])), "...", flush=True)
         if cmd[0] == "download":
             if not download_file(cmd[1], cmd[2], cmd[3]):
                 return EXIT_FAILED
         elif cmd[0] == "link":
             link_nodes(cmd[1], cmd[2])
-        else:
-            try:
-                subprocess.run(cmd, check=True)
-            except (OSError, subprocess.CalledProcessError) as e:
-                print(f"Step failed: {e}")
-                return EXIT_FAILED
+        elif cmd[:2] == ["git", "clone"] and already_cloned(cmd[-1]):
+            print(f"  already there, keeping it: {cmd[-1]}")
+        elif not run_step(cmd):
+            print("Fix that and run the same command again: finished steps are kept.")
+            return EXIT_FAILED
     launcher = write_launcher(base_dir, comfy_flags(result))
-    print(f"Installed. Start it with: {launcher}\nThen open http://127.0.0.1:8310")
+    print(f"Installed. Start it with: {launcher}\nThen open the studio at http://127.0.0.1:8310\nComfyUI's log also mentions port 8200: that is the engine behind the studio, not the page to open.")
     return EXIT_OK
 
 

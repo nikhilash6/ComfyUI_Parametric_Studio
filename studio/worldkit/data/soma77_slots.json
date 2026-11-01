@@ -1,5 +1,5 @@
 {
- "_about": "SOMA77 (Kimodo / GEM-X / mhr2soma BVH) -> retarget.py slot map (~/tools/blender-retarget/retarget.py --src-map this.json). SOMA 'LeftLeg' is the THIGH and 'LeftShin' the shin (Mixamo's LeftLeg is the shin), so --src-map detect would mis-map the legs; fingers: Index1/Middle1/Ring1/Pinky1 are metacarpals, the phalanges are 2-4; thumb 1-3.",
+ "_about": "SOMA77 (Kimodo / GEM-X / mhr2soma BVH) -> retarget.py slot map (blender-retarget/retarget.py --src-map this.json). SOMA 'LeftLeg' is the THIGH and 'LeftShin' the shin (Mixamo's LeftLeg is the shin), so --src-map detect would mis-map the legs; fingers: Index1/Middle1/Ring1/Pinky1 are metacarpals, the phalanges are 2-4; thumb 1-3.",
  "hips": "Hips",
  "spine": [
   "Spine1",

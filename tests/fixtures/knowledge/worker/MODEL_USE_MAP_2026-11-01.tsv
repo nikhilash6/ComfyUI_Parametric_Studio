@@ -1,0 +1,4 @@
+file	gb	repo	path_in_repo	on_disk	disk_path	function	family	does	does_source	status	used_by	proof	next_step	sha
+fake_image_model.safetensors	6.5	acme/fake-image		yes		Image generation	FakeImage			rendered	family FakeImage	rendered FakeImage/t2i (9.1 s)		
+fake_unwired.safetensors	2	acme/fake-unwired		yes		Planned, vision				unreachable			wire a runner	
+fake_waiting.safetensors	1	acme/fake-waiting		no		Image generation	FakeImage			not_on_disk			download	

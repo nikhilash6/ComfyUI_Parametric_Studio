@@ -5,7 +5,7 @@
   "tshirt": {
    "id": "tshirt",
    "label": "T-shirt studio",
-   "doc": "\ud83d\udc55 T-shirt studio.",
+   "doc": "👕 T-shirt studio.",
    "groups": [
     {
      "id": "layout",
@@ -301,7 +301,7 @@
   "mug": {
    "id": "mug",
    "label": "Mug studio",
-   "doc": "\u2615 Mug studio.",
+   "doc": "☕ Mug studio.",
    "groups": [
     {
      "id": "layout",
@@ -458,7 +458,7 @@
       "charcoal grey",
       "mint",
       "burgundy",
-      "ombr\u00e9 blue to white",
+      "ombré blue to white",
       "gold-rimmed white",
       "transparent"
      ]
@@ -566,7 +566,7 @@
   "printify": {
    "id": "printify",
    "label": "Print-on-demand products",
-   "doc": "\ud83d\udda8\ufe0f Print-on-demand products.",
+   "doc": "🖨️ Print-on-demand products.",
    "groups": [
     {
      "id": "layout",
@@ -706,7 +706,7 @@
   "vehicle": {
    "id": "vehicle",
    "label": "Vehicle builder",
-   "doc": "\ud83c\udfce\ufe0f Vehicle builder",
+   "doc": "🏎️ Vehicle builder",
    "groups": [
     {
      "id": "kinds",
@@ -805,7 +805,7 @@
        "classic woody wagon"
       ],
       "Motorcycle & trike": [
-       "caf\u00e9 racer",
+       "café racer",
        "chopper",
        "superbike",
        "scrambler",
@@ -1112,7 +1112,7 @@
   "setting": {
    "id": "setting",
    "label": "Setting designer",
-   "doc": "\ud83c\udfd9\ufe0f Setting designer",
+   "doc": "🏙️ Setting designer",
    "groups": [
     {
      "id": "style",
@@ -1343,7 +1343,7 @@
   "animal": {
    "id": "animal",
    "label": "Animal designer",
-   "doc": "\ud83d\udc3e Animal designer.",
+   "doc": "🐾 Animal designer.",
    "groups": [
     {
      "id": "kinds",
@@ -2171,7 +2171,7 @@
   "plant": {
    "id": "plant",
    "label": "Plant designer",
-   "doc": "\ud83c\udf3f Plant designer.",
+   "doc": "🌿 Plant designer.",
    "groups": [
     {
      "id": "kinds",
@@ -2726,7 +2726,7 @@
       "white ceramic pot",
       "woven basket planter",
       "glass jar",
-      "hanging macram\u00e9 planter",
+      "hanging macramé planter",
       "wooden planter box",
       "metal bucket",
       "concrete planter",
@@ -2846,7 +2846,7 @@
   "hair": {
    "id": "hair",
    "label": "Hair designer",
-   "doc": "\ud83d\udc87 Hair designer",
+   "doc": "💇 Hair designer",
    "groups": [
     {
      "id": "kinds",
@@ -2955,7 +2955,7 @@
       ],
       "Colour & dye": [
        "balayage",
-       "ombr\u00e9",
+       "ombré",
        "platinum blonde",
        "pastel pink",
        "silver-grey",
@@ -3089,7 +3089,7 @@
       "caramel highlights",
       "babylights",
       "chunky contrast highlights",
-      "ombr\u00e9 ends",
+      "ombré ends",
       "root shadow",
       "peekaboo underlayer colour",
       "split-dye halves",
@@ -3210,7 +3210,7 @@
   "nail": {
    "id": "nail",
    "label": "Nail designer",
-   "doc": "\ud83d\udc85 Nail designer.",
+   "doc": "💅 Nail designer.",
    "groups": [
     {
      "id": "kinds",
@@ -3240,15 +3240,15 @@
        "reverse French (moon)",
        "chrome French",
        "glitter French",
-       "ombr\u00e9 French",
+       "ombré French",
        "milky white sheer nails",
        "bare-nail gloss"
       ],
-      "Colour & ombr\u00e9": [
+      "Colour & ombré": [
        "solid cream colour",
        "jelly translucent colour",
-       "gradient ombr\u00e9",
-       "sunset ombr\u00e9",
+       "gradient ombré",
+       "sunset ombré",
        "aura nails",
        "colour-block nails",
        "two-tone split",
@@ -3428,7 +3428,7 @@
       "abstract blobs",
       "negative space",
       "half-moon cuticles",
-      "glitter ombr\u00e9",
+      "glitter ombré",
       "lace",
       "butterflies"
      ]
@@ -3515,7 +3515,7 @@
   "furniture": {
    "id": "furniture",
    "label": "Furniture designer",
-   "doc": "\ud83d\udecb\ufe0f Furniture studio.",
+   "doc": "🛋️ Furniture studio.",
    "groups": [
     {
      "id": "kinds",
@@ -3912,7 +3912,7 @@
   "cosplay": {
    "id": "cosplay",
    "label": "Original costume designer",
-   "doc": "\ud83c\udfad Cosplay outfit maker.",
+   "doc": "🎭 Cosplay outfit maker.",
    "groups": [
     {
      "id": "kinds",
@@ -3946,7 +3946,7 @@
        "kitsune shrine maiden",
        "idol-stage outfit",
        "mecha-pilot suit",
-       "maid caf\u00e9 outfit",
+       "maid café outfit",
        "gothic doll-style dress",
        "demon-slayer-style haori uniform",
        "pirate captain with a long coat",
@@ -4352,7 +4352,7 @@
        "kitsune shrine maiden",
        "idol-stage outfit",
        "mecha-pilot suit",
-       "maid caf\u00e9 outfit",
+       "maid café outfit",
        "gothic doll-style dress",
        "demon-slayer-style haori uniform",
        "pirate captain with a long coat",
@@ -4721,7 +4721,7 @@
       "embroidery",
       "abstract print",
       "tie-dye",
-      "gradient ombr\u00e9",
+      "gradient ombré",
       "checkerboard",
       "quilted",
       "patchwork"
@@ -4985,7 +4985,7 @@
       "embroidery",
       "abstract print",
       "tie-dye",
-      "gradient ombr\u00e9",
+      "gradient ombré",
       "checkerboard",
       "quilted",
       "patchwork"
@@ -5017,7 +5017,7 @@
       "nylon ripstop",
       "lace",
       "faux fur",
-      "metallic lam\u00e9",
+      "metallic lamé",
       "crochet"
      ]
     },
@@ -5070,6 +5070,1666 @@
     "on an adult model: full body three-quarter view": "Fashion photograph of the outfit worn by a fictional adult model, fully clothed, full body three-quarter view, plain studio backdrop",
     "on an adult model: full body, walking toward the camera": "Fashion photograph of the outfit worn by a fictional adult model, fully clothed, full body, walking toward the camera, plain studio backdrop",
     "lookbook collage of the outfit": "Lookbook collage of the same outfit in several views, fully clothed"
+   }
+  },
+  "sneaker": {
+   "id": "sneaker",
+   "label": "Sneaker studio",
+   "doc": "👟 Sneaker studio",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "retro court low-top sneaker",
+      "chunky retro running sneaker",
+      "high-top basketball sneaker",
+      "carbon-plated racing flat",
+      "aggressive trail running shoe",
+      "slip-on skate shoe",
+      "seamless knit sock runner",
+      "futuristic 3D-printed lattice sneaker",
+      "platform cloud runner",
+      "puffy snow-boot-style high-top",
+      "tech sandal-sneaker hybrid"
+     ]
+    },
+    {
+     "id": "upper",
+     "label": "Upper",
+     "options": [
+      "full-grain leather",
+      "brushed suede",
+      "engineered knit",
+      "translucent mesh over a visible cage",
+      "ripstop nylon",
+      "patent leather",
+      "iridescent foil",
+      "woven metallic thread"
+     ]
+    },
+    {
+     "id": "colourway",
+     "label": "Colourway",
+     "options": [
+      "triple black",
+      "bone white",
+      "volt yellow on black",
+      "sunset orange to violet fade",
+      "ice blue and silver",
+      "forest green and cream",
+      "hot coral and teal",
+      "gold and obsidian"
+     ]
+    },
+    {
+     "id": "sole",
+     "label": "Sole",
+     "options": [
+      "sculpted foam midsole",
+      "translucent gum sole",
+      "visible air cushioning",
+      "chunky lugged outsole",
+      "carbon-fibre spring plate",
+      "glowing edge-lit midsole",
+      "thin vulcanised sole"
+     ]
+    },
+    {
+     "id": "laces",
+     "label": "Lacing",
+     "options": [
+      "flat cotton laces",
+      "rope laces",
+      "speed-lock toggle",
+      "magnetic straps",
+      "hidden laceless knit collar"
+     ]
+    },
+    {
+     "id": "detail",
+     "label": "Detail",
+     "options": [
+      "none",
+      "contrast stitching",
+      "exposed foam tongue",
+      "reflective panels",
+      "hand-painted splatter",
+      "embossed geometric texture",
+      "woven heel loop"
+     ]
+    }
+   ],
+   "views": [
+    "levitating hero shot",
+    "side profile on a clean backdrop",
+    "pair from above",
+    "exploded view of every layer",
+    "sole and tread close-up",
+    "wet street at night"
+   ],
+   "view_words": {
+    "levitating hero shot": "Dramatic product photograph of a single shoe levitating in the air on a dark backdrop, hard rim light, fine dust in the air",
+    "side profile on a clean backdrop": "Clean side-profile product photograph of one shoe on a plain light backdrop",
+    "pair from above": "Top-down product photograph of a pair of shoes on a plain surface",
+    "exploded view of every layer": "Exploded technical view of the shoe with each layer floating apart in a line, on a plain dark backdrop",
+    "sole and tread close-up": "Macro product photograph of the sole and tread, angled to the light",
+    "wet street at night": "A single shoe on a wet city street at night, neon reflections in the puddles, no person"
+   }
+  },
+  "watch": {
+   "id": "watch",
+   "label": "Watch atelier",
+   "doc": "⌚ Watch atelier",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "skeleton dress watch",
+      "dive watch",
+      "pilot chronograph",
+      "moonphase dress watch",
+      "square art deco watch",
+      "flying tourbillon watch",
+      "field watch",
+      "futuristic titanium sports watch",
+      "pocket watch on a chain",
+      "double-sided astronomical watch"
+     ]
+    },
+    {
+     "id": "case",
+     "label": "Case",
+     "options": [
+      "polished rose gold",
+      "brushed titanium",
+      "black ceramic",
+      "forged carbon",
+      "sapphire crystal",
+      "aged bronze",
+      "white gold",
+      "blued steel"
+     ]
+    },
+    {
+     "id": "dial",
+     "label": "Dial",
+     "options": [
+      "open-worked gears",
+      "guilloche sunburst",
+      "meteorite texture",
+      "deep blue enamel",
+      "emerald green lacquer",
+      "star map",
+      "mother of pearl",
+      "smoked glass"
+     ]
+    },
+    {
+     "id": "strap",
+     "label": "Strap",
+     "options": [
+      "alligator-texture leather",
+      "woven steel bracelet",
+      "rubber tropic strap",
+      "canvas strap",
+      "titanium links",
+      "velvet ribbon"
+     ]
+    },
+    {
+     "id": "hands",
+     "label": "Hands",
+     "options": [
+      "gold dauphine hands",
+      "blued steel leaf hands",
+      "skeleton hands with lume",
+      "red-tipped needle hand"
+     ]
+    },
+    {
+     "id": "lume",
+     "label": "Glow",
+     "options": [
+      "none",
+      "soft green lume",
+      "ice blue lume",
+      "amber vintage lume"
+     ]
+    }
+   ],
+   "views": [
+    "three-quarter hero on black",
+    "dial macro",
+    "open caseback",
+    "exploded movement",
+    "glowing in the dark",
+    "on a leather desk"
+   ],
+   "view_words": {
+    "three-quarter hero on black": "Macro product photograph of the watch at a three-quarter angle on black, one thin strip of light tracing the case",
+    "dial macro": "Extreme macro photograph of the dial and hands, fine machining visible",
+    "open caseback": "Macro photograph of the open caseback, the movement and gears visible",
+    "exploded movement": "Exploded technical view of the watch with its movement parts floating apart in layers, dark backdrop",
+    "glowing in the dark": "The watch photographed in near darkness, its dial glowing softly",
+    "on a leather desk": "Still life of the watch on a dark leather desk with a fountain pen, warm lamp light"
+   }
+  },
+  "jewellery": {
+   "id": "jewellery",
+   "label": "Jewellery bench",
+   "doc": "💍 Jewellery bench",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "statement cocktail ring",
+      "tiara",
+      "layered collar necklace",
+      "chandelier earrings",
+      "cuff bracelet",
+      "brooch shaped like a beetle",
+      "pendant in a cage setting",
+      "serpent coil bracelet",
+      "ear climber",
+      "crown"
+     ]
+    },
+    {
+     "id": "metal",
+     "label": "Metal",
+     "options": [
+      "yellow gold",
+      "rose gold",
+      "platinum",
+      "oxidised silver",
+      "blackened steel",
+      "hammered bronze"
+     ]
+    },
+    {
+     "id": "stone",
+     "label": "Stone",
+     "options": [
+      "emerald",
+      "sapphire",
+      "ruby",
+      "black opal",
+      "pale moonstone",
+      "tourmaline",
+      "raw uncut quartz",
+      "pearl"
+     ]
+    },
+    {
+     "id": "style",
+     "label": "Style",
+     "options": [
+      "art nouveau",
+      "art deco",
+      "brutalist cast metal",
+      "botanical vines",
+      "celestial stars",
+      "gothic revival",
+      "minimal geometric",
+      "deep-sea organic"
+     ]
+    },
+    {
+     "id": "setting",
+     "label": "Setting",
+     "options": [
+      "pave of tiny diamonds",
+      "bezel set",
+      "claw set",
+      "hanging droplets",
+      "enamel inlay"
+     ]
+    },
+    {
+     "id": "finish",
+     "label": "Finish",
+     "options": [
+      "high polish",
+      "satin brushed",
+      "granulated texture",
+      "matte black patina"
+     ]
+    }
+   ],
+   "views": [
+    "on black velvet",
+    "floating with caustics",
+    "on a stone plinth",
+    "maker's sketch",
+    "macro of the stone"
+   ],
+   "view_words": {
+    "on black velvet": "Luxury macro photograph of the piece on black velvet, a single soft spotlight, sparkling highlights",
+    "floating with caustics": "The piece floating in dark space, light refracting through the stones and throwing caustics",
+    "on a stone plinth": "Still life on a rough stone plinth, warm side light",
+    "maker's sketch": "A jeweller's hand-drawn gouache design sketch of the piece on dark paper",
+    "macro of the stone": "Extreme macro photograph of the main stone and its setting"
+   }
+  },
+  "perfume": {
+   "id": "perfume",
+   "label": "Perfume house",
+   "doc": "🧴 Perfume house",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "faceted glass flacon",
+      "sculptural teardrop bottle",
+      "tall obelisk bottle",
+      "round moon bottle",
+      "bottle shaped like a seed pod",
+      "twisted glass bottle",
+      "heavy square block bottle",
+      "antique atomiser bottle"
+     ]
+    },
+    {
+     "id": "glass",
+     "label": "Glass",
+     "options": [
+      "clear crystal",
+      "smoked black",
+      "amber",
+      "emerald",
+      "frosted white",
+      "iridescent",
+      "cobalt blue"
+     ]
+    },
+    {
+     "id": "liquid",
+     "label": "Perfume colour",
+     "options": [
+      "pale gold",
+      "deep amber",
+      "rose pink",
+      "violet",
+      "ink black",
+      "pale green"
+     ]
+    },
+    {
+     "id": "cap",
+     "label": "Cap",
+     "options": [
+      "polished gold sphere",
+      "black lacquer cube",
+      "raw stone",
+      "carved wood",
+      "crystal stopper",
+      "brass feather"
+     ]
+    },
+    {
+     "id": "note",
+     "label": "Scene",
+     "options": [
+      "white flowers and fog",
+      "smoke and oud wood",
+      "citrus and mist",
+      "wet moss and fern",
+      "dark rose petals",
+      "sea salt and pale driftwood"
+     ]
+    },
+    {
+     "id": "box",
+     "label": "Box",
+     "options": [
+      "none",
+      "black box with a gold edge",
+      "ribbed paper box",
+      "marbled paper box",
+      "velvet-lined case"
+     ]
+    }
+   ],
+   "views": [
+    "hero on wet black stone",
+    "with its packaging",
+    "splash frozen in the air",
+    "among its ingredients",
+    "macro of the cap"
+   ],
+   "view_words": {
+    "hero on wet black stone": "Luxury product photograph of the bottle on wet black stone, backlit so the liquid glows, no label text",
+    "with its packaging": "Still life of the bottle next to its box on a plain surface, soft light, no text on the bottle or the box",
+    "splash frozen in the air": "The bottle surrounded by a frozen splash of liquid, high-speed photograph, dark backdrop, no text",
+    "among its ingredients": "The bottle among its scene ingredients in soft light, no text",
+    "macro of the cap": "Extreme macro photograph of the cap and glass shoulder of the bottle, no text"
+   }
+  },
+  "architecture": {
+   "id": "architecture",
+   "label": "Architect",
+   "doc": "🏛️ Architect",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "cantilevered cliff house",
+      "brutalist concrete villa",
+      "glass pavilion in a forest",
+      "treehouse on stilts",
+      "desert courtyard house",
+      "floating lake cabin",
+      "stepped hillside house",
+      "tall narrow city house",
+      "curved white seaside villa",
+      "earth-sheltered house",
+      "timber A-frame cabin"
+     ]
+    },
+    {
+     "id": "material",
+     "label": "Material",
+     "options": [
+      "board-marked concrete",
+      "charred black timber",
+      "pale limestone",
+      "rammed earth",
+      "weathered steel",
+      "white plaster",
+      "floor-to-ceiling glass",
+      "red brick"
+     ]
+    },
+    {
+     "id": "setting",
+     "label": "Setting",
+     "options": [
+      "a sea cliff",
+      "a misty pine forest",
+      "red desert dunes",
+      "a snowy mountainside",
+      "a still lake",
+      "a dense old city",
+      "a green valley"
+     ]
+    },
+    {
+     "id": "time",
+     "label": "Time",
+     "options": [
+      "golden hour",
+      "blue hour with lit windows",
+      "soft overcast morning",
+      "foggy dawn",
+      "storm light"
+     ]
+    },
+    {
+     "id": "roof",
+     "label": "Roof",
+     "options": [
+      "flat green roof",
+      "steep single pitch",
+      "sweeping curved roof",
+      "stepped terraces"
+     ]
+    },
+    {
+     "id": "feature",
+     "label": "Feature",
+     "options": [
+      "infinity pool",
+      "internal courtyard tree",
+      "long cantilevered deck",
+      "sunken fire pit",
+      "spiral stair tower",
+      "reflecting pond"
+     ]
+    }
+   ],
+   "views": [
+    "exterior hero",
+    "aerial from above",
+    "dusk with lit windows",
+    "section drawing",
+    "main room inside",
+    "scale model"
+   ],
+   "view_words": {
+    "exterior hero": "Architectural photograph of the whole building from outside, wide lens, no people",
+    "aerial from above": "Aerial drone photograph of the building in its landscape, no people",
+    "dusk with lit windows": "Architectural photograph at dusk with warm light from the windows, no people",
+    "section drawing": "A precise architectural cross-section drawing of the building on pale paper, no words",
+    "main room inside": "Interior architectural photograph of the main room looking out through the windows, no people",
+    "scale model": "A white card and wood architectural scale model of the building on a studio table"
+   }
+  },
+  "robot": {
+   "id": "robot",
+   "label": "Robot foundry",
+   "doc": "🤖 Robot foundry",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "towering bipedal war machine",
+      "slender humanoid android",
+      "four-legged cargo walker",
+      "spider-legged explorer robot",
+      "pocket-sized helper robot",
+      "deep-sea diving robot",
+      "heavy construction mech",
+      "samurai-inspired armoured mech",
+      "floating spherical drone",
+      "garden tending robot"
+     ]
+    },
+    {
+     "id": "finish",
+     "label": "Finish",
+     "options": [
+      "gloss white ceramic plates",
+      "scratched gunmetal",
+      "matte olive drab",
+      "polished chrome",
+      "gold anodised",
+      "carbon black",
+      "rust and old paint"
+     ]
+    },
+    {
+     "id": "accent",
+     "label": "Accent",
+     "options": [
+      "yellow hazard stripes",
+      "cyan glow",
+      "red optics",
+      "orange cable runs",
+      "emerald light strips",
+      "none"
+     ]
+    },
+    {
+     "id": "head",
+     "label": "Head",
+     "options": [
+      "single round lens",
+      "narrow visor",
+      "twin antennae",
+      "dome with a glowing core",
+      "no head, sensor cluster"
+     ]
+    },
+    {
+     "id": "scale",
+     "label": "Scale",
+     "options": [
+      "palm-sized",
+      "human-sized",
+      "three storeys tall",
+      "skyscraper-sized"
+     ]
+    },
+    {
+     "id": "wear",
+     "label": "Condition",
+     "options": [
+      "factory new",
+      "dust and scratches",
+      "oil-stained and battered",
+      "mossy, long abandoned",
+      "rain-soaked"
+     ]
+    }
+   ],
+   "views": [
+    "hero in a rainy city",
+    "studio on black",
+    "back view in the hangar",
+    "blueprint",
+    "in the wild",
+    "head close-up"
+   ],
+   "view_words": {
+    "hero in a rainy city": "Cinematic photograph of the robot standing in a rain-soaked neon city at night, low angle, no people, no readable signs",
+    "studio on black": "Studio product photograph of the robot on a black backdrop with hard rim lighting",
+    "back view in the hangar": "Back view of the robot in a dim maintenance hangar, work lights and haze",
+    "blueprint": "A technical blueprint of the robot in white lines on deep blue, no words",
+    "in the wild": "The robot alone in a misty forest clearing at dawn, shafts of light",
+    "head close-up": "Close photograph of the robot's head and neck joints, fine mechanical detail"
+   }
+  },
+  "spaceship": {
+   "id": "spaceship",
+   "label": "Shipyard",
+   "doc": "🚀 Shipyard",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "long-range explorer ship",
+      "sleek needle interceptor",
+      "huge ring-shaped station ship",
+      "blocky deep-space hauler",
+      "manta-winged glider",
+      "organic living ship",
+      "solar sail yacht",
+      "stubby two-seat shuttle",
+      "cathedral-like colony ark"
+     ]
+    },
+    {
+     "id": "hull",
+     "label": "Hull",
+     "options": [
+      "white ceramic panels",
+      "scorched black tiles",
+      "brushed copper",
+      "weathered grey plates",
+      "mirror chrome",
+      "pale bone-like shell"
+     ]
+    },
+    {
+     "id": "engine",
+     "label": "Engines",
+     "options": [
+      "blue ion drive",
+      "orange fusion torch",
+      "green plasma rings",
+      "silent light sail",
+      "twin violet thrusters"
+     ]
+    },
+    {
+     "id": "place",
+     "label": "Place",
+     "options": [
+      "orbit above a ringed planet",
+      "inside a violet nebula",
+      "over a frozen moon",
+      "docked at a vast shipyard",
+      "skimming a storm giant",
+      "landing on a red desert"
+     ]
+    },
+    {
+     "id": "accent",
+     "label": "Markings",
+     "options": [
+      "none",
+      "single red stripe",
+      "yellow hazard chevrons",
+      "faded paint and rust streaks"
+     ]
+    },
+    {
+     "id": "scale",
+     "label": "Scale",
+     "options": [
+      "two-seat",
+      "a small crew",
+      "a city aboard"
+     ]
+    }
+   ],
+   "views": [
+    "hero in space",
+    "engines from behind",
+    "in the docking bay",
+    "blueprint",
+    "cockpit view",
+    "scale model"
+   ],
+   "view_words": {
+    "hero in space": "Cinematic wide shot of the ship in space, dramatic sunlight on the hull, no text",
+    "engines from behind": "Rear view of the ship with its engines firing, glowing exhaust, no text",
+    "in the docking bay": "The ship in a huge docking bay, tiny work lights, haze, no people, no text",
+    "blueprint": "Technical blueprint of the ship in white lines on deep blue, side and top, no words",
+    "cockpit view": "View from inside the empty cockpit looking out at space, glowing instruments without readable text",
+    "scale model": "Studio photograph of a detailed hand-built scale model of the ship on a dark table"
+   }
+  },
+  "creature": {
+   "id": "creature",
+   "label": "Creature lab",
+   "doc": "🐉 Creature lab",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "ancient moss-backed forest giant",
+      "crystal-spined desert lizard",
+      "bioluminescent deep-sea leviathan",
+      "six-winged storm bird",
+      "feathered mountain dragon",
+      "stag-horned spirit beast",
+      "armoured swamp beetle",
+      "cloud jellyfish",
+      "obsidian lava salamander",
+      "many-eyed friendly cave dweller"
+     ]
+    },
+    {
+     "id": "skin",
+     "label": "Skin",
+     "options": [
+      "mossy bark",
+      "iridescent scales",
+      "translucent glowing flesh",
+      "soft fur and feathers",
+      "volcanic plates",
+      "pearly shell"
+     ]
+    },
+    {
+     "id": "colour",
+     "label": "Colour",
+     "options": [
+      "emerald and gold",
+      "deep indigo with cyan glow",
+      "ember orange and black",
+      "bone white",
+      "rose and teal",
+      "storm grey"
+     ]
+    },
+    {
+     "id": "habitat",
+     "label": "Habitat",
+     "options": [
+      "a misty old forest",
+      "a glowing cave",
+      "a black sand shore",
+      "a mountain pass at dawn",
+      "the deep sea",
+      "a field of giant flowers"
+     ]
+    },
+    {
+     "id": "mood",
+     "label": "Mood",
+     "options": [
+      "calm and ancient",
+      "curious",
+      "majestic",
+      "shy and gentle",
+      "watchful"
+     ]
+    },
+    {
+     "id": "size",
+     "label": "Size",
+     "options": [
+      "cat-sized",
+      "horse-sized",
+      "as big as a house",
+      "as big as a hill"
+     ]
+    }
+   ],
+   "views": [
+    "hero in its habitat",
+    "studio concept portrait",
+    "field sketch",
+    "full body side",
+    "museum model"
+   ],
+   "view_words": {
+    "hero in its habitat": "Cinematic wildlife-style photograph of the creature in its habitat, soft atmospheric light, no people, not frightening, no blood",
+    "studio concept portrait": "Close portrait of the creature's face and shoulders, dark backdrop, museum-quality creature design, no blood",
+    "field sketch": "A naturalist's ink and watercolour field-journal drawing of the creature on aged paper, no words",
+    "full body side": "Full-body side view of the creature on a plain neutral backdrop, creature design reference",
+    "museum model": "A museum diorama of the creature, a detailed sculpted model under warm spotlights"
+   }
+  },
+  "helmet": {
+   "id": "helmet",
+   "label": "Armoury",
+   "doc": "⚔️ Armoury",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "great helm with a visor",
+      "crested parade helmet",
+      "samurai-inspired kabuto",
+      "sleek sci-fi pilot helmet",
+      "winged ceremonial helm",
+      "barbute with a T-shaped opening",
+      "full suit of plate armour on a stand",
+      "deep-diver brass helmet",
+      "owl-faced ritual helm",
+      "ornate breastplate on a stand"
+     ]
+    },
+    {
+     "id": "metal",
+     "label": "Metal",
+     "options": [
+      "polished steel",
+      "blackened iron",
+      "gilded bronze",
+      "verdigris copper",
+      "white enamel",
+      "folded damascus steel"
+     ]
+    },
+    {
+     "id": "engraving",
+     "label": "Engraving",
+     "options": [
+      "none",
+      "vine scrollwork",
+      "geometric knotwork",
+      "feathers",
+      "stars and moons",
+      "waves"
+     ]
+    },
+    {
+     "id": "crest",
+     "label": "Crest",
+     "options": [
+      "none",
+      "red horsehair plume",
+      "black feather spray",
+      "sculpted dragon crest",
+      "antlers",
+      "gold sunburst"
+     ]
+    },
+    {
+     "id": "wear",
+     "label": "Condition",
+     "options": [
+      "parade perfect",
+      "battle dented",
+      "rust and lichen, dug from the ground",
+      "soft museum patina"
+     ]
+    }
+   ],
+   "views": [
+    "museum spotlight",
+    "three-quarter on black",
+    "side profile",
+    "forge bench",
+    "engraving close-up"
+   ],
+   "view_words": {
+    "museum spotlight": "Museum photograph on a dark plinth under one spotlight, no glass reflections, no one wearing it",
+    "three-quarter on black": "Dramatic studio photograph at three-quarter view on black with rim light",
+    "side profile": "Clean side-profile photograph on a neutral backdrop",
+    "forge bench": "On a blacksmith's bench in a dark forge, glowing coals behind, no people",
+    "engraving close-up": "Macro photograph of the metalwork and engraving"
+   }
+  },
+  "album": {
+   "id": "album",
+   "label": "Album covers",
+   "doc": "💿 Album covers",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "ambient electronic album",
+      "psychedelic rock album",
+      "orchestral film score",
+      "dark synthwave album",
+      "folk album",
+      "jazz album",
+      "heavy doom album",
+      "dream pop album"
+     ]
+    },
+    {
+     "id": "image",
+     "label": "Image",
+     "options": [
+      "a lone figure seen from behind on a vast salt plain",
+      "a burning piano in the rain",
+      "a giant moon over still water",
+      "liquid metal flowers",
+      "an empty swimming pool at dusk",
+      "a hand-cut paper mountain range",
+      "a glowing door in the desert",
+      "a whale floating over a city"
+     ]
+    },
+    {
+     "id": "technique",
+     "label": "Technique",
+     "options": [
+      "cinematic photograph",
+      "collage of torn paper",
+      "risograph print with heavy grain",
+      "oil paint on canvas",
+      "airbrush chrome",
+      "woodcut print",
+      "marbled ink"
+     ]
+    },
+    {
+     "id": "palette",
+     "label": "Palette",
+     "options": [
+      "acid yellow and black",
+      "teal and orange",
+      "dusty pink and grey",
+      "pure black and white",
+      "ultraviolet and magenta",
+      "earth browns"
+     ]
+    },
+    {
+     "id": "finish",
+     "label": "Finish",
+     "options": [
+      "clean",
+      "worn sleeve creases",
+      "heavy film grain",
+      "halftone dots"
+     ]
+    }
+   ],
+   "views": [
+    "square cover art",
+    "vinyl leaning on a wall",
+    "on a record shelf"
+   ],
+   "view_words": {
+    "square cover art": "Square album cover artwork filling the whole frame, no text, no letters, no logos",
+    "vinyl leaning on a wall": "Photograph of a vinyl record sleeve with this artwork leaning on a plain wall, disc partly out of the sleeve, no text",
+    "on a record shelf": "Close photograph of the sleeve facing out on a wooden record shelf, warm light, other sleeves blurred, no readable text"
+   }
+  },
+  "poster": {
+   "id": "poster",
+   "label": "Poster printer",
+   "doc": "🖼️ Poster printer",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "vintage travel poster",
+      "constructivist poster",
+      "Swiss modernist poster",
+      "1960s psychedelic concert poster",
+      "Japanese-inspired woodblock poster",
+      "retro space travel poster",
+      "great-outdoors landscape poster",
+      "art nouveau poster"
+     ]
+    },
+    {
+     "id": "subject",
+     "label": "Subject",
+     "options": [
+      "a lighthouse on a storm coast",
+      "a mountain railway",
+      "a rocket over a red planet",
+      "a giant koi fish",
+      "a city skyline at sunset",
+      "a sailing ship",
+      "a tiger in tall grass",
+      "a hot air balloon over a canyon"
+     ]
+    },
+    {
+     "id": "palette",
+     "label": "Palette",
+     "options": [
+      "cream, red and navy",
+      "teal and burnt orange",
+      "black, white and one red",
+      "sunset gradient",
+      "mustard and forest green",
+      "cobalt and pale pink"
+     ]
+    },
+    {
+     "id": "technique",
+     "label": "Print",
+     "options": [
+      "flat screen print",
+      "soft lithograph",
+      "heavy grain risograph",
+      "woodblock texture",
+      "bold vector shapes"
+     ]
+    },
+    {
+     "id": "composition",
+     "label": "Composition",
+     "options": [
+      "big central shape",
+      "strong diagonal",
+      "tiny subject in a huge sky",
+      "symmetrical"
+     ]
+    }
+   ],
+   "views": [
+    "flat poster art",
+    "framed on a wall",
+    "rolled on a print bench"
+   ],
+   "view_words": {
+    "flat poster art": "Flat poster artwork filling the whole frame, no text, no letters, no logos",
+    "framed on a wall": "The poster in a thin black frame on a plain plaster wall, soft daylight, no text on it",
+    "rolled on a print bench": "The freshly printed poster on a printer's bench beside ink rollers, no text on it"
+   }
+  },
+  "stainedglass": {
+   "id": "stainedglass",
+   "label": "Stained glass",
+   "doc": "⛪ Stained glass",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "great rose window",
+      "tall lancet window",
+      "round skylight dome",
+      "three-panel triptych window",
+      "art nouveau door panel",
+      "hanging suncatcher panel"
+     ]
+    },
+    {
+     "id": "subject",
+     "label": "Subject",
+     "options": [
+      "a phoenix rising",
+      "a peacock with spread tail",
+      "a tree of life",
+      "whales and waves",
+      "the sun and moon",
+      "irises and dragonflies",
+      "a constellation map",
+      "a koi pond seen from above"
+     ]
+    },
+    {
+     "id": "palette",
+     "label": "Palette",
+     "options": [
+      "ruby and gold",
+      "cobalt and amber",
+      "emerald and violet",
+      "sea green and pearl",
+      "fire orange and indigo"
+     ]
+    },
+    {
+     "id": "lead",
+     "label": "Leading",
+     "options": [
+      "thick black lead lines",
+      "fine copper foil lines",
+      "gold-painted lines"
+     ]
+    },
+    {
+     "id": "glass",
+     "label": "Glass",
+     "options": [
+      "smooth cathedral glass",
+      "rippled antique glass",
+      "opalescent glass",
+      "faceted jewel glass"
+     ]
+    },
+    {
+     "id": "light",
+     "label": "Light",
+     "options": [
+      "low golden sun",
+      "bright noon sun",
+      "pale moonlight",
+      "candlelight from behind"
+     ]
+    }
+   ],
+   "views": [
+    "lit from behind in a dark hall",
+    "flat panel",
+    "glass macro",
+    "cartoon drawing"
+   ],
+   "view_words": {
+    "lit from behind in a dark hall": "Photograph of the window glowing in a dark stone hall, coloured light falling across the floor, no people, no text",
+    "flat panel": "Straight-on photograph of the whole glass panel lit evenly from behind, no text",
+    "glass macro": "Macro photograph of the glass and leading, light glowing through the texture",
+    "cartoon drawing": "The glassmaker's full-size coloured design drawing on paper, lead lines in black, no words"
+   }
+  },
+  "textile": {
+   "id": "textile",
+   "label": "Textile mill",
+   "doc": "🧵 Textile mill",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "silk scarf print",
+      "woven jacquard",
+      "hand block print",
+      "batik-inspired wax resist",
+      "hand-knotted rug",
+      "embroidered panel",
+      "tie-dye shibori cloth",
+      "tapestry"
+     ]
+    },
+    {
+     "id": "motif",
+     "label": "Motif",
+     "options": [
+      "giant peonies",
+      "paisley swirls",
+      "interlocking geometry",
+      "ocean waves",
+      "peacock feathers",
+      "jungle leaves and parrots",
+      "stars and comets",
+      "ogee lattice"
+     ]
+    },
+    {
+     "id": "palette",
+     "label": "Palette",
+     "options": [
+      "indigo and white",
+      "saffron and rust",
+      "emerald and gold",
+      "blush and charcoal",
+      "teal and coral",
+      "black and silver"
+     ]
+    },
+    {
+     "id": "scale",
+     "label": "Scale",
+     "options": [
+      "tiny repeat",
+      "medium repeat",
+      "huge single motif"
+     ]
+    },
+    {
+     "id": "fibre",
+     "label": "Fibre",
+     "options": [
+      "raw silk",
+      "heavy linen",
+      "wool",
+      "velvet",
+      "cotton canvas"
+     ]
+    }
+   ],
+   "views": [
+    "flat swatch",
+    "draped folds",
+    "weave macro",
+    "on the loom or block"
+   ],
+   "view_words": {
+    "flat swatch": "Flat top-down photograph of the fabric filling the whole frame, the pattern crisp, no text",
+    "draped folds": "Photograph of the fabric draped in deep folds, raking side light",
+    "weave macro": "Extreme macro photograph of the threads and weave",
+    "on the loom or block": "The fabric being made, on a wooden workshop table with its tools, no people"
+   }
+  },
+  "cake": {
+   "id": "cake",
+   "label": "Cake atelier",
+   "doc": "🎂 Cake atelier",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "seven-tier wedding cake",
+      "gravity-defying geometric cake",
+      "mirror-glazed entremet",
+      "towering croquembouche",
+      "forest stump cake with moss",
+      "hand-painted porcelain-look cake",
+      "ruffled meringue cake",
+      "planet cake with rings",
+      "cascading sugar flower cake"
+     ]
+    },
+    {
+     "id": "icing",
+     "label": "Finish",
+     "options": [
+      "mirror glaze",
+      "smooth fondant",
+      "rough buttercream",
+      "gold leaf",
+      "marbled icing",
+      "sugar glass shards"
+     ]
+    },
+    {
+     "id": "colour",
+     "label": "Colour",
+     "options": [
+      "ivory and gold",
+      "deep midnight blue",
+      "blush pink",
+      "emerald green",
+      "black and gold",
+      "pastel rainbow"
+     ]
+    },
+    {
+     "id": "decor",
+     "label": "Decoration",
+     "options": [
+      "sugar orchids",
+      "pressed flowers",
+      "chocolate sails",
+      "isomalt crystals",
+      "fresh figs and berries",
+      "hand-piped lace",
+      "edible moths"
+     ]
+    },
+    {
+     "id": "slice",
+     "label": "Inside",
+     "options": [
+      "dark chocolate layers",
+      "rainbow layers",
+      "lemon and cream",
+      "red berry and sponge"
+     ]
+    }
+   ],
+   "views": [
+    "hero on a stand",
+    "a slice cut out",
+    "top-down",
+    "icing macro"
+   ],
+   "view_words": {
+    "hero on a stand": "Fine patisserie photograph of the whole cake on a stand, dark moody backdrop, soft window light, no text, no people",
+    "a slice cut out": "The cake with one slice lifted out to show its layers, no text",
+    "top-down": "Top-down photograph of the cake on a plain surface, no text",
+    "icing macro": "Extreme macro photograph of the decoration and finish"
+   }
+  },
+  "stage": {
+   "id": "stage",
+   "label": "Stage designer",
+   "doc": "🎭 Stage designer",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "grand opera set",
+      "arena concert stage",
+      "experimental theatre set",
+      "ballet set",
+      "circus ring",
+      "open-air amphitheatre set",
+      "fashion runway set"
+     ]
+    },
+    {
+     "id": "centre",
+     "label": "Centrepiece",
+     "options": [
+      "a giant moon on wires",
+      "a vast spiral staircase",
+      "a wall of a thousand candles",
+      "a fallen chandelier",
+      "a sea of hanging fabric",
+      "an enormous hand reaching up",
+      "a house split in half",
+      "a floating forest"
+     ]
+    },
+    {
+     "id": "light",
+     "label": "Light",
+     "options": [
+      "single white follow spot",
+      "deep red wash",
+      "shafts through haze",
+      "cobalt and gold beams",
+      "thousands of tiny bulbs"
+     ]
+    },
+    {
+     "id": "palette",
+     "label": "Palette",
+     "options": [
+      "black and gold",
+      "blood red and white",
+      "icy blue",
+      "storybook pastels",
+      "bare industrial grey"
+     ]
+    },
+    {
+     "id": "floor",
+     "label": "Floor",
+     "options": [
+      "black mirror",
+      "real water",
+      "red sand",
+      "painted checkerboard",
+      "bare boards"
+     ]
+    }
+   ],
+   "views": [
+    "from the front row",
+    "wide from the balcony",
+    "designer's scale model",
+    "backstage side view"
+   ],
+   "view_words": {
+    "from the front row": "Photograph of the empty stage from the front row of a dark theatre, theatrical haze, no performers, no audience faces, no text",
+    "wide from the balcony": "Wide photograph of the whole stage from the high balcony, no performers, no text",
+    "designer's scale model": "A designer's white card scale model box of the set, lit with tiny lamps on a studio table",
+    "backstage side view": "View from the wings looking across the set, ropes and rigging, no people"
+   }
+  },
+  "lamp": {
+   "id": "lamp",
+   "label": "Lamp maker",
+   "doc": "💡 Lamp maker",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "giant paper pendant",
+      "mushroom table lamp",
+      "brutalist concrete floor lamp",
+      "blown-glass chandelier",
+      "leaded glass dragonfly lamp",
+      "woven rattan pendant",
+      "kinetic balanced arm lamp",
+      "alabaster sphere lamp",
+      "neon tube sculpture",
+      "brass cobra desk lamp"
+     ]
+    },
+    {
+     "id": "material",
+     "label": "Material",
+     "options": [
+      "washi paper",
+      "hand-blown art glass",
+      "raw concrete",
+      "polished brass",
+      "alabaster",
+      "woven rattan",
+      "smoked glass",
+      "patinated copper"
+     ]
+    },
+    {
+     "id": "glow",
+     "label": "Glow",
+     "options": [
+      "warm candle amber",
+      "soft white",
+      "deep red",
+      "cool moonlight",
+      "rainbow through glass"
+     ]
+    },
+    {
+     "id": "style",
+     "label": "Style",
+     "options": [
+      "art nouveau",
+      "space age",
+      "Japanese-inspired minimal",
+      "brutalist",
+      "Bauhaus-inspired",
+      "organic biomorphic"
+     ]
+    },
+    {
+     "id": "room",
+     "label": "Room",
+     "options": [
+      "a dark bare room",
+      "a stone cellar",
+      "a moody library",
+      "a dim bedroom",
+      "a concrete loft at dusk"
+     ]
+    }
+   ],
+   "views": [
+    "glowing in a dark room",
+    "studio on white",
+    "lit detail macro",
+    "maker's sketch"
+   ],
+   "view_words": {
+    "glowing in a dark room": "Interior photograph with the lamp lit as the main light in a dark room, warm pools of light on the walls, no people, no text",
+    "studio on white": "Product photograph of the lamp switched off on a plain white backdrop",
+    "lit detail macro": "Macro photograph of the glowing material of the lamp",
+    "maker's sketch": "A designer's pencil and marker sketch of the lamp on paper, no words"
+   }
+  },
+  "gameprop": {
+   "id": "gameprop",
+   "label": "Game prop forge",
+   "doc": "🗝️ Game prop forge",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "enchanted greatsword",
+      "ornate treasure chest",
+      "alchemist's potion set",
+      "floating spell book",
+      "cursed crown",
+      "sci-fi energy rifle prop",
+      "ancient rune stone",
+      "ship's brass astrolabe",
+      "dragon-egg in a nest",
+      "lantern holding a trapped star"
+     ]
+    },
+    {
+     "id": "material",
+     "label": "Material",
+     "options": [
+      "worn iron and leather",
+      "gold and lapis",
+      "bone and obsidian",
+      "crystal and silver",
+      "scratched sci-fi alloy",
+      "carved wood and brass"
+     ]
+    },
+    {
+     "id": "magic",
+     "label": "Effect",
+     "options": [
+      "none",
+      "blue arcane glow",
+      "green poison mist",
+      "ember sparks",
+      "floating rune light",
+      "frost crystals"
+     ]
+    },
+    {
+     "id": "style",
+     "label": "Style",
+     "options": [
+      "painterly hand-painted game art",
+      "photoreal game asset",
+      "chunky low-poly stylised",
+      "dark gothic",
+      "bright storybook"
+     ]
+    },
+    {
+     "id": "wear",
+     "label": "Condition",
+     "options": [
+      "brand new and gleaming",
+      "ancient and chipped",
+      "cracked with light inside",
+      "dusty from a dungeon"
+     ]
+    }
+   ],
+   "views": [
+    "floating hero",
+    "prop sheet",
+    "in the dungeon",
+    "material close-up"
+   ],
+   "view_words": {
+    "floating hero": "Game prop hero render floating on a dark backdrop with a soft glow, no text, no characters",
+    "prop sheet": "A game art prop sheet with the object from three angles on a neutral background, no text",
+    "in the dungeon": "The object resting on a stone altar in a torchlit dungeon, no people, no text",
+    "material close-up": "Macro render of the materials and wear of the object"
+   }
+  },
+  "toy": {
+   "id": "toy",
+   "label": "Toy workshop",
+   "doc": "🧸 Toy workshop",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "wind-up tin robot",
+      "wooden pull-along dragon",
+      "plush monster",
+      "tin rocket on a stand",
+      "articulated wooden knight",
+      "miniature mechanical city",
+      "paper-craft zoo",
+      "clockwork bird in a cage",
+      "stacking totem of animals",
+      "felt woodland village"
+     ]
+    },
+    {
+     "id": "material",
+     "label": "Material",
+     "options": [
+      "lithographed tin",
+      "painted beech wood",
+      "soft felt",
+      "brass and clockwork",
+      "folded paper",
+      "glazed ceramic"
+     ]
+    },
+    {
+     "id": "colour",
+     "label": "Colour",
+     "options": [
+      "primary red, yellow and blue",
+      "pastel mint and peach",
+      "forest green and mustard",
+      "silver and red",
+      "black and gold"
+     ]
+    },
+    {
+     "id": "era",
+     "label": "Era",
+     "options": [
+      "1930s",
+      "1950s",
+      "1970s",
+      "timeless handmade",
+      "far future"
+     ]
+    },
+    {
+     "id": "wear",
+     "label": "Condition",
+     "options": [
+      "boxed mint",
+      "well loved",
+      "scratched and chipped"
+     ]
+    }
+   ],
+   "views": [
+    "toy shop shelf",
+    "studio hero",
+    "exploded parts",
+    "maker's bench"
+   ],
+   "view_words": {
+    "toy shop shelf": "Warm photograph of the toy on an old wooden toy-shop shelf, shallow depth of field, no people, no readable text",
+    "studio hero": "Tilt-shift studio photograph of the toy on a plain coloured backdrop, no text",
+    "exploded parts": "All the parts of the toy laid out neatly in a flat-lay on a workbench, no text",
+    "maker's bench": "The toy half finished on a maker's bench with small tools and sawdust, no people"
+   }
+  },
+  "flash": {
+   "id": "flash",
+   "label": "Flash sheet",
+   "doc": "🖋️ Flash sheet",
+   "groups": [
+    {
+     "id": "kinds",
+     "label": "Kinds",
+     "options": [
+      "traditional flash sheet",
+      "fine-line botanical flash sheet",
+      "blackwork geometric flash sheet",
+      "Japanese-inspired flash sheet",
+      "neo-traditional flash sheet",
+      "dotwork mandala study"
+     ]
+    },
+    {
+     "id": "motif",
+     "label": "Motif",
+     "options": [
+      "panther and roses",
+      "swallows and daggers",
+      "snakes and peonies",
+      "moths and moons",
+      "koi and waves",
+      "skull with marigolds",
+      "ships and anchors",
+      "hands holding an eye"
+     ]
+    },
+    {
+     "id": "ink",
+     "label": "Ink",
+     "options": [
+      "black only",
+      "black and red",
+      "limited primary colours",
+      "muted vintage colours",
+      "black and one gold"
+     ]
+    },
+    {
+     "id": "paper",
+     "label": "Paper",
+     "options": [
+      "aged cream paper",
+      "black paper with white ink",
+      "crisp white paper",
+      "stained parchment"
+     ]
+    },
+    {
+     "id": "line",
+     "label": "Line",
+     "options": [
+      "bold outlines",
+      "whisper-fine lines",
+      "heavy stipple shading"
+     ]
+    }
+   ],
+   "views": [
+    "full sheet on the wall",
+    "flat sheet",
+    "single design close-up",
+    "stencil on the bench"
+   ],
+   "view_words": {
+    "full sheet on the wall": "A full sheet of hand-drawn designs on paper pinned to a studio wall, several separate designs, drawing on paper only, not on skin, no people, no text",
+    "flat sheet": "Flat straight-on scan of the hand-drawn sheet, several separate designs, on paper only, not on skin, no text",
+    "single design close-up": "Close photograph of one hand-inked design on paper, the ink texture visible, on paper only, no text",
+    "stencil on the bench": "The purple transfer stencil of the design on an artist's desk beside ink bottles, on paper only, no people, no text"
    }
   }
  }

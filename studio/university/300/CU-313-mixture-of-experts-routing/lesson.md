@@ -39,7 +39,7 @@ Three real examples.
 ## What goes wrong
 
 - **You budget VRAM as if only K experts existed.** All E experts are loaded. "Sparse" saves compute, not storage, unless something offloads them.
-- **You expect speed to fall with E.** Per token, calls depend on K. But each expert still has a small overhead, as the loop in `forward` visits all of them. This is why a branch in HiDream's `forward` is marked with a TODO about which is faster.
+- **You expect speed to fall with E.** Per token, calls depend on K. But each expert still has a small overhead, as the loop in `forward` visits all of them. A branch in HiDream's `forward` carries a TODO asking which of its two routes is faster, so the code doesn't settle that either.
 - **You check "sum of weights equals 1".** It doesn't, with `norm_topk_prob` False. Don't treat that as a bug.
 - **You try to edit the "right" expert.** A patch or LoRA on expert 2 only affects tokens routed there. Which tokens is decided by the gate, so results can look patchy. There's no fixed "face expert" unless someone has shown it for that model.
 - **The load looks lopsided, so you assume a broken model.** We show only toy tokens here. On a trained model, a skewed load can be fine.

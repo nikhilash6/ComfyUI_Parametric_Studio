@@ -63,5 +63,8 @@
   "The speed and quality of GQA against full multi-head are Ainslie et al.'s reported results on text models. We did not measure them, and we did not test image models.",
   "We read the papers' abstracts through the arXiv API and did not rerun anything from them."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

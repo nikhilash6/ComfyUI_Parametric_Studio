@@ -1,0 +1,1 @@
+[{"pack": "acme__Bad-Pack", "category": "encrypted payload", "confidence": "read and decoded", "evidence": "loader.py:1 runs a decoded blob with exec."}]

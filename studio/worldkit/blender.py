@@ -11,6 +11,7 @@ import contextlib
 import contextvars
 import json
 import os
+import shutil
 import signal
 import subprocess
 import time
@@ -28,7 +29,7 @@ EEVEE_PEAK_GIB = 2.5
 
 
 def blender_path() -> str:
-    return paths.setting("STUDIO_BLENDER", default="/snap/bin/blender")
+    return paths.setting("STUDIO_BLENDER", default="") or shutil.which("blender") or "/snap/bin/blender"
 
 
 def gpu_allowed() -> bool:

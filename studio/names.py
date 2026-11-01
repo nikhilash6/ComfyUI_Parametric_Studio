@@ -43,13 +43,13 @@ def resolve_names(graph, oi, threshold=0.0):
             spec = req.get(k)
             if not spec or not isinstance(v, str) or "${" in v: continue
             opts = spec[0] if isinstance(spec[0], list) else (spec[1].get("options") if len(spec) > 1 and isinstance(spec[1], dict) else None)
-            if not opts or v in opts: continue
+            if opts is None or v in opts: continue                                   # an empty list means nothing is installed for this loader: still missing
             if not MODEL_FILE.search(v): continue
             if SUBSTITUTE.get(v) in opts: n["inputs"][k] = SUBSTITUTE[v]; report.append({"node": nid, "input": k, "was": v, "now": SUBSTITUTE[v], "score": 1.0}); continue
             ratio = lambda o: difflib.SequenceMatcher(None, norm(v), norm(o)).ratio()
             fit = [o for o in opts if isinstance(o, str) and same_model(v, o) and swap_ok(n["class_type"], v, o, n["inputs"].get("weight_dtype")) and ratio(o) >= threshold]
             if fit: best = _closest(v, fit); n["inputs"][k] = best; report.append({"node": nid, "input": k, "was": v, "now": best, "score": round(ratio(best), 2)})
-            else: report.append({"node": nid, "input": k, "was": v, "now": None, "score": round(max(map(ratio, opts)), 2)})
+            else: report.append({"node": nid, "input": k, "was": v, "now": None, "score": round(max(map(ratio, opts), default=0), 2)})
     return graph, report
 def have(files, name, folder=None):
     """The installed file that answers for a model name: that name, or the same model in a precision the loader for `folder` handles. Readiness and resolve_names answer the same way. -> a name in files, or None."""

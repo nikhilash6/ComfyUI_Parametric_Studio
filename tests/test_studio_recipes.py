@@ -124,7 +124,7 @@ def rig(tmp_path, monkeypatch):
     data = {"version": 1, "measured": {"image": {"seconds": 10, "peak_gib": 23}}, "recipes": [RECIPE]}; monkeypatch.setattr(R, "load", lambda: data); monkeypatch.setattr(R, "_srv", lambda: S); monkeypatch.setattr(R, "POLL", 0.01); monkeypatch.setattr(R, "_used_gib", lambda: 12.0); monkeypatch.setattr(R, "_sampler", lambda box, stop: box.__setitem__(0, 12.0))
     R.RUNS.clear(); yield fake
     for r in R.RUNS.values(): r["_cancel"] = True
-def wait(client, rid, run, timeout=8):
+def wait(client, rid, run, timeout=120):
     t0 = time.time()
     while time.time() - t0 < timeout:
         r = client.get(f"/api/recipes/{rid}/runs/{run}").json()

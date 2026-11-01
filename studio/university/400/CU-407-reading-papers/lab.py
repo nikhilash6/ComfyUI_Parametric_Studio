@@ -19,5 +19,5 @@ assert read(2.30, .05, 2.40, .05, 5)[3] < 0 and read(2.30, .20, 2.40, .20, 5)[3]
 # 3. Percent gains flatter a small base. Same absolute change.
 print("\nbase  new   change  percent")
 for b, n in ((10.0, 9.9), (1.0, .9), (.2, .1)): print(f"{b:<5.1f} {n:<5.1f} {n - b:<7.1f} {(n - b) / b:+.0%}")
-# 4. Several metrics, one winner. With 8 metrics, each a coin flip, how often is there at least one metric where the new method wins by a clear margin?
-n = 20000; z = torch.randn(n, 8); print(f"\n8 unrelated metrics, no true difference: at least one looks 'clear of 0' in {(z.abs() > 2).any(1).float().mean().item():.0%} of papers"); assert (z.abs() > 2).any(1).float().mean() > .25
+# 4. Several metrics, one winner. With 8 metrics, each a coin flip, how often is at least one clear of 0 in either direction, and how often is at least one a clear win for the new method?
+n = 20000; z = torch.randn(n, 8); print(f"\n8 unrelated metrics, no true difference: at least one looks 'clear of 0' in {(z.abs() > 2).any(1).float().mean().item():.0%} of papers"); print(f"at least one a clear win for the new method, the direction a paper would headline: {(z > 2).any(1).float().mean().item():.0%} of papers"); assert (z.abs() > 2).any(1).float().mean() > .25

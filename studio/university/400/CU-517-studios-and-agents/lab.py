@@ -22,9 +22,9 @@ print("second try:", pipeline(s, led, "a brass astrolabe"), " calls:", s.calls);
 print("again, nothing changed:", pipeline(s, led, "a brass astrolabe"), " calls so far:", len(s.calls)); assert len(s.calls) == 4
 print("new prompt:", pipeline(s, led, "a copper sextant"), " calls so far:", len(s.calls)); assert len(s.calls) == 7
 # One graph or several? Count what must run again after changing the last step's setting.
-print("\nsplit                  change the last step   why")
-print("one graph              1 node runs            the engine's cache keeps earlier results, while they stay in memory")
-print("three graphs + ledger  1 graph runs           your ledger keeps file names, for as long as the files stay")
+print("\nsplit                  change the last step    why")
+print("one graph              it and what follows it  the engine's cache keeps earlier results, while they stay in memory")
+print("three graphs + ledger  1 graph runs            your ledger keeps file names, for as long as the files stay")
 # Polling, as API nodes do: ask, wait, ask again, and give up at a limit. No fixed delay of ours is the real one.
 def poll(states, limit):
     for i, st in enumerate(states[:limit]):

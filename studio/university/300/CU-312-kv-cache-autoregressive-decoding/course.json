@@ -54,5 +54,8 @@
   "That MiniMaxMusic3TextEncode reaches this class is from reading the model file names and classes; we did not trace the full call path at run time.",
   "The memory table uses illustrative sizes, not a real model's."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

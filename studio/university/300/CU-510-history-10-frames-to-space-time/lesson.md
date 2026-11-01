@@ -100,7 +100,7 @@ On the grid of `WanImageToVideo`, a clip of 81 frames at 832 × 480 is 32,760 to
 
 ## What is contested
 
-Whether joint attention gives better video than factorised attention at equal cost is not something this lab can say. The LTX paper calls full spatiotemporal attention "essential" for temporal consistency. That is its own claim, and we did not test it. Each model family's abstract says it leads the benchmarks it chose, and we did not re-run any.
+Whether joint attention gives better video than factorised attention at equal cost is not something this lab can say. The LTX paper calls full spatiotemporal attention "essential" for temporal consistency. That is its own claim, and we did not test it. Most of these abstracts claim a lead. Video Diffusion Models, Align your Latents and CogVideoX say state-of-the-art, LTX-Video says it outperforms models of similar scale, and Wan says it beats open and commercial ones. Stable Video Diffusion says its text-to-video model is competitive with closed-source ones, and the Cosmos abstract makes no such claim. We did not re-run any.
 
 We also can't say how much of the improvement between 2023 and 2025 came from architecture. The Stable Video Diffusion abstract puts weight on dataset curation, and the Wan abstract credits data and scale as well.
 

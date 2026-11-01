@@ -11,7 +11,7 @@ print("\nchange                               hash changes?")
 for k, g in tests.items(): print(f"{k:<36s} {gh(g) != base}")
 print(f"{'new weights under the same file name':<36s} False, the graph only holds the name")
 assert gh(reord) == base and gh(tests["seed 42 -> 43"]) != base and gh(tests["node id 4 -> 40 (and the wire)"]) != base and gh(tests["cfg 7 -> 7.0"]) != base
-# PNG metadata, as SaveImage writes it: text chunks named prompt and workflow. A minimal PNG is built here and read back.
+# PNG metadata, as SaveImage writes it: a text chunk named prompt, and one per key of extra_pnginfo such as workflow. A minimal PNG is built here and read back.
 def chunk(t, d): return struct.pack(">I", len(d)) + t + d + struct.pack(">I", zlib.crc32(t + d) & 0xffffffff)
 def png(meta):
     raw = b"\x00" + bytes([200, 100, 50]); out = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0))

@@ -99,6 +99,7 @@ base  new   change  percent
 
 ```text
 8 unrelated metrics, no true difference: at least one looks 'clear of 0' in 32% of papers
+at least one a clear win for the new method, the direction a paper would headline: 17% of papers
 ```
 
 ## Sources

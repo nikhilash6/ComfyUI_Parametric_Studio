@@ -37,7 +37,7 @@ assert.deepStrictEqual(filterNodes(rows, 'all', 'rendered', '').map((r) => r.n),
 assert.deepStrictEqual(filterNodes(rows, 'all', 'all', 'FORMULA').map((r) => r.n), ['Sigmas Math1']);
 assert.deepStrictEqual(stateCounts(rows), { rendered: 1, error: 1 });
 assert.ok(sourceUrl('abc', 'beta/x.py', '12').endsWith('/blob/abc/beta/x.py#L12'));
-for (const k of ['rendered', 'ran', 'error', 'rejected', 'needs', 'skipped', 'timeout', 'untested']) assert.ok(STATE_LABEL[k], k);
+for (const k of ['rendered', 'ran', 'error', 'rejected', 'needs', 'skipped', 'timeout', 'model', 'untested']) assert.ok(STATE_LABEL[k], k);
 
 // Quantiles against scipy.stats.beta.ppf
 const near = (a, b) => assert.ok(Math.abs(a - b) < 2e-3, `${a} vs ${b}`);

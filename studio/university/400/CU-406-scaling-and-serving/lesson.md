@@ -34,7 +34,7 @@ Cancelling is per job: `POST /interrupt` with a `prompt_id`, or `POST /queue` wi
 
 ## What goes wrong
 
-- **Testing at low load, launching at high load.** At 91% busy the lab's wait is already five times the job. Plan for well under 100%.
+- **Testing at low load, launching at high load.** At 91% busy a job in the lab takes about five times its own length from arrival to finish, about four of them spent queueing. Plan for well under 100%.
 - **Evenly spreading jobs across many models.** Round robin makes each worker load models over and over. Compare the load counts below.
 - **A batch runs out of memory, one image at a time doesn't.** Batches need room for all their images. Lower it, or use more jobs.
 - **Using the wrong server's id.** Each process has its own queue and history. A `prompt_id` means nothing to another worker.
@@ -61,7 +61,7 @@ batch  seconds per job  images per second  seconds until you see anything
 16     18.0             0.89               18.0
 ```
 
-Going from 8 to 16 adds little throughput and nearly doubles the wait. Now routing: 3 models, a 20 s load, a 5 s job and one job every 2.5 s.
+Going from 8 to 16 adds little throughput and nearly doubles the wait. Now routing: 3 models, a 20 s load, a 5 s job and one job every 2.5 s. Wait in this table and the last one runs from a job's arrival to its finish, so it includes the job itself.
 
 ```text
 workers  routing        mean wait s  95th pct s  model loads

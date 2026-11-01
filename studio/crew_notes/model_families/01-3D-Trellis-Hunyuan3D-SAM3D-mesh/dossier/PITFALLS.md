@@ -30,24 +30,6 @@
 *   **Fix**: Users may need to experiment with inputs to achieve the desired artistic result.
 *   **Source**: [PUBLIC README https://huggingface.co/microsoft/TRELLIS.2-4B/raw/main/README.md]
 
-## Hunyuan3D-2.1: Workflow Node Input Mismatch
-*   **Symptom**: Inability to construct a pure image-to-3D workflow using only the listed ComfyUI nodes for Hunyuan3D-2.1.
-*   **Cause**: The `CampBHunyuan3DPaint` node requires a `FILE_3D` input, implying it is for texturing an existing mesh. There is no standalone "Hunyuan3D Shape Generator" node listed that outputs a `FILE_3D` or `TRIMESH` directly from an image without a pre-existing mesh input for the paint node.
-*   **Fix**: The shape generation step might be handled by a different node not listed, or the `FILE_3D` input might be optional/ignored in some configurations (not stated in sources). Alternatively, use SAM-3D-Objects for image-to-3D if a mask is available.
-*   **Source**: [WORKFLOW_PLAN.md]
-
-## SAM-3D-Objects: Mask Dependency
-*   **Symptom**: The `CampBSAM3DObjects` node cannot process the input image correctly if the object is not isolated.
-*   **Cause**: The node requires a `MASK` input to isolate the object. If no mask generation node is available in the current graph, this step is a bottleneck.
-*   **Fix**: Use an image with a transparent background and load it using `Trellis2LoadImageWithTransparency` to generate the `MASK`, or provide the mask externally.
-*   **Source**: [WORKFLOW_PLAN.md]
-
-## UniRig: Data Type Mismatch
-*   **Symptom**: The `CampBUniRig` node may not accept the output from standard mesh loading nodes directly.
-*   **Cause**: `CampBUniRig` expects a `FILE_3D` input, while nodes like `GeomPackLoadMeshPath` output a `TRIMESH`. There is no explicitly listed node that converts `TRIMESH` to `FILE_3D`.
-*   **Fix**: Ensure the mesh is already in a `FILE_3D` format (e.g., from a previous generation step like TRELLIS-2-4B export) before passing it to `CampBUniRig`.
-*   **Source**: [WORKFLOW_PLAN.md]
-
 ## General: Precision and Format Variance
 *   **Symptom**: Potential compatibility issues or performance variations depending on the specific model file used.
 *   **Cause**: Models in the family are stored in various precisions, including FP16, BF16, and F32. For example, TRELLIS-2-4B DiTs are BF16, while its VAEs are F16. Hunyuan3D-2.1 DiT is FP16.

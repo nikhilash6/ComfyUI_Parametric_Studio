@@ -49,5 +49,8 @@
   "We did not run a real FID or LPIPS.",
   "SSIM's constants are written from common knowledge. We did not read the SSIM paper."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

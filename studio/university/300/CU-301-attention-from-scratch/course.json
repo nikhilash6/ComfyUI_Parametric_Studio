@@ -50,5 +50,8 @@
   "We did not compare the backends' pixel output on one seed.",
   "The figure of 77 tokens per chunk is the usual SD 1.5 chunk size in ComfyUI's tokenizer; the page does not measure a specific prompt."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

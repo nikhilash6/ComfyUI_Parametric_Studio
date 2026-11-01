@@ -11,32 +11,47 @@ Parametric Studio needs a ComfyUI server and a small Python web app. `install.py
 | `python3 install.py --dry-run` | Linux with real hardware detection, and with simulated NVIDIA 12 GB, NVIDIA 96 GB, Windows AMD 16 GB, Apple 16 GB and CPU-only profiles |
 | Installer logic: plan, commands, launchers, resume, hash check | Automated tests with no network (`tests/test_install.py`, `tests/test_boxcheck.py`) |
 | Starting `python -m studio.server` from a fresh clone with no ComfyUI running | Linux, run |
+| The whole path: prerequisites, clone, `install.py`, launcher, Download button, first render | Once: a clean Ubuntu 24.04 Docker container on a 96 GB RTX PRO 6000, with only the NVIDIA driver passed in. Anima goal, first picture in 30 s |
+| Stopping an install and running it again, a pulled network connection during a download, Cancel and Resume | Same container |
 
-**Not checked:** a real install from start to finish on any operating system. `install.py` has not been run on a real Windows or macOS machine, or on an AMD GPU, and the Windows launcher has not been executed. If a step fails there, please open an issue with its output.
+**Not checked:** a full install on a bare machine rather than a container, or on a card other than the one above. `install.py` has not been run on a real Windows or macOS machine, or on an AMD GPU, and the Windows launcher has not been executed. If a step fails there, please open an issue with its output.
 
 ## Requirements
 
 - Python 3.12 is the tested version. `install.py` itself needs 3.10 or newer and only the standard library.
 - git, and ffmpeg with ffprobe on your PATH (the timeline and clip tools use them).
-- Disk: 15 GB for the smallest image goal, more for others. Run `python3 install.py --list` to see sizes.
+- An up-to-date GPU driver. The installer does not install one. On NVIDIA, `nvidia-smi` should print your card before you start; the installer reads it to plan.
+- Blender only for World Kit and Virtual Set. The installer does not fetch it, and those pages say so while it is missing.
+- Disk: about 10 GB for the software (measured on Linux with NVIDIA: PyTorch and its CUDA libraries are most of it), plus the models. The smallest goal is `anime` at 9.2 GB of models, and the default `image` goal is 15 GB, so plan on 20 to 25 GB to start. `python3 install.py --list` shows every goal, and the installer prints what your choice needs before it asks. The studio's Download button also keeps 25 GB free on the disk, and refuses if a download would go below that.
 - A GPU for real work. Peak VRAM measured on the author's card is in [MODELS.md](MODELS.md). Lower-memory cards can use ComfyUI's offloading, which is slower and has not been measured.
 
 ## Linux
 
+Install the prerequisites first. On Ubuntu or Debian:
+
 ```bash
-git clone <this repository's URL> ComfyUI_Parametric_Studio
+sudo apt update
+sudo apt install -y git ffmpeg python3-venv
+```
+
+Then:
+
+```bash
+git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
 cd ComfyUI_Parametric_Studio
 python3 install.py --dry-run
 python3 install.py
 ```
 
-Install ffmpeg with your package manager, for example `sudo apt install ffmpeg git python3-venv`.
+When it finishes it prints the launcher to run. Run that, wait for the line `Parametric Studio is running`, and open http://127.0.0.1:8310. ComfyUI's log also mentions port 8200: that is the engine behind the studio, not the page to open.
+
+If anything stops the install, such as a dropped connection, run the same command again. Finished steps and partly downloaded files are kept. Run it again with other `--goals` to add models later, or press Download in the studio.
 
 ## macOS
 
 ```bash
 brew install python@3.12 git ffmpeg
-git clone <this repository's URL> ComfyUI_Parametric_Studio
+git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
 cd ComfyUI_Parametric_Studio
 python3.12 install.py --dry-run
 python3.12 install.py
@@ -49,7 +64,7 @@ Apple machines use MPS. The planner offers only the goals with no NVIDIA-specifi
 Install [Python 3.12](https://www.python.org/downloads/), [Git](https://git-scm.com/download/win) and [ffmpeg](https://ffmpeg.org/download.html), then in PowerShell:
 
 ```powershell
-git clone <this repository's URL> ComfyUI_Parametric_Studio
+git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
 cd ComfyUI_Parametric_Studio
 py -3.12 install.py --dry-run
 py -3.12 install.py
@@ -78,7 +93,7 @@ The open edition, which is the contest entry, uses local open-weights models onl
 2. **Plans.** For each goal you ask for, it compares the measured peak VRAM with your usable VRAM (2 GiB is held back), then chooses `gpu`, `offload` (adds `--lowvram` or `--novram`) or `unavailable`, and says why. Models that cannot work on the machine are not downloaded. The H3 goals need a card that can use NVFP4; on others they show as unavailable.
 3. **Prints the plan and asks.** `--dry-run` stops after printing every step. `--yes` skips the question. It refuses to run as root without `--yes`.
 4. **Installs** into `--dir` (default: a `parametric-studio-runtime` folder beside the repository): a venv, PyTorch for the backend, ComfyUI at the ref in `channels.json`, ComfyUI's requirements, the studio's packages, and a link to this repository in `ComfyUI/custom_nodes`. LTX goals also clone the Lightricks ComfyUI-LTXVideo pack, because the LTX graphs use its `LTXFloatToInt` node.
-5. **Downloads models** from Hugging Face into `ComfyUI/models`, with resume and a SHA-256 check against `studio/models_manifest.json`. A file that fails the check is deleted.
+5. **Downloads models** from Hugging Face into `ComfyUI/models`, with a SHA-256 check against `studio/models_manifest.json`. A stalled or dropped connection waits and carries on from the bytes on disk, and a stopped run leaves a `.part` file that the next run continues. A file that fails the check is deleted.
 6. **Writes a launcher**, `run_studio.sh` or `run_studio.bat`, which starts ComfyUI on port 8200 and the studio on port 8310 with the right paths and flags.
 
 Exit codes: 0 done, 2 cancelled, 3 nothing installable for these goals, 4 a step failed.
@@ -132,6 +147,7 @@ The custom nodes run inside ComfyUI's own Python and use what is already there (
 | `PSN_SETTINGS` | `~/.config/parametric-studio/settings.env` | Optional file of `KEY=value` lines for any setting here, so you need not export them |
 | `PSN_EDITION` | `open` | `open` hides partner nodes and closed APIs. See [EDITIONS.md](EDITIONS.md) |
 | `STUDIO_LLM_URL`, `STUDIO_LLM_MODEL` | looks on local ports 8002, 8301, 11434 | An OpenAI-style local language model for the crew |
+| `STUDIO_BLENDER` | `blender` on your PATH | The Blender program, for World Kit and Virtual Set |
 | `STUDIO_ALLOW_DOWNLOAD` | `1` | `0` turns off downloads from the model browser |
 | `HF_TOKEN` | unset | Gated Hugging Face downloads |
 | `CIVITAI_TOKEN` | unset | Civitai downloads |
@@ -146,6 +162,7 @@ With no language model, the crew answers by quoting the closest passage from its
 ## Troubleshooting
 
 - **"ComfyUI is not reachable":** ComfyUI has not started or `COMFYUI_URL` is wrong. Check `GET /api/health`.
+- **"Failed to find C compiler" during a render:** PyTorch tried to compile its optional fast kernels. The launcher turns those off, so this only happens when you start ComfyUI yourself. Set `TORCH_DISABLE_NATIVE_JIT=1` before starting it, or install a compiler and Python headers (`sudo apt install build-essential python3-dev`).
 - **"ComfyUI rejected the graph":** usually a missing model or node. The Models tab and the message name it.
 - **403 on a download:** accept the model's licence on Hugging Face and set `HF_TOKEN`.
 - **Empty model list or an error about a path you do not have:** set the path variables above.

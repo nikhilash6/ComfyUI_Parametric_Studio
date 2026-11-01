@@ -104,13 +104,21 @@
    "claim": "Title, date and abstract, as above.",
    "how": "docs",
    "ref": "https://arxiv.org/abs/2210.02747"
+  },
+  {
+   "claim": "Paths of one flow cannot cross, while lines between its end points are only straightened by rounds, at O(1/k). Read in the paper's PDF.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2209.03003"
   }
  ],
  "unchecked": [
-  "We read the abstracts of the four papers, not their full text. Everything said about them is from the abstracts.",
+  "We read the abstracts of the four papers, not their full text, apart from the reflow section of Liu et al. Everything else said about them is from the abstracts.",
   "The lab is one-dimensional and one seed. It says nothing on image quality, and the reflow numbers would shift with another seed.",
   "We did not run the SD 3.5 or FLUX.2 graphs here. They were validated and need model files.",
   "We have no measurement of DiT against a U-Net at equal cost."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

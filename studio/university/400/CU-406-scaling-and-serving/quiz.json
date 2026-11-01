@@ -23,7 +23,7 @@
     "A queue that empties fast"
    ],
    "answer": "Waits several times the job length, since it's 91% busy",
-   "why": "The lab reads 25.9 s at 91%."
+   "why": "The lab reads 25.9 s from arrival to finish at 91%, for a 5 s job."
   },
   {
    "q": "Why does sticky routing help with several models?",

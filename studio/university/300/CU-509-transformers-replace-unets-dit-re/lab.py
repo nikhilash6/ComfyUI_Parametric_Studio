@@ -40,7 +40,7 @@ def straightness(f, x, n=100):
     return total, end
 s1, ends = straightness(velocity, x0[:4000]); print(f"\nexact field: mean squared departure from a straight line {s1:.4f} (0 would be perfectly straight)"); assert s1 > .05
 
-# 5. Reflow (Liu et al.). Take the pairs the first flow produced, (start, its end), which no longer cross, and train a new model on those. The same training code on independent pairs is the first flow.
+# 5. Reflow (Liu et al.). Take the pairs the first flow produced, (start, its end), and train. In this 1D lab the lines between them can't cross, since a flow keeps points in order. In more dimensions they can. Train a new model on those. The same training code on independent pairs is the first flow.
 def mlp(): return torch.nn.Sequential(torch.nn.Linear(2, 64), torch.nn.SiLU(), torch.nn.Linear(64, 64), torch.nn.SiLU(), torch.nn.Linear(64, 64), torch.nn.SiLU(), torch.nn.Linear(64, 1))
 def train(sample, steps=1500, bs=256):
     torch.manual_seed(0); net = mlp().float(); opt = torch.optim.Adam(net.parameters(), 2e-3); sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, steps)

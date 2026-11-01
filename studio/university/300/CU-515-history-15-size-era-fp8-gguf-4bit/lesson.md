@@ -33,7 +33,7 @@ bits per weight = code bits + scale bits / weights per scale
 
 Formats reach ComfyUI as a small JSON tensor per layer named `comfy_quant`. It is a file entry, not a module, and `tests-unit/comfy_quant` is a test folder.
 
-- **The registry.** `QUANT_ALGOS` in `comfy/quant_ops.py` lists `float8_e4m3fn`, `float8_e5m2`, `nvfp4` (group size 16), `mxfp8` (group size 32), `int8_tensorwise`, `convrot_w4a4`, `asym_w4a8_int8` and `w6a8_int8`. The kitchen library does the fast kernels. If it is missing, the log says that fp8 and fp4 support will not be available.
+- **The registry.** `QUANT_ALGOS` in `comfy/quant_ops.py` lists `float8_e4m3fn`, `float8_e5m2`, `nvfp4` (group size 16), `mxfp8` (group size 32, added only when the kitchen build provides it), `int8_tensorwise`, `convrot_w4a4`, `asym_w4a8_int8` and `w6a8_int8`. The kitchen library does the fast kernels. If it is missing, the log says that fp8 and fp4 support will not be available.
 - **Choosing at load.** `UNETLoader` in `nodes.py` has `weight_dtype`, with `fp8_e4m3fn`, `fp8_e4m3fn_fast` and `fp8_e5m2`. There are also the flags `--fp8_e4m3fn-unet` and friends in `comfy/cli_args.py`.
 - **Can this card do it?** `supports_fp8_compute` in `comfy/model_management.py` answers false on CPU, and for NVIDIA it wants a card with compute version 8.9 or newer. `supports_nvfp4_compute` wants 10 or newer.
 - **When it can't.** `get_disabled_quant_formats` in `comfy/ops.py` lists what the device can't do. Those layers keep their small weights and set `_full_precision_mm`, so they expand for the multiply. A test checks this: `test_int8_disabled_on_unsupported_device_falls_back_to_full_precision`. You keep the saved memory and lose the fast kernel. CU-211 has more detail.
@@ -52,7 +52,7 @@ This graph stores a model's weights in fp8 at load time.
 - **You judge a format by its bit count.** In the lab, int4 with one scale has error 0.192, and with a scale per 16 it has 0.085. Same code size, very different result. That is what block scales buy, at 1 bit per weight more.
 - **You read an 8-bit error number as a picture.** These are numbers on made-up weights. Render the same seed with both files and look.
 - **fp8 with no scale wrecks small weights.** A plain cast gave error 0.689 in the lab, and 0.026 with a scale. Check that your tool writes `weight_scale`.
-- **You think a small file means fast everywhere.** On a card with no fast kernel the layers expand to multiply. The console's native and emulated counts show it (`pick_operations`).
+- **You think a small file means fast everywhere.** On a card with no fast kernel the layers expand to multiply. For a model with a quant config, the console's `Native ops` and `emulated ops` lines name the formats (`pick_operations`).
 - **You merge after quantizing.** Merge from unquantized parents, then quantize, so you round once. The `mergeorder` lab in the LoRA track shows it.
 - **You try to load a `.gguf` with a core loader.** It won't list. You need a pack. Read it before you run it (CU-374).
 - **You count only the denoiser.** The table below is weights alone. The text encoder and VAE are extra, and working memory on top of that. CU-305 does the budget.

@@ -46,5 +46,8 @@
   "The definition of studio is our own working one.",
   "The lab runs against a stub, not a real server."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

@@ -57,7 +57,7 @@ The reason for all this first.
 shuffle tokens then attend, against attend then shuffle: max difference 1.9e-06
 ```
 
-Then a table, from the same formula as ComfyUI's. We compared the 1D formula against the real function on a CPU, and the largest gap was 0.
+Then a table, from the same formula as ComfyUI's. We compared the 1D formula against the real function on a CPU. The largest gap was 0 at width 8, and 3.9e-16 at width 32, which is rounding.
 
 ```text
 2D table for an 8x8 grid, width 16: (64, 16), values in [-0.990, 1.000]

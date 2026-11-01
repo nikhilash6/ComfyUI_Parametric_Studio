@@ -58,6 +58,16 @@
    "claim": "The DiT paper zero-initialises the MLP's scale output, which it says makes the full block the identity at the start.",
    "how": "docs",
    "ref": "https://arxiv.org/abs/2212.09748"
+  },
+  {
+   "claim": "apply_mod can apply different values to ranges of tokens through modulation_dims.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/layers.py:apply_mod"
+  },
+  {
+   "claim": "The time embedding is reshaped per batch, so a per-token timestep gives per-token modulation.",
+   "how": "source",
+   "ref": "comfy/ldm/wan/model.py:WanModel"
   }
  ],
  "unchecked": [
@@ -65,5 +75,8 @@
   "The statement that most newer models are DiTs is a reading of the comfy/ldm folder, not a count.",
   "The code only shows a loaded checkpoint, not its starting values, so the start at zero rests on the DiT paper."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

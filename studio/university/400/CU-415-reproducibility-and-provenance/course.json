@@ -62,5 +62,8 @@
   "A full render's bit-for-bit repeat wasn't tested in this lesson. Only the noise was run.",
   "The lab's PNG is a minimal one we built. Real SaveImage files were read from source, not parsed here."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

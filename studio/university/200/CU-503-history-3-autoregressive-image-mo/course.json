@@ -61,5 +61,8 @@
   "That MiniMaxMusic3TextEncode reaches this class comes from reading classes and file names in CU-312. We did not trace it at run time.",
   "We did not run an AR video checkpoint, so we did not see what a mismatched block size does."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

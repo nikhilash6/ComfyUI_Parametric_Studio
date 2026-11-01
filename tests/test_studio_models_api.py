@@ -106,3 +106,16 @@ def test_attach_tests_a_comfyui_lists_what_it_lacks_and_switches_the_studio(api,
     u = api.post("/api/models/attach", json={"url": "http://127.0.0.1:8188"}).json(); assert u["switched"] and M.A.COMFY == "http://127.0.0.1:8188" and M.os.environ["COMFYUI_URL"] == "http://127.0.0.1:8188" and api.get("/api/models/attach").json()["saved"] == "http://127.0.0.1:8188"
     monkeypatch.setattr(M, "fetch_json", lambda url, t: (_ for _ in ()).throw(OSError("down"))); assert api.post("/api/models/attach", json={"url": "http://127.0.0.1:9"}).status_code == 502
     M.switch(M.ORIGINAL["url"])
+
+def test_the_button_uses_the_resumable_downloader_and_reports_a_lost_connection(monkeypatch, tmp_path):
+    seen = {}
+    def fake(url, partial, **k):
+        seen.update(url=url, partial=partial, **k); k["on_wait"](1, 12, 5, "reset"); note = M._DL.get("note"); k["progress"](7); return partial
+    monkeypatch.setattr(M.R, "fetch_partial", fake); monkeypatch.setattr(M, "hf_token", lambda: None); M._DL.clear(); M._DL.update(state="running", done=0, cur=0)
+    got = M.hf_download({"repo": "a/b", "rev": "main", "path": "x y/f.safetensors"}, tmp_path, M.on_bytes, lambda: False)
+    assert seen["url"] == "https://huggingface.co/a/b/resolve/main/x%20y/f.safetensors" and got.endswith("f.safetensors.part") and M._DL["cur"] == 7 and "note" not in M._DL and M._DL["phase"] == "downloading"
+
+def test_a_lost_connection_and_a_refusal_say_what_to_do():
+    assert "press Resume" in M.explain(M.R.GaveUp("reset"), {"repo": "a/b"})["error"]
+    assert M.explain(M.R.Refused(403), {"repo": "a/b"})["state"] == "needs_license"
+    assert "refused" in M.explain(M.R.Refused(404), {"repo": "a/b", "name": "f"})["error"]

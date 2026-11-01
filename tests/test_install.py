@@ -104,3 +104,46 @@ def test_cli_no_models_dry_run_on_cpu(tmp_path):
 def test_cli_unknown_goal_fails(tmp_path):
     r = subprocess.run([sys.executable, str(ROOT / "install.py"), "--dry-run", "--goals", "nope", "--dir", str(tmp_path / "rt")], capture_output=True, text=True)
     assert r.returncode == 4
+
+def _git_repo(path):
+    subprocess.run(["git", "init", "-q", str(path)], check=True)
+    subprocess.run(["git", "-C", str(path), "-c", "user.name=t", "-c", "user.email=t@example.invalid", "commit", "-q", "--allow-empty", "-m", "x"], check=True)
+
+def test_a_rerun_keeps_a_checkout_and_finishes(tmp_path, monkeypatch):
+    """A second run over a finished install must not stop at git clone: it is how an install resumes and how goals get added."""
+    base = tmp_path / "rt"; _git_repo((base / "ComfyUI").mkdir(parents=True) or base / "ComfyUI")
+    (base / "venv" / "bin").mkdir(parents=True); (base / "venv" / "bin" / "python").write_text("")
+    ran = []; monkeypatch.setattr(install, "run_step", lambda cmd, **k: ran.append(cmd) or True); monkeypatch.setattr(install, "detect", lambda path=".": dict(BLACKWELL))
+    assert install.main(["--no-models", "--yes", "--dir", str(base)]) == 0
+    assert not [c for c in ran if c[:2] == ["git", "clone"]] and (base / "run_studio.sh").exists()
+
+def test_a_folder_that_is_not_a_checkout_still_gets_cloned(tmp_path):
+    (tmp_path / "ComfyUI").mkdir(); assert not install.already_cloned(tmp_path / "ComfyUI")
+
+def test_a_failed_network_step_is_tried_again_then_stops(monkeypatch):
+    calls = []
+    def run(cmd, check): calls.append(cmd); raise subprocess.CalledProcessError(1, cmd)
+    monkeypatch.setattr(install.subprocess, "run", run); waits = []
+    assert not install.run_step(["pip"], sleep=waits.append) and len(calls) == install.NETWORK_TRIES and len(waits) == install.NETWORK_TRIES - 1
+
+@pytest.mark.parametrize("dry, code", [(True, 0), (False, 4)])
+def test_not_enough_disk_is_said_before_anything_is_changed(tmp_path, capsys, dry, code):
+    small = {**BLACKWELL, "disk_free_gb": 20.0}; pf = tmp_path / "p.json"; pf.write_text(json.dumps(small)); target = tmp_path / "rt"
+    assert install.main(["--yes", "--profile-json", str(pf), "--dir", str(target), "--goals", "image", *(["--dry-run"] if dry else [])]) == code
+    out = capsys.readouterr().out; assert "Not enough disk space" in out and "25 GB needed" in out and not target.exists()
+
+def test_install_docs_quote_the_real_sizes_and_order():
+    doc = (ROOT / "INSTALL.md").read_text(encoding="utf-8"); goals = install.load_json(ROOT / "studio" / "models_manifest.json")["goals"]
+    size = {g: sum(f["size_gb"] for f in e["files"]) for g, e in goals.items()}; smallest = min(size, key=size.get)
+    assert f"`{smallest}` at {size[smallest]:.1f} GB" in doc and f"`image` goal is {size['image']:.0f} GB" in doc and f"about {install.SOFTWARE_GB:.0f} GB for the software" in doc
+    linux = doc[doc.index("## Linux"):doc.index("## macOS")]; assert linux.index("apt update") < linux.index("apt install") < linux.index("git clone")
+    assert "<this repository's URL>" not in doc
+
+def test_the_last_thing_the_installer_says_is_the_studio(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(install, "run_step", lambda cmd, **k: True); monkeypatch.setattr(install, "detect", lambda path=".": dict(BLACKWELL))
+    assert install.main(["--no-models", "--yes", "--dir", str(tmp_path / "rt")]) == 0
+    assert "open the studio at http://127.0.0.1:8310" in capsys.readouterr().out
+
+def test_the_launcher_needs_no_compiler_and_lets_you_opt_back_in():
+    sh = install.launcher_text("Linux", "/x", "/r", []); bat = install.launcher_text("Windows", "/x", "/r", [])
+    assert 'TORCH_DISABLE_NATIVE_JIT="${TORCH_DISABLE_NATIVE_JIT:-1}"' in sh and sh.index("TORCH_DISABLE_NATIVE_JIT") < sh.index("main.py") and "if not defined TORCH_DISABLE_NATIVE_JIT" in bat

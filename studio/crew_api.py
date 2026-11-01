@@ -36,6 +36,7 @@ INTERNAL_PATH = re.compile(r"`?(?:(?:~|\.{1,2})?/(?:home|mnt|tmp)/\S+|(?:[\w.-]+
 def public_text(t: Any) -> Any:
     """What a user reads: no paths from the machine the notes were written on, no markdown symbols."""
     if not isinstance(t, str): return t
+    t = re.sub(r"\[(code|test|run|docs|claim|inference)(?::[^\]]*)?\]", lambda m: "[" + m.group(1) + "]", t)      # a proof label stays; the file it cites is in the quote's own record, not in the sentence a user reads
     t = INTERNAL_PATH.sub(lambda m: m.group(0) if "://" in t[max(0, m.start() - 8):m.end()] else "", t)
     t = re.sub(r"(?m)^\s*(?:#{1,6}\s+|[-*+]\s+|>\s?|\|)", "", t); t = re.sub(r"\*\*|__|`|\s\|\s?|\|$", lambda m: " " if "|" in m.group(0) else "", t)
     return re.sub(r"[ \t]{2,}", " ", t).strip()

@@ -67,5 +67,8 @@
   "The paper quotes and table numbers were read in an earlier audit of this lesson. In this pass we rechecked the arXiv titles and abstracts only.",
   "How much a different stop layer changes a picture is not measured here. The lesson says only that it differs from the family's setting."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

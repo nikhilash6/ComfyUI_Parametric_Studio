@@ -1,0 +1,7 @@
+pack	repo	tier	verdict	sandbox	stars	isfork	fam_original	name_original	archived	pushed	license	loc	sections	paid	cred	dyn	inst	net	flagged	lab	live	patched	page	why
+acme__Good-Pack			TRY	ok	900	False					MIT									True	False		{LIB}/knowledge_base/sections/01/packs/acme__Good-Pack.md	TRY, a frame interpolation node with no remote calls.
+acme__Copy-Pack			TRY	ok	3	True	acme__Good-Pack				MIT									False	False			TRY, also frame interpolation.
+acme__Bad-Pack			MAYBE	untested	50	False					MIT									False	False			MAYBE, a frame interpolation suite with obfuscated code.
+acme__Skip-Pack			SKIP	failed	1	False					none found									False	False			SKIP, an empty stub for interpolation.
+acme__Trick-Licence			TRY	ok	10	False					MIT									False	False			TRY, a colour grading node.
+acme__No-Licence			TRY	ok	10	False					none found									False	False			TRY, a colour node.

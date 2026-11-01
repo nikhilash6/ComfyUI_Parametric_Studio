@@ -62,5 +62,8 @@
   "We did not train a StyleGAN or see droplets ourselves. That part is the paper's account.",
   "The advice about normalising inside a custom node is reasoning from the paper, not a test."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

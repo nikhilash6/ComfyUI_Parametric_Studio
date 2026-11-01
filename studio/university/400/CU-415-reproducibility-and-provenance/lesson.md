@@ -13,7 +13,7 @@ Provenance is the record of those things. You'll want two levels.
 
 ## What the file already knows
 
-`SaveImage` writes two text chunks in the PNG, `prompt` and `workflow` (from `extra_pnginfo`), unless the server started with `--disable-metadata`. That's why dropping a PNG on the canvas restores a graph. So a saved PNG holds the API graph, including the seed. It doesn't hold the weights, a file hash, or the version.
+`SaveImage` writes a `prompt` text chunk in the PNG and one more for each key of `extra_pnginfo`, unless the server started with `--disable-metadata`. The browser UI puts `workflow` there, so its files have both. A graph queued through the API with no `extra_pnginfo` gets only `prompt`. That's why dropping a PNG on the canvas restores a graph. So a saved PNG holds the API graph, including the seed. It doesn't hold the weights, a file hash, or the version.
 
 Anyone you send the file to gets the prompt too. Clear it, or use that flag, if that matters.
 

@@ -129,5 +129,8 @@
   "We did not measure how much a joint or factorised design changes video quality.",
   "That a batch from an image model gives unrelated frames follows from having no temporal layer. We did not render it for this lesson."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

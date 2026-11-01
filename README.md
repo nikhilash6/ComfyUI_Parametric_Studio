@@ -19,7 +19,7 @@ Bring one clip and queue the shoot: a new camera, a frozen orbit, a recast lead,
 
 ## What's proven
 
-Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Windows, macOS, AMD or a smaller card, and no fresh install has rendered yet.
+Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Windows, macOS, AMD or a smaller card. One fresh install has rendered: a clean Ubuntu 24.04 Docker container on that same card, with only the NVIDIA driver passed in, following INSTALL.md. Its first picture, on the Anima goal, took 30 s once the software and the 9.2 GB of models were in place. Fresh installs of other goals and on other machines have not been tried.
 
 | Feature | Run for real here | Not run yet |
 |---|---|---|
@@ -30,7 +30,7 @@ Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Win
 | Recipes | 2 of 10 flagships rendered. A library of 740 passes an offline format check, and 533 of its recipes show a result we rendered here (467 pictures, 18 clips, 48 sounds), each from one run. The sounds were checked for level and length, not listened to. More renders are on the way | The other 8 flagships and the rest of the library |
 | Sampling Lab | 44 renders on SDXL, SD 1.5 and SD 3.5, and core sampler measurements | Pack entries are read from source, not run |
 | RES4LYF page | A credit page. The pack is not shipped; run separately, of 154 nodes checked 92 rendered, 14 ran and 44 errored | The other nodes in the pack |
-| Families | 82 wired, 41 with a render on record | The other 41 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
+| Families | 89 wired, 54 with a render on record | The other 35 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
 
 <div align="center">
 
@@ -50,7 +50,7 @@ Closed AI video apps give you a prompt box and hide everything else. ComfyUI giv
 |---|---|---|
 | **Cost per render** | Credits | **0 on your own GPU** |
 | **How a result was made** | Hidden | **The real graph, in 3D** |
-| **Which models** | The ones they sell you | **82 families wired, 41 with a render on record** |
+| **Which models** | The ones they sell you | **89 families wired, 54 with a render on record** |
 | **Your files and prompts** | On their servers | **Stay on your machine** |
 | **Help** | A docs page | **A crew of characters that answer from cited notes, out loud** |
 | **Can you fork it?** | No | **Yes: AGPL-3.0** |
@@ -96,7 +96,7 @@ Open **Pro** and the exact ComfyUI graph appears in 3D, with data flowing along 
 ![Comfy Prime and the crew](docs/img/crew.jpg)
 
 ### Model families, each with its own backend
-82 families are wired, and 41 have a render on record. They run from **Stable Diffusion 1.5, SDXL and SD3** through **FLUX, Wan, HunyuanVideo, Mochi, LTX and MiniMax H3**, plus 3D, audio and utility models. Each has its own isolated ComfyUI instance with its own custom nodes and model view, started on demand behind a VRAM check and stopped when idle. Each family shows its state: rendered, ready, or what to download. Most family weights are not on our box any more, so a family with no render on record is wired, not proven.
+89 families are wired, and 54 have a render on record. They run from **Stable Diffusion 1.5, SDXL and SD3** through **FLUX, Wan, HunyuanVideo, Mochi, LTX and MiniMax H3**, plus 3D, audio and utility models. Each has its own isolated ComfyUI instance with its own custom nodes and model view, started on demand behind a VRAM check and stopped when idle. Each family shows its state: rendered, ready, or what to download. Most family weights are not on our box any more, so a family with no render on record is wired, not proven.
 
 ![Model families](docs/img/families.jpg)
 
@@ -126,7 +126,7 @@ Bring one clip and queue the lot: reshoot it with a new camera, orbit around the
 **RES4LYF** is a credit page for ClownsharkBatwing's pack, which we don't ship. Run separately, of 154 nodes checked, 92 rendered, 14 ran, 44 errored and 4 were skipped or refused. The rest of the pack was not tried.
 
 ### ComfyUniversity
-Learn ComfyUI by doing it, in tracks from your first wire to reading the sampler's source: graphs, samplers, noise and latents, guidance, conditioning, ControlNet and depth, LoRA training, video, audio, 3D, custom nodes, debugging, VRAM, and vetting node packs. Each lesson has a graph you can download and open, a lab that runs in the browser with no GPU, a Python lab you can run on your CPU from the page, a quiz, and a section on what commonly goes wrong. Each one lists what we checked against ComfyUI's source, a run or official docs, and what we could not check. Every graph passes ComfyUI's own validation, the ones that need no model were really executed, and the browser's schedulers and solvers are tested against ComfyUI's real functions. Each lesson carries a mark worked out from the data: *second reader checked* if an independent audit has tried to prove it wrong and fixed what it found, or *author-checked, second read pending* if not. Second reads have been finding errors, so expect some in the pending lessons. The page counts both. Most lessons have not been run against a real model on a GPU, and they say so. Progress stays in your browser.
+Learn ComfyUI by doing it, in tracks from your first wire to reading the sampler's source: graphs, samplers, noise and latents, guidance, conditioning, ControlNet and depth, LoRA training, video, audio, 3D, custom nodes, debugging, VRAM, and vetting node packs. Each lesson has a graph you can download and open, a lab that runs in the browser with no GPU, a Python lab you can run on your CPU from the page, a quiz, and a section on what commonly goes wrong. Each one lists what we checked against ComfyUI's source, a run or official docs, and what we could not check. Every graph passes ComfyUI's own validation, the ones that need no model were really executed, and the browser's schedulers and solvers are tested against ComfyUI's real functions. Each lesson carries a mark worked out from the data: *second reader checked* if an independent audit has tried to prove it wrong and fixed what it found, or *author-checked, second read pending* if not. Second reads found and fixed real errors, and they sample each lesson's riskiest claims rather than prove it, so a few mistakes may remain. The page counts both marks and the errors fixed. Most lessons have not been run against a real model on a GPU, and they say so. Progress stays in your browser.
 
 ### Atlas: the history of generative AI
 More than 130 models across 8 eras, from the first VAEs and GANs to today: what each was, why it mattered, its licence, whether it runs here, and a button to use it.
@@ -170,11 +170,14 @@ Entered in **Open Weights Only** and **VFX Workflow Built with LTX**. Best Overa
 **One command, sized to your machine.** See what it would do first:
 
 ```bash
+sudo apt update && sudo apt install -y git ffmpeg python3-venv   # Ubuntu or Debian; other systems are in INSTALL.md
 git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
 cd ComfyUI_Parametric_Studio
-python3 install.py --dry-run     # shows what fits this box, changes nothing
-python3 install.py               # or --channel nightly, or --goals image,video
+python3 install.py --dry-run     # shows what fits this box and the disk it needs, changes nothing
+python3 install.py               # or --goals anime for the smallest download, --channel nightly, --goals image,video
 ```
+
+It needs a GPU driver already installed, and about 10 GB of disk plus the models: 25 GB is enough for the default goal. Then run the launcher it prints and open http://127.0.0.1:8310.
 
 **Already run ComfyUI?** You only need the studio:
 
@@ -221,4 +224,4 @@ Built with [ComfyUI](https://github.com/comfyanonymous/ComfyUI). Recast builds o
 
 ## Licence
 
-**AGPL-3.0-or-later.** Use it, fork it, improve it. If you ship or host a changed version, you share your source too. See [LICENSE](LICENSE). Models keep their own licences.
+Powered by MiniMax H3. **AGPL-3.0-or-later.** Use it, fork it, improve it. If you ship or host a changed version, you share your source too. See [LICENSE](LICENSE). Models keep their own licences.

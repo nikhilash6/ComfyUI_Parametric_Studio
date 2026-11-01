@@ -121,11 +121,11 @@ def test_ask_answers_from_the_notes_word_for_word_while_the_llm_sleeps(client, t
     assert r["from_notes_only"] is True and r["supported"] is True and "20 steps" in r["quotes"][0]["quote"]
 
 # ---------- the characters
-ROSTER_IDS = ["3d-trellis-hunyuan3d-sam3d-mesh", "anima", "audio-fx-separation-foley-models", "chroma", "cogvideox-mochi-cosmos-svd-animatediff-older-video", "depth-normals-pose", "dreamx-creator", "faces-identity-portrait-animation", "flux-1-dev-schnell-kontext-fill", "flux-2-klein", "hidream", "hunyuanvideo-framepack", "kandinsky-omnigen-ovis-hunyuanimage", "krea-2", "ltx-video-ltx-2", "minimax-h3", "music-song-models", "pony-illustrious-noobai", "prism-longcat-void-joyai-video", "qwen-image-qwen-image-edit", "sam-segmentation-matting", "sd-1-5", "sd3-sd3-5", "sdxl", "tts-voice-models", "upscale-restore-models", "vlm-captioning-tagging", "wan-version-not-stated", "wan-2-1", "wan-2-2", "z-image-lumina2", "text-encoders", "vae", "vision", "lora", "controlnet", "upscaler", "master"]
+ROSTER_IDS = ["3d-trellis-hunyuan3d-sam3d-mesh", "anima", "audio-fx-separation-foley-models", "chroma", "cogvideox-mochi-cosmos-svd-animatediff-older-video", "depth-normals-pose", "dreamx-creator", "faces-identity-portrait-animation", "flux-1-dev-schnell-kontext-fill", "flux-2-klein", "hidream", "hunyuanvideo-framepack", "kandinsky-omnigen-ovis-hunyuanimage", "krea-2", "ltx-video-ltx-2", "minimax-h3", "music-song-models", "pony-illustrious-noobai", "prism-longcat-void-joyai-video", "qwen-image-qwen-image-edit", "sam-segmentation-matting", "sd-1-5", "sd3-sd3-5", "sdxl", "tts-voice-models", "upscale-restore-models", "vlm-captioning-tagging", "wan-version-not-stated", "wan-2-1", "wan-2-2", "z-image-lumina2", "text-encoders", "vae", "vision", "lora", "controlnet", "upscaler", "virtual-set", "world-kit", "characters", "train", "sampling-lab", "res4lyf", "recipes", "designers", "university", "master"]
 
 def test_every_member_has_a_distinct_voice_and_a_first_line():
-    assert sorted(crew.CHARACTERS) == sorted(ROSTER_IDS) and len(ROSTER_IDS) == 38
-    pairs = [c[:2] for c in crew.CHARACTERS.values()]; assert len(set(pairs)) == 38, "no two members sound the same"
+    assert sorted(crew.CHARACTERS) == sorted(ROSTER_IDS) and len(ROSTER_IDS) == 47
+    pairs = [c[:2] for c in crew.CHARACTERS.values()]; assert len(set(pairs)) == 47, "no two members sound the same"
     assert all(c[0][:3] in ("af_", "am_", "bf_", "bm_") and 0.8 <= c[1] <= 1.2 and c[2].strip() for c in crew.CHARACTERS.values())
     by_voice = {}
     for v, s in pairs: by_voice.setdefault(v, []).append(s)
@@ -177,4 +177,4 @@ def test_art_manifest_covers_the_roster_when_built():
     for i in d["members"]:
         assert d["members"][i]["prompt"] and isinstance(d["members"][i]["seed"], int), i
         with Image.open(os.path.join(crew._CREW_WEB, f"{i}.webp")) as im: assert im.size == (512, 512), i
-    if missing: pytest.skip(f"{len(missing)} of 38 portraits still rendering")
+    if missing: pytest.skip(f"{len(missing)} of {len(ROSTER_IDS)} portraits still rendering")

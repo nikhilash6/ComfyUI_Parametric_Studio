@@ -66,9 +66,9 @@ new prompt: upscale_00007_.png  calls so far: 7
 The second try skipped the draft. The third ran nothing. A new prompt needed all three steps.
 
 ```text
-split                  change the last step   why
-one graph              1 node runs            the engine's cache keeps earlier results, while they stay in memory
-three graphs + ledger  1 graph runs           your ledger keeps file names, for as long as the files stay
+split                  change the last step    why
+one graph              it and what follows it  the engine's cache keeps earlier results, while they stay in memory
+three graphs + ledger  1 graph runs            your ledger keeps file names, for as long as the files stay
 ```
 
 And a poll that knows when to give up:

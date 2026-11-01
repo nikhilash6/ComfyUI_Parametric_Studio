@@ -36,8 +36,11 @@ def comfy(path, payload=None, timeout=30, raw=False):
     return b if raw else json.loads(b or b"{}")
 
 def comfy_up():
-    try: comfy("/system_stats", timeout=3); return True
-    except Exception: return False
+    """A second try, because one slow answer on a busy machine turned the page's status red and disabled Generate until the next poll."""
+    for _ in range(2):
+        try: comfy("/system_stats", timeout=4); return True
+        except Exception: pass
+    return False
 
 @app.get("/api/health")
 def health():
@@ -107,7 +110,7 @@ def _graph(goal, req, image_name=None, running=False):
         graph, rep = resolve_names(graph, comfy("/object_info", timeout=20))         # portable across boxes: map file names onto what is installed, the same model only
     except Exception: pass
     missing = sorted({r["was"] for r in rep if r["now"] is None})
-    if running and missing and not backends.use_sdk(): raise HTTPException(400, "This needs model files that are not installed: " + ", ".join(missing[:4]) + ". The studio will not run a different model in their place.")     # SDK graphs run elsewhere: this box's list says nothing about them
+    if running and missing and not backends.use_sdk(): raise HTTPException(400, "This needs model files that are not installed: " + ", ".join(missing) + ". Download them on this form or on the Models page. The studio will not run a different model in their place.")     # SDK graphs run elsewhere: this box's list says nothing about them
     return graph, vals, opts
 
 @app.post("/api/graph")
@@ -501,9 +504,23 @@ async def no_cache_static(request, call_next):
 
 app.mount("/", StaticFiles(directory=str(WEB), html=True), name="web")
 
+def ready_banner(url, comfy_ok):
+    """What a person reads last in the terminal, so ComfyUI's own "go to port 8200" line is not taken for the page to open."""
+    state = "ComfyUI is ready." if comfy_ok else f"ComfyUI is not answering at {COMFY} yet, so renders will wait for it."
+    return f"\n  Parametric Studio is running. Open {url}\n  {state}\n"
+
+def announce(url, wait_s=180, up=comfy_up, sleep=time.sleep):
+    sleep(1)
+    for _ in range(wait_s // 2):
+        if up(): break
+        sleep(2)
+    print(ready_banner(url, up()), flush=True)
+
 if __name__ == "__main__":
     import uvicorn
     adopt_comfy_paths()
+    _shown_host = os.environ.get("STUDIO_HOST", "127.0.0.1")
+    threading.Thread(target=announce, args=(f"http://{'127.0.0.1' if _shown_host in ('0.0.0.0', '::', 'localhost', '::1') else _shown_host}:{os.environ.get('STUDIO_PORT', '8310')}",), daemon=True).start()
     if os.environ.get("STUDIO_HOST", "127.0.0.1") not in ("127.0.0.1", "::1", "localhost") and not os.environ.get("STUDIO_TOKEN"):
         os.environ["STUDIO_TOKEN"] = secrets.token_urlsafe(24); print("[studio] open to the local network. Pairing is required; open the Phone panel on this computer for the QR code.", flush=True)
     uvicorn.run(app, host=os.environ.get("STUDIO_HOST", "127.0.0.1"), port=int(os.environ.get("STUDIO_PORT", "8310")), log_level="warning")

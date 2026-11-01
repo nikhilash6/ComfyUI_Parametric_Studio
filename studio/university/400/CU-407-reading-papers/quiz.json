@@ -45,7 +45,7 @@
     "It means the other seven are wrong"
    ],
    "answer": "With care: one of many can favour it by chance",
-   "why": "The lab's chance of one clear win with no real difference is 32%."
+   "why": "With no real difference, the lab finds at least one clear result in either direction in 32% of papers, and at least one clear win for the new method in 17%."
   },
   {
    "q": "A paper gets lower error at 20 steps by calling the model twice per step. What fair comparison should you ask for?",

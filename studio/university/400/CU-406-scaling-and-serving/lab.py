@@ -21,7 +21,7 @@ def simulate(workers, route, jobs=300, gap=2.5, load=20.0, run=5.0, seed=1):
         else: w = min(range(workers), key=lambda i: (free[i] + (0 if have[i] == m else load)))
         start = max(t, free[w]); cost = run
         if have[w] != m: cost += load; have[w] = m; loads += 1
-        free[w] = start + cost; waits.append(free[w] - t)
+        free[w] = start + cost; waits.append(free[w] - t)   # wait here runs from arrival to finish, so it includes the job
     waits.sort(); return sum(waits) / len(waits), waits[int(.95 * len(waits))], loads
 print("\nworkers  routing        mean wait s  95th pct s  model loads")
 res = {}

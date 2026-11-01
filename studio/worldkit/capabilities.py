@@ -222,7 +222,7 @@ def blender_problem() -> str:
     from studio.worldkit import blender as B
     import shutil
     p = B.blender_path()
-    return "" if Path(p).exists() or shutil.which(p) else f"Blender is not installed at {p}. Set STUDIO_BLENDER."
+    return "" if Path(p).exists() or shutil.which(p) else "Blender is not installed. World Kit and Virtual Set use it for 3D. Install it (on Ubuntu: sudo snap install blender --classic) and restart the studio, or set STUDIO_BLENDER to where it is."
 
 
 def comfy_up() -> bool:

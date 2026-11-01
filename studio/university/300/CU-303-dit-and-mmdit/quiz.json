@@ -15,7 +15,7 @@
    "why": "1024 ÷ 8 = 128, 128 ÷ 2 = 64, and 64² = 4,096."
   },
   {
-   "q": "In adaLN, how is the scale from the time vector applied?",
+   "q": "In SD 3's modulate, how is the scale from the time vector applied?",
    "options": [
     "One value per channel, the same across all tokens",
     "A different scale per token",

@@ -52,5 +52,8 @@
   "The graph hunyuan3d_mesh is not confirmed to load a v2.1 model; it says Hunyuan3D 2. We use it only to show the family.",
   "No trained expert routing was measured here."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

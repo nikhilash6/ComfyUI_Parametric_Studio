@@ -10,9 +10,11 @@ picture is often only a poor default for this setup. Writes studio/web/res4lyf_n
 Refuses the live ports. One seed, no re-rolls.
 Usage: res4lyf_node_check.py http://127.0.0.1:8683 /path/to/instance [--only name,name]
 """
+import io
 import json
 import pathlib
 import re
+import subprocess
 import sys
 import time
 import urllib.error
@@ -137,11 +139,16 @@ def graph_for(name, info):
     return {k: g[k] for k in keep}, (wired or ""), ""
 
 
+FREE_EVERY = 8  # the box is short of RAM and other jobs wait on it
+DTYPE = re.compile(r"bias type|dtype|\bdouble\b", re.I)
+
+
 def call(url, path, body=None):
     data = None if body is None else json.dumps(body).encode()
     req = urllib.request.Request(url + path, data=data, headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=60) as r:
-        return json.load(r)
+        raw = r.read()
+    return json.loads(raw) if raw else {}
 
 
 def run(url, graph, wait=120):
@@ -165,12 +172,34 @@ def run(url, graph, wait=120):
             msg = [m[1].get("exception_type", "") + ": " + m[1].get("exception_message", "") for m in h["status"].get("messages", []) if m[0] == "execution_error"]
             return "error", " ".join(msg)[:300], None
         time.sleep(0.4)
-    urllib.request.urlopen(urllib.request.Request(url + "/interrupt", data=b"{}", headers={"Content-Type": "application/json"}), timeout=30).read()
     return "timeout", f"over {wait}s", None
+
+
+def restart(url, inst):
+    """A precision node can leave torch's default dtype changed for the whole server, and every later graph then fails for that reason alone."""
+    subprocess.run(["systemctl", "--user", "restart", f"comfy-family@{inst.name}"], check=True)
+    for _ in range(90):
+        time.sleep(2)
+        try:
+            return call(url, "/system_stats")
+        except (OSError, ValueError):
+            pass
+    raise SystemExit("instance didn't come back")
 
 
 def safe(name):
     return re.sub(r"[^A-Za-z0-9_-]+", "_", name)
+
+
+def thumb(url, name, img, r):
+    q = urllib.parse.urlencode({"filename": img["filename"], "subfolder": img.get("subfolder", ""), "type": img.get("type", "output")})
+    try:
+        im = Image.open(io.BytesIO(urllib.request.urlopen(url + "/view?" + q, timeout=60).read())).convert("RGB")
+        im.thumbnail((256, 256))
+        im.save(THUMBS / f"{safe(name)}.jpg", quality=78)
+        r["thumb"] = f"res4lyf_renders/nodes/{safe(name)}.jpg"
+    except (OSError, urllib.error.URLError):
+        r.update(state="ran", detail="ran, but its picture couldn't be read back")
 
 
 def main():
@@ -178,15 +207,18 @@ def main():
     if urllib.parse.urlparse(url).port in LIVE_PORTS:
         raise SystemExit("refusing a live port")
     only = sys.argv[sys.argv.index("--only") + 1].split(",") if "--only" in sys.argv else None
+    retry = "--retry-failed" in sys.argv
     THUMBS.mkdir(parents=True, exist_ok=True)
     info = call(url, "/object_info")
     device = call(url, "/system_stats")["devices"][0]["name"]
     pack = {n: v for n, v in info.items() if "RES4LYF" in str(v.get("python_module", ""))}
     results = json.loads(OUT.read_text()) if OUT.exists() else {}
+    done = 0
     for name in sorted(pack, key=str.lower):
         if only and name not in only:
             continue
-        if not only and name in results:
+        again = retry and results.get(name, {}).get("state") in ("error", "timeout") and results[name].get("pass") != 2
+        if not only and name in results and not again:
             continue
         graph, wired, why = graph_for(name, pack[name])
         if str(pack[name].get("category")) == "RES4LYF/loaders":
@@ -196,14 +228,23 @@ def main():
         else:
             (THUMBS / f"{safe(name)}.json").write_text(json.dumps(graph, indent=1))
             state, detail, img = run(url, graph)
+            dirty = bool(DTYPE.search(detail))
+            if dirty:
+                restart(url, inst)
+                state, detail, img = run(url, graph)
+            # A graph that overran can't always be interrupted, and every later one would queue behind it and time out too.
+            if "Precision" in name or state == "timeout" or DTYPE.search(detail):
+                restart(url, inst)
+            else:
+                done += 1
+                if done % FREE_EVERY == 0:
+                    call(url, "/free", {"unload_models": True, "free_memory": True})
             r = {"state": "rendered" if img else state, "detail": detail, "wired": wired, "graph": f"res4lyf_renders/nodes/{safe(name)}.json"}
             if img:
-                src = inst / "output" / img.get("subfolder", "") / img["filename"]
-                im = Image.open(src).convert("RGB")
-                im.thumbnail((256, 256))
-                im.save(THUMBS / f"{safe(name)}.jpg", quality=78)
-                r["thumb"] = f"res4lyf_renders/nodes/{safe(name)}.jpg"
+                thumb(url, name, img, r)
         r["device"] = device
+        if retry:
+            r["pass"] = 2
         results[name] = r
         OUT.write_text(json.dumps(results, indent=0, sort_keys=True))
         print(name, r["state"], r["detail"][:110], flush=True)

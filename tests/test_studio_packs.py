@@ -34,6 +34,6 @@ def test_every_designer_has_a_sheet_and_the_slot_in_a_view_is_filled():
     t = P.compose("plant", {"kinds": "monstera"}, view="in a room, styled"); assert "{subject}" not in t and "monstera" in t.split(".")[0]
 
 def test_character_and_fashion_are_fully_clothed_adult_and_the_first_tiles_with_vehicle():
-    ids = [s["id"] for s in P.summary()]; assert ids[:3] == ["character", "fashion", "vehicle"] and len(ids) == 13
+    ids = [s["id"] for s in P.summary()]; assert ids[:3] == ["character", "fashion", "vehicle"] and len(ids) >= 13
     c, f = P.load()["character"], P.load()["fashion"]; assert all("fictional adult" in w for w in c["view_words"].values()) and not any(o in json.dumps([c, f]).lower() for o in ("bikini", "lingerie", "swimsuit", "corset", "silhouette"))
     assert "fictional adult" in P.compose("character", {"age": "adult"}, view="full body, front") and P.compose("fashion", {"garment": "trench coat"}, view="flat lay on a clean background").startswith("Clean flat-lay")

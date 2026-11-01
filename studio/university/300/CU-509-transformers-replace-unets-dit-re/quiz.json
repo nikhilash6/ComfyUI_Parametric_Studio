@@ -28,12 +28,12 @@
   {
    "q": "What does reflow change, and what does it cost?",
    "options": [
-    "It trains on the pairs the first flow made, which don't cross. It needs those pairs and a second training run",
+    "It trains on the pairs the first flow made, so its paths come out straighter. It needs those pairs and a second training run",
     "It uses more Euler steps at no training cost",
     "It changes the shift setting",
     "It swaps the transformer for a U-Net"
    ],
-   "answer": "It trains on the pairs the first flow made, which don't cross. It needs those pairs and a second training run",
+   "answer": "It trains on the pairs the first flow made, so its paths come out straighter. It needs those pairs and a second training run",
    "why": "In the lab straightness falls from 0.7470 to 0.0019 and one-step error falls 13.5 times."
   },
   {

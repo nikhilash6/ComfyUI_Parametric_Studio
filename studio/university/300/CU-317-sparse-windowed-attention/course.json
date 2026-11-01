@@ -62,5 +62,8 @@
   "The graph is a stand-in for 3D data. Hunyuan3D 2 may not use sparse tokens. It is shown so that you can see where 3D models sit, nothing more.",
   "We did not run a real windowed model."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

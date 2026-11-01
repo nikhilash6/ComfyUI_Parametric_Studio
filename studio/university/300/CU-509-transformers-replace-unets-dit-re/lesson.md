@@ -30,7 +30,7 @@ Now the catch. Pairs are drawn at random, so lines cross. At a crossing point th
 
 The extreme case is t = 0. Noise says nothing about which data point it will meet, so the field there is the mean of the data minus x. One Euler step from noise therefore lands every sample on the mean of the data, whatever the noise was.
 
-**Reflow** is what the paper does about this. Run the trained flow to get pairs (start, where it ended). Those pairs were made by one smooth flow, so they don't cross. Train a new model on them. Its paths are much straighter, and that is when a single step can work. The paper's abstract says "nearly straight flows that give high quality results even with a single Euler discretization step", and it gets there by repeating this rectification.
+**Reflow** is what the paper does about this. Run the trained flow to get pairs (start, where it ended). The paths of one flow never cross each other. In the lab's one dimension that keeps the points in order, so the straight lines between the pairs can't cross either. In more dimensions they still can: the paper proves straightening at a rate of O(1/k) in the number of rounds k, and doesn't say one round makes everything straight. Train a new model on those pairs. Its paths are much straighter, and that is when a single step can work. The paper's abstract says "nearly straight flows that give high quality results even with a single Euler discretization step", and it gets there by repeating this rectification.
 
 ## In ComfyUI
 

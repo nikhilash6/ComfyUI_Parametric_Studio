@@ -191,7 +191,7 @@ PLAN = [
 
 EXTRA = {"flux": [
     ("redux", redux, "Redux with ComfyUI's own StyleModelApply: the style reference joins the prompt as extra image tokens."),
-    ("redux_style", redux_style, "The pack's ReReduxPatcher in front of the same node, on the same reference."),
+    ("redux_style", redux_style, "The pack's ReReduxPatcher in front of the same node, on the same reference. Byte for byte the same image as the plain Redux render, so it changed nothing here."),
 ]}
 WAN_PLAN = [("res_2m", wan, "Video: ClownsharKSampler, res_2m on beta57, 49 frames at 704x480.")]
 

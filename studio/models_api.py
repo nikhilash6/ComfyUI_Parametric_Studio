@@ -1,17 +1,17 @@
 """Models: what every goal and AI-edit tool needs, whether this machine has it, and one-press downloads of only what is missing.
 Readiness reads studio/models_manifest.json (the files each goal needs, from Hugging Face) and the edit templates' own model links, and checks them against what ComfyUI reports as installed through studio.apps.resolve (names.resolve_names), so a file kept in a sub-folder is not 'missing'.
-Downloads use huggingface_hub: resumable, one at a time, only the missing files, into the ComfyUI models folder ($STUDIO_MODELS_ROOT), refused unless the disk keeps the need plus 25 GB free. A gated repo needs the user to accept the licence on the model page and log in with the hub's own login: the studio never sees a token."""
+Downloads use studio/resumable.py, not hf_hub_download, which reports no bytes for Xet files, cannot be cancelled mid-file, and throws its partial file away when a run stops. One at a time, only the missing files, into the ComfyUI models folder ($STUDIO_MODELS_ROOT), refused unless the disk keeps the need plus 25 GB free. A gated repo needs the user to accept the licence on the model page and log in with the hub's own login: the studio never asks for a token or stores one, and sends the login's token only to huggingface.co."""
 import hashlib, json, os, re, shutil, sys, threading, time, urllib.parse, urllib.request
 from collections import deque
 from pathlib import Path
 from psn import paths
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from studio import apps as A, attach as AT, edits as E
+from studio import apps as A, attach as AT, edits as E, resumable as R
 from studio.goals import GOALS, WF
 GB = 2**30; RESERVE = 25 * GB; HERE = Path(__file__).resolve().parent; router = APIRouter(); _M = {}
 ROLE = {"unet": ("UNETLoader", "unet_name"), "text_encoder": ("CLIPLoader", "clip_name"), "vae": ("VAELoader", "vae_name"), "audio_vae": ("VAELoader", "vae_name"), "lora": ("LoraLoaderModelOnly", "lora_name")}
-class Cancelled(Exception): pass
+Cancelled = R.Cancelled
 def root(): return Path(paths.models_root(True))
 def manifest():
     if "m" not in _M: _M["m"] = json.load(open(HERE / "models_manifest.json"))["goals"]
@@ -126,29 +126,31 @@ def status():
     return s
 def on_bytes(n, reset=False):
     _DL["cur"] = n if reset else _DL.get("cur", 0) + n; now = time.time()
+    if _DL.get("note"): _DL.pop("note", None); _DL["phase"] = "downloading"
     if not _SAMP or now - _SAMP[-1][0] > 0.5: _SAMP.append((now, _DL.get("done", 0) + _DL["cur"]))
+def on_wait(fail, tries, seconds, why): _DL.update(phase="waiting", note=f"Connection lost. Trying again in {seconds} s (try {fail} of {tries}). What arrived is kept.")
+def hf_token():
+    """The studio never asks for a token: HF_TOKEN if it is set, otherwise the hub's own login when that package is here."""
+    if os.environ.get("HF_TOKEN"): return os.environ["HF_TOKEN"]
+    try:
+        from huggingface_hub import get_token
+        return get_token()
+    except Exception: return None
 def hf_download(f, stage, progress, cancelled):
-    from huggingface_hub import hf_hub_download
-    from huggingface_hub.utils import tqdm as T
-    class Bar(T):
-        def __init__(self, *a, **k):
-            k["file"] = open(os.devnull, "w"); super().__init__(*a, **k)
-            if k.get("unit") == "B" and k.get("initial"): progress(k["initial"], reset=True)
-        def update(self, n=1):
-            if cancelled(): raise Cancelled()
-            if getattr(self, "unit", "") == "B": progress(n)
-            return super().update(n)
-    return hf_hub_download(repo_id=f["repo"], filename=f["path"], revision=f["rev"], local_dir=str(stage), tqdm_class=Bar)
+    url = f"https://huggingface.co/{f['repo']}/resolve/{urllib.parse.quote(f['rev'], safe='')}/{urllib.parse.quote(f['path'])}"
+    return str(R.fetch_partial(url, Path(stage) / (Path(f["path"]).name + ".part"), token=hf_token(), progress=progress, cancelled=cancelled, on_wait=on_wait, sleep=_CANCEL.wait))
 def sha256_file(p):
     h = hashlib.sha256()
     with open(p, "rb") as fh:
         for c in iter(lambda: fh.read(8 << 20), b""): h.update(c)
     return h.hexdigest()
 def explain(e, f):
-    code = getattr(getattr(e, "response", None), "status_code", None)
+    code = getattr(e, "status", None) or getattr(getattr(e, "response", None), "status_code", None)
     if type(e).__name__ == "GatedRepoError" or code in (401, 403):
         url = f"https://huggingface.co/{f['repo']}"
         return {"state": "needs_license", "license_url": url, "error": f"{f['repo']} is gated. Open {url}, accept the licence while signed in to Hugging Face, then log in on this machine with `hf auth login` (the studio never asks for or stores your token) and press Download again."}
+    if isinstance(e, R.GaveUp): return {"state": "error", "error": f"The connection kept failing ({str(e)[:160]}). What arrived is kept: press Resume to carry on."}
+    if isinstance(e, R.Refused): return {"state": "error", "error": f"Hugging Face refused {f.get('name') or 'the file'} ({e.status}). Check that the file still exists at {f.get('repo') or 'its repository'}."}
     return {"state": "error", "error": f"{type(e).__name__}: {str(e)[:240]}"}
 def work(files, r):
     f = None
