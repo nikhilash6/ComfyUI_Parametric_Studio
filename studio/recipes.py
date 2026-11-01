@@ -625,8 +625,8 @@ def _light(r):
     """A library row: what a card needs. The steps' names only show how long the chain is."""
     return {**{k: r.get(k) for k in ("id", "title", "pitch", "kind", "group", "tags", "proof", "reference", "why_not", "waiting")}, "n_steps": len(r["steps"]), "render": renders().get(r["id"]), "models": [{"name": m["name"], "licence": m["licence"], "licence_class": m["licence_class"]} for m in r["models"]]}
 @router.get("/api/recipe-library")
-def recipe_library(kind: str = "", q: str = "", ready_only: bool = False, offset: int = 0, limit: int = 60):
-    """The ported library, filtered and paged. Whether a recipe can run comes from a real check of its graphs against ComfyUI's /object_info and the model files on disk."""
+def recipe_library(kind: str = "", q: str = "", ready_only: bool = False, rendered_only: bool = False, offset: int = 0, limit: int = 60):
+    """The ported library, filtered and paged, recipes with our own render first. Whether a recipe can run comes from a real check of its graphs against ComfyUI's /object_info and the model files on disk."""
     from studio import recipe_check as C
     rows = library(); counts = {}
     for r in rows: counts[r["kind"]] = counts.get(r["kind"], 0) + 1
@@ -636,7 +636,9 @@ def recipe_library(kind: str = "", q: str = "", ready_only: bool = False, offset
         if words and not all(w in " ".join([r["title"], r["pitch"], r.get("group") or ""]).lower() for w in words): continue
         st = C.check_recipe(r, oi, files)
         if ready_only and not st["ready"]: continue
+        if rendered_only and r["id"] not in renders(): continue
         shown.append((r, st))
+    shown.sort(key=lambda x: x[0]["id"] not in renders())
     page = shown[max(0, offset):max(0, offset) + max(1, min(limit, 200))]
     return {"recipes": [{**_light(r), "ready": st["ready"], "ready_why": st["why"]} for r, st in page], "total": len(shown), "counts": counts, "ready": sum(1 for _, st in shown if st["ready"]), "rendered": sum(1 for r, _ in shown if r["id"] in renders())}
 @router.get("/api/recipe-ready/{rid}")
