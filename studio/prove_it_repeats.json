@@ -1,0 +1,2 @@
+{"about": "Times we re-ran one of our own renders with Prove It on the machine that made it. One file each, nothing more.",
+ "repeats": [{"recipe": "pic_art_3d_cel_shaded", "date": "2026-11-01", "result": "identical", "how": "the hash of the full picture matched the original render"}]}

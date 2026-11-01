@@ -55,7 +55,7 @@ def test_keys_are_unique_and_every_row_has_a_real_call(rows):
 
 
 def test_counts_are_computed(rows):
-    c = G.counts(rows); assert c["all"] == len(rows) == c["graph"] + c["not_graph"] and c["not_graph"] == sum(1 for m in M.MODELS if m["via"] != "family")
+    c = G.counts(rows); assert c["all"] == len(rows) == c["graph"] + c["not_graph"] and c["not_graph"] == sum(1 for m in M.MODELS if m["via"] != "family") + c.get("tryon", 0)
 
 
 @pytest.fixture

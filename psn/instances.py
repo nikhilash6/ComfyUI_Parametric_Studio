@@ -15,7 +15,7 @@ TYPES = ["checkpoints", "diffusion_models", "unet", "text_encoders", "clip", "cl
          "ipadapter", "configs", "model_patches", "latent_upscale_models", "frame_interpolation", "optical_flow", "detection", "geometry_estimation"]
 COMMON_PACKS = ["comfyui_parametric_studio", "kijai__ComfyUI-KJNodes"]
 REPO_LIB = paths.setting("PSN_REPO_LIB", default=paths.home("nodepack_library", "repos"))
-FAMILY_PACKS = {"PartCrafter": ["tungthedev__ComfyUI-TripoSG"], "LTX-2.5": ["Lightricks__ComfyUI-LTXVideo"], "Wan2.1": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2-Animate": ["kijai__ComfyUI-WanVideoWrapper"],
+FAMILY_PACKS = {"AnimateDiff": ["Kosinkadink__ComfyUI-AnimateDiff-Evolved"], "PartCrafter": ["tungthedev__ComfyUI-TripoSG"], "LTX-2.5": ["Lightricks__ComfyUI-LTXVideo"], "Wan2.1": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2-Animate": ["kijai__ComfyUI-WanVideoWrapper"],
                 "Wan2.2-Dancer": ["kijai__ComfyUI-WanVideoWrapper"], "TurboWan2.2-I2V": ["kijai__ComfyUI-WanVideoWrapper"], "Wan-SCAIL-2": ["kijai__ComfyUI-WanVideoWrapper"],
                 "MiniMax-H3": ["Larryvrh__ComfyUI-MiniMax-H3-Turbo", "TripleHeadedMonkey__ComfyUI-MiniMaxH3_LatentUpscaler", "T8mars__comfyui-minimax-h3-audio-T8", "vizart-vj__ComfyUI-MiniMax-H3-LongMedia", "YJX-Research__comfyui-controlfoley-official"],
                 "SeedVR2": ["bbaudio-2025__Comfyui-MMH3-UltimateUpscale"], "dwpose": ["kijai__ComfyUI-WanVideoWrapper"]}                                      # a pack is its directory name, owner__Repo: a bare repo name never resolves (MiniMax-H3 once got no packs that way)
@@ -24,6 +24,8 @@ ALIASES = {"LTX-2.5": ["ltx 2.5", "ltx"], "Flux.3-Klein": ["flux3-klein", "flux3
 # Families whose weights are not laid out the way ComfyUI's loaders expect. Each file is shown to the instance under a loader-friendly name through a symlink view (instance/models/<type>/<name>).
 # loader: "core" = ComfyUI's own loaders read it (verified by a CPU load test); "core+psn" = needs one of our loader nodes (psn_nodes/loaders.py); "needs-pack" = no loader exists here yet (files are linked, not claimed loadable).
 WRAPS = {
+ "AnimateDiff": {"loader": "pack", "files": [("animatediff_models", "mm_sd_v15_v2.ckpt", "video_gen/animatediff/mm_sd_v15_v2.ckpt"), ("animatediff_models", "v3_sd15_mm.ckpt", "video_gen/animatediff/v3_sd15_mm.ckpt"), ("animatediff_models", "mm_sdxl_v10_beta.ckpt", "video_gen/animatediff/mm_sdxl_v10_beta.ckpt"), ("animatediff_models", "animatediff_lightning_4step_comfyui.safetensors", "video_gen/animatediff/animatediff_lightning_4step_comfyui.safetensors")],
+                 "note": "motion modules from video_gen/animatediff through ComfyUI-AnimateDiff-Evolved (Apache-2.0); it adds no pip packages. A short clip on an SD 1.5 or SDXL checkpoint."},
  "PixArt-Sigma": {"loader": "core", "files": [("diffusion_models", "pixart-sigma_transformer.safetensors", "_complete_pipelines/PixArt-Sigma/diffusers/diffusion_pytorch_model.safetensors"),
                   ("text_encoders", "t5xxl_fp16.safetensors", "_complete_pipelines/Flux.1/text_encoders/t5xxl_fp16.safetensors"), ("vae", "sdxl_vae.safetensors", "vae/SDXL/sdxl_vae.safetensors")],
                   "note": "diffusers transformer shown as a diffusion model; the T5-XXL encoder and the SDXL VAE are shared from the library (the folder holds neither)"},

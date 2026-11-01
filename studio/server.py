@@ -356,9 +356,20 @@ def _browse_download(b):
 
 # ---------- lanes built in parallel: presets, website builder, crew, 3D
 OUTPUT = Path(paths.output_dir())
-for _mod in ("shot_board", "presets", "site_api", "crew_api", "voice", "packs", "apps", "edits", "prime", "schedule", "github_link", "calibrate", "attach", "models_api", "phone", "families_api", "model3d", "graph_registry", "recipes", "loras", "live_api", "atlas", "processes", "rotation", "worldkit.api", "vset.api", "music_styles", "train", "sampling_lab"):
+for _mod in ("shot_board", "presets", "site_api", "crew_api", "voice", "packs", "apps", "edits", "prime", "schedule", "github_link", "calibrate", "attach", "models_api", "phone", "families_api", "model3d", "graph_registry", "tryon", "recipes", "loras", "live_api", "atlas", "processes", "rotation", "worldkit.api", "vset.api", "music_styles", "train", "sampling_lab"):
     try: app.include_router(__import__(f"studio.{_mod}", fromlist=["router"]).router)
     except Exception as e: print(f"[studio] {_mod} not loaded: {type(e).__name__}: {e}")
+
+# A page that is one file: studio/feature_<name>.py holds its router and its PAGE for the shell. Nothing lists them, so each one merges on its own.
+FEATURE_PAGES: list = []
+for _p in sorted(ROOT.glob("feature_*.py")):
+    try:
+        _m = __import__(f"studio.{_p.stem}", fromlist=["router"]); app.include_router(_m.router)
+        if getattr(_m, "PAGE", None): FEATURE_PAGES.append(_m.PAGE)
+    except Exception as e: print(f"[studio] {_p.stem} not loaded: {type(e).__name__}: {e}")
+
+@app.get("/api/feature-pages")
+def feature_pages(): return {"pages": FEATURE_PAGES}
 
 if os.environ.get("PSN_EDITION") == "extended":
     try: app.include_router(__import__("studio.printify", fromlist=["router"]).router)

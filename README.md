@@ -30,7 +30,7 @@ Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Win
 | Recipes | 2 of 10 flagships rendered. A library of 740 passes an offline format check, and 533 of its recipes show a result we rendered here (467 pictures, 18 clips, 48 sounds), each from one run. The sounds were checked for level and length, not listened to. More renders are on the way | The other 8 flagships and the rest of the library |
 | Sampling Lab | 44 renders on SDXL, SD 1.5 and SD 3.5, and core sampler measurements | Pack entries are read from source, not run |
 | RES4LYF page | A credit page. The pack is not shipped; run separately, of 154 nodes checked 92 rendered, 14 ran and 44 errored | The other nodes in the pack |
-| Families | 89 wired, 54 with a render on record | The other 35 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
+| Families | 90 wired, 55 with a render on record | The other 35 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
 
 <div align="center">
 
@@ -50,7 +50,7 @@ Closed AI video apps give you a prompt box and hide everything else. ComfyUI giv
 |---|---|---|
 | **Cost per render** | Credits | **0 on your own GPU** |
 | **How a result was made** | Hidden | **The real graph, in 3D** |
-| **Which models** | The ones they sell you | **89 families wired, 54 with a render on record** |
+| **Which models** | The ones they sell you | **90 families wired, 55 with a render on record** |
 | **Your files and prompts** | On their servers | **Stay on your machine** |
 | **Help** | A docs page | **A crew of characters that answer from cited notes, out loud** |
 | **Can you fork it?** | No | **Yes: AGPL-3.0** |
@@ -96,7 +96,7 @@ Open **Pro** and the exact ComfyUI graph appears in 3D, with data flowing along 
 ![Comfy Prime and the crew](docs/img/crew.jpg)
 
 ### Model families, each with its own backend
-89 families are wired, and 54 have a render on record. They run from **Stable Diffusion 1.5, SDXL and SD3** through **FLUX, Wan, HunyuanVideo, Mochi, LTX and MiniMax H3**, plus 3D, audio and utility models. Each has its own isolated ComfyUI instance with its own custom nodes and model view, started on demand behind a VRAM check and stopped when idle. Each family shows its state: rendered, ready, or what to download. Most family weights are not on our box any more, so a family with no render on record is wired, not proven.
+90 families are wired, and 55 have a render on record. They run from **Stable Diffusion 1.5, SDXL and SD3** through **FLUX, Wan, HunyuanVideo, Mochi, LTX and MiniMax H3**, plus 3D, audio and utility models. Each has its own isolated ComfyUI instance with its own custom nodes and model view, started on demand behind a VRAM check and stopped when idle. Each family shows its state: rendered, ready, or what to download. Most family weights are not on our box any more, so a family with no render on record is wired, not proven.
 
 ![Model families](docs/img/families.jpg)
 

@@ -2141,6 +2141,51 @@
 "h": 357,
 "model": "flux-2-klein-9b.safetensors",
 "seed": 401677871
+},
+{
+"id": "fam_flux-2_10",
+"prompt": "Try-on: FLUX.2 Klein 9B, two references",
+"seconds": 79.9,
+"tpl": "klein9b_tryon",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_10.webp",
+"poster": "families/flux-2_10.webp",
+"w": 438,
+"h": 640,
+"model": "flux-2-klein-9b.safetensors",
+"seed": 1846650933,
+"peak_vram_gib": 27.5
+},
+{
+"id": "fam_flux-2_11",
+"prompt": "Try-on: FLUX.2 Klein 4B with the try-on LoRA",
+"seconds": 66.2,
+"tpl": "klein4b_tryon",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_11.webp",
+"poster": "families/flux-2_11.webp",
+"w": 438,
+"h": 640,
+"model": "flux-2-klein-base-4b.safetensors",
+"seed": 1497448468,
+"peak_vram_gib": 21.2
+},
+{
+"id": "fam_flux-2_12",
+"prompt": "Try-on: FLUX.2 Klein 9B with the try-on LoRA",
+"seconds": 43.4,
+"tpl": "klein9b_tryon_lora",
+"own": true,
+"kind": "image",
+"src": "families/flux-2_12.webp",
+"poster": "families/flux-2_12.webp",
+"w": 438,
+"h": 640,
+"model": "flux-2-klein-9b.safetensors",
+"seed": 1113724064,
+"peak_vram_gib": 29.1
 }
 ],
 "templates": [
@@ -7079,6 +7124,36 @@
 "h": 346,
 "model": "qwen_image_edit_2509_int8_convrot.safetensors",
 "seed": 1352649774
+},
+{
+"id": "fam_qwen-image-2-1_13",
+"prompt": "Try-on: Qwen Image 2.1 + Outfit Swap",
+"seconds": 53.7,
+"tpl": "qwen21_tryon",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_13.webp",
+"poster": "families/qwen-image-2-1_13.webp",
+"w": 640,
+"h": 640,
+"model": "qwen_image_2.1_bf16.safetensors",
+"seed": 1131149263,
+"peak_vram_gib": 35.1
+},
+{
+"id": "fam_qwen-image-2-1_14",
+"prompt": "Try-off: Qwen Image 2.1",
+"seconds": 40.7,
+"tpl": "qwen21_tryoff",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_14.webp",
+"poster": "families/qwen-image-2-1_14.webp",
+"w": 640,
+"h": 640,
+"model": "qwen_image_2.1_bf16.safetensors",
+"seed": 89027379,
+"peak_vram_gib": 32.5
 }
 ],
 "templates": [
@@ -11771,6 +11846,83 @@
 "seed": 42,
 "note": "33 bones with weights on every vertex. A hard test pose stretches it badly: looked at, not a finished rig.",
 "peak_vram_gib": 10.9
+}
+],
+"templates": []
+},
+"AnimateDiff": {
+"slug": "animatediff",
+"kind": "video",
+"era": 2023,
+"licence": "Apache-2.0 (the motion modules' own card and the checkpoint's licence also apply)",
+"crew": "master",
+"repos": [
+"guoyww/animatediff",
+"ByteDance/AnimateDiff-Lightning"
+],
+"what": "Short looping clips from an SD 1.5 or SDXL checkpoint, by adding a motion module to the sampler.",
+"what_source": "notes",
+"level": "render",
+"test": {
+"note": "animatediff_sd15_lightning rendered on this box 2026-11-01 (seed 35627528, model DreamShaper_8_pruned.safetensors)",
+"tpl": "animatediff_sd15_lightning",
+"render": "ok",
+"tested": "2026-11-01",
+"secs": 35.6,
+"peak_gib": 3.7
+},
+"media": [
+{
+"id": "fam_animatediff_0",
+"prompt": "AnimateDiff Lightning: SD 1.5 in 4 steps",
+"seconds": 35.6,
+"tpl": "animatediff_sd15_lightning",
+"own": true,
+"kind": "video",
+"src": "families/animatediff_0.mp4",
+"poster": "families/animatediff_0.webp",
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 35627528,
+"peak_vram_gib": 3.7
+},
+{
+"id": "fam_animatediff_1",
+"prompt": "AnimateDiff v3: SD 1.5 clip",
+"seconds": 40.6,
+"tpl": "animatediff_sd15_v3",
+"own": true,
+"kind": "video",
+"src": "families/animatediff_1.mp4",
+"poster": "families/animatediff_1.webp",
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 1326568444,
+"peak_vram_gib": 6.0
+},
+{
+"id": "fam_animatediff_2",
+"prompt": "AnimateDiff v2: SD 1.5 clip",
+"seconds": 40.7,
+"tpl": "animatediff_sd15_v2",
+"own": true,
+"kind": "video",
+"src": "families/animatediff_2.mp4",
+"poster": "families/animatediff_2.webp",
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 1453687570,
+"peak_vram_gib": 6.1
+},
+{
+"id": "fam_animatediff_3",
+"prompt": "AnimateDiff SDXL beta: SDXL clip",
+"seconds": 70.8,
+"tpl": "animatediff_sdxl_beta",
+"own": true,
+"kind": "video",
+"src": "families/animatediff_3.mp4",
+"poster": "families/animatediff_3.webp",
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 943904497,
+"peak_vram_gib": 12.8
 }
 ],
 "templates": []

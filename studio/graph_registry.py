@@ -69,12 +69,18 @@ def _model_rows(need=None):
     return rows
 
 
+def _tryon_rows():
+    """The try-on methods that are runners. The family ones are already family rows."""
+    from studio import tryon as T
+    return [{"key": "tryon:" + m["id"], "kind": m["via"], "section": "tryon", "id": m["id"], "label": f"Try-on: {m['label']}", "sub": m["note"], "licence": m["licence"], "graph_url": None, "open": "design/fashion", "call": {"method": "POST", "path": "/api/tryon/run", "body": {"method": m["id"], "person": "NAME_FROM_POST_/api/upload", "garment": "NAME_FROM_POST_/api/upload", "category": "tops"}, "poll": "/api/tryon/jobs/ID"}} for m in T.METHODS if m["via"] == "runner"]
+
+
 def _workflow_rows():
     return [{"key": "workflow:" + n, "kind": "workflow", "id": n, "label": WORKFLOWS[n][0], "sub": "World Kit" if WORKFLOWS[n][1] == "worldkit" else "Virtual Set", "graph_url": "/api/workflow-graphs/" + n, "open": WORKFLOWS[n][1], "call": WORKFLOWS[n][2]} for n in workflow_files() if n in WORKFLOWS]
 
 
 def all_rows():
-    rows = [*_goal_rows(), *_model_rows(), *_workflow_rows(), *_family_rows(), *_recipe_rows()]
+    rows = [*_goal_rows(), *_model_rows(), *_tryon_rows(), *_workflow_rows(), *_family_rows(), *_recipe_rows()]
     for r in rows: r.setdefault("runs_as", RUNS[r["kind"]])
     return rows
 

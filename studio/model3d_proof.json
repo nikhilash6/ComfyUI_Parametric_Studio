@@ -98,5 +98,15 @@
   "sheet": "families/anigen_turn.webp",
   "note": "33 bones with weights on every vertex. A hard test pose stretches it badly: looked at, not a finished rig.",
   "when": "2026-11-01"
+ },
+ "sam3d_objects": {
+  "status": "ran",
+  "seconds": 210.0,
+  "peak_gib": 21.7,
+  "seed": 42,
+  "input": "bear cut-out and its mask, the SAM 3D Objects tool",
+  "sheet": "families/sam3d-objects_turn.webp",
+  "note": "Good overall shape with fur detail and a mesh plus a splat. The colour is uneven: pale on one side and brown on the other.",
+  "when": "2026-11-01"
  }
 }

@@ -1309,6 +1309,33 @@
    "note": ""
   },
   {
+   "family": "SDXL",
+   "name": "sdxl_controlnet_openpose",
+   "title": "SDXL pose control: Xinsir OpenPose",
+   "desc": "Text to picture following a pose skeleton picture, with the Apache-2.0 Xinsir OpenPose ControlNet on SDXL base.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 9.3,
+   "tags": [
+    "Studio template",
+    "Pose control"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 6.94
+    },
+    {
+     "name": "xinsir_openpose_sdxl.safetensors",
+     "dir": "controlnet",
+     "gb": 2.33
+    }
+   ],
+   "source": "Studio template; xinsir/controlnet-openpose-sdxl-1.0 card",
+   "note": "On our test it ran but followed the pose only loosely and cropped the legs, with a skeleton enlarged from a small SDPose picture. Not yet proven with a clean full-size skeleton."
+  },
+  {
    "family": "Qwen-Image-2.1",
    "name": "qwen21_turbo_edit",
    "title": "Qwen Image 2.1 Turbo: Image Edit",
@@ -1667,6 +1694,277 @@
     {
      "name": "instruct-pix2pix-00-22000.safetensors",
      "dir": "checkpoints"
+    }
+   ],
+   "source": "studio"
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen21_tryon",
+   "title": "Try-on: Qwen Image 2.1 + Outfit Swap",
+   "desc": "A person and a garment to that person wearing it. Qwen Image 2.1 with the Outfit Swap Consistency LoRA at strength 1, 25 steps, cfg 1, as the LoRA's notes say. The LoRA's licence is rent-only on its source, read it before commercial use.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.8,
+   "tags": [
+    "Studio template",
+    "Fashion",
+    "Try-on"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_2.1_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.23
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "qwen_image_2.1_vae_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors"
+    },
+    {
+     "name": "qwen-image-2.1-outfit-swap.safetensors",
+     "dir": "loras"
+    }
+   ],
+   "source": "Comfy Copilot graph qwen21_edit",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen21_tryoff",
+   "title": "Try-off: Qwen Image 2.1",
+   "desc": "A photo of a person to the garment alone, as a product shot, from the base Qwen Image 2.1 edit with no LoRA.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 31.8,
+   "tags": [
+    "Studio template",
+    "Fashion",
+    "Try-off"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_2.1_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.23
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "qwen_image_2.1_vae_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors"
+    }
+   ],
+   "source": "Comfy Copilot graph qwen21_edit",
+   "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein9b_tryon",
+   "title": "Try-on: FLUX.2 Klein 9B, two references",
+   "desc": "A person and a garment as two reference pictures, no try-on LoRA.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 27.2,
+   "tags": [
+    "Studio template",
+    "Fashion",
+    "Try-on"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-9b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 18.16
+    },
+    {
+     "name": "qwen_3_8b_fp8mixed.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.66
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Comfy Copilot graph klein9b_edit",
+   "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein9b_tryon_lora",
+   "title": "Try-on: FLUX.2 Klein 9B with the try-on LoRA",
+   "desc": "A person and a garment as two reference pictures, with the Attach Outfit LoRA at strength 1 on the distilled Klein 9B, 4 steps, CFG 1. The LoRA was made for Base 9B, which is not on this box.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 27.3,
+   "tags": [
+    "Studio template",
+    "Fashion",
+    "Try-on"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-9b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 18.16
+    },
+    {
+     "name": "qwen_3_8b_fp8mixed.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.66
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    },
+    {
+     "name": "flux2_klein/civitai2/KleinBase9B_TryOn.safetensors",
+     "dir": "loras",
+     "gb": 0.08
+    }
+   ],
+   "source": "Studio template, LoRA card",
+   "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein4b_tryon",
+   "title": "Try-on: FLUX.2 Klein 4B with the try-on LoRA",
+   "desc": "A person and a garment as two reference pictures, with the Attach Outfit LoRA at strength 1 on Klein Base 4B, 20 steps, CFG 5.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 15.1,
+   "tags": [
+    "Studio template",
+    "Fashion",
+    "Try-on"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-base-4b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 7.22
+    },
+    {
+     "name": "qwen_3_4b.safetensors",
+     "dir": "text_encoders",
+     "gb": 7.49
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    },
+    {
+     "name": "flux2_klein/civitai2/KleinBase4B_TryOn.safetensors",
+     "dir": "loras",
+     "gb": 0.04
+    }
+   ],
+   "source": "Studio template, settings from the LoRA card",
+   "note": ""
+  },
+  {
+   "family": "AnimateDiff",
+   "name": "animatediff_sd15_v3",
+   "title": "AnimateDiff v3: SD 1.5 clip",
+   "desc": "16 frames at 512x512 on DreamShaper 8, motion module v3.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 3.8,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints"
+    },
+    {
+     "name": "v3_sd15_mm.ckpt",
+     "dir": "animatediff_models"
+    }
+   ],
+   "source": "studio"
+  },
+  {
+   "family": "AnimateDiff",
+   "name": "animatediff_sd15_v2",
+   "title": "AnimateDiff v2: SD 1.5 clip",
+   "desc": "16 frames at 512x512 on DreamShaper 8, motion module v2.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 3.9,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints"
+    },
+    {
+     "name": "mm_sd_v15_v2.ckpt",
+     "dir": "animatediff_models"
+    }
+   ],
+   "source": "studio"
+  },
+  {
+   "family": "AnimateDiff",
+   "name": "animatediff_sd15_lightning",
+   "title": "AnimateDiff Lightning: SD 1.5 in 4 steps",
+   "desc": "4 steps, cfg 1, euler with sgm_uniform, linear betas. Lightning is distilled from AnimateDiff SD 1.5 v2 and has no SDXL version.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 3.0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints"
+    },
+    {
+     "name": "animatediff_lightning_4step_comfyui.safetensors",
+     "dir": "animatediff_models"
+    }
+   ],
+   "source": "studio"
+  },
+  {
+   "family": "AnimateDiff",
+   "name": "animatediff_sdxl_beta",
+   "title": "AnimateDiff SDXL beta: SDXL clip",
+   "desc": "16 frames at 1024x576 on SDXL base, the SDXL beta motion module.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 7.5,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints"
+    },
+    {
+     "name": "mm_sdxl_v10_beta.ckpt",
+     "dir": "animatediff_models"
     }
    ],
    "source": "studio"
