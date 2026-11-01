@@ -15,4 +15,9 @@ NODE_CLASS_MAPPINGS.update({k: v for k, v in _gen.load(taken=set(NODE_CLASS_MAPP
 NODE_DISPLAY_NAME_MAPPINGS = {**_logic.NODE_DISPLAY_NAME_MAPPINGS, **_bridges.NODE_DISPLAY_NAME_MAPPINGS, **_subagents.NODE_DISPLAY_NAME_MAPPINGS, **_site.NODE_DISPLAY_NAME_MAPPINGS, **_quality.NODE_DISPLAY_NAME_MAPPINGS, **_prompts.NODE_DISPLAY_NAME_MAPPINGS, **_gen.NODE_DISPLAY_NAME_MAPPINGS, **(_latent.NODE_DISPLAY_NAME_MAPPINGS if _latent else {}), **(_loaders.NODE_DISPLAY_NAME_MAPPINGS if _loaders else {}), **(_flagship.NODE_DISPLAY_NAME_MAPPINGS if _flagship else {})}
 from .psn_nodes.tidy import tidy as _tidy
 _tidy(NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS)   # one category tree, names, descriptions and tooltips; ids and inputs stay as they are
+try:                                   # GPU handoff with a local LLM; does nothing unless PSN_VRAM_HANDOFF_LLM_URL is set
+    from .psn.vram_handoff import install as _handoff_install
+    _handoff_install()
+except Exception:
+    pass
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]

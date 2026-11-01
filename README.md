@@ -81,6 +81,11 @@ Whole concept sheets from a few choices: **Character, Fashion, Vehicle**, plus s
 ### AI video editing
 Remove objects, upscale, slow motion, extend a clip, restyle with pose or depth, change the camera, fill and outpaint, edit by instruction, then cut it together on a timeline.
 
+### Shot Board: one clip in, a whole shoot out
+![Shot Board: one source clip, reshot, orbited, recast and run through four LTX-2.5 effects](docs/img/shotboard.jpg)
+
+Bring one clip and queue the lot: reshoot it with a new camera, orbit around the subject, recast the lead from a single picture, then run LTX-2.5 VFX for water, a clean plate, day to night and a matte. Jobs run one at a time on your GPU, the queue survives a reload, and every result keeps its exact graph and seed. Export the grid as one captioned contact video. Seven jobs on one clip took about 14 minutes on our 96 GB card. A clean plate can leave a small smear when the subject fills the frame, and the page says so.
+
 ### ComfyUniversity
 Levels 100 to 400, from *what happens when you press Queue* to *building and measuring models*: latent space, attention, flow matching, CFG, precision. Each lesson has a lab that runs on your CPU and prints real numbers, and a quiz. Audited lessons cite their sources; the rest carry a visible Draft banner until they earn it. Interactive graph-building walkthroughs are coming soon.
 

@@ -128,6 +128,7 @@ The custom nodes run inside ComfyUI's own Python and use what is already there (
 | `STUDIO_COMFY_INPUT` | what the running ComfyUI reports, then `~/ComfyUI/input` | Your ComfyUI `input` folder |
 | `STUDIO_UNIVERSITY` | `studio/university/` in the repo | Optional: another folder holding lessons |
 | `STUDIO_KB` | `studio/crew_notes/` in the repo | Optional: a larger folder of crew notes with the same layout |
+| `PSN_VRAM_HANDOFF_LLM_URL` | off | The address of a local vLLM server started with `--enable-sleep-mode` and `VLLM_SERVER_DEV_MODE=1`. Queuing a render moves its weights to RAM, and they return after 30 idle seconds. Local addresses only. |
 | `PSN_SETTINGS` | `~/.config/parametric-studio/settings.env` | Optional file of `KEY=value` lines for any setting here, so you need not export them |
 | `PSN_EDITION` | `open` | `open` hides partner nodes and closed APIs. See [EDITIONS.md](EDITIONS.md) |
 | `STUDIO_LLM_URL`, `STUDIO_LLM_MODEL` | looks on local ports 8002, 8301, 11434 | An OpenAI-style local language model for the crew |
