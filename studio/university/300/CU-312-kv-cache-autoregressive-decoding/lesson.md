@@ -37,7 +37,7 @@ So the fraction of pairs saved is 1 − 3 ÷ (n + 2). Short runs gain little. Lo
 
 Three places to read.
 
-**Text encoders.** `BaseGenerate` in `comfy/text_encoders/llama.py` is the generation loop. `init_kv_cache` makes the store. Without the fast path it's a tuple of key, value and index. With it, it's a `FixedKV`, sized once up front so nothing has to reallocate. In the attention, new keys and values are written to the store and the query attends against all of it.
+**Text encoders.** `BaseGenerate` in `comfy/text_encoders/llama.py` is the generation loop. `init_kv_cache` makes the store. Without the fast path it's a tuple of key, value and index. With it, it's a `FixedKV`. Both are allocated once at full capacity, so nothing has to reallocate. In the attention, new keys and values are written to the store and the query attends against all of it.
 
 **Music.** `MiniMaxMusic3AR.generate` in `comfy/ldm/minimax_music/ar.py` runs an autoregressive text and music-code model, calling `init_kv_cache` with a capacity of prompt tokens plus a decode limit, plus one. The graph below contains that step: `MiniMaxMusic3TextEncode` reaches this class through the text encoder model. So the name "text encode" hides a whole generator here.
 
@@ -49,7 +49,7 @@ Ordinary diffusion samplers don't use this. Each sampling step changes the whole
 
 ## What goes wrong
 
-- **Out of memory at a late step, fine at the start.** A growing store is the likely reason, or a store sized too large at the beginning. Read the capacity it asks for. Shorter output means a smaller store, and for music that's the audio length you asked for.
+- **Out of memory as soon as generation starts.** These loops allocate the whole store up front, so a long run fails at the start and not at a late step. A loop of your own that grows its store would fail late instead. Read the capacity it asks for. Shorter output means a smaller store, and for music that's the audio length you asked for.
 - **Garbage after you changed an early token.** The lab shows this: a stale cache gives a very wrong answer. Clear it or roll back. Inside ComfyUI, the loops reset caches themselves, so this mainly bites when you write your own.
 - **You expect KV caching to speed up image sampling.** It doesn't apply, as said above. Caching tools for diffusion reuse results between steps under other rules, and those change the picture.
 - **Position drifts.** A cached model needs the right position for each new token, since it isn't re-running the old ones. `get_past_len` exists for this. In your own loop, a wrong position gives output that looks fine for a moment and then degrades.
@@ -70,7 +70,7 @@ KV cache      40                  820
 The answers agree to rounding error. The work does not. 1 − 3 ÷ 42 is 92.9%, which is what 820 against 11,480 gives. Now the memory, for one illustrative size: two arrays, 8 key and value heads, head width 128, two bytes each.
 
 ```text
-tokens stored   one layer, 8 kv heads, head width 128, bf16   24 layers
+tokens stored   one layer in MiB, 8 kv heads, head width 128, bf16   24 layers
 256             1.0                                           0.02 GiB
 1,024           4.0                                           0.09 GiB
 4,096           16.0                                          0.38 GiB

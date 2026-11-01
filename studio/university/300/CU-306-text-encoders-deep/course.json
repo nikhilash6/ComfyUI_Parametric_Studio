@@ -80,5 +80,8 @@
   "We don't claim that one encoder gives better pictures. That depends on the whole model, which was trained with its encoder.",
   "The draft said T5 handles long prompts better. We did not test that, and removed it as a quality claim. What we can state is that T5 has no 77-token chunking.",
   "We did not read every LLM encoder in core. Others may pick different layers."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

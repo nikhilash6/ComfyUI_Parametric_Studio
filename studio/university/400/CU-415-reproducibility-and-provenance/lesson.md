@@ -23,7 +23,7 @@ Sort the keys, and use fixed separators, and hash the text. Now the same graph a
 
 {{play:provhash}}
 
-Two things catch people. The graph holds only a file's name, so new weights under an old name don't change the hash. And node ids are in the graph, though the engine's cache key ignores them (CU-102), so a renumbered copy has a new hash and doesn't re-run.
+Two things catch people. The graph holds only a file's name, so new weights under an old name don't change the hash. And node ids are in the graph, though the engine's cache key ignores them unless a node asks for its own id (CU-102), so a renumbered copy has a new hash and doesn't re-run.
 
 {{graph:sd15_txt2img}}
 
@@ -43,7 +43,8 @@ Noise is one thing. Beyond it:
 graph_sha256       sorted JSON of the API graph
 weights_sha256     each file by hash, not by name
 comfyui            version or commit
-torch and driver   /system_stats gives versions
+torch              /system_stats gives the version
+GPU driver         nvidia-smi on NVIDIA cards, /system_stats does not report it
 packs              the git commit of each pack
 seed, size, batch  already in the graph
 hardware           GPU model

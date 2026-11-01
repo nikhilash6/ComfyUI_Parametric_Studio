@@ -57,5 +57,8 @@
   "Our line reader in the lab is small and easily fooled, as CU-381 shows. Real reading needs a human.",
   "The list of patterns is about common cases. A careful author of bad code can avoid all of them."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

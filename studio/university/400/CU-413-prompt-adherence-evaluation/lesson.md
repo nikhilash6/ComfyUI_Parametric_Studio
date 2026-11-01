@@ -43,7 +43,7 @@ For the real pictures in the play, see the [Sampling Lab](#sampling/renders). Ea
 - **Reading a score as a percentage.** CLIP cosines don't span 0 to 1. Compare with your other scores only.
 - **A short prompt scores well.** The lab's "red car" beats the full caption on a picture holding more. A prompt with fewer items is easier to satisfy, and a higher score doesn't mean a better image.
 - **Extra things go unnoticed.** A dog nobody asked for barely moves the score in the lab. Add your own checks for what mustn't be there.
-- **Wrong attachment.** "Red car, blue ball" and "blue car, red ball" look the same to our toy embedding. Real encoders see more than this one, which adds word vectors, yet binding has been a known weak spot. So test with a checklist item that names the pairing.
+- **Wrong attachment.** "Red car, blue ball" and "blue car, red ball" look the same to our toy embedding. Real encoders see more than this one, which adds word vectors. Binding is widely reported as a weak spot of real encoders too, though we did not test that here. So test with a checklist item that names the pairing.
 - **Mixed encoders.** A CLIP text vector and an image vector from another model share no directions. The lab shows a cosine near 0 for the same concept.
 - **One seed, one rater.** The hand-marked table in the lab is one reader's view of one seed. That's fine as a demonstration, and not enough to rank samplers (CU-470).
 

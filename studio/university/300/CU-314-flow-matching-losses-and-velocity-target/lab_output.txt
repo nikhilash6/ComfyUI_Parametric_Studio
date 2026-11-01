@@ -11,6 +11,7 @@ t     floor (perfect model)  constant guess
 0.5   1.9241                 3.7710
 0.8   3.6701                 3.7710
 0.95  3.0493                 3.7710
+spread of x0 alone, where the floor heads as t nears 1: 2.77
 
 the same velocity error of 0.1 read in other units
 t     clean-latent error (t x 0.1)   noise error ((1 - t) x 0.1)

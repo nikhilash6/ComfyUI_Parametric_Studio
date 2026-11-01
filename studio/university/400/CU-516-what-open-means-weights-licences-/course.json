@@ -52,5 +52,8 @@
   "We make no claim about which released models meet the OSI definition.",
   "The earlier history of how the word open spread through image models is not covered: we didn't check sources for it."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

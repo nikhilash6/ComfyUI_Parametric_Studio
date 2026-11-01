@@ -96,7 +96,7 @@ The docs' rules: a name under 100 characters, using letters, numbers, hyphens, u
 
 ## Ship a graph you can test
 
-Put a small graph in `example_workflows`, and the server offers it as a template. Other folder names get a warning asking you to rename them. If your pack can do anything with no model, ship a graph that runs in a second, like this one with your node swapped in. A user can then tell at once whether the install worked.
+Put a small graph in `example_workflows`, and the server offers it as a template. The server also accepts `example`, `examples`, `workflow` and `workflows`, with a debug-level log line suggesting a rename. Any other folder name isn't served. If your pack can do anything with no model, ship a graph that runs in a second, like this one with your node swapped in. A user can then tell at once whether the install worked.
 
 {{graph:nm_first}}
 

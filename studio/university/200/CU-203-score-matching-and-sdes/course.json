@@ -6,7 +6,7 @@
   "CU-202"
  ],
  "char": "denoise",
- "hook": "Why predicting noise is the same as learning the gradient of the data density, proved numerically.",
+ "hook": "Why predicting noise is the same as learning the gradient of the noised data density, checked numerically.",
  "code_refs": [
   "comfy/k_diffusion/sampling.py:to_d",
   "comfy/k_diffusion/sampling.py:sample_euler",
@@ -44,5 +44,8 @@
  "unchecked": [
   "The statements about Hyvärinen, Vincent, Efron, Anderson and Song were checked at the first audit and not re-read this time.",
   "ComfyUI's ancestral samplers are not the exact SDE written in this lesson, and we did not measure how close they come."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

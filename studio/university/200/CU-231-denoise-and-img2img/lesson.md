@@ -30,7 +30,7 @@ at the very top   x = latent + √(1 + σ²) · noise
 flow model        x = (1 − σ) · latent + σ · noise
 ```
 
-Look at the top line: the latent is always in the sum. The middle line is chosen by `max_denoise`, which asks whether the first sigma is the model's largest. So even at denoise 1 your picture is still in there, under a great deal of noise.
+Look at the top two lines: on a noise-prediction model the latent is always in the sum. The middle line is chosen by `max_denoise`, which asks whether the first sigma is the model's largest. So on those models your picture is still in there even at denoise 1, under a great deal of noise. A flow model is different: its top σ is 1, so the latent's weight 1 − σ is 0 and nothing of your picture is left.
 
 ## Try it
 
@@ -53,7 +53,7 @@ The scheduler changes what any number means. At denoise 0.5 and 10 steps, `karra
 - **"Denoise 0.1 should be fast."** It runs all your steps. If you want a quick touch-up, lower the steps too.
 - **Denoise 0 and nothing happens.** The schedule is empty and the sampler hands the latent back. It is not an error.
 - **Low denoise leaves a soft, unfinished look.** There were few levels to work with and the picture's own errors stay. Raise it a little before you add steps.
-- **The result is still your picture at denoise 1.** Only a trace, but the latent is in the sum. For a clean start, feed an `EmptyLatentImage`.
+- **The result is still your picture at denoise 1.** On a noise-prediction model there is a trace, because the latent is in the sum. For a clean start, feed an `EmptyLatentImage`. On a flow model at σ 1 the latent's weight is 0.
 - **Denoise means something else on another node.** `BasicScheduler` follows the same rule as KSampler and keeps your step count. `AlignYourStepsScheduler` and a few others run round(steps × denoise) steps instead. So 0.5 at 20 steps is 20 steps on one node and 10 on another.
 - **Your picture was a different size from what the model likes.** `VAEEncode` keeps its size, so large pictures cost more memory. Scale first (CU-116 and CU-217).
 
@@ -70,7 +70,7 @@ denoise  schedule built  steps run  starts at sigma  sigma / sqrt(1 + sigma^2)
 0.1      200             20         0.0715           0.071
 ```
 
-Denoise is not linear in noise. Going from 1 to 0.75 only moves the last column from 0.998 to 0.981, because the schedule spends most of its range at very high σ. All the action in that column is between 0.5 and 0.1. That is why denoise 0.9 and 1 can look so alike.
+Denoise is not linear in noise. Going from 1 to 0.75 only moves the last column from 0.998 to 0.981, because the schedule spends most of its range at very high σ. Most of the change in that column is between 0.75 and 0.1. That is why denoise 0.9 and 1 can look so alike.
 
 ```text
 same denoise 0.5, other schedulers start at: karras 1.091   simple 1.613

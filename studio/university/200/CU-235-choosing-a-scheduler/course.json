@@ -55,5 +55,8 @@
  "unchecked": [
   "Linking a curve's shape to a broken render is our reasoning on one seed for each case. We did not sweep seeds or test other models.",
   "SD 3.5 renders used a small preview VAE (TAESD3), because no full SD3 VAE was on the test machine, so fine detail in them should not be judged."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

@@ -23,7 +23,7 @@
     "It runs in parallel"
    ],
    "answer": "It predicts 50 frames a second of 4 tokens, not 16,000 samples a second",
-   "why": "EnCodec with a stride of 640 at 32 kHz gives 50 Hz: 6,000 predictions for 30 s against 480,000."
+   "why": "EnCodec with a stride of 640 at 32 kHz gives 50 Hz: 1,500 steps for 30 s against 480,000."
   },
   {
    "q": "Going from 30 s to 120 s, what happens to the call count of a 30-step diffusion model?",
@@ -45,7 +45,7 @@
     "It's a vocoder with no model"
    ],
    "answer": "An autoregressive model writes a code sequence, then a flow-matching DiT renders from its hidden states",
-   "why": "ar.py loops over frames, then the graph's KSampler runs on the DiT. The README describes Global and Local LLMs with Flow Matching."
+   "why": "ar.py loops over frames, then the graph's KSampler runs on the DiT."
   },
   {
    "q": "ACE-Step has an FSQ tokenizer. Is it therefore autoregressive like MusicGen?",

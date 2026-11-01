@@ -52,5 +52,8 @@
  "unchecked": [
   "The toy is one-dimensional with a perfect denoiser. Rankings do not carry over to pictures.",
   "The citations to Karras and to Lu et al. were checked at the first audit and not re-read this time."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

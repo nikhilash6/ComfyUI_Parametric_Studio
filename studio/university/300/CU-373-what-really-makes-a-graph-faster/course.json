@@ -60,5 +60,8 @@
   "We did not re-run the EasyCache figure, and it is one graph.",
   "We have not timed cached conditioning. Its gain depends on how slow your encoder and storage are."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

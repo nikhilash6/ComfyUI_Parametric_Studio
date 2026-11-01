@@ -50,5 +50,8 @@
  "unchecked": [
   "The wipe is one prompt and one seed on SDXL. It shows what happened, not what always happens.",
   "We quote the papers' statements on what CFG samples. We did not re-derive their proofs."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

@@ -59,5 +59,8 @@
  "unchecked": [
   "The lab uses random tensors with the real shapes. It didn't load a text encoder.",
   "We list keys used by the nodes in this track, not every key in core."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

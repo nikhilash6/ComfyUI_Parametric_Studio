@@ -26,9 +26,9 @@ And at the end of custom node loading, `Import times for custom nodes`, with any
 
 ## During a run
 
-**`got prompt`** means the server accepted a job. It is printed when the job arrives, not when it starts, so it can land in the middle of another job's progress bar. It says nothing about success.
+**`got prompt`** means a job request reached the server. It is printed when the request arrives, before validation and not when the job starts, so a graph that is then refused prints it too, and it can land in the middle of another job's progress bar. It says nothing about success.
 
-**`Failed to validate prompt for output 7:`** means the graph was refused before anything ran. The next lines name the node and the input. CU-290 goes through these.
+**`Failed to validate prompt for output 7:`** means that output was refused before anything ran. The next lines name the node and the input. If no output passes, the whole graph is refused. If another output passes, the job still runs for that one. CU-290 goes through these.
 
 **`Requested to load SDXL`** means a model isn't already loaded. It is printed only when a load is needed. So when it's missing on the second run, that absence is good news. If you see it on every run, something is pushing the model out.
 
@@ -52,13 +52,13 @@ To see more, start with `--verbose DEBUG`, or `--verbose DEBUG run.log` to send 
 
 - **Reading the last line first.** Failures print far above it. Scroll to the first `!!!`, and read down.
 - **Believing the bar's estimate on the first step.** The first step can include loading. Wait for step 3.
-- **"My LoRA did nothing."** Check for `NOT LOADED` lines, which `comfy/sd.py` prints for LoRA keys that matched nothing, and for the patch count.
+- **"My LoRA did nothing."** Check for `lora key not loaded:` lines, which `comfy/lora.py` prints for LoRA keys that matched nothing, for `NOT LOADED` lines, which `comfy/sd.py` prints for mapped keys that no patch took, and for the patch count.
 - **Warnings you can ignore, or not.** `Missing weight for layer` may be harmless for a part you don't use, and `clip missing:` can be a wrong encoder type. Check one against what you are doing before ignoring or chasing it.
 - **A busy console from packs.** Packs print too. A line that isn't in this list may be theirs.
 
 ## Lab
 
-These lines are copied from one real job on our test machine. Repeats and file paths are removed, and each starts with seconds past the minute. The lab labels each with patterns that follow the source's log calls.
+These lines are copied from one real job on our test machine. Repeats, file paths and the lines this lab doesn't use are removed, the bar's block characters are written as `#`, and each line starts with seconds past the minute. The lab labels each with patterns that follow the source's log calls.
 
 ```text
 31.93  attention    Using pytorch attention in VAE
@@ -109,6 +109,7 @@ the two ways tqdm writes speed
 - [ComfyUI v0.43.0, main.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/main.py)
 - [ComfyUI v0.43.0, execution.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/execution.py)
 - [ComfyUI v0.43.0, comfy/sd.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sd.py)
+- [ComfyUI v0.43.0, comfy/lora.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/lora.py)
 - [ComfyUI v0.43.0, comfy/ops.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ops.py)
 - [ComfyUI v0.43.0, comfy/utils.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/utils.py)
 - [ComfyUI v0.43.0, comfy/model_management.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_management.py)

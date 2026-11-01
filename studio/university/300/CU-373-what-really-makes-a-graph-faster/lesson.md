@@ -46,7 +46,7 @@ Before choosing, split your run into stages. Use this to see why it matters. A h
 
 ## What goes wrong
 
-- **Comparing a first run with a second.** Our own Sampling Lab shows a 66 s first render and 1.5 s after it. That difference is loading, not sampling.
+- **Comparing a first run with a second.** Our own Sampling Lab shows a 66 s first render and many at 1.5 s after it. That difference is loading, not sampling.
 - **A timer too coarse for the job.** Those same renders were polled every 1.5 s, so they can't rank samplers. Check your clock is finer than the thing you're comparing.
 - **Stacking three levers, and crediting one.** Change one, measure, then the next.
 - **Tiled VAE everywhere "for speed".** See above. It's for memory.
@@ -55,7 +55,7 @@ Before choosing, split your run into stages. Use this to see why it matters. A h
 
 ## Lab
 
-Real timings first, from `renders.json` in our Sampling Lab. One graph family, one seed, polled every 1.5 s.
+Real timings first: six of the 44 renders in `renders.json` in our Sampling Lab, picked to show the first run. One graph family, one seed, polled every 1.5 s, and other renders in that file read 3 s or more.
 
 ```text
 timed renders of one graph on our test machine, from sampling_lab/renders.json, seconds

@@ -26,9 +26,9 @@ Notice what the types can't tell you. Both prompts send `CONDITIONING`, so nothi
 
 ## What really happens when you press Queue
 
-Before any node runs, the server checks the whole graph. It looks for output nodes, walks back along the wires from each one, and checks each input it finds. It also needs every required input to be present and every number to be in range. If anything fails, nothing runs and you get a list of errors.
+Before any node runs, the server checks the graph. It looks for output nodes, walks back along the wires from each one, and checks each input it finds. It also needs every required input to be present and every number to be in range. If no output passes, nothing runs and you get a list of errors. If you have two outputs and one passes, that one still runs (CU-290 shows this).
 
-Then it runs nodes in an order that respects the wires. In the graph below, `ImageInvert` is wired to nothing, so it never runs, even though it's sitting right there on the canvas.
+Then it runs nodes in an order that respects the wires. In the graph below, `ImageInvert` takes a wire in, but nothing takes its output, so it never runs, even though it's sitting right there on the canvas.
 
 {{graph:nm_dead_branch}}
 

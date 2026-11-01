@@ -59,5 +59,8 @@
   "Seam errors come from a toy decoder with fixed random weights and zero padding. They don't measure a real VAE or upscaler.",
   "The factor 3.77 assumes the decoder's cost grows with positions, which is only roughly true.",
   "The lab doesn't compare resize methods. Whether latent or pixel upscaling looks better isn't measured here."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

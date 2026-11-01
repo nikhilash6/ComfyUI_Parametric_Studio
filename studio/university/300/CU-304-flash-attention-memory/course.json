@@ -66,5 +66,8 @@
   "Which PyTorch backend runs for a given shape is decided inside PyTorch. We read only what ComfyUI turns on.",
   "What the Comfy Kitchen attention does internally lives in another package we did not read."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

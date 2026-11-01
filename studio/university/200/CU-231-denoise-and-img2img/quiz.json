@@ -48,15 +48,15 @@
    "why": "Align Your Steps uses round(steps × denoise). BasicScheduler keeps steps."
   },
   {
-   "q": "You feed your picture to KSampler at denoise 1. Is the picture gone?",
+   "q": "You feed your picture to KSampler at denoise 1 on an SD 1.5 model. Is the picture gone?",
    "options": [
-    "A trace remains, because the latent is always added",
+    "A trace remains, because the latent is still added",
     "Yes, the latent is ignored",
     "Yes, the sampler zeros it",
     "No, nothing changes"
    ],
-   "answer": "A trace remains, because the latent is always added",
-   "why": "noise_scaling adds latent_image in both branches. For a clean start, use an empty latent."
+   "answer": "A trace remains, because the latent is still added",
+   "why": "EPS.noise_scaling adds latent_image in both branches. For a clean start, use an empty latent. A flow model differs: at σ 1 the latent's weight 1 − σ is 0."
   }
  ]
 }

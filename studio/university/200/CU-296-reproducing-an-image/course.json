@@ -2,13 +2,17 @@
  "code": "CU-296",
  "title": "A result that doesn't match: reproducing someone's image",
  "level": "200",
- "prereq": ["CU-105"],
+ "prereq": [
+  "CU-105"
+ ],
  "char": "graph",
  "hook": "Same prompt, same seed, different picture. A checklist in the order that matters, and a test for each item.",
  "track": "debugging",
  "order": 55,
  "kit": true,
- "graphs": ["sd15_txt2img"],
+ "graphs": [
+  "sd15_txt2img"
+ ],
  "code_refs": [
   "comfy/sample.py:prepare_noise",
   "nodes.py:common_ksampler",
@@ -18,17 +22,48 @@
   "comfy/cli_args.py:--disable-metadata"
  ],
  "verified": [
-  {"claim": "Noise is drawn on the CPU from the seed, so the card doesn't change it.", "how": "source", "ref": "comfy/sample.py:prepare_noise_inner"},
-  {"claim": "All the noise for a batch comes from one generator, and batch_index rebuilds one item.", "how": "source", "ref": "comfy/sample.py and nodes.py:common_ksampler"},
-  {"claim": "The batch behaviour in the lab, from a port of prepare_noise, gives the same results as those rules.", "how": "run here", "ref": "the lab"},
-  {"claim": "SaveImage writes the prompt and workflow into PNG text chunks, unless --disable-metadata is set.", "how": "source", "ref": "nodes.py:SaveImage.save_images"},
-  {"claim": "In one-seed renders on SD 1.5: euler and ddim had the same SHA-256. Euler ancestral differed by 61.95 of 255 on average, dpmpp_2m by 20.92.", "how": "test", "ref": "studio/sampling_lab/renders.json"},
-  {"claim": "In one-seed renders on SDXL: normal to karras differed by 23.26. CFG 7 to 14 by 30.99.", "how": "test", "ref": "studio/sampling_lab/renders.json"},
-  {"claim": "--deterministic's help says it might not make images deterministic in all cases.", "how": "source", "ref": "comfy/cli_args.py"}
+  {
+   "claim": "Noise is drawn on the CPU from the seed, so the card doesn't change it.",
+   "how": "source",
+   "ref": "comfy/sample.py:prepare_noise_inner"
+  },
+  {
+   "claim": "All the noise for a batch comes from one generator, and batch_index rebuilds one item when each item holds a multiple of 16 values. Real prepare_noise with real LatentFromBatch matched on (4,4,64,64) and failed on (4,4,65,65).",
+   "how": "source",
+   "ref": "comfy/sample.py and nodes.py:common_ksampler"
+  },
+  {
+   "claim": "The batch behaviour in the lab, from a port of prepare_noise, gives the same results as those rules.",
+   "how": "run here",
+   "ref": "the lab"
+  },
+  {
+   "claim": "SaveImage writes the prompt and workflow into PNG text chunks, unless --disable-metadata is set.",
+   "how": "source",
+   "ref": "nodes.py:SaveImage.save_images"
+  },
+  {
+   "claim": "In one-seed renders on SD 1.5: euler and ddim had the same SHA-256. Euler ancestral differed by 61.95 of 255 on average, dpmpp_2m by 20.92.",
+   "how": "test",
+   "ref": "studio/sampling_lab/renders.json"
+  },
+  {
+   "claim": "In one-seed renders on SDXL: normal to karras differed by 23.26. CFG 7 to 14 by 30.99.",
+   "how": "test",
+   "ref": "studio/sampling_lab/renders.json"
+  },
+  {
+   "claim": "--deterministic's help says it might not make images deterministic in all cases.",
+   "how": "source",
+   "ref": "comfy/cli_args.py"
+  }
  ],
  "unchecked": [
   "We did not compare the same graph across two different cards. That results can differ across cards and drivers is what the --deterministic help hints at. We have no measured size for it.",
   "How other programs handle seeds and prompt weights. We read ComfyUI only, so a graph from another tool may differ in ways we can't list.",
   "Each difference in renders.json comes from one prompt and one seed. Another seed will give other numbers."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

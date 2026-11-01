@@ -8,4 +8,4 @@ the truth itself                                       -1.1812
 
 share of one-Gaussian samples in the empty gap between the modes (-1 < x < 0.5): 0.326   truth: 0.016
 
-why images need more: a 512x512 RGB image has 256^(3*512*512) possible values, a number with 1,893,916 digits
+why images need more: a 512x512 RGB image has 256^(3*512*512) possible values, a number with 1,893,917 digits

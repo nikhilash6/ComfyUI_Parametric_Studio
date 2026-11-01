@@ -68,5 +68,8 @@
   "We did not measure how much --fast fp16_accumulation changes a picture, or how much speed it gives.",
   "How often a real LoRA training run loses gradients this way, in any format."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

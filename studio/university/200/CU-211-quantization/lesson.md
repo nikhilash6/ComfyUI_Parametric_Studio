@@ -53,14 +53,14 @@ Rounding costs about 6 dB of signal per bit you remove. Drop to fp8's three mant
 
 {{play:quant}}
 
-And the graph that stores a model's weights in fp8 at load time, from a file in any format. It needs `UNETLoader`'s `weight_dtype`, which is under the node's advanced inputs.
+And the graph that stores a model's weights in fp8 at load time, from a floating-point file that isn't fp8 already. It needs `UNETLoader`'s `weight_dtype`, which is under the node's advanced inputs.
 
 {{graph:b_unet_fp8}}
 
 ## What goes wrong
 
 - **A "4-bit" file is not half of an 8-bit file.** Scales cost bits too. GGUF Q4_0 is 4.5 bits per weight and not 4, and mxfp8 is 8.25 bits.
-- **fp8 stored with no scale, on small weights.** A plain cast with scale 1 lost most of the signal at std 0.0008 in the lab below. Formats and tools add the scale for this reason. Check that your conversion tool writes `weight_scale`.
+- **fp8 stored with no scale, on small weights.** A plain cast with scale 1 gave an error 0.69 times the size of the signal at std 0.0008 in the lab below. Formats and tools add the scale for this reason. Check that your conversion tool writes `weight_scale`.
 - **Expecting a quantized file to be fast on every card.** `get_disabled_quant_formats` lists what your device cannot compute natively. Those layers are dequantized for the multiply, so you keep the small storage and lose the fast kernel. The console prints `Native ops: ... emulated ops: ...`.
 - **Trying to load `.gguf` with a core loader.** Core's model folders don't list that extension. You need a pack, and the startup warning in `main.py` recommends native formats instead. CU-374 covers how the loaders differ.
 - **Judging a format from the error number alone.** The numbers below are about weights, not pictures. Render the same seed with both files and look.

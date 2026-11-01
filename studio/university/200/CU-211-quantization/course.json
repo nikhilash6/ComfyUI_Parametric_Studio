@@ -56,5 +56,8 @@
  "unchecked": [
   "How much any format changes a real picture, and which format is fastest on a given card. This lesson measures weight and matmul error only.",
   "The speed statement about native formats in main.py is the developers' own, and we did not test it."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

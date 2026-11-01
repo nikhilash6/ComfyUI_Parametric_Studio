@@ -59,10 +59,10 @@ The core list includes `euler_cfg_pp`, `euler_ancestral_cfg_pp`, `dpmpp_2m_cfg_p
 
 ## What goes wrong
 
-- **cfg 7 on a CFG++ sampler.** A burnt picture, far past the paper's range. Carry over the sampler or the cfg, not both. Start near 1 or below.
+- **cfg 7 on a CFG++ sampler.** That's far past the paper's range, so expect a burnt picture, though we have no render of it. Carry over the sampler or the cfg, not both. Start near 1 or below.
 - **Expecting cfg 1 to be fast.** It isn't. Two predictions per step, as the flag above shows.
 - **A negative that "shouldn't matter" does.** At cfg 1 on CFG++, it sets the noise. Choose it deliberately, or zero it out.
-- **A distilled model.** A cfg 1 model trained not to need a second prediction has no meaningful unconditional. We haven't tested the combination. Be wary of it.
+- **A distilled model.** A cfg 1 model wasn't trained to rely on a separate unconditional prediction, so the noise CFG++ takes from it may not suit. The paper says some of its experiments used distilled models such as SDXL-turbo and lightning. We haven't tested the combination, so look at the result before you trust it.
 - **Comparing against plain cfg at the same number.** The scales differ. Compare by looking, using the table above as a starting point.
 
 ## Lab

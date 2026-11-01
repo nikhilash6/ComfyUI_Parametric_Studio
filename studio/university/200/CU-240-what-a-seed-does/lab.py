@@ -27,6 +27,7 @@ res = {}
 for sh in ((4, 4, 64, 64), (4, 16, 128, 128), (4, 4, 65, 65), (4, 4, 66, 65), (4, 16, 65, 65)):
     n = sh[1] * sh[2] * sh[3]; B = prepare_noise(sh, 7); p = prepare_noise(sh, 7, inds=[2]); res[sh] = bool(torch.equal(p[0], B[2])); print(f"{str(sh):22s} {n:<16d} {str(n % 16 == 0):<15s} {res[sh]}")
 assert res[(4, 4, 64, 64)] and not res[(4, 4, 65, 65)]
+print("at 65 x 65 cells, batch item 0 equals the single image:", bool(torch.equal(prepare_noise((4, 4, 65, 65), 42)[0], prepare_noise((1, 4, 65, 65), 42)[0])))
 f = prepare_noise((4, 4, 64, 64), 42, inds=[0, 0, 0, 0]); print("seed_behavior fixed, batch_index [0,0,0,0], all four the same:", bool(torch.equal(f[0], f[3])))
 # Spectra
 def radial(x, bands=8):

@@ -58,7 +58,7 @@ Most extensions need only three:
 
 - **`setup`** runs at the end of startup. Use it for something global, such as listening for an event from the server.
 - **`beforeRegisterNodeDef(nodeType, nodeData, app)`** runs once per node type. Use it to change what every node of your class does.
-- **`nodeCreated(node)`** runs for each new node on the canvas. `loadedGraphNode` runs for each node restored from a saved graph.
+- **`nodeCreated(node)`** runs for each new node on the canvas. A node restored from a saved graph gets `nodeCreated` and then `loadedGraphNode`, in the docs' order.
 
 Here is the usual pattern. It runs code when your node finishes, using what the Python side sent as `ui`:
 

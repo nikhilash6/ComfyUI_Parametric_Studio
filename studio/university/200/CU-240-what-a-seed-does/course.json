@@ -64,5 +64,8 @@
   "We did not run the same graph on two GPUs. That per-step noise differs by device is read from the code, not measured here.",
   "Why picking from a batch fails when an item's value count is not a multiple of 16 is our reading of a measurement. We did not read torch's generator source. It may change between torch versions.",
   "The claim that a pack's noise colours change pictures in any particular way is not tested. We read the code and did not render with it."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

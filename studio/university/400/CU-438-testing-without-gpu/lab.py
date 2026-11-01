@@ -1,4 +1,4 @@
-# CU-438 lab: plain tests for a node, run against a good node and five broken ones. The node class is real Python with a tiny stand-in for the base class. Real engine tests, which need ComfyUI on the import path, are in the lesson with their output.
+# CU-438 lab: plain tests for a node, run against a good node and six broken ones. The node class is real Python with a tiny stand-in for the base class. Real engine tests, which need ComfyUI on the import path, are in the lesson with their output.
 import torch
 class Out:
     def __init__(self, *a): self.args = a
@@ -15,7 +15,7 @@ class Good:
     def execute(cls, image, amount): return Out(torch.clamp(image * amount, 0, 1))
 class InPlace(Good):
     @classmethod
-    def execute(cls, image, amount): image *= amount; return Out(image)
+    def execute(cls, image, amount): image *= amount; image.clamp_(0, 1); return Out(image)
 class NoClamp(Good):
     @classmethod
     def execute(cls, image, amount): return Out(image * amount)
@@ -27,6 +27,9 @@ class Stateful(Good):
     calls = {"n": 0}
     @classmethod
     def execute(cls, image, amount): cls.calls["n"] += 1; return Out(torch.clamp(image * amount + 0.001 * cls.calls["n"], 0, 1))
+class Squeezed(Good):
+    @classmethod
+    def execute(cls, image, amount): return Out(torch.clamp(image * amount, 0, 1)[0])
 def t_schema(N): schema_ok(N.schema)
 def t_input_untouched(N):
     x = torch.full((1, 2, 2, 3), 0.25); y = x.clone(); N.execute(x, 2.0); assert torch.equal(x, y), "input changed"
@@ -39,11 +42,11 @@ def t_same_twice(N):
 TESTS = [t_schema, t_input_untouched, t_range, t_shape, t_same_twice]
 print(f"{'node':10}" + "".join(f"{t.__name__[2:]:17}" for t in TESTS))
 res = {}
-for N in (Good, InPlace, NoClamp, Swapped, DupId, Stateful):
+for N in (Good, InPlace, NoClamp, Swapped, DupId, Stateful, Squeezed):
     row = []
     for t in TESTS:
         try: t(N); row.append("pass")
         except Exception as e: row.append("FAIL")
     res[N.__name__] = row; print(f"{N.__name__:10}" + "".join(f"{x:17}" for x in row))
-assert res["Good"] == ["pass"] * 5 and res["InPlace"][1] == "FAIL" and res["NoClamp"][2] == "FAIL" and res["Swapped"][0] == "FAIL" and res["DupId"][0] == "FAIL" and res["Stateful"][4] == "FAIL"
+assert res["Good"] == ["pass"] * 5 and res["InPlace"][1] == "FAIL" and res["NoClamp"][2] == "FAIL" and res["Swapped"][0] == "FAIL" and res["DupId"][0] == "FAIL" and res["Stateful"][4] == "FAIL" and res["Squeezed"][3] == "FAIL"
 assert all("FAIL" in res[k] for k in res if k != "Good")

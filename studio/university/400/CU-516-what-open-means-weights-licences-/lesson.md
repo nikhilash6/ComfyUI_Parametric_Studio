@@ -13,7 +13,7 @@ When someone calls a model open, they might mean any of these, and they often do
 
 The first three are about what you were given, and the fourth is about what you're allowed. A model can have downloadable weights and a licence with a list of banned uses. A project can have a permissive code licence and weights you can't get.
 
-The Open Source Initiative has a written definition for AI systems. It asks for the freedoms to use, study, modify and share, and it asks that weights, code and enough information about the data be available. It's a useful test, and most things people call open weights don't claim to meet it. So "open weights" is the honest phrase when weights are what you have.
+The Open Source Initiative has a written definition for AI systems. It asks for the freedoms to use, study, modify and share, and it asks that weights, code and enough information about the data be available. It's a useful test, and calling something open weights doesn't claim to meet it. So "open weights" is the honest phrase when weights are what you have.
 
 ## How this reaches your graph
 
@@ -30,7 +30,7 @@ A second meaning of open matters here: it doesn't mean safe. `SECURITY.md` in Co
 | date | what | the idea |
 |---|---|---|
 | 29 June 2007 | GNU GPL 3 | source must come with copies you pass on |
-| 19 November 2007 | GNU AGPL 3 | same, plus users over a network |
+| 19 November 2007 | GNU AGPL 3 | same, plus an offer of source to network users of a modified version |
 | August 22, 2022 | CreativeML Open RAIL-M | free to use, with banned uses you must pass on |
 
 That last one was new for this field: permission is broad, and some uses are written out of it. Whether it counts as open in the older sense is exactly the kind of argument this lesson is about, and we won't settle it. Read the terms that apply to what you have.

@@ -13,12 +13,12 @@ pictures   steps   batch   average   fewest   most
 12         300     4       100.0     82       123
 pictures never seen: 200 pictures at 300 steps 48   formula n (1 - 1/n)^steps = 44.5
 
-tokens in the caption   groups sent to the encoder (SD 1.5)   numbers in the conditioning
+tokens in the caption   groups sent to the encoder (SD 1.5)   shape of the conditioning
 10                      1                                     1 x 77 x 768
 75                      1                                     1 x 77 x 768
-76                      2                                     2 x 77 x 768
-150                     2                                     2 x 77 x 768
-151                     3                                     3 x 77 x 768
+76                      2                                     1 x 154 x 768
+150                     2                                     1 x 154 x 768
+151                     3                                     1 x 231 x 768
 
 the toy. Prompt: the trigger alone. What the model then produces: lamp, beach, forest (1 = fully present)
 captions                                  lamp    beach   forest

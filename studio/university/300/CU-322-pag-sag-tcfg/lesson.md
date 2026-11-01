@@ -36,7 +36,7 @@ Here are the stored clock times of our 20-step SDXL renders. The timer polled ev
 
 ## PAG
 
-Perturbed-attention guidance, from Ahn et al. (2024). The paper replaces the self-attention map with an identity, so each token only gets back its own value. In core that's three lines:
+Perturbed-attention guidance, from Ahn et al. (2024). The paper replaces the self-attention map with an identity, so each token only gets back its own value. In core it's two lines:
 
 ```python
 def perturbed_attention(q, k, v, extra_options, mask=None):

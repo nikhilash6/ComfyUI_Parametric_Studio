@@ -1,4 +1,4 @@
-# CU-370 lab: pull the useful numbers out of ComfyUI's console. The lines below are copied from one real job on our test machine, seconds past the minute in front, with repeats and file paths removed.
+# CU-370 lab: pull the useful numbers out of ComfyUI's console. The lines below are copied from one real job on our test machine, seconds past the minute in front, with repeats, file paths and lines this lab doesn't use removed, and the bar's block characters written as #.
 # The patterns follow the log calls in main.py, server.py, comfy/model_management.py, comfy/model_patcher.py and comfy/sd.py at v0.43.0.
 import re
 LOG = """31.93 Using pytorch attention in VAE

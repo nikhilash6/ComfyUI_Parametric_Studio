@@ -1,7 +1,8 @@
 node      schema           input_untouched  range            shape            same_twice       
 Good      pass             pass             pass             pass             pass             
-InPlace   pass             FAIL             FAIL             pass             pass             
+InPlace   pass             FAIL             pass             pass             pass             
 NoClamp   pass             pass             FAIL             pass             pass             
 Swapped   FAIL             pass             pass             pass             pass             
 DupId     FAIL             pass             pass             pass             pass             
 Stateful  pass             pass             pass             pass             FAIL             
+Squeezed  pass             pass             pass             FAIL             pass             

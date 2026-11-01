@@ -56,10 +56,11 @@ The schema also has flags, such as `is_output_node`, `not_idempotent`, `is_input
 
 `EXECUTE_NORMALIZED` wraps your function, and it accepts:
 
-- `io.NodeOutput(a, b)`: what you should use. It also takes `ui=` to send data to the editor, `expand=` for expansion, and `block_execution=` to stop what's downstream.
+- `io.NodeOutput(a, b)`: what you should use. It also takes `ui=` to send data to the editor, `expand=` for expansion, and `block_execution=` to stop what's downstream. Pass an output value with it: `io.NodeOutput(None, block_execution="why")`. On its own, with no value, the block is skipped, and in our run the node failed with an `IndexError`.
 - A tuple: wrapped for you.
 - A dict with `result`, `ui` or `expand`: the old V1 shape.
 - `None`: an empty output.
+- An `ExecutionBlocker`: it becomes `NodeOutput(block_execution=...)` with no value, so it hits the same `IndexError`. In our run a tuple holding the blocker worked.
 
 Anything else raises `Invalid return type from node`.
 
@@ -91,7 +92,7 @@ V1 is different again. The engine makes one instance per node id and keeps it in
 
 - **`Cannot modify class attribute`.** You set something on `cls` inside `execute`. Make it an input, or use a dict only for a true cache, such as a loaded model, that doesn't change results.
 - **`No execute function was defined for node class X`.** A typo, or you forgot the `@classmethod`.
-- **`Input ids must be unique, but ['a'] are not.`** Two inputs share an id, or an input and an output do.
+- **`Input ids must be unique, but ['a'] are not.`** Two inputs share an id. Two outputs give the same message, starting `Output ids`. An input and an output sharing an id passed in our run, though the docstring says that is checked too.
 - **`'NoneType' object has no attribute 'unique_id'`, in a test.** `cls.hidden` exists only inside the engine. CU-438 covers how to test this.
 - **Invalid return type.** You returned a bare value or a tensor. Wrap it in `io.NodeOutput`.
 - **A hidden value is `None`.** You didn't ask for it: add `hidden=[io.Hidden.unique_id]` to the schema. Fields you don't request come back as `None`, and no error appears.

@@ -32,7 +32,7 @@ Other pills on a method: **In core, runs here**, **Live pack**, **Needs a pack**
 
 ## How much to trust it
 
-The lab prints the real figures. About half of the entries had a second reader. Of those, 22% needed a fix or a caveat. The checked entries were then corrected. The other half have not had that chance, and our guess is they have a similar rate of faults. So open an entry's file and line before you stake a day's work on it.
+The lab prints the real figures. About half of the entries had a second reader. Of those, 22% needed a fix or a caveat. 69 of those 82 were then corrected, and the other 13, all minor, still carry the reader's note. The other half have not had that chance, and our guess is they have a similar rate of faults. So open an entry's file and line before you stake a day's work on it.
 
 No method from outside core is proven by a render yet. The sandbox failed its control render, so all six attempts failed. A pack's entry tells you what the code says, and not that it works on your model.
 
@@ -96,6 +96,7 @@ atlas: 720 methods; 183 in core; 13 in a live pack only; 524 need a pack; 44 ren
 by family: guidance 174, latent 91, math 12, noise 79, patch 86, sampler 164, scheduler 114
 by label: from code 692, from pack README claim 2, inference 26
 second reader looked at 378: 296 right, 68 imprecise, 14 wrong, so 22% needed a fix or a caveat. Share of all methods checked this way: 52%
+of those 82, corrected in the atlas: 69
 renders: 44 real, all in core. Pack methods proven by a render: 0 of 6 tried
 ```
 

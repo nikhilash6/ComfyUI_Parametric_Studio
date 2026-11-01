@@ -22,7 +22,7 @@ One add loses almost nothing. A long sum is different, because the running total
 
 **Between steps, in a training loop.** Gradient accumulation sums gradients over batches. The total is a running sum, so keep it wide. An `fp16` accumulator loses small late gradients after large early ones.
 
-**In one gradient.** The smallest positive number fp16 can hold is about 6e-8. A gradient smaller than that becomes exactly 0. `GradScaler` multiplies the loss by a big number first to lift gradients into range, then undoes it. bf16 has fp32's range, so it doesn't underflow like that, but it has only 7 mantissa bits. A comment in `nodes_train.py` notes that GradScaler handles float16 gradients, not bfloat16. The same file logs a warning if you train an fp16 model with `fp16_accumulation` on: it "can be numerically unstable during training and may cause NaN values".
+**In one gradient.** The smallest positive number fp16 can hold is about 6e-8. A gradient smaller than half of that becomes exactly 0. `GradScaler` multiplies the loss by a big number first to lift gradients into range, then undoes it. bf16 has fp32's range, so it doesn't underflow like that, but it has only 7 mantissa bits. A comment in `nodes_train.py` notes that GradScaler handles float16 gradients, not bfloat16. The same file logs a warning if you train an fp16 model with `fp16_accumulation` on: it "can be numerically unstable during training and may cause NaN values".
 
 ## In ComfyUI
 

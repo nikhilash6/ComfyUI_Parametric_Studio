@@ -4,7 +4,7 @@ first token, cached against recomputed: max difference 0.0e+00
 no cache      820                 11,480
 KV cache      40                  820
 
-tokens stored   one layer, 8 kv heads, head width 128, bf16   24 layers
+tokens stored   one layer in MiB, 8 kv heads, head width 128, bf16   24 layers
 256             1.0                                           0.02 GiB
 1,024           4.0                                           0.09 GiB
 4,096           16.0                                          0.38 GiB

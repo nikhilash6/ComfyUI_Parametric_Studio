@@ -18,13 +18,13 @@ frames in -> latent frames from two causal stride-2 layers, against (n - 1) // 4
  120 ->  30   30
  121 ->  31   31
 
-change frame 20 of 21: the 6 latent frames that move are [5]
+change frame 20 of 21: of the 6 latent frames, the ones that move are [5]
 
 two tiles of a 64-long latent, zero padding at each tile edge, hard join in the middle of the overlap
 overlap   largest error at the join
 0         0.136897
-2         0.036592
-4         0.000000
+2         0.034534
+4         0.036592
 6         0.000000
 8         0.000000
 12        0.000000

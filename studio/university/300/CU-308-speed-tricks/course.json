@@ -71,5 +71,8 @@
   "We did not test whether torch.compile helps on any model, or what its first-run cost is here. The advice to time the second run is general.",
   "Quality changes from a cache or a distilled model are for your eyes. The toy ODE's error is not a picture."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

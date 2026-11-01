@@ -31,7 +31,7 @@ for dt in (torch.float32, torch.float64):
     assert max(diffs) < (1e-5 if dt == torch.float32 else 1e-12)
 print(f"scale alpha/r: alpha 8, r 8 -> {8 / 8}   alpha 1, r 8 -> {1 / 8}   file with no alpha -> {1.0} whatever the rank")
 
-# 4. Initialisation. The product B A must start at zero. One factor is zero, so at step 0 only the other one gets a gradient.
+# 4. Initialisation. The product B A must start at zero. One factor is zero, so at step 0 only that zero factor gets a gradient: the other one's gradient is multiplied by the zero.
 din, dout, r = 64, 96, 8
 Wt = torch.randn(dout, din, generator=g) * 0.1; X = torch.randn(din, 256, generator=g)
 def loss(up, down): return (((up @ down) - Wt) @ X).pow(2).mean()

@@ -21,6 +21,7 @@ print("t     floor (perfect model)  constant guess")
 fl = {}
 for t in (.05, .2, .5, .8, .95):
     x = (1 - t) * x0 + t * e; tgt = e - x0; fl[t] = (tgt - best_v(x, t)).pow(2).mean().item(); print(f"{t:<5} {fl[t]:<22.4f} {tgt.var():.4f}")
+print(f"spread of x0 alone, where the floor heads as t nears 1: {x0.var():.2f}")
 assert min(fl.values()) > .01
 # Same error, other units: x0_hat = x_t - t v_hat and eps_hat = x_t + (1 - t) v_hat.
 print("\nthe same velocity error of 0.1 read in other units")

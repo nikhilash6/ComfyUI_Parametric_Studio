@@ -12,7 +12,7 @@ class Switch:
 class Eager:
     LAZY = set()
     def run(self, use_a, a=None, b=None): LOG.append("execute"); return a if use_a else b
-class TwoWay(Switch):                            # a bad check: it asks for an input that is a constant
+class TwoWay(Switch):                            # a bad check: it asks for an input that has no wire
     def check_lazy_status(self, use_a, a=None, b=None): return ["a"]
 CL = {"Tick": Tick, "Switch": Switch, "Eager": Eager, "TwoWay": TwoWay}
 def is_link(v): return isinstance(v, list) and len(v) == 2

@@ -16,7 +16,7 @@ output = weights V       shape n × d
 
 Tokens come from the picture. With an 8× VAE and one token per latent cell, 1024 px gives 128 × 128 = 16,384 tokens. Double the image side and you have four times the tokens, so sixteen times the table. Real models attend at lower resolutions for this very reason, and a batch and several heads multiply the table again.
 
-Print a latent and read its shape:
+Print a latent. `PreviewAny` shows the tensor's values with the middle cut out, and no shape line, so work the size out: this graph asks for 1024 px, which is 128 × 128 cells.
 
 {{graph:nm_latent_ops}}
 
@@ -26,7 +26,7 @@ Then see the numbers:
 
 ## Three ways to hold less, or smaller
 
-**Slice the queries.** The answer for one query needs only that query's row. So score a slice of queries, turn it into output, drop the scores, and go on. The sums are the same, and only less is held at once. `attention_split` works out what it needs and doubles the number of slices until that fits free memory. It costs more passes.
+**Slice the queries.** The answer for one query needs only that query's row. So score a slice of queries, turn it into output, drop the scores, and go on. The sums are the same, and only less is held at once. `attention_split` works out what it needs, picks the power of two of slices that should fit free memory, and doubles it if it still runs out. It costs more passes.
 
 **Online softmax.** The rows themselves can be built piece by piece, which is the idea of FlashAttention (Dao et al. 2022). Walk the keys and values in blocks, and for each query keep three running things: the largest score so far, the sum of exponentials so far, and the output so far.
 
@@ -59,7 +59,7 @@ So you usually already have a form of flash attention, through PyTorch, without 
 
 - **You installed Sage expecting less VRAM.** It is sold on speed through low precision. Test it with a timer and a peak reading before you decide it helped.
 - **Black or broken images after changing backend.** Change back first. `--force-upcast-attention` has the help text "please report if it fixes black images", and several flags exist because low precision bites. One seed proves little, so test more.
-- **A flag does nothing.** The library behind it may be missing, or the flags are mutually exclusive. Read the line that names the backend at startup.
+- **A flag is refused or ignored.** With `--use-sage-attention` or `--use-flash-attention` and no library, ComfyUI logs an install command and exits. The attention flags are a mutually exclusive group, so two together stop at the command line. The help for the split and sub-quadratic flags says they are ignored when xformers is used. Read the line that names the backend at startup.
 - **A mask-using node falls back quietly.** Sage takes masks only if its version supports them, and flash does not. You may be running PyTorch attention for those calls.
 - **Out of memory at high resolution, even with flash.** The rows are smaller, not gone. Outputs, Q, K and V still have to fit. Lower the size or the batch first.
 

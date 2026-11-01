@@ -4,7 +4,7 @@
 
 ## The idea
 
-When you press Queue, the server checks the graph first. If the check fails, nothing runs, and you get an error instead of a picture. That is good news. These are the cheapest errors you will ever meet, and each one names what it doesn't like.
+When you press Queue, the server checks the graph first. If no output passes the check, nothing runs, and you get an error instead of a picture. That is good news. These are the cheapest errors you will ever meet, and each one names what it doesn't like.
 
 There are two kinds of reply. The whole prompt can be refused for one reason, such as no outputs. Or the reply can say `prompt_outputs_failed_validation` and hold a `node_errors` list, with an entry for each node at fault. **Read `node_errors`.** The top message often says very little: when the fault sits upstream of the output, its `details` field is empty.
 
@@ -28,7 +28,7 @@ Read it as: output node 2 can't run, the fault is at node 1 (`ImageInvert`), and
 3. For each output node, walk back along the wires. `validate_inputs` checks each node it reaches.
 4. Check loop nodes, if there are any.
 
-Nodes that don't lead to an output are never looked at. So a broken node on an unused branch gives no error.
+After step 1, nodes that don't lead to an output are never looked at. So a node with a bad input on an unused branch gives no error. A class that isn't installed is different: step 1 stops the prompt wherever that node sits. We ran both.
 
 ## Every error
 
@@ -69,9 +69,10 @@ All of the following came from the real function on a CPU, with core nodes, unle
 | `dependency_cycle` | `Dependency cycle detected: 1 (ImageInvert) -> 3 (ImageInvert) -> 1 (ImageInvert)` | Break one wire in the chain it prints. Real loops use Start Loop and End Loop. |
 | `exception_during_inner_validation` | `Exception when validating inner node: '99'` | A wire points at node 99, which isn't there. A hand-edit or a bad delete. |
 | `exception_during_validation` | `Exception when validating node: '99'` | The same, on the output node itself. |
-| `exception_during_validation` | `Exception when validating node: tuple index out of range` | A wire asks for an output slot that the source doesn't have. |
+| `exception_during_validation` | `Exception when validating node: tuple index out of range` | A wire on the output node asks for an output slot that the source doesn't have. |
+| `exception_during_inner_validation` | `Exception when validating inner node: tuple index out of range` | The same bad slot, on a node further up. |
 
-Those last two look alike, and they cover anything that raises during the check, including a crash in a node's own validator. When the details are just `'99'`, that is Python's `KeyError` text, and the number is a node id.
+These look alike, and they cover anything that raises during the check, including a crash in a node's own validator. When the details are just `'99'`, that is Python's `KeyError` text, and the number is a node id.
 
 ## Now fix some
 

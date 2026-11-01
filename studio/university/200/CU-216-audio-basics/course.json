@@ -55,7 +55,11 @@
  ],
  "unchecked": [
   "We did not run an audio VAE or a vocoder, so nothing here measures audio quality.",
+  "That ACE-Step 1.5 uses the 1920-ratio waveform VAE is our reading of EmptyAceStep1.5LatentAudio and the loader. We did not load its weights.",
   "That a mel spectrogram loses phase follows from taking magnitudes. The lab doesn't test it.",
   "Dips in the lab are for two equal tones and a Hann window only."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

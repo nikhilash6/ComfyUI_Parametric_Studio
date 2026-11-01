@@ -37,7 +37,7 @@ Modern tools use a trained network. RAFT is one, and core ComfyUI can load it.
 
 **Causal convolution.** Video VAEs care about time in their own way. `VideoConv3d` pads `kernel_size - 1` frames before the clip and none after, so no output depends on a later frame. `CausalConv3d` in Wan's and in LTX's VAE code has the same goal. That's about the order of time, not about flow. CU-316 follows it through.
 
-**Generated video isn't told about flow.** The starting noise has no correlation between frames (CU-218). Coherence comes from the model. Models in core don't get a flow field unless a node like the one above adds it.
+**Generated video isn't told about flow.** In an ordinary run the starting noise has no correlation between frames (CU-218), and coherence comes from the model. The one route for flow we found is the node above, and it hands on noise warped by flow, as the starting latent, and not the flow field itself.
 
 Here's the simplest possible video: with no change between frames, flow is zero everywhere.
 
@@ -46,7 +46,7 @@ Here's the simplest possible video: with no change between frames, flow is zero 
 ## What goes wrong
 
 - **Calling a frame difference "flow".** It has no direction. Use it to find change, and not motion.
-- **Judging flicker with a raw difference on a moving shot.** A pan scores far worse than a real strobe. Undo the motion first. CU-411 builds this into a score.
+- **Judging flicker with a raw difference on a moving shot.** In the lab a 3-pixel pan scores about twice a 10% brightness jump. Undo the motion first. CU-411 builds this into a score.
 - **Flow on big jumps.** Lucas-Kanade breaks: in the lab, a true motion of 8 pixels reads as 0.35. Real tools work coarse to fine or use a network.
 - **Flow on lighting changes.** Brightness constancy fails there, so the method finds motion that isn't there, or leaves a big residual. Fades and flashes aren't motion.
 - **Looking for the VOID nodes' model and not finding it.** ComfyUI won't fetch it. Put torchvision's RAFT-large format in `models/optical_flow`, as the loader's text says.

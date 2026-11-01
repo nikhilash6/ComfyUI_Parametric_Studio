@@ -4,7 +4,7 @@
  "level": "100",
  "prereq": [],
  "char": "denoise",
- "hook": "A seed is the starting noise and nothing more. A toy sampler with an exact denoiser shows what that does and does not fix when you change steps, samplers or hardware.",
+ "hook": "A seed makes the starting noise, plus the extra noise of an ancestral sampler, and nothing more. A toy sampler with an exact denoiser shows what that does and does not fix when you change steps, samplers or hardware.",
  "code_refs": [
   "comfy/sample.py:def prepare_noise",
   "comfy/k_diffusion/sampling.py:def default_noise_sampler",
@@ -60,5 +60,8 @@
  "unchecked": [
   "The pictures are one seed on one model. They show what can happen, and no rate.",
   "We did not compare the same seed across two machines. The warning there comes from PyTorch's notes."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

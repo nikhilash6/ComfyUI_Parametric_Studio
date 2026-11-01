@@ -108,7 +108,7 @@ The lab is one-dimensional. It checks the mathematics of paths, and says nothing
 
 ## What is contested
 
-"Better" depends on what you hold fixed. The SD3 study compares formulations under its own noise-level sampling, and the abstract reports that its approach beats established diffusion formulations. It doesn't say the straight path alone did that. Flow Matching's abstract reports faster training and sampling on ImageNet for the straight path. We did not re-run any of these.
+"Better" depends on what you hold fixed. The SD3 study compares formulations under its own noise-level sampling, and the abstract reports that its approach beats established diffusion formulations. It doesn't say the straight path alone did that. Flow Matching's abstract reports faster training and sampling for its Optimal Transport paths, and, in a separate sentence, better ImageNet results for training with Flow Matching than for diffusion-based methods. We did not re-run any of these.
 
 Scale is contested too. DiT's abstract ties lower FID to more Gflops within its own family. That doesn't show transformers always beat U-Nets at the same cost, and we don't have a measurement here that could.
 

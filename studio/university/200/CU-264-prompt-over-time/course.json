@@ -52,5 +52,8 @@
   "We have no render of this graph, so no picture shows the switch. We've listed it as wanted.",
   "We expect a gap to damage the picture, from reading the code. We didn't render a gap.",
   "That early steps set layout and later steps set detail is the common description and fits CU-250's render. We did not test it for this lesson."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

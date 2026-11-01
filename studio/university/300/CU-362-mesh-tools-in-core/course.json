@@ -51,7 +51,7 @@
    "ref": "comfy_extras/mesh3d/postprocess/qem_decimate.py:qem_simplify"
   },
   {
-   "claim": "On a CPU, the real remesh_narrow_band_dc gave 7,980 faces at resolution 32 and 31,740 at 64 on that sphere.",
+   "claim": "On a CPU, the real remesh_narrow_band_dc in sdf mode gave 7,980 faces at resolution 32 and 31,740 at 64 on that sphere. In udf mode with the component filters off, as the graph has it, it gave 16,008 at 32, an inner and an outer shell.",
    "how": "run here",
    "ref": "comfy_extras/mesh3d/postprocess/remesh.py:remesh_narrow_band_dc"
   },
@@ -70,5 +70,8 @@
   "These checks ran on one synthetic sphere, which is an easy shape. Real generated meshes are messier. We did not run the cleanup graph from a real generated mesh, since the checkpoint is not on our test machine.",
   "The node's faces-per-resolution tooltip (256 about 100k, 512 about 1M) is the node's own figure. The sphere run gives far fewer faces at low resolutions, as its surface fills less of the box.",
   "The lab's decimator shows the idea only. The real one runs parallel rounds with quality checks we did not port."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

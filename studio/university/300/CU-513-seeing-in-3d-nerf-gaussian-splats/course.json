@@ -61,5 +61,8 @@
   "The 192 samples in the cost line is an example number we picked. We did not confirm the paper's sample counts.",
   "We ran no 3D model for this lesson. No 3D checkpoint is on our test machine.",
   "The real-time claim for splats is the paper's own, and we did not time it."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

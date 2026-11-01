@@ -50,7 +50,7 @@ for name, r in (("1:1", 1.0), ("4:3", 4 / 3), ("3:2", 1.5), ("16:9", 16 / 9), ("
     print(f"{name:<16}{f'{a[0]}x{a[1]}':<20}{f'{b[0]}x{b[1]}':<20}{'yes' if (a[1], a[0]) in SDXL else 'no'}")
 
 # 4. Cost of a square image of side s. Tokens N = (s / 8)^2 if a layer attends over every latent position; an N x N attention matrix has N^2 entries.
-# The last column uses the memory estimate that comfy/sd.py attaches to the VAE decoder: 2178 * latent_h * latent_w * 64 * bytes per value.
+# The last column uses the memory estimate that comfy/sd.py attaches to the VAE decoder: 2178 * latent_h * latent_w * 64 * bytes per value (times 2.73 on AMD, not shown).
 print("\nside   pixels / 512x512   tokens N   N^2 entries        full matrix in fp16   VAE decode estimate (fp32)")
 for s in (512, 768, 1024, 1536, 2048):
     n = (s // 8) ** 2; est = 2178 * (s // 8) * (s // 8) * 64 * 4

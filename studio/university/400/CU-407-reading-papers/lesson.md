@@ -34,7 +34,7 @@ Here's the abstract of the GQA paper from CU-302, read this way: "We show that u
 - **Baseline.** Two of them: multi-head for quality, multi-query for speed. Good: it says both.
 - **Measure.** "Close to" and "comparable to" have no numbers. Go to the tables.
 - **Spread.** Not in the abstract.
-- **Cost.** It says 5% of the original pre-training compute for the retraining recipe. Check what that recipe assumes before you plan on it.
+- **Cost.** The 5% of original pre-training compute it names is for its recipe that retrains into multi-query attention. The abstract gives no figure for GQA itself, so check the paper before you plan on it.
 - **My problem?** It's about language models. For image models, it's only a lead.
 
 We read the abstract, not the tables, so this stops there. That's the honest end of a 2-minute read.

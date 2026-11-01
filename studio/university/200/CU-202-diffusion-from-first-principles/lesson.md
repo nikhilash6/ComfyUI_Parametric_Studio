@@ -14,7 +14,7 @@ Move the slider to see what the formula does to a real render. At signal to nois
 
 ## The idea
 
-Destroying data is easy, so make it the training data. Add a little Gaussian noise many times, until nothing is left. Then train a network to undo one small step. Sohl-Dickstein et al. (2015) introduced this, and their key observation is that for small steps the reverse step is close to Gaussian too, so the network only has to supply its mean. Ho et al. (2020) found a parameterisation that made it work on images.
+Destroying data is easy, so make it the training data. Add a little Gaussian noise many times, until nothing is left. Then train a network to undo one small step. Sohl-Dickstein et al. (2015) introduced this, and their key observation is that for small steps the reverse step is close to Gaussian too, so the network only has to supply its mean and covariance. Ho et al. (2020) fixed the covariance to constants and found a parameterisation that made it work on images.
 
 ## The maths
 

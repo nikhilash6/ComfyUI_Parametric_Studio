@@ -4,7 +4,7 @@
  "level": "300",
  "questions": [
   {
-   "q": "How many model calls is Heun, 20 steps, CFG 7?",
+   "q": "What does the formula give for Heun, 20 steps, CFG 7?",
    "options": [
     "80",
     "40",
@@ -12,7 +12,7 @@
     "160"
    ],
    "answer": "80",
-   "why": "20 steps × 2 calls per step × 2 for CFG."
+   "why": "20 steps × 2 calls per step × 2 for CFG. It is the round figure: sample_heun's last step to sigma 0 makes one call, so the real count on such a schedule is 78."
   },
   {
    "q": "Why does CFG 1 run about twice as fast as CFG 7?",

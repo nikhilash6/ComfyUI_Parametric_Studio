@@ -2,13 +2,17 @@
  "code": "CU-112",
  "title": "What Queue really does, and where your picture went",
  "level": "100",
- "prereq": ["CU-102"],
+ "prereq": [
+  "CU-102"
+ ],
  "char": "graph",
  "hook": "Follow one press of Queue from the editor to a file on disk: what is sent, what waits, what history keeps, and how the file gets its name.",
  "track": "first-graph",
  "order": 35,
  "kit": true,
- "graphs": ["a_save_preview"],
+ "graphs": [
+  "a_save_preview"
+ ],
  "code_refs": [
   "server.py:post_prompt",
   "server.py:view_image",
@@ -23,16 +27,48 @@
   "app/assets/lifecycle.py:cleanup_temp_filesystem"
  ],
  "verified": [
-  {"claim": "The queue is a heap ordered by number, and front=true makes the number negative.", "how": "source", "ref": "server.py:post_prompt"},
-  {"claim": "History is a plain dictionary in memory, capped near 10000 entries, and main.py strips the sixth field of a queue item before storing it.", "how": "source", "ref": "execution.py:PromptQueue.task_done"},
-  {"claim": "Prefix to subfolder, name and counter, including the refusal to leave the output folder and a %date% token staying literal on the server.", "how": "run here", "ref": "folder_paths.py:get_save_image_path, on a throw-away folder"},
-  {"claim": "Running the same graph twice wrote one file and returned the same output record both times. Changing the colour wrote a second.", "how": "run here", "ref": "execution.py:PromptExecutor with the classic cache, on graph a_save_preview"},
-  {"claim": "PreviewImage wrote to the temp folder with the record type temp. A batch of two took two counter values.", "how": "run here", "ref": "nodes.py:SaveImage.save_images"},
-  {"claim": "The temp folder is removed at startup when the assets system is off, and that system is off unless --enable-assets is given.", "how": "source", "ref": "main.py and comfy/cli_args.py"},
-  {"claim": "The editor sends client_id, prompt and extra_data with extra_pnginfo.workflow, and turns %date:...% into text before sending.", "how": "docs", "ref": "ComfyUI front end main branch, packages/api-client/src/ComfyApi.ts and src/extensions/core/saveImageExtraOutput.ts, fetched 2026-11-01"}
+  {
+   "claim": "The queue is a heap ordered by number, and front=true makes the number negative.",
+   "how": "source",
+   "ref": "server.py:post_prompt"
+  },
+  {
+   "claim": "History is a plain dictionary in memory, capped near 10000 entries, and main.py strips the sixth field of a queue item before storing it.",
+   "how": "source",
+   "ref": "execution.py:PromptQueue.task_done"
+  },
+  {
+   "claim": "Prefix to subfolder, name and counter, including the refusal to leave the output folder and a %date% token staying literal on the server.",
+   "how": "run here",
+   "ref": "folder_paths.py:get_save_image_path, on a throw-away folder"
+  },
+  {
+   "claim": "Running the same graph twice wrote one file and returned the same output record both times. Changing the colour wrote a second.",
+   "how": "run here",
+   "ref": "execution.py:PromptExecutor with the classic cache and the default RAM-pressure cache, on graph a_save_preview"
+  },
+  {
+   "claim": "PreviewImage wrote to the temp folder with the record type temp. A batch of two took two counter values.",
+   "how": "run here",
+   "ref": "nodes.py:SaveImage.save_images"
+  },
+  {
+   "claim": "The temp folder is removed at startup when the assets system is off, and that system is off unless --enable-assets is given.",
+   "how": "source",
+   "ref": "main.py and comfy/cli_args.py"
+  },
+  {
+   "claim": "The editor sends client_id, prompt and extra_data with extra_pnginfo.workflow, and turns %date:...% into text before sending.",
+   "how": "docs",
+   "ref": "ComfyUI front end main branch, packages/api-client/src/ComfyApi.ts and src/extensions/core/saveImageExtraOutput.ts, fetched 2026-11-01"
+  }
  ],
  "unchecked": [
+  "The warning about %batch_num% rests on one run of SaveImage.save_images with a batch of two, twice over.",
   "We read the front-end code on its main branch and did not press Queue by hand in a browser for this lesson, so what the buttons and side panels look like is left out.",
   "With --enable-assets the temp folder is handled differently, and we did not read how far that goes."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

@@ -125,6 +125,24 @@
 "module": "comfy_extras.nodes_custom_sampler",
 "is_output": false
 },
+"BatchImagesNode": {
+"input": {
+"required": {
+"images": [
+"COMFY_AUTOGROW_V3"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_post_processing",
+"is_output": false
+},
 "CFGGuider": {
 "input": {
 "required": {

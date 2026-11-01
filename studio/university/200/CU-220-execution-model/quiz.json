@@ -56,7 +56,7 @@
     "Which outputs are valid"
    ],
    "answer": "The order among ready nodes, so results appear sooner",
-   "why": "Its comment says it has no effect on overall length of execution."
+   "why": "It only chooses among nodes that are ready. Its comment says the output rule has no effect on overall length of execution. The async rule is the exception: its comment says it reduces overall time."
   }
  ]
 }

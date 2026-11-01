@@ -18,6 +18,8 @@ print("third of a batch of 4 equals a single with that seed:", torch.equal(batch
 print("third of a batch of 4 equals seed + 2:", torch.equal(batch[2:3], prepare_noise(s, 44)))
 idx = prepare_noise((1, 4, 8, 8), 42, noise_inds=[2]); print("third, rebuilt with batch_index [2] (LatentFromBatch):", torch.equal(batch[2:3], idx))
 assert torch.equal(batch[0:1], a) and not torch.equal(batch[2:3], a) and torch.equal(batch[2:3], idx)
+odd = prepare_noise((4, 4, 65, 65), 42); odd_idx = prepare_noise((1, 4, 65, 65), 42, noise_inds=[2]); print("the same rebuild on (4, 4, 65, 65), 16900 values per item:", torch.equal(odd[2:3], odd_idx))
+assert not torch.equal(odd[2:3], odd_idx)
 # Read a graph back from a PNG. SaveImage calls metadata.add_text("prompt", json) with Pillow, which writes tEXt chunks.
 def chunk(t, d): return struct.pack(">I", len(d)) + t + d + struct.pack(">I", zlib.crc32(t + d) & 0xffffffff)
 def tiny_png(texts):

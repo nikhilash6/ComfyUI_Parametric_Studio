@@ -23,6 +23,11 @@
  ],
  "verified": [
   {
+   "claim": "Sohl-Dickstein et al. estimate a mean and a covariance for each Gaussian step, and Ho et al. set the covariance to untrained constants. Equations 4 and 14 of Ho et al. are as cited.",
+   "how": "docs",
+   "ref": "arXiv 1503.03585 and 2006.11239, PDF text read 2026-11-01"
+  },
+  {
    "claim": "sigma is computed from alphas_cumprod as in the lesson.",
    "how": "source",
    "ref": "comfy/model_sampling.py:ModelSamplingDiscrete._register_schedule"
@@ -51,5 +56,8 @@
  "unchecked": [
   "The equation numbers and the claims about Ho, Sohl-Dickstein and Lin were checked when this lesson was first audited, and not read again this time.",
   "The toy is one-dimensional, so it shows the mechanism and says nothing about image quality."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

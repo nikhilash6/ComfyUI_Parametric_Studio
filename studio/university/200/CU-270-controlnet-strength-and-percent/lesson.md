@@ -99,7 +99,7 @@ percent  sigma on SD 1.x   sigma on flow
 
 ## What strength does
 
-`control_merge` multiplies every residual by `strength`. That is all. It does not change when the ControlNet runs, and it does not change the hint. If you chain two nodes, each one's residuals get its own strength and then they are added. They are not averaged, so two nodes at 1.0 push twice as hard as one.
+`control_merge` multiplies every residual by `strength`. That is all. It does not change when the ControlNet runs, and it does not change the hint. If you chain two nodes, each one's residuals get its own strength and then they are added. They are not averaged, so two nodes at 1.0 add two full sets of residuals, where an average would give the size of one.
 
 ```text
 strength multiplies the residuals: |0.5 x| / |x| = 0.5   chained: difference from 0.5 r1 + 0.5 r2 = 0.0

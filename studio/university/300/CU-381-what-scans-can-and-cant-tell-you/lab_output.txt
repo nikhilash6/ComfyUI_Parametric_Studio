@@ -18,7 +18,7 @@ hit on a bad line 3, hit on a fine line 6, clean on a bad line 5, clean on a fin
 of 9 hits, 6 were false alarms. of 5 clean lines, 5 were bad
 these are our own samples, picked to show both mistakes. The counts say nothing about real packs.
 
-adding patterns moves the mistakes, it does not end them
+adding a pattern catches some misses, it does not end the mistakes
 with a loaders pattern: clean on a bad line 2, hit on a fine line 6
 same line, different place. The text is equal, the risk is not
   tests/test_nodes.py, never imported            low

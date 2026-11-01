@@ -57,15 +57,15 @@ That's the formula for picking with replacement, and it's a good check. So a big
 Our Train page warns when a caption is over 65 words, because the encoder's window is about 75 tokens. The end of a long caption isn't dropped in ComfyUI, though. The tokenizer starts another group of 77, and all the groups are joined:
 
 ```text
-tokens in the caption   groups sent to the encoder (SD 1.5)   numbers in the conditioning
+tokens in the caption   groups sent to the encoder (SD 1.5)   shape of the conditioning
 10                      1                                     1 x 77 x 768
 75                      1                                     1 x 77 x 768
-76                      2                                     2 x 77 x 768
-150                     2                                     2 x 77 x 768
-151                     3                                     3 x 77 x 768
+76                      2                                     1 x 154 x 768
+150                     2                                     1 x 154 x 768
+151                     3                                     1 x 231 x 768
 ```
 
-We checked that on the real tokenizer. So it's not cut, but the words after the split are encoded apart from the words before, without seeing them, which changes how they read. Keep captions under the window where you can. And a word isn't always one token.
+We checked the groups on the real tokenizer, and the shape on the real `encode_token_weights` with a stub encoder. So it's not cut, but the words after the split are encoded apart from the words before, without seeing them, which changes how they read. Keep captions under the window where you can. And a word isn't always one token.
 
 ## What a caption does
 

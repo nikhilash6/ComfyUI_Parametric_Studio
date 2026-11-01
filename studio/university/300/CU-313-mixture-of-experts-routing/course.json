@@ -41,11 +41,15 @@
    "claim": "Routed and brute-force outputs match exactly in the lab.",
    "how": "run here",
    "ref": "lab.py"
+  },
+  {
+   "claim": "Switch Transformers routes each token to one expert and adds an auxiliary loss to balance the load.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2101.03961"
   }
  ],
  "unchecked": [
   "The graph hunyuan3d_mesh is not confirmed to load a v2.1 model; it says Hunyuan3D 2. We use it only to show the family.",
-  "The load balancing loss is described from the papers' subject matter and the name AddAuxLoss; we did not reread the papers' full text.",
   "No trained expert routing was measured here."
  ],
  "kit": true

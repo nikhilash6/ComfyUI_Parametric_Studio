@@ -12,7 +12,7 @@ This graph shows both, and it needs no model. Pick any picture of yours in the l
 
 ## How a picture gets in
 
-The input folder sits beside output and temp (CU-112). `LoadImage`'s menu is a listing of the files directly in it. Files you put in a subfolder aren't listed, as our run showed. Copy a file there by hand, or use the node's upload button, which sends it to the server's `/upload/image` route.
+The input folder sits beside output and temp (CU-112). `LoadImage`'s menu is a listing of the image files directly in it. Files you put in a subfolder aren't listed, and neither was a text file, as our run showed. Copy a file there by hand, or use the node's upload button, which sends it to the server's `/upload/image` route.
 
 The graph only stores the file's name. Send your graph to a friend and the picture stays behind (CU-110), and they get `Invalid image file` until they supply their own.
 

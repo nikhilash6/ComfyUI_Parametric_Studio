@@ -24,13 +24,13 @@ That is only the starting noise. A seed does not promise the same picture on ano
 
 ## Batches
 
-A batch is not several seeds. `batch_size` 4 draws one block of noise with four rows. Item 0 matches a single image with that seed. Item 1 does not match seed + 1.
+A batch is not several seeds. `batch_size` 4 draws one block of noise with four rows. On the usual sizes item 0 matches a single image with that seed (the trap below is the exception). Item 1 does not match seed + 1.
 
 To render just item 2 again, `LatentFromBatch` records `batch_index` in the latent. `prepare_noise` then draws the items one by one, keeps the ones you asked for and throws the rest away.
 
 {{graph:b_batch_pick}}
 
-This has a trap we found while writing this lesson. It only works if each item has a multiple of 16 values. A 512 by 512 SD latent has 16,384 values, so it works. A latent of 65 × 65 cells with 4 channels has 16,900, so the picked item comes out different from the one in the batch. Our guess is that torch fills large tensors in blocks of 16. We measured this, and did not read torch's source. Stay on widths and heights that are multiples of 16 pixels, and an SD latent has a multiple of 16 values. A 16-channel latent always does.
+This has a trap we found while writing this lesson. It only works if each item has a multiple of 16 values. A 512 by 512 SD latent has 16,384 values, so it works. A latent of 65 × 65 cells with 4 channels has 16,900, so the picked item comes out different from the one in the batch, and even item 0 of the batch differs from a single image. Our guess is that torch fills large tensors in blocks of 16. We measured this, and did not read torch's source. Stay on widths and heights that are multiples of 16 pixels, and an SD latent has a multiple of 16 values. A 16-channel latent always does.
 
 To get the same noise for every item, use `LatentBatchSeedBehavior` set to `fixed`. That is how you compare prompts fairly in one batch.
 
@@ -77,6 +77,7 @@ shape                  values per item  multiple of 16  picked item equals the b
 (4, 4, 65, 65)         16900            False           False
 (4, 4, 66, 65)         17160            False           False
 (4, 16, 65, 65)        67600            True            True
+at 65 x 65 cells, batch item 0 equals the single image: False
 seed_behavior fixed, batch_index [0,0,0,0], all four the same: True
 ```
 

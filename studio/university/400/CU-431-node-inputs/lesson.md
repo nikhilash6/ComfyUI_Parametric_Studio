@@ -70,7 +70,7 @@ Each of these came from a real run.
 ## What goes wrong
 
 - **A switch that is always on in API calls.** A client sent the string "false". Send a JSON `false`, and check the type if strangers can call you.
-- **`TypeError: missing 1 required positional argument`.** An optional input has no default in your function. Add `=None`.
+- **`TypeError: MyNode.run() missing 1 required positional argument: 'o'`.** An optional input has no default in your function. Add `=None`.
 - **A wire left unconnected on a required input.** `required_input_missing`, named in the message. Connect it or make it optional.
 - **Two copies of your node suddenly run separately.** You added `UNIQUE_ID`. That is the side effect above.
 - **A menu value that worked last week fails.** `value_not_in_list`. Menus are checked against what the schema returns today, and file menus change when files move. CU-294 covers that.

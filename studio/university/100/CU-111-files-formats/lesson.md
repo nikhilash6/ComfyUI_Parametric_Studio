@@ -4,7 +4,7 @@
 
 ## The idea
 
-Every format answers two questions at the start: what am I, and how do I find my parts? A PNG begins with a signature and then a list of chunks. A WAV file is a list of chunks inside a RIFF wrapper. An MP4 is a list of boxes. A safetensors file starts with the size of a JSON header (CU-107). In all four, a small index of labelled parts sits beside the bulk data. In the first three, a reader may also skip a part it does not know. That rule is how ComfyUI hides a whole workflow inside a picture without changing a pixel: it adds text chunks that a decoder is free to skip.
+Every format answers two questions at the start: what am I, and how do I find my parts? A PNG begins with a signature and then a list of chunks. A WAV file is a list of chunks inside a RIFF wrapper. An MP4 is a list of boxes. A safetensors file starts with the size of a JSON header (CU-107). In all four, a small index of labelled parts sits beside the bulk data. In the first three, a reader may also skip many of the parts it does not know, though a PNG reader cannot skip an unknown critical chunk. That rule is how ComfyUI hides a whole workflow inside a picture without changing a pixel: it adds text chunks that a decoder is free to skip.
 
 ## The mechanism
 
@@ -28,7 +28,7 @@ Run this no-model graph with a `SaveImage` in place of the preview and you get a
 
 `SaveVideo` offers the containers mp4, mkv and webm with the codecs h264 and av1, and "auto" means MP4 for h264 and WebM for av1. For MP4 written to a path it opens the output with the FFmpeg flags `use_metadata_tags+faststart`, so the index is moved to the front, and the metadata goes into the `mdta` metadata box. A comment in the code says the flag preserves the custom tags (workflow, prompt, extra_pnginfo) in the ISO file.
 
-The audio save nodes in `comfy_extras/nodes_audio.py` write FLAC by default, with MP3 and Opus nodes alongside, and WAV is not one of their formats. This small graph writes a real audio file with no model. It uses the default format and not WAV.
+The audio save nodes in `comfy_extras/nodes_audio.py` write FLAC, MP3 or Opus, and WAV is not one of their formats. `SaveAudioAdvanced` picks the format with a menu, and the older one-format nodes `SaveAudio`, `SaveAudioMP3` and `SaveAudioOpus` are now marked deprecated. This small graph writes a real audio file with no model. It uses the older `SaveAudio`, which writes FLAC and not WAV.
 
 {{graph:nm_audio}}
 
@@ -36,7 +36,7 @@ The audio save nodes in `comfy_extras/nodes_audio.py` write FLAC by default, wit
 
 ## What goes wrong
 
-- **Dragging a picture onto the canvas does nothing.** The chunks are gone, because another program re-encoded the file, or the server ran with `--disable-metadata`. Check with a chunk reader, as in the lab.
+- **Dragging a picture onto the canvas does nothing.** The chunks may be gone, because another program re-encoded the file, or the server ran with `--disable-metadata`. Check with a chunk reader, as in the lab.
 - **You shared more than the picture.** A PNG from `SaveImage` carries your whole graph, with your prompts and the names of your files. Before posting one, decide whether that's fine. To remove it, turn on `--disable-metadata` or strip the text chunks.
 - **Reading a WAV at byte 44.** The lab shows an odd-sized chunk moving the data to byte 56. Walk the chunks.
 - **Trusting what the metadata says.** It isn't signed, so anyone can edit the prompt in a file. It says what the file claims and proves nothing about how the picture was made.
@@ -73,7 +73,7 @@ one bit flipped inside the prompt text: chunks failing their crc: ['tEXt prompt'
 only the critical chunks kept: 488 -> 165 bytes, text chunks left: 0, same pixels: True
 ```
 
-A single flipped bit is caught by exactly one chunk's CRC, and the image chunks are unharmed. Dropping the ancillary chunks leaves the picture identical and removes the workflow, which is what happens when a tool re-encodes a file.
+A single flipped bit is caught by exactly one chunk's CRC, and the image chunks are unharmed. Dropping the ancillary chunks leaves the picture identical and removes the workflow, which is what a tool that re-encodes a file does if it doesn't copy them. We did not test which tools do.
 
 ```text
 WAV: 32044 bytes = 44 header bytes + 32000 data bytes; RIFF size field 32036 = file size - 8

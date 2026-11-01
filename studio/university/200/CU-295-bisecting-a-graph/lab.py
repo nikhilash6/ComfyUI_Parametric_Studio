@@ -2,7 +2,7 @@
 import torch
 def walk(bad, n):
     c = 0
-    for i in range(1, n):
+    for i in range(1, n - 1):       # node 0 is fine and the last node is bad, so neither needs a check
         c += 1
         if i >= bad: return c
     return c
@@ -17,7 +17,7 @@ print("chain length   walking: worst, average    halving: worst")
 for n in (8, 16, 32, 64):
     W = [walk(b, n) for b in range(1, n)]; H = [halve(b, n) for b in range(1, n)]
     print(f"{n:<14} {max(W):<7} {sum(W) / len(W):<16.1f} {max(H)}")
-    if n == 16: assert max(H) == 4 and max(W) == 15
+    if n == 16: assert max(H) == 4 and max(W) == 14
 # PreviewAny calls torch.set_printoptions(edgeitems=6), then str(tensor).
 def text_of(t):
     torch.set_printoptions(edgeitems=6); s = str(t); torch.set_printoptions(); return s

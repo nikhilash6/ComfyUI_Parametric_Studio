@@ -13,7 +13,7 @@ They look related, and they work in different places, at different times.
 | Who made it | You, in the editor | A node's Python |
 | Where it lives | In the workflow file | Only in the running prompt |
 | When it becomes real nodes | Before the prompt is sent | While the prompt runs |
-| Does the server know? | No | Yes |
+| Does the executor know? | No | Yes |
 | Does the canvas change? | It shows one box | Nothing appears |
 | Can it decide the count at run time? | No | Yes |
 
@@ -23,7 +23,7 @@ So if you want to tidy your canvas, use a sub-graph. If you want a loop, or a no
 
 **Sub-graphs.** A saved workflow keeps definitions in `definitions.subgraphs`, each with a UUID, its own nodes and links, and input and output lists. The blueprints folder of ComfyUI holds real examples. `SubgraphManager` in `app/subgraph_manager.py` serves such files, and that is its job. Inner nodes run under compound execution ids such as `1:2:3`, per the Subgraph Developer Guide.
 
-The sub-graph node itself can't reach the executor: `validate_prompt` rejects any `class_type` that isn't in `NODE_CLASS_MAPPINGS`, and a UUID type isn't there. So the front end must flatten it first. We infer this from those two facts, and did not read the front-end source.
+The sub-graph node itself can't reach the executor: `validate_prompt` rejects any `class_type` that isn't in `NODE_CLASS_MAPPINGS`, and a UUID type isn't there. So the front end must flatten it first, and its `graphToPrompt` does, walking each node's inner nodes. We read that on the front end's main branch, and did not test it by hand.
 
 **Expansion.** A node returns `{"result": ..., "expand": graph}`. V3 nodes use `io.NodeOutput(..., expand=graph)`, and the schema must flag the node as expandable. In `execute` in `execution.py`:
 

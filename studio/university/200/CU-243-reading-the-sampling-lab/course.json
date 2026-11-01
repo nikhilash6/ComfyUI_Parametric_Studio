@@ -48,5 +48,8 @@
  "unchecked": [
   "We did not re-read all 720 atlas entries for this lesson. We say what the labels promise, and how many a second reader checked.",
   "The page's counts change when the atlas is rebuilt. These are the counts in the build we read."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

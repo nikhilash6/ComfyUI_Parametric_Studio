@@ -3,6 +3,7 @@ first of a batch of 4 equals a single: True
 third of a batch of 4 equals a single with that seed: False
 third of a batch of 4 equals seed + 2: False
 third, rebuilt with batch_index [2] (LatentFromBatch): True
+the same rebuild on (4, 4, 65, 65), 16900 values per item: False
 
 read from the PNG: {'seed': 424242, 'steps': 20, 'cfg': 7.0, 'sampler_name': 'euler', 'scheduler': 'karras'} {'ckpt_name': 'model.safetensors'}
 a screenshot, or a re-saved JPEG, has no such chunk: {}

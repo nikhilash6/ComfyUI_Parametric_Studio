@@ -40,12 +40,12 @@ The `CONST` class in `comfy/model_sampling.py` implements this: `noise_scaling` 
 
 ## What goes wrong
 
-- **Using one step because "flow is straight".** The lab's first row: one Euler step has an error of 1.67 on a mixture. Only reflowed models come close to doing that.
+- **Using one step because "flow is straight".** The lab's first row: one Euler step has an error of 1.67 on a mixture. The lab's last block shows a reflowed network getting close on this toy. Reflow is one route to few steps, not the only one.
 - **Using a noise-prediction schedule on a flow model.** `karras` gave a broken render on SD 3.5 on our one seed (CU-235).
-- **Using SD latents with an SD3 graph.** It needs its own 16-channel empty latent. `EmptySD3LatentImage` does that.
+- **Using SD latents with an SD3 graph.** An encoded SD latent has 4 channels and SD3 wants 16, and nothing converts it. An all-zero empty latent is the exception: `fix_empty_latent_channels` in `comfy/sample.py` widens it when sampling starts. `EmptySD3LatentImage` makes 16 channels from the start.
 - **Expecting a flow model to have σ up to 14.** Its range is about 0 to 1. Check typed-in schedule numbers.
 - **Setting shift by habit.** It's a real choice, and it changes where steps go. Change it on purpose and compare (CU-242).
-- **Calling a model "rectified" because it uses straight training pairs.** Liu et al.'s reflow is a second training round. Most flow models have not been through that, and we can't tell you which from their names.
+- **Calling a model "rectified" because it uses straight training pairs.** Liu et al.'s reflow is a second training round. As far as we know most flow models have not been through that, though we did not survey them, and you can't tell which from their names.
 
 ## Lab
 

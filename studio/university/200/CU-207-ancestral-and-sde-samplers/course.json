@@ -57,5 +57,8 @@
  "unchecked": [
   "The toy has one number per sample and a perfect denoiser, so its results do not settle whether noise helps on real models.",
   "The Karras et al. quote was checked at the first audit and not re-read this time."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

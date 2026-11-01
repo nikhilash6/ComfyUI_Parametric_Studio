@@ -45,13 +45,13 @@
    }
   },
   "4": {
-   "class_type": "ImageBatch",
+   "class_type": "BatchImagesNode",
    "inputs": {
-    "image1": [
+    "images.image0": [
      "1",
      0
     ],
-    "image2": [
+    "images.image1": [
      "3",
      0
     ]

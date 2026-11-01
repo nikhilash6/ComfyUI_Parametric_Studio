@@ -58,5 +58,8 @@
  "unchecked": [
   "The token counts assume one token per latent position for LTX and a 2 x 2 patch for Wan and H3. We read those in the model code, but did not run a model to count them.",
   "We did not measure quality. Nothing here says that any grid gives better motion than another."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

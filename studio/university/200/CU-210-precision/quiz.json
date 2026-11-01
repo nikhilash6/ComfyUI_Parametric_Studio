@@ -18,11 +18,11 @@
    "q": "Which is true of fp16 against bf16?",
    "options": [
     "They are identical",
-    "fp16 is more precise but overflows at 65,504, and bf16 has far more range but less precision",
+    "fp16 is more precise but tops out at 65,504, and bf16 has far more range but less precision",
     "bf16 is more precise",
     "fp16 has the larger range"
    ],
-   "answer": "fp16 is more precise but overflows at 65,504, and bf16 has far more range but less precision",
+   "answer": "fp16 is more precise but tops out at 65,504, and bf16 has far more range but less precision",
    "why": "The lab's table: epsilon 9.8e-4 against 7.8e-3, and largest 6.55e4 against 3.39e38."
   },
   {
@@ -51,12 +51,12 @@
    "q": "How can fp16 lead to a broken image?",
    "options": [
     "It cannot",
-    "A value above 65,504 becomes inf, and inf arithmetic gives NaN, which then spreads",
+    "A value past its limit becomes inf, and inf arithmetic gives NaN, which then spreads",
     "It uses too much memory",
     "It changes the seed"
    ],
-   "answer": "A value above 65,504 becomes inf, and inf arithmetic gives NaN, which then spreads",
-   "why": "The lab: 300² = inf, then normalising gives NaN."
+   "answer": "A value past its limit becomes inf, and inf arithmetic gives NaN, which then spreads",
+   "why": "The lab: 300² = 90,000, past the limit, so inf, then normalising gives NaN. Values from 65,520 up overflow, and those just above 65,504 round down to it."
   }
  ]
 }

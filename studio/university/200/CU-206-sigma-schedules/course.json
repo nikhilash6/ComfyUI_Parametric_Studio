@@ -56,5 +56,8 @@
  "unchecked": [
   "The statements about Karras et al.'s rho, about Esser et al.'s Figure 6, and about Sabour et al. were checked at the first audit and not re-read this time.",
   "The lab's error table is for a one-dimensional toy, so the ranking does not carry over to pictures."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

@@ -53,5 +53,8 @@
   "We did not run the VOID nodes or RAFT. We read what they load and call.",
   "The first version of this lesson named specific papers for Cosmos and Genmo. We could not confirm those numbers and removed them.",
   "A causal VAE has no future to leak from, but that alone doesn't prove less flicker. We make no claim that causal video VAEs flicker less."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

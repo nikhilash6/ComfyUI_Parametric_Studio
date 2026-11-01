@@ -52,5 +52,8 @@
  "unchecked": [
   "We did not render the same seed with and without a negative. All our Sampling Lab renders use one negative, so no picture here shows what a negative prompt adds.",
   "We did not measure how a zeroed negative and an encoded empty negative differ in a picture. We only read that their numbers differ."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

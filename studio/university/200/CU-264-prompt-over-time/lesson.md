@@ -4,7 +4,7 @@
 
 ## The idea
 
-Early steps work at high noise and decide the broad layout. Later steps work at low noise and decide detail. So you can use one prompt to lay things out and another to finish them.
+Early steps work at high noise and later steps at low noise. The usual description is that the early ones decide the broad layout and the later ones decide detail. We didn't test that for this lesson. It's why people use one prompt to lay things out and another to finish them.
 
 `ConditioningSetTimestepRange` takes `start` and `end`, and does almost nothing itself. It writes two keys into the dict. Then you `ConditioningCombine` the two prompts, and the sampler picks by noise level at every step.
 
@@ -32,7 +32,7 @@ On a flow model the scale differs. With shift 3, percent 0.5 is sigma 0.75, not 
 - **"I set 0.5 but it wasn't half my steps."** Expected. Count in the play, or use the lab's method for your scheduler.
 - **A gap between ranges.** With 0 to 0.4 and 0.6 to 1, some steps have no positive entry at all. Their positive prediction becomes zero, so make ranges meet exactly.
 - **Two range nodes in a row.** The second overwrites the first. They don't intersect. Check the dict (CU-260).
-- **The second prompt seems to do nothing.** It only runs at low noise, when the layout is already fixed. Start it earlier.
+- **The second prompt seems to do nothing.** It only runs at low noise, when the layout has usually settled. Start it earlier.
 - **Range on only the positive.** The negative keeps running through the whole schedule. That's fine, but know that it is doing so.
 - **Forgetting the Combine.** Two range nodes need to be one list before the sampler. Otherwise one of them isn't wired in at all.
 

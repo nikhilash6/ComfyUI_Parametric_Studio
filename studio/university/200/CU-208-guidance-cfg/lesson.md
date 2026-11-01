@@ -40,7 +40,7 @@ The formula has three places where other nodes can step in, and most of the rest
 
 - `sampler_pre_cfg_function` sees both predictions before the sum. APG and TCFG sit here.
 - `sampler_cfg_function` replaces the sum. RescaleCFG sits here.
-- `sampler_post_cfg_function` sees the result. CFGNorm, CFG-Zero-Star, PAG and SAG sit here.
+- `sampler_post_cfg_function` sees the result. CFG-Zero-Star, PAG and SAG sit here, and so does CFGNorm by default. With its `pre_cfg` input on, CFGNorm uses `sampler_cfg_function` instead.
 
 Here is the graph to change it in. The number is the `cfg` input on `KSampler`.
 

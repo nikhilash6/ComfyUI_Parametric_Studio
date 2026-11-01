@@ -53,12 +53,17 @@
    "claim": "Titles and the DiT and MM-DiT attributions come from the arXiv API.",
    "how": "docs",
    "ref": "https://arxiv.org/abs/2212.09748"
+  },
+  {
+   "claim": "The DiT paper zero-initialises the MLP's scale output, which it says makes the full block the identity at the start.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2212.09748"
   }
  ],
  "unchecked": [
-  "We describe adaLN-Zero from the DiT paper's summary and our memory of its block design, and did not reread the full paper; the code only shows the checkpoint's result, not its starting values.",
   "We did not run a real DiT in this lesson: every number is from toy sizes.",
-  "The statement that most newer models are DiTs is a reading of the comfy/ldm folder, not a count."
+  "The statement that most newer models are DiTs is a reading of the comfy/ldm folder, not a count.",
+  "The code only shows a loaded checkpoint, not its starting values, so the start at zero rests on the DiT paper."
  ],
  "kit": true
 }

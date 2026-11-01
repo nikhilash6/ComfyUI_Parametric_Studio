@@ -62,5 +62,8 @@
   "We have not run any 3D model for this lesson, since no 3D checkpoint is on our test machine. The pictures are from ComfyUI's template library, and were not rendered by us.",
   "The memory table counts a thin surface band with a rough formula. It shows how each kind grows, not exact file sizes.",
   "The first version of the lab counted faces of a shell and printed about 3, and blamed the stairs. Counting one wall gives about 1.5. The first version also stated that Dual Contouring guarantees a manifold mesh for any input. We removed that, since core's manifold option applies only in sdf mode."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

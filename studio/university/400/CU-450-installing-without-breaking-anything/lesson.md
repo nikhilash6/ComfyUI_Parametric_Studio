@@ -14,16 +14,16 @@ Installing a pack can do three kinds of damage. Keep them separate, since each n
 
 **Layer 1: read it first.** Everything in CU-380. It costs nothing, and it's the only layer that happens before any code runs.
 
-**Layer 2: a dry run, with constraints.** `pip install --dry-run` prints what it would do and does nothing. A constraints file pins the versions you depend on: as pip's guide says, constraints "only control which version of a requirement is installed, not whether it is installed or not". So:
+**Layer 2: a dry run, with constraints.** `pip install --dry-run` prints what it would install and installs nothing. It still has to resolve, so it can download packages, and for a package that comes only as source it may run that package's build code to read its metadata. Add `--only-binary :all:` if you want to rule that out. A constraints file pins the versions you depend on: as pip's guide says, constraints "only control which version of a requirement is installed, not whether it is installed or not". So:
 
 ```
 python -m pip freeze > constraints.txt                  # once, while everything works
 pip install --dry-run -c constraints.txt -r pack/requirements.txt
 ```
 
-If it can't resolve, that's your answer, and it cost nothing. A failure on paper is good news. Packages you truly can't let move are worth keeping as a short list, and checking against the report by name. Be aware that a pack can also call pip from its own code at import, which no dry run will see, and that's why you read first.
+If it can't resolve, that's your answer, and nothing in your environment moved. A failure on paper is good news. Packages you truly can't let move are worth keeping as a short list, and checking against the report by name. Be aware that a pack can also call pip from its own code at import, which no dry run will see, and that's why you read first.
 
-**Layer 3: a separate environment.** Don't touch the venv you use every day. A venv gives you "its own independent set of Python packages". So make another, or copy what you have, and install there.
+**Layer 3: a separate environment.** Don't touch the venv you use every day. A venv gives you "its own independent set of Python packages". So make another and install there. To start from what you have, reinstall your frozen list into it: the venv docs say an environment is "Not considered as movable or copyable", so recreate it and don't copy the folder.
 
 **Layer 4: a sandbox.** Run the test copy in a container, or at least apart from your main install. Good choices:
 
@@ -80,7 +80,7 @@ dry run with the constraints file
 a failure in the second list is good news: it happened on paper, not in your environment
 ```
 
-Pack B moves a package you didn't protect, so it's your call. Packs C and D now fail instead of moving what you need. That failure happened on paper.
+Pack B moves a package you didn't protect, so it's your call. The lab's constraints file is a short one that pins only torch, numpy and safetensors. A file from `pip freeze` pins everything installed, so it would stop Pack B as well. Packs C and D now fail instead of moving what you need. That failure happened on paper.
 
 ```text
 what each layer of the method protects against

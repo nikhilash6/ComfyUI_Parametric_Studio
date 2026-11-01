@@ -4,7 +4,7 @@ only what is new   would move: nothing
 
 table: {'KSampler': 'core', 'Blur': 'pack_b'}
 pack_a tried to replace core KSampler: ignored
-so prefix your ids: MyPack_Blur cannot clash
+so prefix your ids: MyPack_Blur clashes only if another pack picks the same prefix
 
 pack_a loaded
 pack_b IMPORT FAILED: ModuleNotFoundError: No module named 'cv2'

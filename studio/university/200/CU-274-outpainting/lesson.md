@@ -27,7 +27,7 @@ rounded (VAE route)     0.00 0.00 0.00 0.00 1.00 1.00 1.00 1.00 1.00
 rounded and grown by 6  0.00 0.00 0.00 0.00 1.00 1.00 1.00 1.00 1.00
 ```
 
-At the join the ramp starts at 1 and falls away as a square: ((f − d) / f)², with d the distance from the join and f the `feathering`. It's quadratic, so it falls quickly. At feathering 40 it has already dropped to 0.25 by column 492, 20 pixels in.
+The ramp falls away from the join as a square: ((f − d) / f)², with d the distance from the join and f the `feathering`. It's quadratic, so it falls quickly. At feathering 40 it has already dropped to 0.25 by column 492, 20 pixels in.
 
 Now look at the second and third rows. `VAEEncodeForInpaint` rounds the mask (CU-273), so most of the ramp is lost. Only the part above one half survives, and that's about 29% of the feathering's width, because √0.5 is 0.71. Then the growth adds 2 pixels, this way.
 
@@ -43,7 +43,7 @@ feathering   soft mask above 0   rounded   rounded, grown by 6   feather on?
 256          0                   0         2                     no: hard edge
 ```
 
-So feathering isn't how far the blend goes on this route. It's how many of your pixels get wiped and redrawn: 13 at the default. A soft route like `InpaintModelConditioning` keeps the ramp.
+So feathering isn't how far the blend goes on this route. It's how many of your pixels get wiped and redrawn: 13 at the default, with the pad on the right, as here. A pad on the bottom also gives 13. On the left or top the real node gives 15: d starts at 0 there, not 1, so rounding keeps 12, and the even box reaches 3 pixels that way. Our `d_outpaint` graph sets `grow_mask_by` to 8, which makes it 14 on the right. A soft route like `InpaintModelConditioning` keeps the ramp.
 
 {{play:outpad}}
 

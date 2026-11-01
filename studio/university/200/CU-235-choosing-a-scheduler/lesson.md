@@ -49,7 +49,7 @@ And a reassuring one: `sgm_uniform` and `simple` have almost the same lists (mea
 1. Start with what the model's own example uses. If you have none, read the list on that family first.
 2. Rule out lists with a big last jump or a start below the top, unless you want that.
 3. Compare a few on several seeds at equal steps. Change only the scheduler.
-4. Remember the sampler is part of the test. CU-206 shows `normal` six times worse than `exponential` with DPM++ 2M at 10 steps on a toy, and about equal with Euler.
+4. Remember the sampler is part of the test. CU-206 shows `normal` six times worse than `exponential` with DPM++ 2M at 10 steps on a toy, and slightly better than it with Euler.
 5. Want to bend one? Use `KarrasScheduler`, which shows rho, as in this graph.
 
 {{graph:sd15_karras_rho}}

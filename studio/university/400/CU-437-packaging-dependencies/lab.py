@@ -20,7 +20,7 @@ def load(pack, mapping):
         else: log.append(f"{pack} tried to replace core {name}: ignored")
 load("pack_a", {"KSampler": "pack_a", "Blur": "pack_a"}); load("pack_b", {"Blur": "pack_b"})
 print("\ntable:", table); print(log[0]); assert table == {"KSampler": "core", "Blur": "pack_b"}
-print("so prefix your ids: MyPack_Blur cannot clash")
+print("so prefix your ids: MyPack_Blur clashes only if another pack picks the same prefix")
 # An import error costs the whole pack, and nothing else.
 def try_import(name, fn, result):
     try: fn(); result.append((name, "loaded"))

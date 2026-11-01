@@ -50,6 +50,16 @@
    "claim": "Both graphs validate.",
    "how": "run here",
    "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "With a mismatched shape the real calculate_weight logs the warning and adds nothing, but still multiplies the weight by strength_model: 10 became 5 at ratio 0.5.",
+   "how": "run here",
+   "ref": "comfy/lora.py:calculate_weight"
+  },
+  {
+   "claim": "Merging rounded parents grows the error by 1.38 in FP8 while their rounding errors are unrelated (correlation 0.006). An even grid with unrelated parents gave 1.41, and FP8 parents 1% apart gave 1.04.",
+   "how": "run here",
+   "ref": "side script on the lab's fp8 function"
   }
  ],
  "unchecked": [
@@ -57,5 +67,8 @@
   "We ran no real merge and no render here. Whether a merged image model looks good is untested.",
   "Those two papers study classifiers and language models, mostly. They say nothing about image-generation checkpoints, so 'it often helps' is not shown for them.",
   "That lerp shrinking weights by a tiny amount harms pictures is not shown. We removed the draft's claims about grey noise, black images and washed-out output."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

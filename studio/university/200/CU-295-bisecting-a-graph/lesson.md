@@ -6,13 +6,13 @@
 
 The worst bugs don't raise an error. The picture is just wrong. Don't stare at the whole graph, and don't change settings at random. Treat it like a leak in a long pipe: check the middle. If the water is clean there, the leak is downstream, and you can forget the first half. If it's dirty, forget the second half. Each check throws away half of what's left.
 
-For a chain of 16 nodes, walking from the start takes up to 15 checks, and halving takes at most 4.
+For a chain of 16 nodes, with the first known good and the last known bad, walking from the start takes up to 14 checks, and halving takes at most 4.
 
 {{play:f_bisect}}
 
 ## Your probes
 
-A node's output is invisible until something shows it. You have three good probes:
+A node's output is invisible until something shows it. You have four good probes:
 
 | To see | Use | It shows |
 |---|---|---|
@@ -21,7 +21,7 @@ A node's output is invisible until something shows it. You have three good probe
 | Anything | `PreviewAny` (shown as Preview as Text) | Text: numbers, strings, even tensors |
 | A size | `GetImageSize`, `GetLatentSize` | Width, height, batch |
 
-Probes are output nodes, so wiring one in makes its branch run. A preview also turns "a node with no path to an output" into one that runs, which is useful when you are unsure whether a branch is doing anything at all.
+The three previews are output nodes, so wiring one in makes its branch run. The size nodes aren't: a graph with only `GetImageSize` at the end gets `prompt_no_outputs`, so wire a number from them into `PreviewAny`. A preview also turns "a node with no path to an output" into one that runs, which is useful when you are unsure whether a branch is doing anything at all.
 
 This graph has a preview at the midpoint and a text probe at the end. Open it, and move the probes about.
 
@@ -82,10 +82,10 @@ The lab counts the checks, walking and halving, on a chain where node 0 is fine 
 
 ```text
 chain length   walking: worst, average    halving: worst
-8              7       4.0              3
-16             15      8.0              4
-32             31      16.0             5
-64             63      32.0             6
+8              6       3.9              3
+16             14      7.9              4
+32             30      16.0             5
+64             62      32.0             6
 ```
 
 Then the text trap. `PreviewAny` sets `edgeitems=6` and calls `str`, so the lab does the same:

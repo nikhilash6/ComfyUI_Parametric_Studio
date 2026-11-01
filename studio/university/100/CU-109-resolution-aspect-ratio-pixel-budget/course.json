@@ -56,5 +56,8 @@
  "unchecked": [
   "Nothing here tests picture quality at any size.",
   "We did not measure real memory use at each size."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

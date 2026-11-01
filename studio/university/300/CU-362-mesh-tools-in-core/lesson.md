@@ -46,7 +46,7 @@ Parameterization is an orthographic PCA projection, falling back to ABF or LSCM.
 - **Thousands of tiny charts, one per triangle.** The input isn't welded. The tooltip says to raise `weld_distance` to about 0.001. `VoxelToMesh` in `basic` mode gives unwelded output like this.
 - **Decimate does nothing.** It's already under `target_face_count`. Or the target is 0, which disables it.
 - **The texture is scrambled after a cleanup.** You remeshed or decimated after unwrapping. Unwrap last, then bake.
-- **Remesh gives a double shell.** `udf` on a closed input also gives an inner shell, by the docstring. Use the options to drop enclosed components, or use `sdf` or `solid`.
+- **Remesh gives a double shell.** `udf` on a closed input also gives an inner shell, by the docstring. We saw it on a sphere at resolution 32, with radii from 0.93 to 1.07 and 16,008 faces against 7,980 in `sdf`. The graph above stays on `udf` with those options off, so expect this from it on a closed mesh. Use the options to drop enclosed components, or use `sdf` or `solid`.
 - **Sharp edges go soft.** Remesh rebuilt them at the grid's resolution. Raise `resolution`, or try `sdf`, which turns on sharp-feature recovery.
 - **Out of memory on remesh.** Lower `resolution`. Doubling it costs eight times the memory floor.
 - **Thin hair or fins vanish on decimate.** Stay with `midpoint`, or raise the target. Check the worst case and not only the mean.

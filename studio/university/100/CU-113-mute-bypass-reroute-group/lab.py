@@ -1,5 +1,5 @@
 # CU-113 lab: what the editor sends for each state of a small graph. A short port of graphToPrompt and ExecutableNodeDTO from the ComfyUI front end, without subgraphs.
-# Read from the front end's main branch on 2026-11-01. Not run in the real editor. The "server says" column follows validate_prompt in ComfyUI v0.43.0.
+# Read from the front end's main branch on 2026-11-01. Not run in the real editor. The "server says" column is a stand-in for validate_prompt in ComfyUI v0.43.0: it checks outputs and wires, not widget values.
 import json, copy
 ALWAYS, NEVER, BYPASS = 0, 2, 4   # LGraphEventMode
 

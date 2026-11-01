@@ -65,5 +65,8 @@
   "The draft said joint attention is necessary for text in pictures and cross-attention is weaker. We removed both. The paper reports better text and typography for its whole model, which isn't a test of attention alone.",
   "The pair counts compare one block only, at one size. A real U-Net has attention at several resolutions, and we didn't add them up.",
   "No render compares the two, because a model can't be switched between them."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

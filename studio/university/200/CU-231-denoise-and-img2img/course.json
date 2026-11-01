@@ -39,6 +39,11 @@
    "ref": "comfy/model_sampling.py:EPS.noise_scaling"
   },
   {
+   "claim": "With zero noise, noise_scaling at the top sigma returns the latent on EPS and 0 on CONST with shift 3, whose sigma_max is 1.",
+   "how": "run here",
+   "ref": "comfy.model_sampling in a Python session"
+  },
+  {
    "claim": "Align Your Steps cuts to round(steps × denoise) steps.",
    "how": "source",
    "ref": "comfy_extras/nodes_align_your_steps.py"
@@ -52,5 +57,8 @@
  "unchecked": [
   "The 'still the left subject' column comes from a toy with two subjects and a perfect denoiser. Where a real picture changes its subject depends on the model, the prompt and the picture.",
   "We did not render an image to image sweep for this lesson, so the common ranges in the prose are starting points, not measurements."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

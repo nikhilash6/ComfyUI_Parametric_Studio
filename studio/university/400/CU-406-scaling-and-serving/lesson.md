@@ -10,7 +10,7 @@ One ComfyUI process runs one job at a time. Its queue holds the rest. To serve m
 - **Queue well.** Know how full is too full.
 - **Run more workers**, usually one process per GPU, and route jobs among them. Giving each worker its own share of the work is what people mean by sharding.
 
-Model loading usually dominates. Moving a model into memory can cost far more than the job itself. So the routing that keeps models in place does best.
+When jobs switch models, loading can dominate, since moving a model into memory can cost more than the job itself. In our simulation below, the routing that keeps models in place does best.
 
 ## The mechanism
 

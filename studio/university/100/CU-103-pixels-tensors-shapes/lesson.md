@@ -43,7 +43,7 @@ In `comfy/sd.py`, `VAE.encode` crops with `vae_encode_crop_pixels`, calls `moved
 
 ## What goes wrong
 
-- **`expected input to have 3 channels` or a similar error in your own node.** The tensor is channels last and the layer wants channels first. Use `movedim(-1, 1)`.
+- **`expected input[1, 512, 512, 3] to have 3 channels, but got 512 channels instead` in your own node.** The tensor is channels last and the layer wants channels first. Use `movedim(-1, 1)`.
 - **The picture comes out as coloured stripes or mixed-up patches, and no error.** Somewhere the axes were relabelled with `reshape` when they should have been moved. The lab shows that a convolution takes the scrambled tensor without complaint.
 - **A size off by a few pixels.** A size that isn't a multiple of 8 is rounded down by the empty latent node, and cropped from both sides by VAE encode. Pick multiples of 8.
 - **An error about the number of dimensions.** An IMAGE always has a batch axis, even for one picture. A mask has no channel axis. In your own node, `image[None,]` adds a batch axis and `image[0]` takes one out.

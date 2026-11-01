@@ -39,16 +39,16 @@
   {
    "q": "A decoder reaches 3 positions each side. Which tile overlap removes the error at a hard join in the lab?",
    "options": [
-    "4 or more",
-    "0",
+    "6 or more",
     "2",
+    "4",
     "Only 12"
    ],
-   "answer": "4 or more",
-   "why": "Error is 0.136897 at 0, 0.036592 at 2, and zero from 4 up."
+   "answer": "6 or more",
+   "why": "Each tile has to reach 3 past the join, so the two tiles share 6. Error is 0.136897 at 0, 0.034534 at 2, 0.036592 at 4, and zero from 6 up."
   },
   {
-   "q": "Why does Wan 2.2's decode estimate have no frame count?",
+   "q": "What in the code fits Wan 2.2's decode estimate having no frame count?",
    "options": [
     "It decodes frame by frame with a cache of past features, a benefit of being causal",
     "Its videos are short",
@@ -56,7 +56,7 @@
     "It's a bug"
    ],
    "answer": "It decodes frame by frame with a cache of past features, a benefit of being causal",
-   "why": "decode loops over latent frames with feat_cache, and memory_used_decode leaves out T."
+   "why": "decode loops over latent frames with feat_cache, and memory_used_decode leaves out T. The code gives no reason, so linking the two is our reading."
   }
  ]
 }

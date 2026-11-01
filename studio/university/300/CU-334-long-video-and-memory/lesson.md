@@ -50,7 +50,7 @@ Our gallery's short film came from such a recipe, with a prompt about a lampligh
 
 - **Out of memory on the first sampling step, and you add tiles.** Tiles only act at decode. Lower the length or the size.
 - **Tiles change nothing on H3.** They can't: see above. Use plain `VAEDecode`.
-- **A jump every second or so in a tiled LTX decode.** Those are the temporal tile joins. The graph's overlap is one latent frame. Try more, with `temporal_overlap` 16, which is two latent frames, and see if it clears.
+- **A jump about every 2.3 seconds in a tiled LTX decode.** Those are likely the temporal tile joins: at 24 fps, tiles of 8 latent frames with an overlap of one start every 56 frames. That overlap, the graph's, blends a single frame at each join. Try more, with `temporal_overlap` 16, which is two latent frames and blends 9, and see if it clears.
 - **Each clip drifts further from the first.** Every link in a chain starts from a generated frame, so errors build up. Our earlier notes record identity falling in a 2-clip test on H3, and colour drift being a known issue. Restate the description in each prompt and use a fixed reference where the model allows it.
 - **A stutter at every join.** A frame is repeated. Drop the first frame of each new clip, as the graph above does.
 - **RAM runs out at the end, with VRAM fine.** 60 seconds at 1920 x 1088 is 33.6 GiB of float32. Save each clip to disk and join files, not batches.

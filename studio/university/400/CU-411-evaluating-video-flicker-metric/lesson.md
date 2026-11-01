@@ -38,7 +38,7 @@ We ran the plain second difference over our web copies. The clips below are comp
 | H3, chef with fire | 6.33 | 19.01 |
 | H3, dragon in a storm | 8.21 | 27.84 |
 
-Sort by what's in the shot: a slow push-in on a still street at the top, then fire, waves, and a storm at the bottom. Those may be real flicker, or just fast detail. On this score alone, you can't tell. Our check's limit of 6.0 is labelled a starting guess in the code, and the chef and dragon clips would fail it.
+Sort by what's in the shot: a slow push-in on a still street at the top, then waves, fire and a storm at the bottom. Those may be real flicker, or just fast detail. On this score alone, you can't tell. Our check's limit of 6.0 is labelled a starting guess in the code, and the chef and dragon clips would fail it.
 
 {{video:showcase/v_h3_dragon.mp4|H3. Prompt: a huge gold-scaled dragon uncoils around a black stone tower during a thunderstorm. It has the highest score in the table. Watch it and decide whether that's flicker or storm.}}
 

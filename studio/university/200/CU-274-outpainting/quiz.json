@@ -15,7 +15,7 @@
    "why": "new_image starts as ones times 0.5, and your picture is copied in."
   },
   {
-   "q": "You pad a 512 x 512 picture and set feathering 40, then use VAEEncodeForInpaint with grow_mask_by 6. How many of your pixels get repainted, counted from the join?",
+   "q": "You pad a 512 x 512 picture on the right and set feathering 40, then use VAEEncodeForInpaint with grow_mask_by 6. How many of your pixels get repainted, counted from the join?",
    "options": [
     "About 40",
     "About 13",
@@ -23,7 +23,7 @@
     "All of them"
    ],
    "answer": "About 13",
-   "why": "Rounding keeps only the ramp above one half, 11 pixels, and growth adds 2. The lab's table says 13."
+   "why": "Rounding keeps only the ramp above one half, 11 pixels, and growth adds 2. The lab's table says 13. On the left or top it's 15."
   },
   {
    "q": "You pad an 80 x 512 picture with feathering 40. What happens?",

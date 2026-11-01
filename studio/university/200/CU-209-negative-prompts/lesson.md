@@ -71,7 +71,7 @@ cfg 3, positive dog, negative fox        0.000  1.000  0.000  13.00
 
 Same positive, same cfg: a specific negative pushes more than a neutral one, because the difference between dog and fox is larger than between dog and everything. That is a reason a long negative prompt can change the look of an image, not just remove things from it.
 
-A 1-D or 2-D toy overstates the distance, since real images have many other directions to absorb the push, and real pipelines keep the result in range through the VAE. Read the direction of the effect, not its size.
+This 2-D toy probably overstates the distance. Real images have many other directions to absorb the push, and the VAE's output step clips decoded pixels into range, though that clip doesn't change the latent. We didn't measure this. Read the direction of the effect, not its size.
 
 ## What is contested
 

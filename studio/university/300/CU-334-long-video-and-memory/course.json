@@ -65,5 +65,8 @@
   "The notes on chained clips and on context windows are from our earlier studio's records, on another software stack. Treat them as leads. We did not rerun them.",
   "We did not measure how visible seams are for any overlap. The lab counts work only.",
   "Whether the attention pairs in the table match real memory depends on the attention code. Real models may window or batch; the number is a count, not a measurement."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

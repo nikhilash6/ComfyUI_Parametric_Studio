@@ -61,5 +61,8 @@
   "The floors are for a one-dimensional mixture. A real model's floor is not known, and it depends on the data.",
   "We read core's trainer and did not run a flow model through it for this lesson. That its weighting differs from any published recipe is arithmetic, and we have no result on whether it matters for pictures.",
   "Whether a particular published trainer uses velocity loss is outside this lesson, since we did not read those trainers."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

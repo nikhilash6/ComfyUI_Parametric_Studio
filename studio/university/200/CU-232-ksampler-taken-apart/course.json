@@ -54,5 +54,8 @@
  ],
  "unchecked": [
   "We did not render KSampler and SamplerCustomAdvanced side by side for this lesson. That they match with euler is read from the code and shown on a toy with the same formulas."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

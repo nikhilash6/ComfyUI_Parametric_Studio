@@ -2,12 +2,14 @@ dilations 1, 2, 4 ... 512, kernel 2: 1024 samples seen, against 11 with no dilat
 
 model                                            calls for 30 s   how
 WaveNet, one call per sample at 16 kHz           480,000          sequential
-MusicGen, 50 frames/s x 4 codebooks              6,000            sequential
+MusicGen, delay pattern, 50 steps/s              1,500            sequential
 Music 3 AR stage, main model, 25 frames/s        750              sequential
 Music 3 DiT, 30 steps, CFG on                    60               each call covers the song, in windows
 Stable Audio style diffusion, 30 steps, CFG on   60               each call covers the clip
 
 at 120 s the sequential counts multiply by 4; the diffusion step count does not change, each call just gets longer
+
+Music 3 DiT passes per model call, window 8 s, hop 4 s: 30 s -> 7, 120 s -> 30
 
 flow matching on 4 latent values, x_sigma = (1 - sigma) x + sigma noise:
 sigma 1.0 : +1.541 -0.293 -2.179 +0.568

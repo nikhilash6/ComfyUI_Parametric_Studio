@@ -67,5 +67,8 @@
   "The zero-convolution gradient argument is ours, since we did not read the paper's supplement. The lab checks it on a toy.",
   "Quality comparisons between adapter designs, and between control windows, are not tested: see What is contested.",
   "IP-Adapter in ComfyUI comes from custom nodes. We recommend none in this lesson."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

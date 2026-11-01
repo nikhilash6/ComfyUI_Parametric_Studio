@@ -55,15 +55,18 @@ Each loader reads one folder type: `checkpoints`, `loras`, `vae`, `text_encoders
 
 ## A broken file
 
-These appear during the run, when the loader opens the file. Here's what we got from three bad files we made:
+These appear during the run, when the loader opens the file. Here's what we got from four bad files we made:
 
 | The file | The error |
 |---|---|
 | Cut short by a failed download | `Error while deserializing header: incomplete metadata, file not fully covered` |
-| Only the first few bytes | `Error while deserializing header: invalid header length` |
+| Only the first few bytes, 8 or more | `Error while deserializing header: invalid header length` |
+| Fewer than 8 bytes, or empty | `Error while deserializing header: header too small` |
 | A web page saved under the model's name | `Error while deserializing header: header too large` |
 
-All three mean the same thing: this isn't a whole safetensors file. Look at the size first. A checkpoint of a few KB is a saved web page, often a login page. Then download it again, and compare the hash.
+All of them mean the same thing: this isn't a whole safetensors file. Look at the size first. A checkpoint of a few KB is a saved web page, often a login page. Then download it again, and compare the hash.
+
+Those words come from the safetensors library, which is what loaded the file on our CPU run. With dynamic VRAM on, `load_safetensors` in `comfy/utils.py` reads the file itself and words it differently, such as `The safetensors header is too large.` and `The safetensors header is incomplete.` We read that path, and did not run it.
 
 The lab reads a file's first bytes itself, so you can see why it says "too large".
 
@@ -71,7 +74,8 @@ The lab reads a file's first bytes itself, so you can see why it says "too large
 
 The file opens fine and ComfyUI can't work out what it is.
 
-- `ERROR: Could not detect model type of: <path>` in a checkpoint loader. A LoRA, a bare diffusion model or a VAE was put in the `checkpoints` folder. A diffusion model on its own needs `UNETLoader` and the `diffusion_models` folder.
+- `ERROR: Could not detect model type of: <path>` in a checkpoint loader. A LoRA or a VAE was put in the `checkpoints` folder. We got this from small files of both kinds. If the file name holds `lora`, a HINT line says so.
+- `Warning, This is not a checkpoint file, trying to load it as a diffusion model only.` A bare diffusion model the loader can recognise loads anyway, with no text encoder and no usable VAE, so it fails later, as in the next item. We read this in `load_state_dict_guess_config`, and did not run it. Use `UNETLoader` and the `diffusion_models` folder.
 - `ERROR: clip input is invalid: None`, with the note `your checkpoint does not contain a valid clip or text encoder model`. Your checkpoint holds no text encoder. Add a text encoder loader.
 
 Other wrong-kind mistakes appear as shape errors. See CU-292.

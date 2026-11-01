@@ -62,5 +62,8 @@
   "We did not read how Dynamic VRAM's memory is reported to torch or nvidia-smi, so a reading on that path may differ from what the allocator model suggests.",
   "The toy allocator keeps the idea of reserved memory and leaves out everything else a real allocator does."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

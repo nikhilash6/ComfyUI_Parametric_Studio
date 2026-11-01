@@ -10,5 +10,5 @@ a second SetTimestepRange keeps (0.3, 0.9) and forgets (0, 0.5)
 ZeroOut: largest value 0.0   shape unchanged: True
 
 what the sampler turns the list into: a list of plain dicts
-['area', 'cross_attn', 'end_percent', 'model_conds', 'pooled_output', 'set_area_to_bounds', 'start_percent', 'strength']
-['cross_attn', 'model_conds', 'pooled_output']
+['area', 'cross_attn', 'end_percent', 'model_conds', 'pooled_output', 'set_area_to_bounds', 'start_percent', 'strength', 'uuid']
+['cross_attn', 'model_conds', 'pooled_output', 'uuid']

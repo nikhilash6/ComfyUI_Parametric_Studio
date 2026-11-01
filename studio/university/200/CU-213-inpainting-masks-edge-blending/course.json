@@ -59,5 +59,8 @@
  "unchecked": [
   "The lab uses a stand-in model, so it says nothing about how a seam looks in a real image: see What is contested.",
   "We do not say ComfyUI's blend is RePaint. The mechanism is of the same kind, and the code does not cite it."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

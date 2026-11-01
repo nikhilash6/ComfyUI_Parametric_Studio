@@ -14,6 +14,7 @@ shape                  values per item  multiple of 16  picked item equals the b
 (4, 4, 65, 65)         16900            False           False
 (4, 4, 66, 65)         17160            False           False
 (4, 16, 65, 65)        67600            True            True
+at 65 x 65 cells, batch item 0 equals the single image: False
 seed_behavior fixed, batch_index [0,0,0,0], all four the same: True
 
 power in eight bands, low frequency first, 1.00 is a fair share

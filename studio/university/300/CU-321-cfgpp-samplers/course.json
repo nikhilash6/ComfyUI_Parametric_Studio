@@ -52,5 +52,8 @@
   "One render, one seed. We have no CFG++ render at another cfg, so no picture here shows it overshooting.",
   "The toy's mapping to plain cfg differs from the paper's, as expected for a toy. Don't use either as an exact conversion.",
   "We read the Euler CFG++ code closely. We read the other CFG++ samplers only far enough to see them use the same flag, and did not port them."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

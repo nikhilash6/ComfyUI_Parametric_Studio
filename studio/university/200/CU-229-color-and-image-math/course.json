@@ -35,9 +35,9 @@
    "ref": "the graph b_blend_light, and the nodes in a Python session"
   },
   {
-   "claim": "LoadImage divides by 255 in float32, and SaveImage clips and casts to uint8.",
-   "how": "source",
-   "ref": "nodes.py"
+   "claim": "LoadImage goes first through VideoFromFile, which for 8-bit formats divides by 255 in float32. PNG and JPEG files came back with EXIF orientation applied, all 256 codes unchanged after SaveImage's cast, and the same numbers with a color profile embedded. SaveImage clips and casts to uint8.",
+   "how": "run here",
+   "ref": "comfy_api.input_impl.VideoFromFile in a Python session, and nodes.py"
   },
   {
    "claim": "ImageBlend does a lerp and clamps.",
@@ -51,8 +51,11 @@
   }
  ],
  "unchecked": [
-  "We assume the stored codes are sRGB, which is the usual case. The code we read does not handle other profiles, and we did not test a file with one.",
+  "We assume the stored codes are sRGB, which is the usual case. Our profile test used one synthetic profile on PNG and JPEG. We did not test a real wide-gamut file, or files above 8 bits.",
   "We did not measure the latent space of any model, so the lesson says nothing about what a VAE does to colour.",
   "The truncation figures are for uniformly random values, and real images are not uniform."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

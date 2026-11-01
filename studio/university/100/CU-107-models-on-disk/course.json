@@ -23,14 +23,19 @@
  ],
  "verified": [
   {
-   "claim": "load_torch_file uses safe_open for .safetensors and .sft, and torch.load with weights_only=True for the rest.",
+   "claim": "load_torch_file uses load_safetensors when DynamicVRAM is active and safe_open otherwise for .safetensors and .sft, and torch.load with weights_only=True for the rest.",
    "how": "source",
    "ref": "comfy/utils.py:load_torch_file"
   },
   {
-   "claim": "HeaderTooLarge and MetadataIncompleteBuffer are turned into these two messages.",
+   "claim": "load_safetensors raises these two messages, and the safe_open route adds them only when the library's error holds the names HeaderTooLarge or MetadataIncompleteBuffer.",
    "how": "source",
-   "ref": "comfy/utils.py:_invalid_safetensors_error"
+   "ref": "comfy/utils.py:load_torch_file"
+  },
+  {
+   "claim": "On the safe_open route with safetensors 0.9.0-rc.1, a cut file and an absurd header length gave the library's own words, without ComfyUI's added text. The library also refused a hole, a wrong shape and a numeric metadata value.",
+   "how": "run here",
+   "ref": "comfy.utils.load_torch_file on damaged files, on a CPU"
   },
   {
    "claim": "SD15 expects a context of 768, and SDXL a context of 2048 and an extra vector of 2816. matches compares every listed entry.",
@@ -55,6 +60,9 @@
  ],
  "unchecked": [
   "The lab's matcher is a tiny stand-in. We did not load real SD 1.5 and SDXL files for this lesson; the shapes are those the family classes list.",
-  "We did not cause the two ComfyUI error messages with damaged real files."
- ]
+  "We read the load_safetensors route in the source and did not run it, because comfy-aimdo was not initialised in our CPU test."
+ ],
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

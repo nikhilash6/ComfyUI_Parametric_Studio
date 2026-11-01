@@ -27,7 +27,7 @@ print(f"\nhit on a bad line {tp}, hit on a fine line {fp}, clean on a bad line {
 assert fp >= 5 and fn >= 4
 print(f"of {tp + fp} hits, {fp} were false alarms. of {fn + tn} clean lines, {fn} were bad")
 print("these are our own samples, picked to show both mistakes. The counts say nothing about real packs.")
-print("\nadding patterns moves the mistakes, it does not end them")
+print("\nadding a pattern catches some misses, it does not end the mistakes")
 PATS["loaders"] = r"pickle\.load|weights_only=False|query\["
 fn2 = sum(1 for b, l in SAMPLES if b and not scan(l)); fp2 = sum(1 for b, l in SAMPLES if not b and scan(l))
 print(f"with a loaders pattern: clean on a bad line {fn2}, hit on a fine line {fp2}")

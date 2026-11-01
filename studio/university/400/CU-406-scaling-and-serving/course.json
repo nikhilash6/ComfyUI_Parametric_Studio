@@ -45,7 +45,8 @@
   "All timings are simulated with sizes we chose. No real server was load-tested.",
   "We did not run two workers behind a router.",
   "We found no route that reports loaded models among those we read, but we did not read every route in the app folder.",
-  "That dropping a connection doesn't cancel a job is from reading the worker loop, not a test."
+  "That dropping a connection doesn't cancel a job is from reading the worker loop, not a test.",
+  "How much a model load costs on real hardware was not measured. The 20 s load in the lab is a number we chose."
  ],
  "kit": true
 }

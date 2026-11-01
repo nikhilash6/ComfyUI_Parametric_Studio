@@ -48,7 +48,7 @@ The error box also shows the failing node's id and type, and `current_inputs` ho
 
 Each message here is real torch wording, made in the lab. The fix depends on which numbers appear.
 
-**`The size of tensor a (X) must match the size of tensor b (Y) at non-singleton dimension N`.** Two tensors added or multiplied. Find N in the table above. At dimension 0 it's a batch size. At the last two, it's height or width. At dimension 1 of a latent, it's the family.
+**`The size of tensor a (X) must match the size of tensor b (Y) at non-singleton dimension N`.** Two tensors added or multiplied. Find N in the table above. At dimension 0 it's a batch size. On a latent, dimension 1 is the family, and the last two are height and width. On an IMAGE, dimensions 1 and 2 are height and width, and the last is channels.
 
 **`Sizes of tensors must match except in dimension 0`.** Things being stacked into a batch. All must be the same size, apart from the batch axis.
 
@@ -75,7 +75,7 @@ This surprised us. We tried to make core nodes fail on mismatched sizes, and mos
 | `LatentBatch` | 8 by 8, 16 by 16 latents | (2, 4, 8, 8) |
 | `ImageBatch` | RGB, RGBA | (2, 64, 64, 4) |
 
-That is kind, until you wonder why your picture is squashed. A silent resize can stretch an image out of shape. And when a size error does appear later, the cause may be several nodes upstream. Run this graph, and read what comes out.
+That is kind, until you wonder why your picture lost its edges. `ImageBatch`, `ImageBlend` and `LatentAdd` crop the second input to the first one's shape, then scale it: in our run, a gradient 128 wide and 64 tall kept only its middle half. `JoinImageWithAlpha` doesn't crop, so a mask of another shape gets stretched. And when a size error does appear later, the cause may be several nodes upstream. Run this graph, and read what comes out.
 
 {{graph:f_size_silent}}
 
@@ -84,7 +84,7 @@ Channels are the exception: a 4 and a 16 can't be resized, so those raise the er
 ## Finding the node that made the wrong size
 
 1. Read the numbers. Which axis? What two values?
-2. Put a probe on each input of the failing node: `PreviewAny` prints the tensors, and `GetImageSize` or `GetLatentSize` print sizes. CU-295 goes further.
+2. Put a probe on each input of the failing node: `PreviewAny` prints the tensors. `GetImageSize` and `GetLatentSize` give sizes, but they aren't output nodes, so wire a number from them into `PreviewAny` or they won't run. CU-295 goes further.
 3. Walk upstream until the size first goes wrong. That's your node.
 4. Common fixes: `ImageScale` or `LatentUpscale` to the size you need, the right VAE or text encoder for the model, or sizes on the model's grid. Try the calculator below.
 

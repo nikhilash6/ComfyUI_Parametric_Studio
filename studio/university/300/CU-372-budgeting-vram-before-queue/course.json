@@ -31,7 +31,7 @@
    "ref": "lab.py"
   },
   {
-   "claim": "The budget formula is the one in load_models_gpu.",
+   "claim": "The 10% margin in step 5 and the reserve come from load_models_gpu. The worksheet is a simpler sum of our own, without the margin.",
    "how": "source",
    "ref": "comfy/model_management.py:load_models_gpu"
   },
@@ -50,5 +50,8 @@
   "Every size in the worksheet is an example, not a measurement of any model.",
   "Your own peak depends on model code and card. This is a planning estimate, and only a run tells you for sure. We make no claim about how close it comes for any graph."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

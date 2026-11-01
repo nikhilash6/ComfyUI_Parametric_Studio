@@ -86,7 +86,7 @@ share of one-Gaussian samples in the empty gap between the modes (-1 < x < 0.5):
 A third of its samples land where the data almost never goes. This is what an underfit model looks like: blur between things that are really separate.
 
 ```text
-why images need more: a 512x512 RGB image has 256^(3*512*512) possible values, a number with 1,893,916 digits
+why images need more: a 512x512 RGB image has 256^(3*512*512) possible values, a number with 1,893,917 digits
 ```
 
 You cannot tabulate that, which is why deep networks are used, and why most of them work in a compressed space (CU-201).

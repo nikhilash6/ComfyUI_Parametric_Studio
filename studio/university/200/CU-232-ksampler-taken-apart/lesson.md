@@ -25,7 +25,7 @@ Nothing new happens inside. Both routes end at `CFGGuider.sample` in `comfy/samp
 - **See the schedule.** SIGMAS is a list of numbers on a wire. You can print it, and cut it with `SplitSigmas`. CU-235 and the `nm_sigmas` graph do this with no model at all.
 - **Use a scheduler with its dials showing.** `KarrasScheduler` exposes rho and `BasicScheduler` does not. See the `sd15_karras_rho` graph.
 - **Change the sampler's own settings.** `SamplerEulerAncestral` exposes eta and `s_noise`, and the sampler menu cannot.
-- **Change guidance.** Put a different guider on the wire: `BasicGuider` for no CFG at all, `DualCFGGuider` for two conditionings. One run can even use one guider for the first half and another for the second.
+- **Change guidance.** Put a different guider on the wire: `BasicGuider` for no CFG at all, `DualCFGGuider` for two positive conditionings and a negative. One run can even use one guider for the first half and another for the second.
 - **Get the running estimate.** Both `SamplerCustom` and `SamplerCustomAdvanced` have a second output, `denoised_output`, the model's last estimate of the clean latent. KSampler has only the first.
 
 `SamplerCustom` is the halfway house: it still takes model, seed, CFG and conditionings as plain inputs, and only the sampler and sigmas come in on wires.

@@ -60,6 +60,16 @@
    "claim": "Our run's graph has this same shape, built by studio/train.py on SDXL; it read the loss list through PreviewAny rather than LossGraphNode.",
    "how": "source",
    "ref": "studio/train.py:training_graph"
+  },
+  {
+   "claim": "existing_lora lists the loras folder and reads its step count from the file name: the real _load_existing_lora returned 300 for my_300_steps_00001_.safetensors and raised ValueError for foo.safetensors.",
+   "how": "run here",
+   "ref": "comfy_extras/nodes_train.py:_load_existing_lora"
+  },
+  {
+   "claim": "training_dtype none skips set_model_compute_dtype, and autocast is then fp16 for an fp16 model and bf16 otherwise.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py:TrainLoraNode.execute"
   }
  ],
  "unchecked": [
@@ -68,5 +78,8 @@
   "The sd15_train_lora graph itself was validated and not run. Our measured run was on SDXL with the Train page's own version of this graph, and its numbers don't carry over to SD 1.5.",
   "The captions of the 12 pictures are not in the record we use here, so we don't describe them.",
   "That the jumps in the loss come from the random noise level and picture is read from the code. The run did not record each step's noise level."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

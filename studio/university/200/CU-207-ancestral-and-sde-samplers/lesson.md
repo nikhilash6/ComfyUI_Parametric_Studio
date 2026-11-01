@@ -8,7 +8,7 @@ A plain sampler commits at the start. Once the first noise is drawn, the result 
 
 ## The idea
 
-An ancestral sampler steps past the target noise level, then adds fresh noise to get back to it. Each step forgets some of the path so far. In ComfyUI's menu these are the names containing `ancestral` or `sde`, and a few others such as `er_sde`, `seeds_2` and `sa_solver`.
+An ancestral sampler steps past the target noise level, then adds fresh noise to get back to it. Each step forgets some of the path so far. In ComfyUI's menu these are the names containing `ancestral` or `sde`, and a few others such as `seeds_2`, `sa_solver` and `ddpm`.
 
 ## The maths
 
@@ -38,7 +38,7 @@ Pick `euler_ancestral` in the lab below and press for new noise. The dots land s
 ## What goes wrong
 
 - **Raising steps to refine an ancestral image.** The picture changes as well as sharpens, because a different number of noise draws happen. The lab's N against 2N table shows the change never settles. To refine a fixed picture, use a deterministic sampler or an SDE sampler with its Brownian path.
-- **Small seed or strength changes giving big jumps.** That's the opposite complaint from the same cause. For smooth changes, use a deterministic sampler.
+- **Nudging the start noise and seeing little happen.** Later noise outweighs the start, as the lab's nudge line shows. For a change in proportion to the nudge, use a deterministic sampler. A new seed is not a nudge on any sampler: it redraws all the starting noise, and the per-step noise too.
 - **Expecting a match between machines.** Ancestral samplers draw per-step noise on the latent's device (CU-240). `dpmpp_sde` names without `_gpu` draw theirs on the CPU.
 - **Thinking extra noise fixes errors by itself.** See the counter-example below.
 - **A custom noise node that seems to do nothing with `euler`.** `s_churn` on `euler` and `heun` uses `randn_like` and ignores any noise sampler. Noise-sampler options only reach the samplers that take one.
@@ -84,7 +84,7 @@ Noise also forgets the start. Nudge the first noise, and only the deterministic 
 nudged start, same sampler seed: RMS change of the result   euler 0.3399   ancestral 0.0424
 ```
 
-That explains the practical advice to avoid ancestral samplers when you want a small change of seed or strength to give a small change of image.
+The start only partly decides an ancestral result, and a nudge there barely shows. If you want a small change of start noise to give a matching change of image, use a deterministic sampler. The lab holds the sampler's own seed fixed. In ComfyUI a new seed changes that too, and we did not measure strength changes.
 
 ## What is contested
 

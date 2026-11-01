@@ -4,7 +4,7 @@
 
 ## The idea
 
-A prompt becomes numbers through a text encoder. A picture can too, through an image encoder. The question is where to put them. Core has two doors.
+A prompt becomes numbers through a text encoder. A picture can too, through an image encoder. The question is where to put them. This lesson covers core's two general doors. Some model-specific nodes, such as Wan's and Hunyuan's, read a vision output directly as well, and we don't cover those here.
 
 - **A style model** turns the picture into extra tokens on the end of the prompt.
 - **unCLIP** uses the picture's single summary vector. The tensor doesn't change.
@@ -46,10 +46,12 @@ Our gallery has a real one. The data says it used core's `StyleModelApply`, with
 
 `unCLIPConditioning` adds an entry to a list in the dict, with the vision output, a strength and a noise amount. It's a list, so several pictures can stack. At strength 0 it returns the input untouched.
 
-It only does something on a model class that reads the key. Two classes do.
+It only does something on a model class that reads the key. These are the two uses to know:
 
 - `SD21UNCLIP` uses `unclip_adm` to build its vector input. A real unCLIP checkpoint comes with its vision model, which is why `unCLIPCheckpointLoader` has a fourth output.
-- `SDXL`'s `sdxl_pooled` swaps the pooled text vector for the image's when the key exists.
+- `SDXL` and `SDXLRefiner` call `sdxl_pooled`, which swaps the pooled text vector for the image's when the key exists.
+
+`StableCascade_C` and `Lumina2` read the key too, in their own ways. We only checked that they read it.
 
 `noise_augmentation` adds noise to the image vector, and blurs what it says about the picture. The idea of generating from CLIP's image vector goes back to Ramesh et al. (2022).
 

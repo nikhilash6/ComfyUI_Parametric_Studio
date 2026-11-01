@@ -32,9 +32,9 @@
    "ref": "comfy/weight_adapter/lora.py:LoRAAdapter.calculate_weight"
   },
   {
-   "claim": "ModelPatcher merges per module when it fits, and otherwise applies LowVramPatch on each forward pass.",
+   "claim": "The older ModelPatcher merges per module when it fits, and otherwise applies LowVramPatch on each forward pass. ModelPatcherDynamic, the default where dynamic VRAM is supported, gives patched weights a LowVramPatch, apart from modules of 16 KB or less and resizing LoRAs.",
    "how": "source",
-   "ref": "comfy/model_patcher.py:LowVramPatch"
+   "ref": "comfy/model_patcher.py:LowVramPatch, comfy/model_patcher.py:ModelPatcherDynamic.load, main.py"
   },
   {
    "claim": "FP8 stores back through stochastic rounding, seeded by the key.",
@@ -61,5 +61,8 @@
   "The low-rank target in the lab is built by hand, and it doesn't test the low-rank hypothesis on diffusion models.",
   "We don't know how large real image LoRAs' updates are against their weights.",
   "Which rounding looks better in a picture is untested."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

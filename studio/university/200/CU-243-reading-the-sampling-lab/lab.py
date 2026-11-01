@@ -13,6 +13,7 @@ print("by family:", ", ".join(f"{k} {v}" for k, v in sorted(ATLAS["family"].item
 print("by label:", ", ".join(f"{k} {v}" for k, v in sorted(ATLAS["label"].items())))
 s = ATLAS["second_reader"]; n = s["correct"] + s["minor"] + s["wrong"]
 print(f"second reader looked at {n}: {s['correct']} right, {s['minor']} imprecise, {s['wrong']} wrong, so {(s['minor'] + s['wrong']) / n:.0%} needed a fix or a caveat. Share of all methods checked this way: {n / ATLAS['total']:.0%}")
+print(f"of those {s['minor'] + s['wrong']}, corrected in the atlas: {ATLAS['fixed']}")
 assert sum(ATLAS["label"].values()) == ATLAS["total"] == sum(ATLAS["family"].values())
 print(f"renders: {RENDERS} real, all in core. Pack methods proven by a render: {PACK_RENDERED} of {PACK_TRIED} tried")
 print("\nCurves page: 'Sigma here' is the list at a step, 'Last before 0' is the last non-zero value")

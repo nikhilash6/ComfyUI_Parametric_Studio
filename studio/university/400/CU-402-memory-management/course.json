@@ -74,5 +74,8 @@
   "We did not study dynamic VRAM's on-demand paging in depth and make no timing claims about it. It lives partly in the comfy-aimdo package, which we did not read.",
   "The lab unloads whole models. The real free_memory can unload part of a model and also weighs reference counts."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

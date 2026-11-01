@@ -23,7 +23,7 @@ A blend (1 − f) a + f b is a correct mixture of light only when a and b are li
 
 ## In ComfyUI
 
-**Loading.** `LoadImage` in `nodes.py` applies the EXIF orientation, converts to RGB, and divides the 8-bit codes by 255 in float32. The code we read does not look at a color profile and does not linearise anything.
+**Loading.** `LoadImage` in `nodes.py` first decodes through `VideoFromFile` in `comfy_api`, and keeps an older Pillow route for files that fails on, such as animated WebP. For 8-bit files both divide the codes by 255 in float32, and neither linearises anything. We ran PNG and JPEG files through the first route: the EXIF orientation was applied, and a file with an unrelated color profile gave the same numbers as one with none. Files with more than 8 bits take another branch, which we did not test.
 
 **The model.** `VAE` in `comfy/sd.py` multiplies the stored values by 2 and subtracts 1 on the way in, and adds 1, halves and clamps on the way out. What colour space the latents correspond to is a property of the model's training data and not of ComfyUI's code, and CU-201 showed that latents are not pixels anyway.
 
@@ -47,7 +47,7 @@ Try it. Compare your own blend with the real half-light mix.
 - **A shrunk picture of fine lines looks darker.** Resizing averages stored values. Convert to linear first, or accept it.
 - **Blending in linear and forgetting to convert back.** The result then looks too dark, since the numbers are light and the screen expects codes.
 - **Treating latents as if they had a gamma.** They aren't sRGB codes. These formulas are for pixels.
-- **Assuming a colour profile was used.** `LoadImage` doesn't read one, as far as the code we read goes. A wide-gamut file will have its numbers taken at face value.
+- **Assuming a colour profile was used.** In our PNG and JPEG test, `LoadImage` gave the same numbers with a profile as without. A wide-gamut file will have its numbers taken at face value.
 - **Expecting exact values after save.** `SaveImage` truncates. A value of 0.999 becomes code 254.
 
 ## Lab
@@ -95,7 +95,7 @@ An untouched image survives load and save exactly. Once values have passed throu
 
 ## What is contested
 
-Blending in light is not always the better choice. It is the physically correct mix of light, and designers and tools have long used stored-value blends for gradients and soft edges because of how they look. The lab shows how large the difference is, not which one to prefer. The sRGB assumption matters too: we assume the stored codes are sRGB, which is the usual case, and the code we read does not handle other profiles. We did not measure the latent space of any model, so the lab says nothing about what a VAE does to colour. The truncation figures are for uniformly random values. Real images are not uniform, and half a code on average is below what most people can see.
+Blending in light is not always the better choice. It is the physically correct mix of light, and designers and tools have long used stored-value blends for gradients and soft edges because of how they look. The lab shows how large the difference is, not which one to prefer. The sRGB assumption matters too: we assume the stored codes are sRGB, which is the usual case, and a profile made no difference to the numbers in our one test. We did not measure the latent space of any model, so the lab says nothing about what a VAE does to colour. The truncation figures are for uniformly random values. Real images are not uniform, and half a code on average is below what most people can see.
 
 ## Sources
 

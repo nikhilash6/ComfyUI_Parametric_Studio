@@ -12,7 +12,7 @@ assert wavenet_rf(dil) == 1024 and wavenet_rf([1] * 10) == 11
 def table(seconds):
     rows = []
     rows.append(("WaveNet, one call per sample at 16 kHz", 16000 * seconds, "sequential"))
-    rows.append(("MusicGen, 50 frames/s x 4 codebooks", 50 * 4 * seconds, "sequential"))
+    rows.append(("MusicGen, delay pattern, 50 steps/s", 50 * seconds, "sequential"))
     rows.append(("Music 3 AR stage, main model, 25 frames/s", 25 * seconds, "sequential"))
     rows.append(("Music 3 DiT, 30 steps, CFG on", 30 * 2, "each call covers the song, in windows"))
     rows.append(("Stable Audio style diffusion, 30 steps, CFG on", 30 * 2, "each call covers the clip"))
@@ -22,6 +22,16 @@ for n, c, h in table(30): print(f"{n:48s} {c:<16,d} {h}")
 for n, c, h in table(120)[:3]: pass
 print("\nat 120 s the sequential counts multiply by 4; the diffusion step count does not change, each call just gets longer")
 assert table(120)[2][1] == 4 * table(30)[2][1] and table(120)[4][1] == table(30)[4][1]
+# MiniMaxMusic3DiT's window loop in comfy/ldm/minimax_music/dit.py: audio frames at 25 a second, windows of 200 frames, hop of 100.
+def latent_length(frames): return max(1, int(frames * 44100 / 24000 * 960 / 512))
+def passes(seconds):
+    n = latent_length(25 * seconds); window = latent_length(200); hop = latent_length(100); start = 0; count = 0
+    if n <= window: return 1
+    while True:
+        count += 1
+        if min(start + window, n) == n: return count
+        start += hop
+print(f"\nMusic 3 DiT passes per model call, window 8 s, hop 4 s: 30 s -> {passes(30)}, 120 s -> {passes(120)}")
 # 3. Sequential generation means a sample can't be made before the one it depends on. Noise-to-data flow updates every position together.
 x = torch.tensor([1.0, -2.0, 3.0, 0.5]); e = torch.randn(4)
 print("\nflow matching on 4 latent values, x_sigma = (1 - sigma) x + sigma noise:")

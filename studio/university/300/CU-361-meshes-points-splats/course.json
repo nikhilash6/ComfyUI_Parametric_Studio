@@ -58,6 +58,9 @@
  "unchecked": [
   "Our density grid in the lab uses round Gaussians. The real node uses each Gaussian's full oriented covariance.",
   "The Hunyuan graph gives a mesh and not a splat. We have no splat model on our test machine, so no splat graph here was run, and we show no splat result of our own.",
-  "Rules of thumb on file size come from counting fields. Compressed formats like spz and ksplat, which core also writes, are smaller, and we did not measure them."
- ]
+  "Rules of thumb on file size come from counting fields. Core also writes spz and ksplat, which its tooltip says keep the base colour only, with spz compressed and ksplat not. We did not measure them."
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

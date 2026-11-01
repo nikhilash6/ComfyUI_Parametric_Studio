@@ -52,5 +52,8 @@
   "The disc test is one toy shape with Gaussian noise and a plain threshold, not the full Canny node.",
   "We don't state which depth convention any one ControlNet was trained on: see CU-272.",
   "Another kornia version could scale the gradient differently."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

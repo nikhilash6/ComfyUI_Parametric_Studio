@@ -68,5 +68,8 @@
   "That core PAG has no effect on a Flux or SD3 transformer, and that core SAG fails there, comes from reading those models' code. We did not run either combination.",
   "We tested the stand-in counting logic, not a live run counting real model calls.",
   "We read SAG's abstract only, and core's implementation in full."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

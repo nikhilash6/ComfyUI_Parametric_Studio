@@ -68,7 +68,7 @@ We're describing what the data structures can do. We haven't compared results on
 - **Lumps floating near the object.** Raise `min_component` or `min_opacity`.
 - **The colours look washed out or muddy.** Raise `color_sharpen`, which affects colour only. Check that the lighting isn't being applied on top of baked colour.
 - **Out of memory on `SplatToMesh`.** The tooltip says cost grows with `resolution` cubed, and the node's comments put Surface Nets at about 3 to 3.5 times the grid. Lower `resolution` from 384.
-- **A file is huge.** 1,000,000 Gaussians at degree 3 is 236.5 MiB as `.ply`. Core also writes `ksplat` and `spz`, through `SplatToFile3D`.
+- **A file is huge.** 1,000,000 Gaussians at degree 3 is 236.5 MiB as `.ply`. Core also writes `ksplat` and `spz`, through `SplatToFile3D`. Both keep the base colour only, and only `spz` is compressed.
 - **Expecting a splat to work in a game engine as a mesh.** It has no triangles. Convert it, and accept the loss.
 
 ## Lab

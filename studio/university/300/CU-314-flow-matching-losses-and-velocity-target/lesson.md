@@ -103,7 +103,11 @@ t     floor (perfect model)  constant guess
 0.95  3.0493                 3.7710
 ```
 
-At high t the point on the line says almost nothing about x₀, so a perfect model only beats a constant by a little.
+At t = 0.8 a perfect model only beats a constant by a little. Nearer t = 1 the point gives away the noise but still says almost nothing about x₀, so the floor falls toward the spread of x₀ alone:
+
+```text
+spread of x0 alone, where the floor heads as t nears 1: 2.77
+```
 
 ```text
 t     clean-latent error (t x 0.1)   noise error ((1 - t) x 0.1)

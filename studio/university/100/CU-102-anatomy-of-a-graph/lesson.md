@@ -34,7 +34,7 @@ The server receives the graph as a dict from node id to `class_type` and `inputs
 
 `CacheKeySetInputSignature` builds the key. Besides the class and the inputs it includes whatever a node's `IS_CHANGED` hook returns. `LoadImage` returns a SHA-256 of the file, so editing the file on disk changes its key. `CheckpointLoaderSimple` has no such hook, so its key rests on the file name alone. The node id enters the key only for classes that set `NOT_IDEMPOTENT` or take the `UNIQUE_ID` hidden input.
 
-How long results stay is a launch option, chosen in `main.py` from flags in `comfy/cli_args.py`. The default keeps results until system RAM runs short. `--cache-classic` keeps only what the latest graph used, `--cache-lru N` keeps N results, and `--cache-none` runs every node every time. One more trap is the seed widget's "control after generate" setting. The KSampler documentation lists Random, Inc, Dec and Keep, and with a random choice the seed changes after each queue, so the KSampler and everything after it run again every time.
+How long results stay is a launch option, chosen in `main.py` from flags in `comfy/cli_args.py`. The default keeps results until system RAM runs short. `--cache-classic` keeps only what the latest graph used, `--cache-lru N` aims for about N results, dropping older runs whole when it goes over, and `--cache-none` runs every node every time. One more trap is the seed widget's "control after generate" setting. The KSampler documentation lists Random, Inc, Dec and Keep, and with a random choice the seed changes after each queue, so the KSampler and everything after it run again every time.
 
 ## Predict it yourself
 

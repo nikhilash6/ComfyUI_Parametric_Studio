@@ -8,7 +8,7 @@ CU-305 gave the formulas. This lesson is the routine. You need your card's size 
 
 **1. Your card.** Take the total and subtract what other programs use. `nvidia-smi` shows it, or `/system_stats`. ComfyUI also keeps a reserve back: 400 MB on Linux by default.
 
-**2. Your files.** List every model the graph loads: diffusion model, text encoder, VAE, ControlNets, LoRAs. On disk, the size is close to what the weights take in memory at that format. To see more, read the header, which costs a few kilobytes, however big the file is. The lab does this by hand. It tells you the parameter count and the format of each tensor.
+**2. Your files.** List every model the graph loads: diffusion model, text encoder, VAE, ControlNets, LoRAs. On disk, the size is close to what the weights take in memory at that format. To see more, read the header, which is a small read however big the file is: from 112 bytes to about 1 MB, median 83 KB, across 60 files we checked. The lab does this by hand. It tells you the parameter count and the format of each tensor.
 
 **3. What's on the card at the same time.** Not everything is. Models load when needed, and get unloaded when room is needed (CU-402). So the text encoder usually doesn't have to fit next to the diffusion model. It only needs to fit when it runs. If you're tight, it helps to think of each stage:
 
@@ -40,7 +40,7 @@ Do these in order, cheapest first, and only as far as you need to.
 
 {{graph:sd15_tiled_vae}}
 
-A partial load isn't failure. With a model too large for the card, ComfyUI can still run it, slowly. Dynamic VRAM's on-demand path is designed for this, and the startup warning in `main.py` claims native formats are fast even larger than memory. We haven't tested that claim, so measure yours.
+A partial load isn't failure. With a model too large for the card, ComfyUI can still run it, slowly. Dynamic VRAM's on-demand path is designed for this, and the startup warning in `main.py` tells GGUF users that native formats "will be faster even if they are larger than your memory". We haven't tested that claim, so measure yours.
 
 ## What goes wrong
 
@@ -59,7 +59,7 @@ header 364 bytes read, data 4259904 bytes not touched
 tensors 4, parameters 2,113,552, by type {'F16': 2097152, 'F32': 16400}
 ```
 
-Then a worksheet. Every size here is an example, so put in your own.
+Then a worksheet. Every size here is an example, so put in your own. It adds the reserve and the working memory but leaves out step 5's 10% margin, so add that before you trust a thin result.
 
 ```text
 budget sheet. Every size here is an example. Replace them with your own files' sizes

@@ -77,7 +77,7 @@ tau     best case at N = 32   loss after 600 steps   zero-shot on the 20 unused 
 0.01    0.0000                0.4510                 0.799
 ```
 
-At τ = 1 even the best arrangement cannot get below 2.4884, barely a nat under the 3.4657 of no idea, and training ends at 2.7143, with the worst zero-shot score. At τ = 0.01 the loss ends at 0.4510 although it could reach 0, and the score is 0.799. Between 0.30 and 0.07 the two are within what 3 seeds can separate (0.876 and 0.862). The learned τ ended at 0.0579, inside that band. The lab does not show that 0.07 is special.
+At τ = 1 even the best arrangement cannot get below 2.4884, barely a nat under the 3.4657 of no idea, and training ends at 2.7143, with the worst zero-shot score. At τ = 0.01 the loss ends at 0.4510 although it could reach 0, and the score is 0.799. Between 0.30 and 0.07 the two are within what 3 seeds can separate (0.876 and 0.862). The learned τ ended at 0.0579, just below that band. The lab does not show that 0.07 is special.
 
 Last, the batch size, with the temperature learned and again 3 seeds. More captions in the batch means more wrong answers to rule out.
 

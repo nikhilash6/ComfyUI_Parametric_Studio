@@ -66,5 +66,8 @@
   "We ran no depth model and no depth ControlNet for this lesson. All numbers are from a synthetic ramp.",
   "Near-is-white for the common SD 1.5 depth ControlNets is what the graph note and common practice assume. The model's own page does not state it, so check with one render.",
   "Whether the Lotus blueprint's result before ImageInvert is far-is-white is an inference from the invert, not a run."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

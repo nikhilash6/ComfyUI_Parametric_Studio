@@ -110,6 +110,8 @@ wrong argument name    TypeError: WrongArg.r() got an unexpected keyword argumen
 expand with no flag    Node ExpNoClone is not expandable, but expand included in NodeOutput
 ```
 
+That first row is for an int. A bare tensor doesn't fail at all: in our run, a (1, 8, 8, 3) image returned without the tuple reached the next node as (8, 8, 3), with no error. So check shapes too.
+
 Errors in a run don't raise. They arrive as a message, so read them: look in `ex.status_messages` for `execution_error`, which holds `exception_type` and `exception_message`. And check `ex.success`.
 
 ## What you still need a card for
@@ -129,19 +131,20 @@ ComfyUI's own suite is a good model. `tests/execution/test_execution.py` starts 
 
 ## Lab
 
-The lab runs five plain tests against one good node and five broken ones. It uses a tiny stand-in for the base class, because labs can't import ComfyUI. Every broken node must fail at least one test.
+The lab runs five plain tests against one good node and six broken ones. It uses a tiny stand-in for the base class, because labs can't import ComfyUI. Every broken node must fail at least one test.
 
 ```text
 node      schema           input_untouched  range            shape            same_twice
 Good      pass             pass             pass             pass             pass
-InPlace   pass             FAIL             FAIL             pass             pass
+InPlace   pass             FAIL             pass             pass             pass
 NoClamp   pass             pass             FAIL             pass             pass
 Swapped   FAIL             pass             pass             pass             pass
 DupId     FAIL             pass             pass             pass             pass
 Stateful  pass             pass             pass             pass             FAIL
+Squeezed  pass             pass             pass             FAIL             pass
 ```
 
-Read down the columns. Each test earns its place by catching something the others miss.
+Read down the columns. Each test earns its place by catching something the others miss. The lab's schema test is stricter than the real check: its min above max rule is ours, and the real `GET_SCHEMA` let min 4, max 0 pass in our run.
 
 ## Sources
 

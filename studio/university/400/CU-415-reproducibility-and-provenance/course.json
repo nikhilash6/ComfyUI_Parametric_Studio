@@ -45,6 +45,16 @@
    "claim": "Hash and PNG tables come from the lab.",
    "how": "run here",
    "ref": "lab.py"
+  },
+  {
+   "claim": "/system_stats reports the ComfyUI, Python and PyTorch versions and each device's name and memory, and no driver version.",
+   "how": "source",
+   "ref": "server.py:system_stats"
+  },
+  {
+   "claim": "The cache signature leaves out the node id unless the node is NOT_IDEMPOTENT or takes UNIQUE_ID.",
+   "how": "source",
+   "ref": "comfy_execution/caching.py:get_immediate_node_signature"
   }
  ],
  "unchecked": [

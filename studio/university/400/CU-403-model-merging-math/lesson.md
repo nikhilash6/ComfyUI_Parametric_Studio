@@ -77,7 +77,7 @@ Here's why. A quantized weight isn't the original number: it's the nearest one o
 
 If you merge in full precision and then quantize, you've rounded once. The final error is about v.
 
-If you quantize the parents and merge those, then the merged value is off grid, and storing it rounds again. For a half-and-half merge the error is (e_A + e_B) / 2 + e_final. If the two parents' errors were unrelated, that's √1.5 ≈ 1.22 times v. When they're related, since the parents are close, it goes up to √2 ≈ 1.41 times. You paid for extra rounding and got nothing for it.
+If you quantize the parents and merge those, then the merged value is off grid, and storing it rounds again. For a half-and-half merge the error is (e_A + e_B) / 2 + e_final. If e_final were an ordinary rounding error, that would be √1.5 ≈ 1.22 times v. It isn't. Halfway between two grid values is either on the grid, which costs nothing, or exactly between two neighbours, which costs half a step. On an even grid that makes e_final √1.5 times v by itself, and the total √2 ≈ 1.41 times v. In a side script the parents' errors in this lab were unrelated (correlation 0.006), and the measured factor was 1.38, not 1.22. Parents so close that both round to the same value do better, since their midpoint is already on the grid: at a 1% change in FP8 the factor fell to 1.04. You paid for extra rounding and got nothing for it.
 
 ```text
 halfway merge of two fine-tunes. Error against the merge done in full precision, as a share of the weights' size
@@ -138,7 +138,7 @@ And when you quantize, keep the unquantized one. It's your only source for the n
 - **The merge looks exactly like model1.** Ratio is 1.0, its default. It's model1's share.
 - **You've merged FP8 or GGUF files.** The parents' rounding is in there for good. Find the unquantized files, and merge again.
 - **Grainy or odd results from add-difference on quantized files.** That's the task vector full of rounding. See the tables.
-- **Different architectures.** `add_patches` only patches a key the model has, and a mismatched shape logs "WARNING SHAPE MISMATCH ... WEIGHT NOT MERGED", leaving that weight alone. So you can get a half-merged model with no error. Read the log.
+- **Different architectures.** `add_patches` only patches a key the model has, and a mismatched shape logs "WARNING SHAPE MISMATCH ... WEIGHT NOT MERGED". Nothing is added, but `calculate_weight` has already multiplied model1's weight by the ratio, so that weight isn't left alone: at ratio 0.5 a weight of 10 came out as 5. So you can get a half-merged model with no error. Read the log.
 - **You merged only the model, and the prompts stopped matching.** The text encoder comes from whichever CLIP you wired to `CheckpointSave`. Merge it too if the two differ.
 - **You've lost the base.** Add-difference needs the same base both fine-tunes started from. With another base, the "change" holds the whole gap between bases.
 

@@ -370,9 +370,9 @@
   "lessons": 162,
   "audited": 162,
   "draft": 0,
-  "second_read": 41,
-  "second_read_pending": 121,
-  "errors_fixed": 36,
+  "second_read": 142,
+  "second_read_pending": 20,
+  "errors_fixed": 192,
   "plays": 115,
   "graphs": 93,
   "graphs_ran": 25,
@@ -399,7 +399,9 @@
     "nm_first"
    ],
    "minutes": 3,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-101",
@@ -419,7 +421,9 @@
     "sd15_txt2img"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-102",
@@ -439,7 +443,9 @@
     "nm_dead_branch"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-103",
@@ -460,7 +466,9 @@
     "nm_latent_ops"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-104",
@@ -482,7 +490,9 @@
     "sd15_txt2img"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-105",
@@ -490,7 +500,7 @@
    "level": "100",
    "prereq": [],
    "char": "denoise",
-   "hook": "A seed is the starting noise and nothing more. A toy sampler with an exact denoiser shows what that does and does not fix when you change steps, samplers or hardware.",
+   "hook": "A seed makes the starting noise, plus the extra noise of an ancestral sampler, and nothing more. A toy sampler with an exact denoiser shows what that does and does not fix when you change steps, samplers or hardware.",
    "status": "audited",
    "path": "100/CU-105-seeds-and-noise",
    "track": "first-graph",
@@ -503,7 +513,9 @@
     "sd15_txt2img"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-106",
@@ -547,8 +559,10 @@
     "sd15_txt2img",
     "sdxl_txt2img"
    ],
-   "minutes": 6,
-   "second_read": null
+   "minutes": 7,
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-109",
@@ -570,7 +584,9 @@
     "a_pixel_budget"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-110",
@@ -593,7 +609,9 @@
     "sd15_txt2img"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-111",
@@ -613,8 +631,10 @@
     "nm_audio",
     "nm_first"
    ],
-   "minutes": 7,
-   "second_read": null
+   "minutes": 8,
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-112",
@@ -635,8 +655,10 @@
    "graphs": [
     "a_save_preview"
    ],
-   "minutes": 5,
-   "second_read": null
+   "minutes": 6,
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-113",
@@ -647,7 +669,7 @@
     "CU-110"
    ],
    "char": "graph",
-   "hook": "Bypass rewires the graph, Mute cuts it, and reroutes and groups never leave your browser. See the JSON each one produces.",
+   "hook": "Bypass rewires the graph, Mute cuts it, and reroutes and groups never reach the graph the server runs. See the JSON each one produces.",
    "status": "audited",
    "path": "100/CU-113-mute-bypass-reroute-group",
    "track": "first-graph",
@@ -658,8 +680,10 @@
    "graphs": [
     "a_modes_chain"
    ],
-   "minutes": 5,
-   "second_read": null
+   "minutes": 6,
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-114",
@@ -708,7 +732,9 @@
     "a_read_before_run"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-116",
@@ -732,7 +758,9 @@
     "sd15_img2img"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-201",
@@ -743,7 +771,7 @@
     "CU-103"
    ],
    "char": "latent",
-   "hook": "Train a tiny VAE on a CPU, and see why the midpoint of two latents is a picture while the midpoint of two images is a ghost.",
+   "hook": "Train a tiny VAE on a CPU, and see when the midpoint of two latents is a picture, and why the midpoint of two images is a ghost.",
    "status": "audited",
    "path": "200/CU-201-latent-space-and-the-vae",
    "track": "noise-latent",
@@ -756,7 +784,9 @@
     "nm_latent_ops"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-202",
@@ -779,7 +809,9 @@
     "nm_sigmas"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-203",
@@ -789,7 +821,7 @@
     "CU-202"
    ],
    "char": "denoise",
-   "hook": "Why predicting noise is the same as learning the gradient of the data density, proved numerically.",
+   "hook": "Why predicting noise is the same as learning the gradient of the noised data density, checked numerically.",
    "status": "audited",
    "path": "200/CU-203-score-matching-and-sdes",
    "track": "noise-latent",
@@ -801,7 +833,9 @@
     "b_ancestral_eta"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-204",
@@ -824,7 +858,9 @@
     "sd35_flow"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-205",
@@ -846,7 +882,9 @@
     "sd15_custom"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-206",
@@ -869,7 +907,9 @@
     "sd15_karras_rho"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-207",
@@ -891,7 +931,9 @@
     "b_ancestral_eta"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-208",
@@ -913,7 +955,9 @@
     "sd15_txt2img"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-209",
@@ -936,7 +980,9 @@
     "sd15_txt2img"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-210",
@@ -946,7 +992,7 @@
     "CU-103"
    ],
    "char": "bits",
-   "hook": "Where rounding bites: small LoRA deltas vanish, sums stall, and fp16 overflows at 65,504.",
+   "hook": "Where rounding bites: small LoRA deltas turn to noise, sums stall, and fp16 tops out at 65,504.",
    "status": "audited",
    "path": "200/CU-210-precision",
    "track": "noise-latent",
@@ -957,8 +1003,10 @@
    "graphs": [
     "b_unet_fp8"
    ],
-   "minutes": 3,
-   "second_read": null
+   "minutes": 4,
+   "second_read": {
+    "errors_fixed": 4
+   }
   },
   {
    "code": "CU-211",
@@ -980,7 +1028,9 @@
     "b_unet_fp8"
    ],
    "minutes": 8,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-212",
@@ -1003,7 +1053,9 @@
     "sd15_train_lora"
    ],
    "minutes": 8,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-213",
@@ -1028,7 +1080,9 @@
     "sd15_inpaint_vae"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-214",
@@ -1052,7 +1106,9 @@
     "sd15_inpaint"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-215",
@@ -1074,7 +1130,9 @@
     "nm_video"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-216",
@@ -1094,7 +1152,9 @@
     "nm_audio"
    ],
    "minutes": 7,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-217",
@@ -1117,7 +1177,9 @@
     "sd15_upscale"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-218",
@@ -1139,8 +1201,10 @@
    "graphs": [
     "wf_wan22_t2v"
    ],
-   "minutes": 6,
-   "second_read": null
+   "minutes": 7,
+   "second_read": {
+    "errors_fixed": 5
+   }
   },
   {
    "code": "CU-219",
@@ -1163,7 +1227,9 @@
     "nm_mask_canny"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-220",
@@ -1186,7 +1252,9 @@
     "nm_dead_branch"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-221",
@@ -1209,7 +1277,9 @@
     "sd15_txt2img"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-222",
@@ -1219,7 +1289,7 @@
     "CU-220"
    ],
    "char": "graph",
-   "hook": "A sub-graph is a front-end idea that the server never sees. Node expansion is a server idea that the front-end never sees.",
+   "hook": "A sub-graph is a front-end idea that the executor never sees. Node expansion is a server idea that the front-end never sees.",
    "status": "audited",
    "path": "200/CU-222-subgraphs-and-expansion",
    "track": "custom-nodes",
@@ -1232,7 +1302,9 @@
     "nm_first"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-223",
@@ -1304,7 +1376,9 @@
     "b_blend_light"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-230",
@@ -1350,7 +1424,9 @@
     "sd15_img2img"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-232",
@@ -1372,7 +1448,9 @@
     "sd15_custom"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-233",
@@ -1448,7 +1526,9 @@
     "sd35_flow"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-240",
@@ -1470,8 +1550,10 @@
     "b_batch_fixed",
     "b_batch_pick"
    ],
-   "minutes": 4,
-   "second_read": null
+   "minutes": 5,
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-241",
@@ -1546,7 +1628,9 @@
     "nm_sigmas"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-250",
@@ -1595,7 +1679,9 @@
     "wf_flux2_klein"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-260",
@@ -1618,7 +1704,9 @@
     "sd15_txt2img"
    ],
    "minutes": 3,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-261",
@@ -1640,7 +1728,9 @@
     "c_weights"
    ],
    "minutes": 3,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-262",
@@ -1714,8 +1804,10 @@
    "graphs": [
     "sd15_cond_time"
    ],
-   "minutes": 2,
-   "second_read": null
+   "minutes": 3,
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-265",
@@ -1726,7 +1818,7 @@
     "CU-262"
    ],
    "char": "attn",
-   "hook": "Core has two doors for a picture. A style model adds tokens to the prompt. unCLIP changes the model's global vector. CLIP vision makes the numbers for both, and it isn't a model that generates anything.",
+   "hook": "Two general doors in core for a picture. A style model adds tokens to the prompt. unCLIP changes the model's global vector. CLIP vision makes the numbers for both, and it isn't a model that generates anything.",
    "status": "audited",
    "path": "200/CU-265-reference-images",
    "track": "conditioning",
@@ -1739,7 +1831,9 @@
     "c_unclip"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-270",
@@ -1761,7 +1855,9 @@
     "sd15_controlnet"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-271",
@@ -1786,7 +1882,9 @@
     "sd15_controlnet"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-272",
@@ -1810,7 +1908,9 @@
     "sd15_controlnet_depth"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-273",
@@ -1858,8 +1958,10 @@
     "d_outpaint",
     "d_outpaint_mask"
    ],
-   "minutes": 3,
-   "second_read": null
+   "minutes": 4,
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-280",
@@ -1906,7 +2008,9 @@
     "sd15_train_lora"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-282",
@@ -1928,7 +2032,9 @@
     "d_lora_compare"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-290",
@@ -1950,7 +2056,9 @@
     "f_validation_base"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-291",
@@ -1974,7 +2082,9 @@
     "sd15_tiled_vae"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-292",
@@ -1997,7 +2107,9 @@
     "f_size_silent"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-293",
@@ -2043,7 +2155,9 @@
     "sd15_txt2img"
    ],
    "minutes": 6,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-295",
@@ -2066,7 +2180,9 @@
     "nm_dead_branch"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-296",
@@ -2088,7 +2204,9 @@
     "sd15_txt2img"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-501",
@@ -2280,7 +2398,7 @@
     "sd15_txt2img",
     "wf_flux2_klein"
    ],
-   "minutes": 4,
+   "minutes": 5,
    "second_read": null
   },
   {
@@ -2348,7 +2466,9 @@
     "nm_latent_ops"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-305",
@@ -2371,7 +2491,9 @@
     "sdxl_txt2img"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-306",
@@ -2395,7 +2517,9 @@
     "sd35_flow"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-307",
@@ -2417,7 +2541,9 @@
     "hunyuan3d_mesh"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-308",
@@ -2442,7 +2568,9 @@
     "g_torch_compile"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-309",
@@ -2488,7 +2616,9 @@
     "sd35_flow"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-311",
@@ -2510,7 +2640,9 @@
     "sd15_train_lora"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-312",
@@ -2575,8 +2707,10 @@
    "graphs": [
     "sd35_flow"
    ],
-   "minutes": 4,
-   "second_read": null
+   "minutes": 5,
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-315",
@@ -2597,8 +2731,10 @@
    "graphs": [
     "nm_video"
    ],
-   "minutes": 3,
-   "second_read": null
+   "minutes": 4,
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-316",
@@ -2621,7 +2757,9 @@
     "wf_wan22_t2v"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-317",
@@ -2693,8 +2831,10 @@
    "graphs": [
     "c_cfgpp"
    ],
-   "minutes": 3,
-   "second_read": null
+   "minutes": 4,
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-322",
@@ -2719,7 +2859,9 @@
     "sd15_sag"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-323",
@@ -2742,7 +2884,9 @@
     "sd15_perpneg"
    ],
    "minutes": 3,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-330",
@@ -2765,7 +2909,9 @@
     "wf_ltx25_t2v"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-331",
@@ -2861,7 +3007,9 @@
     "wf_ltx25_t2v"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-350",
@@ -2908,7 +3056,9 @@
     "nm_audio"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-360",
@@ -2955,7 +3105,9 @@
     "hunyuan3d_mesh"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-362",
@@ -2977,7 +3129,9 @@
     "e_mesh_cleanup"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-370",
@@ -2998,8 +3152,10 @@
    "graphs": [
     "sd15_txt2img"
    ],
-   "minutes": 4,
-   "second_read": null
+   "minutes": 5,
+   "second_read": {
+    "errors_fixed": 4
+   }
   },
   {
    "code": "CU-371",
@@ -3045,8 +3201,10 @@
     "b_unet_fp8",
     "sd15_tiled_vae"
    ],
-   "minutes": 3,
-   "second_read": null
+   "minutes": 4,
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-373",
@@ -3071,7 +3229,9 @@
     "sd15_tiled_vae"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-374",
@@ -3118,7 +3278,9 @@
     "a_read_before_run"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-381",
@@ -3140,7 +3302,9 @@
     "a_read_before_run"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-382",
@@ -3236,7 +3400,9 @@
     "sd15_pag"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-504",
@@ -3257,7 +3423,7 @@
    "graphs": [
     "sd35_flow"
    ],
-   "minutes": 6,
+   "minutes": 7,
    "second_read": null
   },
   {
@@ -3327,7 +3493,9 @@
     "wf_music3"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 5
+   }
   },
   {
    "code": "CU-513",
@@ -3349,7 +3517,9 @@
     "hunyuan3d_mesh"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-514",
@@ -3418,8 +3588,10 @@
    "graphs": [
     "nm_first"
    ],
-   "minutes": 4,
-   "second_read": null
+   "minutes": 5,
+   "second_read": {
+    "errors_fixed": 4
+   }
   },
   {
    "code": "CU-402",
@@ -3441,7 +3613,9 @@
     "sd15_txt2img"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-403",
@@ -3464,8 +3638,10 @@
     "d_merge_add_difference",
     "sd15_merge"
    ],
-   "minutes": 5,
-   "second_read": null
+   "minutes": 6,
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-404",
@@ -3576,8 +3752,10 @@
    "graphs": [
     "d_lcm"
    ],
-   "minutes": 5,
-   "second_read": null
+   "minutes": 6,
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-410",
@@ -3599,7 +3777,9 @@
     "b_unet_fp8"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-411",
@@ -3622,7 +3802,9 @@
     "nm_video"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-412",
@@ -3644,7 +3826,9 @@
     "sd15_train_lora"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-413",
@@ -3711,7 +3895,9 @@
     "f_txt2img_probe"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 0
+   }
   },
   {
    "code": "CU-420",
@@ -3782,7 +3968,9 @@
     "f_widget_wire"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-432",
@@ -3805,7 +3993,9 @@
     "f_lazy_switch"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-433",
@@ -3852,7 +4042,9 @@
     "f_list_tiles"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-435",
@@ -3899,7 +4091,9 @@
     "nm_first"
    ],
    "minutes": 4,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 1
+   }
   },
   {
    "code": "CU-437",
@@ -3922,7 +4116,9 @@
     "nm_first"
    ],
    "minutes": 5,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-438",
@@ -3943,8 +4139,10 @@
    "graphs": [
     "nm_first"
    ],
-   "minutes": 4,
-   "second_read": null
+   "minutes": 5,
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-450",
@@ -3965,8 +4163,10 @@
    "graphs": [
     "nm_first"
    ],
-   "minutes": 4,
-   "second_read": null
+   "minutes": 5,
+   "second_read": {
+    "errors_fixed": 3
+   }
   },
   {
    "code": "CU-460",
@@ -4107,7 +4307,9 @@
     "sd15_lora"
    ],
    "minutes": 3,
-   "second_read": null
+   "second_read": {
+    "errors_fixed": 2
+   }
   },
   {
    "code": "CU-517",

@@ -7,7 +7,7 @@
   "CU-262"
  ],
  "char": "attn",
- "hook": "Core has two doors for a picture. A style model adds tokens to the prompt. unCLIP changes the model's global vector. CLIP vision makes the numbers for both, and it isn't a model that generates anything.",
+ "hook": "Two general doors in core for a picture. A style model adds tokens to the prompt. unCLIP changes the model's global vector. CLIP vision makes the numbers for both, and it isn't a model that generates anything.",
  "code_refs": [
   "nodes.py:CLIPVisionEncode.encode",
   "nodes.py:StyleModelApply.apply_stylemodel",
@@ -59,6 +59,11 @@
    "ref": "comfy/model_base.py"
   },
   {
+   "claim": "SDXLRefiner, StableCascade_C and Lumina2 also read unclip_conditioning, and core nodes for Wan and Hunyuan read a clip_vision_output directly.",
+   "how": "source",
+   "ref": "comfy/model_base.py, comfy_extras/nodes_wan.py, comfy_extras/nodes_hunyuan.py"
+  },
+  {
    "claim": "The flux_redux render used core's StyleModelApply, with a pack's sampler, on FLUX.1 schnell.",
    "how": "run here",
    "ref": "studio/web/res4lyf_renders/results.json and its graph"
@@ -69,5 +74,8 @@
   "The vision model's token counts in the lab are stand-ins. Real counts depend on the vision model.",
   "We read the attn_bias path but don't claim what it does to a picture.",
   "We describe the core nodes only. IP-Adapter is a separate paper and a third-party pack, and CU-214 covers the idea."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

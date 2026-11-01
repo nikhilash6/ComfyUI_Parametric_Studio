@@ -35,7 +35,7 @@ RES4LYF is not bundled. The RES4LYF page credits it, with our own notes and shor
 
 ### ComfyUI template thumbnails
 
-Family pages show some thumbnails from ComfyUI's template package, marked as not ours in `studio/family_status.json`. Their licence has not been checked.
+Family pages show some thumbnails from ComfyUI's template package, marked as not ours in `studio/family_status.json`. They come from Comfy-Org/workflow_templates, MIT License, Copyright (c) 2023-present Comfy Org: https://github.com/Comfy-Org/workflow_templates/blob/main/LICENSE
 
 AGPL-3.0 section 13 and GPL-3.0 section 13 allow the two to be combined. Other Python dependencies are installed from PyPI under their own licences (see the installer's lock files).
 

@@ -10,7 +10,7 @@ Nearly all sampling time is calls to the model. So the first number to know is h
 calls = steps × calls per step × (2 if CFG is not 1)
 ```
 
-Euler makes one call per step, and Heun makes two. CFG needs a prediction for each of two prompts. In `sampling_function` in `comfy/samplers.py`, when CFG is exactly 1 the second is dropped, so CFG 1 costs half. Some patches turn that shortcut off.
+Euler makes one call per step, and Heun makes two, except that `sample_heun` makes one on a last step that lands on sigma 0, so 20 steps of Heun on a schedule ending at 0 is 39 calls and this formula is the round figure. CFG needs a prediction for each of two prompts. ComfyUI can run those two as one batch when memory allows, so read "calls" as predictions. In `sampling_function` in `comfy/samplers.py`, when CFG is exactly 1 the second is dropped, so CFG 1 costs half. Some patches turn that shortcut off.
 
 ## The four levers
 
@@ -24,7 +24,7 @@ Euler makes one call per step, and Heun makes two. CFG needs a prediction for ea
 
 - The **node cache** skips a node whose class, inputs and ancestors are unchanged. Change the seed and the sampler runs, but the text encoder doesn't. CU-221 has the details. It saves nothing on a first run.
 - A **step cache** skips model calls inside one run, by reusing the last change when little is changing. `EasyCache` and `LazyCache` are core nodes, marked experimental. This one trades quality for time: it is an approximation, and you should look at the picture.
-- A **prefix cache** is model-specific. In `comfy/ldm/qwen_image21/model.py`, `PrefixCache` keeps attention keys and values for the prompt and reference part, so later calls attend to the stored prefix. That helps that family when the prefix repeats. You don't turn it on in the graph, and other models don't have it.
+- A **prefix cache** is model-specific. In `comfy/ldm/qwen_image21/model.py`, `PrefixCache` keeps attention keys and values for the prompt and reference part, so later calls attend to the stored prefix. That helps that family when the prefix repeats. You don't have to turn it on in the graph, since its default setting is `auto`, and the experimental core node `QwenImage21Cache` can set its device and format or turn it off. Other models don't have it.
 
 {{graph:g_easycache}}
 
@@ -97,6 +97,8 @@ Half the calls cost five times the error here. That is the trade, in miniature, 
 - [ComfyUI v0.43.0, comfy_extras/nodes_torch_compile.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_torch_compile.py)
 - [ComfyUI v0.43.0, comfy_execution/caching.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_execution/caching.py)
 - [ComfyUI v0.43.0, comfy/ldm/qwen_image21/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/qwen_image21/model.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_qwen.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_qwen.py)
+- [ComfyUI v0.43.0, comfy/k_diffusion/sampling.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/k_diffusion/sampling.py)
 - [ComfyUI v0.43.0, comfy/cli_args.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/cli_args.py)
 - [Salimans and Ho 2022. Progressive Distillation for Fast Sampling of Diffusion Models](https://arxiv.org/abs/2202.00512)
 - [Song et al. 2023. Consistency Models](https://arxiv.org/abs/2303.01469)

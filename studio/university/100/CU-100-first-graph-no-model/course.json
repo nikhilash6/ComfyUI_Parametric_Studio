@@ -48,5 +48,8 @@
  ],
  "unchecked": [
   "We read that front-end code on its main branch. We did not test dropping a file by hand in the version installed here."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

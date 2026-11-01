@@ -2,13 +2,19 @@
  "code": "CU-116",
  "title": "Your own picture: the input folder, LoadImage and its mask",
  "level": "100",
- "prereq": ["CU-103", "CU-106"],
+ "prereq": [
+  "CU-103",
+  "CU-106"
+ ],
  "char": "graph",
  "hook": "Where an uploaded picture lives, the two things LoadImage hands on, and why a picture with no alpha gives a 64 by 64 mask.",
  "track": "first-graph",
  "order": 38,
  "kit": true,
- "graphs": ["a_own_picture", "sd15_img2img"],
+ "graphs": [
+  "a_own_picture",
+  "sd15_img2img"
+ ],
  "code_refs": [
   "nodes.py:LoadImage.load_image",
   "nodes.py:LoadImage.IS_CHANGED",
@@ -19,17 +25,48 @@
   "server.py:upload_image"
  ],
  "verified": [
-  {"claim": "LoadImage's menu lists files directly in the input folder. A file in a subfolder was not listed.", "how": "run here", "ref": "nodes.LoadImage.INPUT_TYPES on a throw-away folder"},
-  {"claim": "A half-transparent RGBA file gave an IMAGE of [1, 48, 64, 3] and a mask of [1, 48, 64] with value 0.498.", "how": "run here", "ref": "nodes.LoadImage.load_image on a small PNG"},
-  {"claim": "A JPEG with no alpha gave an IMAGE of [1, 48, 64, 3] and an all-zero mask of [1, 64, 64].", "how": "run here", "ref": "nodes.LoadImage.load_image on a small JPEG"},
-  {"claim": "A missing file gives 'Invalid image file' at validation, and IS_CHANGED hashes the file's bytes.", "how": "run here", "ref": "nodes.LoadImage.VALIDATE_INPUTS and IS_CHANGED"},
-  {"claim": "VAE encode crops to a multiple of 8.", "how": "source", "ref": "comfy/sd.py:vae_encode_crop_pixels"},
-  {"claim": "The file name form 'out.png [output]' reads from the output folder.", "how": "run here", "ref": "folder_paths.get_annotated_filepath"},
-  {"claim": "The no-model graph passes validate_prompt and ran on a CPU.", "how": "run here", "ref": "scripts/verify_university_graphs.py"}
+  {
+   "claim": "LoadImage's menu lists image files directly in the input folder. A file in a subfolder and a .txt file were not listed.",
+   "how": "run here",
+   "ref": "nodes.LoadImage.INPUT_TYPES on a throw-away folder"
+  },
+  {
+   "claim": "A half-transparent RGBA file gave an IMAGE of [1, 48, 64, 3] and a mask of [1, 48, 64] with value 0.498.",
+   "how": "run here",
+   "ref": "nodes.LoadImage.load_image on a small PNG"
+  },
+  {
+   "claim": "A JPEG with no alpha gave an IMAGE of [1, 48, 64, 3] and an all-zero mask of [1, 64, 64].",
+   "how": "run here",
+   "ref": "nodes.LoadImage.load_image on a small JPEG"
+  },
+  {
+   "claim": "A missing file gives 'Invalid image file' at validation, and IS_CHANGED hashes the file's bytes.",
+   "how": "run here",
+   "ref": "nodes.LoadImage.VALIDATE_INPUTS and IS_CHANGED"
+  },
+  {
+   "claim": "VAE encode crops to a multiple of 8.",
+   "how": "source",
+   "ref": "comfy/sd.py:vae_encode_crop_pixels"
+  },
+  {
+   "claim": "The file name form 'out.png [output]' reads from the output folder.",
+   "how": "run here",
+   "ref": "folder_paths.get_annotated_filepath"
+  },
+  {
+   "claim": "The no-model graph passes validate_prompt and ran on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
  ],
  "unchecked": [
   "We did not upload through the browser, so the upload button's look and the place it stores the file come from the source route /upload/image, not a click.",
   "The img2img graph needs an SD 1.5 model and was only validated here. We make no claim about how its pictures look.",
   "LoadImage first tries to read files as video and falls back to Pillow. We tested one PNG and one JPEG, not every format."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

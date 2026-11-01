@@ -4,7 +4,7 @@
 
 ## The idea
 
-Sound on a computer is a pressure signal measured many times a second. ComfyUI's audio models do not generate those samples one by one. Some compress the waveform with a VAE, at 2048 samples per latent frame in the Stable Audio family. Others first turn it into a log-mel spectrogram, a picture of energy by time and pitch, and encode that picture the way an image model would, as ACE-Step does. Sampling, the Fourier transform, windows and the mel scale decide what survives either route.
+Sound on a computer is a pressure signal measured many times a second. ComfyUI's audio models do not generate those samples one by one. Some compress the waveform with a VAE, at 2048 samples per latent frame in the Stable Audio family. Others first turn it into a log-mel spectrogram, a picture of energy by time and pitch, and encode that picture the way an image model would, as the first ACE-Step does. Sampling, the Fourier transform, windows and the mel scale decide what survives either route.
 
 ## The maths
 
@@ -18,13 +18,13 @@ Sound on a computer is a pressure signal measured many times a second. ComfyUI's
 
 ## In ComfyUI
 
-**Seconds to latents.** `EmptyLatentAudio` in `comfy_extras/nodes_audio.py` (default 47.6 seconds) makes a latent of shape [batch, 64, length] with length = round((seconds · 44100 / 2048) / 2) · 2, and tags it with a temporal downscale ratio of 2048. `AudioOobleckVAE` in `comfy/ldm/audio/autoencoder.py` takes stereo (2 channels) with strides [2, 4, 4, 8, 8], which multiply to 2048, a latent size of 64, and Snake activations. The Stable Audio Open paper describes an autoencoder with 5 strided convolutional blocks, a latent size of 64 and a latent rate of 21.5 Hz. When the loader in `comfy/sd.py` finds weights for a variant with strides [2, 4, 4, 6, 10], it sets 48000 Hz and a ratio of 1920.
+**Seconds to latents.** `EmptyLatentAudio` in `comfy_extras/nodes_audio.py` (default 47.6 seconds) makes a latent of shape [batch, 64, length] with length = round((seconds · 44100 / 2048) / 2) · 2, and tags it with a temporal downscale ratio of 2048. `AudioOobleckVAE` in `comfy/ldm/audio/autoencoder.py` takes stereo (2 channels) with strides [2, 4, 4, 8, 8], which multiply to 2048, a latent size of 64, and Snake activations. The Stable Audio Open paper describes an autoencoder with 5 strided convolutional blocks, a latent size of 64 and a latent rate of 21.5 Hz. When the loader in `comfy/sd.py` finds weights for a variant with strides [2, 4, 4, 6, 10], it sets 48000 Hz and a ratio of 1920. `EmptyAceStep1.5LatentAudio` uses that same 48000 / 1920, so we read ACE-Step 1.5 as taking the waveform route, though we didn't load its VAE.
 
 **Resampling.** `VAEEncodeAudio` resamples audio to the VAE's sample rate, 44100 Hz by default, with `resample` in `comfy/audio.py`. Its docstring calls it bandlimited sinc resampling, with a Hann-windowed sinc as the default method.
 
 **Loudness on the way out.** `VAEDecodeAudio` divides the decoded waveform by max(1, 5 × its standard deviation) for each item in the batch.
 
-**Mel route.** `MusicDCAE` in `comfy/ldm/ace/vae/music_dcae_pipeline.py` computes a log-mel spectrogram of the audio with `LogMelSpectrogram`, whose defaults are a Hann window, n_fft 2048, hop 512 and 128 mel bands. It rescales the values from the range −11 to 3 into 0 to 1, and encodes them with an image autoencoder, `AutoencoderDC`. Decoding goes the other way, from latents to a mel spectrogram, and a vocoder turns that into a waveform. A mel spectrogram has lost the phase, so the vocoder has to invent it.
+**Mel route.** `MusicDCAE` in `comfy/ldm/ace/vae/music_dcae_pipeline.py` computes a log-mel spectrogram of the audio with `LogMelSpectrogram`, whose defaults are a Hann window, n_fft 2048, hop 512 and 128 mel bands. Its vocoder builds this one with f_min 40 and f_max 16000. It rescales the values from the range −11 to 3 into 0 to 1, normalizes those to −1 to 1, and encodes them with an image autoencoder, `AutoencoderDC`. Decoding goes the other way, from latents to a mel spectrogram, and a vocoder turns that into a waveform. A mel spectrogram has lost the phase, so the vocoder has to invent it.
 
 ## Try it
 
@@ -113,7 +113,7 @@ Taking every second sample moves the tone to 2 kHz at full strength. A low-pass 
 - **A mix sounds dull or wrong after a sample-rate change.** The rate and the tensor disagree. Keep them together, as `AUDIO` does.
 - **Your track never gets loud.** `VAEDecodeAudio` caps the standard deviation at 0.2. That's the decoder's rule, not your settings. Master afterwards.
 - **The length is close but not exact.** `EmptyLatentAudio` rounds to an even number of latent frames. 10 seconds comes back as 10.031.
-- **Mel bands look blank at the bottom.** With n_fft 2048 and 128 bands, the bands at the bottom are only 1.4 bins apart. Use a longer window for fine low detail.
+- **Low notes look blurred in a mel spectrogram.** With n_fft 2048 and 128 bands, the bands at the bottom are only 1.4 bins apart and cover 2 or 3 FFT bins each, so neighbours read nearly the same bins. None is empty: we checked the real filterbank. Use a longer window for fine low detail.
 - **A latent from one audio model fails in another's decoder.** Sizes and rates differ between models: `EmptyLatentAudio` has 64 channels and Music 3 has 128. A latent belongs to its VAE.
 
 ## What is contested

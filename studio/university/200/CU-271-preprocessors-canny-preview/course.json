@@ -62,5 +62,8 @@
   "We ran no ControlNet for this lesson. How a noisy or empty map changes a picture is described from what the map contains, and is not measured. The scene in the lab is synthetic.",
   "Core's pose nodes were only found by name and not read. No core preprocessor for line art, soft edges or scribbles rests on a search of node names, not on reading every file.",
   "The share of edge pixels that suits a given ControlNet is not something we measured. The 4% to 12% in the browser lab is that lab's exercise, not a rule."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

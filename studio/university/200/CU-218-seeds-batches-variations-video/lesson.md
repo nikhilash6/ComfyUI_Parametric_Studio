@@ -22,9 +22,9 @@ For two vectors of equal length its length is the same as theirs at every t.
 
 **From seed to noise.** `common_ksampler` in `nodes.py` calls `comfy.sample.prepare_noise(latent_image, seed, batch_inds)`. That function calls `torch.manual_seed(seed)` and then `torch.randn` with the generator, on the CPU in float32, once for the whole latent, and converts the result to the latent's dtype. The seed widget accepts 0 to 0xffffffffffffffff, and `RandomNoise` in the custom-sampling nodes has the same range.
 
-**Batches.** If the latent carries a `batch_index`, `prepare_noise_inner` draws one item at a time up to the highest index wanted and keeps the ones asked for, so item i is the i-th draw. `LatentFromBatch` writes that index when it cuts items out of a batch, which is how an image can be redone alone with the noise it had in the batch. `LatentBatchSeedBehavior` has two modes. In "fixed", the default, it sets `batch_index` to the first item's index for every item, so all items start from the same noise. In "random" it removes the field.
+**Batches.** If the latent carries a `batch_index`, `prepare_noise_inner` draws one item at a time up to the highest index wanted and keeps the ones asked for, so item i is the i-th draw. `LatentFromBatch` writes that index when it cuts items out of a batch, which is how an image can be redone alone with the noise it had in the batch, as long as each item has a multiple of 16 values. The lab shows it failing otherwise. `LatentBatchSeedBehavior` has two modes. In "fixed", the default, it sets `batch_index` to the first item's index for every item, so all items start from the same noise. In "random" it removes the field.
 
-**Ancestral and SDE samplers** (CU-207) add noise at every step. That noise comes from `default_noise_sampler` in `comfy/k_diffusion/sampling.py`, a generator on the same device as the latent, seeded with the seed, plus one when the latent is on the CPU. On a GPU it is the GPU's generator and not the CPU's.
+**Ancestral samplers** (CU-207) add noise at every step. That noise comes from `default_noise_sampler` in `comfy/k_diffusion/sampling.py`, a generator on the same device as the latent, seeded with the seed, plus one when the latent is on the CPU. On a GPU it is the GPU's generator and not the CPU's. The SDE family differs: `dpmpp_sde`, `dpmpp_2m_sde` and `dpmpp_3m_sde` use `BrownianTreeNoiseSampler` with `cpu=True`, and only the `_gpu` names use the device.
 
 **No variation node.** A search of `comfy/`, `comfy_extras/` and `nodes.py` finds no node that interpolates noise. The only slerp is `bislerp`, one of the latent resize methods in `comfy/utils.py`. A variation is not a built-in feature.
 
@@ -59,7 +59,7 @@ batch of 4, same seed 7:   item 0 equals the noise of a batch of 1   item 1 equa
 LatentBatchSeedBehavior 'fixed' sets batch_index to [0, 0, 0, 0]: all four items identical: True
 ```
 
-For ordinary latents, item 0 does not depend on the batch size, and redoing one item gives back its noise. That held in the lab for the two shapes whose item size is a multiple of 16 and failed for the two whose item size is not. We did not find out why, so treat the property as true for the usual latent shapes and not as a guarantee. Then video. The noise is laid out channel by channel, then frame by frame:
+For ordinary latents, item 0 does not depend on the batch size, and redoing one item gives back its noise. That held in the lab for the two shapes whose item size is a multiple of 16 and failed for the two whose item size is not. We did not find out why, so treat the property as true for the usual latent shapes and not as a guarantee. CU-240 finds the same on SD latents, where 65 x 65 fails. Then video. The noise is laid out channel by channel, then frame by frame:
 
 ```text
 same seed, 21 latent frames against 41: share of the 21-frame noise found unchanged in the 41-frame noise 0.0625  (channel 0 alone: 1.0000)
@@ -67,7 +67,7 @@ same seed, width 104 against 112: share unchanged 0.0000
 correlation between the noise of adjacent frames, 20 pairs: mean -0.0004, largest in size 0.0065
 ```
 
-Adding frames keeps only the first channel of the old noise, which is 1/16 of it, and changing the width keeps nothing. So the same seed with a different length or size is a different video. Adjacent frames have no correlation beyond chance. Last, interpolating two noises of 16,384 numbers each:
+Adding frames keeps only the first channel of the old noise, which is 1/16 of it, and changing the width keeps only the first row of the first frame of channel 0, 104 numbers out of about 2 million, which the line above rounds to 0. So the same seed with a different length or size is a different video. Adjacent frames have no correlation beyond chance. Last, interpolating two noises of 16,384 numbers each:
 
 ```text
 angle between the two noises 89.9 degrees.   t      lerp: std  corr with a      slerp: std  corr with a
@@ -83,14 +83,14 @@ The two methods stay equally close to a, but a linear blend has shrunk to a stan
 - **Same seed, slightly longer clip, a totally different video.** Expected. Only 1/16 of the noise stays in place on a 16-channel latent. To change the length and keep the shot, you need another method, such as a keyframe guide.
 - **A comparison by seed misleads you.** Same seed at a different size or length is different noise. Keep both fixed when you compare settings.
 - **All four items in a batch look identical.** `LatentBatchSeedBehavior` is on `fixed`, or you repeated one latent. Use `random` to get four different draws.
-- **You can't reproduce a batch item alone.** Use `LatentFromBatch`, which keeps the index. Note the lab's warning about unusual latent shapes.
-- **Same seed gives a different result with an ancestral or SDE sampler on another machine.** Those samplers add noise per step from a generator on the latent's device, so the device matters.
-- **A blended noise looks soft or washed out.** Linear blending shrinks it to 0.708 of the size at the middle. Use slerp, or rescale. Core has no node for this.
+- **You can't reproduce a batch item alone.** Use `LatentFromBatch`, which keeps the index. If it still differs, check the size: each item needs a multiple of 16 values. Widths and heights that are multiples of 16 pixels give that on SD and Mochi latents.
+- **Same seed gives a different result with an ancestral sampler on another machine.** It adds noise per step from a generator on the latent's device, so the device matters. The same goes for the `_gpu` SDE names. The plain SDE names draw theirs on the CPU.
+- **A blended noise looks soft or washed out.** Linear blending shrinks it to 0.708 of the size at the middle. Use slerp, or rescale. Core has no node for this on the sampler's noise: `LatentInterpolate` blends and rescales a latent, but `KSampler` draws its noise later from the seed, so that node never sees it.
 - **Big seeds repeat.** On this build, seeds 2^32 apart gave the same noise. Don't expect more variety from larger numbers.
 
 ## What is contested
 
-Whatever coherence a generated video has does not come from correlation in the starting noise, because there is none: ComfyUI draws the noise independently for every frame, and the model creates the coherence. Whether correlated noise would help is a research question: Ge et al. (2023) report that, when finetuning an image diffusion model for video, naively extending the image noise prior to video was sub-optimal and a designed prior was better. That is a different setting from today's video transformers, and ComfyUI's core does not use their prior. The observation about 32-bit seeds belongs to this PyTorch build's CPU generator. Another version or device may behave differently, and per-step noise on a GPU comes from a different generator altogether.
+In an ordinary run, whatever coherence a generated video has does not come from correlation in the starting noise, because there is none: `prepare_noise` draws the noise independently for every frame, and the model creates the coherence. Core's one exception we found is `VOIDWarpedNoise`, which warps noise along a clip's motion (CU-315). Whether correlated noise would help is a research question: Ge et al. (2023) report that, when finetuning an image diffusion model for video, naively extending the image noise prior to video was sub-optimal and a designed prior was better. That is a different setting from today's video transformers, and ComfyUI's core does not use their prior. The observation about 32-bit seeds belongs to this PyTorch build's CPU generator. Another version or device may behave differently, and per-step noise on a GPU comes from a different generator altogether.
 
 ## Sources
 

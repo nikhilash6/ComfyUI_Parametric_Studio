@@ -4,7 +4,7 @@
 
 ## The idea
 
-The canvas holds more than the server ever sees. Modes, reroute dots, notes and coloured group boxes all live in the editor. When you press Queue, the editor rewrites your graph into the API format (CU-110), and the server only gets the result. It has no idea a node was bypassed, because the node simply isn't there.
+The canvas holds more than the server ever sees. Modes, reroute dots, notes and coloured group boxes all live in the editor. When you press Queue, the editor rewrites your graph into the API format (CU-110), and that is the graph the server checks and runs. It has no idea a node was bypassed, because the node simply isn't there. A copy of the save format does travel with it in `extra_data`, only so that it can be written into your PNG (CU-112). The executor does not run from that copy.
 
 So each of these is a question about what the editor writes down. Here is a graph to try them on.
 
@@ -18,9 +18,9 @@ So each of these is a question about what the editor writes down. Here is a grap
 
 The rule of thumb: bypass passes through, and mute cuts.
 
-**Reroute.** A reroute node is purely for the editor, and its source comment says it "does not impact the resulting prompt". The wire is followed through it, so the next node is wired directly to the real source. Our server check shows the other side: send a `Reroute` by hand and you get `missing_node_type`, because the server has no such class. The save format also has a newer kind of reroute, a point on a link listed in a top-level `reroutes` array, which isn't a node at all.
+**Reroute.** A reroute node is purely for the editor, and its source comment says it "does not impact the resulting prompt". The wire is followed through it, so the next node is wired directly to the real source. Our server check shows the other side: send a `Reroute` by hand and you get `missing_node_type`, because the server has no such class. The save format also has a newer kind of reroute, a point on a link listed in a `reroutes` array, which isn't a node at all.
 
-**Group.** A group is a title, a box and a colour in the save format. It is never sent. Its menu has "Set Group Nodes to Always", "Set Group Nodes to Never" and "Bypass Group Nodes", and those just set the mode of each node inside. So a group is a way to select nodes, not a thing the graph runs. Notes are similar: `Note` and `MarkdownNote` are virtual and are not sent.
+**Group.** A group is a title, a box and a colour in the save format. It is never in the API graph. Its menu has "Set Group Nodes to Always", "Set Group Nodes to Never" and "Bypass Group Nodes", and those just set the mode of each node inside. So a group is a way to select nodes, not a thing the graph runs. Notes are similar: `Note` and `MarkdownNote` are virtual and are not in the API graph either.
 
 Try it. The right column updates as you change a mode, using the same rules.
 
@@ -45,7 +45,7 @@ To skip a whole branch, mute or bypass its output node, and leave the rest alone
 
 ## Lab
 
-A short port of the editor's `graphToPrompt`, on the graph above plus a reroute between the blur and the invert, and a note. The wires column shows each input name and the node it reads from. The node numbers: 1 EmptyImage, 2 ImageBlur, 3 Reroute, 4 ImageInvert, 5 PreviewImage, 6 Note.
+A short port of the editor's `graphToPrompt`, on the graph above plus a reroute between the blur and the invert, and a note. The wires column shows each input name and the node it reads from. The node numbers: 1 EmptyImage, 2 ImageBlur, 3 Reroute, 4 ImageInvert, 5 PreviewImage, 6 Note. The "server says" column is a stand-in that only looks at outputs and wires, not widget values.
 
 ```text
 blur then invert      nodes sent    wires                       server says

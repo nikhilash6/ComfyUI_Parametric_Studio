@@ -45,7 +45,7 @@
     "RAM pressure"
    ],
    "answer": "RAM pressure",
-   "why": "main.py sets CacheType.RAM_PRESSURE unless --cache-classic, --cache-lru or --cache-none is given."
+   "why": "main.py sets CacheType.RAM_PRESSURE unless --cache-classic, --cache-lru or --cache-none is given. --high-ram also turns on --cache-classic."
   },
   {
    "q": "Two ordinary nodes have identical class and inputs. What happens?",

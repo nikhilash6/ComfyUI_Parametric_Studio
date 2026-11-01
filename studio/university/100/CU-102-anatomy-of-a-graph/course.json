@@ -43,6 +43,9 @@
   }
  ],
  "unchecked": [
-  "The list of cache modes is correct for this version's main.py. Later versions may change the default."
- ]
+  "Later versions may change the cache modes or the default. We read them in this version's main.py only."
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

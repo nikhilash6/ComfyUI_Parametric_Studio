@@ -56,5 +56,8 @@
   "The 2% in the lab is an example for the arithmetic, not a measured rate.",
   "Other good packs do these jobs. We read only these."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

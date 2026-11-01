@@ -2,13 +2,18 @@
  "code": "CU-295",
  "title": "Bisecting a broken graph: previews are your print statement",
  "level": "200",
- "prereq": ["CU-100"],
+ "prereq": [
+  "CU-100"
+ ],
  "char": "graph",
  "hook": "Something is wrong and nothing errors. Put a preview in the middle and throw away half the graph. Four previews find one bad node out of sixteen.",
  "track": "debugging",
  "order": 50,
  "kit": true,
- "graphs": ["f_bisect_probes", "nm_dead_branch"],
+ "graphs": [
+  "f_bisect_probes",
+  "nm_dead_branch"
+ ],
  "code_refs": [
   "comfy_extras/nodes_preview_any.py:PreviewAny.main",
   "nodes.py:PreviewImage",
@@ -18,15 +23,42 @@
   "server.py:partial_execution_targets"
  ],
  "verified": [
-  {"claim": "PreviewAny is an output node. It prints strings and numbers as they are, tries JSON, then falls back to str.", "how": "source", "ref": "comfy_extras/nodes_preview_any.py"},
-  {"claim": "Real PreviewAny output for a small image was tensor text with its values, and for a latent a dict with samples and downscale_ratio_spacial.", "how": "run here", "ref": "core nodes on a CPU"},
-  {"claim": "With torch's default summary, one NaN in the middle of a 64 by 64 latent doesn't show in the text, and a corner one does.", "how": "run here", "ref": "same settings as PreviewAny, in the lab and in a real process"},
-  {"claim": "The graph f_bisect_probes ran on a CPU.", "how": "run here", "ref": "scripts/verify_university_graphs.py"},
-  {"claim": "Core has PreviewImage, MaskPreview, GetImageSize, GetLatentSize and SaveLatent.", "how": "run here", "ref": "looked up in NODE_CLASS_MAPPINGS"},
-  {"claim": "The server accepts partial_execution_targets to run only chosen outputs.", "how": "source", "ref": "server.py:post_prompt and execution.py:validate_prompt"}
+  {
+   "claim": "PreviewAny is an output node. It prints strings and numbers as they are, tries JSON, then falls back to str.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_preview_any.py"
+  },
+  {
+   "claim": "Real PreviewAny output for a small image was tensor text with its values, and for a latent a dict with samples and downscale_ratio_spacial.",
+   "how": "run here",
+   "ref": "core nodes on a CPU"
+  },
+  {
+   "claim": "With torch's default summary, one NaN in the middle of a 64 by 64 latent doesn't show in the text, and a corner one does.",
+   "how": "run here",
+   "ref": "same settings as PreviewAny, in the lab and in a real process"
+  },
+  {
+   "claim": "The graph f_bisect_probes ran on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "Core has PreviewImage, MaskPreview, GetImageSize, GetLatentSize and SaveLatent.",
+   "how": "run here",
+   "ref": "looked up in NODE_CLASS_MAPPINGS"
+  },
+  {
+   "claim": "The server accepts partial_execution_targets to run only chosen outputs.",
+   "how": "source",
+   "ref": "server.py:post_prompt and execution.py:validate_prompt"
+  }
  ],
  "unchecked": [
   "Halving assumes a chain. A graph with branches needs judgement about where 'the middle' is, and we have no measure for that.",
   "How the editor offers a partial run isn't tested here."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

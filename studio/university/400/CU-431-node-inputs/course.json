@@ -2,13 +2,17 @@
  "code": "CU-431",
  "title": "Node inputs: widgets, optional, hidden, force_input",
  "level": "400",
- "prereq": ["CU-430"],
+ "prereq": [
+  "CU-430"
+ ],
  "char": "graph",
  "hook": "The string \"false\" reaches your node as True. A default in the schema doesn't reach your function at all. Inputs promise less than they seem to.",
  "track": "custom-nodes",
  "order": 6,
  "kit": true,
- "graphs": ["f_widget_wire"],
+ "graphs": [
+  "f_widget_wire"
+ ],
  "code_refs": [
   "comfy_api/latest/_io.py:class Input",
   "comfy_api/latest/_io.py:class WidgetInput",
@@ -22,16 +26,51 @@
   "execution.py:validate_inputs"
  ],
  "verified": [
-  {"claim": "After validation, 3.7 for an INT arrives as 3, the string 'false' for a BOOLEAN arrives as True, None for a STRING arrives as 'None', and 'nan' for a FLOAT passes a 0 to 1 range and arrives as nan.", "how": "run here", "ref": "execution.py:validate_prompt then PromptExecutor on one prompt object, CPU"},
-  {"claim": "A value breaking step is accepted: 3 passed with step 2.", "how": "run here", "ref": "execution.py:validate_inputs has no check on step"},
-  {"claim": "An optional input left out of the prompt is not passed, so the schema default does not reach the function.", "how": "run here", "ref": "execution.py:get_input_data"},
-  {"claim": "force_input is not enforced by the server: a constant in the prompt reached a forceInput STRING.", "how": "run here", "ref": "execution.py:validate_inputs"},
-  {"claim": "An undeclared constant input is dropped before the call.", "how": "run here", "ref": "execution.py:get_input_data"},
-  {"claim": "A list of the wrong length as a widget value gives bad_linked_input, and __value__ is how a list value is passed.", "how": "source", "ref": "execution.py:validate_inputs"},
-  {"claim": "UNIQUE_ID, PROMPT and DYNPROMPT arrived in a real V1 node, and unique_id and prompt on cls.hidden in a V3 node.", "how": "run here", "ref": "execution.py:get_input_data"},
-  {"claim": "An output node gets the prompt and extra_pnginfo hidden inputs added for it in V3.", "how": "source", "ref": "comfy_api/latest/_io.py:Schema.finalize"}
+  {
+   "claim": "After validation, 3.7 for an INT arrives as 3, the string 'false' for a BOOLEAN arrives as True, None for a STRING arrives as 'None', and 'nan' for a FLOAT passes a 0 to 1 range and arrives as nan.",
+   "how": "run here",
+   "ref": "execution.py:validate_prompt then PromptExecutor on one prompt object, CPU"
+  },
+  {
+   "claim": "A value breaking step is accepted: 3 passed with step 2.",
+   "how": "run here",
+   "ref": "execution.py:validate_inputs has no check on step"
+  },
+  {
+   "claim": "An optional input left out of the prompt is not passed, so the schema default does not reach the function.",
+   "how": "run here",
+   "ref": "execution.py:get_input_data"
+  },
+  {
+   "claim": "force_input is not enforced by the server: a constant in the prompt reached a forceInput STRING.",
+   "how": "run here",
+   "ref": "execution.py:validate_inputs"
+  },
+  {
+   "claim": "An undeclared constant input is dropped before the call.",
+   "how": "run here",
+   "ref": "execution.py:get_input_data"
+  },
+  {
+   "claim": "A list of the wrong length as a widget value gives bad_linked_input, and __value__ is how a list value is passed.",
+   "how": "source",
+   "ref": "execution.py:validate_inputs"
+  },
+  {
+   "claim": "UNIQUE_ID, PROMPT and DYNPROMPT arrived in a real V1 node, and unique_id and prompt on cls.hidden in a V3 node.",
+   "how": "run here",
+   "ref": "execution.py:get_input_data"
+  },
+  {
+   "claim": "An output node gets the prompt and extra_pnginfo hidden inputs added for it in V3.",
+   "how": "source",
+   "ref": "comfy_api/latest/_io.py:Schema.finalize"
+  }
  ],
  "unchecked": [
   "We did not test by hand how the editor draws each option. What it does with force_input and socketless comes from the comments in comfy_types and _io.py, not from clicking."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

@@ -167,13 +167,13 @@
    }
   },
   "12": {
-   "class_type": "ImageBatch",
+   "class_type": "BatchImagesNode",
    "inputs": {
-    "image1": [
+    "images.image0": [
      "11",
      0
     ],
-    "image2": [
+    "images.image1": [
      "10",
      0
     ]

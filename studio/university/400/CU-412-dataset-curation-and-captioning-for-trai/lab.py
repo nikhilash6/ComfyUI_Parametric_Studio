@@ -30,9 +30,9 @@ assert sum(rows[(12, 300, 1)]) == 300 and min(rows[(200, 300, 1)]) == 0
 miss = lambda n, st: sum(1 for x in counts(n, st, 1) if x == 0)
 print(f"pictures never seen: 200 pictures at 300 steps {miss(200, 300)}   formula n (1 - 1/n)^steps = {200 * (1 - 1 / 200) ** 300:.1f}")
 # 3. A caption of more than the encoder's window is split into groups, not cut. sd1_clip.SDTokenizer: 77 slots, 2 taken by the start and end tokens, 75 for words.
-print("\ntokens in the caption   groups sent to the encoder (SD 1.5)   numbers in the conditioning")
+print("\ntokens in the caption   groups sent to the encoder (SD 1.5)   shape of the conditioning")
 for t in (10, 75, 76, 150, 151):
-    k = max(1, math.ceil(t / 75)); print(f"{t:<23} {k:<37} {k} x 77 x 768")
+    k = max(1, math.ceil(t / 75)); print(f"{t:<23} {k:<37} 1 x {k * 77} x 768")
 # 4. Why captions matter: a toy. A picture is two facts, the new thing (lamp) and the place (a beach in most of them). A linear model learns what each caption word adds.
 # Words are inputs; the picture's content is the target. Least squares: the smallest weights that explain the data, which is what gradient descent on a linear model from zero finds.
 g = torch.Generator().manual_seed(1)

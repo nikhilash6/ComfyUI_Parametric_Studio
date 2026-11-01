@@ -4,7 +4,7 @@
 
 ## The idea
 
-You render one image with each sampler, and one looks better. Have you learned anything? Almost nothing. A seed changes a picture far more than most sampler choices do, so one render can name either winner.
+You render one image with each sampler, and one looks better. Have you learned anything? Almost nothing. In our one-seed renders and general experience a seed can change a picture more than a sampler choice does, though we have not measured that over many seeds. So one render can name either winner.
 
 A fair test has five parts.
 
@@ -60,7 +60,7 @@ Note that stochastic samplers (ancestral, SDE) use fresh noise drawn in the loop
 - **One seed, one winner.** With our made-up sizes a single seed points the wrong way 24% of the time when a true gain exists. Yours may differ. It's not zero.
 - **Best of many samplers.** Try 15 equal samplers and one wins by chance. Test the winner again on new seeds.
 - **A convergence test used as a beauty test.** A sampler nearest the long-run image isn't always the one people prefer.
-- **The first render's time.** It includes loading. Our data show euler at 66 s and the others at 1.5 s, which is not about the sampler.
+- **The first render's time.** It includes loading. In our SD 1.5 sampler set, euler shows 66 s and the rest 1.5 s, or 3.0 s for `uni_pc` and `sa_solver`. That gap is loading and polling, not the sampler.
 - **Different schedulers by accident.** A sampler and scheduler pair is a two-part change. Change one thing.
 
 ## Lab
@@ -105,7 +105,7 @@ seeds per sampler   same seeds: diff +/- range   different seeds: diff +/- range
 ```
 
 ```text
-seeds for a range of +/- the true difference: same seeds (sd of difference 1.41): 9, different seeds (sd 7.21): 208
+seeds for a range of +/- the true difference: same seeds (sd of difference 1.41): 8, different seeds (sd 7.21): 208
 same seed, one render each, true difference +1 in favour of b: a looks better 24% of the time
 15 equal samplers, 8 seeds each, noise sd 1: the winner's lead over the true mean averages 0.62, so test the winner again on new seeds
 ```

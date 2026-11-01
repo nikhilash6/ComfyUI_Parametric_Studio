@@ -46,11 +46,19 @@
    "claim": "Titles from the arXiv API; these replace the draft's wrong Longformer and Trellis citations.",
    "how": "docs",
    "ref": "https://arxiv.org/abs/2004.05150"
+  },
+  {
+   "claim": "attention_sub_quad calls efficient_dot_product_attention from sub_quadratic_attention.py, a memory-saving computation of the same attention.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:attention_sub_quad"
+  },
+  {
+   "claim": "In wan/model.py window_size is stored and passed along, and no attention code reads it.",
+   "how": "source",
+   "ref": "comfy/ldm/wan/model.py:window_size"
   }
  ],
  "unchecked": [
-  "attention_sub_quad's use of chunks is from reading its function name, its file sub_quadratic_attention.py and a brief look at the call, not a full read.",
-  "Wan's window_size being unused comes from reading its value (-1, -1) in constructors, and we did not grep every model subclass.",
   "The graph is a stand-in for 3D data. Hunyuan3D 2 may not use sparse tokens. It is shown so that you can see where 3D models sit, nothing more.",
   "We did not run a real windowed model."
  ],

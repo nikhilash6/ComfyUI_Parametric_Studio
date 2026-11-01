@@ -28,7 +28,7 @@ print("              token projections   attention pairs")
 print(f"no cache      {work['full'][0]:<19,d} {work['full'][1]:,d}"); print(f"KV cache      {work['cached'][0]:<19,d} {work['cached'][1]:,d}")
 assert work["cached"][0] == 40 and work["full"][0] == 820
 # The price: memory for each layer, kept for the whole run.
-print("\ntokens stored   one layer, 8 kv heads, head width 128, bf16   24 layers")
+print("\ntokens stored   one layer in MiB, 8 kv heads, head width 128, bf16   24 layers")
 for n in (256, 1024, 4096, 16384):
     b = 2 * n * 8 * 128 * 2; print(f"{n:<15,d} {b / 2 ** 20:<45.1f} {24 * b / 2 ** 30:.2f} GiB")
 # The cache is only right if nothing earlier changes. Change one early token and the stored keys are stale.

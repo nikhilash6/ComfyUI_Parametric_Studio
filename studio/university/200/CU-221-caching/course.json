@@ -2,7 +2,9 @@
  "code": "CU-221",
  "title": "Caching: why changing the seed does not reload the model",
  "level": "200",
- "prereq": ["CU-220"],
+ "prereq": [
+  "CU-220"
+ ],
  "char": "graph",
  "hook": "Each node gets a key built from its whole ancestry. Change one input and only what lies downstream runs again.",
  "code_refs": [
@@ -23,16 +25,42 @@
  "track": "debugging",
  "order": 20,
  "kit": true,
- "graphs": ["nm_first", "sd15_txt2img"],
+ "graphs": [
+  "nm_first",
+  "sd15_txt2img"
+ ],
  "verified": [
-  {"claim": "Two ordinary copies of a node with the same inputs ran once, and with not_idempotent they ran twice.", "how": "run here", "ref": "test nodes through PromptExecutor with the classic cache"},
-  {"claim": "A new NaN fingerprint re-ran on all 3 queues, and a shared math.nan ran once.", "how": "run here", "ref": "test nodes through PromptExecutor"},
-  {"claim": "main.py picks RAM_PRESSURE unless a cache flag is set.", "how": "source", "ref": "main.py"},
-  {"claim": "A fingerprint sees constants and not wired values.", "how": "run here", "ref": "execution.py:IsChangedCache"},
-  {"claim": "A failed node's result isn't stored, while results from earlier nodes stay in the cache.", "how": "source", "ref": "execution.py:execute"}
+  {
+   "claim": "Two ordinary copies of a node with the same inputs ran once, and with not_idempotent they ran twice.",
+   "how": "run here",
+   "ref": "test nodes through PromptExecutor with the classic cache"
+  },
+  {
+   "claim": "A new NaN fingerprint re-ran on all 3 queues, and a shared math.nan ran once.",
+   "how": "run here",
+   "ref": "test nodes through PromptExecutor"
+  },
+  {
+   "claim": "main.py picks RAM_PRESSURE unless a cache flag is set, and --high-ram sets cache_classic in comfy/cli_args.py.",
+   "how": "source",
+   "ref": "main.py"
+  },
+  {
+   "claim": "A fingerprint sees constants and not wired values.",
+   "how": "run here",
+   "ref": "execution.py:IsChangedCache"
+  },
+  {
+   "claim": "A failed node's result isn't stored, while results from earlier nodes stay in the cache.",
+   "how": "source",
+   "ref": "execution.py:execute"
+  }
  ],
  "unchecked": [
   "RAM pressure eviction isn't simulated in the lab, because it depends on free RAM on the machine.",
   "The lab's LRU counts single results, and the real one evicts by generation, so read its row for direction only."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

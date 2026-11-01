@@ -21,6 +21,6 @@ value 70000 stored as
   fp16: inf
   bf16: 70144.0
 fp16: 300^2 = inf   then normalising: [nan, 0.0]
-smallest fp16 value before underflow to zero: 0.0  bf16 keeps it: 1.001e-08
+the value 1e-8 stored in fp16, below its smallest step: 0.0  bf16 keeps it: 1.001e-08
 
 memory for 1 billion parameters: fp32 3.7 GiB  fp16/bf16 1.9 GiB  fp8 0.9 GiB

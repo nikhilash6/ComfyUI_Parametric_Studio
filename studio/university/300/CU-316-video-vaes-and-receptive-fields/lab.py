@@ -31,9 +31,9 @@ x = torch.rand(1, 1, 21, 1, 1); y = x.clone(); y[0, 0, 20] += 5.0; k = torch.ran
 def stack(v):
     for _ in range(2): v = F.conv3d(F.pad(v, (0, 0, 0, 0, 2, 0), mode="replicate"), k, stride=(2, 1, 1))
     return v
-a, b = stack(x), stack(y); ch = (a != b).flatten().nonzero().flatten().tolist(); print(f"\nchange frame 20 of 21: the {a.shape[2]} latent frames that move are {ch}")
+a, b = stack(x), stack(y); ch = (a != b).flatten().nonzero().flatten().tolist(); print(f"\nchange frame 20 of 21: of the {a.shape[2]} latent frames, the ones that move are {ch}")
 assert ch == [5]
-# 5. Why tiles need overlap: decode a 1D latent with a stack of receptive radius 3, in two tiles, and compare. Error stops when the overlap covers the radius.
+# 5. Why tiles need overlap: decode a 1D latent with a stack of receptive radius 3, in two tiles that share `ov` positions, and join them in the middle. Each tile reaches ov // 2 past the join, so error stops when ov // 2 covers the radius.
 torch.manual_seed(1); w = [torch.randn(1, 1, 3) * 0.6 for _ in range(3)]; z = torch.randn(1, 1, 64)
 def dec(v):
     for k in w: v = torch.tanh(F.conv1d(v, k, padding=1))
@@ -41,5 +41,5 @@ def dec(v):
 t = dec(z); print("\ntwo tiles of a 64-long latent, zero padding at each tile edge, hard join in the middle of the overlap")
 print("overlap   largest error at the join"); errs = []
 for ov in (0, 2, 4, 6, 8, 12):
-    m = 32; a = dec(z[..., :m + ov // 2 + ov % 2 + ov // 2]) if False else dec(z[..., :m + ov]); b = dec(z[..., m - ov:]); o = torch.cat([a[..., :m], b[..., ov:]], -1); e = (o - t).abs().max().item(); errs.append(e); print(f"{ov:<9d} {e:.6f}")
-assert errs[0] > 1e-3 and errs[-1] < 1e-9
+    m = 32; a = dec(z[..., :m + ov // 2]); b = dec(z[..., m - ov // 2:]); o = torch.cat([a[..., :m], b[..., ov // 2:]], -1); e = (o - t).abs().max().item(); errs.append(e); print(f"{ov:<9d} {e:.6f}")
+assert errs[2] > 1e-3 and errs[3] < 1e-9 and errs[-1] < 1e-9

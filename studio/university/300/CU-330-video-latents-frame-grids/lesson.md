@@ -32,7 +32,7 @@ Why 17k + 5? H3's latent frames don't all cover the same time. `FRAME_PER_TOKEN`
 
 ## See it on real clips
 
-Here's an LTX-2.5 clip from our gallery, asked for 6 seconds at 24 fps. That is 144 frames, which is off the grid. The file has 145 frames, which is 8 x 18 + 1, one more than the sum. The prompt was "Macro shot, liquid gold and emerald ink collide in black water and bloom into huge swirling clouds".
+Here's an LTX-2.5 clip from our gallery, asked for 6 seconds at 24 fps. That is 144 frames, which is off the grid. The file has 145 frames, which is 8 x 18 + 1, one more than the sum. Typed as 144, the node floors it to 137, so 145 is what the node was given: our studio's helper rounds to the nearest 8k + 1 first. The prompt was "Macro shot, liquid gold and emerald ink collide in black water and bloom into huge swirling clouds".
 
 {{video:showcase/v_ltx_ink.mp4|LTX-2.5 at 960 x 544, 145 frames, with sound. One seed. The file's size and frame count were read with ffprobe.}}
 

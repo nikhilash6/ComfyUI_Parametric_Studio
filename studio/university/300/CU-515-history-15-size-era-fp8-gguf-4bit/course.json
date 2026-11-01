@@ -109,7 +109,8 @@
   "The weights are synthetic. We measured no real model and rendered no pictures.",
   "The two block rows are a simple stand-in, not the exact algorithm of any named format.",
   "We did not compare GGUF with native formats for speed. The line from main.py is the project's own claim.",
-  "We don't name a GGUF pack here and did not test one."
+  "We don't name a GGUF pack here and did not test one.",
+  "We did not trace which real 4-bit format moved to block scales when. The lab shows the effect, not the history."
  ],
  "kit": true
 }

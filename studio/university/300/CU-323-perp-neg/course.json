@@ -55,5 +55,8 @@
  "unchecked": [
   "Our one render uses an ordinary negative that doesn't overlap the prompt. It doesn't test the overlap case Perp-Neg is for. We list that render as wanted.",
   "That the batch-wide dot product matters in practice is our inference. The lab only shows that the sum isn't per image."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

@@ -58,5 +58,8 @@
  "unchecked": [
   "We ran no ControlNet model for this lesson, so the lesson says nothing measured about how pictures change with strength or window. The advice to try lower end values is common practice, not a result of ours.",
   "What a ControlNet does at strength above 1 in a picture is untested here. The code only multiplies."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

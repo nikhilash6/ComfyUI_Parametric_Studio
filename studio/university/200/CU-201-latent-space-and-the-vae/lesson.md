@@ -87,7 +87,7 @@ beta    reconstruction MSE per image   KL per image   latent std
 latent std per channel with a weak KL: 1.524 1.381   scale factor 1/std: 0.6853   std after scaling: 1.000
 ```
 
-The second block is where a scale factor comes from. Now the classic demonstration: halfway between a bar on the left and a bar on the right.
+The last of those two blocks is where a scale factor comes from. Now the classic demonstration: halfway between a bar on the left and a bar on the right.
 
 ```text
 pixel midpoint           0.05 0.39 0.39 0.05 0.05 0.39 0.39 0.05

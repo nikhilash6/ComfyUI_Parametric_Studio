@@ -90,7 +90,7 @@ head width 96: axes for time, height, width = [32, 32, 32], sum 96
 latent 21x90x160, patch 1x2x2: 75,600 tokens
 ```
 
-The last line is a toy size, and shows how fast video grows.
+The last line is the grid of an 81-frame clip at 1280 × 720 with a 4× time and 8× space VAE. It shows how fast video grows.
 
 ## Sources
 

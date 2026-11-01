@@ -35,7 +35,7 @@
    "ref": "comfy_extras/nodes_latent.py:LatentBatchSeedBehavior"
   },
   {
-   "claim": "Per-step noise comes from default_noise_sampler, on the latent's device.",
+   "claim": "Ancestral samplers' per-step noise comes from default_noise_sampler, on the latent's device. The plain dpmpp_sde, dpmpp_2m_sde and dpmpp_3m_sde use BrownianTreeNoiseSampler with cpu=True.",
    "how": "source",
    "ref": "comfy/k_diffusion/sampling.py:default_noise_sampler"
   },
@@ -43,6 +43,11 @@
    "claim": "The lab reproduced prepare_noise on this PyTorch build and printed the tables.",
    "how": "run here",
    "ref": "lab.py"
+  },
+  {
+   "claim": "The real prepare_noise with LatentFromBatch's batch_index gave back item 2 for item sizes that are multiples of 16, and not for others, including a 12-channel latent of 61 x 105.",
+   "how": "run here",
+   "ref": "comfy/sample.py:prepare_noise"
   },
   {
    "claim": "Ge et al. report a designed noise prior beat a naive one when finetuning an image model for video.",
@@ -58,6 +63,9 @@
  "unchecked": [
   "Seeds that differ by 2^32 giving the same noise is observed on this PyTorch build's CPU generator. We did not read the cause in PyTorch's source.",
   "Item i of a batch matching the i-th draw held only for item sizes that are multiples of 16 in the lab. We did not find out why, so it's stated as seen.",
-  "Per-step noise on a GPU comes from a different generator, and we did not test it."
- ]
+  "Ancestral per-step noise on a GPU comes from a different generator, and we did not test it."
+ ],
+ "second_read": {
+  "errors_fixed": 5
+ }
 }

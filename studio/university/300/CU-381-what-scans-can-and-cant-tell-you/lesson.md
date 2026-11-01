@@ -27,7 +27,7 @@ These patterns show up again and again. Each one looks alarming and usually isn'
 - **Things you can't read.** Compiled binaries, or a long string blob that gets decoded later.
 - **Code fetched later.** Nothing bad in the pack today, then a download at run time.
 - **Harm with ordinary words.** Opening a file named in a web request needs no scary word. It only needs a missing check.
-- **Patterns no one thought to add.** Each new pattern catches more and also adds new false alarms.
+- **Patterns no one thought to add.** Each new pattern catches more, and it can add new false alarms as well.
 
 ## Where a hit is matters more than what it is
 
@@ -55,7 +55,7 @@ ComfyUI's own security policy puts issues that need a specific custom node out o
 
 - **Dropping a pack on one hit.** You may lose a good pack to a padding mode. Read the line first.
 - **Installing a pack on a clean scan.** Silence is not evidence of good intent. It's only evidence that no pattern matched.
-- **Adding patterns until it feels safe.** The lab shows that this moves the mistakes. It doesn't end them.
+- **Adding patterns until it feels safe.** In the lab a new pattern catches some misses, leaves two, and fixes no false alarm. It doesn't end the mistakes.
 - **Treating a scan count as a score.** Fifty hits in a big toolkit can all be harmless, and one in a small pack can be the whole problem.
 - **Quoting a scan as if you'd read the code.** Say which of the two you did.
 
@@ -90,7 +90,7 @@ these are our own samples, picked to show both mistakes. The counts say nothing 
 Adding a pattern for loaders catches some misses and fixes no false alarms:
 
 ```text
-adding patterns moves the mistakes, it does not end them
+adding a pattern catches some misses, it does not end the mistakes
 with a loaders pattern: clean on a bad line 2, hit on a fine line 6
 ```
 

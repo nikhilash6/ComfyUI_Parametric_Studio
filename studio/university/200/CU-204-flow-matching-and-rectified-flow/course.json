@@ -39,6 +39,11 @@
    "ref": "lab.py"
   },
   {
+   "claim": "fix_empty_latent_channels widens an all-zero 4-channel latent to 16 for SD3's format and leaves a non-zero one at 4. KSampler and SamplerCustomAdvanced both call it.",
+   "how": "run here",
+   "ref": "comfy.sample.fix_empty_latent_channels in a Python session, nodes.py:common_ksampler"
+  },
+  {
    "claim": "A karras flow render came out brown and unfinished on one seed.",
    "how": "run here",
    "ref": "renders.json, flow-euler-karras"
@@ -51,6 +56,10 @@
  ],
  "unchecked": [
   "The results quoted from Lipman, Liu and Albergo were checked at the first audit and not re-read this time.",
+  "That most flow models have not been reflowed is our impression, not a survey.",
   "The rectified pairs being optimal holds in one dimension, as the lesson says. We ran one dimension only."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

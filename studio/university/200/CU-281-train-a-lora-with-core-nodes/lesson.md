@@ -115,8 +115,8 @@ The node's defaults are for trying it out: 16 steps won't do much. Our run used 
 - `steps`: how many updates. Each step sees `batch_size` pictures, so 300 steps at batch 1 on 12 pictures is 25 sightings each on average (CU-412 shows the spread).
 - `rank`: file size and capacity (CU-212, CU-420).
 - `learning_rate`: default 0.0005, and it stays fixed for the whole run.
-- `training_dtype`: bf16 by default. `none` keeps the model's own dtype, and `bypass_mode` is for quantized models, which CU-420 mentions.
-- `existing_lora`: continues from a saved LoRA. The optimizer state isn't saved, so it's a new run on top of old weights, not a resume.
+- `training_dtype`: bf16 by default. `none` leaves the model's compute dtype alone, and training then autocasts to fp16 for an fp16 model and to bf16 for anything else. `bypass_mode` is for quantized models, which CU-420 mentions.
+- `existing_lora`: continues from a saved LoRA. The optimizer state isn't saved, so it's a new run on top of old weights, not a resume. The menu lists your loras folder, while `SaveLoRA` writes to the output folder, so move the file over. Keep `_N_steps_` in its name too: the node reads the step count from there, and stops with a ValueError on a name without it.
 - `gradient_checkpointing`, on by default, lowers memory for some speed.
 
 ## What goes wrong

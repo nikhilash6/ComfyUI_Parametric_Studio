@@ -35,7 +35,7 @@ class Switch(io.ComfyNode):
 
 In V1, add `{"lazy": True}` to the input options, and write `check_lazy_status` as an ordinary method with `self`.
 
-An input that hasn't been computed arrives as `None`, so every lazy argument needs a default.
+A wired input that hasn't been computed arrives as `None`. An optional input with no wire isn't passed at all, so that one needs a default. The defaults on required inputs here are only a habit: the same node with none ran fine.
 
 ## What the engine does
 

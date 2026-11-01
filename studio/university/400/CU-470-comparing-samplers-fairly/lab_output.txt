@@ -26,6 +26,6 @@ seeds per sampler   same seeds: diff +/- range   different seeds: diff +/- range
 64                  +1.05 +/- 0.39              +0.48 +/- 1.78
 256                 +1.05 +/- 0.17              +1.09 +/- 0.90
 
-seeds for a range of +/- the true difference: same seeds (sd of difference 1.41): 9, different seeds (sd 7.21): 208
+seeds for a range of +/- the true difference: same seeds (sd of difference 1.41): 8, different seeds (sd 7.21): 208
 same seed, one render each, true difference +1 in favour of b: a looks better 24% of the time
 15 equal samplers, 8 seeds each, noise sd 1: the winner's lead over the true mean averages 0.62, so test the winner again on new seeds

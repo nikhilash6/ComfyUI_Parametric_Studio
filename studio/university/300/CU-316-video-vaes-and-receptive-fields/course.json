@@ -52,6 +52,10 @@
  "unchecked": [
   "We did not measure the receptive field of a real video VAE. Real stacks add attention, up and down sampling blocks, and residual paths, so the numbers here are for plain convolution stacks.",
   "The first version of this lesson's references to LTX-Video and HunyuanVideo paper titles and arXiv numbers were wrong and are removed. CU-215 cites the LTX-Video paper with its right title.",
-  "We have not tested how large a tile overlap each real VAE needs. The rule here is that the overlap should reach as far as the receptive field."
- ]
+  "We have not tested how large a tile overlap each real VAE needs. The rule here is for a hard join in the middle of the overlap: the overlap should be at least twice the receptive radius.",
+  "The code gives no reason for Wan 2.2's decode estimate having no frame count. Linking it to the feature cache is our reading."
+ ],
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

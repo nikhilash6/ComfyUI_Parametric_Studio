@@ -18,7 +18,7 @@ These steps are read from `execution.py` and `comfy_execution/graph.py` at v0.43
 2. **Partial success is allowed.** An output whose ancestors are invalid is dropped, and the rest still runs. The prompt only fails if no output survives. We ran this: of two previews, the good one ran and the bad one was reported.
 3. **Build the list.** `ExecutionList` extends `TopologicalSort`. Each pending node has a count of the nodes still blocking it.
 4. **Dissolve.** Take a node with count 0, run it, and subtract 1 from everything it blocks.
-5. **Pick kindly.** `ux_friendly_pick_node` prefers an output or an async node, then something feeding an output directly, then one link away, so previews appear early. The comment there says this doesn't change total time.
+5. **Pick kindly.** `ux_friendly_pick_node` prefers an output or an async node, then something feeding an output directly, then one link away, so previews appear early. The comment on the output rule says it doesn't change total time. The comment on the async rule says running those first reduces it.
 6. **Stop at the first failure.** If a node raises, the loop breaks. Nodes that haven't run don't run, but results already finished stay in the cache, so the next queue picks up from there.
 
 ## Three ways a node's turn can end

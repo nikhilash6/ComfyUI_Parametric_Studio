@@ -4,6 +4,8 @@ Every graph the studio runs is plain ComfyUI API format, in `workflows/` and ove
 
 | Call | What it does |
 |---|---|
+| `GET /api/all-graphs` | Everything the studio runs, from one list: goals, recipes, family templates, 3D models and the World Kit and Virtual Set graphs, each with how it runs and the call that runs it |
+| `POST /api/3d/run` | Run a 3D model by id: `{"model": "shap_e", "prompt": "a wooden chair"}`, then `GET /api/3d/jobs/{job}` |
 | `GET /api/graphs` | Every goal, its model and its workflow file |
 | `GET /api/graphs/{goal}` | The API-format graph, and the `${names}` the studio fills in |
 | `POST /api/graph` | The filled graph for your prompt and options, without running it |

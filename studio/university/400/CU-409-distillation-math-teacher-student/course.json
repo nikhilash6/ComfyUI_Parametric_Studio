@@ -51,5 +51,8 @@
   "We read the three papers' abstracts only. The student and consistency fits in the lab are our simplified version: no network, no EMA, one number per level.",
   "On this problem every sampler step is a multiplication, so a student copies its teacher perfectly. A real network does not, so the lab's flat student-error column overstates what a real student keeps.",
   "We ran no distilled model here. The settings in d_lcm are the usual ones for LCM files, and are untested by us. Check your file's notes."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

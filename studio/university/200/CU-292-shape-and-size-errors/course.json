@@ -2,13 +2,17 @@
  "code": "CU-292",
  "title": "Shape and size errors: reading a traceback",
  "level": "200",
- "prereq": ["CU-103"],
+ "prereq": [
+  "CU-103"
+ ],
  "char": "graph",
  "hook": "Core nodes often resize without telling you, and then a model refuses the result. Read the numbers in the error, and it usually says which two things disagree.",
  "track": "debugging",
  "order": 30,
  "kit": true,
- "graphs": ["f_size_silent"],
+ "graphs": [
+  "f_size_silent"
+ ],
  "code_refs": [
   "execution.py:execute",
   "execution.py:mat1 and mat2 shapes",
@@ -19,14 +23,42 @@
   "comfy_extras/nodes_preview_any.py:PreviewAny"
  ],
  "verified": [
-  {"claim": "The traceback shown is real, from LatentAdd given 4-channel and 16-channel latents on a CPU. We removed the long code lines of the engine's own frames.", "how": "run here", "ref": "PromptExecutor, CPU, core nodes"},
-  {"claim": "LatentBlend gives the same size error, and LatentBatch gives: Sizes of tensors must match except in dimension 0. Expected size 4 but got size 16.", "how": "run here", "ref": "core nodes on a CPU"},
-  {"claim": "These core nodes resized without an error: ImageBatch 64+128 gave (2,64,64,3), ImageBlend gave (1,64,64,3), JoinImageWithAlpha with a 128 mask gave (1,64,64,4), LatentAdd gave (1,4,8,8), LatentBatch gave (2,4,8,8). ImageBatch of RGB and RGBA gave 4 channels.", "how": "run here", "ref": "core nodes on a CPU"},
-  {"claim": "ComfyUI adds a tip when a mat1 and mat2 error comes from a node with Sampler in its class name.", "how": "run here", "ref": "execution.py:execute, with a test node standing in for a sampler"},
-  {"claim": "The wording of each lab error comes from torch itself.", "how": "run here", "ref": "the lab, on the torch version in meta.json"}
+  {
+   "claim": "With a 128 by 64 gradient as second input, ImageBatch and ImageBlend kept values from 0.25 to 0.75, so they crop. LatentAdd did the same with a wide latent. JoinImageWithAlpha kept the full range, so it stretches.",
+   "how": "run here",
+   "ref": "core nodes on a CPU"
+  },
+  {
+   "claim": "The traceback shown is real, from LatentAdd given 4-channel and 16-channel latents on a CPU. We removed the long code lines of the engine's own frames.",
+   "how": "run here",
+   "ref": "PromptExecutor, CPU, core nodes"
+  },
+  {
+   "claim": "LatentBlend gives the same size error, and LatentBatch gives: Sizes of tensors must match except in dimension 0. Expected size 4 but got size 16.",
+   "how": "run here",
+   "ref": "core nodes on a CPU"
+  },
+  {
+   "claim": "These core nodes resized without an error: ImageBatch 64+128 gave (2,64,64,3), ImageBlend gave (1,64,64,3), JoinImageWithAlpha with a 128 mask gave (1,64,64,4), LatentAdd gave (1,4,8,8), LatentBatch gave (2,4,8,8). ImageBatch of RGB and RGBA gave 4 channels.",
+   "how": "run here",
+   "ref": "core nodes on a CPU"
+  },
+  {
+   "claim": "ComfyUI adds a tip when a mat1 and mat2 error comes from a node with Sampler in its class name.",
+   "how": "run here",
+   "ref": "execution.py:execute, with a test node standing in for a sampler"
+  },
+  {
+   "claim": "The wording of each lab error comes from torch itself.",
+   "how": "run here",
+   "ref": "the lab, on the torch version in meta.json"
+  }
  ],
  "unchecked": [
   "We didn't run a real model for the mat1 and mat2 or channel errors. We made the same torch errors with a small layer. Which real pairs of model and encoder cause them is from the tip's wording and from dimensions, not from a run.",
   "The exact wording of torch errors can change between torch versions."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

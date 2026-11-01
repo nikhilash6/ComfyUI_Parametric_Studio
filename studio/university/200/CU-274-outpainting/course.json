@@ -39,10 +39,18 @@
    "claim": "d_outpaint_mask ran on a CPU here, and d_outpaint validates.",
    "how": "run here",
    "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "Repainted pixels at feathering 40, grow_mask_by 6, from the real ImagePadForOutpaint and VAEEncodeForInpaint with a stub VAE: right 13, bottom 13, left 15, top 15. At grow_mask_by 8 on the right: 14.",
+   "how": "run here",
+   "ref": "nodes.py:VAEEncodeForInpaint.encode"
   }
  ],
  "unchecked": [
   "We ran no render for this lesson. The advice on how far to pad in one go, and on what a prompt should say, is common practice and untested here.",
   "Our graph's inpainting checkpoint name is a placeholder: use yours."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

@@ -27,7 +27,7 @@ calls   error    std
 128     0.0200   0.978
 ```
 
-One call is worthless, as the std of 0.012 shows: a single step lands on the denoiser's mean, which is nearly zero. Error halves each time you double the calls. That's the slow road.
+One call is worthless, as the std of 0.012 shows: a single step lands on the denoiser's mean, which is nearly zero. Going from one call to two gains almost nothing. After that the error falls by 1.7 to 2 times each time you double the calls, and from 8 calls on it halves. That's the slow road.
 
 ## Progressive distillation
 
@@ -49,7 +49,7 @@ student calls   student error   Euler at the same calls   std of student
 
 The student's error stays at 0.04 all the way down to one call, where Euler at one call is useless. That's what the method promises.
 
-Two warnings about that column. First, it's flat because this problem is too easy: a step here is a multiplication, and a product of two numbers is one number, so the student copies exactly. A real network can't copy two steps perfectly, and each round adds some error. Second, the student matches its teacher, not the truth. Its error can't fall below the teacher's:
+Two warnings about that column. First, it's flat because this problem is too easy: a step here is a multiplication, and a product of two numbers is one number, so the student copies exactly. A real network can't copy two steps perfectly, and each round adds some error. Second, the student matches its teacher, not the truth. Nothing in its training points at what the teacher got wrong, and here its error lands exactly on the teacher's:
 
 ```text
 the student copies the teacher, errors included. One-step student from each teacher, against the teacher's own error

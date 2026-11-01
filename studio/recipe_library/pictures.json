@@ -4909,48 +4909,28 @@
 "rating": "sfw",
 "title": "Black-and-white manga panel page",
 "pitch": "Comics and manga: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
+"key": "words",
+"label": "Word in the balloon",
+"default": "WOW!"
+},
+{
 "key": "subject",
 "label": "Subject",
 "default": "a vase of flowers"
-},
-{
-"key": "mood",
-"label": "Mood",
-"default": "action-packed",
-"options": [
-"action-packed",
-"quiet and wistful",
-"mysterious",
-"comedic",
-"romantic"
-]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "four-panel page",
-"options": [
-"four-panel page",
-"splash page with an inset",
-"vertical strip layout",
-"a two-page spread",
-"a close-up panel sequence",
-"an establishing wide panel with small insets"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -4960,14 +4940,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 856224,
-"prompt": "A silent black-and-white ink comic page with no speech balloons at all, showing {subject}, laid out in dynamic panels of different sizes with speed lines, screentone shading, fine ink linework and dramatic close-ups of the subject. Crisp inking, large gutters, every panel a pure wordless picture of the flowers and plain white gutters, and a tense {mood} mood on clean white paper. {variation}.",
+"prompt": "A black-and-white manga page of {subject} in four panels, speed lines, screentone shading, fine ink linework. One large speech balloon in the last panel with the English word \"{words}\" in clean comic capitals. All other panels are wordless. The only word is \"{words}\", spelled exactly.",
 "options": {
-"aspect": "2:3",
-"mode": "quality"
+"aspect": "2:3"
 },
 "final": true
 }
@@ -4975,7 +4954,8 @@
 "proof": {
 "level": "recipe",
 "note": "Never rendered through this recipe. Settings and wording come from the earlier studio."
-}
+},
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling."
 },
 {
 "id": "pic_art_comic_shonen_action",
@@ -5055,55 +5035,35 @@
 },
 {
 "id": "pic_art_comic_golden_age",
-"text_note": "Leaves a blank band for your title.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Comics and manga",
 "section": "art",
 "rating": "sfw",
 "title": "Golden Age comic cover",
 "pitch": "Comics and manga: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
+"key": "words",
+"label": "Title",
+"default": "BLOOM"
+},
+{
 "key": "subject",
 "label": "Subject",
 "default": "a vase of flowers"
-},
-{
-"key": "palette",
-"label": "Palette",
-"default": "red, yellow and blue",
-"options": [
-"red, yellow and blue",
-"green and orange",
-"purple and pink",
-"teal and red",
-"black and gold"
-]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "wide establishing view",
-"options": [
-"wide establishing view",
-"medium shot of the main subject",
-"close-up on a detail",
-"low dramatic angle",
-"high overview",
-"over-the-shoulder view"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -5113,14 +5073,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 326944,
-"prompt": "A Golden Age American comic book cover style illustration of {subject}, with bold flat colour, thick black outlines, four-colour dot printing, a plain blank solid-colour band across the top, saturated {palette} palette, exaggerated action poses and a pulpy, adventurous mood on aged newsprint paper. {variation}.",
+"prompt": "A Golden Age American comic book cover illustration of {subject}, bold flat colour, thick black outlines, four-colour dot printing, saturated red, yellow and blue, aged newsprint. Across the top the title \"{words}\" in huge red comic letters, fully inside the frame. The only word is \"{words}\", spelled exactly.",
 "options": {
-"aspect": "2:3",
-"mode": "quality"
+"aspect": "2:3"
 },
 "final": true
 }
@@ -12421,43 +12380,30 @@
 },
 {
 "id": "pic_art_type_brush_calligraphy",
-"text_note": "Paints a picture, not words. The picture model can't spell.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
 "rating": "sfw",
 "title": "Brush calligraphy word",
 "pitch": "Calligraphy and typography: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
-"key": "subject",
-"label": "Subject",
-"default": "a vase of flowers"
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "centred picture",
-"options": [
-"centred picture",
-"word running diagonally",
-"vertical stacked word",
-"word with a large first stroke",
-"word with splashes",
-"close view of one stroke"
-]
+"key": "words",
+"label": "Word",
+"default": "Calm"
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -12467,14 +12413,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 205123,
-"prompt": "A picture of {subject} painted in expressive brush strokes on blank paper. Black ink on handmade cream paper, with bold thick-to-thin strokes, dry-brush streaks, a few ink splashes and a vermilion seal stamp. Generous empty margins and a calm, confident artistic feel. Fine paper fibres show through the ink and the whole composition feels spontaneous yet balanced. {variation}.",
+"prompt": "A single word written in expressive brush calligraphy: \"{words}\". Black ink on handmade cream paper, with bold thick-to-thin strokes, dry-brush streaks and a few ink splashes. Generous empty margins. The only mark on the paper is the word \"{words}\", spelled exactly.",
 "options": {
-"aspect": "2:3",
-"mode": "quality"
+"aspect": "2:3"
 },
 "final": true
 }
@@ -12486,23 +12431,23 @@
 },
 {
 "id": "pic_art_type_gothic_blackletter",
-"text_note": "The script on the page is decorative and has no meaning.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
 "rating": "sfw",
 "title": "Blackletter manuscript initial",
 "pitch": "Calligraphy and typography: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
-"key": "subject",
-"label": "Subject",
-"default": "a vase of flowers"
+"key": "words",
+"label": "Word",
+"default": "Rosa"
 },
 {
 "key": "palette",
@@ -12515,26 +12460,13 @@
 "crimson and teal",
 "black and gold"
 ]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "centred and symmetrical",
-"options": [
-"centred and symmetrical",
-"close-up crop",
-"wide view with generous space around the subject",
-"low angle looking up",
-"high angle looking down",
-"off-centre with negative space"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -12544,14 +12476,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 564678,
-"prompt": "A medieval illuminated manuscript page with a large decorated initial for the word {subject}, drawn in blackletter style with burnished gold leaf, {palette} pigments, vine scrollwork, tiny animals in the margins and ruled lines of unreadable script on parchment. Tiny cracks in the gold, a slight yellowing of the page and a faint stain make it feel ancient. {variation}.",
+"prompt": "A medieval illuminated manuscript page with the single large blackletter word \"{words}\" in burnished gold leaf, {palette} pigments, vine scrollwork, tiny animals in the margins, on otherwise empty parchment. The only word on the page is \"{words}\", spelled exactly.",
 "options": {
-"aspect": "2:3",
-"mode": "quality"
+"aspect": "2:3"
 },
 "final": true
 }
@@ -12563,23 +12494,23 @@
 },
 {
 "id": "pic_art_type_neon_sign",
-"text_note": "Draws a neon outline, not words. The picture model can't spell.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
 "rating": "sfw",
 "title": "Neon sign lettering",
 "pitch": "Calligraphy and typography: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
-"key": "subject",
-"label": "Subject",
-"default": "a vase of flowers"
+"key": "words",
+"label": "Word",
+"default": "OPEN"
 },
 {
 "key": "colour",
@@ -12592,26 +12523,13 @@
 "green",
 "orange"
 ]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "straight view",
-"options": [
-"straight view",
-"angled view",
-"with rain",
-"close-up of the glass",
-"with a pole shadow",
-"sign above a doorway"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -12622,14 +12540,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 343279,
-"prompt": "A glowing neon tube outline drawing {subject} in smooth lines, on a blank wall, mounted on a dark brick wall, with {colour} light bloom, reflections on wet pavement, tiny cables and brackets visible. Night street atmosphere and sharp glass tube detail. A faint hum of glow bleeds onto nearby bricks, and some tubes are slightly dimmer than others. {variation}.",
+"prompt": "A glowing neon tube sign spelling \"{words}\" in smooth script lettering, mounted on a dark brick wall, with {colour} light bloom, reflections on wet pavement, tiny cables and brackets visible. The only word is \"{words}\", spelled exactly.",
 "options": {
-"aspect": "3:2",
-"mode": "quality"
+"aspect": "3:2"
 },
 "final": true
 }
@@ -12641,23 +12558,23 @@
 },
 {
 "id": "pic_art_type_sign_painting",
-"text_note": "Paints the sign with a picture, not words. Add your own lettering afterwards.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
 "rating": "sfw",
 "title": "Hand-painted sign",
 "pitch": "Calligraphy and typography: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
-"key": "subject",
-"label": "Subject",
-"default": "a vase of flowers"
+"key": "words",
+"label": "Word on the sign",
+"default": "FLOWERS"
 },
 {
 "key": "colour",
@@ -12670,26 +12587,13 @@
 "red",
 "black"
 ]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "centred and symmetrical",
-"options": [
-"centred and symmetrical",
-"close-up crop",
-"wide view with generous space around the subject",
-"low angle looking up",
-"high angle looking down",
-"off-centre with negative space"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -12699,14 +12603,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 842296,
-"prompt": "A hand-painted shop sign showing a plain picture of {subject}, blank otherwise, in bold brush strokes with a drop shadow, gold outline, and small decorative flourishes on a {colour} painted wooden board. Weathered paint, slightly faded edges and sunlight on a brick wall. Brush marks show in the paint and fine pinstripes finish the edges of the board. {variation}.",
+"prompt": "A hand-painted shop sign reading \"{words}\", in bold brush lettering with a drop shadow, gold outline, and small decorative flourishes on a {colour} painted wooden board. Weathered paint and sunlight on a brick wall. The only word is \"{words}\", spelled exactly.",
 "options": {
-"aspect": "3:2",
-"mode": "quality"
+"aspect": "3:2"
 },
 "final": true
 }
@@ -12718,23 +12621,23 @@
 },
 {
 "id": "pic_art_type_chalk_lettering",
-"text_note": "Draws the board and leaves it blank for your own lettering. The picture model can't spell.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
 "rating": "sfw",
 "title": "Chalk lettering board",
 "pitch": "Calligraphy and typography: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
-"key": "subject",
-"label": "Subject",
-"default": "a vase of flowers"
+"key": "words",
+"label": "Words on the board",
+"default": "FRESH COFFEE"
 },
 {
 "key": "colour",
@@ -12747,26 +12650,13 @@
 "green",
 "orange"
 ]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "centred and symmetrical",
-"options": [
-"centred and symmetrical",
-"close-up crop",
-"wide view with generous space around the subject",
-"low angle looking up",
-"high angle looking down",
-"off-centre with negative space"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -12777,14 +12667,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 177870,
-"prompt": "A cafe chalkboard with a drawing of {subject} and a blank clear centre, white and {colour} chalk, flourishes, small leaves and dots, a hand-drawn border, smudged chalk dust and a wooden frame. Warm indoor light. Small stars, leaves and dots decorate the border, while chalk dust sits along the frame and the board shows faint ghosting from earlier cleaning. {variation}.",
+"prompt": "A cafe chalkboard with the words \"{words}\" in large decorative hand lettering, white and {colour} chalk, flourishes, small leaves and dots, a hand-drawn border, smudged chalk dust and a wooden frame. Warm indoor light. The only words on the board are \"{words}\", spelled exactly.",
 "options": {
-"aspect": "2:3",
-"mode": "quality"
+"aspect": "1:1"
 },
 "final": true
 }
@@ -12796,23 +12685,23 @@
 },
 {
 "id": "pic_art_type_swiss_poster",
-"text_note": "Leaves blank space for your title. The picture model can't spell.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
 "rating": "sfw",
 "title": "Swiss-style typographic poster",
 "pitch": "Calligraphy and typography: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
-"key": "subject",
-"label": "Subject",
-"default": "a vase of flowers"
+"key": "words",
+"label": "Word",
+"default": "FORM"
 },
 {
 "key": "colour",
@@ -12825,26 +12714,13 @@
 "green",
 "black"
 ]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "centred and symmetrical",
-"options": [
-"centred and symmetrical",
-"close-up crop",
-"wide view with generous space around the subject",
-"low angle looking up",
-"high angle looking down",
-"off-centre with negative space"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -12854,14 +12730,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 18837,
-"prompt": "A minimalist Swiss-style graphic layout of {subject} as one bold simple shape, set large on a strict grid with asymmetric layout, generous blank white space, one {colour} accent shape and fine grain. Crisp geometry and an editorial design calm. {variation}.",
+"prompt": "A minimalist Swiss-style typographic poster with the single word \"{words}\" in a bold sans-serif typeface, the whole word on one line and fully inside the frame with wide margins, on a strict grid with generous white space, one {colour} accent shape and fine grain. The only word is \"{words}\", spelled exactly.",
 "options": {
-"aspect": "2:3",
-"mode": "quality"
+"aspect": "2:3"
 },
 "final": true
 }
@@ -12873,23 +12748,23 @@
 },
 {
 "id": "pic_art_type_graffiti_lettering",
-"text_note": "Draws the look with shapes, not real letters. The picture model can't spell.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
 "rating": "sfw",
 "title": "Graffiti lettering study",
 "pitch": "Calligraphy and typography: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
-"key": "subject",
-"label": "Subject",
-"default": "a vase of flowers"
+"key": "words",
+"label": "Word",
+"default": "BLOOM"
 },
 {
 "key": "palette",
@@ -12902,26 +12777,13 @@
 "red and yellow",
 "teal and magenta"
 ]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "centred and symmetrical",
-"options": [
-"centred and symmetrical",
-"close-up crop",
-"wide view with generous space around the subject",
-"low angle looking up",
-"high angle looking down",
-"off-centre with negative space"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -12931,14 +12793,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 721134,
-"prompt": "A graffiti-style study of {subject}, drawn in thick bubble shapes on blank paper with outlines, highlights, drop shadows and arrows, in {palette} markers on white paper. Clean fast confident lines and playful energy. Highlight marks, small stars and a few dripping marker lines add energy, and the paper shows tiny marker bleed. {variation}.",
+"prompt": "A graffiti lettering study of the word \"{words}\", drawn in thick bubble letters with outlines, highlights, drop shadows and arrows, in {palette} markers on white paper. Clean fast confident lines. The only word is \"{words}\", spelled exactly.",
 "options": {
-"aspect": "3:2",
-"mode": "quality"
+"aspect": "3:2"
 },
 "final": true
 }
@@ -12950,23 +12811,23 @@
 },
 {
 "id": "pic_art_type_ornamental_monogram",
-"text_note": "Draws the ornament with a blank centre for your own letter.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Calligraphy and typography",
 "section": "art",
 "rating": "sfw",
 "title": "Ornamental monogram",
 "pitch": "Calligraphy and typography: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "art"
 ],
 "fields": [
 {
-"key": "subject",
-"label": "Subject",
-"default": "a vase of flowers"
+"key": "words",
+"label": "Letter",
+"default": "A"
 },
 {
 "key": "colour",
@@ -12979,26 +12840,13 @@
 "green",
 "silver"
 ]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "centred and symmetrical",
-"options": [
-"centred and symmetrical",
-"close-up crop",
-"wide view with generous space around the subject",
-"low angle looking up",
-"high angle looking down",
-"off-centre with negative space"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -13008,14 +12856,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 411275,
-"prompt": "An ornamental medallion of {subject} in a Victorian style, surrounded by foliage, flowers, scrolls and ribbon, engraved in fine lines with {colour} accents on cream paper. Symmetrical, detailed and elegant. Delicate shading, tiny leaves, flowing ribbon ends and fine decorative dots frame the blank centre, with a faint paper grain and a hand-engraved quality in every curve. {variation}.",
+"prompt": "An ornamental monogram of the single capital letter \"{words}\" in a Victorian style, surrounded by foliage, flowers, scrolls and ribbon, engraved in fine lines with {colour} accents on cream paper. Symmetrical and elegant. The only letter is \"{words}\".",
 "options": {
-"aspect": "1:1",
-"mode": "quality"
+"aspect": "1:1"
 },
 "final": true
 }
@@ -30643,19 +30490,24 @@
 },
 {
 "id": "pic_inf_social_carousel",
-"text_note": "Leaves a blank space for your text; add the words yourself afterwards.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Social post formats",
 "section": "lifestyle",
 "rating": "sfw",
 "title": "Carousel slide portrait",
 "pitch": "Social post formats: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "lifestyle"
 ],
 "fields": [
+{
+"key": "words",
+"label": "Words",
+"default": "Slow mornings"
+},
 {
 "key": "setting",
 "label": "Setting",
@@ -30691,26 +30543,13 @@
 "dusty rose",
 "charcoal"
 ]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "looking right",
-"options": [
-"looking right",
-"looking at the camera",
-"looking down",
-"laughing to the right",
-"leaning on her hand",
-"turning away slightly"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -30720,14 +30559,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 78652,
-"prompt": "A square portrait of an adult woman in {setting}, her pose and gaze directed to the right, wearing {outfit}, with a gentle bokeh background. Soft window light, a muted {palette} palette, calm expression, and a plain empty colour area on the left side of the frame, left blank. 85mm lens. {variation}.",
+"prompt": "A square social post: a portrait of an adult woman in {setting} on the right, wearing {outfit}, gaze to the right, gentle bokeh, soft window light, muted {palette} palette. On the left, on a plain area, the words \"{words}\" in an elegant serif type. The only words are \"{words}\", spelled exactly.",
 "options": {
-"aspect": "1:1",
-"mode": "quality"
+"aspect": "1:1"
 },
 "final": true
 }
@@ -30739,19 +30577,24 @@
 },
 {
 "id": "pic_inf_social_short_video_cover",
-"text_note": "Leaves a blank space for your captions; add the words yourself afterwards.",
+"text_note": "Spelled by the model: keep to a few short words, and check the spelling.",
 "kind": "picture",
 "group": "Social post formats",
 "section": "lifestyle",
 "rating": "sfw",
 "title": "Short-video cover frame",
 "pitch": "Social post formats: a picture from a prompt with drop-downs.",
-"why": "A hand-written picture prompt from the earlier studio, with its own choices and variations. Written for Krea 2; here it runs on FLUX.2 Klein 4B.",
+"why": "A picture with real words, from the earlier studio's prompt. It runs on Krea 2, which spells short words.",
 "tags": [
 "picture",
 "lifestyle"
 ],
 "fields": [
+{
+"key": "words",
+"label": "Words",
+"default": "SUNNY DAYS"
+},
 {
 "key": "outfit",
 "label": "Outfit",
@@ -30775,26 +30618,13 @@
 "a beach",
 "an urban plaza"
 ]
-},
-{
-"key": "variation",
-"label": "Variation",
-"default": "spinning in place",
-"options": [
-"spinning in place",
-"walking toward camera",
-"jumping lightly",
-"swinging hair",
-"pointing at the camera",
-"dancing with arms up"
-]
 }
 ],
 "models": [
 {
-"name": "FLUX.2 Klein 4B",
-"licence": "Apache-2.0",
-"licence_class": "open"
+"name": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community"
 }
 ],
 "tips": [
@@ -30804,14 +30634,13 @@
 {
 "id": "picture",
 "type": "goal",
-"goal": "image",
+"goal": "krea2",
 "label": "The picture",
-"peak_gib": 23,
+"peak_gib": 24,
 "seed": 397657,
-"prompt": "A vertical cover frame of an adult woman in {outfit}, caught mid-motion in {place}, with her hair and clothes moving. Slightly tilted camera, warm sunlight, saturated colour, shallow depth of field, and plain empty sky and ground at the top and bottom of the frame, left blank. 35mm lens, energetic, trend-aware social look. {variation}.",
+"prompt": "A vertical video cover of an adult woman in {outfit}, caught mid-motion in {place}, hair and clothes moving, warm sunlight, saturated colour. At the top of the frame the words \"{words}\" in bold white block capitals. The only words are \"{words}\", spelled exactly.",
 "options": {
-"aspect": "9:16",
-"mode": "quality"
+"aspect": "9:16"
 },
 "final": true
 }

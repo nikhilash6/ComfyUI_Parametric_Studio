@@ -57,7 +57,10 @@
   }
  ],
  "unchecked": [
-  "exception_during_inner_validation can also come from a raising upstream validator. We triggered it only with a wire to a missing node.",
+  "exception_during_inner_validation can also come from a raising upstream validator. We triggered it only with a wire to a missing node and a wire to a missing slot.",
   "How the editor shows each error (red outlines and the dialog) isn't tested here. We read the server's replies."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

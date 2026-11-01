@@ -50,7 +50,7 @@ Now try them on a toy dataset with an exact answer. Watch the model calls as wel
 ## What goes wrong
 
 - **Comparing at equal steps.** Compare at equal model calls. The last table in the lab does this, and it changes the order.
-- **Expecting more steps to always help.** A second-order sampler can be worse than Euler at very few steps. In the lab at 5 steps, `heun`'s median error is 1.14 and `euler`'s is 0.47. Order describes what happens as steps grow.
+- **Expecting a higher order to always win.** A second-order sampler can be worse than Euler at very few steps. In the lab at 5 steps, `heun`'s median error is 1.14 and `euler`'s is 0.47. Order describes what happens as steps grow.
 - **Assuming higher order means a better picture.** All this measures distance from the exact path, on a toy. Real models have errors of their own, and CFG changes the equation.
 - **Changing step count and expecting the same composition.** A few paths sit near a boundary between outcomes, and a small error moves them over. That's the "wrong" column.
 - **Thinking samplers differ in which model they use.** They all ask the same model and differ in how they use its answers. To pick one, see CU-234.

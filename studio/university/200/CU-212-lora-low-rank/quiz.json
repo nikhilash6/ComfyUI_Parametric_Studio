@@ -72,13 +72,13 @@
   {
    "q": "Which way does the standard Load LoRA node in ComfyUI apply a LoRA?",
    "options": [
-    "By weight patches: merged into the weight when the module is fully loaded, or applied on every forward pass for modules that do not fit in VRAM",
+    "By weight patches: applied on every forward pass under dynamic VRAM, and under the older patcher merged into a module that fits or applied on each pass to one that does not",
     "Always in bypass mode, to avoid touching the weights",
     "By retraining the base model for a few steps",
     "By editing the checkpoint file on disk"
    ],
-   "answer": "By weight patches: merged into the weight when the module is fully loaded, or applied on every forward pass for modules that do not fit in VRAM",
-   "why": "LoraLoader calls load_lora_for_models, which registers patches. ModelPatcher.load then merges them or attaches LowVramPatch objects. The bypass loader is a separate experimental node."
+   "answer": "By weight patches: applied on every forward pass under dynamic VRAM, and under the older patcher merged into a module that fits or applied on each pass to one that does not",
+   "why": "LoraLoader calls load_lora_for_models, which registers patches. ModelPatcherDynamic.load attaches LowVramPatch objects, and the older ModelPatcher.load merges or attaches them per module. The bypass loader is a separate experimental node."
   }
  ]
 }

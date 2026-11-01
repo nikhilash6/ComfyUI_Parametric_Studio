@@ -34,7 +34,7 @@
     "Invert the map"
    ],
    "answer": "Lower both thresholds",
-   "why": "The edges are below the high threshold. A black map gives the ControlNet nothing to follow, and strength multiplies nothing."
+   "why": "The edges are below the high threshold. A black map gives the ControlNet no edges to follow. Strength scales its residuals, and those aren't zero, but it can't add edges the map doesn't have."
   },
   {
    "q": "Your hint is 1920 x 1080 and your render is 512 x 512. What happens?",

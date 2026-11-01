@@ -33,6 +33,11 @@
    "ref": "pip install reference, fetched 2026-11-01"
   },
   {
+   "claim": "A dry run still resolves first, so it can download packages and prepare a source package's metadata, which can run its build code.",
+   "how": "source",
+   "ref": "pip _internal/commands/install.py and _internal/operations/prepare.py, read as text; not run"
+  },
+  {
    "claim": "venv creates a separate environment, isolated by default from the base environment's packages.",
    "how": "docs",
    "ref": "Python docs, venv, fetched 2026-11-01"
@@ -64,5 +69,8 @@
   "Whether any tool that installs packs for you runs requirements automatically. Check the tool you use.",
   "We describe the method in general. Commands vary with your system, and we did not run these exact ones for this lesson."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

@@ -62,5 +62,8 @@
   "The gain setting is approximate: a random matrix's largest singular value is near the value named, not exactly on it.",
   "Which layers matter most in any real model, including the common advice about first and last layers, which we did not test."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

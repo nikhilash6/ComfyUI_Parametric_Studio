@@ -54,5 +54,8 @@
  "unchecked": [
   "What a browser does with a damaged PNG is up to the browser, and we didn't test several.",
   "We did not re-encode files in real editors to see which keep the metadata. The docs say that some may drop it."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

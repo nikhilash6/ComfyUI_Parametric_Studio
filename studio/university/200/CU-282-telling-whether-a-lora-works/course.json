@@ -40,5 +40,8 @@
   "The sweep and seed numbers come from a small stand-in network, not an image model, so its near-straight line is not a claim about any real LoRA. Real sweeps can bend far more or less.",
   "Our real pictures are two prompts at one seed each, at strength 1. We have no sweep from a real LoRA in this lesson.",
   "That testing with several seeds and four on/off pictures is enough is our advice, not something proved."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

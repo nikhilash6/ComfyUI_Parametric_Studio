@@ -55,5 +55,8 @@
   "We did not run a VAE, so we have not confirmed each family's decoder against the ratio functions.",
   "The attention share is a count for a plain block. It isn't a measurement of any real model.",
   "We say nothing about which frame rate a model was trained at, or how motion quality depends on it."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

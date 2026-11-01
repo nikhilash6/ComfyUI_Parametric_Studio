@@ -28,7 +28,7 @@ for n in (1, 4, 16, 64, 256):
     if n == 1: a, b, c = sim(1, 1.0, g=g); print(f"1                   {(b - a).item():+.2f}, no range               {(c - a).item():+.2f}, no range"); continue
     a, b, c = sim(n, 1.0, g=g); m1, r1 = ci(b - a); m2 = (c.mean() - a.mean()).item(); r2 = 2 * math.sqrt(c.var().item() / n + a.var().item() / n); print(f"{n:<19d} {m1:+.2f} +/- {r1:<17.2f} {m2:+.2f} +/- {r2:.2f}")
 # Using the same seed removes the seed effect from the comparison, which is why it needs far fewer seeds.
-def need(diff, sd): return math.ceil((2 * sd / diff) ** 2)
+def need(diff, sd): return math.ceil(round((2 * sd / diff) ** 2, 9))     # round first: (2 * sqrt(2)) ** 2 comes out a hair over 8 in floats
 print(f"\nseeds for a range of +/- the true difference: same seeds (sd of difference {math.sqrt(2):.2f}): {need(1, math.sqrt(2))}, different seeds (sd {math.sqrt(2 * 26):.2f}): {need(1, math.sqrt(2 * 26))}"); assert need(1, math.sqrt(2)) < need(1, math.sqrt(2 * 26))
 # How often one seed picks the wrong winner.
 g = torch.Generator().manual_seed(2); x = 2.0 ** .5 * torch.randn(200000, generator=g) + 1.0; print(f"same seed, one render each, true difference +1 in favour of b: a looks better {(x < 0).float().mean().item():.0%} of the time")

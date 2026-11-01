@@ -43,7 +43,7 @@ Core passes three geometry types on wires: `VOXEL`, `MESH` and `SPLAT`.
 - **Calling an SDF a mesh.** An SDF is a value at every point. You have to extract a surface from it.
 - **Raising voxel resolution until memory runs out.** The cost is cubic. Use a sparse method, or use the surface extraction to get more from the grid you have.
 - **Expecting a splat to behave like a solid.** It has no inside. Physics and printing need a mesh.
-- **Measuring blocky meshes for area or volume.** The area is 50% too high at any resolution.
+- **Measuring blocky meshes for area.** On a sphere the area is 50% too high at any resolution. The factor depends on the shape: a cube lined up with the grid has none. Volume is fine: the lab's 325,184 inside voxels at grid 128 are within 0.1% of the sphere's volume.
 - **Keeping millions of triangles.** Use `DecimateMesh`.
 - **Assuming any mesh is watertight.** It might not be. `RemeshMesh` in `solid` mode aims for a watertight solid from messy input.
 

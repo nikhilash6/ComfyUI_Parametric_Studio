@@ -18,7 +18,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.05
   },
   "nm_dead_branch": {
    "sha": "1b8d7285a665372d",
@@ -28,7 +28,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.01
+   "ran_seconds": 0.22
   },
   "nm_first": {
    "sha": "4835b34a50dbf7a8",
@@ -38,7 +38,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.13
   },
   "nm_latent_ops": {
    "sha": "8638b9a10f409a02",
@@ -48,7 +48,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.04
   },
   "nm_mask_canny": {
    "sha": "9010f158e7bad652",
@@ -58,7 +58,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.02
+   "ran_seconds": 3.33
   },
   "nm_sigmas": {
    "sha": "7172b209a0224ec1",
@@ -88,7 +88,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.02
+   "ran_seconds": 0.45
   },
   "sd15_cfgnorm": {
    "sha": "8fb12848379e6057",
@@ -354,7 +354,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.01
+   "ran_seconds": 0.56
   },
   "a_own_picture": {
    "sha": "d8524e30a07cdc70",
@@ -364,7 +364,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.01
+   "ran_seconds": 0.03
   },
   "a_pixel_budget": {
    "sha": "904e4f6e321a6f2d",
@@ -374,7 +374,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.03
+   "ran_seconds": 0.43
   },
   "a_read_before_run": {
    "sha": "ebf6fbe46dcc1a26",
@@ -384,7 +384,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.01
   },
   "a_save_preview": {
    "sha": "868511bac2f277f4",
@@ -394,7 +394,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.28
   },
   "d_canny_preview": {
    "sha": "e8c4554bb0b3b122",
@@ -404,7 +404,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.02
+   "ran_seconds": 6.78
   },
   "d_depth_moge": {
    "sha": "40171f77e6d2888d",
@@ -431,7 +431,7 @@
    "errors": []
   },
   "d_lora_compare": {
-   "sha": "4f41cff42efe001b",
+   "sha": "6f6709d03d98fa21",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -470,7 +470,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.02
+   "ran_seconds": 0.27
   },
   "b_ancestral_eta": {
    "sha": "6243b83d4dcc0179",
@@ -504,7 +504,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.01
   },
   "b_latent_gain": {
    "sha": "1fde96576e723525",
@@ -626,7 +626,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.01
+   "ran_seconds": 0.08
   },
   "f_core_loop": {
    "sha": "4920bbf6b64fc252",
@@ -644,7 +644,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.01
   },
   "f_lazy_switch": {
    "sha": "e408b20da373b4f8",
@@ -664,7 +664,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.69
   },
   "f_size_silent": {
    "sha": "c0ba0f4007734837",
@@ -674,7 +674,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.01
   },
   "f_txt2img_probe": {
    "sha": "adf75157c1e895a3",
@@ -702,7 +702,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.01
   },
   "e_audio_channels": {
    "sha": "02e5402a3f0acc3b",
@@ -712,17 +712,17 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.0
+   "ran_seconds": 0.12
   },
   "e_chain_join": {
-   "sha": "1a67b1baa9ea2b96",
+   "sha": "8addd1c67997be56",
    "runs": "cpu",
    "unknown": [],
    "validate": "ok",
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.01
+   "ran_seconds": 1.95
   },
   "e_hunyuan3d_surfnet": {
    "sha": "c17ed03810ede639",

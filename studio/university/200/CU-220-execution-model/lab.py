@@ -25,7 +25,7 @@ CLASSES = dict(Load=Load, Text=Text, Sample=Sample, Switch=Switch, Save=Save)
 def is_link(v): return isinstance(v, list) and len(v) == 2
 
 def validate(prompt):
-    """The checks of validate_prompt: known classes, at least one output, types match along links, no cycles. Nodes no output needs are never looked at."""
+    """The checks of validate_prompt: known classes, at least one output, types match along links, no cycles. After the class check, nodes no output needs are never looked at."""
     for i, n in prompt.items():
         if n["class_type"] not in CLASSES: return f"missing_node_type: {n['class_type']}"
     outs = [i for i, n in prompt.items() if CLASSES[n["class_type"]].OUTPUT]

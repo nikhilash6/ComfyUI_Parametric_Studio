@@ -7,7 +7,7 @@
   "CU-103"
  ],
  "char": "latent",
- "hook": "Train a tiny VAE on a CPU, and see why the midpoint of two latents is a picture while the midpoint of two images is a ghost.",
+ "hook": "Train a tiny VAE on a CPU, and see when the midpoint of two latents is a picture, and why the midpoint of two images is a ghost.",
  "code_refs": [
   "comfy/latent_formats.py:scale_factor",
   "comfy/latent_formats.py:class SD15",
@@ -59,5 +59,8 @@
   "The toy VAE has one true degree of freedom, so its behaviour does not transfer directly to image VAEs, as the lesson says.",
   "We did not run wrong-VAE or out-of-memory cases for this lesson. Those lines describe the shapes and what we expect.",
   "The statements about Rombach et al. were checked at the first audit and not re-read this time."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

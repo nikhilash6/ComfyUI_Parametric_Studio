@@ -29,4 +29,4 @@ print(f"mixture      {5:<15d} {sum(x not in trainset for x in g2.tolist()) / 500
 print(f"the truth itself                                       {best:.4f}")
 assert ll2 > ll1 and sum(x in trainset for x in copied.tolist()) == 5000 and abs(ll2 - best) < .02
 print(f"\nshare of one-Gaussian samples in the empty gap between the modes (-1 < x < 0.5): {((g1 > -1) & (g1 < .5)).double().mean():.3f}   truth: {((test > -1) & (test < .5)).double().mean():.3f}")
-print(f"\nwhy images need more: a 512x512 RGB image has 256^(3*512*512) possible values, a number with {int(3 * 512 * 512 * math.log10(256)):,} digits")
+print(f"\nwhy images need more: a 512x512 RGB image has 256^(3*512*512) possible values, a number with {int(3 * 512 * 512 * math.log10(256)) + 1:,} digits")

@@ -63,8 +63,11 @@
   }
  ],
  "unchecked": [
-  "The chunk table is worked out from reading the code. We did not encode real prompts with real weights.",
+  "The chunk counts come from running SDTokenizer, and the shapes in the table are worked out from the configs. We did not encode real prompts with real weights.",
   "The lab's attention uses random weights, so it shows structure and says nothing about meaning.",
   "We read the warning for a missing embedding in the parser's code and did not trigger one."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

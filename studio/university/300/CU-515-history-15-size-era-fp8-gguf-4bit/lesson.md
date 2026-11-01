@@ -4,7 +4,7 @@
 
 ## The idea
 
-Models grew faster than graphics cards. A 14 billion parameter model in fp16 is 26.1 GiB of weights, more than many cards hold. So from about 2019 people started asking how few bits a weight really needs. Here is the order, with the arXiv dates.
+Models grew faster than graphics cards. A 14 billion parameter model in fp16 is 26.1 GiB of weights, more than many cards hold. So people keep asking how few bits a weight really needs. Here are the formats this lesson covers, in order, with their arXiv dates.
 
 - **May 2019, bf16.** "A Study of BFLOAT16 for Deep Learning Training". Its abstract gives two reasons: the same range as fp32 and simple conversion. It costs the same 16 bits as fp16, so it saved no memory against fp16. The lab shows it rounds more coarsely too.
 - **August 2022, int8.** "LLM.int8()". Their abstract says it cuts the memory "for inference by half", on a 175B model.
@@ -23,7 +23,7 @@ a scale per block:          scale = max|block| / qmax   an outlier hurts only it
 a tiny float:               spacing grows with the value, and a scale moves weights to the useful part
 ```
 
-So 4-bit formats got usable once they stopped sharing one scale, and paid for the extra scales in bits.
+In the lab below, 4 bits hold up only once they stop sharing one scale, and they pay for the extra scales in bits.
 
 ```
 bits per weight = code bits + scale bits / weights per scale

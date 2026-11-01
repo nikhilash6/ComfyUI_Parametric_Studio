@@ -98,7 +98,7 @@ side   pixels / 512x512   tokens N   N^2 entries        full matrix in fp16   VA
 2048   16.00              65,536     4,294,967,296           8.00 GiB          34.03 GiB
 ```
 
-From 512 to 1024 the pixel count grows 4 times and the number of attention pairs 16 times. At 2048 one fp16 attention matrix for a single head and a single image would take 8 GiB, which is why a memory-efficient kernel matters. The last column is the estimate formula from `comfy/sd.py`, not a measurement, and the source comment says those constants need tweaking. It grows with the pixel count, so it quadruples when a side doubles.
+From 512 to 1024 the pixel count grows 4 times and the number of attention pairs 16 times. At 2048 one fp16 attention matrix for a single head and a single image would take 8 GiB, which is why a memory-efficient kernel matters. The last column is the estimate formula from `comfy/sd.py`, not a measurement, and the source comment says those constants need tweaking. On AMD the code multiplies it by a further 2.73. It grows with the pixel count, so it quadruples when a side doubles.
 
 ## What is contested
 

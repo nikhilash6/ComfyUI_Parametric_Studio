@@ -78,7 +78,10 @@
   "We did not run FLUX.1 dev or Klein for this lesson, and no render here compares guidance values. We read the code and the cards.",
   "That FLUX.1 dev was trained with guidance as an input is our inference from the guidance_in layer. We did not read Black Forest Labs' training code.",
   "ComfyUI's examples page says to set cfg to 1.0 for the FLUX.1 dev FP8 checkpoint. It doesn't state a reason, so the reason given here is our reading of the source.",
-  "We did not check the Klein file headers: those weights aren't on our test machine at the moment. So we don't say whether a Klein file has guidance_in.",
+  "We did not check the FLUX.2 Klein file headers: those weights aren't on our test machine at the moment. So we don't say whether a FLUX.2 Klein file has guidance_in.",
   "The Klein cards use Diffusers' guidance_scale. We take it as the same idea as ComfyUI's cfg because our template uses cfg 1 for the distilled file and 5 for Base, but we did not read Diffusers' pipeline code."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

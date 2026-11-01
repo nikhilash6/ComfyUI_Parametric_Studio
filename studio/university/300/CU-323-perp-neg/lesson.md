@@ -53,7 +53,7 @@ The paper also uses this for 3D: steering views away from a canonical front view
 
 ## Lab
 
-The arrows are two numbers each, drawn from the empty prediction. The positive is length 1, and so is the negative. Cfg is 7.
+The arrows are two numbers each, drawn from the empty prediction. The positive is length 1, and so is the negative. Cfg is 7 and neg_scale is 1.
 
 ```text
 negative's angle to the positive   plain along   plain sideways   perp-neg along   perp-neg sideways

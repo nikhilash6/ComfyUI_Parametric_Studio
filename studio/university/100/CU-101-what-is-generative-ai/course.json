@@ -57,5 +57,8 @@
  "unchecked": [
   "The toy has one dimension and a known truth. Nothing here measures how much any real image model memorises.",
   "We did not measure how a real model behaves for words outside its training data. That point is from the general idea, not a test."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

@@ -54,5 +54,8 @@
  ],
  "unchecked": [
   "The lab works on a clean ramp of values, not on a real VAE's output, and it measures no visible loss."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

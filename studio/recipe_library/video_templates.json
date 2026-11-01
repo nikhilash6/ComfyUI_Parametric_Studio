@@ -67,7 +67,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 149027,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} looks into the camera and opens with a surprising one-line hook about {benefit}. They speak directly to the camera. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} looks into the camera and opens with a surprising one-line hook about {benefit}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -97,7 +97,7 @@
 "label": "Cta",
 "peak_gib": 46,
 "seed": 149027,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} holds up {product} and gives the call to action: {offer}. They speak directly to the camera. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds up {product} and gives the call to action: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -193,7 +193,7 @@
 "label": "Problem",
 "peak_gib": 46,
 "seed": 880867,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} complains to camera about {problem}, frustrated. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} complains to camera about {problem}, frustrated. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -238,7 +238,7 @@
 "label": "Proof",
 "peak_gib": 46,
 "seed": 895273,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains to camera how {benefit} changed their day, convinced. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains to camera how {benefit} changed their day, convinced. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -253,7 +253,7 @@
 "label": "Cta",
 "peak_gib": 46,
 "seed": 73322,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} smiles and gives the call to action: {offer}. They speak directly to the camera. Handheld selfie, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} smiles and gives the call to action: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -334,8 +334,8 @@
 "goal": "h3_video",
 "label": "Reveal",
 "peak_gib": 46,
-"seed": 623404,
-"prompt": "integrated_multimodal_description: [Shot 1] {product} revealed in dramatic light. Slow push in, shallow depth of field. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"seed": 623411,
+"prompt": "integrated_multimodal_description: [Shot 1] {product} revealed in dramatic light. Slow push in, shallow depth of field. The product is plain and unlabelled: bare brushed steel from top to bottom, with a smooth blank surface and nothing printed or engraved on it. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "1:1",
 "quality": "high",
@@ -459,7 +459,7 @@
 "label": "Reaction",
 "peak_gib": 46,
 "seed": 548407,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {product} with a short honest first impression. They speak directly to the camera. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {product} with a short honest first impression. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -474,7 +474,7 @@
 "label": "Verdict",
 "peak_gib": 46,
 "seed": 185281,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. Handheld selfie, push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie, push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -590,7 +590,7 @@
 "label": "After",
 "peak_gib": 46,
 "seed": 798650,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} shows off {result} and says one proud line. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shows off {result} and says one proud line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -676,7 +676,7 @@
 "label": "Intro",
 "peak_gib": 46,
 "seed": 844849,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces themself and their situation: {story}. They speak directly to the camera. Seated medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces themself and their situation: {story}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -691,7 +691,7 @@
 "label": "Turn",
 "peak_gib": 46,
 "seed": 844849,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains how {product} helped: {benefit}. They speak directly to the camera. Seated medium close-up, very slow push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains how {product} helped: {benefit}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up, very slow push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -706,7 +706,7 @@
 "label": "Close",
 "peak_gib": 46,
 "seed": 844849,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} recommends it warmly in one line. They speak directly to the camera. Seated medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} recommends it warmly in one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -792,7 +792,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 593402,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the viewer a question the {app} answers. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the viewer a question the {app} answers. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -822,7 +822,7 @@
 "label": "Cta",
 "peak_gib": 46,
 "seed": 13542,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the call to action: {offer}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the call to action: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -902,7 +902,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 559719,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly that the sale is on: {offer}. They speak directly to the camera. Fast push in, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly that the sale is on: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Fast push in, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -917,7 +917,7 @@
 "label": "Cta",
 "peak_gib": 46,
 "seed": 185585,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} points down and tells viewers where to get it. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} points down and tells viewers where to get it. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1001,8 +1001,8 @@
 "goal": "h3_video",
 "label": "Hook",
 "peak_gib": 46,
-"seed": 755354,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} opens with a bold hook about {topic}. They speak directly to the camera. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 755377,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} opens with a bold hook about {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1016,8 +1016,8 @@
 "goal": "h3_video",
 "label": "Point 1",
 "peak_gib": 46,
-"seed": 755354,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the first point from: {points}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 755377,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the first point from: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1031,8 +1031,8 @@
 "goal": "h3_video",
 "label": "Point 2",
 "peak_gib": 46,
-"seed": 755354,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the second point from: {points}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 755377,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the second point from: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1046,8 +1046,8 @@
 "goal": "h3_video",
 "label": "Point 3",
 "peak_gib": 46,
-"seed": 755354,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the third point from: {points}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 755377,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the third point from: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1061,8 +1061,8 @@
 "goal": "h3_video",
 "label": "Wrap",
 "peak_gib": 46,
-"seed": 755354,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} wraps up and asks viewers to follow: {offer}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 755377,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} wraps up and asks viewers to follow: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1219,7 +1219,7 @@
 "label": "Night",
 "peak_gib": 46,
 "seed": 15026,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says one reflective line about the day. They speak directly to the camera. Close-up, warm light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one reflective line about the day. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, warm light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1298,7 +1298,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 332922,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} teases the story: {story}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} teases the story: {story}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1313,7 +1313,7 @@
 "label": "Build",
 "peak_gib": 46,
 "seed": 457996,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} tells what happened, animated. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tells what happened, animated. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1328,7 +1328,7 @@
 "label": "Punchline",
 "peak_gib": 46,
 "seed": 641446,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} delivers the twist and how it ended. They speak directly to the camera. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} delivers the twist and how it ended. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1409,7 +1409,7 @@
 "label": "Intro",
 "peak_gib": 46,
 "seed": 509985,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says what they will show: {topic}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says what they will show: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1469,7 +1469,7 @@
 "label": "Result",
 "peak_gib": 46,
 "seed": 845864,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} shows the result and says one line. They speak directly to the camera. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shows the result and says one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1552,7 +1552,7 @@
 "label": "Intro",
 "peak_gib": 46,
 "seed": 650632,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {recipe} with excitement. They speak directly to the camera. Medium shot in a kitchen. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {recipe} with excitement. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot in a kitchen. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1627,7 +1627,7 @@
 "label": "Bite",
 "peak_gib": 46,
 "seed": 855127,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} tastes it and reacts. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tastes it and reacts. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1725,7 +1725,7 @@
 "label": "Quote",
 "peak_gib": 46,
 "seed": 85392,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says the quote with calm conviction: {quote}. They speak directly to the camera. Close-up, golden light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says the quote with calm conviction: {quote}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, golden light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1821,7 +1821,7 @@
 "label": "Question",
 "peak_gib": 46,
 "seed": 676279,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a sharp question about {topic} into a podcast microphone. They speak directly to the camera. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a sharp question about {topic} into a podcast microphone. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -1836,7 +1836,7 @@
 "label": "Answer",
 "peak_gib": 46,
 "seed": 328353,
-"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers with a strong opinion into a podcast microphone. They speak directly to the camera. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers with a strong opinion into a podcast microphone. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -1851,7 +1851,7 @@
 "label": "Reaction",
 "peak_gib": 46,
 "seed": 852203,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} laughs and reacts in one line. They speak directly to the camera. Two-shot, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} laughs and reacts in one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Two-shot, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -1937,7 +1937,7 @@
 "label": "Ask",
 "peak_gib": 46,
 "seed": 115555,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a microphone out and asks about {topic} in {place}. They speak directly to the camera. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a microphone out and asks about {topic} in {place}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1952,7 +1952,7 @@
 "label": "Answer",
 "peak_gib": 46,
 "seed": 278005,
-"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers the question honestly, then grins. They speak directly to the camera. Handheld medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers the question honestly, then grins. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1967,7 +1967,7 @@
 "label": "Follow",
 "peak_gib": 46,
 "seed": 232991,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a quick follow-up. They speak directly to the camera. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a quick follow-up. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1982,7 +1982,7 @@
 "label": "Final",
 "peak_gib": 46,
 "seed": 409609,
-"prompt": "integrated_multimodal_description: [Shot 1] {who2} gives a funny final answer. They speak directly to the camera. Handheld close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} gives a funny final answer. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2068,7 +2068,7 @@
 "label": "Welcome",
 "peak_gib": 46,
 "seed": 566681,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} welcomes viewers to {name}. They speak directly to the camera. Medium shot at the entrance, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} welcomes viewers to {name}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot at the entrance, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2113,7 +2113,7 @@
 "label": "Offer",
 "peak_gib": 46,
 "seed": 86067,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} invites people in: {offer}. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} invites people in: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2209,7 +2209,7 @@
 "label": "Intro",
 "peak_gib": 46,
 "seed": 880114,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} stands at the door and introduces {place}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} stands at the door and introduces {place}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2269,7 +2269,7 @@
 "label": "Pitch",
 "peak_gib": 46,
 "seed": 562043,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the price and how to book a viewing: {offer}. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the price and how to book a viewing: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2407,7 +2407,7 @@
 "label": "Moment",
 "peak_gib": 46,
 "seed": 405763,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says one line about why {place} is special. They speak directly to the camera. Medium close-up, golden hour. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one line about why {place} is special. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, golden hour. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2484,7 +2484,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 282495,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} teases {event} with excitement. They speak directly to the camera. Handheld, fast push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} teases {event} with excitement. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld, fast push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2514,7 +2514,7 @@
 "label": "Cta",
 "peak_gib": 46,
 "seed": 745091,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the date and tells viewers to come: {event}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the date and tells viewers to come: {event}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2589,7 +2589,7 @@
 "label": "Mistake",
 "peak_gib": 46,
 "seed": 270775,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} names the common mistake in {topic}. They speak directly to the camera. Medium shot in a gym. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} names the common mistake in {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot in a gym. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2619,7 +2619,7 @@
 "label": "Push",
 "peak_gib": 46,
 "seed": 774059,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} encourages the viewer in one line. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} encourages the viewer in one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2694,7 +2694,7 @@
 "label": "Intro",
 "peak_gib": 46,
 "seed": 743658,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says they're getting ready for {topic}. They speak directly to the camera. Handheld mirror framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says they're getting ready for {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld mirror framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2739,7 +2739,7 @@
 "label": "Chat",
 "peak_gib": 46,
 "seed": 121504,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} chats about the plans while finishing up. They speak directly to the camera. Mirror framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} chats about the plans while finishing up. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Mirror framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2838,7 +2838,7 @@
 "label": "Question",
 "peak_gib": 46,
 "seed": 606946,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the question behind {topic}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the question behind {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2868,7 +2868,7 @@
 "label": "Explain",
 "peak_gib": 46,
 "seed": 795614,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the answer simply using: {points}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the answer simply using: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2898,7 +2898,7 @@
 "label": "Takeaway",
 "peak_gib": 46,
 "seed": 516747,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the one-line takeaway. They speak directly to the camera. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the one-line takeaway. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2981,7 +2981,7 @@
 "label": "Headline",
 "peak_gib": 46,
 "seed": 458982,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reads the headline about {topic} like a news anchor. They speak directly to the camera. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reads the headline about {topic} like a news anchor. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3011,7 +3011,7 @@
 "label": "Facts",
 "peak_gib": 46,
 "seed": 108858,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the key facts: {points}. They speak directly to the camera. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the key facts: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3026,7 +3026,7 @@
 "label": "Signoff",
 "peak_gib": 46,
 "seed": 301804,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} signs off. They speak directly to the camera. Medium shot, slow pull back. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} signs off. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slow pull back. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3108,7 +3108,7 @@
 "label": "Founder",
 "peak_gib": 46,
 "seed": 432771,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {name} warmly. They speak directly to the camera. Medium shot in a bright office. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {name} warmly. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot in a bright office. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3138,7 +3138,7 @@
 "label": "Mission",
 "peak_gib": 46,
 "seed": 774751,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the mission: {story}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the mission: {story}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3223,7 +3223,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 207572,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} announces that {name} is hiring {role}. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} announces that {name} is hiring {role}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3253,7 +3253,7 @@
 "label": "Apply",
 "peak_gib": 46,
 "seed": 222632,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says how to apply: {offer}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says how to apply: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3333,7 +3333,7 @@
 "label": "Greet",
 "peak_gib": 46,
 "seed": 799038,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} wishes {for_who} a happy birthday, beaming. They speak directly to the camera. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} wishes {for_who} a happy birthday, beaming. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3348,7 +3348,7 @@
 "label": "Message",
 "peak_gib": 46,
 "seed": 381640,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says the personal message: {message}. They speak directly to the camera. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says the personal message: {message}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3422,7 +3422,7 @@
 "label": "Thanks",
 "peak_gib": 46,
 "seed": 412894,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks {for_who} sincerely. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks {for_who} sincerely. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3437,7 +3437,7 @@
 "label": "Promise",
 "peak_gib": 46,
 "seed": 734088,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} promises what comes next, smiling. They speak directly to the camera. Close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} promises what comes next, smiling. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3551,7 +3551,7 @@
 "label": "Announce",
 "peak_gib": 46,
 "seed": 248304,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says the song {song} is out {date}. They speak directly to the camera. Close-up, neon light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says the song {song} is out {date}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, neon light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3621,7 +3621,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 612739,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a bold question about {topic}. They speak directly to the camera. Handheld selfie, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a bold question about {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3937,7 +3937,7 @@
 "label": "Tip",
 "peak_gib": 46,
 "seed": 661127,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} shares one quick tip: {topic}. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shares one quick tip: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4111,7 +4111,7 @@
 "label": "Line",
 "peak_gib": 46,
 "seed": 735990,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says a motivational line about {topic}. They speak directly to the camera. Close-up, golden light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says a motivational line about {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, golden light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4227,7 +4227,7 @@
 "label": "Cta",
 "peak_gib": 46,
 "seed": 446572,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks viewers to follow for {topic}. They speak directly to the camera. Handheld selfie. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks viewers to follow for {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4596,7 +4596,7 @@
 "label": "News",
 "peak_gib": 46,
 "seed": 733576,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly: {topic}. They speak directly to the camera. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4654,7 +4654,7 @@
 "label": "Verdict",
 "peak_gib": 46,
 "seed": 330566,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. Medium close-up, product in hand. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, product in hand. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4828,7 +4828,7 @@
 "label": "Skit",
 "peak_gib": 46,
 "seed": 412277,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out a funny moment: {topic}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out a funny moment: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4886,7 +4886,7 @@
 "label": "Wish",
 "peak_gib": 46,
 "seed": 131513,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says {topic} warmly. They speak directly to the camera. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says {topic} warmly. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4944,7 +4944,7 @@
 "label": "Quote",
 "peak_gib": 46,
 "seed": 327074,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says one honest line about {product}. They speak directly to the camera. Seated medium close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one honest line about {product}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5108,7 +5108,7 @@
 "label": "Ask",
 "peak_gib": 46,
 "seed": 33070,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a passer-by: {topic}. They speak directly to the camera. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a passer-by: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5335,7 +5335,7 @@
 "label": "Thanks",
 "peak_gib": 46,
 "seed": 507634,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks everyone for {topic}. They speak directly to the camera. Close-up, warm light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks everyone for {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, warm light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5482,7 +5482,7 @@
 "label": "Line",
 "peak_gib": 46,
 "seed": 894070,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says deadpan: {topic}. They speak directly to the camera. Static close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says deadpan: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Static close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5714,7 +5714,7 @@
 "label": "Ad",
 "peak_gib": 46,
 "seed": 693506,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} sells {product} with full infomercial energy. They speak directly to the camera. Bright TV-style. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} sells {product} with full infomercial energy. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Bright TV-style. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5830,7 +5830,7 @@
 "label": "Read",
 "peak_gib": 46,
 "seed": 411412,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reads {topic} like Shakespeare. They speak directly to the camera. Low angle, spotlight. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reads {topic} like Shakespeare. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Low angle, spotlight. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5888,7 +5888,7 @@
 "label": "Reveal",
 "peak_gib": 46,
 "seed": 452652,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} confesses with an evil smile: {topic}. They speak directly to the camera. Low angle, dramatic. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} confesses with an evil smile: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Low angle, dramatic. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5951,7 +5951,7 @@
 "label": "Say",
 "peak_gib": 46,
 "seed": 685260,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says confidently: {topic}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says confidently: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6209,7 +6209,7 @@
 "label": "Ask",
 "peak_gib": 46,
 "seed": 796413,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks seriously: {topic}. They speak directly to the camera. Handheld mic framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks seriously: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld mic framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6356,7 +6356,7 @@
 "label": "Take",
 "peak_gib": 46,
 "seed": 786232,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} insists, eating a slice: {topic}. They speak directly to the camera. Close-up, smug. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} insists, eating a slice: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, smug. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6646,7 +6646,7 @@
 "label": "Brag",
 "peak_gib": 46,
 "seed": 577064,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} brags: {topic}. They speak directly to the camera. Desk, medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} brags: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Desk, medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6762,7 +6762,7 @@
 "label": "Say",
 "peak_gib": 46,
 "seed": 283554,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says proudly: {topic}. They speak directly to the camera. Close-up, book in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says proudly: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, book in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",

@@ -10,7 +10,7 @@ The question to ask at every step is the noise level. At the first step of an SD
 
 ## The mechanism
 
-**Start.** Draw ε from a unit normal, one number per latent value. At full denoise ComfyUI starts from x = ε √(1 + σ²), where σ is the largest sigma of the model, which gives the network unit-variance input once its own input scaling is applied. With denoise below 1 it starts, for SD 1.x style models, from x = latent + σ ε: noise added to the encoded image at a lower σ.
+**Start.** Draw ε from a unit normal, one number per latent value. At full denoise ComfyUI starts, for SD 1.x style models, from x = latent + ε √(1 + σ²), where σ is the largest sigma of the model. The latent is all zeros in a text-to-image run, so x is pure noise, which the network's own input scaling brings to unit variance. With denoise below 1 it starts, for SD 1.x style models, from x = latent + σ ε: noise added to the encoded image at a lower σ.
 
 **Step.** A deterministic Euler step moves along d = (x − D(x, σ)) / σ, where D is the network's estimate of the clean image, and then x_next = x + d × (σ_next − σ). No random number appears in it. Two runs with the same ε and the same settings follow the same path, and a run with a different step count follows nearly the same path with other step sizes. For a deterministic sampler, Song, Meng and Ermon (2020) observed that images made from the same initial noise have similar high-level features whatever the number of steps, and that in many cases 20-step samples already resembled 1000-step ones.
 

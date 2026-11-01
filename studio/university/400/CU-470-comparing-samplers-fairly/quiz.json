@@ -12,7 +12,7 @@
     "ComfyUI requires it"
    ],
    "answer": "The seed effect cancels within each pair, so fewer seeds are needed",
-   "why": "The lab: 9 seeds with pairs, 208 without, for the same range at our sizes."
+   "why": "The lab: 8 seeds with pairs, 208 without, for the same range at our sizes."
   },
   {
    "q": "How much does quadrupling the seeds shrink the range?",

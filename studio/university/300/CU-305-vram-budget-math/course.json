@@ -63,5 +63,8 @@
   "The estimate is ComfyUI's own and its source carries the comment that it needs tweaking. We did not compare it with a measured peak on a real card.",
   "Many models override the estimate or use other factors. We read only the base method and the factors named here."
  ],
- "kit": true
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

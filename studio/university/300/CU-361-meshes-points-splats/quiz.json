@@ -23,7 +23,7 @@
     "To compress the file"
    ],
    "answer": "A splat has no surface, so the node must choose which density level counts as one",
-   "why": "_otsu_level picks a split between empty and occupied density. level scales it."
+   "why": "_otsu_level splits the density values of the occupied voxels into two groups. Empty space is left out first. level scales the result."
   },
   {
    "q": "A splat-to-mesh result has holes. What should you try?",

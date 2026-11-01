@@ -16,11 +16,11 @@ The image model never reads your sentence. ComfyUI cuts the text into tokens, re
 
 {{play:attention}}
 
-**Attention.** Attention(Q, K, V) = softmax(Q Kᵀ / √d_k) V (Vaswani et al. 2017). Each position builds a query, compares it with every key, turns the scores into weights with a softmax, and mixes the values. CLIP's text encoder uses masked self-attention, which sets the scores of later positions to −∞ before the softmax. Position i then sees only positions up to i, so the vector at the end marker is the first one that has seen the whole prompt. CLIP takes that vector, after a layer norm, as the summary of the text (Radford et al. 2021).
+**Attention.** Attention(Q, K, V) = softmax(Q Kᵀ / √d_k) V (Vaswani et al. 2017). Each position builds a query, compares it with every key, turns the scores into weights with a softmax, and mixes the values. CLIP's text encoder uses masked self-attention, which adds a huge negative number to the scores of later positions before the softmax (the largest negative float in ComfyUI's `comfy/clip_model.py`, and −∞ in our lab). Position i then sees only positions up to i, so the vector at the end marker is the first one that has seen the whole prompt. CLIP takes that vector, after a layer norm, as the summary of the text (Radford et al. 2021).
 
 ## In ComfyUI
 
-`CLIPTextEncode` calls `clip.tokenize(text)` and `clip.encode_from_tokens_scheduled(tokens)`. The result, CONDITIONING, is a list of pairs: a tensor with one vector per position, and a dictionary holding `pooled_output`, the encoder's output at the end marker.
+`CLIPTextEncode` calls `clip.tokenize(text)` and `clip.encode_from_tokens_scheduled(tokens)`. The result, CONDITIONING, is a list of pairs: a tensor with one vector per position, and a dictionary holding `pooled_output`, taken from the encoder's output at the end marker of the first chunk.
 
 `SDTokenizer` in `comfy/sd1_clip.py` uses Hugging Face's `CLIPTokenizer` with the vocabulary and merge files in `comfy/sd1_tokenizer`. The vocabulary file has 49,408 entries, the start marker is 49406 and the end marker 49407. The text encoder has 77 positions, so a chunk is a start marker, up to 75 tokens, an end marker and padding. ComfyUI does not truncate a longer prompt. It cuts the tokens into chunks, encodes each chunk as its own sequence, and joins the results along the sequence axis. Words in different chunks never attend to each other.
 
@@ -94,7 +94,7 @@ tokens in prompt  chunks   SD 1.x conditioning     SDXL conditioning (768 + 1280
 150               2        [1, 154, 768]           [1, 154, 2048]
 ```
 
-The 75th token fits in the first chunk and the 76th opens a second one. These rows follow from reading the code, not from running ComfyUI. Words made of several tokens can leave a chunk short, because a short word that does not fit moves to the next chunk.
+The 75th token fits in the first chunk and the 76th opens a second one. We ran ComfyUI's real `SDTokenizer` on these five prompts and got the same chunk counts. The shapes are worked out from the configuration files, since no weights were loaded. Words made of several tokens can leave a chunk short, because a short word that does not fit moves to the next chunk.
 
 ## What is contested
 

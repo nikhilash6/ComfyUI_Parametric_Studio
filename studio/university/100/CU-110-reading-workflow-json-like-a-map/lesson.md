@@ -42,7 +42,7 @@ The documentation says to treat embedded metadata as optional and untrusted inpu
 - **Reading `widgets_values` by position across versions.** Those lists have no names. A node whose widgets change in a new version can give an old list a new meaning.
 - **A script finds nodes by title.** Titles live in `_meta` and can be edited or repeated. Search on `class_type`, then confirm.
 - **The seed never changes in your script.** "randomize" stays behind in the save format, and the API format has only a number. Set a new seed each time, or the cache answers (CU-112).
-- **A PNG with no workflow.** Another program re-encoded it, or the server ran with `--disable-metadata`. CU-111 lets you cut one out yourself.
+- **A PNG with no workflow.** Another program re-encoded it, or the server ran with `--disable-metadata`, or a script queued it and sent no `extra_pnginfo`, which leaves only `prompt`. CU-111 lets you cut one out yourself.
 - **Muted nodes are missing from your API export.** They're meant to be (CU-113).
 
 ## Lab

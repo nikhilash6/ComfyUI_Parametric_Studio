@@ -142,6 +142,7 @@ GOALS = {
  "animate": G("Animate", "Bring an image to life with Wan 2.2 (5B)", "wan22_5b_i2v_api.json", "Wan 2.2 TI2V-5B", "video", "Apache-2.0", "open", {"aspect": list(WAN_SIZES["480p"]), "quality": list(WAN_SIZES), "seconds": SECONDS}, {"aspect": "16:9", "quality": "480p", "seconds": 5}, needs_image=True, negative=WAN_NEG),
  "anime": G("Anime", "Anime and illustration with Anima", "anima_core_t2i_api.json", "Anima", "image", "Non-commercial (circlestone-labs licence)", "community", {"aspect": list(IMG_SIZES), "style": list(STYLES), "mode": list(ANIME_MODES)}, {"aspect": "1:1", "style": "tv", "mode": "quality"}),
  "product": G("Product Studio", "FLUX 3: your product, shot like an ad. Pick the set and the light", "flux3_klein_core_t2i_api.json", "FLUX.3 Klein", "image", "FLUX Kommunity licence (gated download)", "community", {"setting": list(PRODUCT_SET), "light": list(PRODUCT_LIGHT), "aspect": list(IMG_SIZES)}, {"setting": "black glass", "light": "rim light", "aspect": "1:1"}, gated=True),
+ "krea2": G("Lettering", "Krea 2 turbo: pictures with a few short words spelled right", "worldkit_krea2_t2i_api.json", "Krea 2", "image", "Krea 2 Community License", "community", {"aspect": list(IMG_SIZES)}, {"aspect": "1:1"}),
  "flux3": G("Image HQ", "FLUX.3 Klein, highest quality", "flux3_klein_core_t2i_api.json", "FLUX.3 Klein", "image", "FLUX Kommunity licence (gated download)", "community", {"aspect": list(IMG_SIZES)}, {"aspect": "1:1"}, gated=True),
  "video_ltx": G("Video + sound", "Text to video with sound, LTX-2.5", "ltx25_core_t2v_api.json", "LTX-2.5", "video", "LTX-2.x community licence (gated download)", "community", {"aspect": list(LTX_SIZES), "seconds": [2, 3, 4, 5, 6]}, {"aspect": "16:9", "seconds": 5}, negative=NEG_VIDEO, gated=True),
  "animate_ltx": G("Animate + sound", "Image to video with sound, LTX-2.5", "ltx25_core_i2v_api.json", "LTX-2.5", "video", "LTX-2.x community licence (gated download)", "community", {"aspect": list(LTX_SIZES), "seconds": [2, 3, 4, 5, 6]}, {"aspect": "16:9", "seconds": 5}, needs_image=True, negative=NEG_VIDEO, gated=True),
@@ -170,10 +171,11 @@ def values_for(goal, req, image_name=None):
         v = {"prompt": str(req.get("prompt", "")).strip(), "seed": seed, "aspect": H3_ASPECTS[o["aspect"]], "megapixels": H3_QUALITY[o["quality"]], "seconds": float(o["seconds"]), "turbo": o["speed"] == "fast"}
         if g["needs_image"]: v["image"] = image_name
         return v, o
-    if goal in ("image", "anime", "flux3", "product"): w, h = IMG_SIZES[o["aspect"]]; v = {"width": w, "height": h}
+    if goal in ("image", "anime", "flux3", "krea2", "product"): w, h = IMG_SIZES[o["aspect"]]; v = {"width": w, "height": h}
     elif goal in ("video", "animate"): w, h = WAN_SIZES[o["quality"]][o["aspect"]]; v = {"width": w, "height": h, "frames": frames_wan(o["seconds"]), "fps": 24}
     else: w, h = LTX_SIZES[o["aspect"]]; v = {"width": w, "height": h, "frames": frames_ltx(o["seconds"]), "fps": 24.0}
     v.update(prompt=str(req.get("prompt", "")).strip(), negative=req.get("negative") if req.get("negative") is not None else g["negative"], seed=seed)
+    if goal == "krea2": v["prefix"] = "krea2"
     if goal == "image": m = KLEIN_MODES[o["mode"]]; v.update(unet=m["unet"], steps=m["steps"], cfg=m["cfg"])
     if goal == "anime":
         m = ANIME_MODES[o["mode"]]; v.update(unet=m["unet"], steps=m["steps"], cfg=m["cfg"])

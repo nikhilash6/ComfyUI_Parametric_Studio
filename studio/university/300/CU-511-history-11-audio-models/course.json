@@ -30,7 +30,7 @@
    "ref": "arXiv 1609.03499, PDF read 2026-11-01"
   },
   {
-   "claim": "MusicGen is one transformer over EnCodec tokens: 32 kHz audio, a stride of 640, 50 Hz, with 4 codebooks.",
+   "claim": "MusicGen is one transformer over EnCodec tokens: 32 kHz audio, a stride of 640, 50 Hz, with 4 codebooks. Its delay pattern gives 1500 autoregressive steps for 30 seconds, and flattening gives 6000.",
    "how": "docs",
    "ref": "arXiv 2306.05284, PDF read 2026-11-01"
   },
@@ -43,6 +43,11 @@
    "claim": "Music 3's AR stage runs 25 frames a second in ComfyUI, then a DiT runs on the result.",
    "how": "source",
    "ref": "comfy/ldm/minimax_music/ar.py:AUDIO_FRAMES_PER_SECOND"
+  },
+  {
+   "claim": "When a song is longer than 200 audio frames, MiniMaxMusic3DiT runs its transformer in overlapping windows inside one model call.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax_music/dit.py"
   },
   {
    "claim": "ACE-Step 1.5 has AceStepDiTModel, plus an AceStepAudioTokenizer using residual FSQ.",
@@ -65,5 +70,8 @@
   "We did not read how ACE-Step uses its tokenizer during generation beyond what the class names and module docstrings show. The lesson says so where it matters.",
   "WaveNet's count assumes one call per sample with no caching, which is what the paper's sequential description means. Later work sped this up, and we did not cover that.",
   "The first version said NADiffusionDecoder is part of LTX 2.4's audio path. It's a video VAE decoder, per its file's first line, so that's removed."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 5
+ }
 }

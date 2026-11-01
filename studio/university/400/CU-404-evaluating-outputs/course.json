@@ -37,12 +37,17 @@
    "claim": "FID is named in the Heusel et al. abstract, and the LPIPS paper calls PSNR and SSIM shallow.",
    "how": "docs",
    "ref": "https://arxiv.org/abs/1801.03924"
+  },
+  {
+   "claim": "The FID formula is equation 6 of Heusel et al., read in the paper's PDF.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/1706.08500"
   }
  ],
  "unchecked": [
-  "The FID formula and SSIM's constants are written from common knowledge. We read the abstracts, not the formulas in the papers.",
   "Our grep can't cover third-party packs: some may offer metric nodes.",
-  "We did not run a real FID or LPIPS."
+  "We did not run a real FID or LPIPS.",
+  "SSIM's constants are written from common knowledge. We did not read the SSIM paper."
  ],
  "kit": true
 }

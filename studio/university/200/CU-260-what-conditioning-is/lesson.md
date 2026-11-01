@@ -24,7 +24,7 @@ Build one and watch it change.
 
 1. `CLIPTextEncode` calls `encode_from_tokens_scheduled`, which returns the list. That's the wire you see.
 2. Your conditioning nodes pass it along. `conditioning_set_values` copies each dict and shares the tensor, so they are cheap and don't change the input.
-3. In the sampler, `convert_cond` turns each entry into one flat dict. The tensor becomes the `cross_attn` key.
+3. In the sampler, `convert_cond` turns each entry into one flat dict. The tensor becomes the `cross_attn` key, and it adds `model_conds` and a `uuid`.
 4. `encode_model_conds` calls the model's `extra_conds` with those keys as keyword arguments. For a model, that produces inputs such as `c_crossattn` and `y`.
 5. At each step, `calc_cond_batch` takes each entry, checks whether it is active at this noise level (CU-264), crops it if it has an area (CU-263), and runs the model.
 
@@ -69,8 +69,8 @@ a second SetTimestepRange keeps (0.3, 0.9) and forgets (0, 0.5)
 And what the sampler sees, once `convert_cond` has run:
 
 ```text
-['area', 'cross_attn', 'end_percent', 'model_conds', 'pooled_output', 'set_area_to_bounds', 'start_percent', 'strength']
-['cross_attn', 'model_conds', 'pooled_output']
+['area', 'cross_attn', 'end_percent', 'model_conds', 'pooled_output', 'set_area_to_bounds', 'start_percent', 'strength', 'uuid']
+['cross_attn', 'model_conds', 'pooled_output', 'uuid']
 ```
 
 ## Sources

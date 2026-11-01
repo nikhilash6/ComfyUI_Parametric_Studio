@@ -18,11 +18,11 @@ A graph gives you settings. It doesn't give you the same files, and it can't tel
 
 ## The checklist
 
-Go in this order. The first items change the most, and are easiest to check.
+Go in this order. We put first what is easy to check and likely to matter most. That order is our judgement, and we didn't measure it.
 
 **1. The model file itself.** A file name isn't an identity. Two files called `model.safetensors` can be different versions. Compare hashes with `sha256sum` if you have theirs. Check the VAE and text encoder as well, especially a separate VAE.
 
-**2. The seed and the batch.** The seed sets the noise. In a batch, all the noise comes from one generator, so the third image of a batch of 4 isn't what you get from a batch of 1 with that seed, or with seed plus 2. To rebuild it, use the same batch size, or `LatentFromBatch`, which sets a `batch_index` the noise step uses. Also check that `control_after_generate` didn't move the seed: the value shown after a run may be the next seed, not the one used.
+**2. The seed and the batch.** The seed sets the noise. In a batch, all the noise comes from one generator, so the third image of a batch of 4 isn't what you get from a batch of 1 with that seed, or with seed plus 2. To rebuild it, use the same batch size, or `LatentFromBatch`, which sets a `batch_index` the noise step uses. That rebuild needs each item to hold a multiple of 16 values, as a 512 by 512 SD latent does. On a (4, 4, 65, 65) latent the picked item came out different, and even the first of the batch differed from a single image (CU-240). Also check that `control_after_generate` didn't move the seed: the value shown after a run may be the next seed, not the one used.
 
 **3. Size.** A different width or height means different noise in different places, and a different picture.
 
@@ -80,6 +80,7 @@ first of a batch of 4 equals a single: True
 third of a batch of 4 equals a single with that seed: False
 third of a batch of 4 equals seed + 2: False
 third, rebuilt with batch_index [2] (LatentFromBatch): True
+the same rebuild on (4, 4, 65, 65), 16900 values per item: False
 ```
 
 Then it writes a tiny PNG with a graph in a text chunk, as `SaveImage` does, and reads it back with no special tools:

@@ -69,13 +69,13 @@ That is the point of lists. An ordinary node works on tiles without any changes,
 - Same size, and you want speed: a **batch**.
 - Different sizes, or items you want processed one by one to save memory: a **list**.
 - Your node must see everything at once: `INPUT_IS_LIST`.
-- Turning one into the other: core has `RebatchImages` and `ImageBatch` for batches. For anything else, write a small node with the flags above.
+- Turning one into the other: core has `RebatchImages` and `BatchImagesNode` (shown as Batch Images) for batches. `ImageBatch` still runs, but v0.43.0 marks it deprecated. For anything else, write a small node with the flags above.
 
 ## What goes wrong
 
 - **A node runs many more times than you expected.** Something upstream outputs a list. A list that meets a slow sampler runs the sampler once per item. Look for a node with `OUTPUT_IS_LIST`.
 - **`'list' object has no attribute 'shape'` inside your node.** Either you set `INPUT_IS_LIST` and forgot that every input is now a list, or you returned a list without the flag and the next node got it as one item.
-- **`'<' not supported between 'list' and 'int'`, or a similar error, on a widget.** The same cause: read `k[0]`.
+- **`'<' not supported between instances of 'list' and 'int'`, or a similar error, on a widget.** The same cause: read `k[0]`.
 - **Pairs that make no sense.** Two lists of different lengths: rule 2. Print them with `PreviewAny`, or make them the same length.
 - **`Sizes of tensors must match` when you batch a list.** A list can hold different sizes and a batch can't. Resize first.
 - **Only one file saved from a list?** Not a bug to expect: `SaveImage` is an ordinary node, so it runs once per item. Check the numbering in the output folder.

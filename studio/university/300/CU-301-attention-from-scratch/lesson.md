@@ -26,9 +26,9 @@ Before the numbers, move a query around and watch who it listens to. Temperature
 
 ## In ComfyUI
 
-`CrossAttention` in `comfy/ldm/modules/attention.py` is the U-Net's block. `optimized_attention` is one function name that points at one of several backends, picked once when the module loads: `attention_pytorch` when PyTorch's own function is allowed, or `attention_split`, `attention_sub_quad` or `attention_basic`. They are meant to agree on the answer and differ in memory and speed. FLUX-style models call `attention` in `comfy/ldm/flux/math.py`, which adds position first and then calls the same `optimized_attention`.
+`CrossAttention` in `comfy/ldm/modules/attention.py` is the U-Net's block. `optimized_attention` is one function name that points at one of several backends, picked once when the module loads: `attention_sage`, `attention_flash` or `attention_xformers` if turned on, then `attention_pytorch` when PyTorch's own function is allowed, otherwise `attention_split` or `attention_sub_quad`, and `attention_comfy_kitchen_int8` if its flag is set. `attention_basic` is only the starting value. A call can still be sent elsewhere, through an override in `transformer_options` or `preferred_attention`. The backends are meant to agree on the answer and differ in memory and speed. FLUX-style models call `attention` in `comfy/ldm/flux/math.py`, which adds position first and then calls the same `optimized_attention`.
 
-Rombach et al. (2021) conditioned Stable Diffusion this way: Q comes from the latent, and K, V from the text encoder, so the text reaches the image only through these weights. In the graph below, `CLIPTextEncode` makes those keys and values, and `KSampler` runs the blocks that attend to them.
+Rombach et al. (2021) conditioned Stable Diffusion this way: Q comes from the latent, and K, V from the text encoder, so the text reaches the image only through these weights. In the graph below, `CLIPTextEncode` makes the text vectors, and `KSampler` runs the blocks, whose linear layers turn those vectors into keys and values and attend to them.
 
 {{graph:sd15_txt2img}}
 
@@ -69,6 +69,7 @@ Shuffling the tokens only shuffles the outputs. Position has to be added separat
 cross-attention shapes: image (1, 64, 32), text (1, 4, 32), weights (1, 64, 4), output (1, 64, 32)
 mean weight on each word, fox patches:   {'a': 0.0, 'red': 0.0, 'fox': 0.999, '<pad>': 0.001}
 mean weight on each word, other patches: {'a': 0.243, 'red': 0.247, 'fox': 0.23, '<pad>': 0.28}
+weight on <pad> without a mask: 0.256  with a mask: 0.0
 ```
 
 The weight matrix has one row per patch and one column per word. This is what attention-map tools visualise. The vectors here are random and planted, so this shows the mechanism and says nothing about a trained model's maps.
@@ -76,6 +77,7 @@ The weight matrix has one row per patch and one column per word. This is what at
 **Cost:**
 
 ```text
+image side  latent side  tokens (patch 2)  pairs in self-attention  attention matrix for one head at fp16
 1024        128          4,096             16,777,216               0.03 GiB
 2048        256          16,384            268,435,456              0.50 GiB
 doubling the side quadruples the tokens and multiplies the pairs by 16

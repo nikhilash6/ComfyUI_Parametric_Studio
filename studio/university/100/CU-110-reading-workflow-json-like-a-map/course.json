@@ -56,5 +56,8 @@
  "unchecked": [
   "The lab's save file is built from the schema, not exported from the editor. Real exports carry more fields.",
   "We read the note about --disable-metadata in the source and did not run a server with that flag."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

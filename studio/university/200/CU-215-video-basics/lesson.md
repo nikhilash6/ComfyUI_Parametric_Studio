@@ -37,7 +37,7 @@ Each model family has its own empty-latent node, and the latent shape is written
 | `EmptyLTXVLatentVideo` | 768 × 512, 97 frames, step 8 | [128, (n−1)//8+1, H/32, W/32] |
 | `WanImageToVideo` | 832 × 480, 81 frames, step 4 | [16, (n−1)//4+1, H/8, W/8] |
 
-Every default is 1 plus a multiple of the node's step. The nodes themselves only floor, they do not check. On the other side, `comfy/sd.py` gives each video VAE its ratios as functions of the latent frame count a. For Wan-type and CogVideoX VAEs the upscale is a · 4 − 3 frames with spatial factor 8, for Mochi a · 6 − 5 with factor 8, for the Cosmos tokenizer a · 8 − 7 with factor 8, and for LTXV a · 8 − 7 with factor 32. The matching downscale is the floor of (frames + k − 1) / k. The transformer side is set in the model code. Wan's default patch size is (1, 2, 2) in `comfy/ldm/wan/model.py`, and the LTXV model uses `SymmetricPatchifier(1)`, so one token per latent position.
+Every default is 1 plus a multiple of the node's step. The nodes themselves only floor, they do not check. On the other side, `comfy/sd.py` gives each video VAE its ratios as functions of the latent frame count a. For the Wan 2.1 and CogVideoX VAEs the upscale is a · 4 − 3 frames with spatial factor 8 (the Wan 2.2 VAE has the same frame rule with factor 16), for Mochi a · 6 − 5 with factor 8, for the Cosmos tokenizer a · 8 − 7 with factor 8, and for LTXV a · 8 − 7 with factor 32. The matching downscale is the floor of (frames + k − 1) / k. The transformer side is set in the model code. Wan's default patch size is (1, 2, 2) in `comfy/ldm/wan/model.py`, and the LTXV model uses `SymmetricPatchifier(1)`, so one token per latent position.
 
 ## Try it
 
@@ -81,7 +81,7 @@ Cosmos (EmptyCosmosLatentVideo)          8  8   16   1280x704x121   (16, 16, 88,
 LTXV (EmptyLTXVLatentVideo)              8  32  128  768x512x97    (128, 13, 16, 24)            179.08                       192
 ```
 
-The long-clip limits agree with what the papers state. The Wan paper gives 4 × 8 × 8 with 16 channels, which is 48, and the LTX-Video paper's Table 1 lists 1:48 for HunyuanVideo and 1:192 for LTX-Video. The Wan paper's figure note lists a temporal factor of 6 for Mochi. Its channel count of 12 and the Cosmos row come from ComfyUI's code only. A short clip falls below its limit: 81 frames use 21 latent frames, which stand for 81 and not 84 frames, so Wan gives 46.29. Then tokens and attention:
+The long-clip limits agree with what the papers state. The Wan paper gives 4 × 8 × 8 with 16 channels, which is 48, and the LTX-Video paper's Table 1 lists 1:48 for HunyuanVideo and 1:192 for LTX-Video. The Wan paper's figure note lists 6 × 8 × 8 with a latent dimension of 12 for Mochi, which is 96. The Cosmos row comes from ComfyUI's code only. A short clip falls below its limit: 81 frames use 21 latent frames, which stand for 81 and not 84 frames, so Wan gives 46.29. Then tokens and attention:
 
 ```text
 Wan, 832x480: 81 frames -> 21 latent frames -> 32,760 tokens.  161 frames -> 41 latent frames -> 63,960 tokens

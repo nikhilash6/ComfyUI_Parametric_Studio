@@ -47,9 +47,9 @@ def to_input_types(schema):                           # V3 schemas become the cl
     for i in schema.inputs: out["optional" if i.optional else "required"][i.id] = (i.type, {k: getattr(i, k) for k in ("default", "min", "max", "lazy") if getattr(i, k) is not None and getattr(i, k) is not False})
     return out
 print(to_input_types(LatentContrast.define_schema()))
-latent = {"samples": torch.randn(1, 4, 8, 8)}; print("input std:", round(latent["samples"].std().item(), 4))
+latent = {"samples": torch.randn(1, 4, 8, 8)}; before = latent["samples"].clone(); print("input std:", round(latent["samples"].std().item(), 4))
 r = LatentContrast.execute(samples=latent, amount=2.0); out = r.args[0]["samples"]
-print("output std at amount=2:", round(out.std().item(), 4), " input tensor untouched:", bool((latent["samples"] == latent["samples"].clone()).all()) and out is not latent["samples"])
+print("output std at amount=2:", round(out.std().item(), 4), " input tensor untouched:", torch.equal(latent["samples"], before) and out is not latent["samples"])
 assert abs(out.std().item() / latent["samples"].std().item() - 2) < .05 and r.args[0] is not latent
 print("validate amount=-1:", LatentContrast.validate_inputs(amount=-1), "| amount=1:", LatentContrast.validate_inputs(amount=1))
 print("lazy, amount=1:", LatentContrast.check_lazy_status(amount=1), "| amount=0, wire not computed yet:", LatentContrast.check_lazy_status(amount=0), "| amount=0, computed:", LatentContrast.check_lazy_status(amount=0, fallback=latent))
@@ -71,7 +71,7 @@ class Sneaky(io.ComfyNode):
     def execute(cls, x): cls.box["calls"] += 1; return io.NodeOutput(x + cls.box["calls"])      # a dict on the class is not stopped
 print("hidden state in a dict on cls, same input twice:", run_locked(Sneaky, 1).args[0], run_locked(Sneaky, 1).args[0], " the lock cannot see this, and the cache cannot either")
 assert Sneaky.box["calls"] == 2
-# What execute may return. A port of EXECUTE_NORMALIZED.
+# What execute may return. A port of EXECUTE_NORMALIZED, leaving out its ExecutionBlocker branch.
 def normalized(r):
     if r is None: return "NodeOutput()"
     if isinstance(r, io.NodeOutput): return "as it is"

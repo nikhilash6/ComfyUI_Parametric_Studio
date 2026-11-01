@@ -51,5 +51,8 @@
   "No render here compares weights. All the figures come from the parser and from random stand-in rows.",
   "We list only two tokenizers with weights off. There are others, so check your model's tokenizer rather than this list.",
   "We don't claim how a given weight changes a picture."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

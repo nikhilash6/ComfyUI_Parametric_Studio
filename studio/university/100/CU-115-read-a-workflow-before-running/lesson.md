@@ -20,7 +20,7 @@ Five things to look for. Practise on this graph. Nothing in it is harmful, and e
 
 **4. Things you can't see at first glance.** A subgraph is one box on the canvas, and `definitions.subgraphs` holds a whole inner graph, so open it. Muted and bypassed nodes are in the file too, with `mode` 2 or 4, and someone may have left a branch off that you'd turn on without looking. Text widgets can hold anything, including a long prompt you never scrolled through.
 
-**5. Notes.** `Note` and `MarkdownNote` are text from the author. They never run, and they're never sent to the server. But they can ask you to do something, and you're the one with a terminal. Be most careful with a note that gives you a command to paste.
+**5. Notes.** `Note` and `MarkdownNote` are text from the author. They never run, and they're not in the graph the server runs, though their text travels in the save-format copy that goes into your PNG (CU-112). But they can ask you to do something, and you're the one with a terminal. Be most careful with a note that gives you a command to paste.
 
 Now do it.
 

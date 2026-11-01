@@ -12,7 +12,7 @@
     "A list of token ids"
    ],
    "answer": "One vector per token position, shaped [1, 77, 768] for a short prompt, plus a pooled vector",
-   "why": "CONDITIONING is a list of pairs: a tensor with one vector per position and a dictionary holding pooled_output, the encoder's output at the end marker. Lab part three prints [1, 77, 768] for short prompts."
+   "why": "CONDITIONING is a list of pairs: a tensor with one vector per position and a dictionary holding pooled_output, taken from the encoder's output at the end marker. Lab part three prints [1, 77, 768] for short prompts."
   },
   {
    "q": "A prompt of 100 one-token words goes through an SD 1.x text encoder in ComfyUI. What shape is the conditioning tensor?",
@@ -56,7 +56,7 @@
     "Softmax removes the influence of later words in every model"
    ],
    "answer": "Position i can attend only to positions up to i, so later tokens cannot reach it",
-   "why": "Masked self-attention sets the scores of later positions to minus infinity before the softmax. The lab prints 0.000000 with the mask and 0.933489 without it. This is also why the end marker is the natural place to read a summary."
+   "why": "Masked self-attention gives the later positions a huge negative score before the softmax, so they get no weight. The lab prints 0.000000 with the mask and 0.933489 without it. This is also why the end marker is the natural place to read a summary."
   },
   {
    "q": "How many numbers does each token position carry in the conditioning that SDXL's text encoders produce?",

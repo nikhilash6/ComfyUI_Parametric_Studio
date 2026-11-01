@@ -31,7 +31,7 @@ Results are cached per node, as each one finishes. So if a run fails halfway, th
 | Flag | Class | Behaviour |
 |---|---|---|
 | none (default) | `RAMPressureCache` | Keeps results, evicting by age and size when free RAM runs low |
-| `--cache-classic` | `HierarchicalCache` | Drops anything the current prompt doesn't use |
+| `--cache-classic`, or `--high-ram`, which sets it | `HierarchicalCache` | Drops anything the current prompt doesn't use |
 | `--cache-lru N` | `LRUCache` | Evicts the least recently used generations above N results |
 | `--cache-none` | `NullCache` | Runs every node every time |
 
@@ -45,7 +45,7 @@ This small graph needs no model. Queue it twice and watch the second run do noth
 
 {{graph:sd15_txt2img}}
 
-Set the seed to fixed, and change only the seed by hand. `CLIPTextEncode` and the loader don't run. Change the prompt, and only the encoder for that prompt does.
+Set the seed to fixed, and change only the seed by hand. `CLIPTextEncode` and the loader don't run. Change the prompt, and the encoder for that prompt runs, along with the sampler and all that follows it. The other encoder and the loader still don't.
 
 ## What goes wrong
 

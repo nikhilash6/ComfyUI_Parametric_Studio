@@ -46,5 +46,8 @@
   "The aligned score uses a single whole-pixel sideways shift per pair, on synthetic clips. A real clip has many motions in one frame and needs real flow, which we did not run.",
   "These scores do not predict how people rate flicker. Published perceptual metrics exist, and we did not compare against them.",
   "The first version of this lesson cited three papers by number and title. We could not confirm them, and removed them."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

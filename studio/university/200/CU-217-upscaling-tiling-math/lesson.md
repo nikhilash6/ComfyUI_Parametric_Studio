@@ -88,7 +88,7 @@ With no overlap the largest error is 2.76 times the output's spread. A plain ave
 
 - **Seams show.** The overlap doesn't reach far enough past the model's sight. Raise it, up to a quarter of the tile, which `VAEDecodeTiled` enforces. Bigger tiles help too.
 - **Tiled decode is slower than plain decode.** It's supposed to be: 3.77 times the work in the lab's example. It trades time for memory, so use it only when needed.
-- **An upscaler slows sharply on a big image.** It halved its tile after running out of memory, so it's making many more calls. Check the log, and free VRAM first.
+- **An upscaler slows sharply on a big image.** It halved its tile after running out of memory, so it's making many more calls. The node logs nothing when it retries, but its progress bar starts again with more steps. Free VRAM first.
 - **The last tile looks different.** It's cut off at the border and can be short, 128 of 512 in the lab's first row. That's normal.
 - **Latent upscale gives a mushy result.** Its methods only resize numbers. They don't add detail by themselves, so a sampler pass normally follows.
 - **Tile settings do nothing on some video VAEs.** H3's ignores them. CU-334 covers video.

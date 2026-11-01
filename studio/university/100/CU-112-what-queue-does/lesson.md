@@ -55,6 +55,7 @@ History is a dictionary in the server's memory. It holds the graph, the extra da
 - **A folder literally called `%date:yyyy-MM-dd%`.** A script sent the prefix straight to the server, and only the editor expands that form. Use `%year%-%month%-%day%`.
 - **A prefix ending in `/`.** `portraits/` does not mean "the portraits folder". The path is normalised first, so it gives a file named `portraits_00001_.png` in the top folder. Write `portraits/fox`.
 - **Numbers jump.** Deleting the highest file frees its number, and deleting a middle one does not.
+- **`%batch_num%` overwrites the last run.** The counter looks for the name with the token still in it, and the files on disk have a number there, so it finds none and starts from 1 again. In our run a second batch reused the same two file names. Change the prefix each run, or leave the token out.
 
 ## Lab
 

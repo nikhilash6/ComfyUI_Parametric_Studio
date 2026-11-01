@@ -64,7 +64,7 @@ Change one, restart, and test on a small graph. Restarts interrupt jobs, so wait
 
 Grey, washed-out or smeared pictures have no NaN. They are valid numbers that mean little. These causes come from the code. **We didn't render them all for this lesson, so read the "looks like" parts as what the numbers suggest.**
 
-- **Too little noise.** With denoise below 1, the sampler starts partway down. On an empty latent there's no picture underneath, and the model expects one. The lab prints the numbers. At denoise 0.25 on SD 1.5, it starts from sigma 0.231, against a possible 14.615. Expect little more than a smear. For text to image, use denoise 1.
+- **Too little noise.** With denoise below 1, the sampler starts partway down. On an empty latent there's no picture underneath, and the model expects one. The lab prints the numbers for the karras scheduler at 20 steps. At denoise 0.25 on SD 1.5, it starts from sigma 0.231, against a possible 14.615. The scheduler matters: with the same settings, `calculate_sigmas` gave 0.671 for normal and 0.693 for simple. Expect little more than a smear. For text to image, use denoise 1.
 - **Denoise of 0.** `set_steps` makes no sigmas at all, so no sampling happens.
 - **The wrong VAE.** An SD 1.5 VAE and an SDXL VAE both take 4 channels, so nothing errors. Their scale factors differ, though, 0.18215 and 0.13025, so decoding through the wrong one starts 1.398 or 0.715 times off, on top of having learned a different space. Expect wrong colours and contrast.
 - **A sampler that doesn't suit the model.** We have a real example. LCM is meant for models trained for it. On plain SD 1.5, with one seed, it gave a smooth blob rather than the astrolabe we asked for.
@@ -78,7 +78,7 @@ Grey, washed-out or smeared pictures have no NaN. They are valid numbers that me
 
 - **Black image, nothing in the error box.** Normal for NaN. Look in the console for `invalid value encountered in cast`, then probe the latent.
 - **Black from one VAE decode, fine from another path.** Try a tiled decode, as in `sd15_tiled_vae` below. If only one path fails, you've learned the fault is in the decode.
-- **You changed a flag and nothing changed.** You didn't restart, or the graph came from the cache, because flags aren't part of a node's key. Change the seed to force a new run.
+- **You changed a flag and nothing changed.** You didn't restart. Flags are read at startup. A restart also empties the cache, so the next queue runs every node again.
 - **A preview looks fine and the saved file doesn't.** Previews during sampling come from a quick approximation, not your VAE, so they can look fine while the real decode goes black.
 
 {{graph:sd15_tiled_vae}}

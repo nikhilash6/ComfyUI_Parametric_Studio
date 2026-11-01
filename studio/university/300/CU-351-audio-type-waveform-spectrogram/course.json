@@ -60,5 +60,8 @@
  "unchecked": [
   "We searched for a general spectrogram node in core and found only internal functions inside model code. A later version may add one, and packs may have one. We did not survey packs for this lesson.",
   "Whether a save node clips values above 1.0 depends on the codec. We did not test each format."
- ]
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

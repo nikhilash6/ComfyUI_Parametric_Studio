@@ -1,0 +1,3 @@
+{
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_qwen.py": {"title": "ComfyUI v0.43.0, comfy_extras/nodes_qwen.py", "checked": "read at v0.43.0 2026-11-01: QwenImage21Cache sets device and dtype of the prefix cache, is_experimental"}
+}

@@ -17,7 +17,7 @@ weights = parameters × bytes per parameter
 fp32 = 4 bytes      fp16 and bf16 = 2 bytes      fp8 = 1 byte
 ```
 
-The file size on disk tells you nearly the same thing, so usually you need no sum at all. The bytes matter when the loader stores weights in another format than the file: see CU-374.
+For a file that holds only that model, the size on disk tells you nearly the same thing, so usually you need no sum at all. A full checkpoint also holds the text encoders and the VAE. The bytes matter when the loader stores weights in another format than the file: see CU-374.
 
 ## Working memory
 

@@ -8,13 +8,13 @@ Audio has one brutal number: tens of thousands of samples for every second. The 
 
 ## Era one: one sample at a time
 
-**WaveNet (2016)** works directly on raw waveforms, at 16,000 samples a second or more. It's autoregressive: each sample is predicted from the ones before it. Training is fast, because all the past samples are known. Generating is sequential: a sample has to be produced and fed back before the next one can start. That's 480,000 steps for 30 seconds.
+**WaveNet (2016)** works directly on raw waveforms, at 16,000 samples a second or more. It's autoregressive: each sample is predicted from the ones before it. In training, all the samples can be predicted in parallel, because the past ones are all known. Generating is sequential: a sample has to be produced and fed back before the next one can start. That's 480,000 steps for 30 seconds.
 
 Its other big idea reaches far back without many layers. A dilated convolution skips inputs: 1, then 2, 4, up to 512. Ten layers see 1024 samples, where ten plain layers of kernel 2 see 11. The lab measures this.
 
 ## Era two: tokens
 
-Compress first, and predict far fewer things. **MusicGen (2023)** turns 32 kHz audio into tokens with EnCodec, using a stride of 640. That's 50 frames a second, with 4 codebooks at each frame. One transformer predicts them in sequence. For 30 seconds, that's 6,000 predictions. It's still sequential, but it's within reach.
+Compress first, and predict far fewer things. **MusicGen (2023)** turns 32 kHz audio into tokens with EnCodec, using a stride of 640. That's 50 frames a second, with 4 codebooks at each frame. One transformer steps through them in order, predicting the 4 codebooks of a step together, with a delay between codebooks. For 30 seconds the paper counts 1,500 autoregressive steps, which is 6,000 tokens. Flattening the codebooks into one line would take 6,000 steps. It's still sequential, but it's within reach.
 
 ## Era three: everything at once
 
@@ -24,9 +24,9 @@ Don't read this as "diffusion is always faster". Fewer calls aren't less time: o
 
 ## In ComfyUI: now it's both
 
-Here's the twist. The newest music model in core combines the eras.
+Here's the twist. One recent music model in core combines the eras.
 
-**MiniMax Music 3** runs an autoregressive language model first, at 25 frames a second with 8 codes per frame. Then it runs a flow-matching DiT, guided by that model's hidden states. So you pay for both, and you get structure from one and detail from the other. CU-350 walks through it.
+**MiniMax Music 3** runs an autoregressive language model first, at 25 frames a second with 8 codes per frame. Then it runs a flow-matching DiT, guided by that model's hidden states. So you pay for both, and you get structure from one and detail from the other. Its DiT also has a window of 8 seconds with a 4-second hop, so on a longer song one call runs the transformer several times, as the lab counts. CU-350 walks through it.
 
 {{graph:wf_music3}}
 
@@ -64,12 +64,18 @@ Calls for 30 seconds, and what changes at 120:
 ```text
 model                                            calls for 30 s   how
 WaveNet, one call per sample at 16 kHz           480,000          sequential
-MusicGen, 50 frames/s x 4 codebooks              6,000            sequential
+MusicGen, delay pattern, 50 steps/s              1,500            sequential
 Music 3 AR stage, main model, 25 frames/s        750              sequential
 Music 3 DiT, 30 steps, CFG on                    60               each call covers the song, in windows
 Stable Audio style diffusion, 30 steps, CFG on   60               each call covers the clip
 
 at 120 s the sequential counts multiply by 4; the diffusion step count does not change, each call just gets longer
+```
+
+Inside one Music 3 call, by the window rule in `dit.py`:
+
+```text
+Music 3 DiT passes per model call, window 8 s, hop 4 s: 30 s -> 7, 120 s -> 30
 ```
 
 Flow matching's sum runs over every value at once, not in order. At sigma 1 it's all noise, and at sigma 0 it's the data:
