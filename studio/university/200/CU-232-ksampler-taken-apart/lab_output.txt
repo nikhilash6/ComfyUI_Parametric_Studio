@@ -1,0 +1,12 @@
+euler, 20 steps: KSampler and the four parts give identical numbers: True
+
+the last sigmas before 0, karras, 20 steps
+euler  KSampler      0.0779 0.0485 0.0292
+euler  BasicScheduler 0.0779 0.0485 0.0292
+dpm_2  KSampler      0.1137 0.0744 0.0473
+dpm_2  BasicScheduler 0.0779 0.0485 0.0292
+dpm_2, same seed: RMS difference between the two routes 0.00269
+
+what the parts let you do that the widget cannot
+split at step 12: first half 12 steps, sigma 14.615 to 0.565; second half 8 steps, sigma 0.565 to 0.000
+guider changed from cfg 7 to cfg 3 at that split: mean result +2.555, against +3.236 for cfg 7 throughout, RMS change 0.681

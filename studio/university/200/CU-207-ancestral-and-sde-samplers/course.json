@@ -11,8 +11,51 @@
   "comfy/k_diffusion/sampling.py:get_ancestral_step",
   "comfy/k_diffusion/sampling.py:sample_euler_ancestral",
   "comfy/k_diffusion/sampling.py:sample_euler_ancestral_RF",
-  "comfy/k_diffusion/sampling.py:BrownianTreeNoiseSampler"
+  "comfy/k_diffusion/sampling.py:BrownianTreeNoiseSampler",
+  "comfy/k_diffusion/sampling.py:default_noise_sampler",
+  "comfy_extras/nodes_custom_sampler.py:SamplerEulerAncestral",
+  "comfy/k_diffusion/sampling.py:sample_euler"
  ],
  "track": "sampling",
- "order": 40
+ "order": 40,
+ "kit": true,
+ "graphs": [
+  "b_ancestral_eta"
+ ],
+ "verified": [
+  {
+   "claim": "The split into sigma_down and sigma_up is read from get_ancestral_step.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:get_ancestral_step"
+  },
+  {
+   "claim": "The real function gives 4.5714 and 6.5652 for 14 to 8.",
+   "how": "run here",
+   "ref": "comfy.k_diffusion.sampling.get_ancestral_step in a Python session"
+  },
+  {
+   "claim": "Flow models are sent to sample_euler_ancestral_RF.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_euler_ancestral"
+  },
+  {
+   "claim": "s_churn uses randn_like.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_euler"
+  },
+  {
+   "claim": "Stochastic samplers gave a different answer with another noise seed on the bench.",
+   "how": "run here",
+   "ref": "measures.json, solvers"
+  },
+  {
+   "claim": "b_ancestral_eta passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The toy has one number per sample and a perfect denoiser, so its results do not settle whether noise helps on real models.",
+  "The Karras et al. quote was checked at the first audit and not re-read this time."
+ ]
 }

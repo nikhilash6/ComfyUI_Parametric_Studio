@@ -1,0 +1,17 @@
+what the hook returns                            runs in 3 queues
+no hook (False is what the engine uses)          1
+return None                                      1
+return a fixed string                            1
+return float("NaN"), a new object each time      3
+return math.nan, one shared object               1
+a module-level NaN, one shared object            1
+a counter that goes up                           3
+
+nan == nan: False   (n,) == (n,): True   (float('nan'),) == (float('nan'),): False
+file hash, queue 4 times, file edited before the 3rd: [True, False, True, False]
+
+validate_inputs(p) on an input with max 10
+p=3    q=1    [('custom_validation_failed', 'p - p must be even, got 3')]
+p=100  q=1    passes
+p=2    q=100  [('value_bigger_than_max', 'q')]
+p=2    q=1    passes

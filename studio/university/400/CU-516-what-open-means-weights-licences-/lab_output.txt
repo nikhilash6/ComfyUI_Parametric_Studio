@@ -1,6 +1,18 @@
-RESULT avg_transparency = 0.84
-RESULT is_open = True
-RESULT all_components_open = True
-RESULT open_ecosystem = True
-RESULT reproducibility_score = 0.990835
-RESULT community_score = 4.2
+                                    run it on your o  read how it work  fine-tune it, a   rebuild somethin
+closed API                          no                no                no                no              
+weights only, in a binary runner    yes               no                no                no              
+weights and code                    yes               yes               yes               no              
+weights, code and data details      yes               yes               yes               yes             
+
+and separately, what the licence lets you do. Dates and rules from the texts we fetched
+  GNU GPL 3                29 June 2007       source duty when you convey; remote use alone is not conveying
+  GNU AGPL 3               19 November 2007   adds an offer of source to remote users of a modified version
+  CreativeML Open RAIL-M   August 22, 2022    free use, with a list of banned uses that you must pass on
+  MIT                      no version date    keep the notice
+
+one graph can carry several of these at once
+  ComfyUI itself             GPL 3
+  a checkpoint               CreativeML Open RAIL-M
+  a LoRA from someone else   its own terms: read them
+  a node pack                its own LICENSE file
+  your pictures              the Open RAIL-M says the licensor claims no rights in the output, with limits on use

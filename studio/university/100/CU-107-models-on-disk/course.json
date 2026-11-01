@@ -15,5 +15,46 @@
   "comfy/supported_models_base.py:def matches"
  ],
  "track": "first-graph",
- "order": 80
+ "order": 80,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img",
+  "sdxl_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "load_torch_file uses safe_open for .safetensors and .sft, and torch.load with weights_only=True for the rest.",
+   "how": "source",
+   "ref": "comfy/utils.py:load_torch_file"
+  },
+  {
+   "claim": "HeaderTooLarge and MetadataIncompleteBuffer are turned into these two messages.",
+   "how": "source",
+   "ref": "comfy/utils.py:_invalid_safetensors_error"
+  },
+  {
+   "claim": "SD15 expects a context of 768, and SDXL a context of 2048 and an extra vector of 2816. matches compares every listed entry.",
+   "how": "source",
+   "ref": "comfy/supported_models.py:SDXL"
+  },
+  {
+   "claim": "A file that matches no family is tried as a diffusion model, then reported.",
+   "how": "source",
+   "ref": "comfy/sd.py:load_state_dict_guess_config"
+  },
+  {
+   "claim": "The file, the damage tests and the pickle demonstration come from running the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The layout follows the safetensors README, Format section.",
+   "how": "docs",
+   "ref": "github.com/huggingface/safetensors README"
+  }
+ ],
+ "unchecked": [
+  "The lab's matcher is a tiny stand-in. We did not load real SD 1.5 and SDXL files for this lesson; the shapes are those the family classes list.",
+  "We did not cause the two ComfyUI error messages with damaged real files."
+ ]
 }

@@ -1,0 +1,73 @@
+{
+ "code": "CU-323",
+ "title": "Perp-Neg: negatives that do not fight the prompt",
+ "level": "300",
+ "questions": [
+  {
+   "q": "Which part of the negative does Perp-Neg remove?",
+   "options": [
+    "The part along the positive",
+    "The part at right angles to the positive",
+    "All of it",
+    "None of it"
+   ],
+   "answer": "The part at right angles to the positive",
+   "why": "perp = neg minus its projection on pos, and only perp is subtracted."
+  },
+  {
+   "q": "When positive and negative overlap almost completely, plain cfg at 7 goes how far along the positive, in the lab?",
+   "options": [
+    "About 7",
+    "About 13",
+    "About 49",
+    "About 1, because the two nearly cancel"
+   ],
+   "answer": "About 1, because the two nearly cancel",
+   "why": "The table's first row has plain at 1.00, while Perp-Neg stays at 7.00."
+  },
+  {
+   "q": "How many predictions per step does PerpNegGuider usually cost?",
+   "options": [
+    "Three: positive, negative and empty",
+    "One",
+    "Two",
+    "Four"
+   ],
+   "answer": "Three: positive, negative and empty",
+   "why": "Guider_PerpNeg.predict_noise passes all three to calc_cond_batch."
+  },
+  {
+   "q": "What does neg_scale 0 give?",
+   "options": [
+    "An error",
+    "No guidance at all",
+    "Plain cfg against the empty prompt, with the negative not run",
+    "Double guidance"
+   ],
+   "answer": "Plain cfg against the empty prompt, with the negative not run",
+   "why": "With perp times 0, D = empty + cfg times (pos). The guider also sets negative_cond to None."
+  },
+  {
+   "q": "A negative dead opposite to the positive gives Perp-Neg what extra push?",
+   "options": [
+    "Twice as much",
+    "The same as plain cfg",
+    "None: it has no right-angle part",
+    "It flips the picture"
+   ],
+   "answer": "None: it has no right-angle part",
+   "why": "At 180 degrees the sideways part is 0, and it stays at 7.00 while plain reaches 13.00."
+  },
+  {
+   "q": "Why might comparing batch size 1 with batch size 4 mislead here?",
+   "options": [
+    "Batches change the seed rule",
+    "The guider ignores batches",
+    "Only one image is sampled",
+    "The dot product sums across the whole batch, so images affect each other's split"
+   ],
+   "answer": "The dot product sums across the whole batch, so images affect each other's split",
+   "why": "The source's torch.mul(neg, pos).sum() has no per-image dimension. The lab shows it."
+  }
+ ]
+}

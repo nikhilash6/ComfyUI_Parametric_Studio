@@ -1,0 +1,62 @@
+{
+ "code": "CU-271",
+ "title": "Preprocessors: Canny in core, and looking at your map",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What are the Canny node's thresholds compared with?",
+   "options": [
+    "Pixel brightness, from 0 to 1",
+    "The unscaled gradient magnitude, which is about 2.59 times the contrast of a straight edge",
+    "A percentage of pixels",
+    "The histogram of the picture"
+   ],
+   "answer": "The unscaled gradient magnitude, which is about 2.59 times the contrast of a straight edge",
+   "why": "kornia does not scale its Sobel. A unit step gives about 2.59 after the default blur, and the thresholds are compared with that."
+  },
+  {
+   "q": "At the default high_threshold of 0.8, what is the smallest contrast of a straight edge that can start a line?",
+   "options": [
+    "About 0.8",
+    "About 0.31",
+    "About 0.08",
+    "Any contrast"
+   ],
+   "answer": "About 0.31",
+   "why": "0.8 / 2.59 is 0.309. In the lab, contrast 0.3 fails and 0.31 passes."
+  },
+  {
+   "q": "Your map is nearly black, but the picture has clear shapes. What do you try first?",
+   "options": [
+    "Raise both thresholds",
+    "Lower both thresholds",
+    "Raise strength on the ControlNet",
+    "Invert the map"
+   ],
+   "answer": "Lower both thresholds",
+   "why": "The edges are below the high threshold. A black map gives the ControlNet nothing to follow, and strength multiplies nothing."
+  },
+  {
+   "q": "Your hint is 1920 x 1080 and your render is 512 x 512. What happens?",
+   "options": [
+    "An error",
+    "The hint is squashed to fit",
+    "The hint's centre 1080 x 1080 is used, and the sides are thrown away",
+    "The render changes shape"
+   ],
+   "answer": "The hint's centre 1080 x 1080 is used, and the sides are thrown away",
+   "why": "get_control calls common_upscale with crop center. The lab shows only 0.56 of the hint is kept."
+  },
+  {
+   "q": "At thresholds 0.05 and 0.1 in the lab's noisy scene, what is wrong with the map?",
+   "options": [
+    "It misses the disc",
+    "About a third of the background is speckled with false edges",
+    "It errors out",
+    "It is the best setting"
+   ],
+   "answer": "About a third of the background is speckled with false edges",
+   "why": "Noise beats thresholds that low. A third of the far background is marked, and the ControlNet would follow it."
+  }
+ ]
+}

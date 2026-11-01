@@ -1,0 +1,18 @@
+the first sampler stops at step 12 of 20; the second starts there
+sigma at step 12: 0.5647
+
+setup                                             RMS from one run   W1 to the true result
+leftover on, new noise off, same steps            0.0000             0.0527
+leftover OFF (first finishes, jumps to sigma 0)   0.2237             0.2127
+new noise ON at the second                        0.4782             0.0554
+second has steps 30, not 20                       0.4635             0.3821
+leftover OFF and new noise ON (a restart)         0.5159             0.1212
+one run, 20 steps, for reference                  0.0000             0.0527
+
+what the first sampler hands over, as a spread (the data alone has spread 1.032)
+leftover on: 1.121   expected from data and sigma: 1.176
+leftover off: 0.831
+
+dpmpp_2m split at step 12 against dpmpp_2m in one run: RMS 0.01662. Euler has no history: RMS 0.0e+00
+euler then dpmpp_2m, W1 to the true result: 0.0444; euler all the way 0.0527; dpmpp_2m all the way 0.0092
+start_at_step past the end hands the latent straight back: True

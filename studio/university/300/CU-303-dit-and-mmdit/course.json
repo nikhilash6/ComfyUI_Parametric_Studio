@@ -2,13 +2,63 @@
  "title": "DiT and MM-DiT blocks",
  "level": "300",
  "char": "attn",
- "hook": "How a transformer replaces the U-Net: patches, adaLN, joint text-image attention.",
+ "hook": "How a transformer replaces the U-Net: patches become tokens, a time vector scales each block, text and image share attention.",
  "code": "CU-303",
  "prereq": [
   "CU-301"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:modulate",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:DismantledBlock",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:_block_mixing",
+  "comfy/ldm/flux/layers.py:Modulation",
+  "comfy/ldm/flux/layers.py:DoubleStreamBlock",
+  "comfy/ldm/flux/layers.py:SingleStreamBlock",
+  "comfy/ldm/flux/layers.py:apply_mod",
+  "comfy/ldm/common_dit.py:pad_to_patch_size"
+ ],
  "track": "architecture",
- "order": 30
+ "order": 30,
+ "graphs": [
+  "sd35_flow",
+  "wf_flux2_klein"
+ ],
+ "verified": [
+  {
+   "claim": "modulate is shift + x (1 + scale), broadcast over tokens.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/mmdit.py:modulate"
+  },
+  {
+   "claim": "SD 3 joins text and image for one attention call.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/mmdit.py:_block_mixing"
+  },
+  {
+   "claim": "FLUX's double block has separate weights and joined attention.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/layers.py:DoubleStreamBlock"
+  },
+  {
+   "claim": "Latents not divisible by the patch are padded.",
+   "how": "source",
+   "ref": "comfy/ldm/common_dit.py:pad_to_patch_size"
+  },
+  {
+   "claim": "The numbers in the lab tables come from the lab, run here.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Titles and the DiT and MM-DiT attributions come from the arXiv API.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2212.09748"
+  }
+ ],
+ "unchecked": [
+  "We describe adaLN-Zero from the DiT paper's summary and our memory of its block design, and did not reread the full paper; the code only shows the checkpoint's result, not its starting values.",
+  "We did not run a real DiT in this lesson: every number is from toy sizes.",
+  "The statement that most newer models are DiTs is a reading of the comfy/ldm folder, not a count."
+ ],
+ "kit": true
 }

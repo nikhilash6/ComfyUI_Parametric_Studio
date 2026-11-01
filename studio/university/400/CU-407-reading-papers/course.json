@@ -2,11 +2,32 @@
  "title": "Reading a generative-AI paper in 20 minutes",
  "level": "400",
  "char": "latent",
- "hook": "A method for extracting claims, assumptions and what to check.",
+ "hook": "Claim, baseline, measure, spread. A way to read fast, and three ways a result looks better than it is.",
  "code": "CU-407",
  "prereq": [],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "nodes.py:KSampler"
+ ],
  "track": "research",
- "order": 30
+ "order": 30,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "The worked example quotes the GQA abstract.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2305.13245"
+  },
+  {
+   "claim": "All tables come from the lab's simulation.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "The minutes in the reading plan are our suggestion, not a measured method.",
+  "Two standard errors is a rule of thumb with assumptions the lab states, not a formal test on any real paper."
+ ],
+ "kit": true
 }

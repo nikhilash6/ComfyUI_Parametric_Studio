@@ -1,0 +1,55 @@
+{
+ "code": "CU-261",
+ "title": "Prompt weights: what the brackets really do",
+ "level": "200",
+ "prereq": [
+  "CU-260"
+ ],
+ "char": "attn",
+ "hook": "Brackets don't multiply a word's embedding. They push it away from what the empty prompt has at that position. And some text encoders ignore them completely.",
+ "code_refs": [
+  "comfy/sd1_clip.py:token_weights",
+  "comfy/sd1_clip.py:parse_parentheses",
+  "comfy/sd1_clip.py:ClipTokenWeightEncoder.encode_token_weights",
+  "comfy/sd1_clip.py:escape_important",
+  "comfy/text_encoders/flux.py:KleinTokenizer.tokenize_with_weights"
+ ],
+ "track": "conditioning",
+ "order": 4,
+ "kit": true,
+ "graphs": [
+  "c_weights"
+ ],
+ "verified": [
+  {
+   "claim": "Each bracket pair multiplies by 1.1, and a number replaces the weight outright.",
+   "how": "test",
+   "ref": "The lab's port equals the real token_weights on seven test strings, on a CPU"
+  },
+  {
+   "claim": "Weighted tokens become (z minus z_empty) times weight plus z_empty.",
+   "how": "source",
+   "ref": "comfy/sd1_clip.py:ClipTokenWeightEncoder.encode_token_weights"
+  },
+  {
+   "claim": "The pooled vector is taken from the same unweighted pass.",
+   "how": "source",
+   "ref": "comfy/sd1_clip.py:ClipTokenWeightEncoder.encode_token_weights"
+  },
+  {
+   "claim": "Several tokenizers, including Klein's and the one Qwen Image uses, pass disable_weights=True.",
+   "how": "source",
+   "ref": "comfy/text_encoders/flux.py and comfy/text_encoders/qwen_image.py"
+  },
+  {
+   "claim": "Backslash-escaped brackets are protected from parsing, then restored.",
+   "how": "source",
+   "ref": "comfy/sd1_clip.py:escape_important"
+  }
+ ],
+ "unchecked": [
+  "No render here compares weights. All the figures come from the parser and from random stand-in rows.",
+  "We list only two tokenizers with weights off. There are others, so check your model's tokenizer rather than this list.",
+  "We don't claim how a given weight changes a picture."
+ ]
+}

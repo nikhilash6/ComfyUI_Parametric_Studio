@@ -1,0 +1,61 @@
+{
+ "code": "CU-380",
+ "title": "Finding out what a pack really does before you install it",
+ "level": "300",
+ "prereq": [
+  "CU-430"
+ ],
+ "char": "graph",
+ "hook": "A custom node is Python that runs with your rights as soon as ComfyUI starts. Learn to read one first: the order to read files, what runs when, and what to write down.",
+ "track": "packs",
+ "order": 20,
+ "graphs": [
+  "a_read_before_run"
+ ],
+ "code_refs": [
+  "SECURITY.md",
+  "main.py:prestartup_script.py",
+  "nodes.py:load_custom_node",
+  "nodes.py:WEB_DIRECTORY",
+  "comfy/cli_args.py:--disable-all-custom-nodes",
+  "comfy/cli_args.py:--whitelist-custom-nodes"
+ ],
+ "verified": [
+  {
+   "claim": "ComfyUI's security policy says custom nodes are arbitrary Python code, trusted as any other software you install.",
+   "how": "source",
+   "ref": "SECURITY.md"
+  },
+  {
+   "claim": "main.py runs each pack's prestartup_script.py before the rest of ComfyUI starts.",
+   "how": "source",
+   "ref": "main.py"
+  },
+  {
+   "claim": "load_custom_node executes the pack's module on import, then reads WEB_DIRECTORY so the pack's JavaScript is served to the browser.",
+   "how": "source",
+   "ref": "nodes.py:load_custom_node"
+  },
+  {
+   "claim": "--disable-all-custom-nodes and --whitelist-custom-nodes exist.",
+   "how": "source",
+   "ref": "comfy/cli_args.py"
+  },
+  {
+   "claim": "The lab's file is made up by us, and is read as text and never run.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graph ran on a CPU.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "Reading a pack can't prove that it is safe. We say what to look for, and nothing here certifies any pack.",
+  "Our line reader in the lab is small and easily fooled, as CU-381 shows. Real reading needs a human.",
+  "The list of patterns is about common cases. A careful author of bad code can avoid all of them."
+ ],
+ "kit": true
+}

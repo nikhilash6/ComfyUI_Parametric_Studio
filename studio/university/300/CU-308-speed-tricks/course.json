@@ -1,12 +1,75 @@
 {
+ "code": "CU-308",
  "title": "Speed: distillation, caching, compile, fewer steps",
  "level": "300",
+ "prereq": [
+  "CU-203"
+ ],
  "char": "denoise",
- "hook": "Where the seconds go and how to get them back.",
- "code": "CU-308",
- "prereq": [],
- "status": "draft",
- "code_refs": [],
+ "hook": "Four levers, four different mechanisms. Count what each one saves, and what it asks in return.",
  "track": "performance",
- "order": 50
+ "order": 50,
+ "graphs": [
+  "d_lcm",
+  "g_easycache",
+  "g_torch_compile"
+ ],
+ "code_refs": [
+  "comfy/samplers.py:sampling_function",
+  "comfy_extras/nodes_easycache.py:EasyCacheNode",
+  "comfy_extras/nodes_easycache.py:LazyCacheNode",
+  "comfy_extras/nodes_torch_compile.py:TorchCompileModel",
+  "comfy_api/torch_helpers/torch_compile.py:set_torch_compile_wrapper",
+  "comfy_execution/caching.py:CacheKeySetInputSignature",
+  "comfy/ldm/qwen_image21/model.py:PrefixCache",
+  "comfy/cli_args.py:--disable-comfy-compiler"
+ ],
+ "verified": [
+  {
+   "claim": "When CFG is 1 the second conditioning is dropped, unless disable_cfg1_optimization is set.",
+   "how": "source",
+   "ref": "comfy/samplers.py:sampling_function"
+  },
+  {
+   "claim": "EasyCache and LazyCache are core nodes marked experimental. Their defaults are reuse threshold 0.2 and a window of 0.15 to 0.95.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_easycache.py"
+  },
+  {
+   "claim": "TorchCompileModel is an experimental node with inductor and cudagraphs backends. It is not a setting.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_torch_compile.py"
+  },
+  {
+   "claim": "The node cache keys on class, inputs and ancestors, and caches whole node results.",
+   "how": "source",
+   "ref": "comfy_execution/caching.py"
+  },
+  {
+   "claim": "A prefix cache keeps keys and values for one model family's prefix, such as prompt and references.",
+   "how": "source",
+   "ref": "comfy/ldm/qwen_image21/model.py"
+  },
+  {
+   "claim": "Progressive distillation trains a student to match two teacher steps with one. Consistency models learn to map any point on a trajectory to its start.",
+   "how": "docs",
+   "ref": "arXiv 2202.00512 and 2303.01469 abstracts"
+  },
+  {
+   "claim": "Error and call counts in the Lab come from a run here on a toy ODE.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "All three graphs pass validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We timed none of these levers in this lesson. The lab counts calls, and speed gains depend on the model and the card.",
+  "We did not test whether torch.compile helps on any model, or what its first-run cost is here. The advice to time the second run is general.",
+  "Quality changes from a cache or a distilled model are for your eyes. The toy ODE's error is not a picture."
+ ],
+ "kit": true
 }

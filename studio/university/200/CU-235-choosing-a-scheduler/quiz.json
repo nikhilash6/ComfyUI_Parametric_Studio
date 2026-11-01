@@ -1,0 +1,62 @@
+{
+ "code": "CU-235",
+ "title": "Choosing a scheduler from the curves",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Why can you check a scheduler without a GPU?",
+   "options": [
+    "Its output is a list of numbers made before the model runs",
+    "It does not affect the picture",
+    "It only needs the VAE",
+    "Schedulers are all the same"
+   ],
+   "answer": "Its output is a list of numbers made before the model runs",
+   "why": "nm_sigmas prints schedules on a CPU with no model."
+  },
+  {
+   "q": "linear_quadratic's last value before 0 on SDXL is 2.67. What does that mean?",
+   "options": [
+    "The last step leaps from heavy noise to clean in one go",
+    "It finishes early",
+    "It adds noise at the end",
+    "It starts low"
+   ],
+   "answer": "The last step leaps from heavy noise to clean in one go",
+   "why": "karras has 0.03 there, so its last jump is tiny."
+  },
+  {
+   "q": "Why does karras behave differently on a flow model?",
+   "options": [
+    "Its formula spends most steps at low noise, which on a 0 to 1 range leaves few steps at high noise",
+    "It uses a different seed",
+    "Flow models ignore schedulers",
+    "It adds noise"
+   ],
+   "answer": "Its formula spends most steps at low noise, which on a 0 to 1 range leaves few steps at high noise",
+   "why": "Only 4 of 20 steps sit above σ 0.5, against 15 for simple."
+  },
+  {
+   "q": "What does the lab's comparison of SD3.5 karras and kl_optimal numbers teach?",
+   "options": [
+    "Summary measures can't tell a broken render from a fine one, so look at the picture",
+    "kl_optimal is broken",
+    "karras is fine",
+    "Brightness decides quality"
+   ],
+   "answer": "Summary measures can't tell a broken render from a fine one, so look at the picture",
+   "why": "The difference, brightness and edge numbers are close, and only one of the two pictures is broken."
+  },
+  {
+   "q": "You ask ddim_uniform for 30 steps on a 1000-entry table. How many do you get?",
+   "options": [
+    "31",
+    "30",
+    "29",
+    "1000"
+   ],
+   "answer": "31",
+   "why": "ss = 1000 // 30 = 33, and the loop from index 1 returns 31 values before the end, as the lab shows."
+  }
+ ]
+}

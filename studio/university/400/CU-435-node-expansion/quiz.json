@@ -1,0 +1,12 @@
+{
+ "code": "CU-435",
+ "title": "Writing a node that expands into a subgraph",
+ "level": "400",
+ "questions": [
+  {"q": "What must a V3 schema set before a node may return expand?", "options": ["is_output_node=True", "enable_expand=True", "not_idempotent=True", "is_input_list=True"], "answer": "enable_expand=True", "why": "EXECUTE_NORMALIZED raises an exception without it. We ran that."},
+  {"q": "What does the result of an expanding node usually hold?", "options": ["The final tensor", "A wire to a new node's output", "The whole graph", "Nothing at all"], "answer": "A wire to a new node's output", "why": "The new nodes haven't run yet. The engine resolves the wire on the second visit."},
+  {"q": "You misspell a class name in the graph you expand into. When do you find out?", "options": ["When the pack loads", "At validation, before anything runs", "During the run, as KeyError", "Never, the node is skipped"], "answer": "During the run, as KeyError", "why": "Validation only sees the queued graph. execute() looks up each new class when it adds it."},
+  {"q": "Why not build ids from a random number?", "options": ["They would break JSON", "The inner nodes would get new keys and miss the cache", "Python forbids it", "Ids must be integers"], "answer": "The inner nodes would get new keys and miss the cache", "why": "The docs require ids to be the same between runs. GraphBuilder's prefix gives that."},
+  {"q": "Node 2 gets a list of 2 items and expands on each call. What prefixes does GraphBuilder give?", "options": ["2.0.0. and 2.1.0.", "2.0.0. both times", "1. and 2.", "Random ones"], "answer": "2.0.0. and 2.1.0.", "why": "The middle number is the call index, set before each call by pre_execute_cb."}
+ ]
+}

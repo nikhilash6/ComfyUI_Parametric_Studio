@@ -1,0 +1,72 @@
+{
+ "code": "CU-433",
+ "title": "When a node re-runs: fingerprints, the NaN trick, not_idempotent",
+ "level": "400",
+ "prereq": [
+  "CU-430",
+  "CU-221"
+ ],
+ "char": "graph",
+ "hook": "float(\"NaN\") makes a node run every time, and math.nan doesn't. Three hooks decide if your node runs and if your graph is allowed to start.",
+ "track": "custom-nodes",
+ "order": 14,
+ "kit": true,
+ "graphs": [
+  "f_fingerprint_image"
+ ],
+ "code_refs": [
+  "execution.py:IsChangedCache",
+  "execution.py:validate_inputs",
+  "comfy_execution/caching.py:CacheKeySetInputSignature",
+  "comfy_execution/caching.py:to_hashable",
+  "comfy_execution/caching.py:Unhashable",
+  "comfy_api/latest/_io.py:fingerprint_inputs",
+  "comfy_api/latest/_io.py:not_idempotent",
+  "nodes.py:LoadImage.IS_CHANGED",
+  "nodes.py:LoadImage.VALIDATE_INPUTS"
+ ],
+ "verified": [
+  {
+   "claim": "Over 3 queues: no hook 1 run, False 1, None 1, fixed dict 1, fixed list 1, new float('NaN') 3, math.nan 1, one module-level NaN 1, a rising counter 3, a tensor 3, a hook that raises 3.",
+   "how": "run here",
+   "ref": "test nodes through one PromptExecutor with the classic cache, CPU"
+  },
+  {
+   "claim": "A NaN from a V3 fingerprint_inputs also re-ran on every queue, and everything downstream ran too.",
+   "how": "run here",
+   "ref": "execution.py:IsChangedCache"
+  },
+  {
+   "claim": "A fingerprint sees constants only: a wired input arrived as None.",
+   "how": "run here",
+   "ref": "execution.py:IsChangedCache calls get_input_data with no execution list"
+  },
+  {
+   "claim": "A hook that raises sets the key to NaN and logs a warning.",
+   "how": "source",
+   "ref": "execution.py:IsChangedCache.get"
+  },
+  {
+   "claim": "Two copies of an ordinary node with the same inputs ran once. With not_idempotent they ran twice, then not at all on the next queue.",
+   "how": "run here",
+   "ref": "comfy_execution/caching.py:CacheKeySetInputSignature"
+  },
+  {
+   "claim": "Naming an input in validate_inputs turned off its range check, and left the others on. Using input_types turned off the type check.",
+   "how": "run here",
+   "ref": "execution.py:validate_inputs"
+  },
+  {
+   "claim": "A validator that returns False gives custom_validation_failed, one error per input it received. One that raises gives exception_during_validation.",
+   "how": "run here",
+   "ref": "execution.py:validate_inputs"
+  }
+ ],
+ "unchecked": [
+  "Our explanation of why math.nan fails is Python's rule that containers compare identical objects as equal. The counts are measured. We didn't step through to_hashable to watch it happen.",
+  "Exact counts for not_idempotent across other cache modes. We used the classic cache."
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

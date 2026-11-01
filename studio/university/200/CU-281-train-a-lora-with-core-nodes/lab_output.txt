@@ -1,0 +1,28 @@
+steps 300   lowest 0.0016   highest 1.1148   mean 0.2035   spread (sd) 0.1326
+
+by tenths of the run
+steps       mean     sd       min      max
+  1-30      0.1626   0.1506   0.0036   0.5771
+ 31-60      0.1794   0.1186   0.0198   0.4858
+ 61-90      0.2082   0.0850   0.0445   0.4147
+ 91-120     0.2425   0.1015   0.0412   0.4747
+121-150     0.2068   0.1157   0.0017   0.4156
+151-180     0.1863   0.1306   0.0041   0.4352
+181-210     0.2618   0.2239   0.0016   1.1148
+211-240     0.1965   0.1104   0.0022   0.3836
+241-270     0.2061   0.0950   0.0075   0.4051
+271-300     0.1849   0.1091   0.0056   0.3936
+
+first tenth 0.1626, last tenth 0.1849: it went up by 0.0223
+shuffled order, 5000 tries: a gap this wide came up 0.514 of the time
+
+window   largest step between neighbouring windows (not overlapping)
+1        0.9361
+5        0.1753
+10       0.1097
+30       0.0755
+60       0.0544
+
+the run's other numbers, from studio/train_measured.json and train_example.js
+pictures 12   steps 300   average sightings per picture 25.0 at batch 1
+rank 8   size 1024   seconds per step 0.6155   300 x 0.6155 = 184.7 s   peak memory 40.25 GiB   setup 13.8 s

@@ -1,0 +1,67 @@
+{
+ "code": "CU-263",
+ "title": "Regions: ConditioningSetArea and ConditioningSetMask",
+ "level": "200",
+ "prereq": [
+  "CU-260",
+  "CU-262"
+ ],
+ "char": "attn",
+ "hook": "A boxed prompt is a real crop: the model sees only that part of the latent. A mask is a share of the blend, with the model looking at everything. Strength is relative, and bare cells get nothing.",
+ "code_refs": [
+  "nodes.py:ConditioningSetArea.append",
+  "nodes.py:ConditioningSetAreaPercentage.append",
+  "nodes.py:ConditioningSetMask.append",
+  "comfy/samplers.py:get_area_and_mult",
+  "comfy/samplers.py:resolve_areas_and_cond_masks_multidim",
+  "comfy/samplers.py:create_cond_with_same_area_if_none",
+  "comfy/samplers.py:_calc_cond_batch"
+ ],
+ "track": "conditioning",
+ "order": 8,
+ "kit": true,
+ "graphs": [
+  "sd15_cond_area",
+  "c_cond_mask"
+ ],
+ "verified": [
+  {
+   "claim": "Area crops the latent the model sees, and the fade over up to 8 cells is applied only on sides that do not touch the picture's edge.",
+   "how": "test",
+   "ref": "get_area_and_mult compared with the lab's port on four areas, on a CPU"
+  },
+  {
+   "claim": "Each cell is the sum of answer times weight, divided by the sum of weights. A cell with no entries gets zero.",
+   "how": "source",
+   "ref": "comfy/samplers.py:_calc_cond_batch"
+  },
+  {
+   "claim": "ConditioningSetArea divides pixels by 8 whatever the model, and the percentage node uses the real latent size.",
+   "how": "source",
+   "ref": "nodes.py and comfy/samplers.py:resolve_areas_and_cond_masks_multidim"
+  },
+  {
+   "claim": "A boxed positive gets a same-area copy of the negative.",
+   "how": "source",
+   "ref": "comfy/samplers.py:create_cond_with_same_area_if_none"
+  },
+  {
+   "claim": "A mask is resized to latent size with bilinear filtering, and mask bounds sets an area from its box. On a CPU a square mask gave area (32, 32, 25, 32) and a model input of 32 by 32 cells, with no enlarging.",
+   "how": "test",
+   "ref": "comfy/samplers.py:resolve_areas_and_cond_masks_multidim and get_area_and_mult"
+  },
+  {
+   "claim": "The flux_regional picture's data says: lighthouse prompt on the left half, forest on the right, FLUX.1 schnell, cfg 1, 8 steps, made with RES4LYF's ClownRegionalConditioning2.",
+   "how": "run here",
+   "ref": "studio/web/res4lyf_renders/results.json and its graph"
+  }
+ ],
+ "unchecked": [
+  "No core area or mask render exists here. The one picture is from a third-party pack, using another mechanism, which we didn't read for this lesson.",
+  "We expect a bare cell's zero prediction to look bad, from reading the code. We did not render it.",
+  "That a crop can't see its surroundings is from the code. We have no picture showing a seam."
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

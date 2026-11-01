@@ -1,0 +1,84 @@
+{
+ "code": "CU-450",
+ "title": "Installing without breaking anything",
+ "level": "400",
+ "questions": [
+  {
+   "q": "What does pip install --dry-run tell you?",
+   "options": [
+    "What it would install, without installing it",
+    "Whether the code is safe",
+    "How fast the pack runs",
+    "Which nodes it adds"
+   ],
+   "answer": "What it would install, without installing it",
+   "why": "It looks at versions. It reads no code."
+  },
+  {
+   "q": "What does a constraints file do?",
+   "options": [
+    "It controls which version is installed, not whether one is",
+    "It installs every package listed in it",
+    "It scans for malware",
+    "It disables the pack"
+   ],
+   "answer": "It controls which version is installed, not whether one is",
+   "why": "Pip's guide says that in almost those words."
+  },
+  {
+   "q": "Why is a resolve failure on a dry run good news?",
+   "options": [
+    "It happened on paper, and nothing in your environment moved",
+    "It means the pack is malicious",
+    "It means pip is broken",
+    "It means the pack has no requirements"
+   ],
+   "answer": "It happened on paper, and nothing in your environment moved",
+   "why": "That is what you ran it for."
+  },
+  {
+   "q": "What can a dry run not see?",
+   "options": [
+    "A pack that calls pip from its own code at import",
+    "The versions in requirements.txt",
+    "Conflicts with your constraints",
+    "Package names"
+   ],
+   "answer": "A pack that calls pip from its own code at import",
+   "why": "That's why you read the entry files first."
+  },
+  {
+   "q": "Why mount models read-only in a sandbox?",
+   "options": [
+    "A pack can't change weights it can't write to",
+    "It makes them load faster",
+    "It is the only way to use a GPU",
+    "Safetensors requires it"
+   ],
+   "answer": "A pack can't change weights it can't write to",
+   "why": "Containers help by what you don't give them."
+  },
+  {
+   "q": "A graph breaks after you added several packs. What is the fastest way to find the culprit?",
+   "options": [
+    "--disable-all-custom-nodes, then whitelist them one at a time",
+    "Reinstall everything with --force-reinstall",
+    "Update every pack",
+    "Delete your models"
+   ],
+   "answer": "--disable-all-custom-nodes, then whitelist them one at a time",
+   "why": "Both flags exist in cli_args.py."
+  },
+  {
+   "q": "A pack loaded fine in the sandbox. What have you shown?",
+   "options": [
+    "That it loaded, and little more until its nodes have run",
+    "That it is safe",
+    "That it will work with every model",
+    "That its licence is fine"
+   ],
+   "answer": "That it loaded, and little more until its nodes have run",
+   "why": "Hence the smoke test, and the rule that no layer is proof."
+  }
+ ]
+}

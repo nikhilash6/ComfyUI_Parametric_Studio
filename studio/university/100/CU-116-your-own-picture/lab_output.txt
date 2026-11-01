@@ -1,0 +1,13 @@
+file                  IMAGE               MASK            mask mean  mask at top, at bottom
+with alpha, top clear [1, 48, 64, 3]      [1, 48, 64]     0.500      1.0 0.0
+no alpha              [1, 48, 64, 3]      [1, 64, 64]     0.000      0.0 0.0
+the mask of a file with no alpha is 64 x 64 whatever the picture's size: True
+
+size of a picture on its way into a latent
+file          after crop    latent [B, 4, h, w]     pixels lost
+1024x1024     1024x1024     [1, 4, 128, 128]        0
+3024x4032     3024x4032     [1, 4, 504, 378]        0
+1000x563      1000x560      [1, 4, 70, 125]         3,000
+515x333       512x328       [1, 4, 41, 64]          3,559
+
+phone photo 3024x4032 in memory as an IMAGE: 139.5 MiB, against the 3.0 MiB of a 512x512 one, 46.5 times the pixels

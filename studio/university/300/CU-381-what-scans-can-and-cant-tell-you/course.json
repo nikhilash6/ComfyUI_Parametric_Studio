@@ -1,0 +1,41 @@
+{
+ "code": "CU-381",
+ "title": "What scans can and can't tell you",
+ "level": "300",
+ "prereq": [
+  "CU-380"
+ ],
+ "char": "graph",
+ "hook": "A scanner shouts at a picture decoder and says nothing about a harmful line built at run time. Learn what a hit means, what silence means, and why neither is a verdict.",
+ "track": "packs",
+ "order": 25,
+ "graphs": [
+  "a_read_before_run"
+ ],
+ "code_refs": [
+  "SECURITY.md"
+ ],
+ "verified": [
+  {
+   "claim": "Every count and table in the Lab comes from a run here on samples we wrote.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "ComfyUI's security policy leaves issues needing a specific custom node out of its scope.",
+   "how": "source",
+   "ref": "SECURITY.md"
+  },
+  {
+   "claim": "The graph ran on a CPU.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The samples were picked by us to show both kinds of mistake, so the counts say nothing about real packs or real scanners.",
+  "We name no scanner as good or bad, and did not test any commercial product.",
+  "How often each kind of mistake happens in the wild, which this lesson deliberately doesn't state."
+ ],
+ "kit": true
+}

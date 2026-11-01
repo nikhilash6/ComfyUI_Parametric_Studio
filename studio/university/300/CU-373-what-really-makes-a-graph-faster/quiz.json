@@ -1,0 +1,73 @@
+{
+ "code": "CU-373",
+ "title": "What really makes a graph faster",
+ "level": "300",
+ "questions": [
+  {
+   "q": "You read that a node makes graphs 3 times faster. What do you know?",
+   "options": [
+    "What to try, not what you'll get",
+    "That it will be 3 times faster for you",
+    "That it is false",
+    "That it only works on Linux"
+   ],
+   "answer": "What to try, not what you'll get",
+   "why": "Someone else's card, model and steps. Measure on your own graph."
+  },
+  {
+   "q": "What does tiled VAE trade?",
+   "options": [
+    "More time for less memory",
+    "More memory for less time",
+    "Less quality for more steps",
+    "Nothing, it is free"
+   ],
+   "answer": "More time for less memory",
+   "why": "decode_tiled_ decodes three tile shapes and averages. Use it when the decode doesn't fit."
+  },
+  {
+   "q": "By counting calls × cells, what does going from 1024 px to 512 px save?",
+   "options": [
+    "About three quarters",
+    "About half",
+    "Nothing",
+    "About 90%"
+   ],
+   "answer": "About three quarters",
+   "why": "A quarter of the cells, at the same call count, leaves 25% of the baseline."
+  },
+  {
+   "q": "When does cached conditioning help most?",
+   "options": [
+    "Across restarts, or when a huge encoder is the problem",
+    "On every step of sampling",
+    "When the prompt changes each run",
+    "When you lower the CFG"
+   ],
+   "answer": "Across restarts, or when a huge encoder is the problem",
+   "why": "The node cache already covers repeats in one session. It doesn't touch sampling."
+  },
+  {
+   "q": "Our first render took 66 s, and later ones 1.5 s. What does that measure?",
+   "options": [
+    "Mostly model loading",
+    "Euler being slower than other samplers",
+    "The VAE",
+    "A broken scheduler"
+   ],
+   "answer": "Mostly model loading",
+   "why": "The first render of a model includes loading it. Leave it out."
+  },
+  {
+   "q": "Which is a fair measurement?",
+   "options": [
+    "Same seed, one change, first run dropped, median of three, and look at the picture",
+    "One run of each on different seeds",
+    "Your best time against someone's post",
+    "Average everything, including the load"
+   ],
+   "answer": "Same seed, one change, first run dropped, median of three, and look at the picture",
+   "why": "Every part removes a way of fooling yourself."
+  }
+ ]
+}

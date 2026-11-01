@@ -1,0 +1,62 @@
+{
+ "code": "CU-260",
+ "title": "What CONDITIONING really is",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What is a CONDITIONING value in the code?",
+   "options": [
+    "A list of entries, each a tensor and a dict",
+    "One tensor",
+    "A file on disk",
+    "A class with a forward method"
+   ],
+   "answer": "A list of entries, each a tensor and a dict",
+   "why": "encode_from_tokens_scheduled builds [cond, pooled_dict] entries in a list."
+  },
+  {
+   "q": "What does ConditioningSetArea change?",
+   "options": [
+    "The tensor's shape",
+    "Keys in the dict: the tensor is shared",
+    "The length of the list",
+    "The model's weights"
+   ],
+   "answer": "Keys in the dict: the tensor is shared",
+   "why": "It calls conditioning_set_values with area, strength and set_area_to_bounds."
+  },
+  {
+   "q": "What does ConditioningCombine do?",
+   "options": [
+    "Adds the two lists together",
+    "Averages the tensors",
+    "Joins tensors along tokens",
+    "Multiplies the dicts"
+   ],
+   "answer": "Adds the two lists together",
+   "why": "It is one line: conditioning_1 + conditioning_2."
+  },
+  {
+   "q": "You chain two SetTimestepRange nodes. Which range applies?",
+   "options": [
+    "Their overlap",
+    "The last one: the key is overwritten",
+    "Their union",
+    "The first one"
+   ],
+   "answer": "The last one: the key is overwritten",
+   "why": "conditioning_set_values overwrites by default. The lab shows (0.3, 0.9) winning."
+  },
+  {
+   "q": "Why can a setting have no effect with no error?",
+   "options": [
+    "A model class reads only the keys it looks for",
+    "The cache drops it",
+    "The VAE removes it",
+    "The tokenizer filters dict keys"
+   ],
+   "answer": "A model class reads only the keys it looks for",
+   "why": "extra_conds uses kwargs.get. Other keys are carried along unused."
+  }
+ ]
+}

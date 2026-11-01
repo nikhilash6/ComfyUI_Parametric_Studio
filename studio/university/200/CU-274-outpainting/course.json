@@ -1,0 +1,48 @@
+{
+ "code": "CU-274",
+ "title": "Outpainting with ImagePadForOutpaint",
+ "level": "200",
+ "prereq": [
+  "CU-273"
+ ],
+ "char": "graph",
+ "hook": "Add canvas beyond the edge. Read what the pad node makes, why its feather can switch itself off, and how much of your picture gets repainted.",
+ "track": "control",
+ "order": 34,
+ "kit": true,
+ "graphs": [
+  "d_outpaint_mask",
+  "d_outpaint"
+ ],
+ "code_refs": [
+  "nodes.py:ImagePadForOutpaint.expand_image",
+  "nodes.py:VAEEncodeForInpaint.encode",
+  "nodes.py:InpaintModelConditioning.encode"
+ ],
+ "verified": [
+  {
+   "claim": "The lab's expand_image gives the same mask as the real node at three settings, largest difference 0.",
+   "how": "run here",
+   "ref": "nodes.py:ImagePadForOutpaint.expand_image"
+  },
+  {
+   "claim": "New pixels are 0.5. Feathering applies only if feathering x 2 is below both sides of the picture, and only next to padded sides.",
+   "how": "source",
+   "ref": "nodes.py:ImagePadForOutpaint.expand_image"
+  },
+  {
+   "claim": "The node's side inputs step by 8, with default feathering 40.",
+   "how": "source",
+   "ref": "nodes.py:ImagePadForOutpaint.INPUT_TYPES"
+  },
+  {
+   "claim": "d_outpaint_mask ran on a CPU here, and d_outpaint validates.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We ran no render for this lesson. The advice on how far to pad in one go, and on what a prompt should say, is common practice and untested here.",
+  "Our graph's inpainting checkpoint name is a placeholder: use yours."
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "code": "CU-437",
+ "title": "Packaging a pack without breaking anyone's install",
+ "level": "400",
+ "questions": [
+  {"q": "Why is pinning numpy==1.24.0 in your pack a problem for others?", "options": ["Pins are not allowed in requirements files", "All packs share one Python, so it moves numpy for every pack", "It makes your pack load slowly", "numpy cannot be installed twice on a card"], "answer": "All packs share one Python, so it moves numpy for every pack", "why": "There is one environment. Your request applies to everyone in it."},
+  {"q": "Two packs both register a node called Blur. Which one do users get?", "options": ["The first loaded", "The last loaded, and the order isn't promised", "Both, with a suffix", "Neither, with an error"], "answer": "The last loaded, and the order isn't promised", "why": "NODE_CLASS_MAPPINGS[name] = node_cls runs for each pack, and folders come from os.listdir."},
+  {"q": "A pack tries to register a node named KSampler. What happens?", "options": ["It replaces core's", "It is ignored", "ComfyUI won't start", "Both appear in the menu"], "answer": "It is ignored", "why": "Core's names are passed as ignore to load_custom_node."},
+  {"q": "What does ComfyUI itself do with your requirements.txt when it loads your pack?", "options": ["Installs it", "Nothing", "Warns about each line", "Refuses to load if it is missing"], "answer": "Nothing", "why": "The loader imports your module and has no install step. A person or a manager installs them."},
+  {"q": "Which command shows what would change, and installs nothing?", "options": ["pip install --dry-run", "pip freeze", "pip check --install", "pip install -U"], "answer": "pip install --dry-run", "why": "The pip docs: don't actually install anything, just print what would be."},
+  {"q": "Your pack needs cv2 for one node. What is the kindest way to import it?", "options": ["At the top of __init__.py", "Inside that node's function, with a clear error if it is missing", "By running pip from your code", "In prestartup_script.py"], "answer": "Inside that node's function, with a clear error if it is missing", "why": "A top-level failure costs the whole pack, while this costs one node."}
+ ]
+}

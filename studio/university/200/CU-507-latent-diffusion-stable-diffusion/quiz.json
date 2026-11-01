@@ -59,15 +59,15 @@
    "why": "RETURN_TYPES is (\"MODEL\", \"CLIP\", \"VAE\"), with tooltips naming the model for denoising latents, the CLIP model for encoding prompts, and the VAE for moving between pixels and latent space."
   },
   {
-   "q": "When did Stability AI announce the public release of Stable Diffusion, and under what licence?",
+   "q": "A paper says latent diffusion is 3 to 5 times faster overall, yet a layer's attention matrix shrinks 4096 times. Why the difference?",
    "options": [
-    "22 August 2022, Creative ML OpenRAIL-M",
-    "20 December 2021, MIT",
-    "22 August 2022, CC0 public domain",
-    "26 February 2021, Apache 2.0"
+    "A whole network mixes many layers, and the 4096 is one layer at equal width",
+    "The paper measured it wrongly",
+    "The VAE runs at every step",
+    "Attention is switched off in pixel space"
    ],
-   "answer": "22 August 2022, Creative ML OpenRAIL-M",
-   "why": "Stability AI's page is dated Aug 22 and says the model is released under a Creative ML OpenRAIL-M licence; the Hugging Face post of the same day is dated 22 August 2022. The latent diffusion paper itself was posted on 20 December 2021."
+   "answer": "A whole network mixes many layers, and the 4096 is one layer at equal width",
+   "why": "The lab counts one layer at a time. Table 6 of the paper measures the end-to-end model."
   }
  ]
 }

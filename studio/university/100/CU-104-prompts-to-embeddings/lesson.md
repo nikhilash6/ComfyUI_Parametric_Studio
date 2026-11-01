@@ -12,6 +12,10 @@ The image model never reads your sentence. ComfyUI cuts the text into tokens, re
 
 **Lookup.** Token ids index a matrix E with one row per token. Reading row i is the same as multiplying a one-hot vector by E. CLIP adds a second table, one row per position, so the same word at another position gets another vector. The row for a token does not know its neighbours.
 
+**Try the attention.** The lab below uses a small grid of latent cells and five tokens, with made-up numbers. It shows the arithmetic of who attends to whom, and it isn't reading a real model.
+
+{{play:attention}}
+
 **Attention.** Attention(Q, K, V) = softmax(Q Kᵀ / √d_k) V (Vaswani et al. 2017). Each position builds a query, compares it with every key, turns the scores into weights with a softmax, and mixes the values. CLIP's text encoder uses masked self-attention, which sets the scores of later positions to −∞ before the softmax. Position i then sees only positions up to i, so the vector at the end marker is the first one that has seen the whole prompt. CLIP takes that vector, after a layer norm, as the summary of the text (Radford et al. 2021).
 
 ## In ComfyUI
@@ -20,9 +24,29 @@ The image model never reads your sentence. ComfyUI cuts the text into tokens, re
 
 `SDTokenizer` in `comfy/sd1_clip.py` uses Hugging Face's `CLIPTokenizer` with the vocabulary and merge files in `comfy/sd1_tokenizer`. The vocabulary file has 49,408 entries, the start marker is 49406 and the end marker 49407. The text encoder has 77 positions, so a chunk is a start marker, up to 75 tokens, an end marker and padding. ComfyUI does not truncate a longer prompt. It cuts the tokens into chunks, encodes each chunk as its own sequence, and joins the results along the sequence axis. Words in different chunks never attend to each other.
 
-Weights such as `(sunset:1.3)` are applied after encoding. The prompt is encoded together with an empty prompt, and each weighted position moves away from the empty-prompt vector: z becomes (z − z_empty) × w + z_empty. Plain parentheses mean 1.1.
+A prompt is plain text until something encodes it, so you can build one from parts with no model loaded.
+
+{{graph:nm_text}}
+
+In the classic graph, each of the two `CLIPTextEncode` nodes does this whole lesson.
+
+{{graph:sd15_txt2img}}
+
+Weights such as `(sunset:1.3)` are applied after encoding. The prompt is encoded together with an empty prompt, and each weighted position moves away from the empty-prompt vector: z becomes (z − z_empty) × w + z_empty. Plain parentheses mean 1.1. Try the real parser.
+
+{{play:weights}}
 
 The width depends on the family. SD 1.x uses CLIP ViT-L: 12 layers and width 768, so a short prompt gives [1, 77, 768]. SDXL uses two encoders, CLIP ViT-L and OpenCLIP ViT-bigG, and concatenates their penultimate-layer outputs along the channel axis, 768 + 1280 = 2048 (Podell et al. 2023, and `comfy/sdxl_clip.py`). It also passes the pooled output of the bigG model. Flux sends the sequence from a T5 encoder and only the pooled vector from CLIP-L.
+
+## What goes wrong
+
+- **A word stops working near the end of a long prompt.** The 76th token opens a second chunk, and chunks are encoded apart, so words across the boundary never attend to each other. Keep related words together, and check the lab's table for where the boundary falls.
+- **You count words when you should count tokens.** A rare word can take many tokens. "wider" took five pieces in the toy below.
+- **You want literal brackets.** `(` means weight. Write `\(` and `\)` to keep the character. The weights lab above parses this.
+- **Very large weights.** A weight scales the distance from the empty-prompt vector, so it has no built-in limit. Whether a high weight helps a given picture is not something this lesson tests.
+- **Swapped positive and negative.** Both are `CONDITIONING`, so nothing flags the mistake (CU-100).
+- **The wrong text encoder for the model.** The width must match, for example 768 for SD 1.x and 2048 for SDXL. CU-114 says how to choose.
+- **An embedding that does nothing.** In a prompt, `embedding:name` looks up a file in `models/embeddings`. A misspelled name doesn't stop the graph: the parser logs a warning and ignores it, so look in the console.
 
 ## Lab
 

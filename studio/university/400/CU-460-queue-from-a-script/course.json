@@ -1,0 +1,79 @@
+{
+ "code": "CU-460",
+ "title": "Queue a graph from a script",
+ "level": "400",
+ "prereq": [
+  "CU-224"
+ ],
+ "char": "graph",
+ "hook": "Five steps and a short script: set values, post, wait, check the status, and download the right file, with the traps each step avoids.",
+ "track": "automation",
+ "order": 12,
+ "graphs": [
+  "a_save_preview"
+ ],
+ "code_refs": [
+  "server.py:post_prompt",
+  "server.py:view_image",
+  "server.py:post_queue",
+  "server.py:post_interrupt",
+  "comfy_execution/jobs.py:validate_job_id",
+  "execution.py:MAXIMUM_HISTORY_SIZE",
+  "script_examples/websockets_api_example.py:get_images"
+ ],
+ "verified": [
+  {
+   "claim": "The body fields of POST /prompt and its replies.",
+   "how": "source",
+   "ref": "server.py:post_prompt"
+  },
+  {
+   "claim": "A client prompt_id must be a canonical lowercase UUID, or the server returns invalid_prompt_id.",
+   "how": "source",
+   "ref": "comfy_execution/jobs.py:validate_job_id"
+  },
+  {
+   "claim": "Messages to a client with no socket are dropped.",
+   "how": "source",
+   "ref": "server.py:PromptServer.send_json"
+  },
+  {
+   "claim": "An upload that clashes gets a numbered name unless overwrite is set.",
+   "how": "source",
+   "ref": "server.py:image_upload"
+  },
+  {
+   "claim": "/view refuses a leading slash or two dots with 400, and a subfolder that leaves the folder with 403.",
+   "how": "source",
+   "ref": "server.py:view_image"
+  },
+  {
+   "claim": "History holds at most 10,000 jobs.",
+   "how": "source",
+   "ref": "execution.py:MAXIMUM_HISTORY_SIZE"
+  },
+  {
+   "claim": "The official example connects its socket before queueing.",
+   "how": "source",
+   "ref": "script_examples/websockets_api_example.py:get_images"
+  },
+  {
+   "claim": "The script listing compiles.",
+   "how": "run here",
+   "ref": "Python compile of the listing"
+  },
+  {
+   "claim": "SaveImage with the prefix university/first reports subfolder university and filename first_00001_.png.",
+   "how": "run here",
+   "ref": "execution.py:PromptExecutor.execute_async"
+  }
+ ],
+ "unchecked": [
+  "The script listing was compiled but not run against a live server, because this course makes no live calls.",
+  "The lab's stub invents the temp file name and the number of polls."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 3
+ }
+}

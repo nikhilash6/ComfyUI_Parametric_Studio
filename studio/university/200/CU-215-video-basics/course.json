@@ -19,5 +19,41 @@
   "comfy/ldm/wan/model.py:patch_size"
  ],
  "track": "video",
- "order": 10
+ "order": 10,
+ "graphs": [
+  "nm_video"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "Each model family's empty-latent node floors to its own grid, with the shapes in the table.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_lt.py:EmptyLTXVLatentVideo"
+  },
+  {
+   "claim": "comfy/sd.py gives each VAE its ratios as functions of the latent frame count.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE"
+  },
+  {
+   "claim": "CreateVideo's fps sets playback and defaults to 30. LTXVConditioning's frame_rate defaults to 25.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_video.py:CreateVideo"
+  },
+  {
+   "claim": "The Wan and LTX-Video papers describe the first frame as compressed on its own.",
+   "how": "docs",
+   "ref": "arXiv 2503.20314 and 2501.00103"
+  },
+  {
+   "claim": "nm_video validates and runs on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not run a VAE, so we have not confirmed each family's decoder against the ratio functions.",
+  "The attention share is a count for a plain block. It isn't a measurement of any real model.",
+  "We say nothing about which frame rate a model was trained at, or how motion quality depends on it."
+ ]
 }

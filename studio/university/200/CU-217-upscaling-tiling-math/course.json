@@ -17,5 +17,47 @@
   "comfy_extras/nodes_upscale_model.py:class ImageUpscaleWithModel"
  ],
  "track": "video",
- "order": 30
+ "order": 30,
+ "graphs": [
+  "sd15_tiled_vae",
+  "sd15_upscale"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "Tile starts are range(0, D - O, S - O) when D > S, cut off at the border.",
+   "how": "source",
+   "ref": "comfy/utils.py:tiled_scale_multidim"
+  },
+  {
+   "claim": "decode_tiled_ decodes three tilings and averages them, for image latents.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE.decode_tiled_"
+  },
+  {
+   "claim": "ImageUpscaleWithModel starts at tile 512, overlap 32, halves on running out of memory, and gives up under 128.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_upscale_model.py:ImageUpscaleWithModel"
+  },
+  {
+   "claim": "The lab's tile plan and ramp follow those functions and ran on a toy decoder.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The tile play's starts for a side of 1024 match the lab.",
+   "how": "run here",
+   "ref": "studio/web/university_plays_e.js:tileStarts"
+  },
+  {
+   "claim": "Both graphs pass validate_prompt with file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "Seam errors come from a toy decoder with fixed random weights and zero padding. They don't measure a real VAE or upscaler.",
+  "The factor 3.77 assumes the decoder's cost grows with positions, which is only roughly true.",
+  "The lab doesn't compare resize methods. Whether latent or pixel upscaling looks better isn't measured here."
+ ]
 }

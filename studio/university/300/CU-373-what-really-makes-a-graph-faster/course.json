@@ -1,0 +1,64 @@
+{
+ "code": "CU-373",
+ "title": "What really makes a graph faster",
+ "level": "300",
+ "prereq": [
+  "CU-308"
+ ],
+ "char": "tune",
+ "hook": "Distilled models, cached conditioning, tiled VAE, smaller latents: count what each buys, then keep only what you measured on your own graph.",
+ "track": "performance",
+ "order": 55,
+ "graphs": [
+  "d_lcm",
+  "g_cond_save",
+  "sd15_tiled_vae",
+  "g_easycache"
+ ],
+ "code_refs": [
+  "comfy/utils.py:get_tiled_scale_steps",
+  "comfy/sd.py:VAE.decode_tiled_",
+  "comfy_extras/nodes_cond.py:SaveConditioning",
+  "comfy_extras/nodes_cond.py:ConditioningLoader",
+  "comfy_extras/nodes_easycache.py:EasyCacheNode",
+  "comfy/samplers.py:sampling_function"
+ ],
+ "verified": [
+  {
+   "claim": "get_tiled_scale_steps is ported, and decode_tiled_ really decodes three tile shapes and averages them.",
+   "how": "source",
+   "ref": "comfy/utils.py:get_tiled_scale_steps, comfy/sd.py"
+  },
+  {
+   "claim": "SaveConditioning writes safetensors, one entry only, and the conditioning loader reads it from the embeddings folder.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_cond.py"
+  },
+  {
+   "claim": "The render times are from renders.json in our Sampling Lab, polled every 1.5 s, one seed.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  },
+  {
+   "claim": "The EasyCache before and after figure is in our process notes for one video graph.",
+   "how": "run here",
+   "ref": "studio/processes/video-edits.md, not re-run for this lesson"
+  },
+  {
+   "claim": "The call and area ratios are arithmetic.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "All four graphs pass validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The calls-times-cells count treats a step's cost as proportional to area. Real cost also depends on the model, and attention grows faster than area (CU-304). So the percentages are a guide.",
+  "We did not re-run the EasyCache figure, and it is one graph.",
+  "We have not timed cached conditioning. Its gain depends on how slow your encoder and storage are."
+ ],
+ "kit": true
+}

@@ -4,49 +4,59 @@
  "level": "300",
  "questions": [
   {
-   "q": "In the context of Grouped-Query Attention (GQA), what is the relationship between the number of Query heads and Key/Value heads?",
+   "q": "A block has width 64 and 8 heads. What does each head attend with?",
    "options": [
-    "The number of KV heads is equal to the number of Q heads.",
-    "The number of KV heads is reduced by a factor of the group size compared to Q heads.",
-    "The number of KV heads is increased by a factor of the group size compared to Q heads.",
-    "The number of KV heads is always 1, regardless of the number of Q heads."
+    "8 channels of its own, after the width is cut into 8",
+    "All 64 channels, 8 times over",
+    "One channel chosen at random",
+    "Only the text tokens"
    ],
-   "answer": "The number of KV heads is reduced by a factor of the group size compared to Q heads.",
-   "why": "The lesson states that in GQA, 'The number of KV heads is num_kv_heads = num_heads / group_size' and that 'You reduce the number of notepads (KV heads) while keeping the number of experts (Q heads) the same.'"
+   "answer": "8 channels of its own, after the width is cut into 8",
+   "why": "Heads split the width. 64 ÷ 8 = 8 channels each, joined again afterwards."
   },
   {
-   "q": "According to the lab results, what was the total parameter count for MHA and GQA respectively when using a group size of 2?",
-   "options": null,
-   "answer": "MHA: 192, GQA: 128",
-   "why": "The lab results section explicitly lists 'RESULT mha_total_params = 192' and 'RESULT gqa_total_params = 128'."
-  },
-  {
-   "q": "Why does Rotary Position Embedding (RoPE) require the head dimension to be even?",
+   "q": "With 24 query heads and 8 key and value heads, how many attention matrices are made?",
    "options": [
-    "Because the dot product calculation requires an even number of dimensions.",
-    "Because RoPE operates on pairs of dimensions for rotation.",
-    "Because the input tensor must be square.",
-    "Because the sequence length must be even."
+    "24, because each query head still makes one",
+    "8, because keys are shared",
+    "16, the difference",
+    "1, because they are merged"
    ],
-   "answer": "Because RoPE operates on pairs of dimensions for rotation.",
-   "why": "The 'Common mistakes' section states: 'RoPE requires the head dimension to be even because it operates on pairs of dimensions.'"
+   "answer": "24, because each query head still makes one",
+   "why": "GQA shares keys and values, not queries. The keys repeat to line up with 24 query heads. The lab prints this rule."
   },
   {
-   "q": "In the lab verification of RoPE properties, what did the equality of 'rope_relative_pos_score1' and 'rope_relative_pos_score2' prove?",
+   "q": "Why does a RoPE score depend only on the gap between two tokens?",
    "options": [
-    "That RoPE encodes absolute position.",
-    "That RoPE preserves the vector norm.",
-    "That RoPE encodes relative position, not absolute position.",
-    "That the attention score is independent of the query and key values."
+    "Rotating both by their positions leaves only the difference of their angles in the dot product",
+    "The tokens are sorted before attention",
+    "Positions are divided by the image size",
+    "Far tokens are masked out"
    ],
-   "answer": "That RoPE encodes relative position, not absolute position.",
-   "why": "The lab results explanation states: 'The fact that the scores are equal proves that RoPE encodes relative position, not absolute position.'"
+   "answer": "Rotating both by their positions leaves only the difference of their angles in the dot product",
+   "why": "Each pair's dot product depends on the angle between the two rotated vectors, and that is (n − m) × ωᵢ."
   },
   {
-   "q": "Which specific ComfyUI model implementation is noted to use 'RePo3DRotaryEmbedding' for 3D point clouds?",
-   "options": null,
-   "answer": "TripoSplat",
-   "why": "The 'In ComfyUI' section states: 'The TripoSplat model uses RopeMultiHeadAttention and RePo3DRotaryEmbedding. This is a specialized adaptation of RoPE for 3D point clouds...'"
+   "q": "You add an ordinary position vector to q and k. What changes compared with RoPE?",
+   "options": [
+    "The score changes when you move both tokens, even with the same gap",
+    "Nothing changes",
+    "Vectors lose their length",
+    "It stops working on a CPU"
+   ],
+   "answer": "The score changes when you move both tokens, even with the same gap",
+   "why": "The lab's last column shows it: same gap, different scores."
+  },
+  {
+   "q": "A FLUX-type model reports an error that its axis widths don't add up. What is the likely cause?",
+   "options": [
+    "The config or detection doesn't match the checkpoint",
+    "The prompt is too long",
+    "Too many samplers are queued",
+    "The seed is too large"
+   ],
+   "answer": "The config or detection doesn't match the checkpoint",
+   "why": "Flux raises this when sum(axes_dim) differs from its positional width, which comes from the config."
   }
  ]
 }

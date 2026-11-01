@@ -1,0 +1,17 @@
+832x480, 81 frames -> latent (128, 11, 15, 26), one token per position: 4,290 tokens
+960x544, 145 frames -> latent (128, 19, 17, 30), one token per position: 9,690 tokens
+1920x1088, 121 frames -> latent (128, 16, 34, 60), one token per position: 32,640 tokens
+
+distilled list: 8 steps, so 8 model calls at CFG 1
+step sizes: 0.0062 0.0062 0.0063 0.0062 0.0656 0.1844 0.3031 0.4219
+share of the noise range removed by the first 4 steps: 0.025, by the last 2: 0.725
+LTXVScheduler 8 steps,  1024 positions: shift 0.950, sigmas 1.000 0.935 0.859 0.768 0.656 0.517 0.338 0.100 0.000
+LTXVScheduler 8 steps,  4096 positions: shift 2.050, sigmas 1.000 0.966 0.922 0.864 0.783 0.665 0.471 0.100 0.000
+LTXVScheduler 8 steps,  4290 positions: shift 2.119, sigmas 1.000 0.967 0.924 0.868 0.789 0.671 0.478 0.100 0.000
+
+VAEDecodeTiled(512, 64, 64, 8) on an 8 x 32 x 32 VAE: spatial tile 16, overlap 2 latent units, temporal tile 8, overlap 1 latent frames
+decode estimate 832x480 81 frames: whole 4.9 GiB, with the graph's tiles 2.2 GiB
+decode estimate 1920x1088 121 frames: whole 37.4 GiB, with the graph's tiles 2.3 GiB
+
+LTXVEmptyLatentAudio with those defaults: 25 latent frames a second, 81 frames at 24 fps -> [1, 8, 84, 16]
+CFGGuider cfg 1.0: math.isclose(cond_scale, 1.0) is True so the negative prompt in this graph does nothing

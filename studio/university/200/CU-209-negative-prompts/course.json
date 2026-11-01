@@ -6,12 +6,51 @@
   "CU-208"
  ],
  "char": "denoise",
- "hook": "A negative prompt is not a subtraction of concepts. It replaces the unconditional branch, and at cfg 1 it does nothing at all.",
+ "hook": "A negative prompt is not a subtraction of concepts. It replaces the unconditional branch, and with an ordinary sampler at cfg 1 it does nothing at all.",
  "code_refs": [
   "comfy/samplers.py:cfg_function",
   "comfy/samplers.py:sampling_function",
-  "nodes.py:KSampler"
+  "nodes.py:KSampler",
+  "nodes.py:ConditioningZeroOut.zero_out",
+  "comfy/k_diffusion/sampling.py:sample_euler_ancestral_cfg_pp",
+  "comfy_extras/nodes_sag.py:SelfAttentionGuidance"
  ],
  "track": "guidance",
- "order": 20
+ "order": 20,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img",
+  "c_zero_out"
+ ],
+ "verified": [
+  {
+   "claim": "The negative fills the uncond slot of the cfg sum.",
+   "how": "source",
+   "ref": "comfy/samplers.py:sampling_function"
+  },
+  {
+   "claim": "At cfg close to 1 the negative is not evaluated, unless a node or sampler sets disable_cfg1_optimization.",
+   "how": "source",
+   "ref": "comfy/samplers.py:sampling_function"
+  },
+  {
+   "claim": "CFG++ samplers and SAG set that flag and then use the unconditional prediction.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_euler_ancestral_cfg_pp and comfy_extras/nodes_sag.py"
+  },
+  {
+   "claim": "ConditioningZeroOut sets the tensor and the pooled vector to zeros.",
+   "how": "source",
+   "ref": "nodes.py:ConditioningZeroOut.zero_out"
+  },
+  {
+   "claim": "The three-class table is exact to every digit at cfg 1, as the lab asserts.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "We did not render the same seed with and without a negative. All our Sampling Lab renders use one negative, so no picture here shows what a negative prompt adds.",
+  "We did not measure how a zeroed negative and an encoded empty negative differ in a picture. We only read that their numbers differ."
+ ]
 }

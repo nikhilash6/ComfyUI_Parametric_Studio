@@ -1,5 +1,14 @@
-RESULT token_count_16x16 = 64
-RESULT num_tokens_512 = 1024
-RESULT num_tokens_1024 = 4096
-RESULT identity_check = True
-RESULT modulated_diff = 1.38815
+latent (1, 4, 16, 16) -> tokens (1, 64, 16), back again identical: True
+image      latent side   patch  tokens   token pairs
+512        64            2      1,024    1,048,576
+1024       128           2      4,096    16,777,216
+2048       256           2      16,384   268,435,456
+1024       128           1      16,384   268,435,456
+
+one scale and one shift per channel, the same for all 64 tokens: largest gap from that formula 0.0e+00
+another time vector changes the output: True
+zero-initialised gate: the block returns its input: True
+
+joint attention: 8 text + 64 image tokens -> a matrix of 5,184 pairs
+change one text token: image output moves by 41.304.  change one image token: text output moves by 0.177.  so it runs both ways
+plain cross-attention, for contrast: 64 queries x 8 keys = 512 pairs, and the text tokens get no new values from it

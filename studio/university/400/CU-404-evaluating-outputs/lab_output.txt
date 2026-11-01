@@ -1,8 +1,16 @@
-RESULT psnr_original = inf
-RESULT corr_original = 1
-RESULT psnr_blur = 29.4547
-RESULT corr_blur = 0.998767
-RESULT psnr_brightness = 14.1514
-RESULT corr_brightness = 1
-RESULT psnr_shift = 8.45098
-RESULT corr_shift = 0.666667
+change                     PSNR dB   Pearson r   SSIM
+identical                  inf       1.0000      1.0000
+brighter by 0.10           20.00     1.0000      0.9657
+shift 1 pixel              27.96     0.9754      0.9236
+shift 4 pixels             19.65     0.8329      0.5583
+box blur 5x5               31.60     0.9898      0.9621
+noise, same MSE as +0.10   20.00     0.8771      0.4430
+
+a different picture with the same style of content: PSNR 11.02, r -0.2819
+
+samples per side  FID, both sides from the same distribution
+50                1.7364
+200               0.3766
+1000              0.0829
+5000              0.0155
+the true distance is 0. a small sample still scores above 0, so only compare FIDs at the same sample size

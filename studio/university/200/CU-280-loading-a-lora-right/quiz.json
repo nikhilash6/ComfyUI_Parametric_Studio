@@ -1,0 +1,62 @@
+{
+ "code": "CU-280",
+ "title": "Loading a LoRA right",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Your picture looks the same with and without the LoRA, and the log shows 'lora key not loaded' for every key. What does that mean?",
+   "options": [
+    "The strength is too low",
+    "The file was made for another model family, so nothing matched",
+    "The cache hid it",
+    "You need the model-only loader"
+   ],
+   "answer": "The file was made for another model family, so nothing matched",
+   "why": "Row 4 of the lab: no key in the file found a weight in the model, so there are zero patches."
+  },
+  {
+   "q": "You load a LoRA with LoraLoaderModelOnly and see warnings for lora_te keys only. What should you do?",
+   "options": [
+    "Stop: the file is broken",
+    "Nothing, if you meant to skip the text encoder: the denoiser keys loaded",
+    "Delete the keys by hand",
+    "Lower the strength"
+   ],
+   "answer": "Nothing, if you meant to skip the text encoder: the denoiser keys loaded",
+   "why": "The model-only loader passes clip None, so text-encoder keys aren't in the key map and get warned about."
+  },
+  {
+   "q": "With LoraLoader, your prompt nodes are wired to the checkpoint's CLIP. What is the effect of strength_clip?",
+   "options": [
+    "It applies as normal",
+    "It does nothing to your prompt",
+    "It doubles",
+    "An error is raised"
+   ],
+   "answer": "It does nothing to your prompt",
+   "why": "The patch is on the CLIP the loader outputs. A prompt encoded through the other CLIP never sees it."
+  },
+  {
+   "q": "You chain two LoRAs at 0.8 and 0.5. What do you get?",
+   "options": [
+    "Their average",
+    "Both changes added to the weight, in either order, up to rounding",
+    "Only the last one",
+    "The first, then the second replacing it"
+   ],
+   "answer": "Both changes added to the weight, in either order, up to rounding",
+   "why": "Each loader appends a patch to the list, and each patch adds to the weight."
+  },
+  {
+   "q": "Two files hold the same up and down numbers at rank 4. One has alpha 4 and the other has alpha 1. At strength 1 how do they compare?",
+   "options": [
+    "The same",
+    "The first changes the weight four times as much",
+    "The second changes the weight four times as much",
+    "Alpha only matters while training"
+   ],
+   "answer": "The first changes the weight four times as much",
+   "why": "The scale is alpha / rank, so 1.0 against 0.25. The lab measures 0.6564 against 0.1641."
+  }
+ ]
+}

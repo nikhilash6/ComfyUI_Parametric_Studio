@@ -1,0 +1,69 @@
+{
+ "code": "CU-241",
+ "title": "Latent operations, and why multiplying changes the picture",
+ "level": "200",
+ "prereq": [
+  "CU-201",
+  "CU-240"
+ ],
+ "char": "latent",
+ "hook": "A latent is just numbers, so you can add and multiply them. Why that does nothing to an empty latent, a little early in a run, and a lot at the end.",
+ "code_refs": [
+  "comfy_extras/nodes_latent.py:LatentMultiply",
+  "comfy_extras/nodes_latent.py:LatentAdd",
+  "comfy_extras/nodes_latent.py:LatentInterpolate",
+  "comfy_extras/nodes_latent.py:reshape_latent_to",
+  "comfy_extras/nodes_latent.py:LatentOperationTonemapReinhard",
+  "comfy/latent_formats.py:LatentFormat.process_in",
+  "comfy/latent_formats.py:SD15",
+  "comfy/samplers.py:CFGGuider.inner_sample",
+  "latent_preview.py:preview_to_image",
+  "nodes.py:LatentUpscale"
+ ],
+ "track": "noise-latent",
+ "order": 15,
+ "kit": true,
+ "graphs": [
+  "nm_latent_ops",
+  "b_latent_gain"
+ ],
+ "verified": [
+  {
+   "claim": "LatentMultiply is s1 * multiplier and works on the numbers on the wire.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_latent.py:LatentMultiply"
+  },
+  {
+   "claim": "process_latent_in is skipped for an all-zero latent.",
+   "how": "source",
+   "ref": "comfy/samplers.py:CFGGuider.inner_sample"
+  },
+  {
+   "claim": "Previews multiply by latent_rgb_factors, then apply (x + 1) / 2 and clip.",
+   "how": "source",
+   "ref": "latent_preview.py"
+  },
+  {
+   "claim": "LatentInterpolate fails with batch 2 and 4 channels: The size of tensor a (4) must match the size of tensor b (2).",
+   "how": "run here",
+   "ref": "the node's execute on random tensors"
+  },
+  {
+   "claim": "common_upscale bilinear on 2x noise gives spread about 0.633, matching the lab's 0.632.",
+   "how": "run here",
+   "ref": "comfy.utils.common_upscale"
+  },
+  {
+   "claim": "nm_latent_ops ran on a CPU; b_latent_gain passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not render b_latent_gain for this lesson, so what a real VAE decoder does with a multiplied latent is not shown here. We show the linear preview map, and we expect a real decoder to behave differently, since it is not linear.",
+  "The toy has one number per sample and a perfect denoiser, so the sizes of the changes do not transfer to pictures."
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

@@ -1,109 +1,31 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility
-torch.manual_seed(0)
-
-# --- Step 1: Define the Sphere SDF ---
-# A sphere of radius r centered at the origin has SDF: d(x) = ||x|| - r
-# Inside: d < 0, Outside: d > 0, Surface: d = 0
-r = 1.0
-grid_size = 32
-# Grid spans [-1.5, 1.5] to fully contain the sphere (radius 1.0)
-# We use linspace to create 32 points in each dimension
-coords = torch.linspace(-1.5, 1.5, grid_size)
-# Create a 3D grid of coordinates
-x, y, z = torch.meshgrid(coords, coords, coords, indexing='ij')
-# Stack into a single tensor of shape (32, 32, 32, 3)
-grid_points = torch.stack([x, y, z], dim=-1)
-
-# Compute SDF values: distance to origin minus radius
-dist_to_origin = torch.norm(grid_points, dim=-1)
-sdf_values = dist_to_origin - r
-
-# --- Step 2: Find Voxels Near the Surface ---
-# A voxel is "near the surface" if its center is within a small threshold of 0
-# We use a threshold slightly larger than the voxel size to capture boundary voxels
-# Voxel size: (1.5 - (-1.5)) / (32 - 1) = 3.0 / 31 ≈ 0.0968
-voxel_size = 3.0 / (grid_size - 1)
-threshold = voxel_size * 0.5  # Half voxel size as a reasonable threshold
-
-# Boolean mask: True where |sdf| < threshold
-surface_mask = torch.abs(sdf_values) < threshold
-
-# --- Step 3: Estimate Surface Area from Voxel Faces ---
-# For each surface voxel, we check its 6 neighbors.
-# If a neighbor is outside the surface (|sdf| >= threshold) or out of bounds,
-# we count that face as contributing to the surface area.
-# Each face has area = voxel_size^2
-
-surface_area = 0.0
-count_faces = 0
-
-# Iterate over all voxels
-for i in range(grid_size):
-    for j in range(grid_size):
-        for k in range(grid_size):
-            if not surface_mask[i, j, k]:
-                continue
-            
-            # Check 6 neighbors: +/- x, +/- y, +/- z
-            # Neighbor offsets
-            neighbors = [
-                (i-1, j, k), (i+1, j, k),
-                (i, j-1, k), (i, j+1, k),
-                (i, j, k-1), (i, j, k+1)
-            ]
-            
-            for (ni, nj, nk) in neighbors:
-                # Check if neighbor is out of bounds
-                if ni < 0 or ni >= grid_size or nj < 0 or nj >= grid_size or nk < 0 or nk >= grid_size:
-                    # Out of bounds: assume outside the surface (contributes to area)
-                    surface_area += voxel_size ** 2
-                    count_faces += 1
-                else:
-                    # Check if neighbor is NOT on the surface
-                    if not surface_mask[ni, nj, nk]:
-                        surface_area += voxel_size ** 2
-                        count_faces += 1
-
-# --- Step 4: Compare to Analytical Area ---
-analytical_area = 4 * math.pi * r ** 2
-
-# --- Step 5: Show Why Coarse Grid Underestimates Smoothness ---
-# A coarse grid approximates the sphere with blocky voxels.
-# The estimated area is the sum of flat voxel faces, which overestimates the true curved surface
-# in terms of "staircase" effect, but actually for a sphere, the voxel-based area tends to
-# overestimate because it counts all exposed faces. However, the question says "underestimates smoothness".
-# Let's clarify: The voxel method gives a "staircase" approximation. The area computed is the area of the
-# polyhedral surface formed by voxel faces. For a sphere, this polyhedral area is actually LARGER than
-# the true sphere area because the staircase surface has more area than the smooth sphere.
-# Wait, let's re-read: "show why a coarse grid underestimates smoothness".
-# Perhaps it means the grid cannot capture the smooth curvature, leading to a jagged surface.
-# The area estimate from voxels is typically an overestimate of the true area for convex shapes like spheres.
-# Let's compute the ratio.
-
-ratio = surface_area / analytical_area
-
-# --- Assertions ---
-# 1. The surface mask should find some voxels
-assert surface_mask.sum() > 0, "No surface voxels found"
-
-# 2. The estimated area should be in a reasonable range (not zero, not absurdly large)
-# For a sphere of radius 1, analytical area is ~12.566.
-# Voxel area should be somewhat close, typically overestimating for coarse grids.
-assert surface_area > 0, "Surface area must be positive"
-assert surface_area < 100, "Surface area seems unreasonably large"
-
-# --- Print Results ---
-print(f"RESULT grid_size = {grid_size}")
-print(f"RESULT voxel_size = {voxel_size:.6g}")
-print(f"RESULT surface_voxel_count = {surface_mask.sum().item()}")
-print(f"RESULT estimated_surface_area = {surface_area:.6g}")
-print(f"RESULT analytical_surface_area = {analytical_area:.6g}")
-print(f"RESULT area_ratio = {ratio:.6g}")
-print(f"RESULT relative_error = {(surface_area - analytical_area) / analytical_area:.6g}")
+# CU-307 lab: the same sphere as a voxel grid, an SDF, a mesh and Gaussians. What each costs and what each gets wrong. CPU, instant.
+import math, torch
+torch.set_num_threads(1)
+true = 4 * math.pi; R = 1.0
+def grid(res):
+    c = (torch.arange(res) + 0.5) / res * 3 - 1.5; z, y, x = torch.meshgrid(c, c, c, indexing="ij"); return (x * x + y * y + z * z).sqrt() - R, 3 / res
+def exposed(inside):
+    p = torch.nn.functional.pad(inside.float(), (1, 1, 1, 1, 1, 1)); n = 0
+    for dim in range(3): n += int((p.diff(dim=dim) != 0).sum())
+    return n
+print("grid    voxels stored   inside voxels   near-surface voxels   blocky area / true")
+out = {}
+for res in (32, 64, 128):
+    d, h = grid(res); ins = d < 0; band = d.abs() < h; a = exposed(ins) * h * h; out[res] = a / true
+    print(f"{res:<7d} {res ** 3:<15,d} {int(ins.sum()):<15,d} {int(band.sum()):<21,d} {a / true:.3f}")
+assert all(1.45 < v < 1.55 for v in out.values())
+print("the area of the blocks stays near 3/2 of the truth. A finer grid gives smaller stairs, not less stair")
+# Why 3/2: the stairs project onto the 3 axes, and each axis sees the sphere's shadow twice. 6 pi r^2 over 4 pi r^2.
+print(f"exact limit: 6 pi r^2 / 4 pi r^2 = {6 * math.pi / true:.3f}")
+# The draft's lab counted faces of a shell, both walls: that is why it printed about 3, twice 3/2.
+d, h = grid(32); shell = d.abs() < h / 2; print(f"counting both walls of a thin shell, as the first version of this lab did: ratio {exposed(shell) * h * h / true:.2f}")
+# An SDF stores a distance, so a bit of arithmetic finds the surface between grid points. Linear crossing on a coarse grid.
+print("\nsurface radius recovered along a ray by linear interpolation between SDF samples, against the staircase answer")
+for res in (8, 16, 32):
+    s = torch.linspace(0, 1.5, res + 1); f = s - R; i = (f >= 0).nonzero()[0].item(); t = -f[i - 1] / (f[i] - f[i - 1]); print(f"{res:>3d} samples: SDF crossing {s[i - 1] + t * (s[i] - s[i - 1]):.4f}   occupancy only {s[i]:.4f}")
+# Memory: bytes for a stored field, a mesh and splats, at matched detail. Mesh and splat counts follow the surface, a grid follows the volume.
+print("\nresolution   full grid, 1 float   thin band, coords + 1 float   triangle mesh, about   Gaussians at band count, 14 floats")
+for res in (64, 256, 1024):
+    band = int(6 * (res * 2 / 3) ** 2 * math.pi / 3 * 1.0); print(f"{res:<12d} {4 * res ** 3 / 1024 ** 2:<20.1f} {16 * band / 1024 ** 2:<29.1f} {(band * 12 + 2 * band * 12) / 1024 ** 2:<22.1f} {14 * 4 * band / 1024 ** 2:.1f}  MiB")
+# Gaussian: one blob's value along a line, opacity weighted. Soft: there is no edge to find.
+print("\none Gaussian of scale 0.1, value at a distance:", [round(math.exp(-(x / 0.1) ** 2 / 2), 3) for x in (0, 0.1, 0.2, 0.3)])

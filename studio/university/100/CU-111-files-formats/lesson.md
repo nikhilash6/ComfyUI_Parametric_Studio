@@ -10,17 +10,39 @@ Every format answers two questions at the start: what am I, and how do I find my
 
 **PNG.** The first eight bytes are the signature 89 50 4E 47 0D 0A 1A 0A. After it come chunks, each made of a four-byte length that counts only the data, a four-byte type, the data, and a four-byte CRC computed over the type and the data. Numbers are big-endian. The CRC polynomial is the one used by gzip, so Python's `zlib.crc32` computes it. The case of the type's letters carries information: a capital first letter means critical, as in IHDR, IDAT and IEND, and a lowercase first letter means ancillary, as in tEXt, which a decoder may skip. IHDR comes first with the width, the height and five one-byte format fields. IDAT holds the pixels, zlib-compressed with a filter byte at the start of every row. A tEXt chunk is a keyword of 1 to 79 bytes, a zero byte and Latin-1 text. Text outside Latin-1 belongs in an iTXt chunk.
 
+Before the other formats, take a PNG apart. This one is really built in your browser, from the same recipe.
+
+{{play:pngcut}}
+
 **WAV.** A RIFF file is the bytes RIFF, a four-byte size, the form name WAVE, and then chunks. Each chunk is a four-character id, a four-byte size, the data, and one pad byte when the size is odd. Numbers are little-endian, the opposite of PNG. The `fmt ` chunk must come before `data`, and a reader must expect and ignore chunks it does not know. For plain PCM the `fmt ` chunk gives the format code 1, the channel count, the sample rate, the byte rate, the block align and the bits per sample. PCM samples are two's-complement integers, except at 8 bits or fewer, where they are offset binary.
 
 **MP4.** An ISO-style file consists of boxes, and no data exists outside a box. A box is a four-byte size that counts its own eight header bytes, a four-character type and a payload. A size of 1 means a 64-bit size follows, and a size of 0 means the box runs to the end of the file. The `ftyp` box comes at or near the start and names the brand, `moov` holds the structural metadata that indexes the media, and `mdat` holds the media bytes. FFmpeg's documentation says the index is usually written at the end of the file. FFmpeg can run a second pass with `+faststart` that moves the `moov` box to the front, for better playback.
 
 ## In ComfyUI
 
+Run this no-model graph with a `SaveImage` in place of the preview and you get a real PNG with these chunks.
+
+{{graph:nm_first}}
+
 `SaveImage` builds a `PngInfo`, adds the API prompt as a text entry named `prompt` and every key of `extra_pnginfo` under its own name, and saves with a compression level of 4. `PreviewImage` uses level 1. The documentation lists where the built-in save nodes put the same two JSON fields: PNG `tEXt` chunks, animated WebP EXIF tags, MP4 and WebM container metadata tags, and safetensors metadata for `.latent` files. With `--disable-metadata` the save nodes skip it.
 
 `SaveVideo` offers the containers mp4, mkv and webm with the codecs h264 and av1, and "auto" means MP4 for h264 and WebM for av1. For MP4 written to a path it opens the output with the FFmpeg flags `use_metadata_tags+faststart`, so the index is moved to the front, and the metadata goes into the `mdta` metadata box. A comment in the code says the flag preserves the custom tags (workflow, prompt, extra_pnginfo) in the ISO file.
 
-The audio save nodes in `comfy_extras/nodes_audio.py` write FLAC by default, with MP3 and Opus nodes alongside, and WAV is not one of their formats. `LoadAudio` decodes with PyAV and turns integer samples into float32 by dividing 16-bit values by 2^15 and 32-bit values by 2^31. The AUDIO value is a dictionary with a `waveform` of shape [B, C, T] and a `sample_rate`.
+The audio save nodes in `comfy_extras/nodes_audio.py` write FLAC by default, with MP3 and Opus nodes alongside, and WAV is not one of their formats. This small graph writes a real audio file with no model. It uses the default format and not WAV.
+
+{{graph:nm_audio}}
+
+`LoadAudio` decodes with PyAV and turns integer samples into float32 by dividing 16-bit values by 2^15 and 32-bit values by 2^31. The AUDIO value is a dictionary with a `waveform` of shape [B, C, T] and a `sample_rate`.
+
+## What goes wrong
+
+- **Dragging a picture onto the canvas does nothing.** The chunks are gone, because another program re-encoded the file, or the server ran with `--disable-metadata`. Check with a chunk reader, as in the lab.
+- **You shared more than the picture.** A PNG from `SaveImage` carries your whole graph, with your prompts and the names of your files. Before posting one, decide whether that's fine. To remove it, turn on `--disable-metadata` or strip the text chunks.
+- **Reading a WAV at byte 44.** The lab shows an odd-sized chunk moving the data to byte 56. Walk the chunks.
+- **Trusting what the metadata says.** It isn't signed, so anyone can edit the prompt in a file. It says what the file claims and proves nothing about how the picture was made.
+- **A video won't start playing until it has fully loaded.** The index may be at the end. A file written to a path by `SaveVideo` as MP4 gets `+faststart`. Writing to a buffer can't use it, as a comment in the code says.
+- **Non-Latin text looks garbled in your own chunk reader.** tEXt is Latin-1, and JSON from `json.dumps` is safe because it escapes other characters. Text from elsewhere may arrive in iTXt.
+- **A `.latent` or safetensors file treated as a picture.** Each format has its own index. Ask what the first bytes are.
 
 ## Lab
 

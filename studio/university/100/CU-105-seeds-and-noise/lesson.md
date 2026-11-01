@@ -18,6 +18,22 @@ The question to ask at every step is the noise level. At the first step of an SD
 
 **Rounding.** Floating-point addition is not associative, so the same numbers added in another order give a slightly different sum. Chips and libraries add in different orders. Identical output therefore needs identical software and hardware, and the seed alone cannot promise it.
 
+## See it on a real render
+
+These three pictures come from one prompt, one seed and 20 steps, on SD 1.5. Only the sampler changes. Euler and Heun are deterministic and follow nearly the same path, so the composition holds and the details shift. Euler ancestral adds fresh noise at each step, and here it gives a different scene from the same seed. This is one seed on one model, so read it as an example.
+
+{{wipe:sampling_lab/sampler-euler.jpg|sampling_lab/sampler-heun.jpg|euler|heun|Same seed, same prompt: the brass disc and the window stay put}}
+
+{{wipe:sampling_lab/sampler-euler.jpg|sampling_lab/sampler-euler_ancestral.jpg|euler|euler ancestral|Same seed, same prompt: a new scene}}
+
+More pairs are in the [Sampling Lab](#sampling/renders). Now do the same test on a toy, where you can change the steps and the seed.
+
+{{play:seedwalk}}
+
+The seed sits on `KSampler`, or on its own `RandomNoise` node in the custom form, which makes it plain that the seed only feeds the noise.
+
+{{graph:sd15_custom}}
+
 ## In ComfyUI
 
 The KSampler seed is an integer from 0 to 0xffffffffffffffff, with a "control after generate" setting that the documentation lists as Random, Inc, Dec or Keep. With a random choice the seed changes after each queue, so the KSampler's cache key from CU-102 is new on every run.
@@ -25,6 +41,16 @@ The KSampler seed is an integer from 0 to 0xffffffffffffffff, with a "control af
 `common_ksampler` in `nodes.py` calls `comfy.sample.prepare_noise`, which seeds PyTorch's generator and draws `torch.randn(..., dtype=torch.float32, device="cpu")`. The starting noise is made on the CPU in float32, whatever device the model runs on, and is then cast to the latent's dtype. A batch is one draw of shape [B, C, H, W], and in the lab image 0 of a batch of four equals the noise of a single image. `RandomNoise` in `comfy_extras/nodes_custom_sampler.py` offers the same recipe to the custom-sampler nodes.
 
 `sample_euler` in `comfy/k_diffusion/sampling.py` is the Euler form of Algorithm 2 of Karras et al. (2022), with the stochastic churn off unless `s_churn` is set, so by default it adds no noise. `sample_euler_ancestral` takes the seed from `extra_args` and builds its noise source with `default_noise_sampler`: a `torch.Generator` on the same device as the latent, seeded with the seed, plus one when that device is the CPU. On a GPU the extra noise therefore comes from a GPU generator, and PyTorch's reproducibility notes say that results may not match between CPU and GPU even with identical seeds.
+
+## What goes wrong
+
+- **Same seed, different picture.** Something else changed. Compare the two PNGs' `prompt` data (CU-110): model, sampler, scheduler, steps, cfg, size, denoise, prompt. If all of it matches, the software or hardware may differ, as PyTorch warns.
+- **You can't get a good picture back.** With "control after generate" on Random, the seed widget has already moved on. The number you want is stored in the saved PNG, so drop it on the canvas, or read its `prompt` entry.
+- **You expected seed 43 to look like seed 42.** It's unrelated noise, as the lab's correlation shows. To make small variations, keep the seed and change something else.
+- **Same seed at a new size gives a new picture.** The noise has a new shape, so its numbers land in different places. Don't expect the composition to carry over.
+- **Changing steps on an ancestral sampler scrambles the picture.** Each step count draws its own noise. Use a deterministic sampler while you tune steps.
+- **The seed won't re-run the graph.** Same seed, same everything: the cache serves it and nothing happens (CU-112). That's usually what you asked for.
+- **A batch and a single don't line up.** Image 0 of a batch matches the single-image noise, as the lab shows, but images 1, 2, 3 have no seed of their own to reuse.
 
 ## Lab
 

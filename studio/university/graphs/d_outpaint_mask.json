@@ -1,0 +1,65 @@
+{
+ "meta": {
+  "title": "See the outpaint mask",
+  "about": "Pad a picture and look at both outputs: the grey canvas and the mask.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "2": "New pixels are mid grey. The mask is 1 there, and a quadratic ramp inside your picture next to each padded side.",
+   "3": "MASK is one channel, so turn it into an image to look at it."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 256,
+    "height": 256,
+    "batch_size": 1,
+    "color": 12613680
+   }
+  },
+  "2": {
+   "class_type": "ImagePadForOutpaint",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "left": 0,
+    "top": 0,
+    "right": 128,
+    "bottom": 0,
+    "feathering": 40
+   }
+  },
+  "3": {
+   "class_type": "MaskToImage",
+   "inputs": {
+    "mask": [
+     "2",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "2",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "3",
+     0
+    ]
+   }
+  }
+ }
+}

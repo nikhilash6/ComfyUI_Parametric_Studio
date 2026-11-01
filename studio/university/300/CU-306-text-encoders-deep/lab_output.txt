@@ -1,32 +1,24 @@
-RESULT bidir_visible_count_token_0 = 5
-RESULT bidir_visible_count_token_1 = 5
-RESULT bidir_visible_count_token_2 = 5
-RESULT bidir_visible_count_token_3 = 5
-RESULT bidir_visible_count_token_4 = 5
-RESULT causal_visible_count_token_0 = 1
-RESULT causal_visible_count_token_1 = 2
-RESULT causal_visible_count_token_2 = 3
-RESULT causal_visible_count_token_3 = 4
-RESULT causal_visible_count_token_4 = 5
-RESULT causal_first_token_attn_to_0 = 1
-RESULT causal_first_token_attn_to_1 = 0
-RESULT causal_first_token_attn_to_2 = 0
-RESULT causal_first_token_attn_to_3 = 0
-RESULT causal_first_token_attn_to_4 = 0
-RESULT causal_last_token_attn_to_0 = 0.00726019
-RESULT causal_last_token_attn_to_1 = 0.0154807
-RESULT causal_last_token_attn_to_2 = 0.0679536
-RESULT causal_last_token_attn_to_3 = 0.0255756
-RESULT causal_last_token_attn_to_4 = 0.88373
-RESULT causal_first_token_non_self_sum = 0
-RESULT causal_last_token_earlier_sum = 0.11627
-RESULT bidir_first_token_attn_to_0 = 0.857742
-RESULT bidir_first_token_attn_to_1 = 0.0825873
-RESULT bidir_first_token_attn_to_2 = 0.024924
-RESULT bidir_first_token_attn_to_3 = 0.0275738
-RESULT bidir_first_token_attn_to_4 = 0.00717287
-RESULT bidir_last_token_attn_to_0 = 0.00726019
-RESULT bidir_last_token_attn_to_1 = 0.0154807
-RESULT bidir_last_token_attn_to_2 = 0.0679536
-RESULT bidir_last_token_attn_to_3 = 0.0255756
-RESULT bidir_last_token_attn_to_4 = 0.88373
+change only the last of 6 tokens. How far does each token's output move?
+token   with CLIP's causal mask   with no mask, as in T5
+0       0.0000                    0.1054
+1       0.0000                    3.7270
+2       0.0000                    5.1937
+3       0.0000                    4.7433
+4       0.0000                    5.3531
+5       12.7101                   12.7101
+
+CLIP: where the pooled vector comes from: the row at the end token, the first place its id appears
+tokens [49406, 320, 1125, 49407, 49407, 49407] -> row 3
+
+tokens in the prompt    chunks   tensor for SD 1.5   tensor for SDXL
+1                       1        [1, 77, 768]        [1, 77, 2048]
+75                      1        [1, 77, 768]        [1, 77, 2048]
+76                      2        [1, 154, 768]       [1, 154, 2048]
+150                     2        [1, 154, 768]       [1, 154, 2048]
+151                     3        [1, 231, 768]       [1, 231, 2048]
+
+how each family builds its tensor from what the encoders return (token count 77 for CLIP, 256 for T5 on Flux, 512 for Qwen3 on Klein)
+SDXL        CLIP-L and CLIP-G side by side    [1, 77, 2048]
+SD3         padded to 4096, T5 on the end     [1, 154, 4096]
+FLUX.1      T5 tokens, CLIP-L's pooled vector [1, 256, 4096] and [1, 768]
+Klein 4B    three hidden layers side by side  [1, 512, 7680]

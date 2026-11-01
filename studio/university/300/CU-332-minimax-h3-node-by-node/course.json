@@ -1,0 +1,81 @@
+{
+ "code": "CU-332",
+ "title": "MiniMax H3, node by node, with sound in the same latent",
+ "level": "300",
+ "prereq": [
+  "CU-330"
+ ],
+ "char": "frame",
+ "hook": "One sampler, one latent, picture and sound on one clock. How a video model writes its own soundtrack, read from the source.",
+ "track": "video",
+ "order": 27,
+ "graphs": [
+  "wf_h3_t2v"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_minimax_h3.py:MiniMaxH3ImageToVideo",
+  "comfy_extras/nodes_minimax_h3.py:_empty_av_latent",
+  "comfy_extras/nodes_minimax_h3.py:temporal_shape",
+  "comfy_extras/nodes_minimax_h3.py:MiniMaxH3SigmaShift",
+  "comfy_extras/nodes_minimax_h3.py:MiniMaxH3AddGuide",
+  "comfy/ldm/minimax/model.py:time_shift_sigma",
+  "comfy/ldm/minimax/model.py:PackedLayout",
+  "comfy/ldm/minimax/vae.py:decode_tiled",
+  "comfy/model_sampling.py:ModelSamplingAV",
+  "comfy/supported_models.py:MiniMaxH3",
+  "comfy_extras/nodes_audio.py:vae_decode_audio",
+  "nodes.py:VAEDecode.decode"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "The node makes a NestedTensor of video [B, 24, T, H/16, W/16] and audio [B, 32, 2, T].",
+   "how": "source",
+   "ref": "comfy_extras/nodes_minimax_h3.py:_empty_av_latent"
+  },
+  {
+   "claim": "Audio latents run at 40 a second, 32000 Hz over a hop of 800, which is 5/3 per video frame.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax/model.py:FRAME_RESCALE"
+  },
+  {
+   "claim": "The default shifts are 12 for video and 3 for audio, and the audio stream is carried scaled by 12 / 3.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:ModelSamplingAV"
+  },
+  {
+   "claim": "VAEDecode takes the first stream of a nested latent and VAEDecodeAudio takes the last.",
+   "how": "source",
+   "ref": "nodes.py:VAEDecode.decode"
+  },
+  {
+   "claim": "The H3 video VAE's decode_tiled ignores tile settings and calls decode.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax/vae.py:decode_tiled"
+  },
+  {
+   "claim": "The lab's ports match the real temporal_shape and time_shift_sigma.",
+   "how": "run here",
+   "ref": "comfy_extras/nodes_minimax_h3.py:temporal_shape"
+  },
+  {
+   "claim": "Gallery H3 clips have 124 frames and stereo sound at 32000 Hz.",
+   "how": "run here",
+   "ref": "ffprobe on web/showcase/v_h3_chef.mp4"
+  },
+  {
+   "claim": "The graph passes validate_prompt with its file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not run a render for this lesson. Clips are earlier renders from our gallery, one seed each.",
+  "The tooltip's trained range of about 124 to 362 frames comes from the node's text. We did not test past it.",
+  "Prompt advice is from our own skill notes, not from a MiniMax document we fetched.",
+  "The graph's turbo LoRA is named for 8 steps, while the graph's turbo branch uses 6. We did not compare them."
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

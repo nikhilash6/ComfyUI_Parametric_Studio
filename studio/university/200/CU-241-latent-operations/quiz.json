@@ -1,0 +1,73 @@
+{
+ "code": "CU-241",
+ "title": "Latent operations, and why multiplying changes the picture",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does LatentMultiply do to an EmptyLatentImage?",
+   "options": [
+    "Nothing, because it is all zeros",
+    "It adds more noise",
+    "It brightens the result",
+    "It changes the seed"
+   ],
+   "answer": "Nothing, because it is all zeros",
+   "why": "Zero times anything is zero, and the noise is added later in the sampler."
+  },
+  {
+   "q": "Why does multiplying near the start of a run do less damage than at the end?",
+   "options": [
+    "Later steps can still pull the sample back toward the data",
+    "Noise cancels multiplication",
+    "The sampler divides it back",
+    "It only affects the seed"
+   ],
+   "answer": "Later steps can still pull the sample back toward the data",
+   "why": "In the lab the spread ends near 1.22 from an early multiply and 1.47 from a late one."
+  },
+  {
+   "q": "A plain average of two noises has spread about:",
+   "options": [
+    "0.71",
+    "1.00",
+    "1.41",
+    "0.50"
+   ],
+   "answer": "0.71",
+   "why": "Independent noises add as squares: √(¼ + ¼) ≈ 0.71, measured as 0.708."
+  },
+  {
+   "q": "Which LatentUpscale method loses the most spread on noise, in the lab?",
+   "options": [
+    "bilinear",
+    "nearest-exact",
+    "area",
+    "bicubic"
+   ],
+   "answer": "bilinear",
+   "why": "0.632 against 1.003, 1.003 and 0.859."
+  },
+  {
+   "q": "Numbers on the wire and numbers inside the sampler differ by:",
+   "options": [
+    "The format's scale factor",
+    "The seed",
+    "The CFG value",
+    "Nothing"
+   ],
+   "answer": "The format's scale factor",
+   "why": "process_latent_in multiplies by scale_factor, for SD 1.x 0.18215."
+  },
+  {
+   "q": "How should you mix two noises and keep their spread?",
+   "options": [
+    "Weight them so the squares of the weights add to 1",
+    "Average them",
+    "Add them",
+    "Multiply them"
+   ],
+   "answer": "Weight them so the squares of the weights add to 1",
+   "why": "√½ each gives 1.001 in the lab."
+  }
+ ]
+}

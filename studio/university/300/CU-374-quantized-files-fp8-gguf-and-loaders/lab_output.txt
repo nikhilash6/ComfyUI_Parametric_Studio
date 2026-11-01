@@ -1,0 +1,34 @@
+bytes per weight, and one billion weights
+  fp32               4.0000   3.73 GB
+  fp16 or bf16       2.0000   1.86 GB
+  fp8 e4m3 or e5m2   1.0000   0.93 GB
+  GGUF Q8_0          1.0625   0.99 GB
+  GGUF Q4_0          0.5625   0.52 GB
+  nvfp4              0.5625   0.52 GB
+
+the comfy_quant entry from QUANTIZATION.md: one small uint8 tensor holding JSON
+  stored as torch.uint8, shape (27,), reads back as {'format': 'float8_e4m3fn'}
+
+what the loader does, step by step, with one fp8 layer
+  on disk or in memory: torch.float8_e4m3fn, 262144 bytes, scale 0.000208
+  for a plain matmul: cast to fp32, multiply by the scale. weight error 0.0265
+
+merge first, quantize after, against the other way round
+  case                               weight error against the true unquantized merge
+  50/50 merge, then quantize once     0.0263
+  quantize both, merge, quantize      0.0371
+  add-difference term (A - base), from unquantized:   0.0000
+  add-difference term (A - base), from fp8 inputs:    0.1212
+
+a small LoRA-sized change on a weight: added before or after rounding
+  add, then quantize once             0.0264
+  quantized weight, add at run time   0.0265
+  quantized weight, add, requantize   0.0318
+
+does the change survive? the size of the change against the size of the rounding
+  change 0.256   rounding error already in the file 0.271
+
+unet_dtype's choice for a file whose weights are fp8, ported: fp8 stays if the card computes in fp8, or if double the size would not fit
+  fp8 compute True  params 6e+09 room 2e+10: stays fp8
+  fp8 compute False params 6e+09 room 2e+10: falls through to the other types
+  fp8 compute False params 6e+09 room 8e+09: stays fp8

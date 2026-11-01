@@ -1,0 +1,73 @@
+{
+ "code": "CU-382",
+ "title": "Same name, different maths",
+ "level": "300",
+ "questions": [
+  {
+   "q": "A graph uses core NAG at 5. What value gives the same strength in sd-perturbed-attention's NAG?",
+   "options": [
+    "4",
+    "5",
+    "6",
+    "10"
+   ],
+   "answer": "4",
+   "why": "Core's weight on the difference is φ − 1, and that pack's is φ. That matches the strength in the formula only: the two hook into different attention."
+  },
+  {
+   "q": "What μ in flux_time_shift, with σ = 1, matches SD3-style shift 3?",
+   "options": [
+    "ln 3, about 1.10",
+    "3",
+    "e³, about 20",
+    "0.3"
+   ],
+   "answer": "ln 3, about 1.10",
+   "why": "The second formula equals the first when α = e^μ."
+  },
+  {
+   "q": "Our render of the sampler named ddim matched euler pixel for pixel. Why?",
+   "options": [
+    "In core the name ddim runs euler with one inpaint option",
+    "Every sampler gives the same picture",
+    "The render failed",
+    "ddim and euler share a seed list"
+   ],
+   "answer": "In core the name ddim runs euler with one inpaint option",
+   "why": "That's in samplers.py. It's the name that misleads."
+  },
+  {
+   "q": "What does denoise 0.5 at 20 steps do in AlignYourSteps, compared with BasicScheduler?",
+   "options": [
+    "AYS runs 10 steps, and BasicScheduler still runs 20",
+    "Both run 10",
+    "Both run 20",
+    "AYS runs 40"
+   ],
+   "answer": "AYS runs 10 steps, and BasicScheduler still runs 20",
+   "why": "One cuts the count, and the other samples from a longer schedule."
+  },
+  {
+   "q": "Two nodes share a name but use different formulas. What can you conclude?",
+   "options": [
+    "Nothing about bugs until you check what each author meant",
+    "One of them is malicious",
+    "The older one is wrong",
+    "The newer one is wrong"
+   ],
+   "answer": "Nothing about bugs until you check what each author meant",
+   "why": "A difference isn't a bug on its own."
+  },
+  {
+   "q": "How do you compare two same-named nodes?",
+   "options": [
+    "Find the formula in each and simplify them side by side",
+    "Read both tooltips",
+    "Compare their star counts",
+    "Render one seed with each and pick"
+   ],
+   "answer": "Find the formula in each and simplify them side by side",
+   "why": "Tooltips and single renders can mislead."
+  }
+ ]
+}

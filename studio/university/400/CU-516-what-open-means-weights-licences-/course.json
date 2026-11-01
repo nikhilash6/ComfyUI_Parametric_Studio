@@ -1,12 +1,56 @@
 {
+ "code": "CU-516",
  "title": "History 16: What open means: weights, licences and the ecosystem",
  "level": "400",
- "char": "graph",
- "hook": "Explore the legal and technical boundaries of open-source AI by dissecting how model weights, licenses, and community contributions shape the ComfyUI ecosystem.",
- "code": "CU-516",
  "prereq": [],
- "status": "draft",
- "code_refs": [],
+ "char": "graph",
+ "hook": "Open code, open weights, open data and an open licence are four different things. Sort out which one you have, because one graph can carry several licences.",
  "track": "packs",
- "order": 10
+ "order": 10,
+ "graphs": [
+  "sd15_lora"
+ ],
+ "code_refs": [
+  "LICENSE",
+  "SECURITY.md",
+  "comfy/utils.py:load_torch_file"
+ ],
+ "verified": [
+  {
+   "claim": "ComfyUI's LICENSE file is the GNU GPL, version 3.",
+   "how": "source",
+   "ref": "LICENSE"
+  },
+  {
+   "claim": "The dates and clauses given for GPL 3 and AGPL 3 are from the licence texts.",
+   "how": "docs",
+   "ref": "gnu.org, fetched 2026-11-01"
+  },
+  {
+   "claim": "CreativeML Open RAIL-M is dated August 22, 2022, lists banned uses in Attachment A and requires them to be passed on. The licensor claims no rights in output, within limits.",
+   "how": "docs",
+   "ref": "the licence text as hosted by CompVis, fetched 2026-11-01"
+  },
+  {
+   "claim": "The OSI's Open Source AI definition names freedoms to use, study, modify and share, and asks for data information, code and weights.",
+   "how": "docs",
+   "ref": "opensource.org, fetched 2026-11-01"
+  },
+  {
+   "claim": "The table in the Lab is our own logic, on those facts.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graph passes validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We read only the licences named here, and only as a reader, not a lawyer. Licences for any specific model you use must be read by you.",
+  "We make no claim about which released models meet the OSI definition.",
+  "The earlier history of how the word open spread through image models is not covered: we didn't check sources for it."
+ ],
+ "kit": true
 }

@@ -1,10 +1,14 @@
 # CU-208 - Guidance: CFG and what it really does
 
-**Objective.** State the CFG formula as ComfyUI computes it, explain why it costs two model calls, and show numerically that it does not sample the distribution people usually say it does. Taught by Dr. Denoise.
+**Objective.** State the CFG formula as ComfyUI computes it, explain why it costs two predictions per step, and show numerically that it does not sample the distribution people usually say it does. Taught by Dr. Denoise.
 
 ## The idea
 
 Run the model twice, with and without the prompt. The difference points towards the prompt. Exaggerate that difference.
+
+That is the whole method. It is one line of code, and it is why almost every image graph has a number called cfg. Try the sum yourself before reading how it fails. The blobs below stand for kinds of picture, and the dots are samples from a real solver.
+
+{{play:cfg}}
 
 ## The maths
 
@@ -13,6 +17,8 @@ ComfyUI computes it on denoised predictions, in `cfg_function`:
 ```
 D_cfg = D_uncond + (D_cond − D_uncond) · cfg
 ```
+
+Read it at three settings. At cfg 0 you get only the unconditional prediction. At cfg 1 the two uncond terms cancel and you get only the conditional one. Above 1 you go past the conditional, in the direction away from the unconditional. Nothing in the formula keeps the result inside the range real pictures have.
 
 Ho and Salimans (2022) write the same thing as ε̃ = (1+w) ε_c − w ε_u, so their w equals cfg − 1, and w = 0 means no guidance. Keep that in mind when you read papers: cfg 7.5 is their w = 6.5.
 
@@ -26,7 +32,31 @@ This motivation is fine, but the conclusion does not follow. At noise level σ, 
 
 ## In ComfyUI
 
-`sampling_function` in `comfy/samplers.py` runs the conditional and unconditional model, then calls `cfg_function`. When cfg is 1 it skips the unconditional run completely. So cfg above 1 costs two model calls per step, and cfg 1 costs one. Models distilled for cfg 1, such as turbo variants, depend on this (CU-209).
+`sampling_function` in `comfy/samplers.py` runs the conditional and unconditional model, then calls `cfg_function`. When cfg is 1 it drops the unconditional run completely. So cfg above 1 costs two predictions per step, and cfg 1 costs one. Models distilled for cfg 1, such as turbo variants, depend on this (CU-209).
+
+The two predictions are not always two trips through the model. `_calc_cond_batch` puts them in one batch when it estimates that memory allows, and splits them when it does not. So cfg above 1 is twice the work, and on a tight card it can also be twice the trips.
+
+The formula has three places where other nodes can step in, and most of the rest of this track lives in them.
+
+- `sampler_pre_cfg_function` sees both predictions before the sum. APG and TCFG sit here.
+- `sampler_cfg_function` replaces the sum. RescaleCFG sits here.
+- `sampler_post_cfg_function` sees the result. CFGNorm, CFG-Zero-Star, PAG and SAG sit here.
+
+Here is the graph to change it in. The number is the `cfg` input on `KSampler`.
+
+{{graph:sd15_txt2img}}
+
+And here is the same prompt and seed at cfg 7 and cfg 14, on SDXL with 20 Euler steps. CU-250 measures what changed.
+
+{{wipe:sampling_lab/guidance-cfg-7.jpg|sampling_lab/guidance-cfg-14.jpg|CFG 7|CFG 14|One prompt, one seed. Higher cfg changed the layout as well as the contrast.}}
+
+## What goes wrong
+
+- **Burnt, over-contrasty pictures.** The cfg is too high for this model. Lower it first. If you need the extra push, CU-320 covers the fixes.
+- **A grey or vague picture.** The cfg may be too low, or below 1. At cfg 0 the prompt plays no part at all.
+- **Twice as slow as you expected.** You are above cfg 1. A distilled model set to cfg 1 skips the second prediction.
+- **A setting copied from another model looks awful.** cfg numbers do not travel. Our SD 3.5 renders use 4.5, the SDXL baseline uses 7, and FLUX.1 schnell runs at 1. See CU-251.
+- **A paper's number looks wrong.** Check whether it uses w. Add 1 to get ComfyUI's cfg when the paper writes (1+w).
 
 ## Lab
 
@@ -49,7 +79,7 @@ w      largest |predicted x0| along the path   true data range is about +-3
 30.0   41.32
 ```
 
-The predicted clean sample leaves the data range long before the end. This is the mechanism behind burnt, saturated images at high CFG, and the reason for clipping and rescaling methods (CU-310).
+The predicted clean sample leaves the data range long before the end. This is the mechanism behind burnt, saturated images at high CFG, and the reason for clipping and rescaling methods (CU-320).
 
 ## What is contested
 
@@ -63,3 +93,4 @@ Why does CFG give good images, given that it is not sampling its nominal target?
 - [Chidambaram et al. 2024. What does guidance do? A fine-grained analysis in a simple setting](https://arxiv.org/abs/2409.13074)
 - [Lin, Liu, Li, Yang 2023. Common Diffusion Noise Schedules and Sample Steps are Flawed](https://arxiv.org/abs/2305.08891)
 - [ComfyUI v0.43.0, comfy/samplers.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/samplers.py)
+- [ComfyUI v0.43.0, comfy/model_patcher.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_patcher.py)

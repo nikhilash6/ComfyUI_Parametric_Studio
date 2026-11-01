@@ -4,49 +4,59 @@
  "level": "300",
  "questions": [
   {
-   "q": "What is the primary architectural shift described in the 'speed era' of diffusion models?",
+   "q": "Plain Euler with a perfect model gets 1.39 at one call, and the student gets 0.14. What did the student learn that Euler doesn't have?",
    "options": [
-    "Moving from CPU to GPU processing",
-    "Shifting from iterative refinement to direct prediction",
-    "Replacing UNet backbones with Transformer architectures",
-    "Increasing the resolution of the latent space"
+    "Where the path from this point ends, rather than its direction at this point",
+    "A better noise schedule",
+    "Better data",
+    "More parameters than the teacher"
    ],
-   "answer": "Shifting from iterative refinement to direct prediction",
-   "why": "The lesson states that the speed era covers the 'architectural shift from iterative refinement to direct prediction' and that the question changes from 'how do we denoise accurately?' to 'how do we predict the final state directly?'"
+   "answer": "Where the path from this point ends, rather than its direction at this point",
+   "why": "Euler moves along the local direction once and lands on an average. The student was trained on end points."
   },
   {
-   "q": "In the context of Latent Consistency Models (LCMs), what does the function F_theta(z_t, t) learn to predict?",
+   "q": "In LCM.calculate_denoised, what does the output equal at timestep 0?",
    "options": [
-    "The derivative f(z_t, t) of the PF-ODE",
-    "The clean latent z_0 directly from the noisy latent z_t",
-    "The next noisy latent z_{t-1} in the sequence",
-    "The noise schedule sigma for the current step"
+    "Exactly the input, because c_skip is 1 and c_out is 0",
+    "The model's clean guess",
+    "Pure noise",
+    "Zero"
    ],
-   "answer": "The clean latent z_0 directly from the noisy latent z_t",
-   "why": "The text explains that LCMs learn a function that 'directly maps any point on the trajectory to the endpoint z_0' and that 'the LCM predicts the clean latent z_0 directly from the noisy latent z_t'."
+   "answer": "Exactly the input, because c_skip is 1 and c_out is 0",
+   "why": "That boundary rule is built into the formula, so training cannot break it."
   },
   {
-   "q": "According to the lab results, what was the calculated speedup factor when comparing the standard 50-step process to the 4-step distilled process?",
-   "options": null,
-   "answer": "12.5",
-   "why": "The lab results section explicitly lists 'RESULT speedup_factor = 12.5' and explains that this proves the distilled model is 12.5 times faster in terms of step count."
-  },
-  {
-   "q": "Why is a lower CFG scale (e.g., 1.0-2.0) typically recommended for LCMs compared to standard diffusion models?",
+   "q": "What does cfg 1 do to the number of calls?",
    "options": [
-    "To reduce the computational cost of the forward pass",
-    "Because the model has already learned the guidance during distillation",
-    "To prevent the model from overfitting to the training data",
-    "To ensure the noise schedule remains linear"
+    "Halves them, since sampling_function skips the negative branch",
+    "Nothing",
+    "Doubles them",
+    "It turns the model off"
    ],
-   "answer": "Because the model has already learned the guidance during distillation",
-   "why": "The 'Common mistakes' section states that LCMs are sensitive to CFG scale and that a lower CFG is recommended 'because the model has already learned the guidance during distillation'."
+   "answer": "Halves them, since sampling_function skips the negative branch",
+   "why": "So 4 steps at cfg 1 is 4 calls, against 40 for 20 steps at cfg 7."
   },
   {
-   "q": "What is the specific training cost mentioned for a high-quality 768x768 LCM in the 'Go deeper' section?",
-   "options": null,
-   "answer": "32 A100 GPU hours",
-   "why": "The 'Go deeper' section cites the paper by Luo et al., noting that 'a high-quality 768x768 LCM takes only 32 A100 GPU hours for training'."
+   "q": "The same student meets data with the hump weights swapped. What happens, and why?",
+   "options": [
+    "The error jumps to 1.37, since a student copies one teacher's answers",
+    "It adapts",
+    "It stays at 0.14, since the data is similar",
+    "It fails with an error"
+   ],
+   "answer": "The error jumps to 1.37, since a student copies one teacher's answers",
+   "why": "It only knows where that teacher's paths ended. Nothing in it looks at new data."
+  },
+  {
+   "q": "At 4 steps, what does SDTurboScheduler pick?",
+   "options": [
+    "999, 899, 799, 699, then sigma 0",
+    "999, 666, 333, 0",
+    "Karras spacing across the range",
+    "A list read from the checkpoint"
+   ],
+   "answer": "999, 899, 799, 699, then sigma 0",
+   "why": "It takes the first steps of a fixed list, so more steps do not mean a finer walk to low noise."
   }
  ]
 }

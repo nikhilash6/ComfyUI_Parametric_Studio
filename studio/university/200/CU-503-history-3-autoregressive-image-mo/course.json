@@ -8,12 +8,58 @@
  "char": "attn",
  "hook": "An image as a product of conditionals: check the chain rule exactly, watch a causal mask make the future invisible, and count what sampling one pixel at a time costs.",
  "code_refs": [
-  "comfy/text_encoders/llama.py:def sample_token",
-  "comfy/text_encoders/llama.py:triu_(1)",
-  "comfy_extras/nodes_ar_video.py:class SamplerARVideo",
-  "comfy/k_diffusion/sampling.py:def sample_ar_video",
-  "comfy/ldm/wan/ar_model.py:class CausalWanSelfAttention"
+  "comfy/text_encoders/llama.py:BaseGenerate",
+  "comfy/text_encoders/llama.py:BaseGenerate.sample_token",
+  "comfy_extras/nodes_ar_video.py:SamplerARVideo",
+  "comfy/k_diffusion/sampling.py:sample_ar_video",
+  "comfy/ldm/wan/ar_model.py:CausalWanSelfAttention"
  ],
  "track": "history",
- "order": 30
+ "order": 30,
+ "graphs": [
+  "wf_music3"
+ ],
+ "verified": [
+  {
+   "claim": "The generate method and the top-k and top-p inputs.",
+   "how": "source",
+   "ref": "comfy/text_encoders/llama.py:BaseGenerate"
+  },
+  {
+   "claim": "Draws with torch.multinomial and a generator.",
+   "how": "source",
+   "ref": "comfy/text_encoders/llama.py:BaseGenerate.sample_token"
+  },
+  {
+   "claim": "The tooltip says num_frame_per_block must match the checkpoint's training mode.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_ar_video.py:SamplerARVideo"
+  },
+  {
+   "claim": "The AR sampler function exists.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_ar_video"
+  },
+  {
+   "claim": "Writes keys and values to a per-layer cache.",
+   "how": "source",
+   "ref": "comfy/ldm/wan/ar_model.py:CausalWanSelfAttention"
+  },
+  {
+   "claim": "The chain rule, the mask test, the likelihoods and the pass counts print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title and date from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/1601.06759"
+  }
+ ],
+ "unchecked": [
+  "The paper quotes and table numbers were read in an earlier audit of this lesson. In this pass we rechecked the arXiv titles and abstracts only.",
+  "That MiniMaxMusic3TextEncode reaches this class comes from reading classes and file names in CU-312. We did not trace it at run time.",
+  "We did not run an AR video checkpoint, so we did not see what a mismatched block size does."
+ ],
+ "kit": true
 }

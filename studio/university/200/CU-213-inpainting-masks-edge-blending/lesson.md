@@ -39,6 +39,12 @@ In every node below, a mask value of 1 means new content.
 
 **Compositing after decoding.** `ImageCompositeMasked` computes `mask · source + (1 − mask) · destination` on the stored pixel values. `LatentCompositeMasked` does the same on latents, with x and y in steps of 8. The decoded image will not equal the original outside the mask, because the VAE is lossy (CU-201). Compositing the decoded result over the original with a feathered mask restores the original pixels there. The values are blended as stored, so the blend is not done in linear light (CU-229).
 
+Here's the sampler's view, live. Slide a thin stripe through a cell and see when the sampler loses it. CU-273 is about which route to choose.
+
+{{play:maskgrid}}
+
+{{graph:sd15_inpaint}}
+
 ## Lab
 
 The functions in the lab follow the ComfyUI code named in their docstrings, applied to small tensors. First the two ramps ComfyUI builds:
@@ -101,6 +107,14 @@ sampler bookkeeping, 12 Euler steps, stand-in model, mask 0 / 0.5 / 1
 ```
 
 Where the mask is 0 the result is the original, whatever the model does. Where it is 0.5 the result is half model and half original in latent space, so a soft latent mask acts as a strength per latent cell.
+
+## What goes wrong
+
+- **A thin mask does nothing.** It missed the pixels the resize reads. Widen it, or use `grow_mask_by`. The browser lab above shows when.
+- **A visible seam.** A hard edge puts the whole difference into one step. Feather inside the image, by blur, and composite after decoding.
+- **`FeatherMask` doesn't soften your shape.** It fades the edges of the mask image, not the shape. Use a blur through `MaskToImage` and `ImageToMask`.
+- **Your feather vanished.** `VAEEncodeForInpaint` rounds. Use a route that keeps it (CU-273).
+- **Pixels outside the mask changed slightly.** The VAE is lossy. Composite the decoded result over the original.
 
 ## What is contested
 

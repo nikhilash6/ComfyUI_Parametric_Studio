@@ -1,0 +1,29 @@
+mean absolute difference between two outputs, 200 tries
+pair                                difference
+same seed, LoRA off against on      0.0869
+new seed, LoRA off against on       0.4911
+new seed, LoRA off against off      0.4842
+at a new seed the LoRA's part is hidden: 0.4911 against 0.4842 with no LoRA at all, while the same-seed pair shows 0.0869
+same seed, LoRA off twice: 0.0000  strength 0 is the base exactly, so anything else that moved is your test's fault
+
+one seed can mislead: effect of the LoRA at strength 1, per seed
+smallest 0.0151   median 0.0850   largest 0.2104   largest / smallest 13.9
+
+strength sweep, same seeds. The weight moves in a straight line. The output need not
+strength   weight change   output change   change per unit of strength
+0.0        0.0000          0.0000          0.0000
+0.25       0.5534          0.0219          0.0874
+0.5        1.1069          0.0435          0.0869
+0.75       1.6603          0.0647          0.0862
+1.0        2.2138          0.0853          0.0853
+1.5        3.3207          0.1247          0.0831
+2.0        4.4276          0.1610          0.0805
+4.0        8.8551          0.2744          0.0686
+-1.0       2.2138          0.0862          0.0862
+
+four pictures to make, one seed, and what each answers
+LoRA   trigger   tells you
+off    no        the base with this prompt
+off    yes       what the word alone does on the base
+on     no        what the LoRA does without its word
+on     yes       the full effect

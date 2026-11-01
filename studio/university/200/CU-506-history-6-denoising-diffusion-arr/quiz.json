@@ -59,15 +59,15 @@
    "why": "The paper says its models do not have competitive log likelihoods and that the majority of the lossless codelength describes imperceptible image details. The 2.80 belongs to Sparse Transformer and the 8.00 to the uniform baseline of the PixelRNN paper."
   },
   {
-   "q": "Who posted \"Deep Unsupervised Learning using Nonequilibrium Thermodynamics\", and when?",
+   "q": "You run the ddpm sampler for 20 steps on a model trained with T = 1000. What does one step do?",
    "options": [
-    "Sohl-Dickstein, Weiss, Maheswaranathan and Ganguli, March 2015",
-    "Song and Ermon, July 2019",
-    "Ho, Jain and Abbeel, June 2020",
-    "Rombach et al., December 2021"
+    "It spans many of the paper's steps, since α comes from the two sigmas",
+    "It runs 50 model calls",
+    "It does exactly one of the paper's steps, so the picture stays noisy",
+    "It skips the model"
    ],
-   "answer": "Sohl-Dickstein, Weiss, Maheswaranathan and Ganguli, March 2015",
-   "why": "arXiv lists it as posted on 12 March 2015. Song and Ermon followed on 12 July 2019 and Ho, Jain and Abbeel on 19 June 2020; the latent diffusion paper came in December 2021."
+   "answer": "It spans many of the paper's steps, since α comes from the two sigmas",
+   "why": "DDPMSampler_step computes α as ᾱ/ᾱ_prev from the sigmas it is handed, so a shorter list means a longer jump."
   }
  ]
 }

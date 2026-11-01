@@ -93,8 +93,8 @@ def sd():
 
 def workflows():
     """Concrete copies of the studio's own video and music templates, with placeholders filled, so they open as they are."""
-    fills = {"prompt": POS, "negative": NEG, "fps": 24, "width": 832, "height": 480, "frames": 81, "length": 81, "seed": 424242, "steps": 20, "cfg": 5.0, "image": "example.png", "seconds": 30, "duration": 30, "caption": "warm lo-fi piano, slow, rainy afternoon", "lyrics": "[instrumental]", "turbo": False, "aspect": "16:9 (Widescreen)", "megapixels": 0.5, "unet": "flux-2-klein-4b-fp8.safetensors"}
-    for src, id, title, need, about in (("h3_t2v_api", "wf_h3_t2v", "MiniMax H3: text to video", "MiniMax H3 weights: its model, text encoder and both VAEs.", "The studio's real H3 graph."), ("ltx25_core_t2v_api", "wf_ltx25_t2v", "LTX-2.5: text to video", "LTX-2.5 weights.", "The studio's real LTX graph."), ("wan22_5b_t2v_api", "wf_wan22_t2v", "Wan 2.2 5B: text to video", "Wan 2.2 TI2V 5B weights.", "The studio's real Wan graph."), ("music3_api", "wf_music3", "MiniMax Music 3", "MiniMax Music 3 weights.", "The studio's real music graph."), ("flux2_klein4b_t2i_api", "wf_flux2_klein", "FLUX.2 Klein: text to image", "FLUX.2 Klein 4B weights.", "A modern image graph: guider, sampler and schedule as parts.")):
+    fills = {"prompt": POS, "negative": NEG, "fps": 24, "width": 832, "height": 480, "frames": 81, "length": 81, "seed": 424242, "steps": 20, "cfg": 5.0, "image": "example.png", "seconds": 30, "duration": 30, "caption": "warm lo-fi piano, slow, rainy afternoon", "lyrics": "[instrumental]", "turbo": False, "aspect": "16:9 (Widescreen)", "megapixels": 0.5, "unet": "flux-2-klein-base-4b.safetensors"}
+    for src, id, title, need, about in (("h3_t2v_api", "wf_h3_t2v", "MiniMax H3: text to video", "MiniMax H3 weights: its model, text encoder and both VAEs.", "The studio's real H3 graph."), ("ltx25_core_t2v_api", "wf_ltx25_t2v", "LTX-2.5: text to video", "LTX-2.5 weights.", "The studio's real LTX graph."), ("wan22_5b_t2v_api", "wf_wan22_t2v", "Wan 2.2 5B: text to video", "Wan 2.2 TI2V 5B weights.", "The studio's real Wan graph."), ("music3_api", "wf_music3", "MiniMax Music 3", "MiniMax Music 3 weights.", "The studio's real music graph."), ("flux2_klein4b_t2i_api", "wf_flux2_klein", "FLUX.2 Klein: text to image", "FLUX.2 Klein 4B Base weights. These settings, cfg 5 and 20 steps, are for the Base file.", "A modern image graph: guider, sampler and schedule as parts.")):
         t = (ROOT / "workflows" / f"{src}.json").read_text(); miss = set()
         def rep(m):
             k = m.group(1); v = fills.get(k)
@@ -104,6 +104,7 @@ def workflows():
         t = re.sub(r'"\$\{(\w+)\}"', lambda m: json.dumps(fills[m.group(1)]) if m.group(1) in fills else m.group(0), t); t = re.sub(r"\$\{(\w+)\}", rep, t)
         if miss: print(id, "unfilled:", sorted(miss))
         g = json.loads(t)
+        if id == "wf_h3_t2v": g["140:133"]["inputs"]["value"] = 5.0  # seconds: 30 would be 736 frames, past the node's stated range
         if id == "wf_ltx25_t2v": del g["9"]; g["10"]["inputs"]["frame_rate"] = 24  # the template's LTXFloatToInt is from a pack and only turned 24 into an integer
         save(id, title, g, needs=[need], about=about)
 

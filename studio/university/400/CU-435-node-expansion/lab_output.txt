@@ -1,0 +1,12 @@
+times=3, picture mean 0.1255
+  node 2 added: ['2.0.0.1', '2.0.0.2', '2.0.0.3']
+  result 0.8745  inverts that ran: 3
+times=6
+  node 2 added: ['2.0.0.1', '2.0.0.2', '2.0.0.3', '2.0.0.4', '2.0.0.5', '2.0.0.6']
+  result 0.1255  inverts that ran: 6
+second call in a list, call index 1
+  node 2 added: ['2.1.0.1', '2.1.0.2']
+a second builder in one call gets its own prefix
+   2.0.0. 2.0.1.
+  node 2 added: ['2.0.0.1']
+a class that does not exist: KeyError: 'NoSuchNode'

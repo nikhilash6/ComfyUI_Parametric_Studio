@@ -1,0 +1,69 @@
+{
+ "code": "CU-334",
+ "title": "Long video and memory: chunks, tiled decode, and what truly helps",
+ "level": "300",
+ "prereq": [
+  "CU-330",
+  "CU-217"
+ ],
+ "char": "frame",
+ "hook": "Tiled decode can't save a sampler that's out of memory, and H3 ignores it anyway. Match each fix to the cost it really touches.",
+ "track": "video",
+ "order": 55,
+ "graphs": [
+  "e_chain_join",
+  "wf_ltx25_t2v"
+ ],
+ "code_refs": [
+  "comfy/model_base.py:BaseModel.memory_required",
+  "comfy/sd.py:VAE.decode_tiled",
+  "comfy/sd.py:VAE._tile_bounded_shape",
+  "comfy/sd.py:VAE.decode_tiled_3d",
+  "comfy/utils.py:tiled_scale_multidim",
+  "comfy/ldm/minimax/vae.py:decode_tiled",
+  "comfy_extras/nodes_context_windows.py:ContextWindowsManual",
+  "comfy_extras/nodes_minimax_h3.py:MiniMaxH3AddGuide",
+  "nodes.py:VAEDecodeTiled.decode",
+  "nodes.py:ImageBatch",
+  "comfy_extras/nodes_images.py:ImageFromBatch"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "Sampler memory is estimated from the latent's area and a per-model factor, and no decode setting appears in it.",
+   "how": "source",
+   "ref": "comfy/model_base.py:BaseModel.memory_required"
+  },
+  {
+   "claim": "LTX's decode estimate counts T, H and W. Wan 2.2's has no T. H3's clamps to one chunk.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE"
+  },
+  {
+   "claim": "A tiled decode's memory estimate is the estimate for one tile.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE._tile_bounded_shape"
+  },
+  {
+   "claim": "H3's decode_tiled calls decode, and its tile settings are ignored.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax/vae.py:decode_tiled"
+  },
+  {
+   "claim": "e_chain_join validates and runs on a CPU, and writes 17 frames from 9 + 8.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "The gallery short film has 544 frames, and H3 shots have 124.",
+   "how": "run here",
+   "ref": "ffprobe on web/showcase"
+  }
+ ],
+ "unchecked": [
+  "The memory numbers are ComfyUI's own estimates, used to plan loading. They are not measured peaks, and comments in the code call parts of them rough.",
+  "The notes on chained clips and on context windows are from our earlier studio's records, on another software stack. Treat them as leads. We did not rerun them.",
+  "We did not measure how visible seams are for any overlap. The lab counts work only.",
+  "Whether the attention pairs in the table match real memory depends on the attention code. Real models may window or batch; the number is a count, not a measurement."
+ ]
+}

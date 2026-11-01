@@ -8,12 +8,61 @@
  "char": "denoise",
  "hook": "The DDPM paper checked against exact answers: the posterior of a forward step, the weights the simplified loss drops, and why the two reverse variances barely differ. Plus which one ComfyUI's ddpm sampler uses.",
  "code_refs": [
-  "comfy/k_diffusion/sampling.py:def DDPMSampler_step",
-  "comfy/k_diffusion/sampling.py:def sample_ddpm",
-  "comfy/samplers.py:ddpm",
-  "comfy/ldm/modules/diffusionmodules/util.py:sqrt_linear",
-  "comfy/model_sampling.py:class ModelSamplingDiscrete"
+  "comfy/k_diffusion/sampling.py:DDPMSampler_step",
+  "comfy/k_diffusion/sampling.py:sample_ddpm",
+  "comfy/samplers.py:KSAMPLER_NAMES",
+  "comfy/ldm/modules/diffusionmodules/util.py:make_beta_schedule",
+  "comfy/model_sampling.py:ModelSamplingDiscrete"
  ],
  "track": "history",
- "order": 60
+ "order": 60,
+ "graphs": [
+  "h5_ddpm_sampler",
+  "b_vpred"
+ ],
+ "verified": [
+  {
+   "claim": "The mean is eq. 11, and alpha comes from sigma. The noise term has variance (1 − α)(1 − ᾱ_prev)/(1 − ᾱ), and it is added only when sigma_prev is above 0.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:DDPMSampler_step"
+  },
+  {
+   "claim": "The sampler function.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_ddpm"
+  },
+  {
+   "claim": "ddpm is in the sampler list.",
+   "how": "source",
+   "ref": "comfy/samplers.py:KSAMPLER_NAMES"
+  },
+  {
+   "claim": "Both branches read, with defaults 1e-4 and 2e-2.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/util.py:make_beta_schedule"
+  },
+  {
+   "claim": "Defaults to linear with 0.00085.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:ModelSamplingDiscrete"
+  },
+  {
+   "claim": "The posterior, eq. 12, the weights and the reverse variances print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title and date from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2006.11239"
+  }
+ ],
+ "unchecked": [
+  "The paper quotes and table numbers were read in an earlier audit of this lesson. In this pass we rechecked the arXiv titles and abstracts only.",
+  "We did not run the ddpm sampler graph here. It was validated, and it needs an SD 1.5 checkpoint. The 50 steps in the graph are a starting point, not a tested recommendation."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

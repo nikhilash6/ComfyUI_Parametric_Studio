@@ -1,0 +1,39 @@
+{
+ "code": "CU-294",
+ "title": "Missing nodes and missing models, and how to fix them safely",
+ "level": "200",
+ "prereq": ["CU-107"],
+ "char": "graph",
+ "hook": "A graph from the internet fails. Is the node missing, the file missing, the file broken, or the file the wrong kind? Each has a different error and a different safe fix.",
+ "track": "debugging",
+ "order": 45,
+ "kit": true,
+ "graphs": ["sd15_txt2img"],
+ "code_refs": [
+  "execution.py:validate_prompt",
+  "execution.py:validate_inputs",
+  "folder_paths.py:get_full_path_or_raise",
+  "comfy/sd.py:load_checkpoint_guess_config",
+  "comfy/utils.py:load_torch_file",
+  "nodes.py:CheckpointLoaderSimple",
+  "nodes.py:CLIPTextEncode.encode",
+  "nodes.py:init_external_custom_nodes"
+ ],
+ "verified": [
+  {"claim": "A missing class gives: Node 'SuperKSampler' not found. The custom node may not be installed. It stops before any other check.", "how": "run here", "ref": "execution.py:validate_prompt"},
+  {"claim": "A missing checkpoint gives: Value not in list: ckpt_name: 'model_a.safetensors' not in [] on an empty folder.", "how": "run here", "ref": "execution.py:validate_inputs"},
+  {"claim": "Long menus print (list of length N), over 20 items.", "how": "source", "ref": "execution.py:validate_inputs"},
+  {"claim": "Calling the loader directly with a missing file gives FileNotFoundError: Model in folder 'checkpoints' with filename 'nope.safetensors' not found.", "how": "run here", "ref": "folder_paths.py:get_full_path_or_raise"},
+  {"claim": "Cut-short and non-model files gave these SafetensorError texts: incomplete metadata, file not fully covered; invalid header length; header too large.", "how": "run here", "ref": "comfy/utils.py:load_torch_file on files we made"},
+  {"claim": "A real safetensors file that isn't a checkpoint gave: ERROR: Could not detect model type of: <path>.", "how": "run here", "ref": "comfy/sd.py:load_checkpoint_guess_config"},
+  {"claim": "A checkpoint without a text encoder fails later with: ERROR: clip input is invalid: None.", "how": "run here", "ref": "nodes.py:CLIPTextEncode.encode, called with None"},
+  {"claim": "The safetensors layout: 8 bytes for the header length, then JSON.", "how": "run here", "ref": "read back from a file written by safetensors.torch.save_file"},
+  {"claim": "The docs describe safetensors as a format for storing tensors safely, as opposed to pickle.", "how": "docs", "ref": "huggingface.co docs safetensors, fetched 2026-11-01"},
+  {"claim": "ComfyUI's loader passes weights_only=True to torch.load.", "how": "source", "ref": "comfy/utils.py:load_torch_file"}
+ ],
+ "unchecked": [
+  "What the editor shows in its missing nodes dialog. We read server replies, and did not test the dialog.",
+  "How a pack manager finds and installs nodes. We don't describe one, and you should read what it plans to do before you agree.",
+  "Which pack holds a given node. We don't list any here. Search by class name, and check who wrote the pack."
+ ]
+}

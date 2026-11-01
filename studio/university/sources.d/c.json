@@ -1,0 +1,174 @@
+{
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_cfg.py": {
+  "title": "ComfyUI v0.43.0 source: nodes_cfg.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_apg.py": {
+  "title": "ComfyUI v0.43.0 source: nodes_apg.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_pag.py": {
+  "title": "ComfyUI v0.43.0 source: nodes_pag.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_sag.py": {
+  "title": "ComfyUI v0.43.0 source: nodes_sag.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_tcfg.py": {
+  "title": "ComfyUI v0.43.0 source: nodes_tcfg.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_perpneg.py": {
+  "title": "ComfyUI v0.43.0 source: nodes_perpneg.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_flux.py": {
+  "title": "ComfyUI v0.43.0 source: nodes_flux.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/model.py": {
+  "title": "ComfyUI v0.43.0 source: model.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/layers.py": {
+  "title": "ComfyUI v0.43.0 source: layers.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/redux.py": {
+  "title": "ComfyUI v0.43.0 source: redux.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_detection.py": {
+  "title": "ComfyUI v0.43.0 source: model_detection.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/supported_models.py": {
+  "title": "ComfyUI v0.43.0 source: supported_models.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_base.py": {
+  "title": "ComfyUI v0.43.0 source: model_base.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_patcher.py": {
+  "title": "ComfyUI v0.43.0 source: model_patcher.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_sampling.py": {
+  "title": "ComfyUI v0.43.0 source: model_sampling.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/k_diffusion/sampling.py": {
+  "title": "ComfyUI v0.43.0 source: sampling.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sampler_helpers.py": {
+  "title": "ComfyUI v0.43.0 source: sampler_helpers.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sd.py": {
+  "title": "ComfyUI v0.43.0 source: sd.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/clip_vision.py": {
+  "title": "ComfyUI v0.43.0 source: clip_vision.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/clip_model.py": {
+  "title": "ComfyUI v0.43.0 source: clip_model.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sdxl_clip.py": {
+  "title": "ComfyUI v0.43.0 source: sdxl_clip.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/node_helpers.py": {
+  "title": "ComfyUI v0.43.0 source: node_helpers.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/sd3_clip.py": {
+  "title": "ComfyUI v0.43.0 source: sd3_clip.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/flux.py": {
+  "title": "ComfyUI v0.43.0 source: flux.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/t5.py": {
+  "title": "ComfyUI v0.43.0 source: t5.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/t5_config_xxl.json": {
+  "title": "ComfyUI v0.43.0 source: t5_config_xxl.json",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/llama.py": {
+  "title": "ComfyUI v0.43.0 source: llama.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/qwen_image.py": {
+  "title": "ComfyUI v0.43.0 source: qwen_image.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/attention.py": {
+  "title": "ComfyUI v0.43.0 source: attention.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/diffusionmodules/mmdit.py": {
+  "title": "ComfyUI v0.43.0 source: mmdit.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2406.08070": {
+  "title": "CFG++: Manifold-constrained Classifier Free Guidance for Diffusion Models",
+  "checked": "title from arXiv API, method and table read from arxiv.org/html/2406.08070, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2503.18886": {
+  "title": "Improved Classifier-Free Guidance for Flow Matching Models",
+  "checked": "arXiv title begins CFG-Zero with an asterisk, which the page cannot show in prose; title from arXiv API, formula read from arxiv.org/html/2503.18886, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2410.02416": {
+  "title": "Eliminating Oversaturation and Artifacts of High Guidance Scales in Diffusion Models",
+  "checked": "abstract page and arxiv.org/html/2410.02416 read, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2403.17377": {
+  "title": "Self-Rectifying Diffusion Sampling with Perturbed-Attention Guidance",
+  "checked": "title from arXiv API, method read from arxiv.org/html/2403.17377, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2210.00939": {
+  "title": "Improving Sample Quality of Diffusion Models Using Self-Attention Guidance",
+  "checked": "title from arXiv API, abstract read, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2304.04968": {
+  "title": "Re-imagine the Negative Prompt Algorithm: Transform 2D Diffusion into 3D, alleviate Janus problem and Beyond",
+  "checked": "title from arXiv API, Eq. 8 read from arxiv.org/html/2304.04968, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2503.18137": {
+  "title": "TCFG: Tangential Damping Classifier-free Guidance",
+  "checked": "title from arXiv API, method read from arxiv.org/html/2503.18137, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2204.06125": {
+  "title": "Hierarchical Text-Conditional Image Generation with CLIP Latents",
+  "checked": "title and abstract from arXiv API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/1910.10683": {
+  "title": "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+  "checked": "title and abstract from arXiv API, 2026-11-01"
+ },
+ "https://comfyanonymous.github.io/ComfyUI_examples/flux": {
+  "title": "ComfyUI Examples: Flux",
+  "checked": "fetched 2026-11-01: cfg 1.0 for the dev FP8 checkpoint, and schnell as a distilled 4 step model"
+ },
+ "https://github.com/black-forest-labs/flux2": {
+  "title": "FLUX.2 repository README",
+  "checked": "fetched 2026-11-01: the table of step and guidance distillation"
+ },
+ "https://huggingface.co/black-forest-labs/FLUX.2-klein-4B": {
+  "title": "FLUX.2 klein 4B model card",
+  "checked": "fetched 2026-11-01: guidance_scale 1.0, 4 steps"
+ },
+ "https://huggingface.co/black-forest-labs/FLUX.2-klein-base-4B": {
+  "title": "FLUX.2 klein 4B Base model card",
+  "checked": "fetched 2026-11-01: guidance_scale 4.0, 50 steps, trained without distillation"
+ }
+}

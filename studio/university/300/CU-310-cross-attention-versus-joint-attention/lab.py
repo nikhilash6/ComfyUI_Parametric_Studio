@@ -1,58 +1,33 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-torch.manual_seed(0)
-
-# Define small dimensions for a CPU-only demo
-batch_size = 1
-seq_len_q = 4  # Query sequence length (e.g., image tokens)
-seq_len_k = 3  # Key/Value sequence length (e.g., text tokens)
-dim = 8
-
-# Generate random inputs
-q = torch.randn(batch_size, seq_len_q, dim)
-k = torch.randn(batch_size, seq_len_k, dim)
-v = torch.randn(batch_size, seq_len_k, dim)
-
-# 1. Cross-Attention: Q from image, K/V from text
-# Shape: [B, Lq, Lk]
-scores_cross = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(dim)
-weights_cross = torch.softmax(scores_cross, dim=-1)
-out_cross = torch.matmul(weights_cross, v)
-
-# 2. Joint/Self-Attention: Concatenate Q, K, V into one sequence
-# Create joint sequence where image and text tokens attend to each other
-# Q_joint = [q, k], K_joint = [q, k], V_joint = [q, k] (using q and k as values for simplicity)
-q_joint = torch.cat([q, k], dim=1)  # [B, Lq+Lk, dim]
-k_joint = torch.cat([q, k], dim=1)  # [B, Lq+Lk, dim]
-v_joint = torch.cat([q, k], dim=1)  # [B, Lq+Lk, dim]
-
-# Compute joint attention scores
-scores_joint = torch.matmul(q_joint, k_joint.transpose(-2, -1)) / math.sqrt(dim)
-weights_joint = torch.softmax(scores_joint, dim=-1)
-out_joint = torch.matmul(weights_joint, v_joint)
-
-# Extract the image part of the joint output (first seq_len_q tokens)
-out_joint_image = out_joint[:, :seq_len_q, :]
-
-# Print results
-print(f"RESULT cross_attention_output_shape = {out_cross.shape}")
-print(f"RESULT joint_attention_output_shape = {out_joint.shape}")
-print(f"RESULT cross_attention_first_token = {out_cross[0, 0, 0].item():.6g}")
-print(f"RESULT joint_attention_first_token = {out_joint_image[0, 0, 0].item():.6g}")
-
-# Assert that cross-attention output has the correct shape
-assert out_cross.shape == (batch_size, seq_len_q, dim), "Cross-attention output shape is incorrect"
-
-# Assert that joint attention output has the correct shape
-assert out_joint.shape == (batch_size, seq_len_q + seq_len_k, dim), "Joint attention output shape is incorrect"
-
-# Assert that cross-attention weights sum to 1 over the key dimension
-assert torch.allclose(weights_cross.sum(dim=-1), torch.ones(batch_size, seq_len_q)), "Cross-attention weights do not sum to 1"
-
-# Assert that joint attention weights sum to 1 over the key dimension
-assert torch.allclose(weights_joint.sum(dim=-1), torch.ones(batch_size, seq_len_q + seq_len_k)), "Joint attention weights do not sum to 1"
+# CU-310 lab: cross-attention and joint attention side by side. Small hand-made versions following CrossAttention (comfy/ldm/modules/attention.py) and _block_mixing (mmdit.py) and DoubleStreamBlock (flux/layers.py). Random weights.
+import math, torch
+torch.manual_seed(0); torch.set_num_threads(1)
+D = 8
+def attn(q, k, v): return torch.softmax(q @ k.transpose(-2, -1) / math.sqrt(D), -1) @ v
+class Proj:
+    def __init__(self): self.q, self.k, self.v = torch.randn(D, D) * .3, torch.randn(D, D) * .3, torch.randn(D, D) * .3
+img_p, txt_p = Proj(), Proj()
+def cross(img, txt): return attn(img @ img_p.q, txt @ txt_p.k, txt @ txt_p.v), txt            # the text passes through untouched
+def joint(img, txt):
+    q = torch.cat((txt @ txt_p.q, img @ img_p.q), 1); k = torch.cat((txt @ txt_p.k, img @ img_p.k), 1); v = torch.cat((txt @ txt_p.v, img @ img_p.v), 1)
+    out = attn(q, k, v); n = txt.shape[1]; return out[:, n:], out[:, :n]                        # split back into two streams
+img = torch.randn(1, 4, D); txt = torch.randn(1, 3, D)
+ci, ct = cross(img, txt); ji, jt = joint(img, txt)
+print("4 image tokens and 3 text tokens")
+print("cross-attention:  image out", list(ci.shape), "  text out", list(ct.shape), "  text changed:", not torch.equal(ct, txt))
+print("joint attention:  image out", list(ji.shape), "  text out", list(jt.shape), "  text changed:", not torch.equal(jt, txt))
+assert torch.equal(ct, txt) and not torch.equal(jt, txt) and ci.shape == ji.shape
+def scores(q, k): return q.shape[1] * k.shape[1]
+print("\nwhat can a token see, as a share of all attention weight? one row of each weight table")
+w_c = torch.softmax((img @ img_p.q) @ (txt @ txt_p.k).transpose(-2, -1) / math.sqrt(D), -1)[0, 0]; print("cross, image token 0 over the 3 text tokens:", [round(v, 3) for v in w_c.tolist()])
+q = torch.cat((txt @ txt_p.q, img @ img_p.q), 1); k = torch.cat((txt @ txt_p.k, img @ img_p.k), 1); w_j = torch.softmax(q @ k.transpose(-2, -1) / math.sqrt(D), -1)[0, 3]
+print("joint, image token 0 over 3 text + 4 image:  ", [round(v, 3) for v in w_j.tolist()])
+assert abs(w_c.sum().item() - 1) < 1e-5 and abs(w_j.sum().item() - 1) < 1e-5
+img2 = img.clone(); img2[0, 3] = torch.randn(D); print("\nchange image token 3 only. Does image token 0's output move?")
+print("cross:", (cross(img2, txt)[0][0, 0] - ci[0, 0]).norm().item() > 0, "  joint:", (joint(img2, txt)[0][0, 0] - ji[0, 0]).norm().item() > 0)
+assert (cross(img2, txt)[0][0, 0] - ci[0, 0]).norm() == 0 and (joint(img2, txt)[0][0, 0] - ji[0, 0]).norm() > 0
+print("\nwhy the U-Net also has self-attention: cross alone never lets image tokens see each other. Its block runs attn1 (self) then attn2 (cross).")
+print("\nnumber of query-key pairs per block, 64 by 64 image tokens")
+I = 64 * 64
+for name, n in (("SD 1.5 style: self + cross, 77 text tokens", I * I + I * 77), ("Flux style: joint, 256 text tokens", (I + 256) ** 2), ("Flux style: joint, 512 text tokens", (I + 512) ** 2), ("joint, text left out, for scale", I * I)):
+    print(f"{name:<46} {n / 1e6:.2f} million")
+assert (I + 256) ** 2 > I * I + I * 77

@@ -1,103 +1,85 @@
 # CU-313 - Mixture of experts routing
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Explain how a gate picks a few feed-forward networks for each token, why that adds capacity without adding much work per token, and how to read it in ComfyUI. Taught by Madame Attention.
 
-## Why this matters
+## The idea
 
-Welcome back, students. You have spent the last few weeks in CU-301 learning how attention allows tokens to look at one another. But attention is not the only mechanism that determines what a model does. In large-scale architectures, we face a brutal trade-off: we want massive capacity to store knowledge, but we cannot afford to compute every parameter for every single token.
+After attention, each block has a small network applied to every token: the feed-forward, or MLP. A mixture of experts (MoE) keeps several such networks and uses only a few per token. A small gate decides which.
 
-This is where Mixture of Experts (MoE) enters the stage. It is the architectural answer to the question: *How do we make a model bigger without making it slower?* By routing tokens to only a subset of "experts," we decouple model size from computational cost. However, this routing is not trivial. If the gate is unstable, the model collapses. If the selection is inefficient, we gain nothing. Today, we dissect the machinery that decides who attends to whom, and more importantly, who computes what.
+Storage grows with the number of experts. Work per token grows only with how many a token uses. So you can have a model with many more weights without paying for them all on each token. You do still pay for storing them.
 
-## The intuition
+## The mechanism
 
-Imagine a hospital with four specialized doctors (experts). In a standard dense network, every patient (token) sees all four doctors, gets four diagnoses, and we average them. It is thorough, but incredibly expensive.
+For a token x of width D, with E experts and top-k K:
 
-In an MoE architecture, we have a triage nurse (the gate). The nurse looks at the patient and decides: "You need the cardiologist and the neurologist. The others can go home." The patient is processed only by those two specialists. The other two doctors remain idle for this specific patient.
+```
+scores = softmax( W x )                W is E×D, the gate's weights
+ids, weights = top K of scores
+output = Σ weightᵢ × expertᵢ(x)        plus, in many designs, a shared network that always runs
+```
 
-The key insight here is **conditional computation**. The total number of parameters in the model grows because we have more doctors, but the compute per token remains constant because each patient still only sees a fixed number of specialists (typically $k=2$ or $k=4$). The gate must be precise. If the nurse sends everyone to the cardiologist, we have a bottleneck. If the nurse is random, we have no specialization. We need a mechanism that is both selective and stable.
+Shazeer et al. (2017) introduced the sparsely-gated layer. Fedus et al. (2021), in Switch Transformers, simplified it to one expert per token.
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+**Training issues.** `top K` has no gradient: only the weights do. The lab prints this. And a gate may fall into always choosing the same few experts. The literature's fix is a load-balancing loss during training. For inference that loss doesn't matter. The route is just arithmetic.
 
-The core of MoE routing is the **Gate**. In the architectures we study, such as those found in `comfy/ldm/hidream` and `comfy/ldm/hunyuan3dv2_1`, this is implemented by classes like `MoEGate`.
-
-Let $x \in \mathbb{R}^{d}$ be the input token representation, where $d$ is the hidden dimension. Let $E$ be the total number of experts. The gate computes a set of logits $z \in \mathbb{R}^{E}$ using a linear projection:
-
-$$ z = x W_g $$
-
-where $W_g \in \mathbb{R}^{d \times E}$ is the gate weight matrix. These logits are raw scores indicating how relevant each expert is to the token.
-
-To convert these scores into a probability distribution, we apply the softmax function over the expert dimension:
-
-$$ p_i = \frac{\exp(z_i)}{\sum_{j=1}^{E} \exp(z_j)} $$
-
-Here, $p_i$ is the probability that expert $i$ should handle the token. Note that $\sum p_i = 1$.
-
-However, we do not use all experts. We use **Top-K selection**. We select the $k$ experts with the highest probabilities. Let $S$ be the set of indices of the top-$k$ experts:
-
-$$ S = \text{TopK}(p, k) $$
-
-In our lab, we use $k=2$. The final output $y$ is a weighted sum of the outputs of the selected experts. If $f_i(x)$ is the output of expert $i$, then:
-
-$$ y = \sum_{i \in S} \frac{p_i}{\sum_{j \in S} p_j} f_i(x) $$
-
-The normalization term $\frac{p_i}{\sum_{j \in S} p_j}$ ensures that the weights of the selected experts sum to 1, preserving the scale of the representation. This is critical for training stability. Without it, the magnitude of the output would depend on the absolute confidence of the gate, leading to vanishing or exploding gradients.
-
-The mathematical stability of this mechanism relies on the smoothness of the softmax and the discrete nature of the Top-K selection. The gate learns to spread load evenly across experts during training, often aided by auxiliary load-balancing losses (like the `AddAuxLoss` seen in Hunyuan 3D v2.1), which penalize the gate if it routes too many tokens to a single expert.
+{{play:gate}}
 
 ## In ComfyUI
 
-In the ComfyUI codebase, this machinery is not abstract; it is concrete code.
+Three real examples.
 
-For the **HiDream** image generation model, the file `comfy/ldm/hidream/model.py` contains the class `MoEGate`. This class implements the gating logic. It is used by `MOEFeedForwardSwiGLU`, which is a feed-forward layer that utilizes Mixture of Experts. The `MOEFeedForwardSwiGLU` class includes an `moe_infer` method for inference logic, which handles the routing during the forward pass.
+**HiDream.** `comfy/ldm/hidream/model.py` has `MoEGate`, defaults of 4 routed experts and 2 activated, and `MOEFeedForwardSwiGLU`. Its `forward` repeats each token K times, runs each expert on the tokens routed to it, and sums with the gate's weights. It then adds `shared_experts`, which always runs. `norm_topk_prob` is False, so weights do not sum exactly to 1. The lab's first lines show this. `aux_loss` is `None` here: this is inference code. The comment says the design was modified from DeepSeek-V3's.
 
-Similarly, in the **Hunyuan 3D v2.1** architecture, defined in `comfy/ldm/hunyuan3dv2_1/hunyuandit.py`, we find the `MoEGate` class and the `MoEBlock`. The `MoEBlock` combines multiple expert networks with gating logic. A crucial component here is `AddAuxLoss`, a custom autograd function designed to inject auxiliary losses during the backward pass. This ensures that the regularization losses required to keep the expert load balanced are correctly backpropagated through the non-differentiable Top-K selection process.
+**Hunyuan 3D v2.1.** `comfy/ldm/hunyuan3dv2_1/hunyuandit.py` has its own `MoEGate`, `MoEBlock` and `AddAuxLoss`. Only the last `num_moe_layers` blocks use it, by `use_moe=True if depth - layer <= num_moe_layers`. The graph below is for the 3D family: it says Hunyuan3D 2, and we use it to show where such a block would live. Check which model you've got, because the code path depends on it.
 
-These implementations show that MoE is not just a theoretical concept but a standard component in modern diffusion transformers within ComfyUI, allowing models to scale capacity without proportionally increasing compute for every token.
+{{graph:hunyuan3d_mesh}}
+
+**Text encoders.** `comfy/text_encoders/gpt_oss.py` has `num_local_experts` 32 and `num_experts_per_tok` 4 in its config. `moe_experts_forward` is in `comfy/text_encoders/llama.py`.
+
+## What goes wrong
+
+- **You budget VRAM as if only K experts existed.** All E experts are loaded. "Sparse" saves compute, not storage, unless something offloads them.
+- **You expect speed to fall with E.** Per token, calls depend on K. But each expert still has a small overhead, as the loop in `forward` visits all of them. This is why a branch in HiDream's `forward` is marked with a TODO about which is faster.
+- **You check "sum of weights equals 1".** It doesn't, with `norm_topk_prob` False. Don't treat that as a bug.
+- **You try to edit the "right" expert.** A patch or LoRA on expert 2 only affects tokens routed there. Which tokens is decided by the gate, so results can look patchy. There's no fixed "face expert" unless someone has shown it for that model.
+- **The load looks lopsided, so you assume a broken model.** We show only toy tokens here. On a trained model, a skewed load can be fine.
 
 ## Lab
 
-In this lab, we simulate the routing decision for a small batch of tokens. We define an input tensor $x$ of shape $(4, 8)$ and a gate weight matrix $W$ of shape $(8, 4)$, representing 4 experts. We compute the logits, apply softmax, and select the top-2 experts for each token.
+The lab builds the layer with random weights. That shows the mechanics, and tells you nothing about trained routing.
 
-The lab output is as follows:
-
+```text
+tokens 1000, experts 4, each token uses 2: output (1000, 32)
+first 4 tokens, expert ids and weights:
+  [3, 2]  [0.833, 0.151]  weights sum to 0.984
+  [0, 2]  [0.725, 0.157]  weights sum to 0.882
+  [0, 1]  [0.577, 0.419]  weights sum to 0.996
+  [3, 1]  [1.0, 0.0]  weights sum to 1.000
+load on each expert: [490, 484, 503, 523]  total 2000 = 1000 x 2
+routed against compute-all-then-pick: max difference 0.0e+00
 ```
-RESULT topk_indices = [[0, 1], [3, 1], [2, 1], [3, 1]]
-RESULT topk_values = ['0.722216', '0.228781', '0.641072', '0.255769', '0.54796', '0.424075', '0.525417', '0.366076']
+
+The routed code gives exactly what brute force gives. The total is always tokens × K.
+
+```text
+experts  top-k  expert parameters stored   expert calls per token
+1        1      4,192                      1
+4        2      16,768                     2
+6        2      25,152                     2
+16       2      67,072                     2
 ```
 
-Let us analyze what these lines prove:
+Going from 4 to 16 experts quadruples storage, with the same number of calls per token. Now a gate pointed the wrong way, and the fact that makes training awkward.
 
-1.  `RESULT topk_indices = [[0, 1], [3, 1], [2, 1], [3, 1]]`
-    This proves that the Top-K selection is working. For the first token, experts 0 and 1 were selected. For the second, experts 3 and 1. Notice that expert 1 is selected in three out of four cases. This indicates a potential load imbalance, which in a real training scenario would be corrected by the auxiliary loss.
+```text
+top-1 load when one expert's gate weights line up with the data: [997, 2, 0, 1]
+gradient flows through the weights: True  through the chosen ids: False
+```
 
-2.  `RESULT topk_values = ['0.722216', '0.228781', '0.641072', '0.255769', '0.54796', '0.424075', '0.525417', '0.366076']`
-    This proves that the probabilities are correctly normalized and within the range $[0, 1]$. For the first token, the probabilities for experts 0 and 1 are 0.722216 and 0.228781. Their sum is approximately 0.951, which is less than 1 because the other two experts (2 and 3) had lower probabilities. The normalization in the final output calculation will divide these by their sum to ensure the weights sum to 1.
+## Sources
 
-3.  The fact that the indices are integers and the values are floats confirms the separation between the discrete routing decision (which expert) and the continuous weighting (how much to trust that expert).
-
-4.  The reproducibility of the lab (running twice yields identical output) confirms that the random seed is set correctly, ensuring that the routing decisions are deterministic given the same input and weights.
-
-5.  The shape of the `topk_values` is implicitly $(4, 2)$, matching the batch size and $k$ value, which is essential for broadcasting the weights to the expert outputs.
-
-6.  The values are all positive, confirming that the softmax function was applied correctly to the logits.
-
-## Common mistakes
-
-1.  **Ignoring Load Balancing:** If you implement a gate without an auxiliary loss, the model will quickly learn to route all tokens to a single "best" expert. This defeats the purpose of MoE, as you are no longer utilizing the full capacity of the model. Always include a load-balancing loss.
-
-2.  **Forgetting Normalization:** If you do not normalize the weights of the selected experts (i.e., divide by the sum of the selected probabilities), the magnitude of the output will vary depending on the gate's confidence. This can lead to training instability.
-
-3.  **Using Dense Routing:** If you accidentally compute the output of all experts and then select the top-k, you are wasting compute. The whole point of MoE is to only compute the selected experts. Ensure your implementation skips the computation for unselected experts.
-
-4.  **Incorrect Top-K Implementation:** Ensure that you are selecting the top-k *probabilities*, not the top-k *logits*. While the ranking is the same, the values used for weighting must be the probabilities.
-
-## Go deeper
-
-For a deeper understanding of the theoretical foundations and practical implementations of Mixture of Experts, I recommend the following papers:
-
-*   **arXiv:1701.06538** - "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer" by Shazeer et al. This is the seminal paper that introduced the modern MoE architecture with Top-K gating and load-balancing losses.
-*   **arXiv:2006.16668** - "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity" by Fedus et al. This paper simplifies the MoE architecture by using Top-1 routing, which is more efficient but requires careful load balancing.
-*   **arXiv:2202.08906** - "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding" by Lepikhin et al. This paper discusses the practical challenges of implementing MoE at scale, including sharding and communication overhead.
-
-These papers provide the mathematical and engineering insights necessary to understand why the mechanisms we see in ComfyUI are designed the way they are.
-
+- [Shazeer et al. 2017. Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer](https://arxiv.org/abs/1701.06538)
+- [Fedus et al. 2021. Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity](https://arxiv.org/abs/2101.03961)
+- [ComfyUI v0.43.0, comfy/ldm/hidream/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/hidream/model.py)
+- [ComfyUI v0.43.0, comfy/ldm/hunyuan3dv2_1/hunyuandit.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/hunyuan3dv2_1/hunyuandit.py)
+- [ComfyUI v0.43.0, comfy/text_encoders/gpt_oss.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/gpt_oss.py)

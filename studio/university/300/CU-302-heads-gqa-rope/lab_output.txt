@@ -1,8 +1,20 @@
-RESULT split_merge_identity = True
-RESULT mha_total_params = 192
-RESULT gqa_total_params = 128
-RESULT kv_reduction_ratio = 2
-RESULT rope_norm_preserved = True
-RESULT rope_relative_pos_score1 = -1.38599
-RESULT rope_relative_pos_score2 = -1.38599
-RESULT rope_relative_pos_equal = True
+width 64, 8 heads -> 8 heads of width 8, split then join is identical: True
+8 query heads, 4 key/value heads: output (1, 8, 6, 8), heads 0 and 1 share keys: True, heads 1 and 2 share keys: False
+
+projection weights for one block, Lumina 2 sizes (dim 2304, head width 96, from model_detection.py)
+key/value heads   weights        relative
+24                15,925,248     1.000
+12                10,616,832     0.667
+8                 8,847,360      0.556
+4                 7,077,888      0.444
+the attention matrix is still one per query head: 24 of them, whatever kv is
+
+length before 9.869930, after rotating to position 500 9.869930
+query at  key at  gap  score with RoPE  score with added position
+0         3       3    -15.734306       36.905059
+10        13      3    -15.734306       28.187126
+500       503     3    -15.734306       20.093070
+0         40      40   -16.555222       18.010450
+same gap, same RoPE score: True  same gap, same added-position score: False
+
+3 axes: score for offset (0, +2, -7) at two places in the grid: -20.359071 -20.359071

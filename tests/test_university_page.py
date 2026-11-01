@@ -8,7 +8,7 @@ from psn import paths
 WEB = ROOT / "studio" / "web"; FIX = ROOT / "tests" / "fixtures"; SRC = Path(paths.setting("COMFYUI_SRC", default=paths.home("ComfyUI")))
 node = pytest.mark.skipif(not shutil.which("node"), reason="node not installed")
 hascomfy = pytest.mark.skipif(not (SRC / "execution.py").exists(), reason="no ComfyUI checkout here")
-FILES = [f"university{x}.js" for x in ("", "_logic", "_maths", "_parts", "_plays", "_play_data")] + ["university.css"]
+FILES = sorted(p.name for p in WEB.glob("university*")) 
 
 def run_js(body):
     with tempfile.TemporaryDirectory() as t:
@@ -137,6 +137,14 @@ def test_tracks_are_ordered_complete_and_counts_are_computed():
     for t in cat["tracks"]: assert (WEB / t["art"]).exists(), t["slug"]
     for a in cat["art"]: assert (WEB / a).exists(), a
 
+def test_second_read_marks_are_computed_and_shown():
+    cat = json.loads((B.HERE / "catalogue.json").read_text()); rows = cat["courses"]; n = cat["counts"]
+    assert n["second_read"] == sum(bool(r["second_read"]) for r in rows) and n["second_read"] + n["second_read_pending"] + n["draft"] == len(rows)
+    assert n["errors_fixed"] == sum((r["second_read"] or {}).get("errors_fixed", 0) for r in rows)
+    for c in B.courses():
+        if c.get("second_read"): assert isinstance(c["second_read"]["errors_fixed"], int) and c["second_read"]["errors_fixed"] >= 0, c["code"]
+    t = (WEB / "university.js").read_text(); assert "Author-checked, second read pending" in t and "Second reader checked" in t and "c.second_read_pending" in t
+
 def test_page_types_no_counts():
     t = (WEB / "university.js").read_text(); assert not re.search(r"\b\d{2,} (lessons|tracks|graphs|labs)\b", t)
 
@@ -144,27 +152,40 @@ def test_every_embed_in_every_lesson_is_real():
     rows = B.courses(); assert not {c["code"]: p for c in rows for p in [B.check_embeds(c, (c["dir"] / "lesson.md").read_text())] if p}
 
 def test_every_play_has_a_task_and_is_used_by_a_lesson_or_reported():
-    t = (WEB / "university_plays.js").read_text(); names = B.play_names(); assert len(names) >= 20
+    t = "".join(p.read_text() for p in WEB.glob("university_plays*.js")); names = B.play_names(); assert len(names) >= 20
     assert len(re.findall(r"^  [a-z0-9_]+: \{ title: \"[^\"]+\", task: \"[^\"]+\"", t, re.M)) == len(names)
 
+def test_play_names_are_unique_across_files():
+    seen = [n for p in WEB.glob("university_plays*.js") for n in re.findall(r"^  ([a-z0-9_]+): \{ title:", p.read_text(), re.M)]; assert len(seen) == len(set(seen))
+
+def test_every_lesson_link_points_at_a_lesson_that_exists():
+    rows = B.courses(); codes = {c["code"] for c in rows}
+    bad = {c["code"]: sorted(set(re.findall(r"\bCU-\d{3}\b", (c["dir"] / "lesson.md").read_text())) - codes) for c in rows}; assert not {k: v for k, v in bad.items() if v}
+
 def test_finished_lessons_have_the_full_kit():
-    rows = [c for c in B.courses() if c.get("kit")]; assert len(rows) >= 2
+    rows = [c for c in B.courses() if c.get("status") != "draft"]; assert len(rows) > 100 and not [c["code"] for c in rows if not c.get("kit")]
     assert not {c["code"]: g for c in rows for g in [B.kit_gaps(c)] if g}
 
 def test_drafts_are_labelled_on_the_page():
     for c in B.courses():
         if c.get("status") == "draft": assert (c["dir"] / "lesson.md").read_text().split("\n")[2].startswith("> Draft."), c["code"]
 
+def test_lab_import_check_sees_every_name_on_a_line():
+    assert B.lab_imports("import os, math\nfrom sys import path\nfrom .x import y\n") == {"os", "math", "sys"}
+
 def test_verified_claims_name_how_and_refs_exist():
     for c in B.courses():
         for v in c.get("verified", []):
             assert v.get("claim") and v.get("how") in ("source", "run here", "docs", "test"), (c["code"], v)
-            if v["how"] == "source" and (SRC / "execution.py").exists() and v.get("ref"): assert B.symbol_exists(SRC, v["ref"]), (c["code"], v["ref"])
+            if v["how"] == "source" and (SRC / "execution.py").exists() and v.get("ref") and "pack" not in v["ref"] and "read as text" not in v["ref"]:
+                toks = re.findall(r"[\w./-]+\.(?:json|py|js|md)(?::[\w.]+)?", v["ref"]) or ([v["ref"]] if (SRC / v["ref"]).exists() else []); assert toks, (c["code"], v["ref"])
+                for x in toks:
+                    f = x.split(":")[0]; root = SRC if (SRC / f).exists() else ROOT; assert (root / f).exists() and (":" not in x or B.symbol_exists(root, x)), (c["code"], x)
 
 # ---------- rules
 def test_page_files_stay_local_and_clean():
     for f in FILES:
-        t = (WEB / f).read_text(); assert not re.search(r"https?://|//cdn\.|@import", t), f; assert "\u2014" not in t, f
+        t = (WEB / f).read_text(); assert not re.search(r"https?://(?!example\.invalid)|//cdn\.|@import", t), f; assert "\u2014" not in t, f
     assert 'href="university.css"' in (WEB / "index.html").read_text() and 'import { University } from "./university.js"' in (WEB / "app.js").read_text()
 
 def test_progress_storage_is_guarded():

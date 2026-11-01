@@ -1,0 +1,73 @@
+{
+ "code": "CU-374",
+ "title": "Quantized files: fp8, GGUF, and how loaders treat them",
+ "level": "300",
+ "prereq": [
+  "CU-211"
+ ],
+ "char": "bits",
+ "hook": "Same model, three kinds of file, three different roads through the loader. And why you merge first and quantize after, measured.",
+ "track": "performance",
+ "order": 45,
+ "graphs": [
+  "b_unet_fp8",
+  "d_merge_add_difference"
+ ],
+ "code_refs": [
+  "nodes.py:UNETLoader.load_unet",
+  "comfy/model_management.py:unet_dtype",
+  "comfy/model_management.py:supports_fp8_compute",
+  "comfy/ops.py:pick_operations",
+  "comfy/ops.py:get_disabled_quant_formats",
+  "comfy/quant_ops.py:QUANT_ALGOS",
+  "QUANTIZATION.md",
+  "folder_paths.py:supported_pt_extensions",
+  "main.py:gguf"
+ ],
+ "verified": [
+  {
+   "claim": "UNETLoader's weight_dtype offers default, fp8_e4m3fn, fp8_e4m3fn_fast and fp8_e5m2, and these set the dtype in model_options.",
+   "how": "source",
+   "ref": "nodes.py:UNETLoader.load_unet"
+  },
+  {
+   "claim": "unet_dtype keeps a file's fp8 if the card computes fp8, or if twice the parameters would not fit.",
+   "how": "source",
+   "ref": "comfy/model_management.py:unet_dtype"
+  },
+  {
+   "claim": "A native quantized file is a normal safetensors file with a comfy_quant tensor per module, holding JSON.",
+   "how": "source",
+   "ref": "QUANTIZATION.md"
+  },
+  {
+   "claim": "Core's model folders do not list .gguf, and main.py's warning recommends native formats to GGUF users.",
+   "how": "source",
+   "ref": "folder_paths.py, main.py"
+  },
+  {
+   "claim": "The GGUF pack we read defines its own layers on comfy.ops.manual_cast and decodes weights when a layer is called.",
+   "how": "source",
+   "ref": "calcuis/gguf pig.py, read as text and not run"
+  },
+  {
+   "claim": "Merge-order errors in the Lab come from a run here with real torch fp8 on synthetic weights.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Both graphs pass validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not run any GGUF pack, and we read only one. Others may differ.",
+  "The speed statement in main.py is the developers'. We did not test it.",
+  "The merge errors are on synthetic weights with fp8 and a single scale. Pictures, and finer formats, were not tested."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

@@ -1,0 +1,12 @@
+queued: 00000000-0000-4000-8000-000000000000  errors: []
+finished after polls: 2  status: success True
+  node 2: output  subfolder 'university'  filename first_00001_.png
+  node 3: temp    subfolder ''            filename ComfyUI_temp_abc_00001_.png
+downloaded: b'\x89PNG'
+
+too wide: None
+prompt_outputs_failed_validation
+  node 1 EmptyImage: value_bigger_than_max (width)
+
+my own id MY-JOB-1: ['invalid_prompt_id']
+my own id, a real UUID: 12345678-1234-4234-8234-1234567890ab

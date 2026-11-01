@@ -1,2 +1,20 @@
-RESULT final_color = 0.5 0.25 0.125
-RESULT transmittance = 1 0.5 0.25
+three slices, alpha 0.5: colour [0.5, 0.25, 0.125]  transmittance [1.0, 0.5, 0.25]  background keeps 0.125
+
+ray through fog, exact opacity 0.864665
+samples per ray   opacity
+5                 0.909282
+7                 0.819908
+16                0.864665
+64                0.864665
+192               0.864664
+
+a thin wall, 0.04 thick, density 200, seen through evenly spaced samples:
+  16 samples: opacity 0.0000
+  64 samples: opacity 0.0000
+ 128 samples: opacity 1.0000
+ 256 samples: opacity 0.9981
+ 512 samples: opacity 0.9999
+
+NeRF at 800 x 800, 192 samples a ray: 122,880,000 network queries per image. Splats: no network at render time, one projection per Gaussian
+three Gaussians at depths 2, 1, 3, sorted before blending: [0.25, 0.5, 0.125] (the nearest colour wins most)
+unsorted, in stored order: [0.5, 0.25, 0.125]

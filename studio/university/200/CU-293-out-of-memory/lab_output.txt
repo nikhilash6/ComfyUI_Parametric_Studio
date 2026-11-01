@@ -1,0 +1,24 @@
+minimum_inference_memory: 1.19 GB
+card  8 GB: maximum_vram_for_weights  5.85 GB
+card 12 GB: maximum_vram_for_weights  9.37 GB
+card 24 GB: maximum_vram_for_weights 19.93 GB
+
+VAE decode: batch_number = int(free / memory_used), at least 1
+free 8 GB, 1.5 GB per latent: 5 at a time
+free 8 GB, 3.0 GB per latent: 2 at a time
+free 2 GB, 3.0 GB per latent: 1 at a time
+
+  whole decode
+  Warning: Ran out of memory when regular VAE decoding, retrying with tiled VAE decoding.
+  tiled decode
+
+upscale model, the largest tile that fits is 128: ([512, 256, 128], 'ok')
+nothing fits: ([512, 256, 128], 'raises the error')
+
+tiled decode of a 1024 by 1024 image, default tiles: 9 + 7 + 7 = 23 tile decodes
+VAEDecodeTiled at its defaults, 512 and 64 pixels, so tile 64 and overlap 8: 9 + 5 + 5 = 19 tile decodes
+
+cond and uncond in one call or two: 2 conds at 3 GB each
+free 12 GB: 2 at a time
+free  8 GB: 1 at a time
+free  4 GB: 1 at a time

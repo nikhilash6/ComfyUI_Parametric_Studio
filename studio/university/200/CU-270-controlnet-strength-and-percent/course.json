@@ -1,0 +1,62 @@
+{
+ "code": "CU-270",
+ "title": "ControlNet strength, start and end percent",
+ "level": "200",
+ "prereq": [
+  "CU-214"
+ ],
+ "char": "graph",
+ "hook": "Why end_percent 0.5 is not half your steps, why a ControlNet can switch off completely at low denoise, and what strength really multiplies.",
+ "track": "control",
+ "order": 12,
+ "kit": true,
+ "graphs": [
+  "sd15_controlnet"
+ ],
+ "code_refs": [
+  "nodes.py:ControlNetApplyAdvanced.apply_controlnet",
+  "comfy/controlnet.py:ControlBase.control_merge",
+  "comfy/controlnet.py:ControlNet.get_control",
+  "comfy/controlnet.py:ControlBase.pre_run",
+  "comfy/samplers.py:pre_run_control",
+  "comfy/model_sampling.py:ModelSamplingDiscrete.percent_to_sigma",
+  "comfy/model_sampling.py:ModelSamplingDiscreteFlow.percent_to_sigma",
+  "comfy/samplers.py:KSampler.set_steps"
+ ],
+ "verified": [
+  {
+   "claim": "Percent becomes a noise level with percent_to_sigma, and a step skips the ControlNet when its sigma is above the start level or below the end level.",
+   "how": "source",
+   "ref": "comfy/controlnet.py:ControlNet.get_control"
+  },
+  {
+   "claim": "The on-step counts per scheduler in the lab equal those from ComfyUI's own calculate_sigmas and percent_to_sigma on an SD 1.x sampling object.",
+   "how": "run here",
+   "ref": "comfy/samplers.py:calculate_sigmas"
+  },
+  {
+   "claim": "At denoise 0.5 and end_percent 0.5 the first sigma, 1.548, is below the end level, 1.616, so no step runs the ControlNet.",
+   "how": "run here",
+   "ref": "comfy/model_sampling.py:ModelSamplingDiscrete.percent_to_sigma"
+  },
+  {
+   "claim": "Strength multiplies each residual, and a chained ControlNet adds its residuals to the earlier one's.",
+   "how": "source",
+   "ref": "comfy/controlnet.py:ControlBase.control_merge"
+  },
+  {
+   "claim": "Strength 0 returns the conditioning unchanged, and the node writes control into both positive and negative.",
+   "how": "source",
+   "ref": "nodes.py:ControlNetApplyAdvanced.apply_controlnet"
+  },
+  {
+   "claim": "sd15_controlnet passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We ran no ControlNet model for this lesson, so the lesson says nothing measured about how pictures change with strength or window. The advice to try lower end values is common practice, not a result of ours.",
+  "What a ControlNet does at strength above 1 in a picture is untested here. The code only multiplies."
+ ]
+}

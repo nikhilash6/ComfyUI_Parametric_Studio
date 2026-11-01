@@ -1,0 +1,56 @@
+{
+ "code": "CU-264",
+ "title": "Changing the prompt over time",
+ "level": "200",
+ "prereq": [
+  "CU-260",
+  "CU-206"
+ ],
+ "char": "attn",
+ "hook": "start and end percent are not percent of your steps. They are points on the model's noise scale, so end 0.5 can be 9 of 20 steps, or 17. And a gap in your ranges leaves steps with no prompt at all.",
+ "code_refs": [
+  "nodes.py:ConditioningSetTimestepRange.set_range",
+  "comfy/model_sampling.py:ModelSamplingDiscrete.percent_to_sigma",
+  "comfy/model_sampling.py:ModelSamplingDiscreteFlow.percent_to_sigma",
+  "comfy/samplers.py:calculate_start_end_timesteps",
+  "comfy/samplers.py:get_area_and_mult"
+ ],
+ "track": "conditioning",
+ "order": 9,
+ "kit": true,
+ "graphs": [
+  "sd15_cond_time"
+ ],
+ "verified": [
+  {
+   "claim": "The node only writes start_percent and end_percent.",
+   "how": "source",
+   "ref": "nodes.py:ConditioningSetTimestepRange.set_range"
+  },
+  {
+   "claim": "The lab's percent_to_sigma equals the real discrete and flow functions at the percents tried, on a CPU.",
+   "how": "test",
+   "ref": "Our comparison, v0.43.0"
+  },
+  {
+   "claim": "calculate_start_end_timesteps turns percents into sigmas, and get_area_and_mult skips an entry whose range doesn't contain the step's sigma.",
+   "how": "source",
+   "ref": "comfy/samplers.py"
+  },
+  {
+   "claim": "A step with no active entry gets a zero prediction for that branch.",
+   "how": "source",
+   "ref": "comfy/samplers.py:_calc_cond_batch"
+  },
+  {
+   "claim": "A second range node replaces the first one's values.",
+   "how": "test",
+   "ref": "Real nodes on a CPU, v0.43.0"
+  }
+ ],
+ "unchecked": [
+  "We have no render of this graph, so no picture shows the switch. We've listed it as wanted.",
+  "We expect a gap to damage the picture, from reading the code. We didn't render a gap.",
+  "That early steps set layout and later steps set detail is the common description and fits CU-250's render. We did not test it for this lesson."
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "code": "CU-350",
+ "title": "MiniMax Music 3, node by node",
+ "level": "300",
+ "questions": [
+  {
+   "q": "Why does the text encode node take so long for Music 3?",
+   "options": [
+    "It runs a language model in a loop that generates audio codes frame by frame, 25 frames a second of music",
+    "It downloads the lyrics",
+    "It loads the VAE",
+    "It runs the KSampler early"
+   ],
+   "answer": "It runs a language model in a loop that generates audio codes frame by frame, 25 frames a second of music",
+   "why": "encode_token_weights calls generate in ar.py, which samples codes in a loop and returns the hidden states as conditioning."
+  },
+  {
+   "q": "What is the seconds output of MiniMaxMusic3TextEncode?",
+   "options": [
+    "The length the model actually produced, which may be below max_duration",
+    "A copy of max_duration",
+    "The time the node took",
+    "The number of sampling steps"
+   ],
+   "answer": "The length the model actually produced, which may be below max_duration",
+   "why": "It is conditioning[0][0].shape[1] / 25. The loop can stop early when it samples a stop token."
+  },
+  {
+   "q": "You type a longer value into the empty latent than the seconds output. What happens to the extra part?",
+   "options": [
+    "The DiT pads the condition with zeros, so that end has no guidance",
+    "The node raises an error",
+    "The song repeats",
+    "The extra is removed before sampling"
+   ],
+   "answer": "The DiT pads the condition with zeros, so that end has no guidance",
+   "why": "In MiniMaxMusic3DiT.forward, a condition shorter than x is padded with zeros."
+  },
+  {
+   "q": "How are the 128 latent channels used by the decoder?",
+   "options": [
+    "They fold into 64 for each stereo channel",
+    "All 128 go to one mono signal",
+    "128 is the number of mel bands",
+    "They are 128 separate instruments"
+   ],
+   "answer": "They fold into 64 for each stereo channel",
+   "why": "MiniMaxMusic3DAV.decode reshapes [B, 128, L] to [2B, 64, L]."
+  },
+  {
+   "q": "What happens to the tag [CHORUS] in the lyrics before tokenizing?",
+   "options": [
+    "It goes on its own line, in lower case",
+    "It's removed",
+    "It's sung as a word",
+    "It becomes a caption"
+   ],
+   "answer": "It goes on its own line, in lower case",
+   "why": "normalize_lyrics splits on bracket tags, lowercases them and joins with line breaks. The lab prints [chorus]."
+  },
+  {
+   "q": "The graph has two CFG settings at 1.7. What do they act on?",
+   "options": [
+    "cfg_scale on the code-generating loop, and cfg on the DiT's sampling",
+    "Both act on the DiT",
+    "Both act on the language model",
+    "One is for each stereo channel"
+   ],
+   "answer": "cfg_scale on the code-generating loop, and cfg on the DiT's sampling",
+   "why": "cfg_scale goes into generate, in ar.py, and KSampler's cfg guides the flow model."
+  }
+ ]
+}

@@ -1,0 +1,125 @@
+{
+ "meta": {
+  "title": "Two LoRAs, denoiser only",
+  "about": "LoraLoaderModelOnly never touches the text encoder. Chain them and pass the model along.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader.",
+   "Two LoRAs for SD 1.5 in models/loras, made by you or by someone you trust."
+  ],
+  "packs": [],
+  "notes": {
+   "2": "Patches the denoiser only. Text-encoder keys in the file show up in the log as not loaded.",
+   "3": "Takes the MODEL from the node before. Their changes add up.",
+   "4": "The CLIP comes straight from the checkpoint here. That is correct for a model-only loader."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "LoraLoaderModelOnly",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "lora_name": "your_lora.safetensors",
+    "strength_model": 0.8
+   }
+  },
+  "3": {
+   "class_type": "LoraLoaderModelOnly",
+   "inputs": {
+    "model": [
+     "2",
+     0
+    ],
+    "lora_name": "your_other_lora.safetensors",
+    "strength_model": 0.5
+   }
+  },
+  "4": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "5": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "6": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "7": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "3",
+     0
+    ],
+    "seed": 424242,
+    "steps": 20,
+    "cfg": 7.0,
+    "sampler_name": "euler",
+    "scheduler": "karras",
+    "denoise": 1.0,
+    "positive": [
+     "4",
+     0
+    ],
+    "negative": [
+     "5",
+     0
+    ],
+    "latent_image": [
+     "6",
+     0
+    ]
+   }
+  },
+  "8": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "7",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "9": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "8",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

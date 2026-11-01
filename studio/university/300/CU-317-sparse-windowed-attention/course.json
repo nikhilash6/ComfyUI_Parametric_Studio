@@ -2,13 +2,57 @@
  "title": "Sparse and windowed attention",
  "level": "300",
  "char": "attn",
- "hook": "Discover how limiting attention to local windows and sparse patterns drastically reduces computational cost while preserving spatial context.",
+ "hook": "Limit who attends to whom. Cost falls from tokens squared to tokens times a constant, and reach is what you pay with.",
  "code": "CU-317",
  "prereq": [
   "CU-304"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/ldm/sam3/sam.py:window_partition",
+  "comfy/ldm/sam3/sam.py:window_unpartition",
+  "comfy/ldm/sam3/sam.py:Block",
+  "comfy/ldm/seedvr/model.py:make_shifted_720Pwindows_bysize",
+  "comfy/ldm/trellis2/model.py:SparseMultiHeadAttention",
+  "comfy/ldm/modules/attention.py:attention_sub_quad",
+  "comfy/ldm/wan/model.py:window_size"
+ ],
  "track": "architecture",
- "order": 70
+ "order": 70,
+ "graphs": [
+  "hunyuan3d_mesh"
+ ],
+ "verified": [
+  {
+   "claim": "window_partition pads and reshapes into windows, and the lab's rule matched it on a CPU.",
+   "how": "run here",
+   "ref": "comfy/ldm/sam3/sam.py:window_partition"
+  },
+  {
+   "claim": "The SeedVR window function offsets windows by a half.",
+   "how": "source",
+   "ref": "comfy/ldm/seedvr/model.py:make_shifted_720Pwindows_bysize"
+  },
+  {
+   "claim": "Sparse attention takes SparseTensor input.",
+   "how": "source",
+   "ref": "comfy/ldm/trellis2/model.py:SparseMultiHeadAttention"
+  },
+  {
+   "claim": "Fixed windows stay at 64 tokens and shifted ones reach 1024 by layer 8.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Titles from the arXiv API; these replace the draft's wrong Longformer and Trellis citations.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2004.05150"
+  }
+ ],
+ "unchecked": [
+  "attention_sub_quad's use of chunks is from reading its function name, its file sub_quadratic_attention.py and a brief look at the call, not a full read.",
+  "Wan's window_size being unused comes from reading its value (-1, -1) in constructors, and we did not grep every model subclass.",
+  "The graph is a stand-in for 3D data. Hunyuan3D 2 may not use sparse tokens. It is shown so that you can see where 3D models sit, nothing more.",
+  "We did not run a real windowed model."
+ ],
+ "kit": true
 }

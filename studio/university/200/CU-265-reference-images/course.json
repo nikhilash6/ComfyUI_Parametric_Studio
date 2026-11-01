@@ -1,0 +1,73 @@
+{
+ "code": "CU-265",
+ "title": "Reference images: CLIP vision, unCLIP and style models",
+ "level": "200",
+ "prereq": [
+  "CU-260",
+  "CU-262"
+ ],
+ "char": "attn",
+ "hook": "Core has two doors for a picture. A style model adds tokens to the prompt. unCLIP changes the model's global vector. CLIP vision makes the numbers for both, and it isn't a model that generates anything.",
+ "code_refs": [
+  "nodes.py:CLIPVisionEncode.encode",
+  "nodes.py:StyleModelApply.apply_stylemodel",
+  "nodes.py:unCLIPConditioning.apply_adm",
+  "nodes.py:unCLIPCheckpointLoader",
+  "comfy/clip_vision.py:ClipVisionModel.encode_image",
+  "comfy/sd.py:StyleModel.get_cond",
+  "comfy/sd.py:load_style_model",
+  "comfy/model_base.py:unclip_adm",
+  "comfy/model_base.py:sdxl_pooled",
+  "comfy/ldm/flux/redux.py:ReduxImageEncoder"
+ ],
+ "track": "conditioning",
+ "order": 30,
+ "kit": true,
+ "graphs": [
+  "c_unclip",
+  "c_style_redux"
+ ],
+ "verified": [
+  {
+   "claim": "CLIPVisionEncode returns an output with last_hidden_state, image_embeds and penultimate_hidden_states.",
+   "how": "source",
+   "ref": "comfy/clip_vision.py:encode_image"
+  },
+  {
+   "claim": "StyleModelApply concatenates the style model's output to the text tensor along tokens.",
+   "how": "source",
+   "ref": "nodes.py:StyleModelApply.apply_stylemodel"
+  },
+  {
+   "claim": "unCLIPConditioning adds to an unclip_conditioning list in the dict, and returns the input unchanged at strength 0.",
+   "how": "source",
+   "ref": "nodes.py:unCLIPConditioning.apply_adm"
+  },
+  {
+   "claim": "load_style_model picks StyleAdapter or the Redux encoder from the file's keys.",
+   "how": "source",
+   "ref": "comfy/sd.py:load_style_model"
+  },
+  {
+   "claim": "Redux maps 1152 numbers per token to 4096.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/redux.py"
+  },
+  {
+   "claim": "The SD 2.1 unCLIP class and SDXL use the key, through unclip_adm and sdxl_pooled.",
+   "how": "source",
+   "ref": "comfy/model_base.py"
+  },
+  {
+   "claim": "The flux_redux render used core's StyleModelApply, with a pack's sampler, on FLUX.1 schnell.",
+   "how": "run here",
+   "ref": "studio/web/res4lyf_renders/results.json and its graph"
+  }
+ ],
+ "unchecked": [
+  "We didn't run c_unclip or c_style_redux. They pass validation only, and the model file names in them are examples.",
+  "The vision model's token counts in the lab are stand-ins. Real counts depend on the vision model.",
+  "We read the attn_bias path but don't claim what it does to a picture.",
+  "We describe the core nodes only. IP-Adapter is a separate paper and a third-party pack, and CU-214 covers the idea."
+ ]
+}

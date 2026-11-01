@@ -8,13 +8,64 @@
  "char": "attn",
  "hook": "CLIP's loss as a table of similarities: what chance scores, how the temperature caps confidence, why more captions help, and zero-shot use on pairs never seen in training.",
  "code_refs": [
-  "comfy/clip_model.py:class CLIPTextModel_",
+  "comfy/clip_model.py:CLIPTextModel_",
   "comfy/clip_model.py:text_projection",
-  "comfy/clip_model.py:class CLIPVisionModelProjection",
-  "comfy/sd1_clip.py:class SD1CheckpointClipModel",
-  "comfy/sdxl_clip.py:class SDXLClipG",
-  "comfy/model_base.py:def encode_adm"
+  "comfy/clip_model.py:CLIPVisionModelProjection",
+  "comfy/sd1_clip.py:SD1CheckpointClipModel",
+  "comfy/sdxl_clip.py:SDXLClipG",
+  "comfy/model_base.py:encode_adm",
+  "nodes.py:CLIPSetLastLayer"
  ],
  "track": "history",
- "order": 50
+ "order": 50,
+ "graphs": [
+  "sdxl_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "Builds the causal mask with triu_(1) and takes the state at the end token.",
+   "how": "source",
+   "ref": "comfy/clip_model.py:CLIPTextModel_"
+  },
+  {
+   "claim": "The image tower has a visual_projection.",
+   "how": "source",
+   "ref": "comfy/clip_model.py:CLIPVisionModelProjection"
+  },
+  {
+   "claim": "Configured with return_projected_pooled False.",
+   "how": "source",
+   "ref": "comfy/sd1_clip.py:SD1CheckpointClipModel"
+  },
+  {
+   "claim": "Penultimate layer and return_projected_pooled True.",
+   "how": "source",
+   "ref": "comfy/sdxl_clip.py:SDXLClipG"
+  },
+  {
+   "claim": "SDXL joins the pooled vector with size and crop embeddings.",
+   "how": "source",
+   "ref": "comfy/model_base.py:encode_adm"
+  },
+  {
+   "claim": "The node that moves the stop layer.",
+   "how": "source",
+   "ref": "nodes.py:CLIPSetLastLayer"
+  },
+  {
+   "claim": "The chance losses, the zero-shot numbers and the temperature table print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title and date from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2103.00020"
+  }
+ ],
+ "unchecked": [
+  "The paper quotes and table numbers were read in an earlier audit of this lesson. In this pass we rechecked the arXiv titles and abstracts only.",
+  "How much a different stop layer changes a picture is not measured here. The lesson says only that it differs from the family's setting."
+ ],
+ "kit": true
 }

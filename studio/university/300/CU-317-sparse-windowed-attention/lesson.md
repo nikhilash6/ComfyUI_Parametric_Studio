@@ -1,95 +1,102 @@
 # CU-317 - Sparse and windowed attention
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Cut attention's cost by limiting who sees whom, count what that saves, and say what it gives up. Taught by Madame Attention.
 
-## Why this matters
+## The idea
 
-Welcome back. You have mastered the standard dot-product attention in CU-304. You know that for a sequence of length $L$, the computational cost is $O(L^2)$. This is the tax we pay for global context. Every token looks at every other token. It is elegant. It is also expensive.
+Full attention costs tokens squared (CU-301). Two ways around this.
 
-In modern architectures, whether you are running SDXL, SD3, or 3D generation models like Trellis2, this quadratic scaling becomes a bottleneck. We need to be selective. We need to decide who attends to whom. This lesson covers **Sparse** and **Windowed** attention. These are not just optimizations; they are architectural choices that alter the very structure of the attention matrix. We trade some global connectivity for computational efficiency and memory savings. If you cannot manage this trade-off, you cannot build scalable generative systems.
+- **Windows.** Split the grid into blocks. A token attends only inside its block. Swin Transformer (Liu et al. 2021) made this common in vision, and shifted the blocks between layers so information could cross borders.
+- **Sparse tokens.** Don't make a token for empty space at all. In 3D, most of a volume is empty, so only the occupied cells become tokens.
 
-## The intuition
+A third thing has a similar name but saves nothing by itself. **A mask** on full attention gets the same output as windows, but the backend may still build the full matrix.
 
-Imagine a room full of people (tokens). In full attention, everyone talks to everyone. It is chaotic and slow.
+## The mechanism
 
-**Windowed Attention** is like a conversation circle. Each person only talks to their immediate neighbors, say, the two people to their left and themselves. They ignore the rest of the room. This captures local context (syntax, local texture) but misses long-range dependencies (global structure, semantic consistency).
+With n tokens and window size w, per layer:
 
-**Sparse Attention** is more selective. It is not necessarily about neighbors. It might be that everyone only talks to the people wearing red shirts (even-indexed tokens), or only to specific "expert" tokens. This creates a structured sparsity in the attention matrix. It is efficient because we do not compute scores for pairs that are masked out.
+```
+full:     n × n pairs
+windows:  (n ÷ w²) windows × w² × w²  =  n × w²  pairs
+```
 
-The key insight: **Masking is the mechanism.** We do not change the formula $QK^T/\sqrt{d}$; we change what we feed into the softmax. We set disallowed positions to $-\infty$, so their weight becomes zero. The structure of the mask defines the flow of information.
+So at n = 16,384 and w = 8, the share is 64 ÷ 16,384, about 0.4% of full. Cost now grows in line with tokens.
 
-## Under the hood
+**What you give up is reach.** A fixed grid of windows can never pass information past its border, however many layers you stack. Two ways to fix it:
 
-Let $Q, K, V \in \mathbb{R}^{L \times d}$ be the query, key, and value matrices. $L$ is sequence length, $d$ is head dimension.
+- Shift the windows every second layer, as Swin does.
+- Use a few global layers. Longformer (Beltagy et al. 2020) adds global tokens to its sliding windows, for text. SAM 3's image encoder mixes windowed and full blocks.
 
-Standard attention computes:
-$$ A = \text{softmax}\left(\frac{QK^T}{\sqrt{d}}\right) $$
-$$ O = AV $$
+Try the reach for yourself.
 
-For sparse or windowed attention, we introduce a binary mask $M \in \{0, 1\}^{L \times L}$.
-- If $M_{ij} = 1$, token $i$ can attend to token $j$.
-- If $M_{ij} = 0$, token $i$ cannot attend to token $j$.
-
-We modify the score matrix $S = \frac{QK^T}{\sqrt{d}}$ by applying the mask:
-$$ S'_{ij} = \begin{cases} S_{ij} & \text{if } M_{ij} = 1 \\ -\infty & \text{if } M_{ij} = 0 \end{cases} $$
-
-Then we compute:
-$$ A = \text{softmax}(S') $$
-$$ O = AV $$
-
-Because $\text{softmax}(-\infty) = 0$, the masked positions contribute nothing to the output. The weights for allowed positions are renormalized to sum to 1.
-
-**Windowed Mask:** For a window size $w$, $M_{ij} = 1$ if $i - w + 1 \leq j \leq i$. This creates a banded matrix.
-**Sparse Mask:** $M_{ij} = 1$ if $j$ satisfies a specific condition (e.g., $j \pmod 2 = 0$). This creates a column-wise sparsity.
-
-The computational savings come from not computing the full $L \times L$ matrix, or from using specialized kernels that skip zero-weight multiplications.
+{{play:windows}}
 
 ## In ComfyUI
 
-ComfyUI provides multiple attention backends to handle these variations efficiently. The core logic resides in `comfy/ldm/modules/attention.py`.
+**Windows.** `window_partition` and `window_unpartition` in `comfy/ldm/sam3/sam.py` are the plain form: reshape, pad, attend, restore. In `Block`, the attention runs with a window when `window_size` is set, and otherwise on the whole grid. The default image-encoder config has `window_size=24` with `global_att_blocks=(7, 15, 23, 31)`: most blocks are windowed, and four see everything.
 
-- `attention_basic`: Implements standard dot-product attention. This is the baseline.
-- `attention_sub_quad`: Implements sub-quadratic attention for memory efficiency. This is where sparse/windowed logic often lives, reducing the $O(L^2)$ cost.
-- `attention_flash`: Wrapper for Flash Attention implementations, which are optimized for memory and speed, often incorporating tiling and masking strategies.
-- `ComfyAttention`: A configurable module wrapper that manages attention backend selection. It decides which backend to use based on device capabilities and model requirements.
+**Shifted 3D windows.** `make_shifted_720Pwindows_bysize` in `comfy/ldm/seedvr/model.py` computes windows over time, height and width, with a half-window offset where a window is smaller than the grid. The SeedVR2 nodes are in `comfy_extras/nodes_seedvr.py`. This is in the same family as Swin's shift. We have no graph for it in this course.
 
-In 3D generation, such as the Trellis2 model (`comfy/ldm/trellis2`), sparsity is inherent to the data structure. The `SparseMultiHeadAttention` class implements sparse attention mechanisms specifically for efficient computation on sparse grids. Here, the "sparsity" is not just a mask on a dense matrix, but a fundamental property of the `SparseTensor` data structure, where only non-zero voxels are processed.
+**Sparse.** `SparseMultiHeadAttention` in `comfy/ldm/trellis2/model.py` works on a `SparseTensor`, where only occupied voxels are tokens.
 
-For video models like SAM3 (`comfy/ldm/sam3`), we see `SplitAttn` and `MemoryAttnLayer`. These modules manage attention over time and memory, often using masking to restrict attention to relevant frames or objects, effectively creating a sparse attention pattern over the temporal dimension.
+**Not this.** `attention_sub_quad` in `comfy/ldm/modules/attention.py` sounds like a window, but it's a memory-saving way to compute attention, through `sub_quadratic_attention.py`. Also Wan's `window_size=(-1, -1)` in `comfy/ldm/wan/model.py` is a setting that is not in use: tokens attend the whole video grid. Don't read those names as windows.
+
+For a graph, the 3D mesh one is the closest we have to sparse data, and it's a stand-in: see the unchecked list. It needs a Hunyuan3D 2 checkpoint.
+
+{{graph:hunyuan3d_mesh}}
+
+## What goes wrong
+
+- **Seams along block edges.** Without a shift or global step, information can't cross a border. If you write a windowed model and see a grid pattern, check that first.
+- **Sizes don't divide.** `window_partition` pads when the grid isn't a multiple of the window, and `window_unpartition` has to remove it. A hand-written version that forgets gives misaligned tokens.
+- **You mask, and expect a saving.** The lab shows that masked full attention and separate windows agree, at 256 against 64 pairs. A mask changes the output, not necessarily the cost.
+- **A sparse model runs out of memory anyway.** Occupied tokens still cost tokens squared. A denser object means many more pairs: 2% of 64³ is already 5,242 tokens.
+- **You compare only cost.** Models pick windows because of what they trained on. You can't switch a trained full-attention model to windows and expect the same pictures.
 
 ## Lab
 
-In this lab, we compare three attention mechanisms on a small sequence ($L=8, d=4$): Full, Windowed (size 2), and Sparse (even-indexed keys). We verify that the outputs differ and that the weights are correctly normalized.
+First, the partition and its inverse. We checked this rule against the real `window_partition` on a CPU, and the largest gap was 0.
 
-The lab prints the first element of the output vector and the first weight for each mechanism.
-
-```
-RESULT out_full[0,0,0] = -0.670553
-RESULT out_windowed[0,0,0] = -0.569248
-RESULT out_sparse[0,0,0] = -0.654069
-RESULT weights_full[0,0,0] = 0.14138
-RESULT weights_windowed[0,0,0] = 1
-RESULT weights_sparse[0,0,0] = 0.442288
+```text
+grid (1, 16, 16, 8) -> 16 windows of 4x4, back again identical: True
 ```
 
-**Analysis:**
-1.  `out_full[0,0,0] = -0.670553`: The baseline output. Token 0 attends to all 8 tokens.
-2.  `out_windowed[0,0,0] = -0.569248`: The output differs from full attention. This proves that restricting context changes the result.
-3.  `out_sparse[0,0,0] = -0.654069`: The sparse output is closer to full than windowed, but still distinct. This shows that the specific pattern of sparsity matters.
-4.  `weights_full[0,0,0] = 0.14138`: In full attention, token 0 distributes its attention across all 8 tokens. The weight for token 0 itself is ~0.14.
-5.  `weights_windowed[0,0,0] = 1`: In windowed attention with size 2, token 0 can only attend to tokens 0 and 1. However, the mask allows $j \in [0, 1]$. Wait, let's look at the mask logic: `start = max(0, i - window_size + 1)`. For $i=0$, `start=0`. `mask[0, 0:1]` is True. So token 0 only attends to token 0. Thus, the weight is 1. This proves the window is causal and local.
-6.  `weights_sparse[0,0,0] = 0.442288`: In sparse attention, token 0 attends to all even-indexed tokens (0, 2, 4, 6). There are 4 such tokens. The weight is ~0.44, which is higher than the full attention weight (~0.14) because the attention is concentrated on fewer keys. This proves the sparsity pattern alters the weight distribution.
+Now the counts.
 
-## Common mistakes
+```text
+grid side  tokens    full pairs        window 8 pairs   share of full
+32         1,024     1,048,576         65,536           0.0625
+64         4,096     16,777,216        262,144          0.0156
+128        16,384    268,435,456       1,048,576        0.0039
+256        65,536    4,294,967,296     4,194,304        0.0010
+window pairs grow with the tokens (n x 64). full pairs grow with the square of the tokens.
+```
 
-1.  **Forgetting to renormalize:** If you mask out positions but do not apply softmax to the masked scores, the weights will not sum to 1. Always apply `masked_fill` with $-\infty$ before `softmax`.
-2.  **Assuming sparsity is always faster:** If your hardware does not support sparse matrix multiplication efficiently, a dense matrix with many zeros might be slower than a full dense matrix due to overhead. Use `attention_sub_quad` or `attention_flash` which are optimized for these patterns.
-3.  **Ignoring positional encoding:** Sparse and windowed attention break the assumption that all tokens are equally distant. You must use appropriate positional encodings (like RoPE, seen in `apply_rope_memory` in SAM3) to ensure the model understands the relative positions of the tokens it *can* see.
-4.  **Confusing data sparsity with attention sparsity:** In Trellis2, the data is sparse (`SparseTensor`). In standard 2D models, the data is dense, but the attention is sparse via masking. Do not mix these concepts.
+Next, reach. Start from the corner token, spread through a window each layer, and count how far it gets.
 
-## Go deeper
+```text
+layers  tokens reachable, fixed windows  tokens reachable, shifted every second layer   (grid 32x32, window 8, 1024 tokens)
+1       64                               64
+2       64                               144
+4       64                               400
+8       64                               1024
+12      64                               1024
+```
 
-- **arXiv:2205.14135**: "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness". This paper details the IO-aware algorithms that make sparse and windowed attention practical on modern GPUs.
-- **arXiv:2104.09864**: "Longformer: The Long-Document Transformer". This paper introduces sliding window and global attention patterns, which are foundational to the windowed strategies we discussed.
-- **arXiv:2303.09541**: "Trellis: Structured 3D Latent Diffusion for Large-Scale Text-to-3D Generation". This paper describes the sparse 3D representation and attention mechanisms used in the Trellis2 model.
+Fixed windows never leave the first block. Shifted ones cover the whole grid by layer 8, on this size. Now the mask and sparse counts.
 
+```text
+masked full attention against four separate windows: max difference 2.4e-07. pairs computed: 256 against 64
+3D grid 64^3 = 262,144 cells, 2% occupied: 5,242 tokens, 27,478,564 pairs against 68,719,476,736 if every cell were a token
+3D grid 128^3 = 2,097,152 cells, 1% occupied: 20,971 tokens, 439,782,841 pairs against 4,398,046,511,104 if every cell were a token
+```
+
+The occupancy percentages are examples we chose, not measurements of a real object.
+
+## Sources
+
+- [Liu et al. 2021. Swin Transformer: Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/abs/2103.14030)
+- [Beltagy et al. 2020. Longformer: The Long-Document Transformer](https://arxiv.org/abs/2004.05150)
+- [ComfyUI v0.43.0, comfy/ldm/sam3/sam.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/sam3/sam.py)
+- [ComfyUI v0.43.0, comfy/ldm/seedvr/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/seedvr/model.py)
+- [ComfyUI v0.43.0, comfy/ldm/trellis2/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/trellis2/model.py)

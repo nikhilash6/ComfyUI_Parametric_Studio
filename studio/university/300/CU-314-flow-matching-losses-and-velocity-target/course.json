@@ -1,12 +1,65 @@
 {
+ "code": "CU-314",
  "title": "Flow-matching losses and velocity targets",
  "level": "300",
+ "prereq": [
+  "CU-204"
+ ],
  "char": "denoise",
- "hook": "Learn how to compute the exact velocity field that guides your diffusion model from noise to data.",
- "code": "CU-314",
- "prereq": [],
- "status": "draft",
- "code_refs": [],
+ "hook": "The target for each training pair is simple. Why the loss never reaches zero, why the same error looks different in other units, and what ComfyUI's own trainer really minimises.",
+ "code_refs": [
+  "comfy/model_sampling.py:CONST",
+  "comfy/model_sampling.py:time_snr_shift",
+  "comfy_extras/nodes_train.py:TrainSampler.fwd_bwd",
+  "comfy_extras/nodes_train.py:TrainSampler._generate_batch_sigmas",
+  "comfy/model_sampling.py:ModelSamplingDiscreteFlow.percent_to_sigma"
+ ],
  "track": "noise-latent",
- "order": 40
+ "order": 40,
+ "kit": true,
+ "graphs": [
+  "sd35_flow"
+ ],
+ "verified": [
+  {
+   "claim": "CONST mixes as sigma * noise + (1 - sigma) * latent and reads the clean estimate as x - sigma * output.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:CONST"
+  },
+  {
+   "claim": "TrainSampler compares the model's clean estimate with the latent, using a loss chosen from MSE, L1, Huber and SmoothL1.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py:TrainSampler.fwd_bwd"
+  },
+  {
+   "claim": "TrainSampler draws sigma with percent_to_sigma of a uniform number.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py:TrainSampler._generate_batch_sigmas"
+  },
+  {
+   "claim": "Least squares on the per-pair target has identical gradients to least squares on the marginal field.",
+   "how": "docs",
+   "ref": "Lipman et al. 2022, Theorem 2, as stated in CU-204"
+  },
+  {
+   "claim": "Esser et al. describe logit-normal timestep sampling with parameters m and s, and rf/lognorm(0.00, 1.00) ranks first in their table.",
+   "how": "docs",
+   "ref": "arXiv 2403.03206, PDF text read 2026-11-01"
+  },
+  {
+   "claim": "The ratio of clean-latent loss to velocity loss is sigma squared, on a perfect model.",
+   "how": "run here",
+   "ref": "assert in lab.py"
+  },
+  {
+   "claim": "sd35_flow passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The floors are for a one-dimensional mixture. A real model's floor is not known, and it depends on the data.",
+  "We read core's trainer and did not run a flow model through it for this lesson. That its weighting differs from any published recipe is arithmetic, and we have no result on whether it matters for pictures.",
+  "Whether a particular published trainer uses velocity loss is outside this lesson, since we did not read those trainers."
+ ]
 }

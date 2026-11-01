@@ -12,7 +12,7 @@ Rezende, Mohamed and Wierstra posted a closely related method on 16 January 2014
 
 ## The maths
 
-For any q the log-likelihood splits exactly into the lower bound L (eq. 3 of the paper) and a gap (eq. 2):
+For any q the log-likelihood splits exactly into the lower bound L and a gap (eq. 1 of the paper). Here L is written in the form of its eq. 3:
 
 ```
 log p(x) = E_q[ log p(x|z) ] − KL( q(z|x) ‖ p(z) )  +  KL( q(z|x) ‖ p(z|x) )
@@ -26,6 +26,23 @@ To train q by gradient you need the gradient of an expectation over q. The "usua
 ## In ComfyUI
 
 `VAEEncode` in `nodes.py` calls `vae.encode`, which reaches the encoder of an `AutoencoderKL`. These VAEs have `double_z` set, so the encoder ends in a `quant_conv` with twice the latent channels: for SD 1.x, 8 channels, which are 4 means and 4 log-variances. That is the paper's recognition model. `DiagonalGaussianDistribution` in `comfy/ldm/modules/distributions/distributions.py` splits them with `torch.chunk` and has the paper's draw, `sample()`, which returns mean + std · randn. But `AutoencoderKL` builds its `DiagonalGaussianRegularizer` with the default `sample=False`, which returns `posterior.mode()`, the mean. So VAE Encode in ComfyUI is deterministic: it computes the log-variance and drops it.
+
+Move q yourself, on the same model as the lab. Watch which number never changes.
+
+{{play:elbogap}}
+
+This graph is the recognition model and the decoder with nothing in between. Whatever differs between the two previews is what the autoencoder can't keep.
+
+{{graph:h_vae_roundtrip}}
+
+## What goes wrong
+
+- **You expect VAE Encode to give a new latent each run.** It doesn't. `AutoencoderKL` uses `DiagonalGaussianRegularizer` with `sample=False`, so it returns the mean. The variation in a generation comes from the sampler's noise.
+- **You expect a VAE round trip to be perfect.** It is lossy. CU-507 quotes the paper's table for the f = 8 model: a PSNR of 24.19. Fine text and small faces are the first things to check in the graph above.
+- **The picture comes back a little smaller.** `vae_encode_crop_pixels` trims each side to a multiple of the compression factor and centres the crop. So a picture 1027 wide comes back 1024 wide, for an ordinary 8 times VAE. Resize first if the edges matter.
+- **Wrong VAE, no error.** SD 1.x and SDXL latents both have 4 channels, so a mismatch passes every shape check. Their `scale_factor` values differ too (0.18215 and 0.13025 in `comfy/latent_formats.py`). An odd colour cast with no error message is worth checking against the model's own VAE.
+- **Out of memory only at the end.** Sampling fit, and decoding did not. Use `VAEDecodeTiled`, as in the `sd15_tiled_vae` graph.
+- **You blame the 2013 maths for all blur.** Squared error from an unsure decoder gives the average, as the lab shows, but modern autoencoders add perceptual and adversarial losses for that reason.
 
 ## Lab
 

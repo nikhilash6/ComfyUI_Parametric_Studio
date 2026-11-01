@@ -1,0 +1,62 @@
+{
+ "code": "CU-230",
+ "title": "KSampler, field by field",
+ "level": "200",
+ "questions": [
+  {
+   "q": "You lower denoise from 1 to 0.5 with 20 steps. What happens to the number of model calls?",
+   "options": [
+    "It halves",
+    "It stays the same",
+    "It doubles",
+    "It drops to zero"
+   ],
+   "answer": "It stays the same",
+   "why": "KSampler.set_steps builds a longer schedule and keeps the last 20 steps. The lab shows 40 evaluations in both rows."
+  },
+  {
+   "q": "Your negative prompt seems to do nothing at CFG 1. Why?",
+   "options": [
+    "The negative pass is skipped at CFG 1",
+    "The text encoder failed",
+    "CFG 1 means no positive either",
+    "The seed is fixed"
+   ],
+   "answer": "The negative pass is skipped at CFG 1",
+   "why": "sampling_function sets the negative to None when cond_scale is close to 1, and uncond + (cond − uncond) × 1 is the positive alone anyway."
+  },
+  {
+   "q": "Which is a fair test of euler against heun?",
+   "options": [
+    "Both at 20 steps",
+    "Both at the same number of evaluations",
+    "Heun at 40 steps and euler at 20",
+    "Both at CFG 1 and 20 steps"
+   ],
+   "answer": "Both at the same number of evaluations",
+   "why": "Heun calls the model about twice per step, so equal steps gives it twice the work."
+  },
+  {
+   "q": "Why does the 4-channel EmptyLatentImage work with a 16-channel model?",
+   "options": [
+    "An all-zero latent is widened to the model's channel count",
+    "The model ignores channels",
+    "The VAE converts it",
+    "It does not work"
+   ],
+   "answer": "An all-zero latent is widened to the model's channel count",
+   "why": "fix_empty_latent_channels in comfy/sample.py repeats an all-zero latent to latent_format.latent_channels."
+  },
+  {
+   "q": "In the lab, changing the seed barely moved the mean result. What does that tell you?",
+   "options": [
+    "A new seed is a new draw from the same distribution",
+    "The seed has no effect",
+    "The model ignored the noise",
+    "Means are always equal"
+   ],
+   "answer": "A new seed is a new draw from the same distribution",
+   "why": "Each sample moved, by 0.384 RMS, and the average of the whole set stayed."
+  }
+ ]
+}

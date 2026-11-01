@@ -1,0 +1,73 @@
+{
+ "code": "CU-385",
+ "title": "How to pick between packs, and when core already does it",
+ "level": "300",
+ "questions": [
+  {
+   "q": "What is the first rung of the ladder?",
+   "options": [
+    "Does core already do it?",
+    "How many stars does it have?",
+    "Is the author famous?",
+    "Is it the newest?"
+   ],
+   "answer": "Does core already do it?",
+   "why": "Each pack adds code at every start. Check whether you need one."
+  },
+  {
+   "q": "You want plain perturbed-attention guidance. Which do you try first?",
+   "options": [
+    "Core PerturbedAttentionGuidance",
+    "sd-perturbed-attention",
+    "A new pack with more stars",
+    "Writing your own"
+   ],
+   "answer": "Core PerturbedAttentionGuidance",
+   "why": "Core has it. The pack answers a different need, such as token perturbation."
+  },
+  {
+   "q": "A pack's README claims 1.45× speed. What is that worth?",
+   "options": [
+    "A reason to try it and measure, on a baseline of your own",
+    "A guarantee for your card",
+    "Proof that core is slower everywhere",
+    "Nothing, READMEs are always false"
+   ],
+   "answer": "A reason to try it and measure, on a baseline of your own",
+   "why": "It's the author's number on the author's graph."
+  },
+  {
+   "q": "A pack has a good idea but patches every job. What fits best?",
+   "options": [
+    "Borrow the idea and write your own",
+    "Install it, since it works",
+    "Install it twice",
+    "Give up on the idea"
+   ],
+   "answer": "Borrow the idea and write your own",
+   "why": "Ideas are reusable, and the side effects stay in the pack."
+  },
+  {
+   "q": "Why do you write down what core lacks as one sentence?",
+   "options": [
+    "If you can't name the gap, you don't need a pack yet",
+    "It's required by the licence",
+    "The server asks for it",
+    "It makes the install faster"
+   ],
+   "answer": "If you can't name the gap, you don't need a pack yet",
+   "why": "It stops a vague want from becoming a new dependency."
+  },
+  {
+   "q": "Why not run two step caches on one model?",
+   "options": [
+    "Both patch the same forward path, and results can change with no error",
+    "They share a licence",
+    "They double the speed, which is too fast",
+    "ComfyUI refuses to start"
+   ],
+   "answer": "Both patch the same forward path, and results can change with no error",
+   "why": "Test one at a time."
+  }
+ ]
+}

@@ -4,49 +4,59 @@
  "level": "300",
  "questions": [
   {
-   "q": "According to the lesson, what is the primary distinction between the question asked by traditional diffusion models and the question asked by Flow Matching?",
+   "q": "What is the flow matching target for one training pair?",
    "options": [
-    "Diffusion asks 'how much noise is there?', while Flow Matching asks 'what is the instantaneous velocity required to move from the noise distribution to the data distribution?'",
-    "Diffusion asks 'what is the data?', while Flow Matching asks 'what is the noise?'",
-    "Diffusion asks 'what is the timestep?', while Flow Matching asks 'what is the loss?'",
-    "Diffusion asks 'how to sample?', while Flow Matching asks 'how to train?'"
+    "ε − x₀",
+    "x₀ − ε",
+    "x₀ only",
+    "The score"
    ],
-   "answer": "Diffusion asks 'how much noise is there?', while Flow Matching asks 'what is the instantaneous velocity required to move from the noise distribution to the data distribution?'",
-   "why": "The lesson states: 'Traditional diffusion models... ask \"how much noise is there?\"... Flow Matching (FM) changes the question... we ask \"what is the instantaneous velocity required to move from the noise distribution to the data distribution?\"'"
+   "answer": "ε − x₀",
+   "why": "The derivative of (1 − t) x₀ + t ε with respect to t. It does not change along the line."
   },
   {
-   "q": "In the context of the lab code convention described in the lesson, what does the variable $x_t$ represent when $t=0$ and when $t=1$?",
+   "q": "Why does the loss not reach zero even for a perfect model?",
    "options": [
-    "At $t=0$, $x_t$ is noise; at $t=1$, $x_t$ is data",
-    "At $t=0$, $x_t$ is data; at $t=1$, $x_t$ is noise",
-    "At $t=0$, $x_t$ is the velocity; at $t=1$, $x_t$ is the loss",
-    "At $t=0$, $x_t$ is the score; at $t=1$, $x_t$ is the gradient"
+    "Many pairs pass through the same point, so the model can only return their average",
+    "The optimizer is too slow",
+    "The learning rate is too low",
+    "Floats round"
    ],
-   "answer": "At $t=0$, $x_t$ is data; at $t=1$, $x_t$ is noise",
-   "why": "The lesson explains: 'The code defines `x_t = (1 - t) * data + t * noise`. This implies that at $t=0$, $x_t = data$, and at $t=1$, $x_t = noise$.'"
+   "answer": "Many pairs pass through the same point, so the model can only return their average",
+   "why": "The floor in the lab is above 1 at every t."
   },
   {
-   "q": "Based on the mathematical derivation provided in the lesson, what is the formula for the velocity target $v$ in terms of the data sample $x_0$ and the noise sample $x_1$?",
-   "options": null,
-   "answer": "v = x_1 - x_0",
-   "why": "The lesson derives: '$v = \\frac{d}{dt} x_t = ... = -x_0 + x_1 = x_1 - x_0$. So, the velocity target is simply the difference between the noise and the data.'"
-  },
-  {
-   "q": "What is the specific loss function used to train the model in Flow Matching, and what does it measure?",
+   "q": "A velocity error of δ at time t is what clean-latent error?",
    "options": [
-    "Cross-Entropy Loss, measuring the probability of the data class",
-    "Mean Squared Error (MSE), measuring the difference between the predicted velocity and the target velocity",
-    "Negative Log-Likelihood, measuring the log-probability of the noise",
-    "Binary Cross-Entropy, measuring the binary classification of noise vs. data"
+    "t · δ",
+    "(1 − t) · δ",
+    "δ",
+    "δ²"
    ],
-   "answer": "Mean Squared Error (MSE), measuring the difference between the predicted velocity and the target velocity",
-   "why": "The lesson states: 'The loss function is the Mean Squared Error (MSE) between the predicted velocity and the target velocity: $L = \\frac{1}{N} \\sum_{i=1}^{N} || v_\\theta(x_t, t) - (x_1 - x_0) ||^2$'"
+   "answer": "t · δ",
+   "why": "x̂₀ = x_t − t v̂."
   },
   {
-   "q": "According to the 'Common mistakes' section, why is it a mistake for a model to ignore the timestep $t$?",
-   "options": null,
-   "answer": "Because the velocity field depends on $t$, and the direction of the flow changes as you move along the path.",
-   "why": "The lesson lists under Common Mistakes: 'Ignoring the Timestep: The velocity field depends on $t$. A model that ignores $t$ will fail because the direction of the flow changes as you move along the path.'"
+   "q": "What does ComfyUI's TrainSampler compare?",
+   "options": [
+    "The model's clean estimate against the latent",
+    "The velocity against ε − x₀ directly",
+    "Noise against noise",
+    "Images in pixel space"
+   ],
+   "answer": "The model's clean estimate against the latent",
+   "why": "fwd_bwd calls loss_fn(x0_pred, x0). On a flow model with MSE that is σ² × velocity loss."
+  },
+  {
+   "q": "How does shift 3 change core's trainer's noise levels?",
+   "options": [
+    "About half the samples have σ above 0.75",
+    "All samples have σ below 0.25",
+    "Nothing",
+    "It only changes the seed"
+   ],
+   "answer": "About half the samples have σ above 0.75",
+   "why": "percent_to_sigma bends the uniform draw. The lab measures 0.499."
   }
  ]
 }

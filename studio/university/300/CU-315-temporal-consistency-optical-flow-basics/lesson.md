@@ -1,103 +1,98 @@
 # CU-315 - Temporal consistency and optical flow basics
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Say what optical flow measures, tell motion from flicker with a simple test, and say where ComfyUI uses each idea. Taught by Reel Rascal.
 
-**Instructor:** Reel Rascal
-**Course:** CU-315 Temporal consistency and optical flow basics
-**Level:** 300 (Architecture: the machinery inside the models)
-**Prerequisites:** CU-209
+## The idea
 
-*Clack-clack-clack.* Listen to that. That’s the sound of a film reel spinning at 24 frames per second. I’m Reel Rascal, and I don’t just watch movies; I count the frames. In this lesson, we are stripping away the magic of "AI video" to look at the raw machinery underneath. We are going to talk about **temporal consistency**. If your video flickers, it’s not because the model is "confused." It’s because the pixels didn’t move where they were supposed to. Let’s fix that.
+Between two frames, things change for two very different reasons. Something moved, or something changed. A camera pan changes nearly every pixel, and nobody calls it a fault. A brightness jump of 10% changes pixels far less, and everybody sees it.
 
-## Why this matters
+So counting changed pixels tells you little. You need to ask: after undoing the motion, what's left? That's the idea behind optical flow, and behind every useful flicker check.
 
-In static image generation, you care about spatial coherence: does the left edge of the cat match the right edge? In video, you have a new dimension: **time**. Temporal consistency is the promise that the world doesn’t teleport between frame $t$ and frame $t+1$.
+## What flow is
 
-If you generate a video where a character’s face changes shape every frame, or the background shimmers like heat haze, you have a temporal consistency failure. This is the enemy of immersion. For us architects, this isn’t just an aesthetic problem; it’s a structural one. The neural networks we build must understand that a pixel at $(x, y)$ in frame $t$ is likely related to a pixel at $(x', y')$ in frame $t+1$. If we ignore this relationship, we get flicker. If we enforce it, we get smooth motion. This lesson is about the fundamental unit of that relationship: **pixel displacement**.
+Optical flow is a field of two numbers per pixel, (u, v), saying where that pixel went in the next frame. It rests on one assumption, called brightness constancy: a point keeps its brightness as it moves.
 
-## The intuition
+```
+I(x + u, y + v, t + 1) = I(x, y, t)
+```
 
-Imagine you are watching a ball roll across a screen. In frame 1, the ball is at position $P_1$. In frame 2, it is at $P_2$. The "optical flow" is the vector that tells you how far and in what direction the ball moved.
+A plain frame difference isn't flow. It has one number per pixel, and it can't tell you where anything went. An earlier draft of this lesson confused the two.
 
-In a perfect, rigid world, every pixel in the ball moves by the exact same amount. If the ball moves 5 pixels to the right, every pixel in the ball shifts by +5 in the x-direction. This is **uniform flow**.
+Move the guess until the picture goes black:
 
-However, real video is messy. Objects rotate, deform, and occlude each other. But the core intuition remains: **temporal coherence is the minimization of unexpected change.** If a pixel changes value drastically between frames without a corresponding spatial shift, the brain perceives it as noise or flicker. Our goal in architecture is to ensure that the latent representations of consecutive frames are aligned in a way that respects this physical continuity.
+{{play:flow}}
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+## How flow gets computed
 
-Before we dive into complex neural networks, let’s define the math of displacement. We treat a video as a sequence of images $I_t(x, y)$, where $t$ is the time index, and $x, y$ are spatial coordinates.
+Two classic routes:
 
-The **optical flow field** $V(x, y)$ at a given location is a 2D vector $(u, v)$ that describes the displacement of the pixel from time $t$ to $t+1$.
+- **Search.** Try many shifts and keep the best. Simple and slow.
+- **Solve.** Assume small motion, and turn the equation above into a straight line: Ix u + Iy v + It = 0, where Ix and Iy are how brightness changes across the picture, and It how it changes over time. Solve by least squares over a window. That is Lucas-Kanade, and it works only while motion is small, as the lab shows.
 
-The fundamental constraint of temporal consistency is the **brightness constancy assumption** (simplified): the intensity of a moving pixel remains constant over time. Mathematically, this is expressed as:
-
-$$ I_{t+1}(x + u, y + v) = I_t(x, y) $$
-
-Where:
-*   $I_t(x, y)$ is the pixel intensity at time $t$.
-*   $I_{t+1}(x + u, y + v)$ is the pixel intensity at time $t+1$, shifted by the flow vector.
-*   $u$ is the horizontal displacement (x-flow).
-*   $v$ is the vertical displacement (y-flow).
-
-In our simplest case, if the entire image shifts by a constant amount, the flow is uniform. Let’s define the flow tensor $F$ as the difference between two frames:
-
-$$ F = I_{t+1} - I_t $$
-
-If $I_{t+1}$ is just $I_t$ shifted, $F$ captures that shift. In our lab, we will compute this naive flow. Note that in real neural networks, we don’t just subtract pixels; we learn to predict $u$ and $v$ using convolutional layers that look at local neighborhoods. But the *goal* is always to satisfy that equation above. If the model fails to predict the correct $u, v$, the reconstructed $I_{t+1}$ will not match the actual next frame, resulting in error. This error, when summed over time, is what we perceive as flicker.
+Modern tools use a trained network. RAFT is one, and core ComfyUI can load it.
 
 ## In ComfyUI
 
-Now, where does this live in ComfyUI? We need to look at the video-specific modules.
+**No general flow node, but flow is there.** `OpticalFlowLoader` loads a RAFT checkpoint from `models/optical_flow`, and ComfyUI never downloads it for you. `VOIDWarpedNoise` uses flow to warp noise along the motion of a clip, for the VOID inpainting pipeline. That's the one core use we found.
 
-In `comfy/ldm/modules/diffusionmodules/model.py`, you will find `VideoConv3d` and `CarriedConv3d`. `VideoConv3d` is a standard 3D convolution that operates on the time, height, and width dimensions simultaneously. This is the first line of defense against temporal inconsistency; it forces the network to consider neighboring frames during the forward pass.
+**Causal convolution.** Video VAEs care about time in their own way. `VideoConv3d` pads `kernel_size - 1` frames before the clip and none after, so no output depends on a later frame. `CausalConv3d` in Wan's and in LTX's VAE code has the same goal. That's about the order of time, not about flow. CU-316 follows it through.
 
-More specifically, `CarriedConv3d` is a **causal** 3D convolution. "Causal" means it only looks at past and present frames, not future ones. This is critical for autoregressive video generation or when processing streams. It ensures that the temporal consistency is built from history forward, preventing "future leakage" which can cause artifacts.
+**Generated video isn't told about flow.** The starting noise has no correlation between frames (CU-218). Coherence comes from the model. Models in core don't get a flow field unless a node like the one above adds it.
 
-In the Cosmos implementation (`comfy/ldm/cosmos/cosmos_tokenizer/layers3d.py`), we see `CausalConv3d`. This layer is used in the `EncoderBase` and `DecoderBase` to handle the spatiotemporal patches. By using causal padding, the tokenizer ensures that the latent representation respects the temporal order of the video.
+Here's the simplest possible video: with no change between frames, flow is zero everywhere.
 
-Additionally, in `comfy/ldm/genmo/vae/model.py`, the `VideoVAE` uses `PConv3d` (3D convolution) and `DepthToSpaceTime` to rearrange spatial and temporal dimensions. This allows the VAE to compress the video in both space and time, but the underlying mechanism still relies on these 3D convolutions to maintain the link between frames.
+{{graph:nm_video}}
 
-*Note: Specific optical flow estimation nodes are not covered in our sources; the consistency is enforced architecturally via these 3D causal layers.*
+## What goes wrong
+
+- **Calling a frame difference "flow".** It has no direction. Use it to find change, and not motion.
+- **Judging flicker with a raw difference on a moving shot.** A pan scores far worse than a real strobe. Undo the motion first. CU-411 builds this into a score.
+- **Flow on big jumps.** Lucas-Kanade breaks: in the lab, a true motion of 8 pixels reads as 0.35. Real tools work coarse to fine or use a network.
+- **Flow on lighting changes.** Brightness constancy fails there, so the method finds motion that isn't there, or leaves a big residual. Fades and flashes aren't motion.
+- **Looking for the VOID nodes' model and not finding it.** ComfyUI won't fetch it. Put torchvision's RAFT-large format in `models/optical_flow`, as the loader's text says.
 
 ## Lab
 
-Let’s prove the concept with a tiny experiment. We will create two 2x2 grayscale images. `img1` is `[[1, 2], [3, 4]]` and `img2` is `[[2, 3], [4, 5]]`. Notice that every pixel in `img2` is exactly 1 unit higher than `img1`. This simulates a uniform brightness shift, which in a spatial context would be a uniform flow.
+A textured picture, moved by a known amount. First, what a difference can't tell you, and how a search recovers the truth:
 
-We compute the naive flow as `img2 - img1`.
-
-Here are the results from our lab run:
-
-```
-RESULT flow_mean = 1
-RESULT flow_std = 0
-RESULT flow_max = 1
-RESULT flow_min = 1
-RESULT flow_tensor = [[1.0, 1.0], [1.0, 1.0]]
+```text
+frame difference: 1 number per pixel, mean -0.0000, largest 0.504. True motion (+3.0, -1.5) cannot be read from it
+search over whole and half pixels: best motion (+3.0, -1.5), mean squared error left 0.000000
 ```
 
-Let’s break down what each line proves:
+Lucas-Kanade on the whole frame. Close for small motion, useless for large:
 
-1.  `RESULT flow_mean = 1`: The average displacement is 1.0. This confirms that the "motion" is consistent across the entire image. There are no outliers.
-2.  `RESULT flow_std = 0`: The standard deviation is 0. This is the key metric for **consistency**. A standard deviation of 0 means every single pixel moved by the exact same amount. In a real video, a low standard deviation in a region indicates rigid body motion, which is easy for a neural network to model. High standard deviation indicates complex deformation or noise.
-3.  `RESULT flow_max = 1`: The maximum displacement is 1.0. No pixel moved more than the average.
-4.  `RESULT flow_min = 1`: The minimum displacement is 1.0. No pixel moved less than the average.
-5.  `RESULT flow_tensor = [[1.0, 1.0], [1.0, 1.0]]`: This is the raw flow field. It is a uniform matrix. If this were a real video, the object would appear to move smoothly and rigidly. If the values were random, the object would appear to shimmer or dissolve.
+```text
+true motion   Lucas-Kanade over the whole frame
+(+0.3, -0.2)  ->  (+0.29, -0.19)
+(+1.0, +0.5)  ->  (+0.94, +0.44)
+(+3.0, -1.5)  ->  (+0.70, -0.53)
+(+8.0, +4.0)  ->  (+0.35, +0.09)
+```
 
-This lab demonstrates that **temporal consistency is a property of the flow field’s variance.** When the flow is uniform (low variance), the video is coherent. When the flow is erratic (high variance), the video flickers.
+The test that matters. Undo the best whole-pixel shift, then see what's left:
 
-## Common mistakes
+```text
+change between two frames   mean |difference|   left after the best whole-pixel shift
+camera pans 3 pixels        0.1036              0.0000
+brightness jumps 10%        0.0498              0.0498
+fine noise re-rolled        0.0405              0.0405
+still frame                 0.0000              0.0000
+```
 
-1.  **Ignoring Causality:** Using standard 3D convolutions that look at future frames during inference can cause "smearing" or artifacts because the model is cheating by looking ahead. Always use `CausalConv3d` or `CarriedConv3d` for real-time or sequential generation.
-2.  **Treating Time as Just Another Spatial Dimension:** While 3D convolutions treat time as a dimension, the physics of time are different. Time is sequential and irreversible. Architectures that treat time symmetrically (like some static image models) often fail to capture the directionality of motion, leading to "wobble" or "jitter."
-3.  **Over-relying on Attention Alone:** While attention mechanisms (like `VideoAttn` in Cosmos) help global consistency, they are computationally expensive and can miss local pixel-level displacements. You need local 3D convolutions to handle the fine-grained optical flow.
+The pan has the largest raw difference, and it leaves nothing. The brightness jump and the noise have smaller raw differences, and they stay. And a causal kernel against a centred one:
 
-## Go deeper
+```text
+an impulse at frame 4 through a 3-frame kernel:
+causal  output non-zero at frames [4, 5, 6]
+centred output non-zero at frames [3, 4, 5]
+```
 
-To understand the theoretical underpinnings of these architectures, look into the following papers:
+## Sources
 
-*   **arXiv:2303.14512** (Cosmos World Foundation Model): Details the use of causal 3D convolutions and DiT for video generation.
-*   **arXiv:2209.00796** (Genmo Video Generation): Discusses the asymmetric DiT and Video VAE architecture.
-*   **arXiv:2006.11239** (Latent Diffusion Models): The foundational paper for LDMs, which we extend to video in this course.
-
-*Clack-clack-clack.* Keep your flows uniform, your convolutions causal, and your frames consistent. Class dismissed.
-
+- [RAFT: Recurrent All-Pairs Field Transforms for Optical Flow](https://arxiv.org/abs/2003.12039)
+- [ComfyUI v0.43.0, comfy/ldm/modules/diffusionmodules/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/diffusionmodules/model.py)
+- [ComfyUI v0.43.0, comfy/ldm/wan/vae.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/wan/vae.py)
+- [ComfyUI v0.43.0, comfy/ldm/lightricks/vae/causal_conv3d.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/lightricks/vae/causal_conv3d.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_void.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_void.py)
+- [ComfyUI v0.43.0, comfy_extras/void_noise_warp.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/void_noise_warp.py)

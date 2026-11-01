@@ -1,0 +1,44 @@
+ports of ddim_uniform and linear_quadratic match the stored lists from ComfyUI's code: True
+ddim_uniform takes every 50th table entry from index 1, so its top is index 951 of 999: sigma 11.028, not 14.615
+ddim_uniform steps asked for and returned: [(20, 20), (25, 25), (30, 31)]
+
+SD and SDXL noise prediction, 20 steps
+scheduler         first    step 10   last before 0   steps above sigma 1.0
+simple            14.615   1.613     0.2230          13
+sgm_uniform       14.615   1.616     0.2255          13
+karras            14.615   1.091     0.0292          11
+exponential       14.615   0.554     0.0292          9
+ddim_uniform      11.028   1.376     0.0413          12
+beta              14.615   1.618     0.1114          13
+normal            14.615   1.481     0.0292          13
+linear_quadratic  14.615   14.249    2.6745          20
+kl_optimal        14.615   0.890     0.0292          10
+
+SD 3.5, flow, shift 3, 20 steps
+scheduler         first    step 10   last before 0   steps above sigma 0.5
+simple            1.000    0.750     0.1364          15
+sgm_uniform       1.000    0.751     0.1434          16
+karras            1.000    0.085     0.0030          4
+exponential       1.000    0.047     0.0030          3
+ddim_uniform      0.983    0.712     0.0060          15
+beta              1.000    0.751     0.0409          14
+normal            1.000    0.731     0.0089          15
+linear_quadratic  1.000    0.975     0.1830          17
+kl_optimal        1.000    0.392     0.0030          8
+
+renders on one seed, difference from the baseline, brightness, edge strength
+SDXL normal            0.0     87.4    13.35
+SDXL karras            23.26   86.5    14.86
+SDXL exponential       19.21   86.0    13.09
+SDXL sgm_uniform       13.19   87.5    13.64
+SDXL simple            13.28   87.5    13.56
+SDXL ddim_uniform      37.87   106.6   16.09
+SDXL beta              19.62   90.4    14.12
+SDXL linear_quadratic  34.74   75.6    22.11
+SDXL kl_optimal        28.79   77.1    11.78
+SD3.5 simple           0.0     94.9    11.27
+SD3.5 beta             39.32   92.1    14.3
+SD3.5 kl_optimal       34.89   96.5    7.85
+SD3.5 karras           37.0    95.3    7.9
+
+sgm_uniform and simple, mean gap between lists 0.0027; karras and exponential 0.6768; normal and karras 0.4432

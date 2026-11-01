@@ -1,92 +1,111 @@
 # CU-316 - Video VAEs and receptive fields
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Work out how far one output of a convolution stack can see, explain the first-frame rule from causal padding, and say what that means for tile overlap. Taught by Professor Latent.
 
-## Why this matters
+## The idea
 
-Welcome back to the compressed world. In CU-209, we learned that the VAE is not merely a compressor; it is a translator. It maps the high-dimensional, noisy chaos of pixel space into a smooth, low-dimensional latent manifold where diffusion models can operate efficiently. But there is a subtle, critical constraint governing this translation: **receptive fields**.
+One latent value in a video VAE was computed from some region of the input frames. That region is its receptive field. Nothing outside it can affect that value. Three everyday facts follow from this: why video lengths are 1 + k x m, why changing a late frame leaves early latents alone, and why tiles need overlap.
 
-In video generation, we are not just compressing space; we are compressing time. A single frame is a 2D slice, but a video is a 3D volume (Height, Width, Time). If the VAE’s encoder cannot "see" far enough across time or space, the latent representation will be fragmented. The decoder will struggle to reconstruct coherent motion because the latent codes lack the global context needed to understand how a pixel in frame 1 relates to a pixel in frame 10.
+## The formula
 
-This lesson focuses on the mathematical machinery that determines how far a single latent variable can "reach" into the original pixel data. We will dissect the accumulation of spatial and temporal coverage in deep convolutional stacks, specifically within the context of video VAEs like those found in the Lightricks LTX family. Understanding this is essential for debugging artifacts, understanding why certain resolutions fail, and appreciating the trade-offs between compression ratio and temporal coherence.
+A stack of layers, each with kernel k and stride s. Let j be the product of the strides so far, starting at 1. Then:
 
-## The intuition
+```
+r = 1 + sum over layers of (k - 1) x j
+```
 
-Imagine you are standing in a vast, dark forest (pixel space). You want to send a message to a friend in a nearby cave (latent space). You shout, but your voice only carries a short distance. If you stand in the middle of a clearing, your shout might reach the cave. But if you stand at the edge of a dense thicket, your voice is muffled.
+Each layer adds (k - 1) steps, measured in input samples, and j says how far apart its inputs are. With stride 1, you gain k - 1 per layer: slow growth. With stride 2, j doubles each time, so reach roughly doubles per layer. Set your own stack here:
 
-In a convolutional neural network, each layer acts like a listener who hears a small patch of the forest and passes a summary to the next listener. The first listener hears a 3x3 patch. The second listener hears a 3x3 patch of the *first listener's summary*. Because the first listener’s summary already contained information from a 3x3 area, the second listener effectively hears a larger area of the original forest.
+{{play:rf}}
 
-This is the **receptive field (RF)**. It is the region in the input volume that influences a single neuron in the output volume. In video VAEs, this field expands in three dimensions: height, width, and time. As we stack more convolutional layers, especially those with strides (which downsample), the RF grows exponentially. This growth is what allows the VAE to capture long-range temporal dependencies, like the trajectory of a ball across 100 frames, within a single latent token.
+The lab checks this formula by experiment, tracing which inputs reach one output. It matches on every stack.
 
-If the RF is too small, the latent space is "myopic." It sees local textures but misses global motion. If the RF is too large, the model may struggle to localize fine details, leading to blurring. The architecture of the VAE is a careful balancing act of kernel sizes, strides, and dilations to shape this field.
+## Time is different
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+In space, a convolution looks both ways. In time, video VAEs usually look only backward. In `VideoConv3d` and in Wan's `CausalConv3d`, padding goes before the clip and not after, so an output has no dependence on later frames. LTX's `CausalConv3d` has a `causal` flag and can run either way.
 
-The receptive field of a single convolutional layer is determined by its kernel size, dilation, and stride. For a single layer, the receptive field size $RF_1$ is:
+This produces the rule from CU-215. With padding of 2 before and stride 2, repeated twice, the output count is exactly `(n - 1) // 4 + 1`. The first frame gets a latent of its own, because nothing comes before it to group with. The lab confirms this with real `conv3d` calls, not arithmetic. The same stack shows no future leak: change frame 20 of 21, and only the last latent moves.
 
-$$RF_1 = (kernel\_size - 1) \times dilation + 1$$
+Why bother? It lets a VAE decode a long clip chunk by chunk, holding a small cache of past features, as Wan's `CausalConv3d` does with `cache_x`. That's why the Wan 2.2 decode estimate in `comfy/sd.py` has no frame count (CU-333).
 
-However, in a deep network, the RF accumulates. For a stack of $L$ layers, the total receptive field $RF_{total}$ is the sum of the contributions from each layer, weighted by the cumulative stride of the preceding layers. The standard formula for the cumulative receptive field with stride $s$ is:
+{{graph:wf_wan22_t2v}}
 
-$$RF_{total} = 1 + \sum_{i=0}^{L-1} (kernel\_size - 1) \times dilation \times (s^i)$$
+Follow the wire from `Wan22ImageToVideoLatent` to `VAEDecode`. The latent's first frame stands for one video frame, and the rest stand for four each.
 
-Where:
-*   $kernel\_size$ is the size of the convolutional filter (e.g., 3).
-*   $dilation$ is the spacing between kernel elements (usually 1).
-*   $s$ is the stride of the convolution (e.g., 2 for downsampling).
-*   $i$ is the layer index, starting from 0.
+## Why tiles need overlap
 
-In video VAEs, this calculation is applied independently for spatial dimensions (H, W) and the temporal dimension (T). Often, temporal strides are larger (e.g., 2 or 4) to compress time more aggressively than space. For example, in the `VideoVAE` implementation found in `comfy/ldm/lightricks/vae/causal_video_autoencoder.py`, the `Encoder` uses `ResnetBlock3D` and `CausalConv3d`. The `CausalConv3d` ensures that the temporal receptive field is causal (looking only at past and present frames, not future ones), which is crucial for real-time or autoregressive generation.
+When a tile is decoded alone, values within the receptive field radius of its edge are missing their neighbours, so they're wrong. Overlap gives every position a tile where it's far from the edge. So the overlap needs to be at least the radius. The lab shows this directly. With radius 3, error is large at overlaps 0 and 2, and gone at 4.
 
-The output spatial dimension $H_{out}$ after a convolution is calculated as:
+CU-217 covers the blending that hides what's left.
 
-$$H_{out} = \left\lfloor \frac{H_{in} + 2 \times padding - dilation \times (kernel\_size - 1) - 1}{stride} \right\rfloor + 1$$
+## What goes wrong
 
-This formula dictates how the input resolution shrinks as it moves through the encoder. The interplay between the shrinking spatial dimensions and the growing receptive field is what defines the "resolution" of the latent space.
-
-## In ComfyUI
-
-In ComfyUI, the specific implementation of these receptive fields is handled by the VAE classes within the model folders. For the Lightricks LTX models, the relevant code is located in `comfy/ldm/lightricks/vae/causal_video_autoencoder.py`. The `VideoVAE` class wraps the `Encoder` and `Decoder`. The `Encoder` utilizes `ResnetBlock3D` and `CausalConv3d` to process the video volume. The `CausalConv3d` class in `comfy/ldm/lightricks/vae/causal_conv3d.py` is specifically designed to handle the temporal dimension with causality, ensuring that the receptive field expands only forward in time.
-
-For Hunyuan Video, the VAE is found in `comfy/ldm/hunyuan_video/vae.py`, using `PixelShuffle2D` and `PixelUnshuffle2D` for spatial manipulation, though the temporal handling is integrated into the broader transformer flow. The specific receptive field calculations for these models are embedded in the layer definitions of their respective `Encoder` and `Decoder` classes.
+- **Treating a stride as a small change.** Each stride multiplies the reach of every later layer. A stack of six layers with three strides of 2 sees 29, where six plain layers see 13.
+- **Mixing up receptive field and output spacing.** r is how far one output sees. j is how far apart outputs sit. Both matter, and they grow differently.
+- **Off-by-one lengths.** The first-frame rule isn't a bug. Ask for 1 + k x m frames.
+- **Assuming the full region matters equally.** Real values fall off towards the edge of the region: the formula gives an outer limit, and what matters most is usually smaller. We read this as common knowledge and did not measure it here.
+- **Seams at a regular spacing with a tile overlap under the reach.** Raise the overlap until the seam stops changing.
+- **Copying advice across VAEs.** Some VAEs chunk for themselves. H3's ignores tile settings entirely.
+- **Applying a tiny kernel's numbers to a real VAE.** These stacks are plain convolutions. Real VAEs add attention and residual paths.
 
 ## Lab
 
-The lab demonstrates the mathematical accumulation of the receptive field and verifies the spatial dimension reduction using a simple 2D convolutional stack, which serves as a proxy for the spatial dimensions of a video VAE.
+The formula against an experiment that traces gradients:
 
-The lab code defines a kernel size of 3, stride of 2, and dilation of 1. It calculates the single-layer RF and the cumulative RF after two layers. It then applies these convolutions to a tensor to verify the output spatial size and the isolation of the receptive field.
+```text
+layers (kernel, stride)                        formula r  measured  output spacing j
+[(3, 1)]                                       3          3         1
+[(3, 2)]                                       3          3         2
+[(3, 2), (3, 2)]                               7          7         4
+[(3, 1), (3, 1), (3, 1), (3, 1)]               9          9         1
+[(3, 2), (3, 2), (3, 2), (3, 2)]               31         31        16
+[(3, 1), (3, 2), (3, 1), (3, 2), (3, 1), (3, 2)] 29         29        8
+```
 
-Here are the real `RESULT` lines from the lab output:
+Note r and the spacing j. An earlier version of this lesson's lab got sizes wrong, so here is the sum for two layers of kernel 3, stride 2, on 7 pixels:
 
-1.  `RESULT single_layer_rf = 3`
-    *   **Proof:** This confirms the base formula $(3-1)*1 + 1 = 3$. A single 3x3 kernel sees 3 pixels.
+```text
+spatial size with kernel 3, stride 2, no padding: 7 -> 3 after one layer, 1 after two
+```
 
-2.  `RESULT total_rf_2_layers = 7`
-    *   **Proof:** This verifies the accumulation formula. $1 + (2*1*2^0) + (2*1*2^1) = 1 + 2 + 4 = 7$. After two layers with stride 2, the center pixel sees a 7x7 area of the original input. This demonstrates the exponential growth of coverage.
+The first-frame rule, from real causal convolutions:
 
-3.  `RESULT input_spatial = 7`
-    *   **Proof:** This is the input dimension $H_{in}$ used in the test case.
+```text
+frames in -> latent frames from two causal stride-2 layers, against (n - 1) // 4 + 1:
+   1 ->   1   1
+   5 ->   2   2
+   9 ->   3   3
+  17 ->   5   5
+  21 ->   6   6
+  81 ->  21   21
+ 120 ->  30   30
+ 121 ->  31   31
+```
 
-4.  `RESULT output_spatial = 3`
-    *   **Proof:** This verifies the spatial reduction formula. $\lfloor (7 + 0 - 2 - 1)/2 \rfloor + 1 = \lfloor 4/2 \rfloor + 1 = 3$. The 7x7 input is compressed to a 3x3 output after two stride-2 convolutions.
+No leak from the future:
 
-5.  `RESULT center_pixel_1 = 0.726815`
-    *   **Proof:** This is the value of the center pixel in the output when the input is unmodified.
+```text
+change frame 20 of 21: the 6 latent frames that move are [5]
+```
 
-6.  `RESULT center_pixel_2 = 0.726815`
-    *   **Proof:** This is the value of the center pixel when a pixel *outside* the receptive field (pixel 0,0 in an 11x11 input) is modified. The fact that the values are identical proves that the receptive field is isolated; changes outside the RF do not influence the center output pixel.
+And the overlap a tile needs, for a stack that reaches 3 on each side:
 
-## Common mistakes
+```text
+two tiles of a 64-long latent, zero padding at each tile edge, hard join in the middle of the overlap
+overlap   largest error at the join
+0         0.136897
+2         0.036592
+4         0.000000
+6         0.000000
+8         0.000000
+12        0.000000
+```
 
-1.  **Ignoring Temporal Strides:** Students often calculate the spatial RF but forget that video VAEs have separate temporal strides. A temporal stride of 2 means the temporal RF grows much faster than the spatial RF, leading to a "tube-like" receptive field that is wide in time but narrow in space, or vice versa.
-2.  **Confusing Causal and Non-Causal:** In video generation, `CausalConv3d` is critical. Using a standard 3D convolution that looks into the future breaks causality and can cause temporal artifacts or make the model unusable for streaming. Always check if the VAE uses causal convolutions.
-3.  **Assuming Linear Growth:** The receptive field grows exponentially with depth if strides are greater than 1. A common mistake is to assume that adding one more layer only adds a few pixels to the RF. In reality, with stride 2, each new layer doubles the effective reach of the previous layers.
+## Sources
 
-## Go deeper
-
-For a deeper understanding of the architectures discussed, refer to the following papers:
-
-*   **LTX-Video:** "LTX-Video: A Large Text-to-Video Model" (arXiv:2405.14252) - Details the `VideoVAE` and `CausalConv3d` implementations.
-*   **Hunyuan Video:** "HunyuanVideo: A Diffusion Model for Video Generation" (arXiv:2412.03603) - Discusses the VAE and token refiner mechanisms.
-*   **Causal Convolutions:** "WaveNet: A Generative Model for Raw Audio" (arXiv:1609.03499) - The foundational paper for causal convolutions in time-series data, which is adapted for video in `CausalConv3d`.
-
+- [ComfyUI v0.43.0, comfy/ldm/lightricks/vae/causal_conv3d.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/lightricks/vae/causal_conv3d.py)
+- [ComfyUI v0.43.0, comfy/ldm/wan/vae.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/wan/vae.py)
+- [ComfyUI v0.43.0, comfy/ldm/modules/diffusionmodules/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/diffusionmodules/model.py)
+- [ComfyUI v0.43.0, comfy/ldm/minimax/vae.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/minimax/vae.py)
+- [ComfyUI v0.43.0, comfy/sd.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sd.py)
+- [ComfyUI v0.43.0, comfy/utils.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/utils.py)

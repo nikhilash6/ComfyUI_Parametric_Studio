@@ -1,91 +1,123 @@
 # CU-305 - VRAM budget math: weights, activations, caches
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Work out, from numbers you already have, the weights, the working memory and the room ComfyUI asks for before a load, and say which one moves when you change the size, the batch or the format. Taught by Bit Bandit.
 
-## Why this matters
+## Three things, three formulas
 
-Welcome back, students. I am Bit Bandit, and I live in the last few bits of your float. You think you’re just running a model? No, you’re playing a high-stakes game of Tetris with bytes that have opinions. In ComfyUI, the difference between a smooth workflow and a dreaded `CUDA out of memory` error is rarely about the model size alone. It’s about the *budget*.
+People ask "will this model fit?" as if the file were the only thing on the card. Three different things want room.
 
-VRAM is not just for weights. It’s a shared economy. If you don’t account for activations (the temporary scratchpad) and caches (the memory of past steps), your math is wrong, and your GPU will scream. This lesson teaches you to calculate the true cost of inference so you can pick the right precision and model size before you hit the wall.
+- **Weights.** The model itself. Parameters times bytes per parameter.
+- **Working memory.** What a step needs on top of the weights: the activations. It grows with the picture, not the file.
+- **Results.** What finished nodes hold on to. By default these sit in system RAM, not on the card.
 
-## The intuition
+## Weights
 
-Imagine you are moving into a new house (your GPU). The furniture (weights) is the biggest item. But you also need space for the boxes you’re unpacking (activations) and the storage unit for things you might need later (caches).
+```
+weights = parameters × bytes per parameter
+fp32 = 4 bytes      fp16 and bf16 = 2 bytes      fp8 = 1 byte
+```
 
-If you only count the furniture, you’ll think you fit. But when you start unpacking, the room is full. In our lab, we treat VRAM as a strict budget. We reserve a safety margin (like keeping the hallway clear) and then estimate how much "living space" the model needs while it’s actually thinking.
+The file size on disk tells you nearly the same thing, so usually you need no sum at all. The bytes matter when the loader stores weights in another format than the file: see CU-374.
 
-The key insight: **Precision is your lever.** Dropping from FP32 to FP8 doesn’t just halve the furniture; it shrinks the boxes and the storage unit too, because they are derived from the same data.
+## Working memory
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+This is the number that surprises people, because ComfyUI estimates it from the latent. `memory_required` in `comfy/model_base.py`, on the path used with PyTorch or flash attention, is:
 
-Let’s break down the memory consumption into three components. We define the following symbols:
+```
+area   = batch × height × width × (frames, for video)     in latent cells, channels not counted
+memory = area × dtype bytes × 0.01 × memory_usage_factor  in MB
+```
 
-*   $P$: Number of parameters in the model (e.g., $12 \times 10^9$ for a 12B model).
-*   $b$: Bytes per parameter, determined by precision ($4$ for FP32, $2$ for BF16, $1$ for FP8, $0.5$ for 4-bit).
-*   $W$: Weight memory in bytes.
-*   $A$: Activation memory in bytes.
-*   $C$: Cache/Latent memory in bytes.
-*   $S$: Safety factor (a multiplier to account for fragmentation and overhead).
-*   $M_{total}$: Total estimated VRAM usage.
+`memory_usage_factor` is a constant per model family, set in `comfy/supported_models.py`. `estimate_memory` in `comfy/sampler_helpers.py` doubles the batch before asking, because guidance can run both prompts together. The source's own comment on this formula says it needs tweaking, so treat it as ComfyUI's guess, not a measured peak.
 
-**1. Weight Memory ($W$)**
-This is the static cost of loading the model.
-$$W = P \times b$$
+Two things follow. Double the side of the image and the estimate goes up four times. Double the batch and it doubles.
 
-**2. Activation Memory ($A$)**
-Activations are the intermediate tensors created during the forward pass. In our simplified model, we assume they scale with the weight size.
-$$A = W \times f_a$$
-Where $f_a$ is the activation fraction. In our lab, we set $f_a = 0.1$ (10% of weight size).
+## The room asked for
 
-**3. Cache/Latent Memory ($C$)**
-This includes KV caches for transformers or latent states for diffusion models.
-$$C = W \times f_c$$
-Where $f_c$ is the latent/cache fraction. In our lab, we set $f_c = 0.05$ (5% of weight size).
+`load_models_gpu` in `comfy/model_management.py` adds these up before it loads:
 
-**4. Total Budget ($M_{total}$)**
-We sum these up and apply a safety factor $S$ to account for PyTorch’s memory allocator inefficiencies and other overheads.
-$$M_{total} = (W + A + C) \times S$$
+```
+extra_mem = max(minimum_inference_memory, memory_required + reserved)
+room      = total model size × 1.1 + extra_mem
+minimum_inference_memory = 0.8 GB + reserved
+reserved  = 400 MB on Linux, unless you set --reserve-vram
+```
 
-In our lab, $S = 1.2$. This means we expect to use 20% more memory than the raw sum of weights, activations, and caches.
+If that much is not free, it unloads other models. If it still does not fit, the model loads partly. CU-402 follows that path, and CU-372 turns this into a checklist.
 
-## In ComfyUI
+Dynamic VRAM, which is on by default on supported cards, changes how weights arrive: see CU-402. The arithmetic here still tells you what is going to be asked of the card.
 
-ComfyUI handles this budget dynamically. The `ModelPatcher` class in `comfy/model_patcher.py` is the gatekeeper. It tracks which weights are on the GPU and which are offloaded to CPU. When you run a node, `comfy/model_management.py` checks the `VRAMState`. If the state is `LOW` or `OOM`, it triggers `free_memory` to offload models or clear caches.
+## Results and caches
 
-The `unet_dtype` function in `comfy/model_management.py` is crucial here. It determines the optimal data type for UNet weights based on available VRAM. If you have a 24GB card, it might force BF16 or FP8 to ensure the model fits within the budget we calculated above. The `LazyCastingParam` class allows weights to be cast on-the-fly, meaning you can load a model in a lower precision and only cast to higher precision for specific operations if memory allows.
+Node results are the third thing, and the word cache causes real confusion here. `intermediate_device` returns the CPU unless you pass `--gpu-only`, so a finished latent or image waits in system RAM. A latent is tiny. A long video as an `IMAGE` batch is not, and it never was on the card to begin with.
+
+{{graph:sdxl_txt2img}}
+
+Now put numbers on it. Use the sliders on your own card.
+
+{{play:vram}}
+
+The lab above is a planning sheet with an overhead slider you set yourself. It does not claim to know your peak.
+
+## What goes wrong
+
+- **"The file is 6 GB and my card is 8 GB, so it fits."** That leaves out reserved memory, the 10% margin and the working memory. Run the sum for your size and batch.
+- **A graph ran at 1024 px, then fails at 2048 px.** Working memory went up four times while the weights stayed still. Lower the size, or decode in tiles if the decoder is what failed (below).
+- **It fails only when decoding.** The VAE has its own estimate, set per VAE in `comfy/sd.py`. If decoding runs out of memory, ComfyUI retries in tiles and logs a warning, and `VAEDecodeTiled` asks for that directly.
+- **Batch 8 fails where batch 1 worked.** ComfyUI's own out-of-memory message suggests this first. Queue single images, or split the batch.
+- **System RAM runs out, not VRAM.** That is results, or weights being kept for the next run. See `--cache-ram` and `--cache-none` in CU-371.
+
+{{graph:sd15_tiled_vae}}
 
 ## Lab
 
-The lab script calculates the total memory required for 4B and 12B models at FP32, BF16, FP8, and 4-bit precision. It then checks if these models fit in 24GB and 96GB GPUs, after reserving 4GB for safety.
+Everything here is arithmetic from the formulas above. No model is loaded. Weights first:
 
-Here are the key `RESULT` lines from the lab output:
-
-```
-RESULT 12B_fp32 = 6.624e+10
-RESULT 12B_bf16 = 3.312e+10
-RESULT 12B_fp8 = 1.656e+10
-RESULT 12B_4bit = 8.28e+09
+```text
+weights: parameters x bytes per parameter (parameter counts from Table 1 of the SDXL paper)
+  SD 1.x U-Net, 860M   fp32  3.20 GB  fp16  1.60 GB  fp8  0.80 GB
+  SDXL U-Net, 2.6B     fp32  9.69 GB  fp16  4.84 GB  fp8  2.42 GB
 ```
 
-*   `RESULT 12B_fp32 = 6.624e+10`: This is approximately 61.69 GB. It proves that a 12B model in FP32 is too large for a 24GB card (which has ~20GB available after reserve).
-*   `RESULT 12B_bf16 = 3.312e+10`: This is approximately 30.85 GB. It proves that even BF16 is too large for a 24GB card, but fits comfortably in a 96GB card.
-*   `RESULT 12B_fp8 = 1.656e+10`: This is approximately 15.42 GB. It proves that FP8 allows a 12B model to fit in a 24GB card, thanks to the reduced weight size and proportional reduction in activations/caches.
-*   `RESULT 12B_4bit = 8.28e+09`: This is approximately 7.71 GB. It proves that 4-bit quantization makes the model extremely lightweight, leaving plenty of room for large batch sizes or high-resolution latents.
+The working memory estimate, with the factors from `supported_models.py`:
 
-## Common mistakes
+```text
+working memory estimate, fp16, CFG on (estimate_memory doubles the batch)
+  SD 1.5  512 px  latent 64x64  factor 1.0:    163.8 MB
+  SD 1.5  768 px  latent 96x96  factor 1.0:    368.6 MB
+  SDXL   1024 px  latent 128x128  factor 0.8:    524.3 MB
+  SD3    1024 px  latent 128x128  factor 1.6:   1048.6 MB
+```
 
-1.  **Ignoring the Safety Factor:** Many students calculate $W + A + C$ and assume that’s the limit. In reality, PyTorch’s allocator has overhead. If you don’t apply a safety factor (like our 1.2x), you will hit OOM errors even when your math says you should fit.
-2.  **Assuming Activations are Constant:** Activations depend on batch size and sequence length. Our lab uses a simplified fraction, but in practice, increasing batch size will increase $A$ linearly, potentially breaking your budget even if weights fit.
-3.  **Forgetting Caches:** In transformer models, KV caches can grow with sequence length. If you ignore $C$, you’ll be surprised when long-context inference fails.
-4.  **Mixing Precisions:** If you load weights in FP8 but compute in FP32, your activations might be in FP32, doubling their memory cost. ComfyUI’s `LazyCastingParam` helps manage this, but you must be aware of the dtype of your intermediate tensors.
+Look at SD3 against SDXL: same latent size, twice the estimate, because the factor is twice as large. Now the scaling rule:
 
-## Go deeper
+```text
+double the side: x4.  double the batch: x2.  channels make no difference to this estimate.
+```
 
-For a deeper dive into the memory management strategies used in modern diffusion models, refer to the following papers:
+The room asked for on a 12 GB card, with nothing else loaded:
 
-*   **arXiv:2306.14465** - "Efficient Diffusion Models: A Survey"
-*   **arXiv:2310.04378** - "Quantization for Efficient Inference of Large Language Models"
-*   **arXiv:2402.10113** - "Memory-Efficient Attention Mechanisms for Transformers"
+```text
+room asked for before loading, on a 12 GB card with nothing else loaded
+  SD 1.5 fp16, 512 px   weights  1.60 GB  asks for  2.95 GB  left   9.05 GB
+  SDXL fp16, 1024 px    weights  4.84 GB  asks for  6.52 GB  left   5.48 GB
+  SDXL fp8, 1024 px     weights  2.42 GB  asks for  3.85 GB  left   8.15 GB
+```
 
-These papers provide the theoretical underpinnings for the heuristics we use in our lab.
+Going to fp8 halves the weights and leaves the working memory alone. The working memory depends on the compute format, which the lab holds at fp16. And results in RAM:
 
+```text
+what a finished result costs in system RAM (node outputs live on intermediate_device, the CPU, unless --gpu-only)
+  latent 128x128, 4 channels, fp32         0.25 MB
+  IMAGE 1024x1024, 3 channels, fp32       12.00 MB
+  IMAGE batch, 81 frames 1280x720        854.30 MB
+```
+
+## Sources
+
+- [ComfyUI v0.43.0, comfy/model_base.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_base.py)
+- [ComfyUI v0.43.0, comfy/sampler_helpers.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sampler_helpers.py)
+- [ComfyUI v0.43.0, comfy/model_management.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_management.py)
+- [ComfyUI v0.43.0, comfy/supported_models.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/supported_models.py)
+- [ComfyUI v0.43.0, comfy/sd.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sd.py)
+- [Podell et al. 2023. SDXL: Improving Latent Diffusion Models for High-Resolution Image Synthesis](https://arxiv.org/abs/2307.01952)

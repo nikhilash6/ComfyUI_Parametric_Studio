@@ -1,0 +1,81 @@
+{
+ "meta": {
+  "title": "Add a difference: task arithmetic in core",
+  "about": "A minus base, added to B. Three checkpoints, all of the same architecture, all unquantized.",
+  "runs": "model",
+  "needs": [
+   "Three checkpoints of the same architecture, in fp16, bf16 or fp32. Merge first, then quantize the result."
+  ],
+  "packs": [],
+  "notes": {
+   "4": "Keeps only what A changed compared with the base. The multiplier scales it.",
+   "5": "Adds that change to B.",
+   "6": "Writes the merged file."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "model_a.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "model_base.safetensors"
+   }
+  },
+  "3": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "model_b.safetensors"
+   }
+  },
+  "4": {
+   "class_type": "ModelMergeSubtract",
+   "inputs": {
+    "model1": [
+     "1",
+     0
+    ],
+    "model2": [
+     "2",
+     0
+    ],
+    "multiplier": 1.0
+   }
+  },
+  "5": {
+   "class_type": "ModelMergeAdd",
+   "inputs": {
+    "model1": [
+     "3",
+     0
+    ],
+    "model2": [
+     "4",
+     0
+    ]
+   }
+  },
+  "6": {
+   "class_type": "CheckpointSave",
+   "inputs": {
+    "model": [
+     "5",
+     0
+    ],
+    "clip": [
+     "3",
+     1
+    ],
+    "vae": [
+     "3",
+     2
+    ],
+    "filename_prefix": "checkpoints/university_merge"
+   }
+  }
+ }
+}

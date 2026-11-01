@@ -34,7 +34,7 @@
     "It is zero for both losses once the discriminator is confident"
    ],
    "answer": "It is 0.4386 with log(1 − D) and 13.0146 with −log D, about 30 times larger",
-   "why": "With respect to the logit, log(1−D) has gradient D, which is near 0 here, and −log D has gradient 1−D, near 1. The paper says the two losses share a fixed point but the second gives much stronger gradients early in learning."
+   "why": "With respect to the logit, the gradient of log(1−D) has size D, which is near 0 here, and that of −log D has size 1−D, near 1. The paper says the two losses share a fixed point but the second gives much stronger gradients early in learning."
   },
   {
    "q": "All four lab seeds ended with discriminator accuracy between 0.461 and 0.515. What does the lab conclude from that?",
@@ -57,6 +57,17 @@
    ],
    "answer": "With a perceptual loss and a patch-based adversarial objective",
    "why": "Section 3.1 and appendix G of the latent diffusion paper. The patch-based discriminator exists only during that training, which is how a GAN idea ends up inside the VAE you run in ComfyUI."
+  },
+  {
+   "q": "Your upscaler draws crisp lettering that was not readable in the source. What is the most likely cause?",
+   "options": [
+    "An adversarial loss rewards what looks real, not what was there",
+    "The tiles overlapped too much",
+    "The model file is damaged",
+    "The upscaler ran in fp8"
+   ],
+   "answer": "An adversarial loss rewards what looks real, not what was there",
+   "why": "The ESRGAN abstract speaks of hallucinated details. The loss has no way to know what was really in the picture."
   }
  ]
 }

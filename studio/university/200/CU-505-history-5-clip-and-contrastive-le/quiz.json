@@ -59,15 +59,15 @@
    "why": "SDXLClipG sets return_projected_pooled=True, SDXLClipModel returns that pooled vector, and SDXL.encode_adm concatenates it with the embeddings. SD 1.x instead uses return_projected_pooled=False and only the per-token states."
   },
   {
-   "q": "According to the CLIP paper, who popularised the objective as the InfoNCE loss?",
+   "q": "Two training runs report loss 0.2 and 0.3, one with batch 8 and the other with batch 100. What can you conclude?",
    "options": [
-    "Oord et al. (2018)",
-    "Sohn (2016)",
-    "Zhang et al. (2020)",
-    "Radford et al. (2021)"
+    "Nothing yet, because the scale depends on the batch: chance alone is ln N",
+    "The 0.2 run is better",
+    "The 0.3 run is better, since larger batches are harder",
+    "Both have failed to train"
    ],
-   "answer": "Oord et al. (2018)",
-   "why": "The paper says the objective was introduced in deep metric learning as the multi-class N-pair loss (Sohn, 2016), popularised as InfoNCE by Oord et al. (2018), and adapted to text and images in medical imaging by Zhang et al. (2020). CLIP's own contribution was the data, the scale and the zero-shot use."
+   "answer": "Nothing yet, because the scale depends on the batch: chance alone is ln N",
+   "why": "A batch of 8 has 7 wrong captions to rule out, and a batch of 100 has 99."
   }
  ]
 }

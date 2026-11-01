@@ -1,0 +1,73 @@
+{
+ "code": "CU-384",
+ "title": "Weights that can run code: pickle, safetensors, torch.load",
+ "level": "300",
+ "questions": [
+  {
+   "q": "Why can loading a .ckpt run code?",
+   "options": [
+    "It is usually a pickle, and a pickle can call functions when rebuilt",
+    "GPUs execute weights directly",
+    "The extension runs a script",
+    "Safetensors converts it to a program"
+   ],
+   "answer": "It is usually a pickle, and a pickle can call functions when rebuilt",
+   "why": "The Python docs warn about exactly this."
+  },
+  {
+   "q": "What does load_torch_file do with a .pt file at v0.43.0?",
+   "options": [
+    "torch.load with weights_only=True",
+    "pickle.loads with no limit",
+    "It refuses all .pt files",
+    "It converts it to GGUF"
+   ],
+   "answer": "torch.load with weights_only=True",
+   "why": "Read in comfy/utils.py. The lab's payload is refused on this path."
+  },
+  {
+   "q": "Why doesn't core's protection cover everything?",
+   "options": [
+    "Packs can call their own loaders",
+    "Core only protects at night",
+    "It only works on fp16",
+    "It covers only VAEs"
+   ],
+   "answer": "Packs can call their own loaders",
+   "why": "Core's choice doesn't bind a pack. Search it for pickle.load and weights_only=False."
+  },
+  {
+   "q": "A file named model.safetensors starts with PK. What should you think?",
+   "options": [
+    "The name is wrong, and it looks like a zip from torch.save",
+    "It is a normal safetensors file",
+    "It is safe because of the name",
+    "Safetensors always starts with PK"
+   ],
+   "answer": "The name is wrong, and it looks like a zip from torch.save",
+   "why": "The first bytes tell you more than the name does."
+  },
+  {
+   "q": "A file is refused by weights_only=True. What is the right response?",
+   "options": [
+    "Find a safetensors copy, or inspect it in isolation",
+    "Set weights_only=False to make it load",
+    "Rename it",
+    "Run it as administrator"
+   ],
+   "answer": "Find a safetensors copy, or inspect it in isolation",
+   "why": "The refusal means it wants more than weights."
+  },
+  {
+   "q": "What does trust_remote_code=True do?",
+   "options": [
+    "Runs Python from the model's repository",
+    "Checks a signature",
+    "Encrypts the download",
+    "Limits the unpickler"
+   ],
+   "answer": "Runs Python from the model's repository",
+   "why": "It's the bluntest of the search terms in this lesson."
+  }
+ ]
+}

@@ -2,6 +2,16 @@
 
 **Objective.** Derive the closed form of the forward process, say exactly what the network is trained to predict, and read the sigma numbers ComfyUI prints. Taught by Dr. Denoise.
 
+## In plain words
+
+Take a picture and add a pinch of random static. Do it again and again, and after enough rounds nothing is left but static. That direction is easy, and anyone can compute it. A diffusion model learns the other direction: given a noisy picture and how noisy it is, say what the noise was. To make a new picture, start from pure static and repeat that small correction many times.
+
+Nearly every number you meet in ComfyUI comes from this. The sigma you see printed is the amount of noise. The steps are stops on the way down. The next part gives the same idea as formulas, and you can skip to "In ComfyUI" on a first read and still follow the rest of this track.
+
+Move the slider to see what the formula does to a real render. At signal to noise 1 the picture is hard to read and not gone.
+
+{{play:noise}}
+
 ## The idea
 
 Destroying data is easy, so make it the training data. Add a little Gaussian noise many times, until nothing is left. Then train a network to undo one small step. Sohl-Dickstein et al. (2015) introduced this, and their key observation is that for small steps the reverse step is close to Gaussian too, so the network only has to supply its mean. Ho et al. (2020) found a parameterisation that made it work on images.
@@ -40,6 +50,18 @@ Noise level is one number, σ. It also gives the signal-to-noise ratio directly:
 ## In ComfyUI
 
 `ModelSamplingDiscrete` in `comfy/model_sampling.py` builds exactly these sigmas from the betas. The `EPS` class holds the conversions: the model input is x / √(σ²+1), which puts x back on the √ᾱ scale the network was trained on, and the denoised estimate is x − σ · ε̂. Samplers only ever see the denoised estimate.
+
+You can see those sigmas for yourself with no model at all. This graph prints a schedule between the SD 1.x values 14.61 and 0.029.
+
+{{graph:nm_sigmas}}
+
+## What goes wrong
+
+- **Thinking the model removes all the noise in one go.** It estimates the clean picture at every step, and that estimate is blurry at high noise. The sampler moves only part of the way toward it, then asks again. That's why a preview starts as a smear.
+- **Reading "1000 steps" as what you run.** Training uses 1000 noise levels. You run 20 or so, chosen by the scheduler.
+- **Treating the top of the schedule as pure noise.** On SD 1.x a trace of the image survives there, as the lab shows. Lin et al. tie this to limits on how bright or dark results get.
+- **Assuming every model works this way.** Flow models mix noise differently (CU-204), and v models read their output differently (CU-242).
+- **Using the wrong σ range by hand.** The numbers 14.61 and 0.029 belong to SD 1.x and SDXL's table, and a flow model's range is about 0 to 1. A scheduler node with typed-in numbers does not check.
 
 ## Lab
 

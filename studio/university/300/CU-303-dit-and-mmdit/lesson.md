@@ -1,90 +1,92 @@
 # CU-303 - DiT and MM-DiT blocks
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Trace how a transformer replaces the U-Net: patches become tokens, a time vector scales every block, and text and image can share one attention. Taught by Madame Attention.
 
-## Why this matters
+## The idea
 
-Welcome back to the studio. In CU-301, we looked at the U-Net, a convolutional beast that processes images in a hierarchical, local manner. But in CU-303, we are dismantling that hierarchy. We are replacing the U-Net with a Transformer. Why? Because attention is not local; it is global. Every token can talk to every other token. This is the architecture of the modern frontier: the Diffusion Transformer, or DiT.
+Stable Diffusion 1.5's U-Net shrinks the image, works, and grows it back. A DiT (diffusion transformer) keeps one grid size and stacks identical blocks over it. Peebles and Xie (2022) showed this working on latents, and most newer image and video models in ComfyUI are some form of it.
 
-You will see this architecture in `comfy/ldm/cosmos` for video, `comfy/ldm/hydit` for HunYuanDiT, and `comfy/ldm/pixeldit` for PixelDiT. They all share a core philosophy: treat the latent space as a sequence of tokens, and let attention decide what matters. If you do not understand how these blocks modulate information based on the diffusion timestep, you are flying blind. You are not controlling the generation; you are merely observing it.
+Three things make that possible:
 
-## The intuition
+- **Patches.** Cut the latent into squares and flatten each square into one token. That's the idea of ViT, Dosovitskiy et al. (2020).
+- **adaLN (adaptive layer norm).** The model must know the noise level. A block turns the time vector into a scale and shift, and applies them to the whole sequence.
+- **A way in for the text.** Either cross-attention as in CU-301, or a joint block where text and image sit in one sequence. The second is what MM-DiT does.
 
-Imagine a painting in progress. In a U-Net, the brushstrokes are local; a pixel only knows its neighbors. In a DiT, the entire canvas is visible to every brushstroke. But here is the critical nuance: the "brush" changes depending on how much noise is currently in the painting.
+## The mechanism
 
-This is where **AdaLN** (Adaptive Layer Normalization) comes in. It is the conductor of the orchestra. The diffusion timestep $t$ tells the model, "We are at step 50 of 1000." The AdaLN mechanism takes this time information and transforms it into **scale** and **shift** parameters. These parameters are then applied to the features inside every transformer block.
+**Patches.** With patch size p, a latent of c channels, height h and width w becomes (h ÷ p) × (w ÷ p) tokens of width c × p × p. A linear layer then brings each token to the model's width. Cost follows CU-301: tokens squared.
 
-Think of it this way: when the image is pure noise (high $t$), the scale and shift might encourage the model to focus on global structure. When the image is nearly clean (low $t$), the modulation shifts to encourage fine-grained detail. The attention mechanism decides *who* looks at *whom*, but AdaLN decides *how strongly* and *in what direction* that attention is applied. Without AdaLN, the transformer would treat a noisy latent and a clean latent with the same indifference. With AdaLN, the model is aware of its own state.
+{{play:patches}}
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+**adaLN.** Inside a block, the time vector c becomes numbers through a small network. Then:
 
-Let us look at the mechanics. The core operation in a DiT block is the modulation of the hidden states.
+```
+x' = shift + x × (1 + scale)                  shift and scale: one value per channel, for the whole sequence
+x  = x + gate × attention(x')                 gate: another output, how much of the block's result to keep
+```
 
-Let $x$ be the input feature tensor of shape $[B, N, D]$, where $B$ is the batch size, $N$ is the number of tokens (patches), and $D$ is the feature dimension.
-Let $t$ be the timestep embedding vector of shape $[B, D]$.
+Each channel gets one scale and one shift, shared by all tokens. So the time vector can't aim at one token. It sets the block's general behaviour for this noise level, and attention does the per-token work.
 
-In a standard DiT implementation, such as the `Block` class in `comfy/ldm/cosmos/predict2.py` or `HunYuanDiTBlock` in `comfy/ldm/hydit/models.py`, we derive modulation parameters from $t$. Typically, a linear layer projects $t$ into a vector that is split into scale and shift components.
+**adaLN-Zero.** DiT starts the network that makes these numbers at zero. Gate zero means the block returns its input, so at the start of training the stack is the identity. The lab checks that this is exactly true. That helps training only: a checkpoint you load has already moved on.
 
-The modulation function is defined as:
-$$x_{modulated} = x \cdot (1 + \text{scale}) + \text{shift}$$
-
-Here, `scale` and `shift` are vectors of shape $[B, D]$. To apply this to the token dimension $N$, we broadcast `scale` and `shift` across the $N$ dimension. In code, this is often implemented by unsqueezing the scale and shift to shape $[B, 1, D]$ so they can multiply and add to $x$ of shape $[B, N, D]$.
-
-This is not just a linear transformation. It is a conditional affine transformation. The "identity" case occurs when `scale` is 0 and `shift` is 0. In this case, $x_{modulated} = x \cdot (1 + 0) + 0 = x$. This property is crucial for stability; if the timestep embedding were zero, the block would act as a pass-through, preserving the input features.
-
-In **MM-DiT** (Multimodal DiT), as seen in `comfy/ldm/pixeldit/model.py` with `MMDiTJointAttention`, the architecture extends this by maintaining separate query, key, and value projections for image and text streams. However, the fundamental modulation principle remains: the timestep conditions the flow of information between these streams.
+**Joint attention.** MM-DiT (Esser et al. 2024) gives text and image their own projections, then joins q, k and v along the token axis and attends over everything. Text sees the image and the image sees the text. Plain cross-attention goes one way.
 
 ## In ComfyUI
 
-In ComfyUI, these architectures are not monolithic; they are modular.
+`modulate` in `comfy/ldm/modules/diffusionmodules/mmdit.py` is the formula above, and `DismantledBlock` carries the adaLN layers. `_block_mixing` runs one text block and one image block together: it collects both sets of q, k and v and sends the joined sequence through `optimized_attention`. That is SD 3, shown in this graph.
 
-*   **Cosmos**: The `comfy/ldm/cosmos` folder implements the `MiniTrainDIT` and `GeneralDIT` classes. The `Block` class here combines self-attention, cross-attention, and MLP layers with AdaLN modulation. It uses `VideoRopePosition3DEmb` for 3D rotary position embeddings, essential for video where temporal order matters.
-*   **HunYuanDiT**: The `comfy/ldm/hydit` folder provides `HunYuanDiTBlock`. It uses `apply_rotary_emb` to maintain spatial awareness. The `modulate` function in `models.py` applies the shift and scale modulation we discussed.
-*   **PixelDiT**: The `comfy/ldm/pixeldit` folder implements `MMDiTBlockT2I`. It uses `MMDiTJointAttention` to handle the bidirectional flow between text and image tokens. The `apply_adaln_` function in `modules.py` handles the adaptive normalization.
+{{graph:sd35_flow}}
 
-These classes are the building blocks. When you load a model in ComfyUI, you are instantiating these specific blocks, stacking them, and feeding them latent tensors.
+FLUX has its own version in `comfy/ldm/flux/layers.py`. `DoubleStreamBlock` keeps text and image apart with their own weights and modulation, and joins them only for attention. `SingleStreamBlock` treats them as one sequence with shared weights. `Modulation` is where the time vector becomes those numbers, and in `apply_mod` you can see scale and shift used. The FLUX model's `process_img` rearranges with the same pattern as the lab's patchify, `b c (h ph) (w pw) -> b (h w) (c ph pw)`.
+
+{{graph:wf_flux2_klein}}
+
+PixArt (`comfy/ldm/pixart/`) keeps text separate and reaches it through cross-attention. Not every DiT is joint. To learn which kind a model is, look at its block class in `comfy/ldm`.
+
+## What goes wrong
+
+- **Your size is off-grid.** A latent side that doesn't divide by the patch has to be padded: `pad_to_patch_size` in `comfy/ldm/common_dit.py`. Choose sizes that divide cleanly.
+- **A DiT costs more than you budgeted at large sizes.** Twice the side means sixteen times the pairs, with no U-Net stage that shrinks the grid to save you. Try the play above. Then read the budget lessons.
+- **A U-Net patch doesn't apply.** U-Net hooks like input and output block patches have no meaning on a block stack. Nodes written for one family can silently do nothing or fail on another. Read which family the node targets.
+- **You think a token is a pixel.** At patch 2, an 8× VAE, one token covers 16×16 pixels. Fine detail has to be carried in the token's channels.
+- **You assume the prompt is only cross-attended.** On joint models, text tokens also get changed in each block. Hook points that expect plain cross-attention may not exist at all.
 
 ## Lab
 
-In this lab, we simulate the core mechanics of a DiT block: patchification and AdaLN modulation. We use a small latent tensor to demonstrate how spatial data becomes tokens and how timestep conditioning alters the features.
-
-We run the following script:
-1.  We patchify a $[1, 4, 16, 16]$ latent into $2 \times 2$ patches.
-2.  We apply AdaLN modulation using random scale and shift vectors.
-3.  We verify the identity property when scale and shift are zero.
-4.  We calculate the token count for 512px and 1024px images, assuming a VAE downsample factor of 8 and a patch size of 2.
-
-Here are the results from the lab execution:
+Patches, tested by going there and back.
 
 ```text
-RESULT token_count_16x16 = 64
-RESULT num_tokens_512 = 1024
-RESULT num_tokens_1024 = 4096
-RESULT identity_check = True
-RESULT modulated_diff = 1.38815
+latent (1, 4, 16, 16) -> tokens (1, 64, 16), back again identical: True
+image      latent side   patch  tokens   token pairs
+512        64            2      1,024    1,048,576
+1024       128           2      4,096    16,777,216
+2048       256           2      16,384   268,435,456
+1024       128           1      16,384   268,435,456
 ```
 
-Let us dissect what these numbers prove:
+Going from patch 2 to patch 1 costs as much as doubling the image side. Now the modulation.
 
-1.  `RESULT token_count_16x16 = 64`: This confirms that a $16 \times 16$ latent with $2 \times 2$ patches yields $8 \times 8 = 64$ tokens. This is the sequence length $N$ that the attention mechanism must process.
-2.  `RESULT num_tokens_512 = 1024`: For a 512px image, the VAE produces a $64 \times 64$ latent. With $2 \times 2$ patches, this becomes $32 \times 32 = 1024$ tokens. This is a standard sequence length for high-resolution DiTs.
-3.  `RESULT num_tokens_1024 = 4096`: For a 1024px image, the latent is $128 \times 128$. With $2 \times 2$ patches, this becomes $64 \times 64 = 4096$ tokens. Notice the quadratic increase in tokens as resolution doubles. This is why DiTs are computationally expensive at high resolutions; attention complexity scales with $N^2$.
-4.  `RESULT identity_check = True`: This proves that when `scale` and `shift` are zero, the modulation function returns the original tensor. This is the mathematical guarantee that the conditioning is additive and multiplicative in a controlled way.
-5.  `RESULT modulated_diff = 1.38815`: This is the mean absolute difference between the original tensor and the modulated tensor. It shows that the modulation significantly alters the features, confirming that the timestep conditioning is actively shaping the data flow.
+```text
+one scale and one shift per channel, the same for all 64 tokens: largest gap from that formula 0.0e+00
+another time vector changes the output: True
+zero-initialised gate: the block returns its input: True
+```
 
-## Common mistakes
+Last, joint attention on random vectors. We nudge one token and see who moves.
 
-1.  **Ignoring the Patch Size**: Students often assume the latent size equals the token count. Remember, the patch size $P$ reduces the token count by a factor of $P^2$. A $16 \times 16$ latent with $P=2$ is not 256 tokens; it is 64.
-2.  **Misunderstanding AdaLN**: Do not think of AdaLN as just another layer norm. It is a *conditional* layer norm. The scale and shift are not fixed weights; they are derived from the timestep. If you hardcode them, you break the diffusion process.
-3.  **Confusing Self-Attention with Cross-Attention**: In MM-DiT, the image and text streams attend to each other. In standard DiT, the image tokens attend to themselves (self-attention) and to the text embedding (cross-attention). Mixing these up leads to incorrect architectural assumptions.
-4.  **Neglecting Positional Embeddings**: DiTs are permutation-invariant by default. Without RoPE or sinusoidal embeddings, the model does not know which token is at the top-left and which is at the bottom-right. Always check if your implementation includes positional encoding.
+```text
+joint attention: 8 text + 64 image tokens -> a matrix of 5,184 pairs
+change one text token: image output moves by 41.304.  change one image token: text output moves by 0.177.  so it runs both ways
+plain cross-attention, for contrast: 64 queries x 8 keys = 512 pairs, and the text tokens get no new values from it
+```
 
-## Go deeper
+Ignore the size of those two moves: the weights are random. The point is that both are above zero. Joint attention also costs more than cross-attention here, 5,184 pairs against 512, though a real block would also have a self-attention to count.
 
-To truly master this, read the foundational papers:
+## Sources
 
-*   **arXiv:2212.09748**: "Scalable Diffusion Models with Transformers" (Peebles & Xie). This is the original DiT paper. It establishes the baseline for using transformers in latent diffusion and introduces the AdaLN modulation scheme we discussed.
-*   **arXiv:2403.03206**: "Scaling Rectified Flow Transformers for High-Resolution Image Synthesis" (Esser et al.). This paper introduces the MM-DiT architecture, which uses separate weights for image and text modalities. It is the theoretical basis for the `MMDiTJointAttention` you see in `comfy/ldm/pixeldit`.
-
-Study these papers. Understand the math. Then, go back to ComfyUI and see how the code implements these ideas. The architecture is not magic; it is mathematics, made executable.
-
+- [Peebles, Xie 2022. Scalable Diffusion Models with Transformers](https://arxiv.org/abs/2212.09748)
+- [Esser et al. 2024. Scaling Rectified Flow Transformers for High-Resolution Image Synthesis](https://arxiv.org/abs/2403.03206)
+- [Dosovitskiy et al. 2020. An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale](https://arxiv.org/abs/2010.11929)
+- [ComfyUI v0.43.0, comfy/ldm/modules/diffusionmodules/mmdit.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/diffusionmodules/mmdit.py)
+- [ComfyUI v0.43.0, comfy/ldm/flux/layers.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/layers.py)
+- [ComfyUI v0.43.0, comfy/ldm/pixart/pixartms.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/pixart/pixartms.py)

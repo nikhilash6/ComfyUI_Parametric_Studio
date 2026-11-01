@@ -47,6 +47,24 @@ Not every card has a fast kernel for every format. `get_disabled_quant_formats` 
 
 GGUF is a separate world. The specification in the ggml repository defines it as a binary file format for models, with metadata, tensor descriptions and a `ggml_type` for each tensor. ComfyUI's own loaders do not read it: `.gguf` is not in the list of file extensions the model folders accept, and a case-insensitive search of the v0.43.0 sources finds the word only in a MIME table, a cloud-deploy extension list, tests, and a startup warning in `main.py`. When dynamic VRAM is switched off by a command-line argument, `main.py` prints a warning that tells GGUF users to keep it on and to prefer native model formats, and says ComfyUI's native fp8, int8 and w4a8 formats "will be faster even if they are larger than your memory". That is the developers' statement. This lab measures no speed.
 
+## Try it
+
+Rounding costs about 6 dB of signal per bit you remove. Drop to fp8's three mantissa bits and read how much survives.
+
+{{play:quant}}
+
+And the graph that stores a model's weights in fp8 at load time, from a file in any format. It needs `UNETLoader`'s `weight_dtype`, which is under the node's advanced inputs.
+
+{{graph:b_unet_fp8}}
+
+## What goes wrong
+
+- **A "4-bit" file is not half of an 8-bit file.** Scales cost bits too. GGUF Q4_0 is 4.5 bits per weight and not 4, and mxfp8 is 8.25 bits.
+- **fp8 stored with no scale, on small weights.** A plain cast with scale 1 lost most of the signal at std 0.0008 in the lab below. Formats and tools add the scale for this reason. Check that your conversion tool writes `weight_scale`.
+- **Expecting a quantized file to be fast on every card.** `get_disabled_quant_formats` lists what your device cannot compute natively. Those layers are dequantized for the multiply, so you keep the small storage and lose the fast kernel. The console prints `Native ops: ... emulated ops: ...`.
+- **Trying to load `.gguf` with a core loader.** Core's model folders don't list that extension. You need a pack, and the startup warning in `main.py` recommends native formats instead. CU-374 covers how the loaders differ.
+- **Judging a format from the error number alone.** The numbers below are about weights, not pictures. Render the same seed with both files and look.
+
 ## Lab
 
 The weights are synthetic: a 512 × 1024 Gaussian matrix with standard deviation 0.02. In the "with outliers" column we multiply 0.1% of the entries by 30 ourselves. Error is ‖W − Ŵ‖ / ‖W‖, and the last column applies the same measure to W X with random inputs X. First the √12 rule:

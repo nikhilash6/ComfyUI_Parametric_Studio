@@ -1,0 +1,85 @@
+{
+ "code": "CU-293",
+ "title": "Out of memory: what ComfyUI tries first",
+ "level": "200",
+ "prereq": [
+  "CU-220"
+ ],
+ "char": "tune",
+ "hook": "An out of memory error means ComfyUI already tried several things. Know what it tried, and you know what's left for you to change.",
+ "track": "debugging",
+ "order": 40,
+ "kit": true,
+ "graphs": [
+  "sd15_tiled_vae"
+ ],
+ "code_refs": [
+  "comfy/model_management.py:is_oom",
+  "comfy/model_management.py:raise_non_oom",
+  "comfy/model_management.py:free_memory",
+  "comfy/model_management.py:load_models_gpu",
+  "comfy/model_management.py:minimum_inference_memory",
+  "comfy/model_management.py:maximum_vram_for_weights",
+  "comfy/model_management.py:EXTRA_RESERVED_VRAM",
+  "comfy/model_management.py:unload_all_models",
+  "comfy/sd.py:VAE.decode",
+  "comfy/sd.py:VAE.encode",
+  "comfy/sd.py:decode_tiled_",
+  "comfy/samplers.py:calc_cond_batch",
+  "comfy/utils.py:get_tiled_scale_steps",
+  "comfy/ldm/modules/attention.py:raise_non_oom",
+  "comfy_extras/nodes_upscale_model.py:ImageUpscaleWithModel",
+  "execution.py:is_oom"
+ ],
+ "verified": [
+  {
+   "claim": "VAE decode and encode catch out of memory, log a warning, and retry with tiles.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE.decode, VAE.encode"
+  },
+  {
+   "claim": "A VAE with a reliable estimate goes straight to tiles.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE.decode"
+  },
+  {
+   "claim": "ImageUpscaleWithModel halves its tile from 512, and raises the error below 128.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_upscale_model.py"
+  },
+  {
+   "claim": "The VAE's attention and split cross attention have their own retries.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py and comfy/ldm/modules/diffusionmodules/model.py"
+  },
+  {
+   "claim": "When OOM reaches the engine it adds a tip, logs a memory summary and unloads all models. The message and tip were produced by a test node raising OutOfMemoryError.",
+   "how": "run here",
+   "ref": "execution.py:execute"
+  },
+  {
+   "claim": "The sampler runs conds together only if 1.5 times the estimate is free.",
+   "how": "source",
+   "ref": "comfy/samplers.py:calc_cond_batch"
+  },
+  {
+   "claim": "The formula for minimum_inference_memory and maximum_vram_for_weights.",
+   "how": "source",
+   "ref": "comfy/model_management.py"
+  },
+  {
+   "claim": "get_tiled_scale_steps gives 9, 7, 7 at tile 64 overlap 16, which are decode_tiled_'s defaults, and 9, 5, 5 at overlap 8, which is what VAEDecodeTiled's defaults become on an 8x VAE.",
+   "how": "run here",
+   "ref": "comfy/utils.py:get_tiled_scale_steps, nodes.py:VAEDecodeTiled.decode"
+  }
+ ],
+ "unchecked": [
+  "We didn't exhaust a real card for this lesson. The fallback paths are read from source, and the lab simulates the decisions.",
+  "Dynamic VRAM changes how models load, and --lowvram's help says it does nothing when dynamic VRAM is on. We didn't trace the dynamic path in detail.",
+  "The advice on RAM, fragmentation and packs holding on to tensors is general experience. We didn't measure it here.",
+  "We found no OOM retry in comfy/samplers.py itself, by searching it. A retry deeper in a model's own code would not show in that search, beyond the attention one we list."
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

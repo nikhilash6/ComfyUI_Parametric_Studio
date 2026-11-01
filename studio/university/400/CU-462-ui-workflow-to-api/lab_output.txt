@@ -1,0 +1,12 @@
+nodes in the file: 9   nodes in the API graph: 7   left out: ['8', '9']
+node 5: {"seed": 424242, "steps": 20, "cfg": 7.0, "sampler_name": "euler", "scheduler": "karras", "denoise": 1.0, "model": ["1", 0], "positive": ["2", 0], "negative": ["3", 0], "latent_image": ["4", 0]}
+
+forget the editor-only value: {'seed': 424242, 'steps': 'randomize', 'cfg': 20, 'sampler_name': 7.0, 'scheduler': 'euler', 'denoise': 'karras'}
+the check says: [('5', 'steps', 'invalid_input_type'), ('5', 'denoise', 'invalid_input_type')]
+
+changed: [('2', 'text'), ('5', 'seed')]
+find by class alone: CLIPTextEncode None: 2 matches
+set a wire: model on node 5 is a wire
+mistyped name: 'node 5 has no input sed'
+
+[1, 2] looks like a wire: True   wrapped: False   unwrapped later: [1, 2]

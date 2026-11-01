@@ -1,14 +1,55 @@
 {
+ "code": "CU-409",
  "title": "Distillation math: teacher, student, consistency",
  "level": "400",
- "char": "tune",
- "hook": "Learn how to compress a complex diffusion model into a fast, few-step generator by mastering the mathematical bridge between teacher guidance and student consis",
- "code": "CU-409",
  "prereq": [
-  "CU-308"
+  "CU-205"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "tune",
+ "hook": "How a slow sampler's work becomes one model call, on a problem with an exact answer. What a student can copy, what it can't, and what core runs.",
  "track": "lora-training",
- "order": 40
+ "order": 40,
+ "kit": true,
+ "graphs": [
+  "d_lcm"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_model_advanced.py:LCM",
+  "comfy_extras/nodes_model_advanced.py:ModelSamplingDiscrete",
+  "comfy/k_diffusion/sampling.py:sample_lcm",
+  "comfy_extras/nodes_custom_sampler.py:SDTurboScheduler",
+  "comfy_extras/nodes_train.py:TrainLoraNode"
+ ],
+ "verified": [
+  {
+   "claim": "The lab's exact path is the probability-flow ODE for Gaussian data, with the Euler step in the form of comfy/k_diffusion/sampling.py.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_euler"
+  },
+  {
+   "claim": "Core has an LCM sampling type, an lcm sampler and SDTurboScheduler. A search of comfy_extras and core Python finds no node that trains by distillation: TrainLoraNode's loss compares with the clean latent.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_model_advanced.py:LCM"
+  },
+  {
+   "claim": "Progressive distillation halves the steps each round, and consistency models map noise to data directly, allow multistep sampling, and can be trained by distilling or alone: from the papers' abstracts.",
+   "how": "docs",
+   "ref": "arXiv abstracts, fetched 2026-11-01"
+  },
+  {
+   "claim": "LCM's abstract says it's inspired by consistency models, directly predicts the ODE solution in latent space, and reports 2 to 4 steps at 768 x 768.",
+   "how": "docs",
+   "ref": "arXiv abstract, fetched 2026-11-01"
+  },
+  {
+   "claim": "d_lcm validates.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We read the three papers' abstracts only. The student and consistency fits in the lab are our simplified version: no network, no EMA, one number per level.",
+  "On this problem every sampler step is a multiplication, so a student copies its teacher perfectly. A real network does not, so the lab's flat student-error column overstates what a real student keeps.",
+  "We ran no distilled model here. The settings in d_lcm are the usual ones for LCM files, and are untested by us. Check your file's notes."
+ ]
 }

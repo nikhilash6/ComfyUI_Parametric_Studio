@@ -1,0 +1,73 @@
+{
+ "code": "CU-240",
+ "title": "What a seed does",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Why does ComfyUI draw the starting noise on the CPU?",
+   "options": [
+    "So the same seed gives the same starting noise on any card",
+    "CPUs are faster",
+    "GPUs cannot make random numbers",
+    "To save VRAM only"
+   ],
+   "answer": "So the same seed gives the same starting noise on any card",
+   "why": "prepare_noise_inner passes device='cpu'. CPU and GPU generators give different numbers."
+  },
+  {
+   "q": "Why can euler_ancestral differ between machines with the same seed?",
+   "options": [
+    "It draws its per-step noise on the latent's own device",
+    "It ignores the seed",
+    "It uses the clock",
+    "Its schedule differs"
+   ],
+   "answer": "It draws its per-step noise on the latent's own device",
+   "why": "default_noise_sampler makes a generator on x.device."
+  },
+  {
+   "q": "How does batch_size 4 get its noise?",
+   "options": [
+    "One block of noise with four rows from one seed",
+    "Four seeds in a row",
+    "The same noise four times",
+    "Four separate generators"
+   ],
+   "answer": "One block of noise with four rows from one seed",
+   "why": "Item 0 matches the single image, and item 1 does not match seed + 1."
+  },
+  {
+   "q": "Picking item 2 from a batch failed to reproduce it at 520 x 520 on SD. Why?",
+   "options": [
+    "Each item's value count is not a multiple of 16",
+    "The seed was too large",
+    "LatentFromBatch is broken for all sizes",
+    "The VAE changed"
+   ],
+   "answer": "Each item's value count is not a multiple of 16",
+   "why": "Measured in the lab: 4 × 65 × 65 = 16,900 fails, and 16,384 works."
+  },
+  {
+   "q": "White noise means:",
+   "options": [
+    "Equal power at every frequency band",
+    "Brighter noise",
+    "Noise with no negative values",
+    "Noise made on a GPU"
+   ],
+   "answer": "Equal power at every frequency band",
+   "why": "The lab's first row is level at about 1.00."
+  },
+  {
+   "q": "A noise pack calls something blue. How should you check it?",
+   "options": [
+    "Measure its spectrum",
+    "Trust the name",
+    "Look at the seed",
+    "Count its channels"
+   ],
+   "answer": "Measure its spectrum",
+   "why": "One pack's blue has power falling as 1/f², the opposite of what the word means."
+  }
+ ]
+}

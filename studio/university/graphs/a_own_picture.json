@@ -1,0 +1,52 @@
+{
+ "meta": {
+  "title": "Your own picture and its mask",
+  "about": "Load a file from the input folder, then see the picture and the mask apart. No model.",
+  "runs": "cpu",
+  "needs": [
+   "An image called example.png in your input folder. Pick your own in the loader."
+  ],
+  "packs": [],
+  "notes": {
+   "1": "Reads from the input folder and returns two things: IMAGE and MASK.",
+   "2": "Shows the colour part.",
+   "3": "Turns the mask into a picture you can look at.",
+   "4": "White means the mask is 1: for LoadImage, a transparent pixel. A file with no alpha gives an all-zero mask."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "2": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "1",
+     0
+    ]
+   }
+  },
+  "3": {
+   "class_type": "MaskToImage",
+   "inputs": {
+    "mask": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "3",
+     0
+    ]
+   }
+  }
+ }
+}

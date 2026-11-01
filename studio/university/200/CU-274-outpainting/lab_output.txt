@@ -1,0 +1,32 @@
+512 x 512 picture, 128 added on the right, feathering 40 (the default)
+output size (512, 640)   new pixels hold 0.5 (mid grey)
+columns                 440  472  482  492  502  508  511  512  600
+mask                    0.00 0.00 0.06 0.25 0.56 0.81 0.95 1.00 1.00
+rounded (VAE route)     0.00 0.00 0.00 0.00 1.00 1.00 1.00 1.00 1.00
+rounded and grown by 6  0.00 0.00 0.00 0.00 1.00 1.00 1.00 1.00 1.00
+
+pixels of your own picture that get repainted, counted from the join
+feathering   soft mask above 0   rounded   rounded, grown by 6   feather on?
+0            0                   0         2                     no: hard edge
+8            7                   2         4                     yes
+16           15                  4         6                     yes
+40           39                  11        13                    yes
+80           79                  23        25                    yes
+255          254                 74        76                    yes
+256          0                   0         2                     no: hard edge
+
+the feather switches off without warning: feathering x 2 must be smaller than both sides of the picture
+picture       feathering 40
+512 x 512      feathered
+96 x 96       feathered
+80 x 512      hard edge
+64 x 64       hard edge
+
+only padded sides feather. 64 added on the left only, feathering 16: first and last rows and columns of the old picture
+join column value 1.0   far right column 0.0   top row, middle 0.0
+
+the grid: pad widgets step by 8, but the picture need not. VAE routes crop to a multiple of 8, from the centre
+size after padding   kept after the crop   pixels lost
+640                  640                   0
+644                  640                   4
+767                  760                   7

@@ -1,114 +1,40 @@
-import torch
+# CU-308 lab: counting model calls, what a bigger stride costs on an ODE with a known answer, and what a skipped step really saves.
+# The ODE is a toy, not a diffusion model. It shows the shape of the trade, not how any picture changes.
 import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility
-torch.manual_seed(0)
-
-# Define a simple toy ODE function for distillation/sampling simulation
-# This simulates a neural network that predicts velocity/gradient
-def toy_ode_fn(x, t):
-    """
-    Toy ODE function: dx/dt = -x + sin(t)
-    This is a simple linear ODE with known solution for error checking.
-    """
-    return -x + torch.sin(t)
-
-def solve_ode_euler(x0, t0, t1, num_steps, ode_fn):
-    """
-    Solve ODE using Euler method with given number of steps.
-    Returns final state and number of function evaluations (NFE).
-    """
-    x = x0.clone()
-    dt = (t1 - t0) / num_steps
-    nfe = 0
-    for i in range(num_steps):
-        t = t0 + i * dt
-        # Each step requires one evaluation of the ODE function
-        dx = ode_fn(x, t)
-        x = x + dt * dx
-        nfe += 1
-    return x, nfe
-
-def solve_ode_exact(x0, t0, t1):
-    """
-    Exact solution for dx/dt = -x + sin(t)
-    Solution: x(t) = C*e^(-t) + 0.5*sin(t) - 0.5*cos(t)
-    Using initial condition x(t0) = x0:
-    C = x0 - 0.5*sin(t0) + 0.5*cos(t0)
-    """
-    C = x0 - 0.5 * torch.sin(t0) + 0.5 * torch.cos(t0)
-    return C * torch.exp(-t1) + 0.5 * torch.sin(t1) - 0.5 * torch.cos(t1)
-
-# Simulate a sampler with different step counts and CFG
-# CFG (Classifier-Free Guidance) doubles the NFE per step
-def simulate_sampler(steps, use_cfg):
-    """
-    Simulate a diffusion sampler.
-    Each step requires 1 NFE without CFG, 2 NFE with CFG.
-    """
-    nfe_per_step = 2 if use_cfg else 1
-    total_nfe = steps * nfe_per_step
-    return total_nfe
-
-# Measure NFE for different configurations
-steps_list = [50, 20, 8, 4]
-results = {}
-
-# Without CFG
-for steps in steps_list:
-    nfe = simulate_sampler(steps, use_cfg=False)
-    results[f"nfe_steps_{steps}_no_cfg"] = nfe
-
-# With CFG
-for steps in steps_list:
-    nfe = simulate_sampler(steps, use_cfg=True)
-    results[f"nfe_steps_{steps}_with_cfg"] = nfe
-
-# Calculate speedup factors relative to 50 steps without CFG
-baseline_nfe = results["nfe_steps_50_no_cfg"]
-for steps in steps_list:
-    nfe_no_cfg = results[f"nfe_steps_{steps}_no_cfg"]
-    nfe_with_cfg = results[f"nfe_steps_{steps}_with_cfg"]
-    speedup_no_cfg = baseline_nfe / nfe_no_cfg
-    speedup_with_cfg = baseline_nfe / nfe_with_cfg
-    results[f"speedup_steps_{steps}_no_cfg"] = speedup_no_cfg
-    results[f"speedup_steps_{steps}_with_cfg"] = speedup_with_cfg
-
-# Toy 1-step vs 4-step ODE solve error trade-off
-x0 = torch.tensor([1.0], dtype=torch.float32)
-t0 = torch.tensor(0.0, dtype=torch.float32)
-t1 = torch.tensor(1.0, dtype=torch.float32)
-
-# Exact solution
-x_exact = solve_ode_exact(x0, t0, t1)
-
-# 1-step Euler
-x_1step, nfe_1step = solve_ode_euler(x0, t0, t1, num_steps=1, ode_fn=toy_ode_fn)
-error_1step = torch.abs(x_1step - x_exact).item()
-
-# 4-step Euler
-x_4step, nfe_4step = solve_ode_euler(x0, t0, t1, num_steps=4, ode_fn=toy_ode_fn)
-error_4step = torch.abs(x_4step - x_exact).item()
-
-results["nfe_1step_ode"] = nfe_1step
-results["nfe_4step_ode"] = nfe_4step
-results["error_1step_ode"] = error_1step
-results["error_4step_ode"] = error_4step
-results["error_reduction_factor"] = error_1step / error_4step if error_4step > 0 else float('inf')
-
-# Assertions to verify concepts
-# 1. Fewer steps should give higher speedup
-assert results["speedup_steps_4_no_cfg"] > results["speedup_steps_50_no_cfg"], "Fewer steps should give higher speedup"
-# 2. More steps should give lower error
-assert error_4step < error_1step, "More steps should give lower error"
-
-# Print results
-for name, value in results.items():
-    if isinstance(value, float):
-        print(f"RESULT {name} = {value:.6g}")
-    else:
-        print(f"RESULT {name} = {value}")
+def calls(steps, per_step, cfg):
+    """samplers.py sampling_function drops the second conditioning when cfg is 1, unless a node turned that shortcut off."""
+    return steps * per_step * (1 if cfg == 1 else 2)
+print("model calls = steps x calls per step x (2 if CFG is not 1)")
+for name, s, p, c in (("euler, 20 steps, CFG 7", 20, 1, 7), ("euler, 20 steps, CFG 1", 20, 1, 1), ("heun, 20 steps, CFG 7", 20, 2, 7), ("euler, 4 steps, CFG 1 (a distilled model)", 4, 1, 1), ("euler, 50 steps, CFG 7", 50, 1, 7)):
+    print(f"  {name:44s} {calls(s, p, c):4d}")
+assert calls(50, 1, 7) / calls(4, 1, 1) == 25
+def f(x, t): return -x + math.sin(t)
+def exact(x0, t): return (x0 + 0.5) * math.exp(-t) + 0.5 * math.sin(t) - 0.5 * math.cos(t)
+def euler(x0, n):
+    x, t, h = x0, 0.0, 1.0 / n
+    for _ in range(n): x += h * f(x, t); t += h
+    return x
+def heun(x0, n):
+    x, t, h = x0, 0.0, 1.0 / n
+    for _ in range(n):
+        a = f(x, t); b = f(x + h * a, t + h); x += h * (a + b) / 2; t += h
+    return x
+print("\nthe ODE dx/dt = -x + sin(t) from t = 0 to 1, whose exact answer we know")
+print(f"  {'steps':>5s} {'euler calls':>12s} {'euler error':>12s} {'heun calls':>12s} {'heun error':>12s}")
+errs = {}
+for n in (1, 2, 4, 8, 16):
+    ee, he = abs(euler(1.0, n) - exact(1.0, 1)), abs(heun(1.0, n) - exact(1.0, 1)); errs[n] = (ee, he)
+    print(f"  {n:5d} {n:12d} {ee:12.5f} {2 * n:12d} {he:12.5f}")
+assert errs[2][0] / errs[4][0] > 1.5 and errs[2][1] / errs[4][1] > 3
+print(f"  halve the step: euler error x{errs[4][0] / errs[8][0]:.2f} smaller, heun x{errs[4][1] / errs[8][1]:.2f} smaller")
+print("\nskipping steps, the idea behind a step cache: reuse the last change when the input barely moved")
+def cached(n, thresh):
+    x, t, h = 1.0, 0.0, 1.0 / n; last = None; lastx = None; used = 0
+    for _ in range(n):
+        if last is not None and abs(x - lastx) < thresh: d = last
+        else: d = f(x, t); last = d; lastx = x; used += 1
+        x += h * d; t += h
+    return x, used
+for th in (0.0, 0.01, 0.03, 0.1):
+    x, u = cached(40, th); print(f"  threshold {th:4.2f}: {u:2d} of 40 calls, error {abs(x - exact(1.0, 1)):.5f}")
+assert cached(40, 0.1)[1] < cached(40, 0.0)[1] and abs(cached(40, 0.1)[0] - exact(1.0, 1)) > abs(cached(40, 0.0)[0] - exact(1.0, 1))

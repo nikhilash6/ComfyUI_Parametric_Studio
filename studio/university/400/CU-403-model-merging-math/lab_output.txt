@@ -1,12 +1,43 @@
-RESULT norm_base = 3.49403
-RESULT norm_t1 = 3.61211
-RESULT norm_t2 = 3.38031
-RESULT norm_lin_interp = 3.49382
-RESULT norm_slerp = 3.49621
-RESULT norm_task_arith = 3.49382
-RESULT cos_lin_t1 = 0.999361
-RESULT cos_lin_t2 = 0.99927
-RESULT cos_slerp_t1 = 0.999316
-RESULT cos_slerp_t2 = 0.999316
-RESULT cos_task_t1 = 0.999361
-RESULT cos_task_t2 = 0.99927
+weights of the same size at an angle: size of the halfway blend, against the parents' 1.0000
+angle (degrees)   lerp     slerp
+1                 1.0000   1.0000
+10                0.9962   1.0000
+45                0.9239   1.0000
+90                0.7071   1.0000
+135               0.3827   1.0000
+
+our two fine-tunes: angle 8.05 degrees, size of A 20.0959, of B 20.0983
+lerp size 20.0474   slerp scaled to the mean size 20.0970   largest difference between them 2.36e-04, against typical weight 0.02
+task arithmetic 0.5 and 0.5 against lerp: largest difference 7.5e-09 (the same sum)
+task arithmetic 1 and 1 keeps each change whole: share of A's change present 1.002   lerp 0.5 keeps 0.501
+
+ModelMergeSimple, model1 = 10, model2 = 2
+ratio   result
+1.0     10.0
+0.7     7.6
+0.3     4.4
+0.0     2.0
+
+halfway merge of two fine-tunes. Error against the merge done in full precision, as a share of the weights' size
+parents stored as   merged, then stored in the same format   merged from those parents, then stored
+float32             0.00000                                  0.00000
+fp16                0.00021                                  0.00029
+bf16                0.00166                                  0.00232
+FP8                 0.02644                                  0.03642
+
+the task vector B - base, read from stored parents. The change is 10% of the weight's size here. Error as a share of the change
+parents stored as   error / change   share of the change kept   correlation with the true change
+float32             0.000            1.000                      1.000
+fp16                0.003            1.000                      1.000
+bf16                0.024            1.000                      1.000
+FP8                 0.372            0.999                      0.937
+
+the same difference with a smaller change (what happens to fine-tunes that barely moved a weight), FP8 parents
+change / weight   error / change   correlation with the true change
+0.1               0.374            0.937
+0.03              1.100            0.673
+0.01              2.248            0.408
+
+rounding errors add along a chain of merges. Four parents, FP8. Error as a share of the weights' size
+four parents, rounded at every merge          0.04025
+four parents, full precision, rounded once    0.02640

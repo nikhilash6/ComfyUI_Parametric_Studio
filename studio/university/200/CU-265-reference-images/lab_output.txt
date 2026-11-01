@@ -1,0 +1,14 @@
+start                 [1, 77, 768] ['pooled_output']
+StyleModelApply       [1, 85, 768] ['pooled_output']
+unCLIPConditioning    [1, 77, 768] ['pooled_output', 'unclip_conditioning']
+unCLIP twice: entries in the key: 2
+unCLIP at strength 0 returns the input untouched: True
+
+style strength 0, multiply: tokens are still there, 85 of them, all zeros: True
+text tokens untouched by the style model: True
+
+Redux maps each vision token from 1152 to 4096 numbers: the same width as T5-XXL's tokens
+so 4 vision tokens become [1, 4, 4096]
+
+SDXL global vector without the key: pooled text
+SDXL global vector with the key:    image embedding through unclip_adm, first 1280 numbers

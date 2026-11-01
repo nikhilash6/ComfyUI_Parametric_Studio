@@ -1,0 +1,70 @@
+{
+ "code": "CU-242",
+ "title": "eps, v-prediction and flow: how a model's output is read",
+ "level": "200",
+ "prereq": [
+  "CU-202",
+  "CU-204"
+ ],
+ "char": "denoise",
+ "hook": "The same network output means different things to different models. model_sampling.py is where ComfyUI says which, and what happens when it says wrong.",
+ "code_refs": [
+  "comfy/model_sampling.py:EPS",
+  "comfy/model_sampling.py:V_PREDICTION",
+  "comfy/model_sampling.py:CONST",
+  "comfy/model_sampling.py:ModelSamplingDiscrete",
+  "comfy/model_sampling.py:ModelSamplingDiscreteFlow",
+  "comfy/model_sampling.py:time_snr_shift",
+  "comfy/model_sampling.py:flux_time_shift",
+  "comfy/model_sampling.py:rescale_zero_terminal_snr_sigmas",
+  "comfy_extras/nodes_model_advanced.py:ModelSamplingDiscrete",
+  "comfy_extras/nodes_model_advanced.py:ModelSamplingSD3",
+  "comfy_extras/nodes_model_advanced.py:ModelSamplingFlux"
+ ],
+ "track": "noise-latent",
+ "order": 35,
+ "kit": true,
+ "graphs": [
+  "b_vpred",
+  "sd35_flow"
+ ],
+ "verified": [
+  {
+   "claim": "The conversions in the lab are copied from EPS, V_PREDICTION and CONST.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py"
+  },
+  {
+   "claim": "Real calculate_denoised gives the values the lab's formulas give: at sigma 3, input 2, output 0.5, eps 0.5 and v -0.27434.",
+   "how": "run here",
+   "ref": "comfy.model_sampling classes in a Python session"
+  },
+  {
+   "claim": "With zsnr the real sigma_max is 4518.76, with sigma_min 0.02917.",
+   "how": "run here",
+   "ref": "comfy.model_sampling.ModelSamplingDiscrete(zsnr=True)"
+  },
+  {
+   "claim": "percent_to_sigma(0.5) is 1.6156 on the SD table and 0.75 on a flow model with shift 3.",
+   "how": "run here",
+   "ref": "comfy.model_sampling classes"
+  },
+  {
+   "claim": "ModelSamplingSD3 and ModelSamplingFlux compute their shift as in the lab.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_model_advanced.py"
+  },
+  {
+   "claim": "b_vpred and sd35_flow pass validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We read only the abstract of Salimans and Ho (2022). The v formula here comes from ComfyUI's code and the lab's check, not from their text.",
+  "We did not render an eps model loaded as v or the other way round. The lab shows the size of the error in the clean-latent estimate on perfect outputs, not what a real picture looks like."
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
+}

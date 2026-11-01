@@ -1,0 +1,31 @@
+toy problem, model calls and error (from the Sampling Lab)
+sampler    steps  calls  rmse
+euler      10     10     0.1548
+euler      20     20     0.0768
+heun       10     19     0.0558
+heun       20     39     0.0114
+dpmpp_2m   10     10     0.0541
+dpmpp_2m   20     20     0.0119
+
+same steps (20): heun 0.0114 beats euler 0.0768, for 39 calls against 20
+same calls (about 20): heun at 10 steps 0.0558, euler at 20 steps 0.0768, dpmpp_2m at 20 steps 0.0119
+
+one seed, one prompt (from the Sampling Lab renders)
+sampler           brightness  contrast  edge    seconds
+euler             102.4       72.1      20.17   66.0
+heun              106.4       80.5      23.38   1.5
+dpmpp_2m          105.1       77.2      22.93   1.5
+euler_ancestral   81.6        51.7      12.16   1.5
+seconds are polled every 1.5 s, and euler's 66 includes loading the model, so these can't rank speed
+
+true difference 1.0, seed effect sd 5, noise sd 1, a score for each render
+seeds per sampler   same seeds: diff +/- range   different seeds: diff +/- range
+1                   +0.79, no range               +0.08, no range
+4                   +1.25 +/- 0.77              +5.78 +/- 12.23
+16                  +0.66 +/- 0.73              -0.55 +/- 4.57
+64                  +1.05 +/- 0.39              +0.48 +/- 1.78
+256                 +1.05 +/- 0.17              +1.09 +/- 0.90
+
+seeds for a range of +/- the true difference: same seeds (sd of difference 1.41): 9, different seeds (sd 7.21): 208
+same seed, one render each, true difference +1 in favour of b: a looks better 24% of the time
+15 equal samplers, 8 seeds each, noise sd 1: the winner's lead over the true mean averages 0.62, so test the winner again on new seeds

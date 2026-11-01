@@ -4,49 +4,59 @@
  "level": "400",
  "questions": [
   {
-   "q": "According to the lesson, what is the primary goal of reading a generative AI paper in 20 minutes?",
+   "q": "A paper says 'better than the state of the art' with no setting listed. What's missing?",
    "options": [
-    "To memorize every equation and detail in the appendix",
-    "To develop spatial intuition to judge if a model is a solid structure or a mirage",
-    "To download and fine-tune the model immediately",
-    "To verify the standard deviations of all reported metrics"
+    "The baseline at the same settings, and the measure",
+    "The author list",
+    "The file size",
+    "Nothing"
    ],
-   "answer": "To develop spatial intuition to judge if a model is a solid structure or a mirage",
-   "why": "The lesson states: 'Your goal in this 400-level course is not to memorize every equation, but to develop the spatial intuition to judge whether a new model is a solid structure or a mirage.'"
+   "answer": "The baseline at the same settings, and the measure",
+   "why": "You need to know better than what, by which number, on what data."
   },
   {
-   "q": "In the 'cake' analogy for reading a paper, what do the middle layers represent?",
+   "q": "A method's best of 30 runs beats the baseline's mean by 2 run-noise units, with no true gain. Why?",
    "options": [
-    "The Abstract and Introduction",
-    "The Method and Results",
-    "The Appendix and References",
-    "The Conclusion and Future Work"
+    "Taking the maximum of many noisy runs inflates the number",
+    "The baseline is broken",
+    "More runs improve the method",
+    "It's impossible"
    ],
-   "answer": "The Method and Results",
-   "why": "The lesson states: 'The middle layers are the Method and Results, which show you the recipe and the taste test.'"
+   "answer": "Taking the maximum of many noisy runs inflates the number",
+   "why": "The lab reaches about 2.04 with a true gain of 0."
   },
   {
-   "q": "What is the formula for calculating Relative Improvement ($\\Delta$) as defined in the lesson?",
-   "options": null,
-   "answer": "$\\Delta = (R - B) / B$",
-   "why": "The lesson explicitly defines the formula as: '$\\Delta = (R - B) / B$' where R is the reported metric and B is the baseline metric."
-  },
-  {
-   "q": "Based on the lab results, why did Model C's claim not survive scrutiny?",
+   "q": "No spread is reported. What should you conclude?",
    "options": [
-    "The improvement was negative, indicating a performance drop",
-    "The relative improvement was approximately 0.7%, which is below the 2% noise threshold",
-    "The baseline metric was too weak to be a valid comparison",
-    "The paper did not report standard deviations for the F1 score"
+    "You can't judge whether the difference is real",
+    "The result has no noise",
+    "The result is false",
+    "The spread must be small"
    ],
-   "answer": "The relative improvement was approximately 0.7%, which is below the 2% noise threshold",
-   "why": "The lab output for Model C shows a relative improvement of 0.00699308 (approx 0.7%). The lesson states: 'This is well below the 2% threshold. Therefore, this claim does not survive; it is likely within the noise of the measurement.'"
+   "answer": "You can't judge whether the difference is real",
+   "why": "The last row of the second table: no spread, no judgement."
   },
   {
-   "q": "According to the 'Common mistakes' section, why is comparing a new model to a weak baseline problematic?",
-   "options": null,
-   "answer": "It makes the improvement look larger than it is.",
-   "why": "The lesson lists 'Ignoring the Baseline' as a common mistake and explains: 'Comparing a new model to a weak baseline makes the improvement look larger than it is.'"
+   "q": "A paper reports eight metrics and wins on one by a clear margin. How should you read that?",
+   "options": [
+    "With care: one of many can favour it by chance",
+    "As proof of a real gain",
+    "As proof of no gain",
+    "It means the other seven are wrong"
+   ],
+   "answer": "With care: one of many can favour it by chance",
+   "why": "The lab's chance of one clear win with no real difference is 32%."
+  },
+  {
+   "q": "A paper gets lower error at 20 steps by calling the model twice per step. What fair comparison should you ask for?",
+   "options": [
+    "The same total model calls",
+    "The same step count",
+    "The same image size only",
+    "The same paper"
+   ],
+   "answer": "The same total model calls",
+   "why": "Steps hide cost. See heun in CU-470."
   }
  ]
 }

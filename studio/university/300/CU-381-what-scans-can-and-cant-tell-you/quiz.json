@@ -1,0 +1,73 @@
+{
+ "code": "CU-381",
+ "title": "What scans can and can't tell you",
+ "level": "300",
+ "questions": [
+  {
+   "q": "A scan flags base64.b64decode on a field called image. What is your next step?",
+   "options": [
+    "Read where the result goes",
+    "Delete the pack at once",
+    "Ignore all base64 hits forever",
+    "Report it as malware"
+   ],
+   "answer": "Read where the result goes",
+   "why": "Decoding is harmless, and exec on the result isn't. Only the next line can tell."
+  },
+  {
+   "q": "What does a clean scan mean?",
+   "options": [
+    "No pattern matched",
+    "The pack is safe",
+    "Someone reviewed it",
+    "It has no network access"
+   ],
+   "answer": "No pattern matched",
+   "why": "Run-time names, compiled files and later downloads don't trip patterns."
+  },
+  {
+   "q": "The same pip call is in docs/build.py and at the top of __init__.py. Which is worse?",
+   "options": [
+    "The one in __init__.py, because it runs at every start",
+    "The docs one, because it is hidden",
+    "They are the same text, so they are equal",
+    "Neither, pip is harmless"
+   ],
+   "answer": "The one in __init__.py, because it runs at every start",
+   "why": "Where a line runs decides what it means."
+  },
+  {
+   "q": "Why might a harmful line have no scary word in it?",
+   "options": [
+    "Opening a path from a web request needs only a missing check",
+    "Python hides those words",
+    "Scanners don't read Python",
+    "Harmful code is always compiled"
+   ],
+   "answer": "Opening a path from a web request needs only a missing check",
+   "why": "Plain words can do real damage."
+  },
+  {
+   "q": "What happened in the lab when a new pattern was added?",
+   "options": [
+    "Fewer misses, and the false alarms were still there",
+    "All mistakes went away",
+    "There were more misses",
+    "The scanner stopped working"
+   ],
+   "answer": "Fewer misses, and the false alarms were still there",
+   "why": "Clean on a bad line fell from 5 to 2, and false alarms stayed at 6."
+  },
+  {
+   "q": "How do you report a hit honestly?",
+   "options": [
+    "Say what the scan found, what you read, and what the line does",
+    "Say the pack passed or failed",
+    "Give the count of hits as a score",
+    "Quote the README"
+   ],
+   "answer": "Say what the scan found, what you read, and what the line does",
+   "why": "A scan points. A reader decides."
+  }
+ ]
+}

@@ -25,11 +25,19 @@ Noise is where the smoothing earns its keep. For white noise of standard deviati
 
 Canny's method adds three steps around the gradient. Blur the image first. Take the gradient. Keep only the ridge of each edge (non-maximum suppression). Then use two thresholds, keeping a weak edge pixel only when it connects to a strong one (hysteresis). We follow kornia's description of the algorithm here, and have not read Canny's paper.
 
+Here's the node at work, with no model needed: one graph, two threshold settings.
+
+{{graph:d_canny_preview}}
+
 ## In ComfyUI
 
 **Edges.** The `Canny` node, "Detect Edges (Canny)", in `comfy_extras/nodes_canny.py` passes the first three channels of the image to `kornia.filters.canny` with `low_threshold` 0.4 and `high_threshold` 0.8 as defaults, and copies the single-channel edge map into three channels. Kornia's documentation for version 0.9.0, the version used for this audit (ComfyUI's requirements say `kornia>=0.7.1`), describes what happens: a 3-channel input becomes grey, it is blurred with a 5 × 5 Gaussian of sigma 1 by default, and the unnormalised Sobel gradient is taken. The thresholds are compared with that magnitude, so they are not fractions of the image range: "a unit step reaches 4 without the blur and about 2.59 with the default one". Then comes non-maximum suppression along the gradient direction, rounded to a multiple of 45 degrees, and hysteresis through the 8 neighbours.
 
 **Depth.** Core ComfyUI estimates depth with networks. It has Depth Anything 3 nodes (`LoadDA3Model`, `DA3Inference`, `DA3Render`) and MoGe nodes (`LoadMoGeModel`, `MoGeInference`) in `comfy_extras`. `DA3Render` turns the depth into a grey image with a `normalization` choice. In `comfy/ldm/depth_anything_3/preprocess.py`, `min_max` stretches the frame's smallest and largest depth to the range 0 to 1. `v2_style` takes the 1st and 99th percentiles of the depth, over the non-sky pixels when a sky mask exists, stretches those, and sets sky to black. Both put near at 1.0, white. The node's tooltip calls `v2_style` "mean/std normalisation", but the code uses percentiles, and the lab follows the code.
+
+Now move a threshold on a real render, and watch the map fill or empty. This lab thresholds plain Sobel, with no thinning. CU-271 covers the node's own settings.
+
+{{play:edges}}
 
 ## Lab
 
@@ -74,6 +82,14 @@ far pixels   min_max               v2_style
 ```
 
 With no far pixels the two agree. With 0.5% far pixels, `min_max` squeezes the whole scene into grey values between 0.984 and 1.000, because its upper end is 500 m, while the percentile version still spreads 2 m to 10 m over the full range, since the 99th percentile ignores them. At 2% the 99th percentile is itself 500 m and `v2_style` collapses too. The sky options of `DA3Render` address this: its `apply_sky_clip` tooltip says it clips sky depth to the 99th percentile of the foreground depth before normalising.
+
+## What goes wrong
+
+- **A black map.** The thresholds are compared with the gradient, not with brightness: 2.59 × contrast for a straight edge. Lower them. CU-271 has the table.
+- **A speckled map.** Noise is getting through. The lab's false edges column shows how much the blur removes, so try a little blur first, or raise the thresholds.
+- **Sobel numbers above 1.** That's normal: the stencil isn't scaled. A unit step gives 4.
+- **A low threshold above the high one.** kornia stops the run with an error, even though the sliders allow it.
+- **A flat pale depth map.** `min_max` with a far sky. Use `v2_style`, a sky mask or a MoGe render (CU-272).
 
 ## What is contested
 

@@ -1,14 +1,72 @@
 {
+ "code": "CU-311",
  "title": "Mixed precision: where accumulation hides",
  "level": "300",
- "char": "bits",
- "hook": "Discover why your gradients vanish or explode when mixing float16 and float32, and how ComfyUI's scheduler hides the accumulation trap.",
- "code": "CU-311",
  "prereq": [
   "CU-210"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "bits",
+ "hook": "Add a small number to a big one in fp16 and nothing happens. Watch a running sum stall at 0.25, and find the same sum inside every matmul.",
  "track": "performance",
- "order": 60
+ "order": 60,
+ "graphs": [
+  "sd15_train_lora"
+ ],
+ "code_refs": [
+  "comfy/cli_args.py:PerformanceFeature",
+  "comfy/model_management.py:PRIORITIZE_FP16",
+  "comfy/ops.py:_fp16_linear_wanted",
+  "comfy/ldm/seedvr/vae.py:_fp16_accumulate_wanted",
+  "comfy_extras/nodes_train.py:TrainSampler",
+  "comfy/model_management.py:lora_compute_dtype"
+ ],
+ "verified": [
+  {
+   "claim": "fp16 has 10 mantissa bits and eps 2^-10, bf16 7 bits, fp32 23 bits, from torch.finfo.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "--fast fp16_accumulation sets allow_fp16_accumulation and is listed under untested and potentially quality deteriorating options.",
+   "how": "source",
+   "ref": "comfy/cli_args.py, comfy/model_management.py"
+  },
+  {
+   "claim": "fp16 accumulation is off during training in the plain linear path and needs fp16 on CUDA.",
+   "how": "source",
+   "ref": "comfy/ops.py"
+  },
+  {
+   "claim": "The core LoRA trainer offers training_dtype bf16, fp32 or none, and lora_dtype bf16 or fp32, with bf16 as the default for both.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py"
+  },
+  {
+   "claim": "Training an fp16 model with fp16_accumulation on logs a warning about instability and NaN values.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py"
+  },
+  {
+   "claim": "A comment in nodes_train.py says GradScaler only supports float16 gradients, not bfloat16.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py"
+  },
+  {
+   "claim": "Every number in the Lab comes from a run here on the CPU.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graph passes validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "torch.backends.cuda.matmul.allow_fp16_accumulation does not appear in the PyTorch 2.15 backends page we fetched. Our reading of it comes from ComfyUI's flag text and code and from its name, not from PyTorch's docs.",
+  "We ran the fp16 summing on a CPU as a plain loop. A GPU's real matmul kernel may order and accumulate differently.",
+  "We did not measure how much --fast fp16_accumulation changes a picture, or how much speed it gives.",
+  "How often a real LoRA training run loses gradients this way, in any format."
+ ],
+ "kit": true
 }

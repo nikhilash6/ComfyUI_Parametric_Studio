@@ -1,14 +1,70 @@
 {
- "title": "Why attention is O(n^2) and how Flash/Sage fix the memory",
- "level": "300",
- "char": "attn",
- "hook": "Tiling, online softmax and the memory wall.",
  "code": "CU-304",
+ "title": "Why attention is O(n^2), and what Flash and Sage change",
+ "level": "300",
  "prereq": [
   "CU-301"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "attn",
+ "hook": "Score every token against every token and the table grows with the square. Slicing and online softmax hold less of it at once, with the same answer. Low precision is a different bargain.",
  "track": "performance",
- "order": 30
+ "order": 30,
+ "graphs": [
+  "nm_latent_ops"
+ ],
+ "code_refs": [
+  "comfy/ldm/modules/attention.py:attention_basic",
+  "comfy/ldm/modules/attention.py:attention_split",
+  "comfy/ldm/modules/attention.py:attention_sub_quad",
+  "comfy/ldm/modules/attention.py:attention_pytorch",
+  "comfy/ldm/modules/attention.py:attention_sage",
+  "comfy/ldm/modules/attention.py:attention_flash",
+  "comfy/ldm/modules/attention.py:attention_comfy_kitchen_int8",
+  "comfy/ldm/modules/attention.py:optimized_attention_for_device",
+  "comfy/model_management.py:pytorch_attention_flash_attention"
+ ],
+ "verified": [
+  {
+   "claim": "attention_basic builds a full score matrix with einsum and then applies softmax.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:attention_basic"
+  },
+  {
+   "claim": "attention_split works out how much it needs, splits the queries into slices when that exceeds free memory, and scores each slice in turn.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:attention_split"
+  },
+  {
+   "claim": "The backend is chosen at import in this order: sage, flash, xformers, pytorch, then split or sub-quadratic. Comfy Kitchen overrides it when its flag is set.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py"
+  },
+  {
+   "claim": "The CUDA flash backend of scaled_dot_product_attention is enabled when pytorch attention is on.",
+   "how": "source",
+   "ref": "comfy/model_management.py"
+  },
+  {
+   "claim": "Slicing queries and online softmax match the full calculation to rounding error, and rounding Q and K to int8 does not.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The FlashAttention title calls it exact and the SageAttention title calls it 8-bit.",
+   "how": "docs",
+   "ref": "arXiv API, 2026-11-01"
+  },
+  {
+   "claim": "The graph ran on a CPU.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not measure Sage or FlashAttention on a GPU, so we make no claim here about their speed or memory on your card.",
+  "The lab's int8 row is our own toy. SageAttention's real method, including what it quantizes and how it keeps accuracy, is not reproduced.",
+  "Which PyTorch backend runs for a given shape is decided inside PyTorch. We read only what ComfyUI turns on.",
+  "What the Comfy Kitchen attention does internally lives in another package we did not read."
+ ],
+ "kit": true
 }

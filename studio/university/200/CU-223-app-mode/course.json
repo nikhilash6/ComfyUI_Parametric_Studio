@@ -3,12 +3,58 @@
  "title": "App Mode: a graph with a form on top",
  "level": "200",
  "prereq": [
-  "CU-109",
+  "CU-110",
   "CU-220"
  ],
  "char": "graph",
  "hook": "App Mode shows chosen inputs and outputs of a workflow as a simple form. The graph underneath does not change.",
- "code_refs": [],
+ "code_refs": [
+  "execution.py:validate_prompt",
+  "server.py:post_prompt"
+ ],
  "track": "automation",
- "order": 20
+ "order": 20,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "The builder's four steps, the version and the Comfy Cloud limit on share links.",
+   "how": "docs",
+   "ref": "https://docs.comfy.org/interface/app-mode fetched 2026-11-01"
+  },
+  {
+   "claim": "linearMode and linearData are saved in the workflow, with inputs and outputs lists.",
+   "how": "docs",
+   "ref": "comfyWorkflow.ts and workflowSchema.ts in the front end, main branch, fetched 2026-11-01"
+  },
+  {
+   "claim": "The app's Run button and the ordinary one both run Comfy.QueuePrompt.",
+   "how": "docs",
+   "ref": "LinearControls.vue and ComfyQueueButton.vue in the front end, fetched 2026-11-01"
+  },
+  {
+   "claim": "pruneLinearData drops a field whose node is gone, and Note and MarkdownNote are refused.",
+   "how": "docs",
+   "ref": "appModeStore.ts in the front end, commit 9458ec9, fetched 2026-11-01"
+  },
+  {
+   "claim": "No Python file in ComfyUI v0.43.0 outside custom nodes mentions linearMode or linearData.",
+   "how": "run here",
+   "ref": "a text search of the source tree"
+  },
+  {
+   "claim": "The re-run counts come from walking the wires of the seven-node graph, the rule in CU-102.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "We read the front end on its main branch, which may be newer than yours. We did not watch an app run in a browser, so the claim that it posts the same way is read from the code.",
+  "The lab is our model of a form, not the front end's code."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

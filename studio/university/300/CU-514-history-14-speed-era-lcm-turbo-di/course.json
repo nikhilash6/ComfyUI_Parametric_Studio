@@ -2,13 +2,106 @@
  "title": "History 14: The speed era: LCM, turbo and distillation",
  "level": "300",
  "char": "denoise",
- "hook": "Discover how we tricked diffusion models into thinking they were already finished, slashing generation time from minutes to seconds.",
+ "hook": "A student learns where the slow path ends. From an exact teacher: 1.39 for Euler at one call against 0.14 for the student, and what happens when the data isn't what it copied.",
  "code": "CU-514",
  "prereq": [
   "CU-308"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy_extras/nodes_model_advanced.py:LCM",
+  "comfy_extras/nodes_model_advanced.py:ModelSamplingDiscreteDistilled",
+  "comfy/k_diffusion/sampling.py:sample_lcm",
+  "comfy_extras/nodes_custom_sampler.py:SDTurboScheduler",
+  "comfy/samplers.py:cfg_function",
+  "comfy/samplers.py:sampling_function"
+ ],
  "track": "history",
- "order": 110
+ "order": 110,
+ "graphs": [
+  "d_lcm",
+  "h5_sdturbo"
+ ],
+ "verified": [
+  {
+   "claim": "c_skip and c_out with sigma_data 0.5 and the timestep times 10.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_model_advanced.py:LCM.calculate_denoised"
+  },
+  {
+   "claim": "original_timesteps is 50.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_model_advanced.py:ModelSamplingDiscreteDistilled"
+  },
+  {
+   "claim": "Sets x to the denoised value, then adds noise for the next level.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_lcm"
+  },
+  {
+   "claim": "Steps up to 10, picked from a fixed flipped list.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_custom_sampler.py:SDTurboScheduler"
+  },
+  {
+   "claim": "uncond is skipped when cfg is close to 1.",
+   "how": "source",
+   "ref": "comfy/samplers.py:sampling_function"
+  },
+  {
+   "claim": "Teacher, student, the swapped data test, the call table, the c_skip table and the Turbo list print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title, date and abstract from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2202.00512"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2210.03142"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2303.01469"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2310.04378"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2311.05556"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2311.17042"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2402.13929"
+  },
+  {
+   "claim": "The two branches go through one forward pass as a batch when memory allows.",
+   "how": "source",
+   "ref": "comfy/samplers.py:_calc_cond_batch"
+  }
+ ],
+ "unchecked": [
+  "We read the abstracts of the seven papers, not their full text.",
+  "The student is trained directly on the exact path's end points, not with the consistency loss, and on one-dimensional data. The noise levels in its loop are ours.",
+  "We didn't run any distilled file here, so what cfg 7 or extra steps do to a real picture was not seen. The advice comes from how these models are described.",
+  "That the guidance a student learned adds to cfg is reasoning from the LCM abstract, not a test.",
+  "That a family-specific LCM LoRA won't work across families is our reading of the abstract, which names its models."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 2
+ }
 }

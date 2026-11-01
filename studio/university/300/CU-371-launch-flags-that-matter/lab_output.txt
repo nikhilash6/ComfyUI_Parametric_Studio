@@ -1,0 +1,31 @@
+does this set of flags ask for dynamic VRAM?
+  no flags                           True
+  --lowvram                          True
+  --highvram                         False
+  --gpu-only                         False
+  --novram                           False
+  --cpu                              False
+  --disable-dynamic-vram             False
+  --highvram --enable-dynamic-vram   True
+
+which attention runs
+  NVIDIA, torch 2, no flag               pytorch
+  NVIDIA, --use-split-cross-attention    split
+  NVIDIA, --use-sage-attention           sage
+  NVIDIA, --use-flash-attention          flash
+  NVIDIA, --use-ck-attention             comfy kitchen
+  no pytorch default, no flag            sub quadratic
+
+the node result cache
+  no flag, 16 GB RAM       RAM pressure, keep 2 GB free
+  no flag, 64 GB RAM       RAM pressure, keep 6.4 GB free
+  no flag, 256 GB RAM      RAM pressure, keep 10 GB free
+  --cache-ram 8            RAM pressure, keep 8 GB free
+  --cache-lru 12           LRU, 12 results
+  --cache-classic          classic
+  --cache-none             none
+
+--reserve-vram changes the room every load asks for, through minimum_inference_memory
+  --reserve-vram None  reserved  0.39 GB   minimum working room  1.19 GB
+  --reserve-vram 1     reserved  1.00 GB   minimum working room  1.80 GB
+  --reserve-vram 4     reserved  4.00 GB   minimum working room  4.80 GB

@@ -1,0 +1,73 @@
+{
+ "code": "CU-374",
+ "title": "Quantized files: fp8, GGUF, and how loaders treat them",
+ "level": "300",
+ "questions": [
+  {
+   "q": "Which file needs a pack to load in ComfyUI v0.43.0?",
+   "options": [
+    "A .gguf file",
+    "An fp8 safetensors file",
+    "A safetensors file with comfy_quant entries",
+    "An fp16 safetensors file"
+   ],
+   "answer": "A .gguf file",
+   "why": "Core's model folders do not list .gguf."
+  },
+  {
+   "q": "You have an fp16 file and little VRAM. What is the first thing to try, with no new file?",
+   "options": [
+    "UNETLoader's weight_dtype set to fp8",
+    "Converting it to GGUF",
+    "Merging it with itself",
+    "Raising the batch"
+   ],
+   "answer": "UNETLoader's weight_dtype set to fp8",
+   "why": "It sets the storage type at load from a file of any float type."
+  },
+  {
+   "q": "Your card can't compute a format in a native quantized file. What happens?",
+   "options": [
+    "Those layers keep small storage and dequantize for the multiply",
+    "The file is refused",
+    "The picture turns black always",
+    "It downloads another file"
+   ],
+   "answer": "Those layers keep small storage and dequantize for the multiply",
+   "why": "The console lists them as emulated ops."
+  },
+  {
+   "q": "In the lab, why is the add-difference term so damaged by fp8 inputs?",
+   "options": [
+    "Subtracting similar models leaves a small result, and the rounding errors stay their full size",
+    "fp8 can't represent negative numbers",
+    "Subtraction isn't defined for fp8",
+    "The lab uses too few weights"
+   ],
+   "answer": "Subtracting similar models leaves a small result, and the rounding errors stay their full size",
+   "why": "The error was 12% of the difference, against none from unquantized inputs."
+  },
+  {
+   "q": "What is the order for merging and quantizing?",
+   "options": [
+    "Merge unquantized files, then quantize the result once",
+    "Quantize each, merge, then quantize again",
+    "Quantize, then merge, and stop",
+    "It makes no difference"
+   ],
+   "answer": "Merge unquantized files, then quantize the result once",
+   "why": "Rounding is permanent. Keep the arithmetic on the full numbers."
+  },
+  {
+   "q": "When does a plain fp8 file stay fp8 in unet_dtype?",
+   "options": [
+    "When the card computes fp8, or twice the parameters would not fit",
+    "Always",
+    "Never",
+    "Only on a CPU"
+   ],
+   "answer": "When the card computes fp8, or twice the parameters would not fit",
+   "why": "Otherwise unet_dtype falls through to other types."
+  }
+ ]
+}

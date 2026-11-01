@@ -14,8 +14,45 @@
   "comfy/sd.py:class VAE",
   "comfy_extras/nodes_post_processing.py:class Blend",
   "comfy_extras/nodes_images.py:srgb_to_linear",
-  "comfy_extras/nodes_images.py:class ImageColorSpace"
+  "comfy_extras/nodes_images.py:class ImageColorSpace",
+  "comfy_extras/nodes_images.py:ImageColorSpace"
  ],
  "track": "noise-latent",
- "order": 60
+ "order": 60,
+ "kit": true,
+ "graphs": [
+  "b_blend_light"
+ ],
+ "verified": [
+  {
+   "claim": "sRGB curves in the lab match the formulas in the CSS Color 4 sample code and in srgb_to_linear.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_images.py:srgb_to_linear"
+  },
+  {
+   "claim": "The real ImageBlend and ImageColorSpace give 0.5 and 0.73536 on black and white.",
+   "how": "run here",
+   "ref": "the graph b_blend_light, and the nodes in a Python session"
+  },
+  {
+   "claim": "LoadImage divides by 255 in float32, and SaveImage clips and casts to uint8.",
+   "how": "source",
+   "ref": "nodes.py"
+  },
+  {
+   "claim": "ImageBlend does a lerp and clamps.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_post_processing.py:Blend"
+  },
+  {
+   "claim": "b_blend_light ran on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We assume the stored codes are sRGB, which is the usual case. The code we read does not handle other profiles, and we did not test a file with one.",
+  "We did not measure the latent space of any model, so the lesson says nothing about what a VAE does to colour.",
+  "The truncation figures are for uniformly random values, and real images are not uniform."
+ ]
 }

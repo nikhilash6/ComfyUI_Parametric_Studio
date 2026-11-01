@@ -4,49 +4,70 @@
  "level": "300",
  "questions": [
   {
-   "q": "In a causal encoder like GPT or Llama, why is the representation of the last token often used as the primary conditioning signal?",
+   "q": "In ComfyUI's code, what can token 3 see in CLIP?",
    "options": [
-    "Because the last token is the only one that has seen all previous tokens, giving it the full context of the sentence.",
-    "Because the last token has the highest numerical value in the embedding space.",
-    "Because the first token is always masked out in causal models.",
-    "Because the last token is processed faster than the other tokens."
+    "All tokens",
+    "Only itself",
+    "Tokens 0 to 3: the mask is causal",
+    "Only the end token"
    ],
-   "answer": "Because the last token is the only one that has seen all previous tokens, giving it the full context of the sentence.",
-   "why": "The lesson states: 'In a causal model, the last token has seen everything that came before it. It is the only token that has the full context of the sentence.'"
+   "answer": "Tokens 0 to 3: the mask is causal",
+   "why": "clip_model.py adds triu of a large negative number to the scores."
   },
   {
-   "q": "What is the specific file path in ComfyUI where the core implementation for Llama models, including the `Llama2_` class, is located?",
-   "options": null,
-   "answer": "comfy/text_encoders/llama.py",
-   "why": "The lesson explicitly states: 'comfy/text_encoders/llama.py contains Llama2_, the core implementation for Llama models.'"
-  },
-  {
-   "q": "According to the lab results, what is the value of `causal_visible_count_token_0`?",
+   "q": "What does a diffusion model usually get from a text encoder?",
    "options": [
-    "0",
-    "1",
-    "5",
-    "0.88373"
+    "Only the last token's row",
+    "The prompt as characters",
+    "A row for every token, and sometimes a pooled vector too",
+    "One number per word"
    ],
-   "answer": "1",
-   "why": "The lab output lists: 'RESULT causal_visible_count_token_0 = 1' with the proof that the first token can only see itself."
+   "answer": "A row for every token, and sometimes a pooled vector too",
+   "why": "SD 1.5 gets [1, 77, 768]. The pooled vector is separate, on families that use it."
   },
   {
-   "q": "In the context of the attention mechanism described, what is the purpose of dividing the dot product $Q K^T$ by $\\sqrt{d}$?",
+   "q": "Your SD 1.5 prompt has 76 tokens. What tensor does it make?",
    "options": [
-    "To increase the magnitude of the attention scores for better contrast.",
-    "To keep the values stable.",
-    "To convert the scores into a probability distribution.",
-    "To remove the need for the Softmax function."
+    "[1, 76, 768]",
+    "[1, 77, 768]",
+    "[2, 77, 768]",
+    "[1, 154, 768]"
    ],
-   "answer": "To keep the values stable.",
-   "why": "The lesson explains the formula: 'We divide by $\\sqrt{d}$ to keep the values stable.'"
+   "answer": "[1, 154, 768]",
+   "why": "75 fit one chunk, so the 76th starts a second, joined along tokens."
   },
   {
-   "q": "Which specific attention mechanism does the `Qwen35` class use, distinguishing it from the standard RoPE used by `Llama2_`?",
-   "options": null,
-   "answer": "GatedDeltaNet",
-   "why": "The lesson states under 'In ComfyUI' and 'Common mistakes': 'Qwen35... uses GatedDeltaNet for attention' and 'Qwen35 uses GatedDeltaNet, while Llama2_ uses standard RoPE.'"
+   "q": "Why is the width 7680 on Klein 4B?",
+   "options": [
+    "T5 is 7680 wide",
+    "It pads to the latent size",
+    "Three of Qwen3's hidden layers are placed side by side, each 2560 wide",
+    "The chat template adds width"
+   ],
+   "answer": "Three of Qwen3's hidden layers are placed side by side, each 2560 wide",
+   "why": "Layers 9, 18, 27 stacked by Flux2TEModel.encode_token_weights."
+  },
+  {
+   "q": "Where does CLIP's pooled vector come from?",
+   "options": [
+    "The row at the end token",
+    "The first row",
+    "The mean of all rows",
+    "The image"
+   ],
+   "answer": "The row at the end token",
+   "why": "clip_model.py indexes by where eos_token_id first appears, or by num_tokens."
+  },
+  {
+   "q": "Which of these has no 77-token chunking?",
+   "options": [
+    "CLIP-L on SD 1.5",
+    "T5-XXL on FLUX.1",
+    "CLIP-G on SDXL",
+    "CLIP-L on SDXL"
+   ],
+   "answer": "T5-XXL on FLUX.1",
+   "why": "T5 uses a huge max_length and a minimum, so it's one sequence."
   }
  ]
 }

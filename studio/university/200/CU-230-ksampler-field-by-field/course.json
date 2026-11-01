@@ -1,0 +1,66 @@
+{
+ "code": "CU-230",
+ "title": "KSampler, field by field",
+ "level": "200",
+ "prereq": [
+  "CU-106"
+ ],
+ "char": "denoise",
+ "hook": "Ten inputs, and each one changes something different. Change them one at a time on a toy and read what moved, what it cost, and what stayed.",
+ "code_refs": [
+  "nodes.py:KSampler",
+  "nodes.py:common_ksampler",
+  "comfy/samplers.py:KSampler.set_steps",
+  "comfy/samplers.py:sampling_function",
+  "comfy/samplers.py:cfg_function",
+  "comfy/samplers.py:KSAMPLER_NAMES",
+  "comfy/samplers.py:SCHEDULER_NAMES",
+  "comfy/sample.py:prepare_noise",
+  "comfy/sample.py:fix_empty_latent_channels"
+ ],
+ "track": "sampling",
+ "order": 5,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "KSampler's inputs, defaults and ranges are as listed.",
+   "how": "source",
+   "ref": "nodes.py:KSampler.INPUT_TYPES"
+  },
+  {
+   "claim": "At CFG 1 the negative pass is skipped.",
+   "how": "source",
+   "ref": "comfy/samplers.py:sampling_function"
+  },
+  {
+   "claim": "The sampler menu has 45 names and the scheduler menu 9 in this version.",
+   "how": "run here",
+   "ref": "comfy.samplers.SAMPLER_NAMES, SCHEDULER_NAMES, read in a Python session"
+  },
+  {
+   "claim": "Denoise 0.5 at 20 steps with karras on SD 1.5 runs 20 steps from sigma 1.1817.",
+   "how": "run here",
+   "ref": "comfy.samplers.KSampler built with a stub model holding the real ModelSamplingDiscrete"
+  },
+  {
+   "claim": "An empty latent is widened to the model's channel count by fix_empty_latent_channels.",
+   "how": "source",
+   "ref": "comfy/sample.py:fix_empty_latent_channels"
+  },
+  {
+   "claim": "sd15_txt2img passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The toy has one number per sample and a perfect model. The sizes of the changes in the table say nothing about how visible each change is in a real picture.",
+  "We did not render a denoise below 1 on an empty latent for this lesson. We say what the sum does, and we expect a weak, unfinished result, from reasoning."
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

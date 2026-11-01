@@ -1,0 +1,41 @@
+how much each format stores for one 1280 x 1280 layer. Full weight: 1,638,400 numbers
+format                   numbers stored   share of full   largest rank it can reach
+LoRA rank 8              20,480           0.0125          8
+LoRA rank 32             81,920           0.0500          32
+LoHa rank 8              40,960           0.0250          64
+LoKr factor 4 (4 x 320)  102,416          0.0625          1280
+LoKr factor 8 (8 x 160)  25,664           0.0157          1280
+LoKr factor 16 (16 x 80) 6,656            0.0041          1280
+LoKr factor 32 (32 x 40) 2,624            0.0016          1280
+
+measured rank of the change on a 96 x 96 layer, random factors (singular values above 1e-5 of the largest)
+LoRA rank 4: 4   LoHa rank 4: 16 (up to 4 x 4)   LoKr 8 x 12, full factors: 96, from 208 numbers against LoRA's 768
+
+the price of that rank: a Kronecker product is one shape repeated. Relative error of the best possible fit to two 96 x 96 targets, about the same budget of numbers
+target                  LoKr 8 x 12 (208 numbers)   LoRA rank 1 (192 numbers)
+made of a Kronecker     0.057                       0.937
+made of rank 4          0.962                       0.781
+
+alpha: the same factors, scale alpha / rank
+format and file            alpha   scale
+LoRA rank 8                8       1.0
+LoRA rank 8                1       0.125
+LoRA rank 8, no alpha      none    1.0
+LoKr, full w1 and w2       1       1.0  (no rank to divide by: alpha is ignored)
+OFT                        1       norm limit, not a scale
+
+DoRA: the file also stores a size for each column. Column sizes of a 64 x 64 weight after the patch
+strength   mean column size   wanted size   mean size of the LoRA version
+0.0        0.8004             1.2007        0.8004
+0.5        1.0002             1.2007        0.8002
+1.0        1.2007             1.2007        0.8004
+
+OFT: the change is a rotation of the weight, built from a skew-symmetric block. It keeps the size of each row group
+rotation check |R Rt - I|: 2.4e-07   weight size before 16.6791, after 16.6791
+
+what TrainLoraNode's rank widget means, per algorithm, for a 1280 x 1280 layer at rank 8
+algorithm   rank widget used as   result
+LoRA        rank                  up 1280 x 8, down 8 x 1280: 20,480 numbers
+LoHa        rank                  two such pairs: 40,960 numbers
+LoKr        factor                w1 8 x 8, w2 160 x 160: 25,664 numbers
+OFT         factor                160 blocks of 8 x 8: 10,240 numbers

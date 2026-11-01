@@ -1,0 +1,62 @@
+{
+ "code": "CU-272",
+ "title": "Depth: conventions and core's depth nodes",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Which end is white in DA3Render's depth and MoGeRender's depth?",
+   "options": [
+    "Far in both",
+    "Near in both",
+    "Near in DA3, far in MoGe",
+    "It depends on the seed"
+   ],
+   "answer": "Near in both",
+   "why": "normalize_depth_v2_style inverts so that near is 1, and _normalize_disparity uses 1/depth, which is largest close up."
+  },
+  {
+   "q": "In a 2 m to 10 m scene, why is 6 m much darker on MoGe's render than on v2_style?",
+   "options": [
+    "MoGe's model is less accurate",
+    "MoGe's grey is linear in 1/depth, so most of the range goes on close distances",
+    "MoGe clips everything past 5 m",
+    "It uses a different picture"
+   ],
+   "answer": "MoGe's grey is linear in 1/depth, so most of the range goes on close distances",
+   "why": "The lab gives 0.167 against 0.500 at 6 m. Same scene, a different scale."
+  },
+  {
+   "q": "A depth map looks flat and pale everywhere. What is the most likely cause, from the lab?",
+   "options": [
+    "The ControlNet strength is too low",
+    "A far outlier, such as sky, took up the range",
+    "The seed",
+    "The VAE"
+   ],
+   "answer": "A far outlier, such as sky, took up the range",
+   "why": "With min_max, 0.5% of pixels at 500 m leaves the scene 5 of 256 grey levels."
+  },
+  {
+   "q": "What does LotusConditioning take as input?",
+   "options": [
+    "An image",
+    "A text prompt",
+    "Nothing: it returns a fixed conditioning",
+    "A depth map"
+   ],
+   "answer": "Nothing: it returns a fixed conditioning",
+   "why": "The node has no inputs. A comment in the source says Lotus uses null conditioning, so its result is inlined."
+  },
+  {
+   "q": "You have a depth map but aren't sure of its convention. What is the quick check?",
+   "options": [
+    "Run a full render at strength 2",
+    "See whether something you know is near is brighter than something you know is far",
+    "Read the file's metadata",
+    "Check its width"
+   ],
+   "answer": "See whether something you know is near is brighter than something you know is far",
+   "why": "ImageInvert turns one convention into the other exactly, so a look decides if you need it."
+  }
+ ]
+}

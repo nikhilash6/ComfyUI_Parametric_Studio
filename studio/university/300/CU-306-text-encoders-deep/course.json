@@ -1,14 +1,84 @@
 {
+ "code": "CU-306",
  "title": "Text encoders: CLIP, T5 and LLM encoders",
  "level": "300",
- "char": "attn",
- "hook": "What each encoder gives the model and what it costs.",
- "code": "CU-306",
  "prereq": [
   "CU-104"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "attn",
+ "hook": "What each encoder gives the model and what it costs. CLIP in ComfyUI is causal, T5 isn't, and neither of them hands over only the last token.",
+ "code_refs": [
+  "comfy/clip_model.py:CLIPTextModel_",
+  "comfy/sd1_clip.py:SDTokenizer.tokenize_with_weights",
+  "comfy/sd1_clip.py:SDClipModel",
+  "comfy/sdxl_clip.py:SDXLClipModel",
+  "comfy/text_encoders/sd3_clip.py:SD3ClipModel.encode_token_weights",
+  "comfy/text_encoders/flux.py:FluxClipModel.encode_token_weights",
+  "comfy/text_encoders/flux.py:Qwen3_4BModel",
+  "comfy/text_encoders/flux.py:Flux2TEModel.encode_token_weights",
+  "comfy/text_encoders/t5.py:T5Stack",
+  "comfy/text_encoders/t5.py:T5Attention",
+  "comfy/text_encoders/llama.py:Llama2_"
+ ],
  "track": "conditioning",
- "order": 10
+ "order": 10,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img",
+  "sd35_flow",
+  "c_klein_fast"
+ ],
+ "verified": [
+  {
+   "claim": "CLIPTextModel_ adds a causal mask (triu of the scores) before its encoder.",
+   "how": "source",
+   "ref": "comfy/clip_model.py:CLIPTextModel_.forward"
+  },
+  {
+   "claim": "T5Stack builds a mask only from padding, so a token can attend to tokens after it.",
+   "how": "source",
+   "ref": "comfy/text_encoders/t5.py:T5Stack.forward"
+  },
+  {
+   "claim": "Llama2_ adds a causal mask when the sequence is longer than one token, outside one decode path.",
+   "how": "source",
+   "ref": "comfy/text_encoders/llama.py:Llama2_.forward"
+  },
+  {
+   "claim": "CLIP's pooled vector is taken at the end token, and the tensor keeps every token's row.",
+   "how": "source",
+   "ref": "comfy/clip_model.py and comfy/sd1_clip.py"
+  },
+  {
+   "claim": "SD 1.5 and SDXL settings: 77 per chunk, widths 768 and 1280, layer choices.",
+   "how": "source",
+   "ref": "comfy/sd1_clip.py, comfy/sdxl_clip.py, comfy/sd1_clip_config.json"
+  },
+  {
+   "claim": "Klein reads layers 9, 18 and 27 of Qwen3 and stacks them, with a minimum length of 512, a chat template and weights off.",
+   "how": "source",
+   "ref": "comfy/text_encoders/flux.py"
+  },
+  {
+   "claim": "T5-XXL's config: 24 layers, width 4096, 64 heads.",
+   "how": "source",
+   "ref": "comfy/text_encoders/t5_config_xxl.json"
+  },
+  {
+   "claim": "Chunk and shape arithmetic in the lab, and the mask experiment, on random numbers.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Paper titles and the abstracts of CLIP and T5.",
+   "how": "docs",
+   "ref": "arXiv API, fetched 2026-11-01"
+  }
+ ],
+ "unchecked": [
+  "We did not load any real text encoder for this lesson, so nothing here measures a real prompt or quality.",
+  "We don't claim that one encoder gives better pictures. That depends on the whole model, which was trained with its encoder.",
+  "The draft said T5 handles long prompts better. We did not test that, and removed it as a quality claim. What we can state is that T5 has no 77-token chunking.",
+  "We did not read every LLM encoder in core. Others may pick different layers."
+ ]
 }

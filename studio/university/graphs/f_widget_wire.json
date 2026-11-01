@@ -1,0 +1,43 @@
+{
+ "meta": {
+  "title": "A widget fed by a wire",
+  "about": "PrimitiveInt drives the width of EmptyImage. The same input can be a typed value or a wire.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "An INT with no inputs of its own.",
+   "2": "width is a wire here, height is a typed value.",
+   "3": "Shows the 96 by 32 result."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "PrimitiveInt",
+   "inputs": {
+    "value": 96
+   }
+  },
+  "2": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": [
+     "1",
+     0
+    ],
+    "height": 32,
+    "batch_size": 1,
+    "color": 3368652
+   }
+  },
+  "3": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "2",
+     0
+    ]
+   }
+  }
+ }
+}

@@ -4,49 +4,59 @@
  "level": "300",
  "questions": [
   {
-   "q": "According to the lesson, what is the primary computational advantage of using Sparse Voxels in Trellis2 compared to a full voxel grid?",
+   "q": "The exposed-face area of a voxel sphere is about 1.5 times the truth. What happens with a grid twice as fine?",
    "options": [
-    "It allows for real-time ray-marching without opacity blending.",
-    "It stores only non-zero coordinates (solid or near-surface), saving memory by ignoring empty space.",
-    "It converts the 3D volume directly into a 2D image projection.",
-    "It eliminates the need for post-processing or remeshing steps."
+    "It stays about 1.5: smaller stairs have the same total",
+    "It falls to 0.75",
+    "It converges to 1.0",
+    "It doubles"
    ],
-   "answer": "It stores only non-zero coordinates (solid or near-surface), saving memory by ignoring empty space.",
-   "why": "The text states that a full 1024^3 grid has over a billion voxels, which is too complex to denoise in real-time. It explains that Sparse Voxels are used to 'save space' by only storing notes that are 'solid' or near the surface, and that the SparseTensor class stores 'only non-zero coordinates to save memory'."
+   "answer": "It stays about 1.5: smaller stairs have the same total",
+   "why": "Stairs sum to the sphere's shadows on three axes from two sides, 6πr². The lab reads 1.511, 1.507 and 1.500."
   },
   {
-   "q": "In the context of 3D Gaussian Splatting (TripoSplat), what specific parameters define each individual Gaussian G_i?",
-   "options": null,
-   "answer": "Position (x, y, z), Scale (s_x, s_y, s_z), Rotation R, Color C, and Opacity alpha.",
-   "why": "The section 'Gaussian Splatting Parameters' explicitly lists these five components: Position, Scale, Rotation, Color, and Opacity, defining them as the parameters for each Gaussian G_i."
-  },
-  {
-   "q": "Why is the 'Narrow Band' approach used when processing Signed Distance Functions (SDFs) in the lab?",
+   "q": "What does a signed distance function give you that plain occupancy doesn't?",
    "options": [
-    "To ensure the mesh is manifold and has no self-intersections.",
-    "To focus processing only on the boundary where |d(x)| < threshold, ignoring the interior and exterior empty space.",
-    "To increase the resolution of the voxel grid to reduce the Staircase Effect.",
-    "To convert the SDF values directly into RGB color values for rendering."
+    "A value that lets you interpolate where the surface lies between samples",
+    "A list of triangles",
+    "Colour",
+    "Lower memory at the same grid"
    ],
-   "answer": "To focus processing only on the boundary where |d(x)| < threshold, ignoring the interior and exterior empty space.",
-   "why": "The text explains that the Narrow Band is created by identifying 'surface voxels' where |d(x)| < threshold. It states this allows the system to 'ignore the empty space inside the object and the vast empty space outside, focusing only on the boundary'."
+   "answer": "A value that lets you interpolate where the surface lies between samples",
+   "why": "Occupancy only says in or out. The lab's SDF finds radius 1.0000 from 8 samples, where occupancy says 1.1250."
   },
   {
-   "q": "What is the specific role of the `_dual_contour_manifold` function in the mesh post-processing pipeline?",
-   "options": null,
-   "answer": "It ensures that for every patch of voxels, exactly one dual vertex is generated, guaranteeing a manifold mesh where every edge is shared by exactly two faces.",
-   "why": "The section on Dual Contouring states that `_dual_contour_manifold` 'ensures that for every patch of voxels, we generate exactly one dual vertex. This guarantees a manifold mesh (every edge is shared by exactly two faces), which is critical for rendering and physics.'"
-  },
-  {
-   "q": "Based on the lab results, what does an `area_ratio` of 3.02278 indicate about the relationship between the voxel-based surface area and the analytical surface area?",
+   "q": "Why do sparse grids and narrow bands save so much?",
    "options": [
-    "The voxel grid is too fine, causing the mesh to lose detail.",
-    "The voxel-based area is approximately 3 times larger than the true area due to the Staircase Effect.",
-    "The analytical area is 3 times larger than the voxel-based area.",
-    "The relative error is 302%, indicating the sphere radius was calculated incorrectly."
+    "A surface grows with the square of resolution, while a full grid grows with the cube",
+    "They compress better on disk",
+    "They skip the VAE",
+    "They store only colours"
    ],
-   "answer": "The voxel-based area is approximately 3 times larger than the true area due to the Staircase Effect.",
-   "why": "The lab output section explains that `area_ratio = 3.02278` means 'The voxel-based area is 3 times larger than the true area.' It attributes this to the 'Staircase Effect,' where a coarse grid approximates a smooth curve with flat faces, adding extra surface area."
+   "answer": "A surface grows with the square of resolution, while a full grid grows with the cube",
+   "why": "Most cells are air or solid. Keeping only cells near the surface follows the smaller growth."
+  },
+  {
+   "q": "What can't a Gaussian splat give you directly?",
+   "options": [
+    "A closed surface for printing or physics",
+    "A picture",
+    "A colour",
+    "A position"
+   ],
+   "answer": "A closed surface for printing or physics",
+   "why": "A splat is soft blobs without triangles or an inside. Convert with SplatToMesh and accept the loss."
+  },
+  {
+   "q": "Which node turns a decoded grid into triangles?",
+   "options": [
+    "VoxelToMesh",
+    "KSampler",
+    "CLIPVisionEncode",
+    "DecimateMesh"
+   ],
+   "answer": "VoxelToMesh",
+   "why": "VoxelToMesh takes VOXEL and gives MESH. DecimateMesh takes a mesh already made."
   }
  ]
 }

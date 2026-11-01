@@ -2,12 +2,9 @@
  "code": "CU-401",
  "title": "Writing a custom node with the V3 API",
  "level": "400",
- "prereq": [
-  "CU-220",
-  "CU-221"
- ],
+ "prereq": ["CU-220", "CU-221"],
  "char": "graph",
- "hook": "A class with a schema and an execute method. The engine calls your node without making an instance, and that changes how you write it.",
+ "hook": "A class with a schema and an execute method. The engine calls your node on a locked copy of the class, and that changes how you write it.",
  "code_refs": [
   "comfy_api/latest/_io.py:class Schema",
   "comfy_api/latest/_io.py:class ComfyNode",
@@ -18,10 +15,27 @@
   "comfy_api/latest/_io.py:class NodeOutput",
   "comfy_api/latest/_io.py:not_idempotent",
   "comfy_api/latest/_io.py:is_output_node",
+  "comfy_api/latest/_io.py:EXECUTE_NORMALIZED",
+  "comfy_api/latest/_io.py:PREPARE_CLASS_CLONE",
+  "comfy_api/internal/__init__.py:make_locked_method_func",
   "comfy_api/latest/__init__.py:ComfyExtension",
   "nodes.py:comfy_entrypoint",
   "comfy_extras/nodes_lotus.py:get_node_list"
  ],
  "track": "custom-nodes",
- "order": 10
+ "order": 10,
+ "kit": true,
+ "graphs": ["nm_first"],
+ "verified": [
+  {"claim": "Inside the engine, execute runs on a clone of the class. Setting cls.calls fails with: Cannot modify class attribute 'calls' on locked class 'V3StateClone'.", "how": "run here", "ref": "comfy_api/internal/__init__.py:make_locked_method_func, with a test node through PromptExecutor"},
+  {"claim": "A dict held on the class is not protected: its count went 1, then 2.", "how": "run here", "ref": "a test node through PromptExecutor"},
+  {"claim": "A V1 node's instance lives across queues: __init__ ran once, and self.n went 1, 2, 3 over three queues with new inputs.", "how": "run here", "ref": "execution.py:execute uses caches.objects"},
+  {"claim": "execute may return NodeOutput, a tuple, a dict or None. Anything else raises Invalid return type from node.", "how": "source", "ref": "comfy_api/latest/_io.py:EXECUTE_NORMALIZED"},
+  {"claim": "comfy_entrypoint may be sync or async, on_load runs first, and get_node_list must return a list.", "how": "source", "ref": "nodes.py:load_custom_node"},
+  {"claim": "cls.hidden.unique_id held the node id in a real run, and fields you didn't ask for were None.", "how": "run here", "ref": "comfy_api/latest/_io.py:HiddenHolder"}
+ ],
+ "unchecked": [
+  "Whether a dict on the class is safe across threads or async nodes. We just showed that the lock doesn't stop it, and that the cache can't see it.",
+  "We did not try async execute in a run for this lesson. The source awaits it through EXECUTE_NORMALIZED_ASYNC."
+ ]
 }

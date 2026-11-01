@@ -1,2 +1,18 @@
-RESULT stable_metric = 0
-RESULT flicker_metric = 2.83333
+clip                             temporal variance   second difference (qc.py)   second difference after aligning
+still frame                      0.00                0.000                       0.000
+slow pan, 1 pixel a frame        737.37              16.898                      0.000
+fast pan, 4 pixels a frame       1062.89             36.206                      0.000
+fade to black                    1314.57             0.000                       0.255
+brightness strobes 4%            25.26               19.427                      19.428
+texture boils, noise 5 levels    24.24               9.773                       9.773
+scene cut in the middle          1084.45             3.431                       2.565
+
+mean luma 121.4. A strobe of amplitude a scores 4 a L on the second difference:
+a = 0.01  measured 4.857   predicted 4.857
+a = 0.02  measured 9.714   predicted 9.714
+a = 0.04  measured 19.427  predicted 19.427
+
+same clip on 0-1 numbers instead of 0-255: second difference 0.0762 (divided by 255), variance 0.000389 (divided by 255 squared)
+fewer than 3 frames: qc.py returns 0.0, which is not a pass, only no measurement
+
+one frame 20% too bright in 32: mean 3.238, worst moment 48.568

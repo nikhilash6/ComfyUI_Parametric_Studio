@@ -1,0 +1,47 @@
+{
+ "meta": {
+  "title": "A small graph to break on purpose",
+  "about": "It passes validation as it stands. Change one thing at a time and read what the server says.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "Try a width of 0 or 999999.",
+   "2": "Try an upscale_method of magic.",
+   "3": "Try deleting images."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 64,
+    "height": 64,
+    "batch_size": 1,
+    "color": 3368652
+   }
+  },
+  "2": {
+   "class_type": "ImageScale",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "upscale_method": "bilinear",
+    "width": 32,
+    "height": 32,
+    "crop": "disabled"
+   }
+  },
+  "3": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "2",
+     0
+    ]
+   }
+  }
+ }
+}

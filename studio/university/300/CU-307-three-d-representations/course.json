@@ -2,13 +2,65 @@
  "title": "3D generation: meshes, SDFs, voxels and Gaussian splats",
  "level": "300",
  "char": "latent",
- "hook": "The shapes a model can output and how they convert.",
+ "hook": "Voxels, SDFs, meshes and splats: what each stores, what it costs, and why blocks never reach the right area.",
  "code": "CU-307",
  "prereq": [
   "CU-201"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy_api/latest/_util/geometry_types.py:VOXEL",
+  "comfy_api/latest/_util/geometry_types.py:MESH",
+  "comfy_api/latest/_util/geometry_types.py:SPLAT",
+  "comfy/ldm/trellis2/vae.py:SparseTensor",
+  "comfy/ldm/trellis2/vae.py:ShapeVae",
+  "comfy/ldm/trellis2/model.py:SLatFlowModel",
+  "comfy/ldm/triposplat/model.py:LatentSeqMMFlowModel",
+  "comfy/ldm/triposplat/vae.py:OctreeGaussianDecoder",
+  "comfy_extras/mesh3d/postprocess/remesh.py:_build_narrow_band_voxels",
+  "comfy_extras/mesh3d/postprocess/remesh.py:_dual_contour_manifold",
+  "comfy_extras/mesh3d/postprocess/qem_decimate.py:qem_simplify"
+ ],
  "track": "three-d",
- "order": 10
+ "order": 10,
+ "graphs": [
+  "hunyuan3d_mesh"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "The lab's blocky area stayed near 1.5 times the truth at grids of 32, 64 and 128, which agrees with the exact limit.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "MESH, VOXEL and SPLAT are the three geometry types core passes on wires.",
+   "how": "source",
+   "ref": "comfy_api/latest/_util/geometry_types.py:MESH"
+  },
+  {
+   "claim": "Remeshing in core works on a narrow band of voxels with Dual Contouring.",
+   "how": "source",
+   "ref": "comfy_extras/mesh3d/postprocess/remesh.py:remesh_narrow_band_dc"
+  },
+  {
+   "claim": "Trellis2 stores sparse voxels in SparseTensor and generates with SLatFlowModel.",
+   "how": "source",
+   "ref": "comfy/ldm/trellis2/vae.py:SparseTensor"
+  },
+  {
+   "claim": "TripoSplat generates with LatentSeqMMFlowModel and decodes to Gaussians.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_triposplat.py:VAEDecodeTripoSplat"
+  },
+  {
+   "claim": "The graph passes validate_prompt with file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We have not run any 3D model for this lesson, since no 3D checkpoint is on our test machine. The pictures are from ComfyUI's template library, and were not rendered by us.",
+  "The memory table counts a thin surface band with a rough formula. It shows how each kind grows, not exact file sizes.",
+  "The first version of the lab counted faces of a shell and printed about 3, and blamed the stairs. Counting one wall gives about 1.5. The first version also stated that Dual Contouring guarantees a manifold mesh for any input. We removed that, since core's manifold option applies only in sdf mode."
+ ]
 }

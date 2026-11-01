@@ -1,0 +1,45 @@
+{
+ "code": "CU-250",
+ "title": "CFG overshoot, measured on real renders",
+ "level": "200",
+ "prereq": [
+  "CU-208"
+ ],
+ "char": "denoise",
+ "hook": "Same seed, cfg 7 against cfg 14, with the numbers. Higher cfg moved the layout and raised the contrast. It did not add edge detail.",
+ "code_refs": [
+  "comfy/samplers.py:cfg_function",
+  "comfy/samplers.py:sampling_function"
+ ],
+ "track": "guidance",
+ "order": 15,
+ "kit": true,
+ "graphs": [
+  "sdxl_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "The cfg 7 and cfg 14 renders use one prompt, one seed, SDXL base, Euler, normal schedule and 20 steps.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  },
+  {
+   "claim": "The brightness, contrast, edge and difference figures are the ones stored with those renders.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  },
+  {
+   "claim": "On a toy with exact predictions, spread and distance from the target grow with cfg while the number of predictions stays the same.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "One seed on one model. Another seed could move the figures differently.",
+  "We quote the stored brightness, contrast and edge figures as they are. We did not re-derive how each was computed, so compare them with each other, not with figures from elsewhere.",
+  "We don't claim where a good cfg sits for any model. Check its card or template, then look."
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

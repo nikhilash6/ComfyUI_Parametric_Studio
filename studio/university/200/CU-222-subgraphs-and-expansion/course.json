@@ -2,9 +2,7 @@
  "code": "CU-222",
  "title": "Sub-graphs and node expansion",
  "level": "200",
- "prereq": [
-  "CU-220"
- ],
+ "prereq": ["CU-220"],
  "char": "graph",
  "hook": "A sub-graph is a front-end idea that the server never sees. Node expansion is a server idea that the front-end never sees.",
  "code_refs": [
@@ -12,8 +10,22 @@
   "comfy_execution/graph.py:DynamicPrompt",
   "comfy_execution/graph.py:add_ephemeral_node",
   "execution.py:pending_subgraph_results",
-  "app/subgraph_manager.py:SubgraphManager"
+  "app/subgraph_manager.py:SubgraphManager",
+  "comfy_extras/nodes_loop.py:StartLoop"
  ],
  "track": "custom-nodes",
- "order": 20
+ "order": 20,
+ "kit": true,
+ "graphs": ["f_core_loop", "nm_first"],
+ "verified": [
+  {"claim": "validate_prompt refuses a class_type it can't find, so a sub-graph's UUID type can't reach the executor.", "how": "source", "ref": "execution.py:validate_prompt"},
+  {"claim": "A test node really expanded, adding ids 2.0.0.1 to 2.0.0.3, with a result reached through a wire.", "how": "run here", "ref": "PromptExecutor on a CPU"},
+  {"claim": "Core's Start Loop ran its body 3 times through expansion, on a CPU with a stub for the server.", "how": "run here", "ref": "graph f_core_loop"},
+  {"claim": "Inner nodes of a sub-graph use compound ids such as 1:2:3.", "how": "docs", "ref": "docs.comfy.org custom-nodes js subgraphs"},
+  {"claim": "Saved workflows keep sub-graphs under definitions.subgraphs.", "how": "docs", "ref": "docs.comfy.org interface features subgraph, and the blueprints in ComfyUI"}
+ ],
+ "unchecked": [
+  "We did not read the front-end source for the flattening step. That it happens is inferred from validate_prompt and the docs' compound ids.",
+  "The lab's flatten function is our own simplified version of what the front end must do, so it isn't the front end's code."
+ ]
 }

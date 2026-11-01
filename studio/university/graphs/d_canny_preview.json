@@ -1,0 +1,124 @@
+{
+ "meta": {
+  "title": "Preview a Canny map at two settings",
+  "about": "A bright square and a faint one, then Canny strict and Canny loose. Nothing here needs a model.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "6": "The node's default thresholds. The faint square has too little contrast to reach 0.8.",
+   "7": "Loose thresholds find the faint square too.",
+   "8": "Always look at the map before you spend a render on it."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 256,
+    "height": 256,
+    "batch_size": 1,
+    "color": 3158064
+   }
+  },
+  "2": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 96,
+    "height": 96,
+    "batch_size": 1,
+    "color": 14737632
+   }
+  },
+  "3": {
+   "class_type": "ImageCompositeMasked",
+   "inputs": {
+    "destination": [
+     "1",
+     0
+    ],
+    "source": [
+     "2",
+     0
+    ],
+    "x": 24,
+    "y": 80,
+    "resize_source": false
+   }
+  },
+  "4": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 64,
+    "height": 64,
+    "batch_size": 1,
+    "color": 5263440
+   }
+  },
+  "5": {
+   "class_type": "ImageCompositeMasked",
+   "inputs": {
+    "destination": [
+     "3",
+     0
+    ],
+    "source": [
+     "4",
+     0
+    ],
+    "x": 160,
+    "y": 96,
+    "resize_source": false
+   }
+  },
+  "6": {
+   "class_type": "Canny",
+   "inputs": {
+    "image": [
+     "5",
+     0
+    ],
+    "low_threshold": 0.4,
+    "high_threshold": 0.8
+   }
+  },
+  "7": {
+   "class_type": "Canny",
+   "inputs": {
+    "image": [
+     "5",
+     0
+    ],
+    "low_threshold": 0.05,
+    "high_threshold": 0.1
+   }
+  },
+  "8": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "6",
+     0
+    ]
+   }
+  },
+  "9": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "7",
+     0
+    ]
+   }
+  },
+  "10": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "5",
+     0
+    ]
+   }
+  }
+ }
+}

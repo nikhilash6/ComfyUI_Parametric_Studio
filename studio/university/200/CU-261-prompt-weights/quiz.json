@@ -1,0 +1,62 @@
+{
+ "code": "CU-261",
+ "title": "Prompt weights: what the brackets really do",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What weight does brass get in ((brass:1.3))?",
+   "options": [
+    "1.3",
+    "1.573",
+    "1.21",
+    "1.1"
+   ],
+   "answer": "1.3",
+   "why": "A number replaces the weight outright. The 1.1 multiplies are thrown away."
+  },
+  {
+   "q": "What does a weight scale?",
+   "options": [
+    "The whole tensor",
+    "The arrow from the empty prompt's row to this token's row",
+    "The token's row directly",
+    "The model's learning rate"
+   ],
+   "answer": "The arrow from the empty prompt's row to this token's row",
+   "why": "z = (z − z_empty) · weight + z_empty."
+  },
+  {
+   "q": "What does weight 0 do to the token?",
+   "options": [
+    "Deletes the token",
+    "Makes the row all zeros",
+    "Puts its row where the empty prompt's row is at that position, keeping the length",
+    "Removes it from the tokens before encoding"
+   ],
+   "answer": "Puts its row where the empty prompt's row is at that position, keeping the length",
+   "why": "Formula with weight 0 gives z_empty[j]. The tensor isn't shortened."
+  },
+  {
+   "q": "Why does a weight not reach other tokens through the encoder?",
+   "options": [
+    "It is applied after the encoder has run",
+    "Other tokens are masked",
+    "CLIP has no attention",
+    "The sampler undoes it"
+   ],
+   "answer": "It is applied after the encoder has run",
+   "why": "encode_token_weights encodes first, then changes rows."
+  },
+  {
+   "q": "You use (brass:1.5) on FLUX.2 Klein. What happens?",
+   "options": [
+    "brass gets weight 1.5",
+    "Validation fails",
+    "The prompt is deleted",
+    "No weight applies: the tokenizer passes disable_weights=True"
+   ],
+   "answer": "No weight applies: the tokenizer passes disable_weights=True",
+   "why": "KleinTokenizer calls the base tokenizer with disable_weights=True."
+  }
+ ]
+}

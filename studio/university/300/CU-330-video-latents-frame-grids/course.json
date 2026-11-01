@@ -1,0 +1,62 @@
+{
+ "code": "CU-330",
+ "title": "How video latents work, and each model's frame grid",
+ "level": "300",
+ "prereq": [
+  "CU-215"
+ ],
+ "char": "frame",
+ "hook": "Ask three models for 120 frames and get 113, 117 and 124. Why, and how to ask so you get what you typed.",
+ "track": "video",
+ "order": 12,
+ "graphs": [
+  "nm_video",
+  "wf_ltx25_t2v"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_lt.py:EmptyLTXVLatentVideo",
+  "comfy_extras/nodes_wan.py:Wan22ImageToVideoLatent",
+  "comfy_extras/nodes_minimax_h3.py:temporal_shape",
+  "comfy_extras/nodes_minimax_h3.py:align_frame_count",
+  "comfy/ldm/minimax/model.py:FRAME_PER_TOKEN",
+  "comfy/latent_formats.py:Wan22",
+  "comfy/latent_formats.py:MiniMaxH3Video"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "LTX floors to 8k + 1 frames, with 128 channels at one thirty-second of the width and height.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_lt.py:EmptyLTXVLatentVideo"
+  },
+  {
+   "claim": "Wan 2.2 5B floors to 4k + 1 frames, with 48 channels at one sixteenth.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_wan.py:Wan22ImageToVideoLatent"
+  },
+  {
+   "claim": "H3 rounds up to 17k + 5 frames, with 24 channels at one sixteenth, and its latent frames cover 1, 4, 4, 4, 4 frames in turn.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_minimax_h3.py:temporal_shape"
+  },
+  {
+   "claim": "The lab's H3 port matches the real temporal_shape for 100, 124 and 736 frames.",
+   "how": "run here",
+   "ref": "comfy_extras/nodes_minimax_h3.py:temporal_shape"
+  },
+  {
+   "claim": "Frame counts of the gallery clips were read with ffprobe: LTX 145 and 121, Wan 121, H3 124.",
+   "how": "run here",
+   "ref": "ffprobe on web/showcase and web/vset_art"
+  },
+  {
+   "claim": "nm_video validates and runs on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The token counts assume one token per latent position for LTX and a 2 x 2 patch for Wan and H3. We read those in the model code, but did not run a model to count them.",
+  "We did not measure quality. Nothing here says that any grid gives better motion than another."
+ ]
+}

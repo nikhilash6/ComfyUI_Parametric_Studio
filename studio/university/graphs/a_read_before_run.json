@@ -1,0 +1,72 @@
+{
+ "meta": {
+  "title": "A graph to read before you run it",
+  "about": "Nothing here is harmful, and everything here is worth noticing. Read it the way you would read a download.",
+  "runs": "cpu",
+  "needs": [
+   "An image in your input folder. The graph names example.png: pick your own in the loader."
+  ],
+  "packs": [],
+  "notes": {
+   "1": "Needs a file that the graph does not contain.",
+   "2": "Reaches the output below, so it runs.",
+   "3": "The path is built inside the output folder, and the server refuses one that leaves it.",
+   "4": "No output asks for this, so it stays idle. Dead nodes are worth asking about.",
+   "5": "Plain text sits in a graph like any other value, and it can say anything.",
+   "6": "Shows the text. Text does nothing until a node uses it."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "2": {
+   "class_type": "ImageInvert",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ]
+   }
+  },
+  "3": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "2",
+     0
+    ],
+    "filename_prefix": "read_first/%year%_test"
+   }
+  },
+  "4": {
+   "class_type": "ImageBlur",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "blur_radius": 4,
+    "sigma": 2.0
+   }
+  },
+  "5": {
+   "class_type": "PrimitiveString",
+   "inputs": {
+    "value": "text inside a graph is only text"
+   }
+  },
+  "6": {
+   "class_type": "PreviewAny",
+   "inputs": {
+    "source": [
+     "5",
+     0
+    ]
+   }
+  }
+ }
+}

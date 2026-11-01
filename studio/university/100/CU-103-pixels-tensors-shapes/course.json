@@ -14,5 +14,45 @@
   "comfy/model_management.py:def intermediate_dtype"
  ],
  "track": "first-graph",
- "order": 50
+ "order": 50,
+ "kit": true,
+ "graphs": [
+  "nm_latent_ops",
+  "nm_first"
+ ],
+ "verified": [
+  {
+   "claim": "IMAGE is [B, H, W, C] and LATENT samples are [B, C, H/8, W/8], with EmptyLatentImage building zeros of that shape.",
+   "how": "source",
+   "ref": "nodes.py:EmptyLatentImage"
+  },
+  {
+   "claim": "VAE encode crops, moves the axis and rescales, and decode reverses that with a clamp.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE.encode"
+  },
+  {
+   "claim": "SaveImage multiplies by 255, clips and casts to uint8, which truncates.",
+   "how": "source",
+   "ref": "nodes.py:SaveImage.save_images"
+  },
+  {
+   "claim": "Layout, crop, clamp and 8-bit results come from running PyTorch on CPU, with the arithmetic copied from these functions.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The two graphs pass validate_prompt and ran on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "Float formats and their bit counts follow Kalamkar et al. 2019, Table 1, and torch.finfo agrees with the eps printed in the lab.",
+   "how": "docs",
+   "ref": "arXiv 1905.12322 and PyTorch Type Info"
+  }
+ ],
+ "unchecked": [
+  "The lab works on a clean ramp of values, not on a real VAE's output, and it measures no visible loss."
+ ]
 }

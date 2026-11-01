@@ -1,97 +1,156 @@
 # CU-403 - Model merging: weighted, SLERP, task arithmetic
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Write the three common merges as sums, predict the result of ModelMergeSimple's ratio, and explain from the numbers why you merge unquantized files and quantize afterwards. Taught by Tinker Tune.
 
-## Why this matters
+## The idea
 
-Welcome back to the workshop. In CU-207, we learned how to fine-tune a model to specialize it for a specific task. But here is the honest truth: fine-tuning is expensive, and often, a single fine-tuned model is brittle. It might get better at "cyberpunk portraits" but worse at "realistic landscapes."
+A checkpoint is a long list of numbers. Two checkpoints of the same architecture line up, number for number. So you can do arithmetic on them. The result is one file, and it runs at the cost of one model.
 
-In this lesson, we stop treating models as black boxes and start treating them as vectors in a high-dimensional space. We are going to merge them. Why? Because, as the research shows, averaging the weights of multiple fine-tuned models often improves accuracy and robustness without increasing inference time. We call these "model soups." Unlike an ensemble, where you run multiple models and average the outputs (doubling your VRAM and compute), a merged model is a single checkpoint. You pay the cost once, at merge time, and then you just run one model.
+Whether it's any good is a separate matter. It works best when the models are close, such as fine-tunes of one base. The Model Soups paper says fine-tuned models "often appear to lie in a single low error basin", and that averaging them "often improves accuracy and robustness". It's about classifiers. We don't know of a result like it for image checkpoints, so treat that as a reason to try, and not a promise.
 
-This is engineering, not magic. We are manipulating the geometry of weight space. If you do it wrong, you get a model that hallucinates or produces gray noise. If you do it right, you get a model that is smoother, more robust, and capable of handling multiple tasks simultaneously.
+## Three sums
 
-## The intuition
+With W for all the weights, and base the model two fine-tunes started from:
 
-Imagine you have a base model, let's call it $W_{base}$. You fine-tune it for Task A, getting $W_A$. You fine-tune the same base for Task B, getting $W_B$.
+```
+weighted (lerp):   W = (1 − t) · A + t · B
+slerp:             W = [ sin((1 − t) θ) · Â + sin(t θ) · B̂ ] / sin θ     Â, B̂ scaled to length 1, θ the angle between them
+task arithmetic:   W = base + x · (A − base) + y · (B − base)
+```
 
-**Weighted Averaging** is the simplest approach. You just take a weighted average of the weights. If you want a 50/50 mix, you calculate $0.5 \cdot W_A + 0.5 \cdot W_B$. It’s like mixing two paints. Simple, but it assumes the "distance" between weights is linear.
+Lerp walks a straight line between them. Slerp walks an arc, so the result has the same length as its parents. A − base is a task vector in the paper by Ilharco et al., whose abstract says these can be combined "through arithmetic operations such as negation and addition".
 
-**SLERP (Spherical Linear Interpolation)** is more sophisticated. It assumes that the "best" path between two points in weight space is along the surface of a sphere, not a straight line through the center. This preserves the "magnitude" or norm of the weights better than linear interpolation. Think of it as walking along the surface of a globe rather than digging a tunnel through the earth.
+Do these differ? Only when the parents are far apart.
 
-**Task Arithmetic** is the most powerful concept here. Instead of merging the full models, we extract the "task vector." A task vector is the difference between the fine-tuned model and the base model: $V_A = W_A - W_{base}$. This vector points in the direction of "Task A." We can then add these vectors together: $W_{new} = W_{base} + V_A + V_B$. This allows us to combine tasks, or even subtract them (negation) to remove a bias or a style.
+```text
+weights of the same size at an angle: size of the halfway blend, against the parents' 1.0000
+angle (degrees)   lerp     slerp
+1                 1.0000   1.0000
+10                0.9962   1.0000
+45                0.9239   1.0000
+90                0.7071   1.0000
+135               0.3827   1.0000
+```
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+A lerp at 90 degrees has lost 29% of its length. But fine-tunes of one base are close. Here are two stand-ins, each moved about 10% from a shared base:
 
-Let's define our symbols clearly.
-*   $W$: A vector of model weights.
-*   $\|W\|$: The L2 norm (magnitude) of the vector.
-*   $\alpha$: A scalar weight between 0 and 1.
+```text
+our two fine-tunes: angle 8.05 degrees, size of A 20.0959, of B 20.0983
+lerp size 20.0474   slerp scaled to the mean size 20.0970   largest difference between them 2.36e-04, against typical weight 0.02
+task arithmetic 0.5 and 0.5 against lerp: largest difference 7.5e-09 (the same sum)
+```
 
-**1. Linear Interpolation (Lerp)**
-The formula is:
-$$W_{lerp} = \alpha \cdot W_1 + (1 - \alpha) \cdot W_2$$
-This is a straight line. The problem? If $W_1$ and $W_2$ are not parallel, the resulting vector $W_{lerp}$ will have a smaller norm than the average of the input norms. It "shrinks" toward the origin. In neural networks, shrinking weights can lead to underfitting or loss of information.
+The angle is 8 degrees. Lerp and slerp differ by at most 0.00024 per weight, on weights of about 0.02. So the choice hardly matters here. And task arithmetic at 0.5 and 0.5 is just lerp, by algebra. What task arithmetic adds is that x and y are free:
 
-**2. SLERP**
-SLERP operates on the directions of the vectors. First, we normalize the vectors to get unit vectors:
-$$\hat{W}_1 = W_1 / \|W_1\|$$
-$$\hat{W}_2 = W_2 / \|W_2\|$$
-We calculate the angle $\theta$ between them using the dot product:
-$$\cos(\theta) = \hat{W}_1 \cdot \hat{W}_2$$
-$$\theta = \arccos(\cos(\theta))$$
-The SLERP formula is:
-$$W_{slerp} = \frac{\sin((1-\alpha)\theta) \cdot \hat{W}_1 + \sin(\alpha\theta) \cdot \hat{W}_2}{\sin(\theta)}$$
-This result is a unit vector. To make it comparable to the original weights, we scale it by the average norm of the inputs:
-$$W_{final} = W_{slerp} \cdot \frac{\|W_1\| + \|W_2\|}{2}$$
-This preserves the magnitude of the weights while interpolating the direction.
+```text
+task arithmetic 1 and 1 keeps each change whole: share of A's change present 1.002   lerp 0.5 keeps 0.501
+```
 
-**3. Task Arithmetic**
-We define the task vector $V$ as:
-$$V = W_{fine} - W_{base}$$
-To merge two tasks, we add their vectors to the base:
-$$W_{merged} = W_{base} + \alpha \cdot V_A + \beta \cdot V_B$$
-Here, $\alpha$ and $\beta$ are scaling factors. If $\alpha = 0.5$ and $\beta = 0.5$, we are blending the two tasks equally. This is linear in the task vector space, which is often more stable than merging the full weights directly.
+Lerp halves each change. Adding both at 1 keeps them whole. That's its use: "put B's change on top of A", or negative to take one away.
 
 ## In ComfyUI
 
-Our sources do not cover specific ComfyUI nodes for model merging. The ComfyUI codebase includes utility functions for JSON merging (`merge_json_recursive`) and configuration loading, but these are for data structures, not weight tensors. For actual model merging, you will typically use external tools like `sd-scripts` or custom nodes that implement the math described above. In this course, we focus on the underlying mechanism so you can verify any node's output.
+Core does these with `ModelMergeSimple`, `ModelMergeSubtract`, `ModelMergeAdd`, and `ModelMergeBlocks` for a ratio per block. There are per-family block nodes such as `ModelMergeSDXL`. `CLIPMergeSimple` and friends handle text encoders. `CheckpointSave` writes the result. There's no SLERP node in these files. Nothing happens until sampling or saving: merging adds patches to a clone, as a LoRA does.
+
+{{graph:sd15_merge}}
+
+Now watch the ratio. `ModelMergeSimple` calls `add_patches(..., 1.0 - ratio, ratio)`, and `calculate_weight` multiplies the model by the second number and adds the patch times the first. So:
+
+```text
+ModelMergeSimple, model1 = 10, model2 = 2
+ratio   result
+1.0     10.0
+0.7     7.6
+0.3     4.4
+0.0     2.0
+```
+
+**Ratio is model1's share, not model2's.** Its default, 1.0, gives you model1 unchanged. If your merge looks exactly like your first model, this is why.
+
+Task arithmetic in core is subtract and add. `ModelMergeSubtract` gives multiplier × (model1 − model2), and `ModelMergeAdd` adds that on:
+
+{{graph:d_merge_add_difference}}
+
+## The rule: merge unquantized, quantize after
+
+Here's why. A quantized weight isn't the original number: it's the nearest one on a coarse grid (CU-211). Call the rounding error e, with size v per weight.
+
+If you merge in full precision and then quantize, you've rounded once. The final error is about v.
+
+If you quantize the parents and merge those, then the merged value is off grid, and storing it rounds again. For a half-and-half merge the error is (e_A + e_B) / 2 + e_final. If the two parents' errors were unrelated, that's √1.5 ≈ 1.22 times v. When they're related, since the parents are close, it goes up to √2 ≈ 1.41 times. You paid for extra rounding and got nothing for it.
+
+```text
+halfway merge of two fine-tunes. Error against the merge done in full precision, as a share of the weights' size
+parents stored as   merged, then stored in the same format   merged from those parents, then stored
+float32             0.00000                                  0.00000
+fp16                0.00021                                  0.00029
+bf16                0.00166                                  0.00232
+FP8                 0.02644                                  0.03642
+```
+
+FP8's error grows by a factor of 1.38. fp16 and bf16 also grow, but their errors start more than ten times smaller, so it hardly matters. That's why the rule says bf16 or fp16 parents, and that's why FP8 parents are the ones to avoid.
+
+It's worse for a difference. The task vector is the small thing you want, and two rounding errors land right on top of it:
+
+```text
+the task vector B - base, read from stored parents. The change is 10% of the weight's size here. Error as a share of the change
+parents stored as   error / change   share of the change kept   correlation with the true change
+float32             0.000            1.000                      1.000
+fp16                0.003            1.000                      1.000
+bf16                0.024            1.000                      1.000
+FP8                 0.372            0.999                      0.937
+```
+
+Then make the change smaller, as with a fine-tune that barely touched a weight:
+
+```text
+the same difference with a smaller change (what happens to fine-tunes that barely moved a weight), FP8 parents
+change / weight   error / change   correlation with the true change
+0.1               0.374            0.937
+0.03              1.100            0.673
+0.01              2.248            0.408
+```
+
+At 1% the "change" you read back from FP8 files is more than twice as big in error as it is in signal. This is the size of update that CU-212 found rounding can swallow. Here it's the merge itself that does damage.
+
+And errors build up along a chain:
+
+```text
+rounding errors add along a chain of merges. Four parents, FP8. Error as a share of the weights' size
+four parents, rounded at every merge          0.04025
+four parents, full precision, rounded once    0.02640
+```
+
+Find the crossover yourself.
+
+{{play:mergeorder}}
+
+So:
+
+1. Merge from fp32, fp16 or bf16 files.
+2. Keep the merged file at that precision.
+3. Quantize a copy, once, at the end.
+
+And when you quantize, keep the unquantized one. It's your only source for the next merge. The same goes for merging a LoRA into a checkpoint.
+
+## What goes wrong
+
+- **The merge looks exactly like model1.** Ratio is 1.0, its default. It's model1's share.
+- **You've merged FP8 or GGUF files.** The parents' rounding is in there for good. Find the unquantized files, and merge again.
+- **Grainy or odd results from add-difference on quantized files.** That's the task vector full of rounding. See the tables.
+- **Different architectures.** `add_patches` only patches a key the model has, and a mismatched shape logs "WARNING SHAPE MISMATCH ... WEIGHT NOT MERGED", leaving that weight alone. So you can get a half-merged model with no error. Read the log.
+- **You merged only the model, and the prompts stopped matching.** The text encoder comes from whichever CLIP you wired to `CheckpointSave`. Merge it too if the two differ.
+- **You've lost the base.** Add-difference needs the same base both fine-tunes started from. With another base, the "change" holds the whole gap between bases.
 
 ## Lab
 
-In this lab, we simulate a small weight vector to test the geometric properties of these merging strategies. We create a base vector and two fine-tuned versions with small perturbations. We then compute the linear interpolation, SLERP, and task arithmetic results, measuring their norms and cosine similarities to the parents.
+The stand-in weights are Gaussian with standard deviation 0.02. The fine-tunes move each by 10%, FP8 is E4M3 with a scale of largest value / 448, and rounding is to nearest. ComfyUI uses stochastic rounding when it stores FP8 again, and CU-212 shows that keeps the mean at the cost of more noise. Nothing here is a real model. We rewrote this lab: the earlier draft compared lengths on a 10-number vector and then claimed things about pictures it had no way to see.
 
-Here are the results from our run:
+## Sources
 
-```text
-RESULT norm_base = 3.49403
-RESULT norm_t1 = 3.61211
-RESULT norm_t2 = 3.38031
-RESULT norm_lin_interp = 3.49382
-RESULT norm_slerp = 3.49621
-RESULT norm_task_arith = 3.49382
-RESULT cos_lin_t1 = 0.999361
-RESULT cos_lin_t2 = 0.99927
-RESULT cos_slerp_t1 = 0.999316
-RESULT cos_slerp_t2 = 0.999316
-RESULT cos_task_t1 = 0.999361
-RESULT cos_task_t2 = 0.99927
-```
-
-Let's analyze what these numbers prove:
-
-1.  **`RESULT norm_lin_interp = 3.49382`**: The average of the parent norms is $(3.61211 + 3.38031) / 2 = 3.49621$. The linear interpolation norm is slightly lower ($3.49382$). This confirms the "shrinkage" effect. Linear interpolation pulls the vector toward the origin.
-2.  **`RESULT norm_slerp = 3.49621`**: This is exactly the average of the parent norms. SLERP, when scaled to the average norm, perfectly preserves the magnitude. This is why SLERP is often preferred for merging models where weight magnitude carries semantic meaning.
-3.  **`RESULT norm_task_arith = 3.49382`**: Task arithmetic with $\alpha=0.5, \beta=0.5$ is mathematically equivalent to linear interpolation in this specific setup (since $W_{base} + 0.5(W_1-W_{base}) + 0.5(W_2-W_{base}) = 0.5W_1 + 0.5W_2$). The norm matches the linear interpolation result exactly.
-4.  **`RESULT cos_slerp_t1 = 0.999316`**: The cosine similarity is high, indicating the merged vector is very close in direction to the parents. SLERP produces a symmetric result (both cosines are identical), whereas linear interpolation is slightly asymmetric due to the different magnitudes of the parents.
-
-## Common mistakes
-
-1.  **Ignoring Norm Shrinkage**: If you use linear interpolation on models with different weight magnitudes, you will shrink the model. This can lead to washed-out images. Always check the norm of your merged model against the parents.
-2.  **Assuming Task Vectors are Additive for All Tasks**: Task arithmetic works best when tasks are related or orthogonal. If you try to add a "cartoon" task vector to a "photorealistic" task vector, you might get a muddy mess. Measure the cosine similarity between task vectors before merging. If they are highly correlated, you are just amplifying one task. If they are orthogonal, you are creating a new hybrid.
-3.  **Forgetting to Scale**: When using SLERP, the raw output is a unit vector. If you forget to scale it back to the average norm, your model will have near-zero weights and produce black images.
-
-## Go deeper
-
-*   **arXiv:2203.05482**: "Model soups: averaging weights of multiple fine-tuned models improves accuracy without increasing inference time." This paper establishes the foundation for why simple averaging works and introduces the concept of "model soups."
-*   **arXiv:2212.04089**: "Editing Models with Task Arithmetic." This paper formalizes the task vector concept and shows how arithmetic operations on these vectors can steer model behavior, including negation and analogy.
-
+- [Model soups: averaging weights of multiple fine-tuned models improves accuracy without increasing inference time](https://arxiv.org/abs/2203.05482)
+- [Editing Models with Task Arithmetic](https://arxiv.org/abs/2212.04089)
+- [ComfyUI v0.43.0, comfy_extras/nodes_model_merging.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_model_merging.py)
+- [ComfyUI v0.43.0, comfy/lora.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/lora.py)
+- [ComfyUI v0.43.0, comfy/model_patcher.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_patcher.py)
+- [ComfyUI v0.43.0, comfy/float.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/float.py)

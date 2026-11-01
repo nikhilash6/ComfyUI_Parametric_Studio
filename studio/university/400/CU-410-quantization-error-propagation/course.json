@@ -1,14 +1,66 @@
 {
+ "code": "CU-410",
  "title": "Quantization error propagation through layers",
  "level": "400",
- "char": "bits",
- "hook": "Discover how tiny rounding errors in low-bit weights can snowball into significant output drift as they pass through deep neural networks.",
- "code": "CU-410",
  "prereq": [
   "CU-211"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "bits",
+ "hook": "Round every layer's weights and measure what reaches the end: with depth it grows more like a square root than an avalanche, until layers start to amplify.",
  "track": "performance",
- "order": 80
+ "order": 80,
+ "graphs": [
+  "b_unet_fp8"
+ ],
+ "code_refs": [
+  "QUANTIZATION.md",
+  "comfy/ops.py:QuantLinearFunc",
+  "comfy/ops.py:mixed_precision_ops",
+  "comfy/ops.py:get_disabled_quant_formats",
+  "comfy/quant_ops.py:QUANT_ALGOS",
+  "tests-unit/comfy_quant/test_mixed_precision.py:test_int8_disabled_on_unsupported_device_falls_back_to_full_precision"
+ ],
+ "verified": [
+  {
+   "claim": "For a linear layer the output error is exactly the weight error times the input.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "In this stack, error at depth 16 was about 3.5 times the error at depth 1 at gains up to 2, and much larger at gain 4.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "QUANTIZATION.md says calibration is needed to choose fixed activation scales, not for formats with dynamic activation scaling, and that biases stay floating point.",
+   "how": "source",
+   "ref": "QUANTIZATION.md"
+  },
+  {
+   "claim": "A checkpoint can mix formats and plain float layers per module.",
+   "how": "source",
+   "ref": "QUANTIZATION.md"
+  },
+  {
+   "claim": "Formats the device lacks fall back to dequantizing for the multiply, and a test covers this for int8.",
+   "how": "source",
+   "ref": "tests-unit/comfy_quant/test_mixed_precision.py"
+  },
+  {
+   "claim": "The GPTQ abstract reports quantizing to 3 or 4 bits with little accuracy loss on large language models.",
+   "how": "docs",
+   "ref": "arXiv 2210.17323"
+  },
+  {
+   "claim": "The graph passes validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The stack is a toy: random matrices, tanh, no attention. Real diffusion models have other structure, and we did not measure one.",
+  "The gain setting is approximate: a random matrix's largest singular value is near the value named, not exactly on it.",
+  "Which layers matter most in any real model, including the common advice about first and last layers, which we did not test."
+ ],
+ "kit": true
 }

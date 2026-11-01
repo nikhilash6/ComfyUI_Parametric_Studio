@@ -31,6 +31,18 @@ The reason to ramp is the receptive field. A stack of 3 × 3 convolutions sees r
 
 **Latent resizing.** `LatentUpscale` takes a width and height in pixels, enforces at least 64, and divides by 8 before resizing. `LatentUpscaleBy` multiplies the latent's sides by `scale_by` (default 1.5) and rounds. Both offer the methods nearest-exact, bilinear, area, bicubic and bislerp.
 
+## Try it
+
+Change the side, the tile and the overlap, and watch the tiles and the cost. Each bar's fade is its weight ramp.
+
+{{play:tiles}}
+
+Two real graphs use this. The first decodes in tiles, and the second runs a model upscaler, which tiles for itself:
+
+{{graph:sd15_tiled_vae}}
+
+{{graph:sd15_upscale}}
+
 ## Lab
 
 The first block applies ComfyUI's position rule to three sides, with tiles of 512 and an overlap of 64, and checks the count formula against the list of starts:
@@ -71,6 +83,15 @@ overlap   tiles   pixels fed in / pixels   plain average   feathered (ComfyUI's 
 ```
 
 With no overlap the largest error is 2.76 times the output's spread. A plain average of overlapping tiles helps less than one might hope: at an overlap of 8 it is still 1.51, because the ruined edge pixels carry half the weight where two tiles meet. The ramp is what helps, 0.39 at the same overlap, and averaging three tilings brings it to 0.29. All of it costs pixels: an overlap of 8 on tiles of 32 feeds the model 1.562 times the image.
+
+## What goes wrong
+
+- **Seams show.** The overlap doesn't reach far enough past the model's sight. Raise it, up to a quarter of the tile, which `VAEDecodeTiled` enforces. Bigger tiles help too.
+- **Tiled decode is slower than plain decode.** It's supposed to be: 3.77 times the work in the lab's example. It trades time for memory, so use it only when needed.
+- **An upscaler slows sharply on a big image.** It halved its tile after running out of memory, so it's making many more calls. Check the log, and free VRAM first.
+- **The last tile looks different.** It's cut off at the border and can be short, 128 of 512 in the lab's first row. That's normal.
+- **Latent upscale gives a mushy result.** Its methods only resize numbers. They don't add detail by themselves, so a sampler pass normally follows.
+- **Tile settings do nothing on some video VAEs.** H3's ignores them. CU-334 covers video.
 
 ## What is contested
 

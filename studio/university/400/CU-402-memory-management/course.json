@@ -24,9 +24,55 @@
   "comfy/cli_args.py:--novram",
   "comfy/cli_args.py:--gpu-only",
   "comfy/cli_args.py:enables_dynamic_vram",
+  "comfy/utils.py:model_trange",
   "execution.py:unload_all_models",
   "server.py:/free"
  ],
  "track": "performance",
- "order": 20
+ "order": 20,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "The room asked for is total model size × 1.1 + extra_mem, with extra_mem = max(inference memory, memory_required + reserved).",
+   "how": "source",
+   "ref": "comfy/model_management.py:load_models_gpu"
+  },
+  {
+   "claim": "free_memory sorts candidates by most offloaded first, then reference count, then size, smallest first, and stops when enough is free.",
+   "how": "source",
+   "ref": "comfy/model_management.py:free_memory"
+  },
+  {
+   "claim": "With dynamic VRAM on, free_memory does not unload dynamic models for other dynamic models.",
+   "how": "source",
+   "ref": "comfy/model_management.py:free_memory"
+  },
+  {
+   "claim": "The console lines quoted in this lesson come from a run here, and their wording is in model_patcher.py and model_management.py.",
+   "how": "run here",
+   "ref": "comfy/model_patcher.py"
+  },
+  {
+   "claim": "An out-of-memory error logs a memory summary and unloads all models.",
+   "how": "source",
+   "ref": "execution.py"
+  },
+  {
+   "claim": "SD 1.x's U-Net has 860M parameters and SDXL's 2.6B.",
+   "how": "docs",
+   "ref": "arXiv 2307.01952 Table 1, PDF read 2026-11-01"
+  },
+  {
+   "claim": "The graph passes validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not study dynamic VRAM's on-demand paging in depth and make no timing claims about it. It lives partly in the comfy-aimdo package, which we did not read.",
+  "The lab unloads whole models. The real free_memory can unload part of a model and also weighs reference counts."
+ ],
+ "kit": true
 }

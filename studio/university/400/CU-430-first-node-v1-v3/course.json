@@ -1,0 +1,75 @@
+{
+ "code": "CU-430",
+ "title": "Your first node, in V1 and in V3",
+ "level": "400",
+ "prereq": [
+  "CU-102"
+ ],
+ "char": "graph",
+ "hook": "The same node written both ways, run through the real engine on a CPU. They look different, and the validator can't tell them apart.",
+ "track": "custom-nodes",
+ "order": 5,
+ "kit": true,
+ "graphs": [
+  "nm_first"
+ ],
+ "code_refs": [
+  "comfy_api/latest/_io.py:class Schema",
+  "comfy_api/latest/_io.py:class ComfyNode",
+  "comfy_api/latest/_io.py:class NodeOutput",
+  "comfy_api/latest/_io.py:def get_v1_info",
+  "comfy_api/latest/__init__.py:class ComfyExtension",
+  "nodes.py:load_custom_node",
+  "nodes.py:comfy_entrypoint",
+  "execution.py:merge_result_data"
+ ],
+ "verified": [
+  {
+   "claim": "A V3 node's INPUT_TYPES returns the same shape of dictionary as a V1 node's.",
+   "how": "run here",
+   "ref": "comfy_api/latest/_io.py:Schema.get_v1_info, called on a test node"
+  },
+  {
+   "claim": "Both forms ran through PromptExecutor with the same result, and V3's execute received a class named V3BrightClone.",
+   "how": "run here",
+   "ref": "in-process run on a CPU with test nodes added to NODE_CLASS_MAPPINGS"
+  },
+  {
+   "claim": "A V1 function returning a bare value fails with TypeError: object of type 'int' has no len().",
+   "how": "run here",
+   "ref": "execution.py:merge_result_data"
+  },
+  {
+   "claim": "Changing an input in place corrupts the cached output of the node upstream: the mean went 0.3755, 0.6255, 0.8755 over three queues.",
+   "how": "run here",
+   "ref": "in-process run with the classic cache"
+  },
+  {
+   "claim": "The loader reads NODE_CLASS_MAPPINGS first and returns, and uses comfy_entrypoint only if that is absent.",
+   "how": "source",
+   "ref": "nodes.py:load_custom_node"
+  },
+  {
+   "claim": "Packs are loaded once, at startup.",
+   "how": "source",
+   "ref": "nodes.py:init_external_custom_nodes"
+  },
+  {
+   "claim": "A V1 node returning a bare image tensor raised nothing: the next node got [H, W, C], the first image alone, and ImageScale then raised ValueError.",
+   "how": "run here",
+   "ref": "execution.py:merge_result_data, test node through PromptExecutor on a CPU, batches of 1 and 2"
+  },
+  {
+   "claim": "The traceback is logged when a pack fails to load, and (IMPORT FAILED) appears later in the import times list.",
+   "how": "source",
+   "ref": "nodes.py:load_custom_node, nodes.py:init_external_custom_nodes"
+  }
+ ],
+ "unchecked": [
+  "We ran these nodes by adding them to the node table inside one process. We did not install them as a pack in a running server for this lesson.",
+  "Whether a later ComfyUI will drop V1. Nothing in v0.43.0 removes it, and core still has V1 nodes such as ImageInvert."
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
+}

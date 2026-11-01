@@ -4,54 +4,59 @@
  "level": "300",
  "questions": [
   {
-   "q": "According to the lesson, what is the primary computational trade-off between Neural Radiance Fields (NeRF) and 3D Gaussian Splatting?",
+   "q": "What does NeRF's network take and return?",
    "options": [
-    "NeRF is faster to render but lower fidelity; Gaussian Splatting is slower but higher fidelity.",
-    "NeRF offers continuous, high-fidelity representations but is slow to render; Gaussian Splatting offers explicit, real-time rendering but requires managing explicit primitives.",
-    "NeRF requires more VRAM than Gaussian Splatting in all cases.",
-    "Gaussian Splatting is an implicit representation while NeRF is an explicit representation."
+    "A 5D coordinate in, and a density and a view-dependent colour out",
+    "A photo in, and a mesh out",
+    "A prompt in, and a splat out",
+    "A voxel grid in, and a depth map out"
    ],
-   "answer": "NeRF offers continuous, high-fidelity representations but is slow to render; Gaussian Splatting offers explicit, real-time rendering but requires managing explicit primitives.",
-   "why": "The 'Why this matters' section explicitly states: 'NeRFs offer continuous, high-fidelity representations but are slow to render; Gaussian Splatting offers explicit, real-time rendering but requires careful management of explicit primitives.'"
+   "answer": "A 5D coordinate in, and a density and a view-dependent colour out",
+   "why": "The abstract says so. The picture comes from adding those answers along each ray."
   },
   {
-   "q": "In the context of the `TripoSplat` module, what type of 3D representation does the final output constitute, and why?",
+   "q": "Why is splatting so much faster to draw than NeRF?",
    "options": [
-    "Implicit, because it uses a transformer to generate the scene.",
-    "Implicit, because the diffusion process in latent space is implicit.",
-    "Explicit, because the decoder outputs explicit Gaussian parameters such as position, scale, and rotation.",
-    "Explicit, because it uses a 5D coordinate function."
+    "It projects stored blobs with no network query for each point along each ray",
+    "It uses fewer pixels",
+    "It skips colour",
+    "It uses a smaller network"
    ],
-   "answer": "Explicit, because the decoder outputs explicit Gaussian parameters such as position, scale, and rotation.",
-   "why": "The 'Common mistakes' section clarifies: 'In TripoSplat, the transformer generates explicit Gaussian parameters... the final 3D representation is explicit.' The 'Under the hood' section lists these parameters as position, scale, rotation, color, and opacity."
+   "answer": "It projects stored blobs with no network query for each point along each ray",
+   "why": "At 192 samples a ray, an 800 x 800 NeRF image is about 123 million queries. A splat renderer needs no network at draw time."
   },
   {
-   "q": "Based on the lab results provided in the lesson, what is the calculated transmittance ($T$) for the third slice ($T_3$) when the opacity ($\\alpha$) of the previous slices is 0.5?",
+   "q": "Why do the same three blobs give a different picture when unsorted?",
    "options": [
-    "0.5",
-    "0.25",
-    "1.0",
-    "0.125"
+    "Blending depends on which is in front, since each blocks what's behind it",
+    "Sorting changes their colours",
+    "Unsorted blobs are skipped",
+    "It only changes the speed"
    ],
-   "answer": "0.25",
-   "why": "The 'Lab' section shows the output line `RESULT transmittance = 1 0.5 0.25` and explains the calculation: '$T_3 = T_2 (1 - \\alpha_2) = 0.5 \\times (1 - 0.5) = 0.25$'."
+   "answer": "Blending depends on which is in front, since each blocks what's behind it",
+   "why": "The lab gives [0.25, 0.5, 0.125] sorted, and [0.5, 0.25, 0.125] in stored order."
   },
   {
-   "q": "What specific method in the `comfy/ldm/chroma_radiance` module is designed to prevent VRAM exhaustion on large scenes, and how does it achieve this?",
+   "q": "Does Chroma Radiance's NerfEmbedder make it a 3D model?",
    "options": [
-    "The `forward_nerf` method, by using a 5D coordinate function.",
-    "The `render_splat` function, by projecting Gaussians to 2D screen space.",
-    "The `forward_tiled_nerf` method, by processing inputs in chunks.",
-    "The `GaussianModel` class, by storing anisotropic covariance."
+    "No: it adds a 2D positional encoding to image patches",
+    "Yes: it is a NeRF",
+    "Yes: it outputs Gaussians",
+    "Only at high resolution"
    ],
-   "answer": "The `forward_tiled_nerf` method, by processing inputs in chunks.",
-   "why": "The 'In ComfyUI' section states: 'The `forward_tiled_nerf` offers a memory-optimized version by processing inputs in chunks.' The 'Common mistakes' section adds: 'Using `forward_nerf` without `forward_tiled_nerf` on large scenes can exhaust VRAM.'"
+   "answer": "No: it adds a 2D positional encoding to image patches",
+   "why": "The class docstring says 2D positional encoding. The name is borrowed from the coordinate-network idea."
   },
   {
-   "q": "In the volume rendering equation for NeRF, what does the term $T_i$ (transmittance) represent, and how is it defined recursively?",
-   "options": null,
-   "answer": "It represents the probability that light reaches slice $i$ without being absorbed by previous slices. It is defined recursively as $T_1 = 1$ and $T_i = T_{i-1} (1 - \\alpha_{i-1})$.",
-   "why": "The 'Under the hood' section defines $T_i$ as 'the probability that light reaches slice $i$ without being absorbed by previous slices' and provides the recursive formulas: '$T_1 = 1$' and '$T_i = T_{i-1} (1 - \\alpha_{i-1})$'."
+   "q": "A wall 0.04 thick is seen with 16 samples over a length of 4. What does the lab show?",
+   "options": [
+    "Opacity 0: the samples step over it",
+    "Opacity 1",
+    "Opacity 0.5",
+    "An error"
+   ],
+   "answer": "Opacity 0: the samples step over it",
+   "why": "Spacing is 0.25, far wider than the wall. Only finer sampling or sampling near surfaces finds it."
   }
  ]
 }

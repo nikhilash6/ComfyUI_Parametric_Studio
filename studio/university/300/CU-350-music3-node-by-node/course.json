@@ -1,0 +1,92 @@
+{
+ "code": "CU-350",
+ "title": "MiniMax Music 3, node by node",
+ "level": "300",
+ "prereq": [
+  "CU-216"
+ ],
+ "char": "sound",
+ "hook": "The text encoder writes the song. Then a diffusion model performs it. Caption, lyrics, seconds and the 128-channel latent, from the source.",
+ "track": "audio",
+ "order": 17,
+ "graphs": [
+  "wf_music3"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_minimax_music.py:MiniMaxMusic3TextEncode",
+  "comfy_extras/nodes_minimax_music.py:EmptyMiniMaxMusic3LatentAudio",
+  "comfy/ldm/minimax_music/ar.py:MAX_AUDIO_FRAMES",
+  "comfy/ldm/minimax_music/ar.py:AUDIO_FRAMES_PER_SECOND",
+  "comfy/ldm/minimax_music/ar.py:derive_seed",
+  "comfy/ldm/minimax_music/dit.py:latent_length",
+  "comfy/ldm/minimax_music/dit.py:MiniMaxMusic3DiT.forward",
+  "comfy/ldm/minimax_music/dav.py:MiniMaxMusic3DAV.decode",
+  "comfy/ldm/minimax_music/prompt.py:build_prompt",
+  "comfy/ldm/minimax_music/prompt.py:clean_caption",
+  "comfy/ldm/minimax_music/prompt.py:normalize_lyrics",
+  "comfy/text_encoders/minimax_music.py:MiniMaxMusic3TEModel.encode_token_weights"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "The text encoder runs an autoregressive model loop up to max_duration and returns one hidden vector per audio frame.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax_music/ar.py:MiniMaxMusic3AR"
+  },
+  {
+   "claim": "The node's seconds output is the length of that conditioning divided by 25, so it can come out shorter than max_duration.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_minimax_music.py:MiniMaxMusic3TextEncode"
+  },
+  {
+   "claim": "9000 frames at 25 a second is the ceiling, 360 s.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax_music/ar.py:MAX_AUDIO_FRAMES"
+  },
+  {
+   "claim": "The DAV decoder folds [B, 128, L] to [2B, 64, L], and it can't encode.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax_music/dav.py:MiniMaxMusic3DAV.decode"
+  },
+  {
+   "claim": "The DiT pads a short condition with zeros, and works in windows above 200 frames.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax_music/dit.py:MiniMaxMusic3DiT.forward"
+  },
+  {
+   "claim": "The lab's latent_length and prompt cleaning match the real functions on these inputs.",
+   "how": "run here",
+   "ref": "comfy/ldm/minimax_music/prompt.py:build_prompt"
+  },
+  {
+   "claim": "The README describes an 8B Global LLM, a 0.6B Local LLM, Flow Matching and Flow-VAE, and songs up to five minutes.",
+   "how": "docs",
+   "ref": "MiniMax-AI/MiniMax-Music3 README, fetched 2026-11-01"
+  },
+  {
+   "claim": "studio/music3_styles.json reports 19 families, 675 styles and 1056 cards.",
+   "how": "run here",
+   "ref": "studio/music3_styles.json"
+  },
+  {
+   "claim": "The graph passes validate_prompt with its file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "The licence's commercial terms ask for a prominent MiniMax-Music3 display in the product's interface, and separate written authorization above 20 million US dollars of yearly revenue.",
+   "how": "docs",
+   "ref": "LICENSE in MiniMaxAI/MiniMax-Music3 on Hugging Face, fetched 2026-11-01"
+  }
+ ],
+ "unchecked": [
+  "We did not run a render for this lesson. The clips are earlier renders in our gallery. The files there are shortened copies.",
+  "The advice on caption blocks, section tags and instrumentals comes from our skill notes, hand-tested on an older software stack with few seeds.",
+  "Mapping the README's two LLMs to the 36-layer main model and 4-layer audio_decoder in source is our reading. The README does not name the code.",
+  "Cost figures in our skill notes (about 1.7 to 2.1 times real time) are old-stack measurements and were not rerun.",
+  "MiniMax's README says the model produces 32 kHz audio, while ComfyUI's latent_length and VAE use 44100 Hz. We follow the code here and did not render to measure a raw file."
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
+}

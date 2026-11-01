@@ -1,0 +1,80 @@
+{
+ "code": "CU-371",
+ "title": "Launch flags that matter",
+ "level": "300",
+ "prereq": [
+  "CU-402"
+ ],
+ "char": "bits",
+ "hook": "There are over a hundred flags. A handful decide your memory, your cache and your attention. Read what each really does in the source, and leave the rest alone.",
+ "track": "performance",
+ "order": 8,
+ "graphs": [
+  "nm_first"
+ ],
+ "code_refs": [
+  "comfy/cli_args.py:enables_dynamic_vram",
+  "comfy/cli_args.py:--reserve-vram",
+  "comfy/cli_args.py:--vram-headroom",
+  "comfy/cli_args.py:--cache-ram",
+  "comfy/cli_args.py:--cache-classic",
+  "comfy/cli_args.py:--cache-lru",
+  "comfy/cli_args.py:--cache-none",
+  "comfy/cli_args.py:--use-pytorch-cross-attention",
+  "comfy/cli_args.py:--use-sage-attention",
+  "comfy/cli_args.py:--use-flash-attention",
+  "comfy/cli_args.py:--use-ck-attention",
+  "comfy/cli_args.py:--disable-smart-memory",
+  "comfy/cli_args.py:--fast",
+  "comfy/model_management.py:EXTRA_RESERVED_VRAM",
+  "comfy/ldm/modules/attention.py:optimized_attention",
+  "main.py:cache_ram",
+  "main.py:dynamic_vram_supported"
+ ],
+ "verified": [
+  {
+   "claim": "Flag names, groups and help text are from the source.",
+   "how": "source",
+   "ref": "comfy/cli_args.py"
+  },
+  {
+   "claim": "The real parser refuses --highvram with --lowvram, --use-sage-attention with --use-flash-attention, and --cache-none with --cache-classic.",
+   "how": "run here",
+   "ref": "comfy/cli_args.py parser, run without starting a server"
+  },
+  {
+   "claim": "enables_dynamic_vram's rule and main.py's further support checks.",
+   "how": "source",
+   "ref": "comfy/cli_args.py, main.py"
+  },
+  {
+   "claim": "The default cache is RAM pressure, keeping 10% of system RAM free, at least 2 GB and at most 10 GB.",
+   "how": "source",
+   "ref": "main.py"
+  },
+  {
+   "claim": "The attention choice follows the order in the Lab.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py"
+  },
+  {
+   "claim": "--reserve-vram sets EXTRA_RESERVED_VRAM, which also raises minimum_inference_memory.",
+   "how": "source",
+   "ref": "comfy/model_management.py"
+  },
+  {
+   "claim": "The graph ran on a CPU.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not benchmark any flag. Whether one helps depends on the card, the driver and the graph.",
+  "How --vram-headroom behaves in comfy-aimdo, which we did not read. We report only its help text.",
+  "The port of the attention order assumes no xformers, which changes the result where it is installed. AMD and other cards have further branches we left out."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

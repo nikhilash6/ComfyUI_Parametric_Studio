@@ -1,0 +1,17 @@
+blur then invert      nodes sent    wires                       server says
+as drawn              1 2 4 5       image<-1 image<-2 images<-4 valid
+bypass 2 ImageBlur    1 4 5         image<-1 images<-4          valid
+mute 2 ImageBlur      1 4 5         images<-4                   required_input_missing: image of ImageInvert
+bypass 2 and 4        1 5           images<-1                   valid
+mute 2 and 4          1 5           -                           required_input_missing: images of PreviewImage
+mute 5 PreviewImage   1 2 4         image<-1 image<-2           prompt_no_outputs
+bypass 1 EmptyImage   2 4 5         image<-2 images<-4          required_input_missing: image of ImageBlur
+
+latent to picture     nodes sent    wires                       server says
+as drawn              1 2 3 4       samples<-2 vae<-1 images<-3 valid
+bypass 3 VAEDecode    1 2 4         -                           required_input_missing: images of PreviewImage
+mute 3 VAEDecode      1 2 4         -                           required_input_missing: images of PreviewImage
+
+the JSON for 'bypass 2 ImageBlur':
+{"1": {"inputs": {"width": 512}, "class_type": "EmptyImage"}, "4": {"inputs": {"image": ["1", 0]}, "class_type": "ImageInvert"}, "5": {"inputs": {"images": ["4", 0]}, "class_type": "PreviewImage"}}
+the word mode appears in it: False

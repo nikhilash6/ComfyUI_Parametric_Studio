@@ -1,0 +1,73 @@
+{
+ "code": "CU-470",
+ "title": "Comparing two samplers fairly",
+ "level": "400",
+ "questions": [
+  {
+   "q": "Why use the same seeds for both samplers?",
+   "options": [
+    "The seed effect cancels within each pair, so fewer seeds are needed",
+    "It's faster on a GPU",
+    "It makes both pictures the same",
+    "ComfyUI requires it"
+   ],
+   "answer": "The seed effect cancels within each pair, so fewer seeds are needed",
+   "why": "The lab: 9 seeds with pairs, 208 without, for the same range at our sizes."
+  },
+  {
+   "q": "How much does quadrupling the seeds shrink the range?",
+   "options": [
+    "By half",
+    "By a quarter",
+    "Not at all",
+    "To zero"
+   ],
+   "answer": "By half",
+   "why": "The range goes with 1 ÷ √n."
+  },
+  {
+   "q": "Heun at 20 steps beats Euler at 20 steps. What is the fair next step?",
+   "options": [
+    "Compare them at equal model calls",
+    "Declare heun better",
+    "Compare at equal file size",
+    "Use one seed"
+   ],
+   "answer": "Compare them at equal model calls",
+   "why": "Heun spent 39 calls against 20. At about 20 calls each, the lab's table shows the real comparison."
+  },
+  {
+   "q": "An SDE sampler's error from the exact ODE answer doesn't fall as steps rise. What's the correct reading?",
+   "options": [
+    "That's the wrong measure for it, because it isn't following that ODE path",
+    "It's broken",
+    "More steps are harmful",
+    "It is using the wrong seed"
+   ],
+   "answer": "That's the wrong measure for it, because it isn't following that ODE path",
+   "why": "It draws fresh noise. Judge it with a measure that fits what it does."
+  },
+  {
+   "q": "You test 15 samplers on 8 seeds and pick the best. What must you do before claiming it wins?",
+   "options": [
+    "Test the winner again on new seeds",
+    "Nothing",
+    "Remove the worst",
+    "Average its picture"
+   ],
+   "answer": "Test the winner again on new seeds",
+   "why": "Picking the best of many inflates it, even if all are equal, as the last line of the lab shows."
+  },
+  {
+   "q": "The Sampling Lab renders all use one seed. What can they show?",
+   "options": [
+    "How far a sampler moves one picture, and facts like two names giving the same pixels",
+    "Which sampler is best",
+    "The average speed",
+    "Which model is best"
+   ],
+   "answer": "How far a sampler moves one picture, and facts like two names giving the same pixels",
+   "why": "n = 1 can't rank anything, but it can reveal an exact match, because that's a fact about the code."
+  }
+ ]
+}

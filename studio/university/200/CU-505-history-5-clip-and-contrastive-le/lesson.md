@@ -30,6 +30,23 @@ The text encoder is a transformer with masked self-attention. The top-layer acti
 - **What the denoiser receives depends on the family.** SD 1.x uses `SD1CheckpointClipModel`: `return_projected_pooled=False`, last layer, so the per-token states reach the U-Net through cross-attention and the contrastive embedding is not used. SDXL's `SDXLClipG` in `comfy/sdxl_clip.py` takes the penultimate layer and sets `return_projected_pooled=True`. `SDXLClipModel.encode_token_weights` concatenates the hidden states of CLIP-L and CLIP-G and returns CLIP-G's projected pooled embedding, and `encode_adm` in `comfy/model_base.py` joins that vector with embeddings of the image size, crop and target size. So SDXL is where CLIP's joint-space text embedding goes straight into the model.
 - **Not here.** ComfyUI runs these towers. It never computes the contrastive loss above.
 
+How low can the loss go? Set the batch and the temperature and read the very best case.
+
+{{play:clipfloor}}
+
+SDXL is where the joint-space embedding reaches the denoiser, and this is its plain graph. `encode_adm` is the part you can't see in it.
+
+{{graph:sdxl_txt2img}}
+
+## What goes wrong
+
+- **You compare loss numbers across batch sizes.** A model with no idea scores ln N: 2.0794 at 8 and 4.6052 at 100. Loss alone can't say which run is better across those.
+- **You copy a "clip skip" between families.** SD 1.x uses the last layer by default and `SDXLClipG` uses the penultimate one. What the model was trained on differs by family, and `CLIPSetLastLayer` moves you off it.
+- **Your long prompt behaves oddly.** The SD 1.x text model takes 77 positions, and two of them are the start and end tokens. Longer text is split into chunks. The `chunks` lab in the conditioning track shows where.
+- **You put a CLIP Vision file in a text loader.** The two towers come in separate files with separate loaders, `CLIPLoader` and `CLIPVisionLoader`.
+- **You expect SD 1.x to use the contrastive embedding.** `return_projected_pooled=False` there, so only the per-token states go in. The pooled embedding matters in SDXL.
+- **You use zero-shot numbers from our toy to judge a real model.** The toy is built so images split neatly into parts. Real pictures don't.
+
 ## Lab
 
 The world has 12 shapes and 10 colours, so 120 concepts. An image is a 64-number vector made of a shape part, a colour part and noise. A caption names the shape and the colour. Twenty combinations are never used in training, so classifying them is zero-shot. First what a model with no idea scores:

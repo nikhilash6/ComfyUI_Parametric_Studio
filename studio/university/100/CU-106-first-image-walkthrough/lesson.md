@@ -1,6 +1,6 @@
 # CU-106 - Your first image: checkpoint, sampler, VAE
 
-**Objective.** Follow one prompt through the classic text-to-image graph. Name what each of the three networks in a checkpoint does, give the shape of every hand-off, and read the sigma list that decides how the sampler walks from noise to a clean latent. Taught by Captain Graph.
+**Objective.** Follow one prompt through the classic text-to-image graph, naming what each of the three networks in a checkpoint does, the shape of every hand-off, and the sigma list that decides how the sampler walks from noise to a clean latent. Taught by Captain Graph.
 
 ## The idea
 
@@ -9,6 +9,14 @@ The classic first graph is the seven-node chart of CU-102: Load Checkpoint, two 
 - The denoiser, the MODEL output, is a UNet in SD 1.x. It looks at a noisy latent and predicts what is noise in it.
 - The text encoder, the CLIP output, turns the prompt into vectors (CU-104).
 - The VAE converts between pixels and the small latent grid the denoiser works on (CU-103).
+
+Here it is. Open it, and every box in this lesson is on your canvas.
+
+{{graph:sd15_txt2img}}
+
+Here is a render from the same graph on our test machine, with a longer prompt and the same seed: one picture, one seed, for scale.
+
+![An SD 1.5 render: euler at 20 steps, karras scheduler, cfg 7, seed 424242](sampling_lab/sampler-euler.jpg)
 
 The sampler is not a network. It is the loop that calls the denoiser again and again. Stable Diffusion runs its diffusion in the latent space of a pretrained autoencoder (Rombach et al. 2021). For SD 1.x the autoencoder has a downsampling factor of 8 and maps an image of shape H × W × 3 to a latent of shape H/8 × W/8 × 4, and the text encoder's output reaches the UNet through cross-attention (the Stable Diffusion v1-4 model card).
 
@@ -20,6 +28,8 @@ For an SD 1.x model, σ comes from the 1000-step training schedule of CU-202, σ
 
 **The denoise setting.** With denoise below 1, ComfyUI builds a longer list with int(steps / denoise) steps and keeps only the last steps + 1 values. The sampler still runs the number of steps you asked for, but it starts at a lower σ, and the start is the encoded input image plus noise of that size.
 
+{{play:denoise}}
+
 **Cost.** One Euler step is one call of the network. Heun's method makes a second call per step, except on the last. With a cfg other than 1 each call evaluates the network for the positive and for the negative prompt and combines them as uncond + (cond − uncond) × cfg.
 
 ## In ComfyUI
@@ -29,6 +39,16 @@ For an SD 1.x model, σ comes from the 1000-step training schedule of CU-202, σ
 `KSampler` in `nodes.py` calls `common_ksampler`, then `comfy.sample.sample`, then `comfy.samplers.KSampler.sample`. That class builds the list with `calculate_sigmas`, one handler per scheduler name. Its widgets default to 20 steps, cfg 8.0 and denoise 1.0. When cfg is exactly 1.0 the negative prompt is not evaluated at all. The preview you watch while sampling is the denoised estimate D, not the noisy x, because the sampler hands the denoised latent to the preview callback.
 
 The `default_workflow.json` in v0.43.0 is a different graph: it uses separate UNETLoader, CLIPLoader and VAELoader nodes for one particular model. The checkpoint loader is still in `nodes.py`, and the classic graph is still the simplest way to see the parts.
+
+## What goes wrong
+
+- **The picture is mush at a low `denoise` with an empty latent.** `denoise` below 1 expects a real picture to start from (CU-116). With `EmptyLatentImage` the start is an all-zero latent with a little noise. We reason this from the formula and did not test how it looks.
+- **The negative prompt seems to do nothing.** At a cfg of exactly 1.0 ComfyUI doesn't evaluate it at all. Raise cfg.
+- **A size far from what the model trained on.** The SD 1.x model card lists training at 512 by 512. You can ask for any size, because nothing refuses it, but this is a request outside its training. CU-109 has the numbers.
+- **The preview looks different from the result.** The preview shows the estimate D, usually through a small approximate decoder, and the final picture goes through the real VAE.
+- **`clip input is invalid: None`.** The file isn't a whole checkpoint. CU-114 shows how to tell, and which loaders to use.
+- **Queue again gives nothing new.** The seed was fixed and nothing changed, so it's all from the cache (CU-112).
+- **Positive and negative crossed.** Both have the same type. Follow each wire from the sampler back to its text.
 
 ## Lab
 
@@ -75,7 +95,7 @@ step  sigma     x to final   denoised estimate to final
 19    0.0292    0.004        0.000
 ```
 
-At the first step x is 38.975 away from its final value, while the denoised estimate is only 2.065 away, so a preview built from the estimate shows far more of the final picture than x would. Both columns reach 0 at the end.
+At the first step x is 38.975 away from its final value, while the denoised estimate is only 2.065 away, so a preview built from the estimate shows far more of the final picture than x would. Both columns are close to 0 by the last step.
 
 ```text
 network evaluations for 20 steps: Euler 20, Heun 39

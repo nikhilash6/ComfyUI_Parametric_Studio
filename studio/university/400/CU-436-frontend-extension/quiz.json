@@ -1,0 +1,12 @@
+{
+ "code": "CU-436",
+ "title": "A front-end extension: WEB_DIRECTORY and registerExtension",
+ "level": "400",
+ "questions": [
+  {"q": "With WEB_DIRECTORY = \"./js\", what is the URL of js/brighten.js in a pack folder my_pack?", "options": ["/extensions/my_pack/brighten.js", "/extensions/my_pack/js/brighten.js", "/js/my_pack/brighten.js", "/custom_nodes/my_pack/js/brighten.js"], "answer": "/extensions/my_pack/brighten.js", "why": "The folder is served at /extensions/<name>, so the name of the folder inside your pack isn't part of the URL."},
+  {"q": "A style.css sits in your web folder. What happens to it?", "options": ["It is applied to the page", "It is served, but your code has to add it", "It is not served", "It raises an error at startup"], "answer": "It is served, but your code has to add it", "why": "The listing holds .js files only. The docs say other resources are reached by URL."},
+  {"q": "You want to change what every Brighten node does on the page. Which hook?", "options": ["setup", "beforeRegisterNodeDef", "init", "afterConfigureGraph"], "answer": "beforeRegisterNodeDef", "why": "It runs once per node type, and gives you the class to patch."},
+  {"q": "Why call the old onExecuted when you replace it?", "options": ["For speed", "To keep what other extensions added", "The browser requires it", "To avoid a memory leak"], "answer": "To keep what other extensions added", "why": "They patch the same prototype. The lab shows the first extension's code no longer running."},
+  {"q": "Your pack raises an error when Python imports it. What happens to its JavaScript?", "options": ["It loads anyway", "It is not registered", "It loads and shows the error", "It loads after a retry"], "answer": "It is not registered", "why": "load_custom_node reads WEB_DIRECTORY after the import succeeds. The exception skips that."}
+ ]
+}

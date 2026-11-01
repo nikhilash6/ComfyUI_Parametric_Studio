@@ -2,13 +2,132 @@
  "title": "History 10: From frames to space-time: the road to modern video models",
  "level": "300",
  "char": "frame",
- "hook": "Discover how video generation evolved from static image sequences to coherent space-time volumes.",
+ "hook": "Time is added on, then compressed, then attended to all at once. Causal describes the VAE and not the sampler, and it is where the 4k + 1 frame grid comes from.",
  "code": "CU-510",
  "prereq": [
   "CU-215"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/ldm/modules/attention.py:SpatialVideoTransformer",
+  "comfy/ldm/modules/diffusionmodules/openaimodel.py:VideoResBlock",
+  "comfy/supported_models.py:SVD_img2vid",
+  "comfy/ldm/wan/vae.py:CausalConv3d",
+  "comfy/ldm/cosmos/cosmos_tokenizer/layers3d.py:CausalConv3d",
+  "comfy/ldm/lightricks/vae/causal_conv3d.py:CausalConv3d",
+  "comfy/ldm/cogvideo/vae.py:CausalConv3d",
+  "comfy/ldm/cogvideo/vae.py:AutoencoderKLCogVideoX._decode_rolling",
+  "comfy/ldm/cogvideo/model.py:get_3d_sincos_pos_embed",
+  "comfy/ldm/cosmos/position_embedding.py:VideoRopePosition3DEmb",
+  "comfy/ldm/wan/model.py:WanModel",
+  "comfy_extras/nodes_wan.py:WanImageToVideo",
+  "comfy_extras/nodes_hunyuan.py:EmptyHunyuanLatentVideo",
+  "comfy_extras/nodes_lt.py:EmptyLTXVLatentVideo",
+  "nodes.py:VAEDecodeTiled"
+ ],
  "track": "history",
- "order": 100
+ "order": 100,
+ "graphs": [
+  "wf_wan22_t2v",
+  "wf_ltx25_t2v"
+ ],
+ "verified": [
+  {
+   "claim": "Pads zeros before the frames and none after.",
+   "how": "source",
+   "ref": "comfy/ldm/wan/vae.py:CausalConv3d"
+  },
+  {
+   "claim": "Repeats the first frame on the past side.",
+   "how": "source",
+   "ref": "comfy/ldm/cosmos/cosmos_tokenizer/layers3d.py:CausalConv3d"
+  },
+  {
+   "claim": "Repeats the first frame, with a causal flag.",
+   "how": "source",
+   "ref": "comfy/ldm/lightricks/vae/causal_conv3d.py:CausalConv3d"
+  },
+  {
+   "claim": "Chunks of 4 frames through the high-resolution layers.",
+   "how": "source",
+   "ref": "comfy/ldm/cogvideo/vae.py:AutoencoderKLCogVideoX._decode_rolling"
+  },
+  {
+   "claim": "Has a time_stack beside transformer_blocks.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:SpatialVideoTransformer"
+  },
+  {
+   "claim": "((length - 1) // 4) + 1 latent frames.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_hunyuan.py:EmptyHunyuanLatentVideo"
+  },
+  {
+   "claim": "((length - 1) // 8) + 1, and height // 32.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_lt.py:EmptyLTXVLatentVideo"
+  },
+  {
+   "claim": "16 channels, ((length - 1) // 4) + 1, height // 8.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_wan.py:WanImageToVideo"
+  },
+  {
+   "claim": "patch_size (1, 2, 2), flattened into one sequence.",
+   "how": "source",
+   "ref": "comfy/ldm/wan/model.py:WanModel"
+  },
+  {
+   "claim": "temporal_size and temporal_overlap inputs.",
+   "how": "source",
+   "ref": "nodes.py:VAEDecodeTiled"
+  },
+  {
+   "claim": "The leak test, the stride table and the token counts print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title, date and abstract from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2204.03458"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2304.08818"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2311.15127"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2408.06072"
+  },
+  {
+   "claim": "Title, date and abstract, as above. The draft's arXiv number for this paper was wrong.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2501.00103"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2501.03575"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2503.20314"
+  }
+ ],
+ "unchecked": [
+  "We read the abstracts of the video papers, not their full text.",
+  "We didn't run a video model here. The graphs were validated and need model files.",
+  "Token and pair counts are for one attention layer. They are not timings.",
+  "We did not measure how much a joint or factorised design changes video quality.",
+  "That a batch from an image model gives unrelated frames follows from having no temporal layer. We did not render it for this lesson."
+ ],
+ "kit": true
 }

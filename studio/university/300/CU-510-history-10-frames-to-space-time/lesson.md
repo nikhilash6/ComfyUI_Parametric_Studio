@@ -1,118 +1,128 @@
 # CU-510 - History 10: From frames to space-time: the road to modern video models
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Follow video models from image networks with time added on to networks that attend across space and time at once, test what a causal convolution really promises, and read the frame grid and token count that follow from it. Taught by Reel Rascal.
 
-## Why this matters
+## The idea
 
-Listen closely, class. For a long time, we treated video like a stack of independent photographs. We generated Frame 0, then Frame 1, then Frame 2, hoping they looked similar. It was like trying to build a movie by shuffling a deck of cards and praying the plot makes sense. That era is over.
+An image model knows nothing about time. Give it a batch of 16 latents and you get 16 unrelated pictures, because nothing passes between them. Every video model is an answer to that. Over about three years the answer changed in three ways.
 
-Today, we are entering the age of **space-time**. We no longer see video as a "bag of independent images." We see it as a continuous 4D tensor: Height, Width, Time, and Channels. In this new paradigm, temporal coherence is not a suggestion; it is a **first-class constraint**. The model must understand that what happens in frame $t$ is physically and logically bound to what happens in frame $t+1$.
+**Add time to an image network (2022 to 2023).** "Video Diffusion Models" (Ho et al., April 2022) calls its model "a natural extension of the standard image diffusion architecture". "Align your Latents" (Blattmann et al., April 2023) takes this further. It trains an image model first, then introduces "a temporal dimension" and fine-tunes on video, and it shows that those temporal layers can be added to Stable Diffusion itself. "Stable Video Diffusion" (November 2023) describes this as the method of the time: models "turned into generative video models by inserting temporal layers".
 
-This lesson dissects the machinery that makes this possible. We are looking at how modern architectures like CogVideoX, Cosmos, and LTX-Video have moved from simple 2D convolutions to 3D causal structures that respect the flow of time. If you want to generate video that doesn't flicker, jitter, or morph into nonsense, you need to understand how these models enforce continuity at the architectural level.
+**Compress time as well (2024).** An image VAE encodes each frame on its own, so the latent has as many frames as the video. CogVideoX (August 2024) brought in "a 3D Variational Autoencoder (VAE) to compress videos along both spatial and temporal dimensions". Fewer latent frames means fewer tokens.
 
-## The intuition
+**Attend to everything at once (2024 onwards).** LTX-Video (December 2024) has a VAE of 32 × 32 × 8 pixels per token, and that compression "enables the transformer to efficiently perform full spatiotemporal self-attention". Wan (March 2025) is "built upon the mainstream diffusion transformer paradigm". Cosmos (January 2025) is a platform that includes video tokenizers.
 
-Imagine you are a film-reel sprite, just like me. I count frames. I hate flicker.
+## The mechanism
 
-In the old "bag of images" approach, if I asked a model to generate a cat walking, it might give me a cat in frame 1, a dog in frame 2, and a cat with three legs in frame 3. Why? Because the model treated each frame as a separate, isolated task. There was no memory. There was no context.
+**Causal convolution.** A 3D convolution reads neighbours in time as well as in space. A centred one reads the next frame too. A causal one reads only the past. It's the same convolution with all the padding on one side.
 
-The shift to space-time modeling is like giving the model a pair of eyes that can see *through* time. Instead of asking, "What does this single image look like?", the model asks, "How does this volume of space evolve over this duration?"
+```
+centred, kernel 3:   output t reads t − 1, t, t + 1
+causal, kernel 3:    output t reads t − 2, t − 1, t       pad 2 frames on the past side only
+```
 
-Think of a 3D convolution. In a standard image, a 2D convolution looks at neighbors in space (up, down, left, right). In a video, a 3D convolution looks at neighbors in space **and** time (up, down, left, right, *and* previous/next frame). This is the core intuition: **Time is just another dimension of space.** By treating time as a spatial axis, we can apply the same powerful mathematical tools we use for images to the flow of motion.
+This is where people get it wrong. Causal describes the VAE. The sampler does not go frame by frame in most video models. A Wan KSampler updates every latent frame at every step, so the model sees the future frames' tokens all the time. What causal buys is this: a frame's code doesn't depend on later frames, so one frame encodes as an image, and a long video can be processed in pieces with a cache. A model that does generate frame by frame is something else, and CU-503 covers it.
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+**The grid.** With causal padding and stride 2 in time, the first frame keeps its own latent. After that, each latent frame covers the next group. Two such layers give 4k + 1:
 
-To enforce temporal coherence, modern video models utilize **3D Causal Convolutions** and **3D Positional Embeddings**. Let’s break down the math and the mechanism using the evidence from our source code.
+```
+latent frames = ((frames − 1) // 4) + 1            Wan and HunyuanVideo families
+latent frames = ((frames − 1) // 8) + 1            LTX
+```
 
-### 1. The Causal Constraint
-
-In `comfy/ldm/cogvideo/vae.py` and `comfy/ldm/cosmos/cosmos_tokenizer/layers3d.py`, we find the class `CausalConv3d`.
-
-A standard 3D convolution uses a kernel of size $k_t \times k_h \times k_w$. It looks at $k_t$ frames in time. However, in video generation, we often process data sequentially or need to ensure that the output at time $t$ does not depend on future frames at time $t+1$ (which don't exist yet during autoregressive generation).
-
-`CausalConv3d` implements **causal temporal padding**.
-*   Let $X$ be the input tensor with shape $(B, C, T, H, W)$, where $B$ is batch, $C$ is channels, $T$ is time, $H$ is height, $W$ is width.
-*   Let $K$ be the kernel size in the temporal dimension.
-*   Standard padding would add zeros to both the past and future sides of the time axis.
-*   Causal padding adds zeros **only** to the past side (or adjusts the stride such that the receptive field is strictly backward-looking).
-
-Mathematically, for a 1D causal convolution along time:
-$$ Y_t = \sum_{i=0}^{K-1} W_i \cdot X_{t-i} $$
-Here, $Y_t$ is the output at time $t$, $W_i$ are the learnable weights, and $X_{t-i}$ are the input values from the current and past $K-1$ steps. Note that $X_{t+1}$ is **not** included. This ensures **temporal causality**: the model cannot "cheat" by looking into the future. This is critical for stable, real-time, or sequential video generation.
-
-### 2. 3D Positional Embeddings
-
-How does the model know which frame is which? It uses **3D Sinusoidal Positional Embeddings** or **Rotary Position Embeddings (RoPE)**.
-
-In `comfy/ldm/cogvideo/model.py`, we see `get_3d_sincos_pos_embed`. This function generates embeddings for spatial and temporal dimensions.
-Let $p$ be the position index along a dimension (e.g., frame index $t$).
-The embedding is computed using sine and cosine functions:
-$$ PE_{(p, 2i)} = \sin\left(\frac{p}{10000^{2i/d}}\right) $$
-$$ PE_{(p, 2i+1)} = \cos\left(\frac{p}{10000^{2i/d}}\right) $$
-Where $d$ is the embedding dimension.
-
-In `comfy/ldm/cosmos/position_embedding.py`, we see `VideoRopePosition3DEmb`. This applies **Rotary Position Embeddings** to the query and key tensors in the attention mechanism. RoPE encodes relative position by rotating the query and key vectors in a complex plane. This allows the attention mechanism to understand that Frame 5 is "close" to Frame 6, but "far" from Frame 100. This relative positioning is what allows the model to maintain long-range temporal consistency without exploding in complexity.
-
-### 3. The 4D Tensor View
-
-The input to these models is not a list of images. It is a single tensor $V \in \mathbb{R}^{B \times C \times T \times H \times W}$.
-*   $B$: Batch size
-*   $C$: Channels (e.g., RGB or latent channels)
-*   $T$: Temporal dimension (number of frames)
-*   $H$: Height
-*   $W$: Width
-
-The `Encoder3D` and `Decoder3D` in the VAEs (e.g., `AutoencoderKLCogVideoX`) compress this 5D tensor into a latent space. The `CogVideoXTransformer3DModel` then operates on these latents, using 3D attention to mix information across space and time simultaneously.
+**Tokens.** Video pays for attention twice. With T latent frames of H × W tokens, a joint model has T·H·W tokens and the square of that many pairs. A factorised model does spatial attention inside each frame and temporal attention across frames at each position, for T·(HW)² + HW·T² pairs. Far cheaper, but information about another place at another time then takes two layers to arrive.
 
 ## In ComfyUI
 
-Our sources provide specific evidence of how these architectures are implemented in ComfyUI.
+- **Temporal layers added on.** `SVD_img2vid` in `comfy/supported_models.py` is the 2023 design. `SpatialVideoTransformer` in `comfy/ldm/modules/attention.py` keeps its image `transformer_blocks`, adds a `time_stack`, and walks through the pairs together. `VideoResBlock` in `openaimodel.py` does the same for convolution blocks.
+- **Causal VAEs.** `CausalConv3d` exists five times, because each family has its own. In `comfy/ldm/wan/vae.py` it pads with zeros. In `comfy/ldm/cosmos/cosmos_tokenizer/layers3d.py` and `comfy/ldm/lightricks/vae/causal_conv3d.py` it repeats the first frame. The LTX one also takes a `causal` flag that can turn this off. `comfy/ldm/cogvideo/vae.py` chooses by `pad_mode`.
+- **Joint attention.** `WanModel` in `comfy/ldm/wan/model.py` has `patch_size=(1, 2, 2)`, then flattens everything into one sequence of tokens. `CogVideoXTransformer3DModel` positions its tokens with `get_3d_sincos_pos_embed`. Cosmos uses `VideoRopePosition3DEmb`.
+- **The grid in code.** `EmptyHunyuanLatentVideo` makes `((length - 1) // 4) + 1` latent frames. `EmptyLTXVLatentVideo` makes `((length - 1) // 8) + 1` at height // 32. `VAE` in `comfy/sd.py` holds the inverse, such as `a * 4 - 3`.
+- **Decoding long clips.** `VAEDecodeTiled` has `temporal_size` and `temporal_overlap`. `AutoencoderKLCogVideoX` has `_decode_rolling`, which runs the expensive high-resolution layers in chunks of 4 frames.
 
-*   **CogVideoX**: The folder `comfy/ldm/cogvideo` contains `CogVideoXTransformer3DModel` and `AutoencoderKLCogVideoX`. The VAE uses `CausalConv3d` to ensure time causality. It also uses `_decode_rolling` to manage memory by decoding in chunks, which is essential for long videos.
-*   **Cosmos**: The folder `comfy/ldm/cosmos` implements `CausalContinuousVideoTokenizer`. It uses `Patcher3D` for 3D discrete wavelet transforms, breaking video into spatiotemporal patches. The transformer is `GeneralDIT` or `MiniTrainDIT`, which uses `VideoRopePosition3DEmb` for 3D rotary embeddings.
-*   **LTX-Video**: The folder `comfy/ldm/lightricks` contains `LTXBaseModel` and `VideoVAE`. It uses `CausalConv3d` in its VAE and `apply_rotary_emb` for positional encoding. It also features `DurationHead`, which predicts the natural shot duration in seconds, further emphasizing the model's understanding of time as a continuous variable.
+Try the grid. Ask for a frame count and see what you get back.
 
-These implementations show that ComfyUI does not just load a model; it provides the specific 3D causal and positional machinery required to treat video as a 4D space-time object.
+{{play:frames}}
+
+Two graphs from the joint-attention era.
+
+{{graph:wf_wan22_t2v}}
+
+{{graph:wf_ltx25_t2v}}
+
+## What goes wrong
+
+- **You ask for 48 frames and get 45.** Floor division, and then the inverse: 48 becomes 12 latent frames, which decode to 45. The lab prints this. Ask for a count on the grid, such as 49 or 81.
+- **You make a video by batching an image model.** It has no layer that connects the frames, so you get separate pictures. Flicker here is no bug in your settings.
+- **You think causal means the model can't see later frames.** That is only the VAE. Most samplers denoise all latent frames at once. So you can't stop a Wan run midway and keep the "finished" early frames.
+- **Sampling fits and decoding runs out of memory.** The decoder has to produce every pixel of every frame. Use `VAEDecodeTiled`, and lower `temporal_size` if needed.
+- **A longer clip costs much more than you expected.** Joint pairs grow with the square of the tokens: 3.81 times for about twice the frames, in the lab. Count the tokens before you queue.
+- **Long clips break at the seams.** Chunking with too little overlap shows. The `longchunks` lab plans this, and CU-215 has the frame rules.
 
 ## Lab
 
-In this lab, we simulate the core requirement of space-time modeling: **temporal consistency**. We create a tiny "video" of 3 frames, each with 2 pixels. We calculate the difference between consecutive frames. In a consistent video, these differences should be small and smooth.
-
-The lab script defines:
-*   `frames`: A tensor of shape $(3, 2)$ representing 3 frames with 2 pixels each.
-*   `diff_0_1`: The absolute difference between Frame 0 and Frame 1.
-*   `diff_1_2`: The absolute difference between Frame 1 and Frame 2.
-*   `mean_diff`: The average of these differences.
-
-Here are the real `RESULT` lines from the lab output:
+First, a real convolution with random weights, tested by differentiating output frame 4 with respect to every input frame, and then by changing the future.
 
 ```text
-RESULT mean_temporal_diff = 1
-RESULT diff_0_1 = [1.0, 1.0]
-RESULT diff_1_2 = [1.0, 1.0]
+output frame 4 reads input frames
+centred convolution       [3, 4, 5]
+causal, zero padding       [2, 3, 4]
+causal, first frame copied [2, 3, 4]
+change frames 6 to 8: outputs 0 to 5 move by 0.0 with causal padding, 2.38 with centred
 ```
 
-**What each proves:**
-1.  `RESULT mean_temporal_diff = 1`: This proves that the average change between frames is exactly 1.0. In a real video model, this value would be much smaller, indicating smooth motion. Here, it confirms our test data is consistent.
-2.  `RESULT diff_0_1 = [1.0, 1.0]`: This proves that the change from Frame 0 to Frame 1 is uniform across both pixels. There is no flicker or random noise; the change is structured.
-3.  `RESULT diff_1_2 = [1.0, 1.0]`: This proves that the change from Frame 1 to Frame 2 is also uniform and identical to the previous step. This **constant rate of change** is the hallmark of temporal coherence. If this value were random (e.g., `[0.5, 2.0]`), it would indicate flicker or instability.
+The causal forms read frames 2, 3 and 4 and nothing later, and changing frames 6 to 8 moves earlier outputs by exactly 0.0. Note the third line. Repeating the first frame instead of padding with zeros keeps the same reach. They differ only in what they feed the very first frames.
 
-This simple check demonstrates why we need 3D convolutions and causal padding: to ensure that the `diff` values remain small and predictable, rather than random.
+Next, stride, with real strided convolutions run for shape. This is where 4k + 1 comes from.
 
-## Common mistakes
+```text
+frames in   latent frames, two stride-2 layers   ((T - 1) // 4) + 1   decoded back, 4 L - 3
+1           1                                    1                    1
+5           2                                    2                    5
+17          5                                    5                    17
+48          12                                   12                   45
+49          13                                   13                   49
+81          21                                   21                   81
+82          21                                   21                   81
+```
 
-1.  **Treating video as a list of images**: If you feed frames individually to a 2D model, you lose temporal context. The model will generate independent images, leading to flicker. You must use a 3D model that processes the $T$ dimension.
-2.  **Ignoring Causality**: Using standard (non-causal) 3D convolutions in an autoregressive setting can cause "future leakage," where the model uses information from frames that haven't been generated yet. This leads to unstable generation. Always use `CausalConv3d` or equivalent causal attention.
-3.  **Neglecting Positional Embeddings**: Without 3D positional embeddings (like RoPE or Sincos), the model cannot distinguish between Frame 1 and Frame 100. It will treat all frames as equivalent, leading to a lack of motion or chaotic transitions.
-4.  **Memory Overflows**: Processing the entire 4D tensor at once can exceed VRAM. Use techniques like `_decode_rolling` or chunked processing, as seen in the CogVideoX VAE, to manage memory efficiently.
+The real convolutions give the same numbers as the formula in the source, for every row. Frames 81 and 82 give the same result, so the 82nd is cut. Then tokens, for sizes we worked out from the formulas above and the patch sizes in the source.
 
-## Go deeper
+```text
+clip                     latent grid after patching   tokens    joint pairs     spatial + temporal pairs   joint / factorised
+Wan 832x480, 81 frames   21 x 30 x 52                  32,760    1.073e+09       5.179e+07                  20.7
+Wan 832x480, 161 frames  41 x 30 x 52                  63,960    4.091e+09       1.024e+08                  40.0
+LTX 768x512, 121 frames  16 x 16 x 24                  6,144     3.775e+07       2.458e+06                  15.4
+double the frames, joint pairs grow 3.81 times; the same clip at twice the side grows them 16 times
+```
 
-To understand the theoretical foundations of these architectures, refer to the following papers (by arXiv ID, as implied by the model names in the evidence):
+On the grid of `WanImageToVideo`, a clip of 81 frames at 832 × 480 is 32,760 tokens. The Wan 2.2 5B graph above uses a coarser grid, and the frames lab shows it. Joint attention is 20.7 times the pairs of factorised, and 40.0 times at 161 frames. So factorising saves more the longer the clip. Those are counts of pairs in one attention layer, not seconds. Real models slice the attention, use faster kernels, and differ in other layers.
 
-*   **CogVideoX**: Look for the paper on "CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer" (arXiv:2408.06072). This paper details the 3D transformer and the causal VAE.
-*   **Cosmos**: Refer to "Cosmos: A World Foundation Model Platform for Physical AI" (arXiv:2501.03575). This paper explains the use of 3D wavelet transforms and rotary embeddings for world modeling.
-*   **LTX-Video**: Look for "LTX-Video: Real-Time Video Generation with Diffusion Transformers" (arXiv:2501.13956). This paper discusses the joint audio-video generation and the causal VAE design.
+## What is contested
 
-These papers provide the mathematical proofs and experimental results behind the code you see in ComfyUI. Study them to understand *why* the architecture is built this way. Now, go forth and generate video that respects the flow of time. No flicker. No chaos. Just smooth, coherent space-time.
+Whether joint attention gives better video than factorised attention at equal cost is not something this lab can say. The LTX paper calls full spatiotemporal attention "essential" for temporal consistency. That is its own claim, and we did not test it. Each model family's abstract says it leads the benchmarks it chose, and we did not re-run any.
 
+We also can't say how much of the improvement between 2023 and 2025 came from architecture. The Stable Video Diffusion abstract puts weight on dataset curation, and the Wan abstract credits data and scale as well.
+
+## Sources
+
+- [Ho et al. 2022. Video Diffusion Models](https://arxiv.org/abs/2204.03458)
+- [Blattmann et al. 2023. Align your Latents: High-Resolution Video Synthesis with Latent Diffusion Models](https://arxiv.org/abs/2304.08818)
+- [Blattmann et al. 2023. Stable Video Diffusion: Scaling Latent Video Diffusion Models to Large Datasets](https://arxiv.org/abs/2311.15127)
+- [Yang et al. 2024. CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer](https://arxiv.org/abs/2408.06072)
+- [HaCohen et al. 2024. LTX-Video: Realtime Video Latent Diffusion](https://arxiv.org/abs/2501.00103)
+- [NVIDIA 2025. Cosmos World Foundation Model Platform for Physical AI](https://arxiv.org/abs/2501.03575)
+- [Team Wan 2025. Wan: Open and Advanced Large-Scale Video Generative Models](https://arxiv.org/abs/2503.20314)
+- [ComfyUI v0.43.0, comfy/ldm/wan/vae.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/wan/vae.py)
+- [ComfyUI v0.43.0, comfy/ldm/wan/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/wan/model.py)
+- [ComfyUI v0.43.0, comfy/ldm/lightricks/vae/causal_conv3d.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/lightricks/vae/causal_conv3d.py)
+- [ComfyUI v0.43.0, comfy/ldm/cosmos/cosmos_tokenizer/layers3d.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/cosmos/cosmos_tokenizer/layers3d.py)
+- [ComfyUI v0.43.0, comfy/ldm/cosmos/position_embedding.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/cosmos/position_embedding.py)
+- [ComfyUI v0.43.0, comfy/ldm/cogvideo/vae.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/cogvideo/vae.py)
+- [ComfyUI v0.43.0, comfy/ldm/cogvideo/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/cogvideo/model.py)
+- [ComfyUI v0.43.0, comfy/ldm/modules/attention.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/attention.py)
+- [ComfyUI v0.43.0, comfy/supported_models.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/supported_models.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_hunyuan.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_hunyuan.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_lt.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_lt.py)
+- [ComfyUI v0.43.0, comfy/sd.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sd.py)
+- [ComfyUI v0.43.0, nodes.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/nodes.py)

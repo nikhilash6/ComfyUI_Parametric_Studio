@@ -1,0 +1,20 @@
+line  4  at start                       install,process          subprocess.check_call([sys.executable, "-m", "pip", "insta
+line 10  when the node runs             code from text           return (eval(text),)
+line 11  at start                       file route               @PromptServer.instance.routes.get("/mypack/read")
+line 13  on a web request               file route               return web.FileResponse(request.query["path"])
+line 15  at start, if os.environ.get("MYPACK_UPDA install,process          subprocess.run(["git", "pull"])
+
+16 lines, 11 of them run as soon as ComfyUI imports this file
+worst first: runs at start and changes your environment, then reacts to outside input, then runs only when you ask
+
+things to look for in the file list before reading any line
+  .py 12                 ordinary
+  .js 3                  ordinary
+  .so 1                  compiled, you can't read it
+  .pkl 2                 a pickle can run code when loaded
+  requirements.txt       dry-run it against your constraints
+  prestartup_script.py   main.py runs this before the rest of ComfyUI starts
+
+pin what you read. If one byte changes, so does the digest
+  file as read 749b67869d8eda0c
+  one space more 3c5672760453e26e

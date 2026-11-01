@@ -1,93 +1,46 @@
+# CU-311 lab: where a sum loses numbers. A running sum in several formats, the dot product inside a matmul, and a toy gradient sum.
 import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-torch.manual_seed(0)
-
-# Step 1: Demonstrate precision loss in fp16 accumulation
-# fp16 has only 10 mantissa bits, so adding small numbers to large ones can be lost
-val_large = torch.tensor(1.0, dtype=torch.float16)
-val_small = torch.tensor(0.0001, dtype=torch.float16)
-
-# In fp16, 1.0 + 0.0001 may round back to 1.0 due to limited precision
-sum_fp16 = val_large + val_small
-print(f"RESULT fp16_sum = {sum_fp16.item():.6g}")
-
-# In fp32, the same addition preserves the small value
-val_large_f32 = torch.tensor(1.0, dtype=torch.float32)
-val_small_f32 = torch.tensor(0.0001, dtype=torch.float32)
-sum_fp32 = val_large_f32 + val_small_f32
-print(f"RESULT fp32_sum = {sum_fp32.item():.6g}")
-
-# Assert that fp16 loses precision while fp32 does not
-assert sum_fp16.item() == 1.0, "fp16 should lose the small addition"
-assert abs(sum_fp32.item() - 1.0001) < 1e-6, "fp32 should preserve the small addition"
-
-# Step 2: Show cumulative error when summing many small values in fp16 vs fp32
-# Create a tensor of small positive values
-n = 1000
-small_values = torch.full((n,), 0.0001, dtype=torch.float32)
-
-# Sum in fp32 (accurate)
-sum_fp32_acc = small_values.sum().item()
-print(f"RESULT fp32_accumulated = {sum_fp32_acc:.6g}")
-
-# Sum in fp16 (accumulates error)
-small_values_fp16 = small_values.to(torch.float16)
-sum_fp16_acc = small_values_fp16.sum().item()
-print(f"RESULT fp16_accumulated = {sum_fp16_acc:.6g}")
-
-# The fp16 sum should be less accurate
-error_fp16 = abs(sum_fp16_acc - n * 0.0001)
-error_fp32 = abs(sum_fp32_acc - n * 0.0001)
-print(f"RESULT fp16_error = {error_fp16:.6g}")
-print(f"RESULT fp32_error = {error_fp32:.6g}")
-
-# Assert that fp16 accumulation has more error than fp32
-assert error_fp16 > error_fp32, "fp16 accumulation should have more error than fp32"
-
-# Step 3: Demonstrate gradient accumulation in mixed precision
-# Simulate a simple linear layer forward and backward pass
-x = torch.randn(4, 8, dtype=torch.float32)
-w = torch.randn(8, 4, dtype=torch.float32)
-
-# Forward in fp16
-x_fp16 = x.to(torch.float16)
-w_fp16 = w.to(torch.float16)
-y_fp16 = x_fp16 @ w_fp16
-
-# Backward: compute gradients in fp16, but accumulate in fp32
-# Simulate multiple mini-batches
-num_batches = 10
-grad_acc_fp32 = torch.zeros_like(w, dtype=torch.float32)
-grad_acc_fp16 = torch.zeros_like(w, dtype=torch.float16)
-
-for i in range(num_batches):
-    # Random input for each batch
-    x_batch = torch.randn(4, 8, dtype=torch.float32).to(torch.float16)
-    # Create a new weight tensor that requires grad for each batch
-    w_batch = w_fp16.clone().requires_grad_(True)
-    y_batch = x_batch @ w_batch
-    
-    # Simple loss: sum of squares
-    loss = (y_batch ** 2).sum()
-    loss.backward()
-    
-    # Get gradient of w
-    grad_w = w_batch.grad.clone()
-    
-    # Accumulate in fp32 (correct way)
-    grad_acc_fp32 += grad_w.to(torch.float32)
-    
-    # Accumulate in fp16 (incorrect, shows error)
-    grad_acc_fp16 += grad_w
-
-# Compare the accumulated gradients
-diff = (grad_acc_fp32 - grad_acc_fp16.to(torch.float32)).abs().max().item()
-print(f"RESULT grad_accum_diff = {diff:.6g}")
-
-# Assert that there is a measurable difference between fp16 and fp32 accumulation
-assert diff > 0, "There should be a difference between fp16 and fp32 gradient accumulation"
+torch.manual_seed(0); torch.set_num_threads(1)
+print("format   mantissa bits   spacing just above 1 (eps)   smallest normal   largest")
+for n, d, m in (("fp16", torch.float16, 10), ("bf16", torch.bfloat16, 7), ("fp32", torch.float32, 23)):
+    i = torch.finfo(d); print(f"{n:8s} {m:<15d} {i.eps:<28.3e} {i.tiny:<17.3e} {i.max:.3e}")
+assert torch.finfo(torch.float16).eps == 2 ** -10
+one, small = torch.tensor(1.0, dtype=torch.float16), torch.tensor(1e-4, dtype=torch.float16)
+print(f"\n1.0 + 0.0001 in fp16 = {(one + small).item():.6f}    in fp32 = {(one.float() + small.float()).item():.6f}")
+assert (one + small).item() == 1.0
+def running(dt, x, n):
+    s = torch.tensor(0.0, dtype=dt); a = torch.tensor(x, dtype=dt); stall = None
+    for i in range(n):
+        t = s + a
+        if t == s and stall is None: stall = i
+        s = t
+    return s.item(), stall
+print("\nadd 0.0001 again and again, rounding after each add. The true total is count x 0.0001")
+print("format   count     result     stopped moving at")
+for n, d in (("fp16", torch.float16), ("bf16", torch.bfloat16), ("fp32", torch.float32)):
+    for c in (1000, 20000):
+        r, st = running(d, 1e-4, c); print(f"{n:8s} {c:<9d} {r:<10.4f} {'never' if st is None else f'add number {st}'}")
+r16, st16 = running(torch.float16, 1e-4, 20000); assert r16 < 1 and st16 is not None
+assert running(torch.float32, 1e-4, 20000)[1] is None
+print("\nthe same loss inside one matmul: a dot product of 4096 terms, summed in the format named")
+g = torch.Generator().manual_seed(0); w = torch.randn(4096, generator=g) * 0.02; x = torch.randn(4096, generator=g) * 1.0
+truth = (w.double() * x.double()).sum().item(); prods = (w.to(torch.float16) * x.to(torch.float16))
+s16 = torch.tensor(0.0, dtype=torch.float16)
+for v in prods: s16 = s16 + v
+s32 = torch.tensor(0.0, dtype=torch.float32)
+for v in prods: s32 = s32 + v.float()
+print(f"true {truth:.5f}   fp16 terms summed in fp32 {s32.item():.5f}   fp16 terms summed in fp16 {s16.item():.5f}")
+print(f"error: fp32 sum {abs(s32.item() - truth):.5f}   fp16 sum {abs(s16.item() - truth):.5f}")
+assert abs(s16.item() - truth) > abs(s32.item() - truth)
+print("\na toy gradient sum: 64 small batches on one weight tensor")
+W = torch.randn(32, 32, generator=g); acc16 = torch.zeros_like(W, dtype=torch.float16); acc32 = torch.zeros_like(W); truth = torch.zeros_like(W, dtype=torch.float64)
+for i in range(64):
+    gr = torch.randn(32, 32, generator=g) * 1e-3 + (0.3 if i == 0 else 0.0)
+    acc16 += gr.to(torch.float16); acc32 += gr; truth += gr.double()
+e16 = ((acc16.double() - truth).norm() / truth.norm()).item(); e32 = ((acc32.double() - truth).norm() / truth.norm()).item()
+print(f"relative error of the summed gradient: fp16 {e16:.2e}   fp32 {e32:.2e}")
+assert e16 > 100 * e32
+print("\ngradients small enough to vanish: the reason GradScaler exists")
+for v in (1e-5, 1e-7, 1e-8):
+    print(f"  {v:.0e} stored as fp16: {torch.tensor(v, dtype=torch.float16).item():.3e}   scaled by 65536 first, then back: {(torch.tensor(v * 65536, dtype=torch.float16).float() / 65536).item():.3e}")
+assert torch.tensor(1e-8, dtype=torch.float16).item() == 0.0

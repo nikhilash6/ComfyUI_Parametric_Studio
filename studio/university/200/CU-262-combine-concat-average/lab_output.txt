@@ -1,0 +1,16 @@
+node       entries  tensor           predictions for the positive, per step
+Combine    2        [1, 77, 16]      2
+Concat     1        [1, 154, 16]     1
+Average    1        [1, 77, 16]      1
+
+how far apart the three answers are (one number each, on the same query)
+Combine against (answer A + answer B) / 2: 0.0000
+Average against Combine:                   7.095
+Concat against Combine:                    5.572
+Concat against Average:                    9.852
+
+small print from the source
+Average, 'from' longer than 'to':  result has 77 tokens, the extra ones are cut
+Average, 'from' shorter than 'to': result has 77 tokens, the gap is filled with zeros
+Concat keeps the pooled vector of 'to' only: True
+Average at strength 1 is 'to' unchanged: True

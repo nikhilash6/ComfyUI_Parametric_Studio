@@ -1,0 +1,37 @@
+{
+ "code": "CU-115",
+ "title": "Reading a downloaded workflow before you run it",
+ "level": "100",
+ "prereq": ["CU-110", "CU-113"],
+ "char": "graph",
+ "hook": "A workflow file is data, and it can still cost you. Five things to look for before you press Queue, and where each one hides.",
+ "track": "first-graph",
+ "order": 110,
+ "kit": true,
+ "graphs": ["a_read_before_run"],
+ "code_refs": [
+  "nodes.py:load_custom_node",
+  "execution.py:missing_node_type",
+  "execution.py:SENSITIVE_EXTRA_DATA_KEYS",
+  "comfy_api/latest/_io.py:API_NODE",
+  "comfy_api_nodes/nodes_bfl.py:FluxProUltraImageNode",
+  "comfy/utils.py:load_torch_file",
+  "folder_paths.py:is_within_directory"
+ ],
+ "verified": [
+  {"claim": "ComfyUI imports every custom node pack's code when it starts, with exec_module, and --disable-all-custom-nodes turns that off.", "how": "source", "ref": "nodes.py:load_custom_node and comfy/cli_args.py"},
+  {"claim": "A class the server doesn't have gives missing_node_type, whose message says the custom node may not be installed.", "how": "source", "ref": "execution.py:validate_prompt"},
+  {"claim": "Partner nodes live in comfy_api_nodes, object_info marks them api_node, and the help text calls them the paid API nodes. --disable-partner-nodes and --offline exist.", "how": "source", "ref": "server.py:node_info and comfy/cli_args.py"},
+  {"claim": "The workflow schema has an optional models list of name, url, hash, hash_type and directory, and definitions.subgraphs holds whole inner graphs.", "how": "docs", "ref": "docs.comfy.org/specs/workflow_json and front end workflowSchema.ts, fetched 2026-11-01"},
+  {"claim": "The editor allows model downloads only from civitai.com, civitai.red, huggingface.co and a few exact URLs, and only for .safetensors, .sft, .ckpt, .pth and .pt.", "how": "docs", "ref": "front end main branch, modelUrlAllowlist.ts and missingModelDownload.ts, fetched 2026-11-01"},
+  {"claim": "A save prefix that leaves the output folder is refused.", "how": "run here", "ref": "folder_paths.get_save_image_path"},
+  {"claim": "The docs say embedded metadata is optional, untrusted input and not a digital signature.", "how": "docs", "ref": "docs.comfy.org/development/api-development/workflow-metadata"},
+  {"claim": "The practice graph passes validate_prompt and ran on a CPU.", "how": "run here", "ref": "scripts/verify_university_graphs.py"}
+ ],
+ "unchecked": [
+  "We have not audited every core node for what it can read or write. 'Core nodes are not a danger' is not a claim this lesson makes.",
+  "We read the download rules on the front end's main branch. Your version may differ, and tools outside the editor apply their own rules or none.",
+  "Pack managers are left out: we did not read how any of them installs a missing pack, so we say only that installing a pack means running its code.",
+  "We did not test what the editor shows for a workflow with missing nodes or a subgraph."
+ ]
+}

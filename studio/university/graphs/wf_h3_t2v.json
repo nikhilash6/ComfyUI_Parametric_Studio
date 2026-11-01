@@ -182,7 +182,7 @@
   "140:133": {
    "class_type": "PrimitiveFloat",
    "inputs": {
-    "value": 30
+    "value": 5.0
    }
   },
   "140:134": {

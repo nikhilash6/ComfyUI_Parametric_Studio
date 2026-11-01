@@ -1,0 +1,12 @@
+{
+ "code": "CU-112",
+ "title": "What Queue really does, and where your picture went",
+ "level": "100",
+ "questions": [
+  {"q": "You press Queue twice with nothing changed, and SaveImage is in the graph. How many new files appear?", "options": ["One, from the first press", "Two", "None at all", "Two, unless the seed is fixed"], "answer": "One, from the first press", "why": "The second run finds every result in the cache, including SaveImage's. In our run the output folder held one file and the second history entry repeated the first record."},
+  {"q": "Where does PreviewImage write its file?", "options": ["Into the temp folder, with the record type temp", "Nowhere, it stays in the browser", "Into the output folder", "Into the input folder"], "answer": "Into the temp folder, with the record type temp", "why": "PreviewImage is a SaveImage that points at the temp directory. The page then fetches it with /view and type=temp."},
+  {"q": "The output folder holds ComfyUI_00001_, 00002_ and 00009_. What is the next number?", "options": ["10", "3", "4", "1"], "answer": "10", "why": "get_save_image_path takes the largest number it finds and adds one. Gaps are never filled."},
+  {"q": "You restart the server. What survives?", "options": ["The saved files survive and the history list does not", "Both the files and the history", "The history and not the files", "Neither"], "answer": "The saved files survive and the history list does not", "why": "History is a dictionary in memory. Files in the output folder are ordinary files on disk."},
+  {"q": "A script posts a prompt with filename_prefix set to %date:yyyy-MM-dd%/x. What folder does it get?", "options": ["A folder literally named %date:yyyy-MM-dd%", "A folder named with today's date", "None, validation refuses it", "The temp folder"], "answer": "A folder literally named %date:yyyy-MM-dd%", "why": "The editor expands %date:...% before sending. The server only knows %year%, %month%, %day%, %hour%, %minute%, %second%, %width% and %height%. A run of the real function confirmed it."}
+ ]
+}

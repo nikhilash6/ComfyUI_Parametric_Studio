@@ -1,4 +1,26 @@
-RESULT standard_steps = 50
-RESULT distilled_steps = 4
-RESULT speedup_factor = 12.5
-RESULT mse = 0.0104185
+teacher, 30 Heun steps (59 calls): W1 0.0137; two real samples differ by 0.0271
+
+model calls   plain Euler, perfect model   student in an LCM loop
+1             1.3863                       0.1428
+2             1.3849                       0.0678
+4             0.7234                       0.0478
+8             0.2689                       0.0712
+32            0.0666                       -
+
+student against its own teacher's data 0.1428; against data with the hump weights swapped 1.3692. A student copies one teacher.
+
+steps   cfg   model calls   share of 20 steps at cfg 7
+20      7.0   40            1/1
+8       7.0   16            2/5
+4       1.0   4             1/10
+1       1.0   1             1/40
+
+timestep   c_skip    c_out   share of the answer taken straight from the input
+999        0.000000  1.0000  0.000000
+499        0.000000  1.0000  0.000000
+99         0.000000  1.0000  0.000000
+19         0.000007  1.0000  0.000007
+0          1.000000  0.0000  1.000000
+SDTurboScheduler, steps 1, denoise 1.0: timesteps [999] then sigma 0
+SDTurboScheduler, steps 2, denoise 1.0: timesteps [999, 899] then sigma 0
+SDTurboScheduler, steps 4, denoise 1.0: timesteps [999, 899, 799, 699] then sigma 0

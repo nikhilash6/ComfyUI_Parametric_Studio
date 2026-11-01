@@ -1,0 +1,15 @@
+pins everything    would move: ['torch 2.6.0 (asked ==2.1.0)', 'numpy 1.26.4 (asked ==1.24.0)', 'pillow 10.4.0 (asked ==9.5.0)']
+floors only        would move: nothing
+only what is new   would move: nothing
+
+table: {'KSampler': 'core', 'Blur': 'pack_b'}
+pack_a tried to replace core KSampler: ignored
+so prefix your ids: MyPack_Blur cannot clash
+
+pack_a loaded
+pack_b IMPORT FAILED: ModuleNotFoundError: No module named 'cv2'
+pack_c loaded
+
+both -> V1 table
+v3 -> comfy_entrypoint
+neither -> skipped: need one of them

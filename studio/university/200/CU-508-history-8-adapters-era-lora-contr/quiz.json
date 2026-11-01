@@ -59,15 +59,15 @@
    "why": "The paper says the outputs are added to the 12 skip-connections and 1 middle block, and apply_control does h += ctrl for the 'middle' and 'output' entries. control_merge scales by strength and adds a previous ControlNet's output."
   },
   {
-   "q": "Who posted the LoRA paper, and when?",
+   "q": "Two ControlNets at strength 0.8 pull too hard, though each looked right alone. Why?",
    "options": [
-    "Hu et al., 17 June 2021",
-    "Zhang, Rao and Agrawala, 10 February 2023",
-    "Mou et al., 16 February 2023",
-    "Houlsby et al., 2 February 2019"
+    "Their outputs are added together, so the pulls add too",
+    "Only the second one runs",
+    "Their strengths multiply to 0.64, so they are too weak",
+    "Each one takes half the steps"
    ],
-   "answer": "Hu et al., 17 June 2021",
-   "why": "arXiv lists \"LoRA: Low-Rank Adaptation of Large Language Models\" as posted on 17 June 2021. ControlNet followed on 10 February 2023 and T2I-Adapter on 16 February 2023."
+   "answer": "Their outputs are added together, so the pulls add too",
+   "why": "control_merge multiplies each output by its strength and adds a previous ControlNet's output."
   }
  ]
 }

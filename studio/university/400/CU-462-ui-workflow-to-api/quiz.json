@@ -1,0 +1,62 @@
+{
+ "code": "CU-462",
+ "title": "From a UI workflow to API format, and setting values by node id",
+ "level": "400",
+ "questions": [
+  {
+   "q": "What is the safest way to get an API-format graph?",
+   "options": [
+    "Write a converter",
+    "Rename the .json file",
+    "File, Export Workflow (API) in the editor",
+    "Copy widgets_values by hand"
+   ],
+   "answer": "File, Export Workflow (API) in the editor",
+   "why": "The front end knows about widgets, bypass and subgraphs. A converter has to reinvent all that."
+  },
+  {
+   "q": "Why is the second value of a KSampler's widgets_values not steps?",
+   "options": [
+    "It is the CFG",
+    "It is the seed's control setting, used only by the editor",
+    "It is the node's id",
+    "It is a wire"
+   ],
+   "answer": "It is the seed's control setting, used only by the editor",
+   "why": "The list runs seed, control, steps, and so on. The control value is not sent to the server."
+  },
+  {
+   "q": "Your script sets inputs[\"sed\"] by mistake. What does the real server do?",
+   "options": [
+    "400 with required_input_missing",
+    "It renames it",
+    "It accepts the graph, ignores the name, and the seed stays as it was",
+    "It crashes"
+   ],
+   "answer": "It accepts the graph, ignores the name, and the seed stays as it was",
+   "why": "A real run with unknown input names passed validation and ran."
+  },
+  {
+   "q": "How does a script tell a wire from a value in an input?",
+   "options": [
+    "A wire is a two-item list",
+    "A wire is a string",
+    "A wire has _meta",
+    "Wires are in a separate dict"
+   ],
+   "answer": "A wire is a two-item list",
+   "why": "That's why arrays get wrapped in __value__."
+  },
+  {
+   "q": "Why search by class_type and check for exactly one match?",
+   "options": [
+    "The server wants it",
+    "Titles can repeat and be edited, and two prompt nodes share a class",
+    "It is faster",
+    "IDs are random on each run"
+   ],
+   "answer": "Titles can repeat and be edited, and two prompt nodes share a class",
+   "why": "The lab's search raises an error when it finds two."
+  }
+ ]
+}

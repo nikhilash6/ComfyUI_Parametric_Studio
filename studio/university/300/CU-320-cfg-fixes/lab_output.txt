@@ -1,0 +1,23 @@
+method                          spread     largest    mean size of a cell
+the positive prediction         1.01       3.73       1.90
+plain cfg 7                     2.66       8.71       5.02
+plain cfg 14                    4.82       15.12      9.08
+RescaleCFG 0.7                  2.20       6.94       4.14
+CFGNorm strength 1              1.01       3.77       1.90
+APG eta 1, threshold 5          2.94       9.48       5.54
+APG eta 0, threshold 5          1.96       5.89       3.68
+CFG-Zero-Star                   4.76       14.91      8.96
+
+CFGNorm: can a cell ever come out larger than the positive's cell? False
+CFGNorm strength 0.5 against strength 1: everything is multiplied by 0.5
+
+APG with its limits off: eta 1, threshold 0, node cfg s
+s = 3.0   largest difference from plain cfg s: 0.968    from plain cfg s + 1: 0.000001
+s = 7.0   largest difference from plain cfg s: 0.968    from plain cfg s + 1: 0.000002
+s = 14.0  largest difference from plain cfg s: 0.968    from plain cfg s + 1: 0.000004
+
+this guidance vector has length 10.11. A threshold above that never acts: True
+APG at eta 1 with the node's other defaults: the part along the positive is kept whole, so only the threshold can act.
+
+CFG-Zero-Star: alpha here is 1.0105. Near 1 it barely differs from plain cfg: largest change 0.420
+node against the paper's formula applied to x - D: largest difference 1.799, which is x * (1 - w) * (1 - alpha): True

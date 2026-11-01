@@ -1,0 +1,80 @@
+{
+ "meta": {
+  "title": "The AUDIO type, piece by piece",
+  "about": "Make stereo silence, split it, join it, trim it, change its volume, save it. No model.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "waveform [1, 2, 44100] and sample_rate 44100.",
+   "2": "Two AUDIO values, left and right.",
+   "3": "Stereo again, from the two channels.",
+   "4": "Half a second, from 0.25 s.",
+   "5": "Gain is 10 to the power dB / 20.",
+   "6": "Writes output/audio."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyAudio",
+   "inputs": {
+    "duration": 1.0,
+    "sample_rate": 44100,
+    "channels": 2
+   }
+  },
+  "2": {
+   "class_type": "SplitAudioChannels",
+   "inputs": {
+    "audio": [
+     "1",
+     0
+    ]
+   }
+  },
+  "3": {
+   "class_type": "JoinAudioChannels",
+   "inputs": {
+    "audio_left": [
+     "2",
+     0
+    ],
+    "audio_right": [
+     "2",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "TrimAudioDuration",
+   "inputs": {
+    "audio": [
+     "3",
+     0
+    ],
+    "start_index": 0.25,
+    "duration": 0.5
+   }
+  },
+  "5": {
+   "class_type": "AudioAdjustVolume",
+   "inputs": {
+    "audio": [
+     "4",
+     0
+    ],
+    "volume": -6
+   }
+  },
+  "6": {
+   "class_type": "SaveAudio",
+   "inputs": {
+    "audio": [
+     "5",
+     0
+    ],
+    "filename_prefix": "audio/university_parts"
+   }
+  }
+ }
+}

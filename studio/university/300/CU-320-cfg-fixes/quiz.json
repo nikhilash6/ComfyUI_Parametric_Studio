@@ -1,0 +1,73 @@
+{
+ "code": "CU-320",
+ "title": "RescaleCFG, CFGNorm, APG and CFG-Zero-Star",
+ "level": "300",
+ "questions": [
+  {
+   "q": "What does the APG node do at its default eta of 1?",
+   "options": [
+    "Keeps both parts of the guidance whole, so only the length limit can act",
+    "Removes the parallel part",
+    "Doubles model calls",
+    "Turns cfg off"
+   ],
+   "answer": "Keeps both parts of the guidance whole, so only the length limit can act",
+   "why": "eta multiplies the parallel part. At 1 orth + par is the original vector."
+  },
+  {
+   "q": "Which of the four adds extra model predictions per step?",
+   "options": [
+    "None of them",
+    "RescaleCFG",
+    "APG",
+    "CFG-Zero-Star"
+   ],
+   "answer": "None of them",
+   "why": "All four work on predictions the sampler already has."
+  },
+  {
+   "q": "What does RescaleCFG match the result's spread to?",
+   "options": [
+    "The VAE's spread",
+    "The noise's spread",
+    "1.0 always",
+    "The positive prediction's spread"
+   ],
+   "answer": "The positive prediction's spread",
+   "why": "ro_pos over ro_cfg scales the cfg result, then the multiplier blends."
+  },
+  {
+   "q": "CFGNorm strength 0.5 does what, in its default mode?",
+   "options": [
+    "Blends halfway back to plain cfg",
+    "Halves the cfg number",
+    "Runs half the steps",
+    "Multiplies the whole prediction by 0.5"
+   ],
+   "answer": "Multiplies the whole prediction by 0.5",
+   "why": "The default branch returns pred * scale * strength."
+  },
+  {
+   "q": "What is the likely reason CFG-Zero-Star barely changed our SDXL render?",
+   "options": [
+    "It only works on batches",
+    "Its zero-init zeroed everything",
+    "If alpha stays near 1 the sum hardly moves, and it does not try to limit size",
+    "The node was not connected"
+   ],
+   "answer": "If alpha stays near 1 the sum hardly moves, and it does not try to limit size",
+   "why": "The stored difference is 2.17. We didn't log alpha on that run, but alpha near 1 leaves the sum almost alone. Zero-init isn't in the core node."
+  },
+  {
+   "q": "With APG's limits off and node cfg s, the result equals",
+   "options": [
+    "Plain cfg one higher than the node's setting",
+    "Plain cfg at exactly the node's setting",
+    "Plain cfg one lower",
+    "The positive prediction"
+   ],
+   "answer": "Plain cfg one higher than the node's setting",
+   "why": "Checked against the real node: modified_cond gives pos + s times guidance, which is plain cfg at s + 1."
+  }
+ ]
+}

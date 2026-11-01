@@ -39,6 +39,23 @@ ComfyUI samples, so it only needs the generating half of a GAN. That half turns 
 
 The judge never runs. The only class named `Discriminator` in the core source is in `comfy/ldm/cascade/stage_a.py`, and nothing calls it.
 
+Try the game yourself. The judge here is rebuilt perfectly for every position of the generator, which real training never has.
+
+{{play:ganvalue}}
+
+The nearest thing to a GAN you can queue is an upscale model. If the file you load was trained with an adversarial loss, as ESRGAN was, the `ImageUpscaleWithModel` node of this graph runs the generator half of that game.
+
+{{graph:sd15_upscale}}
+
+## What goes wrong
+
+- **You read 50% discriminator accuracy as success.** In the lab all four seeds sat near chance, 0.461 to 0.515, while the samples were still 7 to 21 times further from the data than two real samples are. Judge the samples, or a distance like W1, and not the judge's score.
+- **In your own training loop the generator hardly learns at the start.** That is the saturating loss. log(1 − D) gave a gradient of 0.4386 in the lab, and −log D gave 13.0146 against the same judge. Use the second one, as the paper does.
+- **The samples look good but say the same few things.** The paper warns about this: if G trains too far ahead of D, it collapses many values of z on to one x. Spot it by counting. In the lab the share in the right hump should be 0.700. Train the judge in step with G.
+- **An upscaler invents detail.** The ESRGAN abstract itself calls these "hallucinated details". An adversarial loss rewards what looks real, not what was there. For text, faces of real people or measurements, compare with a plain resize before trusting it.
+- **An upscaler runs out of memory.** `ImageUpscaleWithModel` starts with tiles of 512 and halves them when memory runs out, and it gives up below 128. If it fails, shrink the input image, because the tiles are already as small as it will go.
+- **You look for the discriminator in a node list.** Core never runs one when sampling. A GAN's judge is thrown away after training.
+
 ## Lab
 
 Part one uses six points, so everything is exact. The lab evaluates V for the best discriminator against several generators and compares with −log 4 + 2 JSD. The last column is a discriminator that ignores its input and says 1/2.
@@ -59,7 +76,7 @@ logit a   D = sigmoid(a)   |d log(1-D) / da|   |d (-log D) / da|
  -8.0     0.00034          0.00034              0.99966
 ```
 
-The gradient of log(1−D) with respect to a is D itself, so when D is sure the sample is fake the generator hears almost nothing. The gradient of −log D is 1−D. On a real network, after training D for 300 steps against an untrained G and changing only the loss:
+The gradient of log(1−D) with respect to a has size D, so when D is sure the sample is fake the generator hears almost nothing. The gradient of −log D has size 1−D. On a real network, after training D for 300 steps against an untrained G and changing only the loss:
 
 ```text
 after 300 discriminator steps against an untrained generator, mean D(G(z)) = 0.0154
@@ -79,7 +96,7 @@ seed  W1      right hump  share in the gap  discriminator accuracy
 two real samples of this size differ by W1 0.016; the gap holds 0.016 of the real data; 0.500 is a discriminator that cannot tell
 ```
 
-Every discriminator scored near chance, yet W1 is 7 to 21 times the 0.016 that two real samples would differ by. A discriminator at chance is not proof that the generator is right: a small network trained for 2000 steps may not see what is left. Seed 1 has the worst W1 and an accuracy below one half, so at that step D is wrong more often than right. Both networks keep moving, and the end state is one frame of a chase. A generator is a smooth function of z, so it must put some mass between the humps: 0.019 to 0.029 of its samples, against 0.016 of the real data.
+Every discriminator scored near chance, yet W1 is 7 to 21 times the 0.016 that two real samples would differ by. A discriminator at chance is not proof that the generator is right: a small network trained for 2000 steps may not see what is left. Seed 1 has the worst W1 and an accuracy below one half, so at that step D is wrong more often than right. Both networks keep moving, and the end state is one frame of a chase. This generator is a continuous function of z, so it must put some mass between the humps: 0.019 to 0.029 of its samples, against 0.016 of the real data.
 
 ## What is contested
 

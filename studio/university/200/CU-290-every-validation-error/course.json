@@ -1,0 +1,63 @@
+{
+ "code": "CU-290",
+ "title": "Every validation error, and what to do about it",
+ "level": "200",
+ "prereq": [
+  "CU-100"
+ ],
+ "char": "graph",
+ "hook": "Before a node runs, the server checks the whole graph. It can refuse in seventeen ways. Each one, with its real text and its fix.",
+ "track": "debugging",
+ "order": 15,
+ "kit": true,
+ "graphs": [
+  "f_validation_base"
+ ],
+ "code_refs": [
+  "execution.py:validate_prompt",
+  "execution.py:validate_inputs",
+  "comfy_execution/validation.py:validate_loops",
+  "comfy_execution/validation.py:validate_node_input",
+  "comfy_execution/validation.py:LoopValidationError",
+  "comfy_api/latest/_io.py:DynamicInputError",
+  "server.py:no_prompt",
+  "server.py:invalid_prompt_id",
+  "nodes.py:LoadImage.VALIDATE_INPUTS"
+ ],
+ "verified": [
+  {
+   "claim": "The error text in the table is what validate_prompt returned here, for the errors marked as run.",
+   "how": "run here",
+   "ref": "execution.py:validate_prompt, in process on a CPU with core nodes"
+  },
+  {
+   "claim": "The list of error types is complete for execution.py, validation.py and the server's prompt route at v0.43.0.",
+   "how": "source",
+   "ref": "execution.py:validate_inputs"
+  },
+  {
+   "claim": "A graph with one good output and one bad one still runs the good one, and reports the bad one in node_errors.",
+   "how": "run here",
+   "ref": "execution.py:validate_prompt"
+  },
+  {
+   "claim": "The top-level details are empty when the error sits upstream of the output, so node_errors is where to look.",
+   "how": "run here",
+   "ref": "execution.py:validate_prompt"
+  },
+  {
+   "claim": "A bad prompt gets HTTP 400 with error and node_errors.",
+   "how": "source",
+   "ref": "server.py:post_prompt"
+  },
+  {
+   "claim": "Core's LoadImage reports a missing file through custom_validation_failed.",
+   "how": "run here",
+   "ref": "nodes.py:LoadImage.VALIDATE_INPUTS"
+  }
+ ],
+ "unchecked": [
+  "exception_during_inner_validation can also come from a raising upstream validator. We triggered it only with a wire to a missing node.",
+  "How the editor shows each error (red outlines and the dialog) isn't tested here. We read the server's replies."
+ ]
+}

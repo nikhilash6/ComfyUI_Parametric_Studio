@@ -1,0 +1,73 @@
+{
+ "code": "CU-372",
+ "title": "Budgeting VRAM before you press Queue",
+ "level": "300",
+ "questions": [
+  {
+   "q": "Why can you read a safetensors file's parameter count without loading its weights?",
+   "options": [
+    "The header holds each tensor's type and shape as JSON at the start",
+    "The file name has it",
+    "It is always in the metadata field",
+    "You can't"
+   ],
+   "answer": "The header holds each tensor's type and shape as JSON at the start",
+   "why": "An 8-byte length, then JSON, then raw data."
+  },
+  {
+   "q": "Why is adding every file's size together a poor budget?",
+   "options": [
+    "They aren't all on the card at the same time",
+    "Files are always bigger than memory",
+    "Only the VAE counts",
+    "VRAM doesn't hold weights"
+   ],
+   "answer": "They aren't all on the card at the same time",
+   "why": "Models load when needed and are unloaded when room is needed."
+  },
+  {
+   "q": "Your graph samples fine, then fails in the final node. What do you try first?",
+   "options": [
+    "Tiled VAE decode",
+    "More steps",
+    "A higher CFG",
+    "A larger batch"
+   ],
+   "answer": "Tiled VAE decode",
+   "why": "The VAE's stage has its own memory need, and tiling is its cure."
+  },
+  {
+   "q": "What should you try before moving to a smaller format?",
+   "options": [
+    "Closing other programs and lowering size or batch",
+    "Removing the text encoder from the graph",
+    "Raising the batch",
+    "Adding a second VAE"
+   ],
+   "answer": "Closing other programs and lowering size or batch",
+   "why": "Those are free or nearly so, and a smaller format can cost quality."
+  },
+  {
+   "q": "How much bigger is a GB than a GiB?",
+   "options": [
+    "A GiB is about 7% bigger than a GB",
+    "They are exactly the same",
+    "A GB is ten times bigger",
+    "A GB is 7% bigger than a GiB"
+   ],
+   "answer": "A GiB is about 7% bigger than a GB",
+   "why": "1024 cubed against 1000 cubed. 12 GB is about 11.2 GiB."
+  },
+  {
+   "q": "The worksheet says your graph fits with 0.2 GB left. What now?",
+   "options": [
+    "Run it and read the console: a thin margin needs a real test",
+    "Assume it works for all sizes",
+    "Add LoRAs freely",
+    "Delete the VAE"
+   ],
+   "answer": "Run it and read the console: a thin margin needs a real test",
+   "why": "It is an estimate. Only a run gives you the real peak."
+  }
+ ]
+}

@@ -1,0 +1,126 @@
+{
+ "meta": {
+  "title": "Inpaint with InpaintModelConditioning",
+  "about": "The third route: the original stays in the latent and the greyed copy goes in the conditioning.",
+  "runs": "model",
+  "needs": [
+   "An inpainting checkpoint, or another model whose class has concat_keys. An ordinary SD 1.5 file ignores the concat values."
+  ],
+  "packs": [],
+  "notes": {
+   "5": "Paint a mask in the image editor. It arrives on the second output.",
+   "6": "Writes concat_latent_image and concat_mask into both conditionings, and returns the encoded original with a soft noise_mask.",
+   "7": "Can run below full denoise, because the latent holds the original."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "sd-v1-5-inpainting.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "3": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "5": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "6": {
+   "class_type": "InpaintModelConditioning",
+   "inputs": {
+    "positive": [
+     "2",
+     0
+    ],
+    "negative": [
+     "3",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ],
+    "pixels": [
+     "5",
+     0
+    ],
+    "mask": [
+     "5",
+     1
+    ],
+    "noise_mask": true
+   }
+  },
+  "7": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "seed": 424242,
+    "steps": 20,
+    "cfg": 7.0,
+    "sampler_name": "euler",
+    "scheduler": "karras",
+    "denoise": 0.9,
+    "positive": [
+     "6",
+     0
+    ],
+    "negative": [
+     "6",
+     1
+    ],
+    "latent_image": [
+     "6",
+     2
+    ]
+   }
+  },
+  "8": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "7",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "9": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "8",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

@@ -59,7 +59,7 @@ f = {"f": {"class_type": "LoadFile", "inputs": {"path": "in.png"}}, "out": {"cla
 c2 = Cache(); print("\nfile node, first   ran:", run(f, c2)); r = run(f, c2); print("file unchanged     ran:", r); assert r == []
 FILE_CONTENT["v"] = "hash-B"; r = run(f, c2); print("file edited on disk ran:", r); assert r == ["f", "out"]
 # float("NaN") is how IS_CHANGED says "always run", because NaN != NaN.
-nan = float("nan"); print("NaN == NaN:", nan == nan, "  so a key holding NaN never matches, and the node always runs")
+nan = float("nan"); print("NaN == NaN:", nan == nan, "  so a key holding a new NaN never matches, and the node always runs")
 # Two identical non-idempotent nodes do not share an output.
 n2 = {"a": {"class_type": "Noise", "inputs": {"seed": 5}}, "b": {"class_type": "Noise", "inputs": {"seed": 5}}, "out": {"class_type": "Save", "inputs": {"x": ["a", 0], "y": ["b", 0]}}}
 print("same inputs, not_idempotent, two nodes: keys equal?", signature(n2, "a") == signature(n2, "b"))

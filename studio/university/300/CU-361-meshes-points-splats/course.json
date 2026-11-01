@@ -1,0 +1,63 @@
+{
+ "code": "CU-361",
+ "title": "Meshes, points and Gaussian splats",
+ "level": "300",
+ "prereq": [
+  "CU-307"
+ ],
+ "char": "latent",
+ "hook": "What each one really stores, why a splat has no surface, and what SplatToMesh has to invent to get one.",
+ "track": "three-d",
+ "order": 12,
+ "graphs": [
+  "hunyuan3d_mesh"
+ ],
+ "code_refs": [
+  "comfy_api/latest/_util/geometry_types.py:SPLAT",
+  "comfy_api/latest/_util/geometry_types.py:MESH",
+  "comfy_api/latest/_util/geometry_types.py:VOXEL",
+  "comfy_extras/nodes_gaussian_splat.py:SplatToMesh",
+  "comfy_extras/nodes_gaussian_splat.py:_gaussian_to_mesh",
+  "comfy_extras/nodes_gaussian_splat.py:_splat_density",
+  "comfy_extras/nodes_gaussian_splat.py:_otsu_level",
+  "comfy_extras/nodes_gaussian_splat.py:_surface_nets",
+  "comfy_extras/nodes_gaussian_splat.py:_render_gaussian",
+  "comfy_extras/nodes_gaussian_splat.py:_gaussian_ply_bytes",
+  "comfy_extras/nodes_gaussian_splat.py:RenderSplat",
+  "comfy_extras/nodes_triposplat.py:VAEDecodeTripoSplat",
+  "comfy_extras/nodes_moge.py:MoGePointMapToMesh"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "SPLAT holds positions, scales, rotations, opacities and spherical-harmonic colour, each per Gaussian.",
+   "how": "source",
+   "ref": "comfy_api/latest/_util/geometry_types.py:SPLAT"
+  },
+  {
+   "claim": "SplatToMesh builds density and colour grids, picks a level with Otsu, runs Surface Nets, drops small components, applies Taubin smoothing, then samples colour.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_gaussian_splat.py:_gaussian_to_mesh"
+  },
+  {
+   "claim": "The renderer composites front to back across depth slabs.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_gaussian_splat.py:_render_gaussian"
+  },
+  {
+   "claim": "The source comment on _io.py's POINT type says no core code references it, and point clouds reach core as file types and depth nodes.",
+   "how": "source",
+   "ref": "comfy_api/latest/_io.py:Point"
+  },
+  {
+   "claim": "The 3D Gaussian Splatting abstract describes real-time radiance field rendering.",
+   "how": "docs",
+   "ref": "arXiv 2308.04079, fetched 2026-11-01"
+  }
+ ],
+ "unchecked": [
+  "Our density grid in the lab uses round Gaussians. The real node uses each Gaussian's full oriented covariance.",
+  "The Hunyuan graph gives a mesh and not a splat. We have no splat model on our test machine, so no splat graph here was run, and we show no splat result of our own.",
+  "Rules of thumb on file size come from counting fields. Compressed formats like spz and ksplat, which core also writes, are smaller, and we did not measure them."
+ ]
+}

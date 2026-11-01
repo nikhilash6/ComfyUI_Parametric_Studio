@@ -1,0 +1,41 @@
+GPL-3.0 s0     Mere interaction with a user through a computer network, with no transfer of a copy, is not conv
+AGPL-3.0 s13   your modified version must prominently offer all users interacting with it remotely through a co
+MIT            The above copyright notice and this permission notice shall be included in all copies or substan
+OpenRAIL-M 5   You cannot use the Model and the Derivatives of the Model for the specified restricted uses.
+
+MIT
+  use as is, at home                     nothing triggered
+  change it, at home                     nothing triggered
+  change it, give a friend a copy        keep notice
+  change it, run a site for strangers    nothing triggered
+  as is, run a site for strangers        nothing triggered
+
+GPL-3.0
+  use as is, at home                     nothing triggered
+  change it, at home                     nothing triggered
+  change it, give a friend a copy        give source, keep licence, mark changes
+  change it, run a site for strangers    nothing triggered
+  as is, run a site for strangers        nothing triggered
+
+AGPL-3.0
+  use as is, at home                     nothing triggered
+  change it, at home                     nothing triggered
+  change it, give a friend a copy        give source, keep licence, mark changes
+  change it, run a site for strangers    offer source to remote users
+  as is, run a site for strangers        nothing triggered
+
+OpenRAIL-M
+  use as is, at home                     no banned uses
+  change it, at home                     no banned uses
+  change it, give a friend a copy        no banned uses; pass the use limits on
+  change it, run a site for strangers    no banned uses; pass the use limits on
+  as is, run a site for strangers        no banned uses; pass the use limits on
+
+copying a piece of a pack into your own project, by the pack's licence
+  MIT                allowed, keep the notice
+  Apache-2.0         allowed, keep notices and state changes
+  GPL-3.0            your work that contains it, if you convey it, comes under GPL-3.0
+  AGPL-3.0           as GPL, plus the remote-users offer if modified
+  no licence file    no permission has been given: write your own
+
+an idea or a published formula, written in your own code, is a different question from copying the code. Ask someone qualified if it matters.

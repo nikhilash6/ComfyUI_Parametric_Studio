@@ -9,8 +9,40 @@
  "hook": "Why predicting noise is the same as learning the gradient of the data density, proved numerically.",
  "code_refs": [
   "comfy/k_diffusion/sampling.py:to_d",
-  "comfy/k_diffusion/sampling.py:sample_euler"
+  "comfy/k_diffusion/sampling.py:sample_euler",
+  "comfy/k_diffusion/sampling.py:sample_euler_ancestral",
+  "comfy/k_diffusion/sampling.py:get_ancestral_step"
  ],
  "track": "noise-latent",
- "order": 20
+ "order": 20,
+ "kit": true,
+ "graphs": [
+  "b_ancestral_eta"
+ ],
+ "verified": [
+  {
+   "claim": "to_d is (x - denoised) / sigma.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:to_d"
+  },
+  {
+   "claim": "Tweedie's formula and Vincent's identity were checked numerically on the toy.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "ODE and SDE routes both reach the data on the toy, and only the ODE repeats.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "b_ancestral_eta passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The statements about Hyvärinen, Vincent, Efron, Anderson and Song were checked at the first audit and not re-read this time.",
+  "ComfyUI's ancestral samplers are not the exact SDE written in this lesson, and we did not measure how close they come."
+ ]
 }

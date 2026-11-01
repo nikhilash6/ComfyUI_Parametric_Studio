@@ -1,0 +1,62 @@
+{
+ "code": "CU-460",
+ "title": "Queue a graph from a script",
+ "level": "400",
+ "questions": [
+  {
+   "q": "Why copy the loaded graph before setting values?",
+   "options": [
+    "The server refuses originals",
+    "Otherwise one job's values carry into the next",
+    "It makes JSON smaller",
+    "It changes the node ids"
+   ],
+   "answer": "Otherwise one job's values carry into the next",
+   "why": "A loop editing one dict keeps every change it has made."
+  },
+  {
+   "q": "Why connect the websocket before posting?",
+   "options": [
+    "The server demands it",
+    "Messages for a client with no socket are dropped",
+    "It speeds up the sampler",
+    "It creates the prompt_id"
+   ],
+   "answer": "Messages for a client with no socket are dropped",
+   "why": "send_json only sends if the id is in self.sockets."
+  },
+  {
+   "q": "Which prompt_id would the server accept?",
+   "options": [
+    "MY-JOB-1",
+    "123456781234423482341234567890ab",
+    "12345678-1234-4234-8234-1234567890ab",
+    "42"
+   ],
+   "answer": "12345678-1234-4234-8234-1234567890ab",
+   "why": "validate_job_id wants a UUID in lowercase hyphenated form. The one with no hyphens fails."
+  },
+  {
+   "q": "You want to keep only saved pictures. How do you tell them apart in the history?",
+   "options": [
+    "By file size",
+    "type is output, and previews say temp",
+    "By node id 9",
+    "They all go to output"
+   ],
+   "answer": "type is output, and previews say temp",
+   "why": "Each file entry has filename, subfolder and type."
+  },
+  {
+   "q": "Every run gives the same picture almost at once. Why?",
+   "options": [
+    "The GPU is broken",
+    "The seed did not change, so everything was cached",
+    "The queue is full",
+    "/view is caching on the server"
+   ],
+   "answer": "The seed did not change, so everything was cached",
+   "why": "The API format has only a number. Your script must set a new one."
+  }
+ ]
+}

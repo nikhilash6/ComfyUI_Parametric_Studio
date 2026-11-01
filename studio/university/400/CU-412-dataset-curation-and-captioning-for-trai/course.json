@@ -1,14 +1,58 @@
 {
+ "code": "CU-412",
  "title": "Dataset curation and captioning for training",
  "level": "400",
- "char": "tune",
- "hook": "Learn how to transform raw images into high-quality training data by mastering precise captioning and dataset balancing techniques.",
- "code": "CU-412",
  "prereq": [
-  "CU-402"
+  "CU-281"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "tune",
+ "hook": "What core's training path really does with your pictures and captions, how often it sees each one, and why a caption decides what a trigger word learns.",
  "track": "lora-training",
- "order": 20
+ "order": 20,
+ "kit": true,
+ "graphs": [
+  "sd15_train_lora"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_dataset.py:LoadImageTextDataSetFromFolderNode.execute",
+  "comfy_extras/nodes_dataset.py:MakeTrainingDataset.execute",
+  "comfy_extras/nodes_dataset.py:ResolutionBucket",
+  "comfy_extras/nodes_train.py:TrainSampler._train_step_standard_mode",
+  "comfy_extras/nodes_train.py:TrainSampler._train_step_multires_mode",
+  "comfy_extras/nodes_train.py:_prepare_latents_and_count",
+  "comfy/sd1_clip.py:SDTokenizer.tokenize_with_weights",
+  "comfy/sd1_clip.py:ClipTokenWeightEncoder.encode_token_weights"
+ ],
+ "verified": [
+  {
+   "claim": "A folder named N_something repeats its pictures N times. A missing caption becomes an empty string.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_dataset.py:LoadImageTextDataSetFromFolderNode.execute"
+  },
+  {
+   "claim": "Every step draws torch.randperm(dataset)[:batch], so counts per picture vary, and none is guaranteed.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py:TrainSampler._train_step_standard_mode"
+  },
+  {
+   "claim": "A caption beyond 75 tokens goes into another group of 77 rather than being cut: the real SD1Tokenizer gave 1, 1, 2, 2 and 3 groups for 10, 75, 76, 150 and 151 tokens.",
+   "how": "run here",
+   "ref": "comfy/sd1_clip.py:SDTokenizer.tokenize_with_weights"
+  },
+  {
+   "claim": "Pictures of different shapes switch the trainer to a mode that processes them one at a time.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py:_prepare_latents_and_count"
+  },
+  {
+   "claim": "The caption checks we quote are those in the studio's Train page.",
+   "how": "source",
+   "ref": "studio/train.py:report"
+  }
+ ],
+ "unchecked": [
+  "The caption toy is linear algebra on made-up numbers. It shows the mechanism, and a real model is much more complex. We did not train real LoRAs with different captions.",
+  "Advice on how many pictures to use, and on writing captions, is common practice. We have one run (CU-281) and it doesn't compare captions.",
+  "The draft's claim that a model fails on synonyms because of caption frequency was removed: we could not support it."
+ ]
 }

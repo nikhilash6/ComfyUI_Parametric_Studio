@@ -6,8 +6,8 @@
   {
    "q": "What does `cfg_function` compute?",
    "options": [
-    "D_cond · cfg",
     "D_uncond + (D_cond − D_uncond) · cfg",
+    "D_cond · cfg",
     "The unscaled difference of the two predictions",
     "(D_cond + D_uncond) / cfg"
    ],
@@ -37,21 +37,32 @@
    "why": "Stated by Ho and Salimans, Bradley and Nakkiran, and Chidambaram et al. The lab's samples at 7.5 sit a full unit past the tilted mean."
   },
   {
-   "q": "What does cfg = 1 do to the cost per step?",
+   "q": "What does cfg = 1 do to the cost per step, with an ordinary sampler and no extra nodes?",
    "options": [
-    "One model call, because the unconditional run is skipped",
-    "Two model calls",
-    "Zero model calls",
-    "It doubles the VRAM"
+    "Two predictions",
+    "Zero predictions",
+    "It doubles the VRAM",
+    "One prediction, because the unconditional run is dropped"
    ],
-   "answer": "One model call, because the unconditional run is skipped",
+   "answer": "One prediction, because the unconditional run is dropped",
    "why": "sampling_function sets uncond to None when cond_scale is close to 1."
+  },
+  {
+   "q": "Which node step in the formula does RescaleCFG use?",
+   "options": [
+    "It runs before the model",
+    "It changes the text encoder",
+    "It edits the seed",
+    "It replaces the sum, through sampler_cfg_function"
+   ],
+   "answer": "It replaces the sum, through sampler_cfg_function",
+   "why": "RescaleCFG calls set_model_sampler_cfg_function."
   },
   {
    "q": "Which is the most honest account of why CFG works so well?",
    "options": [
-    "It is proven to sample the sharpened posterior",
     "It is empirically good, and its theory is still being worked out",
+    "It is proven to sample the sharpened posterior",
     "It removes all model error",
     "It is a form of quantization"
    ],

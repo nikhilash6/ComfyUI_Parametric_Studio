@@ -1,130 +1,37 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility
-torch.manual_seed(0)
-
-# Define a small sequence length and embedding dimension
-seq_len = 5
-dim = 8
-
-# Create a random input sequence of tokens (just random vectors for demonstration)
-# In a real model, these would be token embeddings
-x = torch.randn(seq_len, dim, dtype=torch.float32)
-
-# --- Part 1: Bidirectional Mask (Encoder-only style) ---
-# In an encoder (like BERT), every token can attend to every other token.
-# The mask is all ones (or True) for all positions.
-# We represent the attention mask as a boolean tensor where True means "allowed to attend".
-bidir_mask = torch.ones(seq_len, seq_len, dtype=torch.bool)
-
-# --- Part 2: Causal Mask (Decoder-only style) ---
-# In a decoder (like GPT), each token can only attend to previous tokens and itself.
-# This is a lower-triangular matrix of True values.
-causal_mask = torch.tril(torch.ones(seq_len, seq_len, dtype=torch.bool))
-
-# Helper function to compute simple self-attention with a given mask
-# This is a simplified version: Q, K, V are all the same input x for demonstration
-def simple_attention(x, mask):
-    # For simplicity, let Q = K = V = x
-    # Attention scores: Q @ K^T / sqrt(d)
-    scores = torch.matmul(x, x.T) / math.sqrt(dim)
-    
-    # Apply mask: set disallowed positions to -inf so they get 0 weight after softmax
-    # We use a large negative number instead of -inf for numerical stability in this toy example
-    scores = scores.masked_fill(~mask, -1e9)
-    
-    # Softmax over the last dimension (keys)
-    attn_weights = torch.softmax(scores, dim=-1)
-    
-    # Weighted sum of values
-    output = torch.matmul(attn_weights, x)
-    return output, attn_weights
-
-# Compute attention outputs for both masks
-bidir_out, bidir_weights = simple_attention(x, bidir_mask)
-causal_out, causal_weights = simple_attention(x, causal_mask)
-
-# --- Analysis: Which positions can each token see? ---
-# For bidirectional: each token sees all tokens
-# For causal: token i sees tokens 0..i
-
-# Check bidirectional: each row should have all True
-bidir_visible_counts = bidir_mask.sum(dim=1)
-# Check causal: token i should see i+1 tokens
-causal_visible_counts = causal_mask.sum(dim=1)
-
-# --- Key Concept: Final-token pooling in causal model ---
-# In a causal model, the last token's representation aggregates information from all previous tokens.
-# In contrast, the first token in a causal model only sees itself.
-
-# Let's verify this by checking the attention weights:
-# For the last token (index seq_len-1) in causal mask, it should attend to all previous tokens
-last_token_causal_weights = causal_weights[-1, :]  # Attention weights of last token over all keys
-
-# For the first token (index 0) in causal mask, it should only attend to itself
-first_token_causal_weights = causal_weights[0, :]  # Attention weights of first token over all keys
-
-# In a causal mask, the first token can only attend to position 0
-# So first_token_causal_weights should be [1, 0, 0, 0, 0] (approximately)
-# The last token can attend to all positions, so its weights should be non-zero for all positions
-
-# Let's compute the sum of attention weights for the first token over non-self positions
-first_token_non_self_sum = first_token_causal_weights[1:].sum().item()
-
-# And for the last token, check that it attends to earlier tokens
-last_token_earlier_sum = last_token_causal_weights[:-1].sum().item()
-
-# --- Assertions to verify the concepts ---
-# 1. In causal attention, the first token should only attend to itself
-#    So the sum of attention weights for positions 1..end should be ~0
-assert abs(first_token_non_self_sum) < 1e-5, "First token in causal model should only attend to itself"
-
-# 2. In causal attention, the last token should attend to earlier tokens
-#    So the sum of attention weights for positions 0..end-1 should be > 0
-assert last_token_earlier_sum > 0.0, "Last token in causal model should attend to earlier tokens"
-
-# 3. Bidirectional mask should allow all tokens to see all tokens
-assert (bidir_visible_counts == seq_len).all(), "Bidirectional mask should allow all tokens to see all tokens"
-
-# 4. Causal mask: token i should see exactly i+1 tokens
-expected_causal_counts = torch.arange(1, seq_len + 1)
-assert torch.equal(causal_visible_counts, expected_causal_counts), "Causal mask should have token i seeing i+1 tokens"
-
-# --- Print results ---
-# Format: RESULT <name> = <value>
-# Use f"{x:.6g}" for floats
-
-# Print the visible counts for each token in bidirectional mask
-for i in range(seq_len):
-    print(f"RESULT bidir_visible_count_token_{i} = {bidir_visible_counts[i].item()}")
-
-# Print the visible counts for each token in causal mask
-for i in range(seq_len):
-    print(f"RESULT causal_visible_count_token_{i} = {causal_visible_counts[i].item()}")
-
-# Print the first token's attention weights in causal model
-for j in range(seq_len):
-    print(f"RESULT causal_first_token_attn_to_{j} = {first_token_causal_weights[j].item():.6g}")
-
-# Print the last token's attention weights in causal model
-for j in range(seq_len):
-    print(f"RESULT causal_last_token_attn_to_{j} = {last_token_causal_weights[j].item():.6g}")
-
-# Print the sum of non-self attention for first token (should be ~0)
-print(f"RESULT causal_first_token_non_self_sum = {first_token_non_self_sum:.6g}")
-
-# Print the sum of earlier-token attention for last token (should be > 0)
-print(f"RESULT causal_last_token_earlier_sum = {last_token_earlier_sum:.6g}")
-
-# Print a sample of the bidirectional attention weights for the first token
-for j in range(seq_len):
-    print(f"RESULT bidir_first_token_attn_to_{j} = {bidir_weights[0, j].item():.6g}")
-
-# Print a sample of the bidirectional attention weights for the last token
-for j in range(seq_len):
-    print(f"RESULT bidir_last_token_attn_to_{j} = {bidir_weights[-1, j].item():.6g}")
+# CU-306 lab: what the mask does, and what shape each encoder hands on. The mask follows CLIPTextModel_.forward and T5Stack.forward in v0.43.0. The chunking follows SDTokenizer.tokenize_with_weights. Random numbers stand in for trained weights.
+import math, torch
+torch.manual_seed(0); torch.set_num_threads(1)
+DIM = 8; Wq = torch.randn(DIM, DIM); Wk = torch.randn(DIM, DIM); Wv = torch.randn(DIM, DIM)
+def attend(x, mask=None):
+    s = (x @ Wq) @ (x @ Wk).transpose(-2, -1) / math.sqrt(DIM)
+    if mask is not None: s = s + mask
+    return torch.softmax(s, -1) @ (x @ Wv)
+def causal(n): return torch.full((n, n), -torch.finfo(torch.float32).max).triu_(1)      # clip_model.py: causal_mask, added to the scores
+x = torch.randn(1, 6, DIM); y = x.clone(); y[0, 5] = torch.randn(DIM)                  # change only the last token
+print("change only the last of 6 tokens. How far does each token's output move?")
+print("token   with CLIP's causal mask   with no mask, as in T5")
+c1 = attend(x, causal(6)); c2 = attend(y, causal(6)); t1 = attend(x); t2 = attend(y); R = []
+for i in range(6): a = (c1[0, i] - c2[0, i]).norm().item(); b = (t1[0, i] - t2[0, i]).norm().item(); R.append((a, b)); print(f"{i:<7} {a:<25.4f} {b:.4f}")
+assert all(R[i][0] == 0 for i in range(5)) and R[5][0] > 0 and all(r[1] > 0 for r in R)
+print("\nCLIP: where the pooled vector comes from: the row at the end token, the first place its id appears")
+ids = torch.tensor([[49406, 320, 1125, 49407, 49407, 49407]]); print("tokens", ids[0].tolist(), "-> row", (ids == 49407).int().argmax(-1).item())
+assert (ids == 49407).int().argmax(-1).item() == 3
+def clip_chunks(n, per=77):
+    """tokenize_with_weights for single-token words: start token, up to 75 tokens, end token, pad."""
+    batches = [[0]]; b = batches[0]
+    for i in range(n):
+        if 1 + len(b) > per - 1:
+            b.append(2); b.extend([3] * (per - len(b))); b = [0]; batches.append(b)
+        b.append(1)
+    b.append(2); b.extend([3] * (per - len(b))); return batches
+print("\ntokens in the prompt    chunks   tensor for SD 1.5   tensor for SDXL")
+for n in (1, 75, 76, 150, 151):
+    k = len(clip_chunks(n)); print(f"{n:<23} {k:<8} {str([1, 77 * k, 768]):<19} {[1, 77 * k, 768 + 1280]}")
+assert len(clip_chunks(75)) == 1 and len(clip_chunks(76)) == 2 and all(len(c) == 77 for c in clip_chunks(151))
+print("\nhow each family builds its tensor from what the encoders return (token count 77 for CLIP, 256 for T5 on Flux, 512 for Qwen3 on Klein)")
+l = torch.zeros(1, 77, 768); g = torch.zeros(1, 77, 1280); t5 = torch.zeros(1, 256, 4096); q = torch.zeros(1, 3, 512, 2560)
+sdxl = torch.cat([l, g], dim=-1); print("SDXL        CLIP-L and CLIP-G side by side   ", list(sdxl.shape))
+sd3 = torch.cat([torch.nn.functional.pad(sdxl, (0, 4096 - 2048)), t5[:, :77]], dim=-2); print("SD3         padded to 4096, T5 on the end    ", list(sd3.shape))
+print("FLUX.1      T5 tokens, CLIP-L's pooled vector", list(t5.shape), "and", [1, 768])
+kl = torch.stack((q[:, 0], q[:, 1], q[:, 2]), dim=1).movedim(1, 2); kl = kl.reshape(kl.shape[0], kl.shape[1], -1); print("Klein 4B    three hidden layers side by side ", list(kl.shape))
+assert sdxl.shape[-1] == 2048 and sd3.shape[-1] == 4096 and kl.shape[-1] == 7680

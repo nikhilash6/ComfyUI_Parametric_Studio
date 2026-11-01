@@ -1,0 +1,62 @@
+{
+ "code": "CU-232",
+ "title": "KSampler taken apart: SamplerCustomAdvanced",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Which socket of SamplerCustomAdvanced decides the noise levels?",
+   "options": [
+    "sigmas",
+    "sampler",
+    "guider",
+    "noise"
+   ],
+   "answer": "sigmas",
+   "why": "SIGMAS is the list of levels. The sampler only decides how to jump between them."
+  },
+  {
+   "q": "With dpm_2, KSampler and BasicScheduler with the same numbers give different pictures. Why?",
+   "options": [
+    "KSampler alone drops the second to last sigma for that sampler",
+    "BasicScheduler ignores steps",
+    "dpm_2 is random",
+    "The guider differs"
+   ],
+   "answer": "KSampler alone drops the second to last sigma for that sampler",
+   "why": "DISCARD_PENULTIMATE_SIGMA_SAMPLERS applies only inside comfy.samplers.KSampler."
+  },
+  {
+   "q": "Why does the graph wire the model into BasicScheduler as well as CFGGuider?",
+   "options": [
+    "The scheduler reads the sigma range from the model",
+    "The scheduler runs the model",
+    "It is only for caching",
+    "It is optional decoration"
+   ],
+   "answer": "The scheduler reads the sigma range from the model",
+   "why": "calculate_sigmas uses model_sampling, so a patched model must reach it too."
+  },
+  {
+   "q": "What does the second output of SamplerCustomAdvanced give you?",
+   "options": [
+    "The model's estimate of the clean latent",
+    "The noise",
+    "The sigma list",
+    "A preview image"
+   ],
+   "answer": "The model's estimate of the clean latent",
+   "why": "denoised_output comes from the x0 passed to the callback."
+  },
+  {
+   "q": "You want to use a lower CFG for the last few steps. What is the simplest route using these parts?",
+   "options": [
+    "SplitSigmas, then two sampler nodes with different guiders",
+    "Lower the denoise",
+    "Change the scheduler",
+    "Use a second seed"
+   ],
+   "answer": "SplitSigmas, then two sampler nodes with different guiders",
+   "why": "The two halves share the value at the cut, so nothing is skipped."
+  }
+ ]
+}

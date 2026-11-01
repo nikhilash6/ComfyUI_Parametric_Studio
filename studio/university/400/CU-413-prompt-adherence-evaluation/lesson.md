@@ -1,98 +1,97 @@
 # CU-413 - Prompt adherence evaluation
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Measure whether a picture contains what the prompt asked for, using a similarity score or a checklist, and say what each one misses. Taught by Tinker Tune.
 
-## Why this matters
+## The idea
 
-Welcome back to the workshop. In CU-404, we built the pipeline. Now, in CU-413, we ask the hard question: *Did it actually listen?*
+"Did it listen?" sounds like one question, but it's many. A prompt lists objects, colours, positions and a style. The usual ways to measure that are:
 
-In generative AI, "prompt adherence" is not a binary switch. It is a geometric relationship. When you type "a red car," you are not just sending characters to a server; you are projecting a vector into a high-dimensional latent space. The diffusion model’s job is to denoise a random signal into an image that aligns with that vector. If the alignment is weak, the model hallucinates. If it is strong, the model obeys.
+- **An embedding score.** Run the image and the text through a model trained so that matching pairs end up close, and take a similarity. CLIP (Radford et al. 2021) is the usual choice. CLIPScore (Hessel et al. 2021) applies it to captions.
+- **A checklist.** Turn the prompt into questions, and answer each by hand or by a question-answering model. TIFA (Hu et al. 2023) automates this.
 
-As engineers, we cannot rely on vibes. We need to measure the distance between the prompt embedding and the generated image’s latent representation. This lesson focuses on the mathematical foundation of **embedding space alignment**. We will look at why certain prompts fail to guide the diffusion process effectively by analyzing the geometry of the vectors involved. We will use cosine similarity as our primary metric for alignment, as it is invariant to the magnitude of the vectors, focusing purely on direction.
+You can't measure adherence by comparing a prompt's conditioning with a latent. They live in different spaces. A similarity between them means nothing.
 
-## The intuition
+## The mechanism
 
-Imagine you are in a dark room with a flashlight (the prompt) and a wall (the latent space). The flashlight beam represents the direction of your intent. The wall has a texture (the noise). Your goal is to paint a specific shape on the wall.
+**Cosine similarity** between vectors u and v from the same model:
 
-If the flashlight is pointed exactly at the center of the target shape, the paint (the generated image) will be dense and clear. If the flashlight is pointed at a 90-degree angle to the target, the light barely touches the target area, and the paint will be sparse, noisy, or entirely in the wrong place.
+```
+cos(u, v) = (u · v) ÷ (‖u‖ ‖v‖)            ranges from −1 to 1
+CLIPScore = 2.5 × max( cos(image, text), 0 )
+```
 
-In vector terms:
-*   **Perfect Alignment:** The prompt vector and the image latent vector point in the exact same direction.
-*   **Orthogonal Mismatch:** The prompt vector is perpendicular to the image latent vector. The prompt provides no directional guidance for that specific feature.
-*   **Anti-Alignment:** The vectors point in opposite directions. The prompt actively suppresses that feature.
+Hessel et al. chose 2.5 to stretch the range, and report that they saw cosines between about 0 and 0.4 in practice, never negative. So a score of 0.8 from CLIP isn't "80% adherence". It's only useful relative to other scores from the same model, on similar inputs.
 
-Most prompt failures are not "errors" in the traditional sense; they are **geometric misalignments**. The model is doing exactly what the math says it should do, but the math says the prompt vector is too far from the target concept vector.
+**The rule for reading it.** Make comparisons, and don't read an absolute. Compare the true prompt with wrong ones and see its rank, or compare two images on one prompt.
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+**A checklist**, by hand, needs no model. Split the prompt into items and answer yes or no per item.
 
-To evaluate adherence, we must quantify the alignment between two vectors in the embedding space. Let $u$ be the prompt embedding vector and $v$ be the image latent feature vector. Both are $N$-dimensional vectors.
-
-The standard metric for alignment is **Cosine Similarity**. It measures the cosine of the angle $\theta$ between the two vectors.
-
-The formula is:
-
-$$ \text{similarity}(u, v) = \frac{u \cdot v}{\|u\| \|v\|} $$
-
-Where:
-*   $u \cdot v$ is the **dot product** of the vectors. It is the sum of the products of their corresponding components: $\sum_{i=1}^{N} u_i v_i$.
-*   $\|u\|$ is the **Euclidean norm** (magnitude) of vector $u$: $\sqrt{\sum_{i=1}^{N} u_i^2}$.
-*   $\|v\|$ is the **Euclidean norm** of vector $v$.
-
-The result is a scalar value in the range $[-1, 1]$.
-*   **1.0**: The vectors are parallel and point in the same direction. Perfect adherence.
-*   **0.0**: The vectors are orthogonal. No correlation. The prompt does not influence this specific latent dimension.
-*   **-1.0**: The vectors are anti-parallel. The prompt actively contradicts the latent feature.
-
-Why cosine and not Euclidean distance? In diffusion models, the *magnitude* of the embedding can vary based on the timestep or the specific encoder architecture (e.g., T5 vs. CLIP). However, the *direction* is what carries the semantic meaning. Cosine similarity normalizes out the magnitude, allowing us to measure pure semantic alignment.
-
-In our lab, we simulate this in a 4-dimensional space to keep the math transparent. We define:
-*   $vec\_a$: The image feature vector.
-*   $vec\_b$: A prompt vector that perfectly matches $vec\_a$.
-*   $vec\_c$: A prompt vector that is orthogonal to $vec\_a$.
+{{play:checklist}}
 
 ## In ComfyUI
 
-In ComfyUI, the text encoder is the first step in this geometric process. The `comfy/text_encoders` folder contains the implementations for various architectures. For example, `comfy/text_encoders/t5.py` contains the `T5` class, which converts text into a sequence of embeddings. These embeddings are then fed into the diffusion model.
+Core has no adherence node. In core, `CLIPTextEncode` makes the model's conditioning, and `CLIPVisionEncode` gives image embeddings for models that use them. These aren't a ready score: a score needs a model's matching text and vision projections, and a formula. To measure, save the images and run a script, or use a pack you've read. Don't assume any pack's number means the same as another's.
 
-However, ComfyUI does not natively expose a "Prompt Adherence Score" node in the standard workflow. The alignment happens implicitly during the denoising steps. To measure it explicitly, we must extract the latent representations and the prompt embeddings.
+To gather a test set, change only the seed, across a fixed prompt list, with a script (CU-460).
 
-The `script_examples` folder provides the infrastructure to automate this. Specifically, `queue_prompt(prompt)` sends the job to the server, and `get_history(prompt_id)` retrieves the execution metadata. While `get_history` gives us the output images, it does not directly give us the intermediate latent vectors or the prompt embeddings in a format ready for cosine similarity calculation without custom node development.
+{{graph:sd15_txt2img}}
 
-Therefore, for this lab, we are simulating the core mathematical operation that *would* occur if we had access to these vectors. We are not using a specific ComfyUI node for the calculation itself, as no standard node in the provided evidence performs this specific post-hoc alignment scoring. The mechanism is theoretical here, grounded in the vector operations that underpin the attention mechanisms in models like `T5` or `FluxClipModel`.
+For the real pictures in the play, see the [Sampling Lab](#sampling/renders). Each one is one seed of one prompt, so it's only an example.
+
+## What goes wrong
+
+- **Reading a score as a percentage.** CLIP cosines don't span 0 to 1. Compare with your other scores only.
+- **A short prompt scores well.** The lab's "red car" beats the full caption on a picture holding more. A prompt with fewer items is easier to satisfy, and a higher score doesn't mean a better image.
+- **Extra things go unnoticed.** A dog nobody asked for barely moves the score in the lab. Add your own checks for what mustn't be there.
+- **Wrong attachment.** "Red car, blue ball" and "blue car, red ball" look the same to our toy embedding. Real encoders see more than this one, which adds word vectors, yet binding has been a known weak spot. So test with a checklist item that names the pairing.
+- **Mixed encoders.** A CLIP text vector and an image vector from another model share no directions. The lab shows a cosine near 0 for the same concept.
+- **One seed, one rater.** The hand-marked table in the lab is one reader's view of one seed. That's fine as a demonstration, and not enough to rank samplers (CU-470).
 
 ## Lab
 
-The lab script simulates two 4-dimensional feature vectors. It calculates the cosine similarity between a "perfect match" pair and an "orthogonal mismatch" pair. This demonstrates the binary extremes of prompt adherence: total alignment and total irrelevance.
+No CLIP model runs here. The vectors are made up: a caption is a sum of random concept vectors, and an image holds some concepts plus noise. Since these vectors are built to match, their cosines run higher than real CLIP's, so the "scores" pass 1. Ignore the scale, and read the order.
 
-We run the script with a fixed seed to ensure reproducibility. The script defines `vec_a` as `[1.0, 0.0, 0.0, 0.0]`. It defines `vec_b` as identical to `vec_a`, and `vec_c` as `[0.0, 1.0, 0.0, 0.0]`.
-
-Here are the results from the lab execution:
-
+```text
+image holds: red, car, beach
+caption               cosine   score (w = 2.5)
+red car on a beach    0.816    2.040
+red car               0.837    2.092
+red car in a city     0.689    1.723
+blue ball at night    -0.001   0.000
 ```
-RESULT sim_match = 1
-RESULT sim_mismatch = 0
+
+The shorter caption scores best here, because it asks for less. Two more limits:
+
+```text
+image with one more thing, a dog, against the old caption: 0.805, so extra things only lower it a little
+'red car, blue ball' against 'blue car, red ball': cosine 1.000
+same caption, vector from a different encoder (a random rotation here): cosine 0.054
 ```
 
-**What each line proves:**
+The useful reading is a rank.
 
-1.  `RESULT sim_match = 1`: This proves that when the prompt vector and the image latent vector are identical (parallel), the cosine similarity is exactly 1.0. This represents **perfect prompt adherence**. The prompt provides maximum directional guidance to the diffusion process. In a real scenario, this would mean the generated image contains the exact features described by the prompt with high fidelity.
+```text
+rank of the true caption among 24 captions: 1
+```
 
-2.  `RESULT sim_mismatch = 0`: This proves that when the prompt vector is orthogonal to the image latent vector, the cosine similarity is exactly 0.0. This represents **zero prompt adherence** for that specific feature dimension. The prompt provides no directional guidance. In a real scenario, this would mean the model is free to hallucinate any feature in that dimension, as the prompt does not constrain it. This is often where "prompt drift" or unexpected artifacts occur.
+Now the checklist on two real renders from the Sampling Lab. We looked at both and marked them by hand. Euler shows a large brass dial on a wooden table in front of a window, and no charts. Euler ancestral shows part of a brass instrument resting on paper charts, with no window in view.
 
-These two lines establish the baseline for our evaluation. Any real-world prompt adherence score will fall between these two extremes. A score of 0.8 indicates strong adherence, while a score of 0.2 indicates weak adherence, suggesting the prompt is not effectively guiding the diffusion process in that latent subspace.
+```text
+item                    euler  euler ancestral   (one seed, marked by one reader)
+brass astrolabe         1      1
+oak table               1      0
+stack of sea charts     0      1
+window light            1      0
+shallow depth of field  0      1
+score                   0.60   0.60
+the same total hides different failures. each row tells you what to fix
+```
 
-## Common mistakes
+{{wipe:sampling_lab/sampler-euler.jpg|sampling_lab/sampler-euler_ancestral.jpg|euler|euler ancestral|One prompt, one seed, two samplers.}}
 
-1.  **Confusing Magnitude with Direction:** Using Euclidean distance instead of cosine similarity. If your prompt embedding has a large magnitude but points in the wrong direction, Euclidean distance might be small, but the semantic alignment is poor. Always normalize your vectors before comparing.
-2.  **Ignoring the Timestep:** The latent representation changes as the diffusion process progresses. Measuring alignment at the final step (t=0) is different from measuring it at the initial step (t=T). The prompt's influence is strongest in the early steps. If you measure adherence only at the end, you might miss early-stage misalignments that cause the model to wander.
-3.  **Assuming Global Alignment:** A prompt can have high alignment for "red" but low alignment for "car." You must decompose the prompt into individual concepts and measure alignment for each. A single global score is often misleading.
-4.  **Forgetting the Encoder:** Different text encoders (e.g., CLIP vs. T5) produce embeddings in different spaces. You cannot compare a CLIP embedding to a T5 embedding directly. You must ensure you are comparing vectors from the same encoder architecture.
+## Sources
 
-## Go deeper
-
-To understand the theoretical basis for why text can guide image generation, we look at the foundational work on learning visual models from natural language supervision.
-
-**arXiv:2103.00020** - *Learning Transferable Visual Models From Natural Language Supervision*
-
-This paper demonstrates that by pre-training on 400 million (image, text) pairs, a model can learn to align text embeddings with visual features. The key insight is that the "alignment" we are measuring in this lab is the result of this massive pre-training process. The model has learned that the vector for "red car" should be close to the vector for images of red cars. When we measure cosine similarity, we are essentially checking how well the model has maintained this learned alignment during the generation process. If the similarity drops, it means the diffusion process has drifted away from the learned alignment, resulting in poor prompt adherence.
-
+- [Radford et al. 2021. Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020)
+- [Hessel et al. 2021. CLIPScore: A Reference-free Evaluation Metric for Image Captioning](https://arxiv.org/abs/2104.08718)
+- [Hu et al. 2023. TIFA: Accurate and Interpretable Text-to-Image Faithfulness Evaluation with Question Answering](https://arxiv.org/abs/2303.11897)
+- [ComfyUI v0.43.0, nodes.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/nodes.py)

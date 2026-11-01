@@ -4,7 +4,7 @@
   "about": "A modern image graph: guider, sampler and schedule as parts.",
   "runs": "model",
   "needs": [
-   "FLUX.2 Klein 4B weights."
+   "FLUX.2 Klein 4B Base weights. These settings, cfg 5 and 20 steps, are for the Base file."
   ],
   "packs": [],
   "notes": {}
@@ -13,7 +13,7 @@
   "1": {
    "class_type": "UNETLoader",
    "inputs": {
-    "unet_name": "flux-2-klein-4b-fp8.safetensors",
+    "unet_name": "flux-2-klein-base-4b.safetensors",
     "weight_dtype": "default"
    }
   },

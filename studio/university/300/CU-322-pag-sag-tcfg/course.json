@@ -1,0 +1,72 @@
+{
+ "code": "CU-322",
+ "title": "PAG, SAG and TCFG: what the extra guidance costs",
+ "level": "300",
+ "prereq": [
+  "CU-208",
+  "CU-301"
+ ],
+ "char": "denoise",
+ "hook": "Three ways to add guidance without a prompt. Two pay with a whole extra prediction each step, and the third with one SVD. Read from source, with our renders.",
+ "code_refs": [
+  "comfy_extras/nodes_pag.py:PerturbedAttentionGuidance.execute",
+  "comfy_extras/nodes_sag.py:SelfAttentionGuidance.execute",
+  "comfy_extras/nodes_sag.py:create_blur_map",
+  "comfy_extras/nodes_tcfg.py:TCFG.execute",
+  "comfy_extras/nodes_tcfg.py:score_tangential_damping",
+  "comfy/model_patcher.py:set_model_options_patch_replace",
+  "comfy/ldm/modules/attention.py:BasicTransformerBlock",
+  "comfy/ldm/flux/model.py:forward_orig"
+ ],
+ "track": "guidance",
+ "order": 60,
+ "kit": true,
+ "graphs": [
+  "sd15_pag",
+  "sd15_sag",
+  "c_tcfg"
+ ],
+ "verified": [
+  {
+   "claim": "PAG replaces middle-block self-attention with returning v, makes one more prediction on the positive, and adds scale times the difference.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_pag.py"
+  },
+  {
+   "claim": "SAG sets disable_cfg1_optimization, records middle-block attention on the unconditional, blurs, and makes one more prediction.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_sag.py"
+  },
+  {
+   "claim": "TCFG makes no extra prediction. It takes an SVD of the two scores and keeps the top direction of the unconditional.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_tcfg.py"
+  },
+  {
+   "claim": "score_tangential_damping's port equals the real function on test tensors.",
+   "how": "test",
+   "ref": "Our comparison on a CPU, v0.43.0"
+  },
+  {
+   "claim": "The prediction counts in the lab come from a stand-in model following each node's logic.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The paper replaces the self-attention map with an identity, and pairs PAG with CFG.",
+   "how": "docs",
+   "ref": "arXiv 2403.17377, fetched 2026-11-01"
+  },
+  {
+   "claim": "The render timings and figures are stored measurements from one seed.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  }
+ ],
+ "unchecked": [
+  "Timings are wall clock polled every 1.5 s, so small differences mean nothing. Only PAG's gap is larger than the polling step.",
+  "That core PAG has no effect on a Flux or SD3 transformer, and that core SAG fails there, comes from reading those models' code. We did not run either combination.",
+  "We tested the stand-in counting logic, not a live run counting real model calls.",
+  "We read SAG's abstract only, and core's implementation in full."
+ ]
+}

@@ -4,59 +4,59 @@
  "level": "300",
  "questions": [
   {
-   "q": "In the context of sparse and windowed attention, how is the attention mechanism modified to restrict which tokens attend to others?",
+   "q": "n = 4,096 tokens, window 8. Roughly what share of full attention's pairs are left?",
    "options": [
-    "By changing the formula QK^T/sqrt(d) to a linear projection.",
-    "By setting disallowed positions in the score matrix to -infinity before applying softmax.",
-    "By reducing the head dimension d to lower computational cost.",
-    "By removing the softmax function entirely to save memory."
+    "About 1.6%",
+    "About 50%",
+    "About 25%",
+    "About 0.01%"
    ],
-   "answer": "By setting disallowed positions in the score matrix to -infinity before applying softmax.",
-   "why": "The lesson states: 'We do not change the formula QK^T/sqrt(d); we change what we feed into the softmax. We set disallowed positions to -infinity, so their weight becomes zero.'"
+   "answer": "About 1.6%",
+   "why": "n × 64 ÷ n² = 64 ÷ 4,096, the 0.0156 in the table."
   },
   {
-   "q": "According to the lab analysis, why is the weight for token 0 in windowed attention (size 2) equal to 1?",
+   "q": "Why do fixed windows need a helper such as shifting?",
    "options": [
-    "Because token 0 attends to all 8 tokens in the sequence.",
-    "Because the mask logic for i=0 results in token 0 only attending to itself.",
-    "Because the window size is too large to include any other tokens.",
-    "Because sparse attention was applied instead of windowed attention."
+    "Information can't cross a window border without it",
+    "They use too much memory",
+    "They need more heads",
+    "Their tokens lose channels"
    ],
-   "answer": "Because the mask logic for i=0 results in token 0 only attending to itself.",
-   "why": "The lesson explains: 'For i=0, start=0. mask[0, 0:1] is True. So token 0 only attends to token 0. Thus, the weight is 1.'"
+   "answer": "Information can't cross a window border without it",
+   "why": "The reach table: stuck at 64 forever."
   },
   {
-   "q": "Which ComfyUI attention backend is described as implementing sub-quadratic attention for memory efficiency, where sparse/windowed logic often resides?",
+   "q": "Masked full attention gives the same output as separate windows. So what do separate windows add?",
    "options": [
-    "attention_basic",
-    "attention_flash",
-    "attention_sub_quad",
-    "ComfyAttention"
+    "Fewer pairs to compute",
+    "Better quality",
+    "A different answer",
+    "Nothing at all"
    ],
-   "answer": "attention_sub_quad",
-   "why": "The lesson lists: 'attention_sub_quad: Implements sub-quadratic attention for memory efficiency. This is where sparse/windowed logic often lives, reducing the O(L^2) cost.'"
+   "answer": "Fewer pairs to compute",
+   "why": "The lab's mask and parts agree, at 256 pairs against 64."
   },
   {
-   "q": "In the Trellis2 model, how does the concept of 'sparsity' differ from standard 2D models?",
+   "q": "A sparse 3D model is still running out of memory. Why could that be?",
    "options": [
-    "It uses a binary mask on a dense matrix to hide specific tokens.",
-    "It relies on a SparseTensor data structure where only non-zero voxels are processed.",
-    "It uses a larger window size to capture global context.",
-    "It removes all positional encodings to reduce computation."
+    "Occupied tokens still cost tokens squared",
+    "Sparse models don't use attention",
+    "The grid is stored in a text encoder",
+    "Empty cells cost the most"
    ],
-   "answer": "It relies on a SparseTensor data structure where only non-zero voxels are processed.",
-   "why": "The lesson states: 'Here, the \"sparsity\" is not just a mask on a dense matrix, but a fundamental property of the SparseTensor data structure, where only non-zero voxels are processed.'"
+   "answer": "Occupied tokens still cost tokens squared",
+   "why": "Sparsity removes empty cells, and the occupied ones still pair up with each other."
   },
   {
-   "q": "Why is it a common mistake to assume that sparse attention is always faster than full dense attention?",
+   "q": "A grid isn't a multiple of the window. What should a partition do?",
    "options": [
-    "Because sparse matrices require more memory to store the mask.",
-    "Because if hardware does not support sparse matrix multiplication efficiently, overhead can make it slower than a full dense matrix.",
-    "Because sparse attention requires recalculating the entire QK^T matrix twice.",
-    "Because sparse attention cannot be used with Flash Attention implementations."
+    "Pad, then remove the padding after",
+    "Drop the extra tokens",
+    "Refuse to run",
+    "Attend to all of them"
    ],
-   "answer": "Because if hardware does not support sparse matrix multiplication efficiently, overhead can make it slower than a full dense matrix.",
-   "why": "The lesson lists under common mistakes: 'If your hardware does not support sparse matrix multiplication efficiently, a dense matrix with many zeros might be slower than a full dense matrix due to overhead.'"
+   "answer": "Pad, then remove the padding after",
+   "why": "window_partition pads, and window_unpartition removes it."
   }
  ]
 }

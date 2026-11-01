@@ -1,0 +1,77 @@
+{
+ "meta": {
+  "title": "Multiply a latent and decode it",
+  "about": "Encode, multiply, decode. No sampling at all.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint for its VAE, and a picture of your own in the input folder."
+  ],
+  "packs": [],
+  "notes": {
+   "4": "A picture of your own.",
+   "5": "Pixels to latent.",
+   "6": "Every number times 1.5. Try 0.8 and 1.2 too.",
+   "7": "The decoder has no idea the numbers were changed."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "4": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "5": {
+   "class_type": "VAEEncode",
+   "inputs": {
+    "pixels": [
+     "4",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "6": {
+   "class_type": "LatentMultiply",
+   "inputs": {
+    "samples": [
+     "5",
+     0
+    ],
+    "multiplier": 1.5
+   }
+  },
+  "7": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "6",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "8": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "7",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

@@ -1,5 +1,18 @@
-RESULT ar_first = 0.1
-RESULT ar_last = 0.199805
-RESULT steady_state = 0.2
-RESULT original_norm = 3.74166
-RESULT noisy_norm = 3.66876
+dilations 1, 2, 4 ... 512, kernel 2: 1024 samples seen, against 11 with no dilation at the same 10 layers
+
+model                                            calls for 30 s   how
+WaveNet, one call per sample at 16 kHz           480,000          sequential
+MusicGen, 50 frames/s x 4 codebooks              6,000            sequential
+Music 3 AR stage, main model, 25 frames/s        750              sequential
+Music 3 DiT, 30 steps, CFG on                    60               each call covers the song, in windows
+Stable Audio style diffusion, 30 steps, CFG on   60               each call covers the clip
+
+at 120 s the sequential counts multiply by 4; the diffusion step count does not change, each call just gets longer
+
+flow matching on 4 latent values, x_sigma = (1 - sigma) x + sigma noise:
+sigma 1.0 : +1.541 -0.293 -2.179 +0.568
+sigma 0.5 : +1.270 -1.147 +0.411 +0.534
+sigma 0.0 : +1.000 -2.000 +3.000 +0.500
+Euler on the straight path with a perfect velocity, 10 steps, error 4.8e-07
+
+FSQ with 5 levels: [-1.0, -0.5, 0.0, 0.5] a token, but ACE-Step still generates by a diffusion transformer, not by predicting tokens one by one

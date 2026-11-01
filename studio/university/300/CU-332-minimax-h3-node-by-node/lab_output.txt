@@ -1,0 +1,27 @@
+length asked -> frames, seconds, video latent [24, T, H, W], audio latent [32, 2, T]   at 1344 x 768
+    5 ->    5 frames   0.208 s   video [24,   2, 48, 84]   audio [32, 2,    8]   tokens: video   2,016 + audio    16, audio is 0.8%
+  100 ->  107 frames   4.458 s   video [24,  32, 48, 84]   audio [32, 2,  178]   tokens: video  32,256 + audio   356, audio is 1.1%
+  124 ->  124 frames   5.167 s   video [24,  37, 48, 84]   audio [32, 2,  207]   tokens: video  37,296 + audio   414, audio is 1.1%
+  362 ->  362 frames  15.083 s   video [24, 107, 48, 84]   audio [32, 2,  603]   tokens: video 107,856 + audio 1,206, audio is 1.1%
+  736 ->  736 frames  30.667 s   video [24, 217, 48, 84]   audio [32, 2, 1227]   tokens: video 218,736 + audio 2,454, audio is 1.1%
+
+the graph's expression at 5 s gives 124, at 15 s 362, at 30 s 736
+audio: 32000 / 800 = 40 latent frames a second; per video frame 40 / 24 = 1.6667, which is FRAME_RESCALE = 5/3
+  video latent frame 0: covers 1 frames, starts at timeline  0.000, which is 0.000 s
+  video latent frame 1: covers 4 frames, starts at timeline  1.667, which is 0.042 s
+  video latent frame 2: covers 4 frames, starts at timeline  8.333, which is 0.208 s
+  video latent frame 3: covers 4 frames, starts at timeline 15.000, which is 0.375 s
+  video latent frame 4: covers 4 frames, starts at timeline 21.667, which is 0.542 s
+  video latent frame 5: covers 1 frames, starts at timeline 28.333, which is 0.708 s
+  video latent frame 6: covers 4 frames, starts at timeline 30.000, which is 0.750 s
+
+shifts: video 12, audio 3, audio_scale = 12 / 3 = 4.0
+video sigma   audio sigma at the same moment
+0.99          0.9612
+0.9           0.6923
+0.75          0.4286
+0.5           0.2000
+0.25          0.0769
+0.1           0.0270
+
+video VAE: ratio_t 4, chunk 5 tokens, overlap 2 tokens, chunk_frames 28

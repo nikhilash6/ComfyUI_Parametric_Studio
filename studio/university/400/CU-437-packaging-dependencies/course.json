@@ -1,0 +1,35 @@
+{
+ "code": "CU-437",
+ "title": "Packaging a pack without breaking anyone's install",
+ "level": "400",
+ "prereq": ["CU-430"],
+ "char": "graph",
+ "hook": "All packs share one Python. One careless pin moves a library under every other pack. Here is the layout, the pyproject, and how to stay out of trouble.",
+ "track": "custom-nodes",
+ "order": 32,
+ "kit": true,
+ "graphs": ["nm_first"],
+ "code_refs": [
+  "nodes.py:load_custom_node",
+  "nodes.py:init_external_custom_nodes",
+  "main.py:execute_prestartup_script",
+  "comfy_config/types.py:ComfyConfig",
+  "comfy_config/types.py:ProjectConfig",
+  "app/custom_node_manager.py:example_workflow_folder_names",
+  "app/governance.py:pack_refusal"
+ ],
+ "verified": [
+  {"claim": "A core node name can't be replaced by a pack. Between two packs, the later one wins with no message, and the order comes from os.listdir.", "how": "source", "ref": "nodes.py:load_custom_node and init_external_custom_nodes"},
+  {"claim": "An exception during import is logged as a warning, the pack is marked IMPORT FAILED, and other packs carry on.", "how": "source", "ref": "nodes.py:load_custom_node"},
+  {"claim": "ComfyUI does not install a pack's requirements when it loads it.", "how": "source", "ref": "main.py and nodes.py have no such step; the only pip text in main.py is a message about the manager's own requirements"},
+  {"claim": "prestartup_script.py in a pack runs before the rest of startup.", "how": "source", "ref": "main.py:execute_prestartup_script"},
+  {"claim": "example_workflows is served as templates, and other folder names get a warning to rename.", "how": "source", "ref": "app/custom_node_manager.py"},
+  {"claim": "pyproject fields: name, version, PublisherId and the name rules.", "how": "docs", "ref": "docs.comfy.org registry specifications, fetched 2026-11-01"},
+  {"claim": "pip's --dry-run prints what would be installed, and -c applies a constraints file.", "how": "docs", "ref": "pip.pypa.io cli pip_install, fetched 2026-11-01"}
+ ],
+ "unchecked": [
+  "We didn't publish a pack or run the registry's checks for this lesson.",
+  "We didn't run pip here. The advice on dry runs comes from pip's docs, and the lab's version check is a teaching model of one idea, not a resolver.",
+  "The docs we fetched don't say how a pack manager installs dependencies, so we say nothing about what a given manager does."
+ ]
+}

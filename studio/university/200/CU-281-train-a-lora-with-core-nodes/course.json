@@ -1,0 +1,72 @@
+{
+ "code": "CU-281",
+ "title": "Train a LoRA with core nodes",
+ "level": "200",
+ "prereq": [
+  "CU-280"
+ ],
+ "char": "tune",
+ "hook": "Six core nodes, and our real 300-step run with its real loss curve. What the nodes do at each step, what the run shows, and what it can't.",
+ "track": "lora-training",
+ "order": 25,
+ "kit": true,
+ "graphs": [
+  "sd15_train_lora"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_train.py:TrainLoraNode.execute",
+  "comfy_extras/nodes_train.py:TrainSampler.fwd_bwd",
+  "comfy_extras/nodes_train.py:TrainSampler._generate_batch_sigmas",
+  "comfy_extras/nodes_train.py:TrainSampler._train_step_standard_mode",
+  "comfy_extras/nodes_train.py:SaveLoRA",
+  "comfy_extras/nodes_train.py:LossGraphNode",
+  "comfy_extras/nodes_train.py:_create_weight_adapter",
+  "comfy_extras/nodes_dataset.py:MakeTrainingDataset.execute",
+  "comfy_extras/nodes_dataset.py:LoadImageTextDataSetFromFolderNode.execute",
+  "comfy/weight_adapter/lora.py:LoRAAdapter.create_train"
+ ],
+ "verified": [
+  {
+   "claim": "The loss list and run facts are copied from the job's record: 12 pictures, 300 steps, rank 8, SDXL base 1.0 at 1024, 187 s, 0.6155 s per step, peak 40.25 GiB.",
+   "how": "run here",
+   "ref": "studio/web/train_example.js, studio/train_measured.json (job 4d13a830507c, 2026-11-01)"
+  },
+  {
+   "claim": "Each step picks a fresh random subset and a random noise level, and its loss compares the model's clean-picture prediction with the clean latent.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py:TrainSampler.fwd_bwd"
+  },
+  {
+   "claim": "The node is marked experimental, defaults to 16 steps, rank 8, learning rate 0.0005, AdamW, MSE, bf16.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py:TrainLoraNode.define_schema"
+  },
+  {
+   "claim": "A new adapter gets alpha 1.0, and only the up matrix starts non-zero.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py:_create_weight_adapter"
+  },
+  {
+   "claim": "Adapters are added to modules with weight_function, and to their biases too, and the node makes no sample pictures during training.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_train.py:_setup_lora_adapters"
+  },
+  {
+   "claim": "sd15_train_lora validates. It was not run: it needs a model and a GPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "Our run's graph has this same shape, built by studio/train.py on SDXL; it read the loss list through PreviewAny rather than LossGraphNode.",
+   "how": "source",
+   "ref": "studio/train.py:training_graph"
+  }
+ ],
+ "unchecked": [
+  "One run, one LoRA, one dataset, two prompts, one seed each. It shows that this path produces a file that changes pictures. It does not show the settings are good.",
+  "We can't say from this run if 300 steps are too few or too many, or how another rank or dataset would do.",
+  "The sd15_train_lora graph itself was validated and not run. Our measured run was on SDXL with the Train page's own version of this graph, and its numbers don't carry over to SD 1.5.",
+  "The captions of the 12 pictures are not in the record we use here, so we don't describe them.",
+  "That the jumps in the loss come from the random noise level and picture is read from the code. The run did not record each step's noise level."
+ ]
+}

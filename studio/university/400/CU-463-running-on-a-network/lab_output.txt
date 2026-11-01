@@ -1,0 +1,20 @@
+POST /prompt from                               default  with CORS
+a script, no Origin                                 200        200
+the page itself                                     200        200
+another site, modern browser                        403        200
+another site, no Sec-Fetch-Site                     403        200
+another site, LAN address, no Sec-Fetch-Site        200        200
+another site, LAN address, modern browser           403        200
+a script faking any Origin, LAN address             200        200
+sibling subdomain, public name                      200        200
+localhost page calling 127.0.0.1 name               403        200
+
+default:      ['cache_control', 'deprecation_warning', 'origin_only']
+--enable-cors-header: ['cache_control', 'deprecation_warning', 'cors']
+
+no flag:         ['127.0.0.1']
+--listen alone:  ['0.0.0.0', '::']
+only --tls-keyfile: http   both: https
+
+--multi-user, header says anna_1: anna_1  (no password asked)
+no --multi-user, header ignored: default

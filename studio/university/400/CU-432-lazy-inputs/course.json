@@ -1,0 +1,31 @@
+{
+ "code": "CU-432",
+ "title": "Lazy inputs and check_lazy_status",
+ "level": "400",
+ "prereq": ["CU-431", "CU-220"],
+ "char": "graph",
+ "hook": "A switch with two expensive branches should only pay for one. Lazy inputs make that happen, at the cost of visiting your node twice.",
+ "track": "custom-nodes",
+ "order": 12,
+ "kit": true,
+ "graphs": ["f_lazy_switch"],
+ "code_refs": [
+  "execution.py:lazy_status_present",
+  "execution.py:ExecutionResult",
+  "comfy_execution/graph.py:make_input_strong_link",
+  "comfy_execution/graph_utils.py:ExecutionBlocker",
+  "comfy_api/latest/_io.py:check_lazy_status",
+  "comfy_extras/nodes_logic.py:SwitchNode.check_lazy_status"
+ ],
+ "verified": [
+  {"claim": "With a lazy switch, the real order was check, branch A, check, run, and branch B never ran.", "how": "run here", "ref": "V1 and V3 test nodes through PromptExecutor on a CPU"},
+  {"claim": "Asking for an input with no wire fails with: Node 5 says it needs input a, but there is no input to that node at all.", "how": "run here", "ref": "comfy_execution/graph.py:make_input_strong_link"},
+  {"claim": "A required input marked lazy and left unwired still gives required_input_missing.", "how": "run here", "ref": "execution.py:validate_inputs"},
+  {"claim": "Core's If/Else Switch runs only the side it uses: with switch True, ImageInvert ran once, and with switch False it did not run.", "how": "run here", "ref": "graph f_lazy_switch with a counter on ImageInvert"},
+  {"claim": "The docs say lazy has very little cost and that check_lazy_status may be called many times.", "how": "docs", "ref": "docs.comfy.org custom-nodes backend lazy_evaluation, fetched 2026-11-01"}
+ ],
+ "unchecked": [
+  "We didn't measure the cost of the second visit. It is one extra Python call, and we didn't time it.",
+  "How lazy interacts with INPUT_IS_LIST comes from the docstring in _io.py (unevaluated inputs arrive as (None,)). We did not run that combination."
+ ]
+}

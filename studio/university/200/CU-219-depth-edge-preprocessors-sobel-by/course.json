@@ -15,5 +15,42 @@
   "comfy_extras/nodes_moge.py:class MoGeInference"
  ],
  "track": "control",
- "order": 20
+ "order": 20,
+ "kit": true,
+ "graphs": [
+  "d_canny_preview",
+  "nm_mask_canny"
+ ],
+ "verified": [
+  {
+   "claim": "The Canny node passes the image to kornia.filters.canny with defaults 0.4 and 0.8.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_canny.py:Canny"
+  },
+  {
+   "claim": "The stencil, the step response and noise tables come from the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "v2_style uses percentiles, though the tooltip says mean/std.",
+   "how": "source",
+   "ref": "comfy/ldm/depth_anything_3/preprocess.py:normalize_depth_v2_style"
+  },
+  {
+   "claim": "kornia 0.9.0 is the version installed on our test machine and the docs we read.",
+   "how": "run here",
+   "ref": "importlib.metadata"
+  },
+  {
+   "claim": "d_canny_preview and nm_mask_canny ran on a CPU here.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The disc test is one toy shape with Gaussian noise and a plain threshold, not the full Canny node.",
+  "We don't state which depth convention any one ControlNet was trained on: see CU-272.",
+  "Another kornia version could scale the gradient differently."
+ ]
 }

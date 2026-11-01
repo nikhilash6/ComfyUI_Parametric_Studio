@@ -1,0 +1,75 @@
+{
+ "code": "CU-383",
+ "title": "Licences in practice: AGPL, GPL, MIT, OpenRAIL",
+ "level": "300",
+ "prereq": [
+  "CU-516"
+ ],
+ "char": "graph",
+ "hook": "Most of the time nothing is triggered until you hand over a copy or put it on a website. Read what four real licences ask in five ordinary cases. Not legal advice.",
+ "track": "packs",
+ "order": 35,
+ "graphs": [
+  "sd15_lora"
+ ],
+ "code_refs": [
+  "LICENSE"
+ ],
+ "verified": [
+  {
+   "claim": "GPL-3.0 section 0: mere interaction over a network with no transfer of a copy is not conveying.",
+   "how": "docs",
+   "ref": "gnu.org gpl-3.0.txt, fetched 2026-11-01"
+  },
+  {
+   "claim": "AGPL-3.0 section 13: a modified version must prominently offer remote users its Corresponding Source.",
+   "how": "docs",
+   "ref": "gnu.org agpl-3.0.txt, fetched 2026-11-01"
+  },
+  {
+   "claim": "GPL-3.0 section 5: modified source versions need notices of the change and stay under the licence.",
+   "how": "docs",
+   "ref": "gnu.org gpl-3.0.txt, fetched 2026-11-01"
+  },
+  {
+   "claim": "MIT's condition is keeping the copyright and permission notice in all copies or substantial portions.",
+   "how": "docs",
+   "ref": "SPDX MIT.txt, fetched 2026-11-01"
+  },
+  {
+   "claim": "Apache-2.0 4(b) asks modified files to carry notices that you changed them.",
+   "how": "docs",
+   "ref": "SPDX Apache-2.0.txt, fetched 2026-11-01"
+  },
+  {
+   "claim": "CreativeML Open RAIL-M paragraphs 4 and 5 and Attachment A set use restrictions, which pass down, also for hosting.",
+   "how": "docs",
+   "ref": "license.txt from the CompVis Space, fetched 2026-11-01"
+  },
+  {
+   "claim": "Software with no licence generally gives you no permission to use, modify or share it.",
+   "how": "docs",
+   "ref": "choosealicense.com/no-permission, fetched 2026-11-01"
+  },
+  {
+   "claim": "ComfyUI's own LICENSE is GPL version 3.",
+   "how": "source",
+   "ref": "LICENSE"
+  },
+  {
+   "claim": "The graph passes validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "This is a reader's summary and not legal advice. Courts, jurisdictions and specific facts can change the answer. Ask someone qualified if it matters.",
+  "What counts as a derivative or a covered work, including whether a node pack is one with ComfyUI, is a real legal question that we don't answer here.",
+  "Other RAIL variants and model licences differ. We read only this one.",
+  "The table simplifies. It doesn't cover patents, warranty terms or every condition."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

@@ -18,5 +18,46 @@
   "comfy/k_diffusion/sampling.py:default_noise_sampler"
  ],
  "track": "video",
- "order": 20
+ "order": 20,
+ "graphs": [
+  "wf_wan22_t2v"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "prepare_noise seeds the CPU generator and draws one block for the whole latent, then converts the dtype.",
+   "how": "source",
+   "ref": "comfy/sample.py:prepare_noise"
+  },
+  {
+   "claim": "LatentFromBatch writes batch_index, and LatentBatchSeedBehavior fixes or removes it.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_latent.py:LatentBatchSeedBehavior"
+  },
+  {
+   "claim": "Per-step noise comes from default_noise_sampler, on the latent's device.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:default_noise_sampler"
+  },
+  {
+   "claim": "The lab reproduced prepare_noise on this PyTorch build and printed the tables.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Ge et al. report a designed noise prior beat a naive one when finetuning an image model for video.",
+   "how": "docs",
+   "ref": "arXiv 2305.10474"
+  },
+  {
+   "claim": "The graph passes validate_prompt with file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "Seeds that differ by 2^32 giving the same noise is observed on this PyTorch build's CPU generator. We did not read the cause in PyTorch's source.",
+  "Item i of a batch matching the i-th draw held only for item sizes that are multiples of 16 in the lab. We did not find out why, so it's stated as seen.",
+  "Per-step noise on a GPU comes from a different generator, and we did not test it."
+ ]
 }

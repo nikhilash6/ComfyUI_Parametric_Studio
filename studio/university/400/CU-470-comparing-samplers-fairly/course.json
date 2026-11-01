@@ -1,0 +1,49 @@
+{
+ "code": "CU-470",
+ "title": "Comparing two samplers fairly",
+ "level": "400",
+ "prereq": [
+  "CU-205",
+  "CU-404"
+ ],
+ "char": "tune",
+ "hook": "One render can name either winner. The same seeds, enough of them, a measure chosen first, and cost in model calls.",
+ "track": "research",
+ "order": 40,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "code_refs": [
+  "nodes.py:KSampler",
+  "comfy/k_diffusion/sampling.py:sample_heun",
+  "comfy/k_diffusion/sampling.py:sample_euler_ancestral"
+ ],
+ "verified": [
+  {
+   "claim": "Toy numbers are copied from the course's measures.json and compared with it by hand.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/measures.json"
+  },
+  {
+   "claim": "Render numbers are copied from renders.json.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  },
+  {
+   "claim": "Heun calls the model about twice per step: 39 calls at 20 steps in the measurements.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_heun"
+  },
+  {
+   "claim": "Same-seed and different-seed tables come from the lab's simulation.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "No real comparison of samplers on pictures was run for this lesson. Every comparison table on pictures is one seed, or simulated.",
+  "The simulated sizes (seed effect 5, noise 1) are our choices, so 24% and the seed counts are illustrations, not measurements.",
+  "The claim that a seed moves a picture more than most sampler choices rests on our one-seed renders and general experience: it is not measured over many seeds."
+ ],
+ "kit": true
+}

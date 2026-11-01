@@ -11,8 +11,45 @@
  "code_refs": [
   "comfy/model_sampling.py:ModelSamplingDiscrete",
   "comfy/model_sampling.py:EPS",
-  "comfy/ldm/modules/diffusionmodules/util.py:make_beta_schedule"
+  "comfy/ldm/modules/diffusionmodules/util.py:make_beta_schedule",
+  "comfy/model_sampling.py:EPS.calculate_input",
+  "comfy/model_sampling.py:ModelSamplingDiscrete.sigma_max"
  ],
  "track": "sampling",
- "order": 10
+ "order": 10,
+ "kit": true,
+ "graphs": [
+  "nm_sigmas"
+ ],
+ "verified": [
+  {
+   "claim": "sigma is computed from alphas_cumprod as in the lesson.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:ModelSamplingDiscrete._register_schedule"
+  },
+  {
+   "claim": "The real sigma_min and sigma_max are 0.02917 and 14.6146.",
+   "how": "run here",
+   "ref": "comfy.model_sampling.ModelSamplingDiscrete in a Python session"
+  },
+  {
+   "claim": "EPS input is x / sqrt(sigma^2 + 1), and the clean estimate is x - sigma * output.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:EPS"
+  },
+  {
+   "claim": "The chain and the jump agree, and the small network gets close to the data.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "nm_sigmas ran on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The equation numbers and the claims about Ho, Sohl-Dickstein and Lin were checked when this lesson was first audited, and not read again this time.",
+  "The toy is one-dimensional, so it shows the mechanism and says nothing about image quality."
+ ]
 }

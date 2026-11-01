@@ -1,0 +1,21 @@
+start: 1 NaN of 3072 values
+after  1 layers:    27 NaN of 3072
+after  2 layers:    75 NaN of 3072
+after  4 layers:   243 NaN of 3072
+after  8 layers:   867 NaN of 3072
+after 16 layers:  2349 NaN of 3072
+after 24 layers:  3072 NaN of 3072
+
+clamp((v + 1) / 2, 0, 1) of nan, -5, 5, 0.5: [nan, 0.0, 1.0, 0.75]
+to 8 bits, torch: 0  so NaN pixels land on 0: black
+
+in fp16: [60000.0, inf]  in bf16: [59904.0, 70144.0]  in fp32: [60000.0, 70000.0]
+inf - inf: nan   inf * 0: nan
+
+latent scale, SD15 0.18215  SDXL 0.13025: decoding through the wrong one multiplies the latent by 1.398 or 0.715
+
+empty latent, denoise d, 20 steps: the noise it starts from
+d=1.0   start sigma  14.615  of a possible 14.615
+d=0.75  start sigma   5.034  of a possible 14.615
+d=0.5   start sigma   1.182  of a possible 14.615
+d=0.25  start sigma   0.231  of a possible 14.615

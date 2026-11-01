@@ -38,6 +38,22 @@ and the simplified loss (eq. 14) keeps ‖ε − ε_θ‖² and drops the weight
 - **The sampler.** `ddpm` is in the sampler list in `comfy/samplers.py`. It calls `sample_ddpm`, which runs `DDPMSampler_step` in `comfy/k_diffusion/sampling.py`. The mean is eq. 11, and the noise it adds has variance (1−α)(1−ᾱ_prev)/(1−ᾱ), which is β̃_t, so ComfyUI took the paper's second choice. It reads ᾱ from sigma as 1/(1+σ²) and α as ᾱ/ᾱ_prev. On a shortened schedule one step therefore spans several of the paper's.
 - **The schedule.** The paper's linear β is the branch named `"sqrt_linear"` in `make_beta_schedule` (`comfy/ldm/modules/diffusionmodules/util.py`), and the defaults there, 1e-4 and 2e-2, are the paper's constants. The branch named `"linear"` squares a linspace of square roots. That is the default in `ModelSamplingDiscrete`, with 0.00085 and 0.012, and it is the schedule of SD models, not of the DDPM paper.
 
+The forward chain on a real picture. The "eps" formula here is the one this lesson uses, written with sigma. Set signal to noise near 1.
+
+{{play:noise}}
+
+And the paper's sampler on a model you might have. It works, with one thing the paper did not have to think about: a much shorter walk.
+
+{{graph:h5_ddpm_sampler}}
+
+## What goes wrong
+
+- **You read "linear" in the source as the paper's schedule.** `"linear"` in `make_beta_schedule` squares a linspace of square roots. The paper's is `"sqrt_linear"`. `ModelSamplingDiscrete` defaults to the first, with SD's numbers.
+- **You think you need 1000 steps.** T = 1000 is how the model was trained. `DDPMSampler_step` works out α from the two sigmas you give it, so one step can span many of the paper's. Compare by calls (CU-205).
+- **Changing the step count changes the whole picture.** `ddpm` adds fresh noise at every step except the last, so the noise it draws depends on the steps. The `seedwalk` lab shows this for ancestral samplers.
+- **Your picture is wrong and every setting looks right.** The model may predict something other than ε. The `b_vpred` graph shows how to tell ComfyUI, and it warns that using it on an ε model gives a wrong picture on purpose.
+- **You quote "diffusion has bad likelihoods" as a law.** It is the paper's result for its own model and loss.
+
 ## Lab
 
 Everything here has an exact answer. First the posterior: Bayes' rule on a fine grid (x_0 = 0.8, ε = 0.7) against the closed form and against the ε form of the mean.

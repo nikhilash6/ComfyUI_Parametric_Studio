@@ -34,7 +34,7 @@
     "Only with custom nodes"
    ],
    "answer": "Yes, if a field allows a value that the node rejects",
-   "why": "The form does not change the node's limits. Our inference is that the same validation applies."
+   "why": "The form does not change the node's limits. The run goes through the same queue command as any other."
   },
   {
    "q": "Which setting is the better field for an end user?",
@@ -46,6 +46,28 @@
    ],
    "answer": "The subject text",
    "why": "Expose what the user decides, and keep what the author decided. This is our recommendation."
+  },
+  {
+   "q": "You hide the checkpoint field in an app. Who can still use another checkpoint?",
+   "options": [
+    "Nobody",
+    "Only the author",
+    "Anyone who can reach the server, by posting their own graph",
+    "Only Comfy Cloud users"
+   ],
+   "answer": "Anyone who can reach the server, by posting their own graph",
+   "why": "The form lives in the page. Nothing in the server knows about it."
+  },
+  {
+   "q": "With everything cached, which field costs the least to change on the seven-node graph?",
+   "options": [
+    "Checkpoint",
+    "Prompt text",
+    "Seed",
+    "File name prefix"
+   ],
+   "answer": "File name prefix",
+   "why": "Only the save node is downstream of its own value: 1 of 7."
   }
  ]
 }

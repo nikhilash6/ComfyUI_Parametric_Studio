@@ -1,0 +1,170 @@
+{
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/execution.py": {
+  "title": "ComfyUI v0.43.0, execution.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/nodes.py": {
+  "title": "ComfyUI v0.43.0, nodes.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/main.py": {
+  "title": "ComfyUI v0.43.0, main.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/server.py": {
+  "title": "ComfyUI v0.43.0, server.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/requirements.txt": {
+  "title": "ComfyUI v0.43.0, requirements.txt",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/folder_paths.py": {
+  "title": "ComfyUI v0.43.0, folder_paths.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_execution/graph.py": {
+  "title": "ComfyUI v0.43.0, comfy_execution/graph.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_execution/graph_utils.py": {
+  "title": "ComfyUI v0.43.0, comfy_execution/graph_utils.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_execution/caching.py": {
+  "title": "ComfyUI v0.43.0, comfy_execution/caching.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_execution/validation.py": {
+  "title": "ComfyUI v0.43.0, comfy_execution/validation.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_api/latest/_io.py": {
+  "title": "ComfyUI v0.43.0, comfy_api/latest/_io.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_api/latest/__init__.py": {
+  "title": "ComfyUI v0.43.0, comfy_api/latest/__init__.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_api/internal/__init__.py": {
+  "title": "ComfyUI v0.43.0, comfy_api/internal/__init__.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/comfy_types/node_typing.py": {
+  "title": "ComfyUI v0.43.0, comfy/comfy_types/node_typing.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_management.py": {
+  "title": "ComfyUI v0.43.0, comfy/model_management.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sd.py": {
+  "title": "ComfyUI v0.43.0, comfy/sd.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/cli_args.py": {
+  "title": "ComfyUI v0.43.0, comfy/cli_args.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/samplers.py": {
+  "title": "ComfyUI v0.43.0, comfy/samplers.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sample.py": {
+  "title": "ComfyUI v0.43.0, comfy/sample.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/utils.py": {
+  "title": "ComfyUI v0.43.0, comfy/utils.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/latent_formats.py": {
+  "title": "ComfyUI v0.43.0, comfy/latent_formats.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/attention.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/modules/attention.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_logic.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_logic.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_images.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_images.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_loop.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_loop.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_latent.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_latent.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_preview_any.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_preview_any.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_upscale_model.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_upscale_model.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_lotus.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_lotus.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/app/custom_node_manager.py": {
+  "title": "ComfyUI v0.43.0, app/custom_node_manager.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/app/governance.py": {
+  "title": "ComfyUI v0.43.0, app/governance.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/app/subgraph_manager.py": {
+  "title": "ComfyUI v0.43.0, app/subgraph_manager.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/tests/execution/test_execution.py": {
+  "title": "ComfyUI v0.43.0, tests/execution/test_execution.py",
+  "checked": "read at tag v0.43.0 in a local checkout, 2026-11-01"
+ },
+ "https://docs.comfy.org/custom-nodes/backend/lazy_evaluation": {
+  "title": "Lazy Evaluation, ComfyUI docs",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://docs.comfy.org/custom-nodes/backend/lists": {
+  "title": "Data lists, ComfyUI docs",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://docs.comfy.org/custom-nodes/backend/expansion": {
+  "title": "Node Expansion, ComfyUI docs",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://docs.comfy.org/custom-nodes/js/javascript_overview": {
+  "title": "Javascript Extensions, ComfyUI docs",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://docs.comfy.org/custom-nodes/js/javascript_hooks": {
+  "title": "Comfy Hooks, ComfyUI docs",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://docs.comfy.org/registry/specifications": {
+  "title": "pyproject.toml, Comfy Registry docs",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://pip.pypa.io/en/stable/cli/pip_install": {
+  "title": "pip install, pip docs",
+  "checked": "fetched 2026-11-01: --dry-run and -c"
+ },
+ "https://huggingface.co/madebyollin/sdxl-vae-fp16-fix": {
+  "title": "madebyollin/sdxl-vae-fp16-fix, Hugging Face",
+  "checked": "fetched 2026-11-01: the statement that the SDXL VAE makes NaNs in fp16"
+ },
+ "https://huggingface.co/docs/safetensors/index": {
+  "title": "Safetensors, Hugging Face docs",
+  "checked": "fetched 2026-11-01"
+ }
+}

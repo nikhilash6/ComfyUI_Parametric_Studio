@@ -1,0 +1,29 @@
+512x512 SD latent: values 16384  mean +0.0091  std 1.0040
+seed 42 twice, identical: True   seeds 42 and 43, correlation: +0.0058
+first three values, seed 0: [-1.1258, -1.1524, -0.2506]  seed 1: [-1.5256, -0.7502, -0.654]
+same seed, 512x768 against 512x512, shared opening values: 16384 of 16384
+
+batches: one block of noise, cut into images
+batch item 0 equals the single image with that seed: True
+batch item 1 equals seed 43: False
+
+LatentFromBatch keeps batch_index, and the generator skips ahead to it
+shape                  values per item  multiple of 16  picked item equals the batch item
+(4, 4, 64, 64)         16384            True            True
+(4, 16, 128, 128)      262144           True            True
+(4, 4, 65, 65)         16900            False           False
+(4, 4, 66, 65)         17160            False           False
+(4, 16, 65, 65)        67600            True            True
+seed_behavior fixed, batch_index [0,0,0,0], all four the same: True
+
+power in eight bands, low frequency first, 1.00 is a fair share
+white, torch.randn              0.98  1.01  0.99  1.01  0.99  1.01  1.00  1.00
+pink, power 1/f                 3.92  1.34  0.79  0.57  0.44  0.36  0.31  0.27
+named blue by one pack, 1/f^2   7.25  0.42  0.15  0.07  0.04  0.03  0.02  0.02
+real blue, power rises with f   0.16  0.39  0.62  0.87  1.11  1.37  1.61  1.86
+
+our measures.json, 16 bands
+default_noise_sampler (torch.randn)    lowest 0.941  highest 1.017
+BrownianTreeNoiseSampler increment     lowest 0.962  highest 1.018
+
+default_noise_sampler seeds: on the CPU seed + 1 = 43 , on any other device seed = 42

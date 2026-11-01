@@ -1,0 +1,83 @@
+{
+ "code": "CU-114",
+ "title": "Which file goes in which loader and folder",
+ "level": "100",
+ "prereq": [
+  "CU-107"
+ ],
+ "char": "bits",
+ "hook": "Checkpoint, diffusion model, text encoder, VAE: what each one holds, which folder feeds which menu, and how to tell them apart when the file name tells you nothing.",
+ "track": "first-graph",
+ "order": 85,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img",
+  "wf_flux2_klein"
+ ],
+ "code_refs": [
+  "folder_paths.py:folder_names_and_paths",
+  "folder_paths.py:supported_pt_extensions",
+  "folder_paths.py:map_legacy",
+  "folder_paths.py:get_full_path",
+  "folder_paths.py:cached_filename_list_",
+  "folder_paths.py:filter_files_extensions",
+  "nodes.py:CheckpointLoaderSimple",
+  "nodes.py:UNETLoader",
+  "nodes.py:CLIPLoader",
+  "nodes.py:VAELoader",
+  "comfy/sd.py:load_state_dict_guess_config",
+  "comfy/sd.py:load_diffusion_model_state_dict",
+  "comfy/sd.py:load_text_encoder_state_dicts",
+  "execution.py:value_not_in_list"
+ ],
+ "verified": [
+  {
+   "claim": "Each folder name maps to its model folders: diffusion_models to unet and diffusion_models, text_encoders to text_encoders and clip, controlnet to controlnet and t2i_adapter.",
+   "how": "source",
+   "ref": "folder_paths.py:folder_names_and_paths"
+  },
+  {
+   "claim": "Menus list known extensions only, include subfolders in the name, and the first folder wins for a duplicate. .gguf and .txt were left out.",
+   "how": "run here",
+   "ref": "folder_paths.get_filename_list and get_full_path on a throw-away tree"
+  },
+  {
+   "claim": "A file name not in the menu gives value_not_in_list.",
+   "how": "run here",
+   "ref": "execution.validate_prompt with a made-up checkpoint name"
+  },
+  {
+   "claim": "A checkpoint loader given a denoiser-only file warns and returns a model with no CLIP, and a VAE object that raises when used.",
+   "how": "source",
+   "ref": "comfy/sd.py:load_state_dict_guess_config"
+  },
+  {
+   "claim": "UNETLoader accepts a whole checkpoint and takes the denoiser out: the comment reads 'Allow loading unets from checkpoint files'.",
+   "how": "source",
+   "ref": "comfy/sd.py:load_diffusion_model_state_dict"
+  },
+  {
+   "claim": "The key names in the play and the lab are ones ComfyUI's detection and loading code reads.",
+   "how": "source",
+   "ref": "comfy/model_detection.py, comfy/sd.py, comfy/controlnet.py, comfy/lora.py"
+  },
+  {
+   "claim": "Each menu's folder is the one named in that node's INPUT_TYPES.",
+   "how": "source",
+   "ref": "nodes.py and comfy_extras/nodes_upscale_model.py"
+  },
+  {
+   "claim": "The docs say to put files in the type's subfolder, press r to refresh, and that GGUF needs community custom nodes.",
+   "how": "docs",
+   "ref": "docs.comfy.org/development/core-concepts/models, fetched 2026-11-01"
+  }
+ ],
+ "unchecked": [
+  "We did not press r in a browser. The server side checks the folder's modified time on each call, and the editor's refresh is taken from the docs.",
+  "The lab's kind test is ours, a teaching simplification. ComfyUI's real detection is far longer.",
+  "We did not load real files for the combinations in the last table: they come from reading comfy/sd.py."
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

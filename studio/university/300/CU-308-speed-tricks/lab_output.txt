@@ -1,21 +1,21 @@
-RESULT nfe_steps_50_no_cfg = 50
-RESULT nfe_steps_20_no_cfg = 20
-RESULT nfe_steps_8_no_cfg = 8
-RESULT nfe_steps_4_no_cfg = 4
-RESULT nfe_steps_50_with_cfg = 100
-RESULT nfe_steps_20_with_cfg = 40
-RESULT nfe_steps_8_with_cfg = 16
-RESULT nfe_steps_4_with_cfg = 8
-RESULT speedup_steps_50_no_cfg = 1
-RESULT speedup_steps_50_with_cfg = 0.5
-RESULT speedup_steps_20_no_cfg = 2.5
-RESULT speedup_steps_20_with_cfg = 1.25
-RESULT speedup_steps_8_no_cfg = 6.25
-RESULT speedup_steps_8_with_cfg = 3.125
-RESULT speedup_steps_4_no_cfg = 12.5
-RESULT speedup_steps_4_with_cfg = 6.25
-RESULT nfe_1step_ode = 1
-RESULT nfe_4step_ode = 4
-RESULT error_1step_ode = 0.702404
-RESULT error_4step_ode = 0.0909041
-RESULT error_reduction_factor = 7.72686
+model calls = steps x calls per step x (2 if CFG is not 1)
+  euler, 20 steps, CFG 7                         40
+  euler, 20 steps, CFG 1                         20
+  heun, 20 steps, CFG 7                          80
+  euler, 4 steps, CFG 1 (a distilled model)       4
+  euler, 50 steps, CFG 7                        100
+
+the ODE dx/dt = -x + sin(t) from t = 0 to 1, whose exact answer we know
+  steps  euler calls  euler error   heun calls   heun error
+      1            1      0.70240            2      0.21833
+      2            2      0.21269            4      0.03343
+      4            4      0.09090            8      0.00637
+      8            8      0.04246           16      0.00140
+     16           16      0.02056           32      0.00033
+  halve the step: euler error x2.14 smaller, heun x4.57 smaller
+
+skipping steps, the idea behind a step cache: reuse the last change when the input barely moved
+  threshold 0.00: 40 of 40 calls, error 0.00807
+  threshold 0.01: 21 of 40 calls, error 0.04065
+  threshold 0.03: 10 of 40 calls, error 0.06260
+  threshold 0.10:  5 of 40 calls, error 0.08620

@@ -1,94 +1,98 @@
 # CU-411 - Evaluating video: a flicker metric
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Compute two flicker scores, know what fools each one, and use them with care on real clips. Taught by Reel Rascal.
 
-**Instructor:** Reel Rascal
-**Course:** CU-411 Evaluating video: a flicker metric
-**Level:** 400 (Engineering and research)
-**Prerequisites:** CU-404
+## The idea
 
-## Why this matters
+You compare two video settings and one looks calmer. How much calmer? A number helps, if you know what it measures. Flicker scores are simple statistics on pixel values over time, and each is fooled by something. So we test them on made-up clips where we know the answer before we trust them on real ones.
 
-Cut! Action! Wait, hold on. Why is the background shimmering like a heat haze? Why does the character’s face look like it’s being remixed every 100 milliseconds? In image generation, we obsess over spatial fidelity, sharpness, texture, color accuracy. But video is time. It is a sequence of shots, a narrative flow, a continuous stream of photons hitting the retina. If your pixels jump around randomly from frame $t$ to frame $t+1$, you don’t have a video; you have a strobe light.
+## Two scores
 
-In the engineering of generative video models, "flicker" is the enemy of immersion. It is the visual noise that breaks the viewer’s suspension of disbelief. We need a metric that is not just a subjective "it looks weird," but a precise, computable measure of temporal instability. This lesson introduces the **Flicker Metric**, a simple yet powerful engineering tool derived from basic statistics. It allows us to quantify temporal consistency. If you can’t measure it, you can’t optimize it. And if you can’t optimize it, your model is just throwing dice at the screen.
+**Temporal variance.** At each pixel position, measure the variance over time, then average across the picture.
 
-## The intuition
+**Second difference.** At each pixel, take f(t + 1) - 2 f(t) + f(t - 1), then average the absolute values. It's near zero when a pixel changes steadily, and big when it zigzags. A fade scores zero. A strobe scores high. Our studio's quality check, `flicker_score` in `studio/vset/qc.py`, uses this on 128 x 128 luma from 0 to 255.
 
-Think of a video as a stack of transparencies. If you look at a single pixel position $(x, y)$ across time, what should you see? In a stable scene, that pixel should remain relatively constant. If the camera is static and the object is static, the pixel value at $t=0$, $t=1$, and $t=2$ should be identical.
+No core node computes either. In a graph, you'd pull frames from a video with `GetVideoComponents` and compute it in your own node or script.
 
-Flicker occurs when that pixel value changes unpredictably. It’s not motion, motion is structured change. Flicker is *random* change. It’s the difference between a car driving down the road (structured spatial shift) and the car’s color randomly turning blue, then red, then green while staying in the same spot.
+{{graph:nm_video}}
 
-Our intuition is simple: **Stability is the inverse of variance.**
+## Try to fool them
 
-If the values at a specific pixel location do not change over time, their variance is zero. If they change wildly, their variance is high. Therefore, we can define a "flicker score" as the average temporal variance across all pixels. Lower is better. Zero is perfect stability.
+{{play:flicker}}
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+The lab does the same with 2D clips, and it turns up something our own code's note gets wrong. The note in `qc.py` says smooth motion scores about 0. That holds for a smooth gradient, but on a textured picture panning at 1 pixel a frame, the second difference is 16.9. That is more than a noise boil, and close to a 4% strobe. Any edge crossing a pixel makes a zigzag there.
 
-Let’s define the math precisely. We have a video tensor $V$ with dimensions $(T, C, H, W)$, where:
-*   $T$ is the number of frames (time dimension).
-*   $C$ is the number of channels (e.g., 3 for RGB).
-*   $H$ is the height.
-*   $W$ is the width.
+So raw scores mix motion with flicker. The fix is the one from CU-315: **align first.** Find the shift between neighbouring frames, undo it, and score what's left. The pan drops to 0. The strobe and the boil stay put.
 
-For a specific pixel location $(c, h, w)$, we have a time series of values: $v_{c,h,w}(0), v_{c,h,w}(1), \dots, v_{c,h,w}(T-1)$.
+## Real clips
 
-The **temporal variance** for this specific pixel is calculated as:
+We ran the plain second difference over our web copies. The clips below are compressed copies, so read this as a rough guide.
 
-$$ \text{Var}_{t}(c, h, w) = \frac{1}{T} \sum_{t=0}^{T-1} (v_{c,h,w}(t) - \bar{v}_{c,h,w})^2 $$
+| clip | second difference, mean | worst moment |
+|---|---|---|
+| LTX-2.5, virtual set | 1.34 | 2.76 |
+| H3, virtual set | 2.78 | 4.93 |
+| LTX-2.5, ink | 2.65 | 6.02 |
+| LTX-2.5, greenhouse | 3.32 | 8.24 |
+| Wan 2.2, waves | 5.44 | 18.36 |
+| H3, chef with fire | 6.33 | 19.01 |
+| H3, dragon in a storm | 8.21 | 27.84 |
 
-Where $\bar{v}_{c,h,w}$ is the mean value of that pixel over time:
+Sort by what's in the shot: a slow push-in on a still street at the top, then fire, waves, and a storm at the bottom. Those may be real flicker, or just fast detail. On this score alone, you can't tell. Our check's limit of 6.0 is labelled a starting guess in the code, and the chef and dragon clips would fail it.
 
-$$ \bar{v}_{c,h,w} = \frac{1}{T} \sum_{t=0}^{T-1} v_{c,h,w}(t) $$
+{{video:showcase/v_h3_dragon.mp4|H3. Prompt: a huge gold-scaled dragon uncoils around a black stone tower during a thunderstorm. It has the highest score in the table. Watch it and decide whether that's flicker or storm.}}
 
-This gives us a variance map of shape $(C, H, W)$. To get a single scalar metric for the entire video, we take the mean of this variance map:
+The studio's records hold the scores from the original renders: 3.2 for H3 and 2.0 for LTX on the virtual-set shot. Here's the pair:
 
-$$ \text{FlickerMetric} = \frac{1}{C \cdot H \cdot W} \sum_{c=0}^{C-1} \sum_{h=0}^{H-1} \sum_{w=0}^{W-1} \text{Var}_{t}(c, h, w) $$
+{{wipe:vset_art/ltx_result.webp|vset_art/h3_result.webp|LTX-2.5, 121 frames|MiniMax H3, 124 frames|One scene, seed 4242, a still from each clip. Records: flicker 2.0 and 3.2.}}
 
-In code, this is often implemented by computing the variance along the time dimension (dimension 0) and then taking the mean of the resulting tensor.
+Numbers from one scene and one seed compare these two clips. They don't rank the models.
 
-**Key Insight:** This metric assumes that "good" video has low temporal variance at fixed spatial locations. This is a strong assumption that works well for static scenes or slow-motion shots. For fast motion, you might need optical flow compensation, but for baseline evaluation of *generative* stability (i.e., is the model hallucinating new textures?), raw temporal variance is the gold standard.
+## What goes wrong
 
-## In ComfyUI
-
-In the context of ComfyUI, this metric is not a built-in node in the standard library for general video evaluation, as it is a post-processing analysis step rather than a generation step. However, the architecture of video models like Genmo (found in `comfy/ldm/genmo`) relies on temporal consistency in the latent space.
-
-The `VideoVAE` class in `comfy/ldm/genmo/vae/model.py` handles the encoding and decoding of video frames. The `Encoder` downsamples input video frames into a latent distribution, handling temporal and spatial downsampling. If the `VideoVAE` introduces temporal noise during decoding, or if the `AsymmDiTJoint` diffusion model fails to maintain temporal coherence in the latent space, the resulting pixel-space video will exhibit high flicker.
-
-While ComfyUI does not have a dedicated "Flicker Metric" node in the core distribution, you can implement this logic using standard PyTorch operations within a custom node or a Python script. You would take the output video tensor from a `VideoDecode` node, compute the variance along the time dimension, and output the scalar value. This allows you to integrate the metric directly into your workflow for real-time monitoring or automated testing.
+- **Calling a moving shot a flickering one.** Use alignment, or compare only shots with similar motion.
+- **Scoring 0 to 1 images with a limit set for 0 to 255.** The second difference is off by 255, and variance by 255 squared. Always state the scale.
+- **Calling a short clip perfect.** `flicker_score` returns 0.0 below 3 frames. That's no measurement, not a pass.
+- **Averaging away one bad frame.** A single frame 20% too bright gives a mean of 3.2 and a worst moment of 48.6. Report the worst too.
+- **Scene cuts.** A cut is a large one-time change. Variance reads it as huge. Split clips at cuts before scoring.
+- **Comparing across compression.** Compression changes high-frequency detail, and that's what these scores measure. Compare like with like.
+- **Different sizes.** Fine texture falls away when you shrink frames. Use the same scoring size for every clip.
+- **One seed.** One number from one seed says little. Score several.
 
 ## Lab
 
-In this lab, we simulate two video sequences: a **stable** video where pixel values remain constant across frames, and a **flickering** video where pixel values change randomly. We compute the flicker metric for both to demonstrate the inverse relationship between variance and stability.
-
-The lab uses PyTorch to create tensors of shape $(3, 1, 2, 2)$ representing 3 frames, 1 channel, and a $2 \times 2$ grid of pixels.
-
-**Lab Output:**
+Seven clips built to have a known answer. Variance is highest on the fade, which has no flicker at all. The plain second difference is zero on the fade and high on pans. Only the aligned column separates motion from flicker:
 
 ```text
-RESULT stable_metric = 0
-RESULT flicker_metric = 2.83333
+clip                             temporal variance   second difference (qc.py)   second difference after aligning
+still frame                      0.00                0.000                       0.000
+slow pan, 1 pixel a frame        737.37              16.898                      0.000
+fast pan, 4 pixels a frame       1062.89             36.206                      0.000
+fade to black                    1314.57             0.000                       0.255
+brightness strobes 4%            25.26               19.427                      19.428
+texture boils, noise 5 levels    24.24               9.773                       9.773
+scene cut in the middle          1084.45             3.431                       2.565
 ```
 
-**Analysis:**
+A check that the formula behaves: a strobe of amplitude a, on mean level L, scores 4 a L.
 
-1.  `RESULT stable_metric = 0`: This proves that for a perfectly stable video (where every pixel value is identical across all frames), the temporal variance is exactly zero. This confirms our baseline: zero flicker is achievable and measurable.
-2.  `RESULT flicker_metric = 2.83333`: This proves that for a video with random pixel changes, the metric yields a positive, non-zero value. The specific value (2.83333) is the average of the variances of the individual pixels in the $2 \times 2$ grid. For example, the pixel at (0,0) has values [1.0, 5.0, 3.0]. Its mean is 3.0. Its variance is $\frac{(1-3)^2 + (5-3)^2 + (3-3)^2}{3} = \frac{4+4+0}{3} = 2.666...$. Averaging across all 4 pixels gives the final metric. This demonstrates that the metric scales with the magnitude of the temporal noise.
+```text
+mean luma 121.4. A strobe of amplitude a scores 4 a L on the second difference:
+a = 0.01  measured 4.857   predicted 4.857
+a = 0.02  measured 9.714   predicted 9.714
+a = 0.04  measured 19.427  predicted 19.427
+```
 
-## Common mistakes
+The scale, the short-clip case and the single bad frame:
 
-1.  **Confusing Motion with Flicker:** If you apply this metric to a video of a fast-moving car, you will get a high score. This is not flicker; it is motion. To evaluate flicker in dynamic scenes, you must first align frames using optical flow or feature tracking, then compute variance on the aligned pixels. Without alignment, you are measuring motion, not instability.
-2.  **Using the Wrong Dimension:** In PyTorch, if your tensor is shaped $(T, C, H, W)$, you must compute variance along `dim=0`. If you accidentally compute it along `dim=1` (channels), you are measuring color inconsistency, not temporal flicker.
-3.  **Ignoring Normalization:** If your video values are in the range [0, 255] vs [0, 1], the magnitude of the variance will differ by a factor of $255^2$. Always normalize your video tensors to [0, 1] or [-1, 1] before computing the metric to ensure comparability across different datasets.
-4.  **Small Sample Sizes:** With only 2 frames, variance is a poor estimator of stability. You need at least 3-5 frames to get a meaningful signal. With 2 frames, variance is just the squared difference divided by 2, which is sensitive to single-frame outliers.
+```text
+same clip on 0-1 numbers instead of 0-255: second difference 0.0762 (divided by 255), variance 0.000389 (divided by 255 squared)
+fewer than 3 frames: qc.py returns 0.0, which is not a pass, only no measurement
 
-## Go deeper
+one frame 20% too bright in 32: mean 3.238, worst moment 48.568
+```
 
-For a deeper understanding of temporal consistency in video generation, refer to the following papers:
+## Sources
 
-*   **arXiv:2310.02504** - *Video Diffusion Models* (or similar foundational work on temporal attention). This paper discusses how diffusion models can be extended to video by adding temporal attention layers, which is crucial for reducing flicker.
-*   **arXiv:2301.12503** - *Sora: Video Generation Models as World Simulators*. While not a technical paper on metrics, it highlights the importance of temporal coherence as a key challenge in video generation.
-*   **arXiv:2212.03916** - *Make-A-Video: Text-to-Video Generation without Text-Video Data*. This paper introduces techniques for maintaining temporal consistency in video generation, which can be evaluated using metrics like the one described here.
-
-Remember, Reel Rascal here: Count your frames, check your variance, and keep the flicker out of your reel. Cut!
-
+- [ComfyUI v0.43.0, comfy_extras/nodes_video.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_video.py)
+- [RAFT: Recurrent All-Pairs Field Transforms for Optical Flow](https://arxiv.org/abs/2003.12039)

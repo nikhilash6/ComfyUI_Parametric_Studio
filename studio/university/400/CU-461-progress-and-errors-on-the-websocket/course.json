@@ -1,0 +1,88 @@
+{
+ "code": "CU-461",
+ "title": "Progress and errors over the websocket",
+ "level": "400",
+ "prereq": [
+  "CU-224",
+  "CU-460"
+ ],
+ "char": "graph",
+ "hook": "Every message a job sends, who receives it, and the one message that means stop waiting, from captures of the real executor.",
+ "track": "automation",
+ "order": 14,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "code_refs": [
+  "server.py:PromptServer.send_json",
+  "server.py:PromptServer.encode_bytes",
+  "server.py:PromptServer.send_image",
+  "server.py:PromptServer.send_image_with_metadata",
+  "server.py:PromptServer.send_progress_text",
+  "execution.py:PromptExecutor.add_message",
+  "execution.py:PromptExecutor.handle_execution_error",
+  "main.py:prompt_worker",
+  "protocol.py:BinaryEventTypes",
+  "comfy_execution/progress.py:WebUIProgressHandler"
+ ],
+ "verified": [
+  {
+   "claim": "The list of nine documented messages.",
+   "how": "docs",
+   "ref": "https://docs.comfy.org/development/comfyui-server/comms_messages fetched 2026-11-01"
+  },
+  {
+   "claim": "Message order for a first run, a cached run, a raising node and an interrupted node, captured from the real executor on a CPU with a recording fake server and test nodes.",
+   "how": "run here",
+   "ref": "execution.py:PromptExecutor.execute_async"
+  },
+  {
+   "claim": "With no client_id only progress and progress_state went out, with no target.",
+   "how": "run here",
+   "ref": "execution.py:PromptExecutor.execute_async"
+  },
+  {
+   "claim": "add_message sends only with a client id or broadcast, and always to server.client_id.",
+   "how": "source",
+   "ref": "execution.py:PromptExecutor.add_message"
+  },
+  {
+   "claim": "The null-node message is sent by prompt_worker after each job.",
+   "how": "source",
+   "ref": "main.py:prompt_worker"
+  },
+  {
+   "claim": "Routing by sid: none means all, a known id means one, an unknown id means nobody.",
+   "how": "source",
+   "ref": "server.py:PromptServer.send_json"
+  },
+  {
+   "claim": "A new socket with the same clientId replaces the old one, and a reconnecting client hears its current node.",
+   "how": "source",
+   "ref": "server.py:websocket_handler"
+  },
+  {
+   "claim": "Binary frame layouts.",
+   "how": "source",
+   "ref": "server.py:PromptServer.encode_bytes"
+  },
+  {
+   "claim": "The first socket message can negotiate feature flags, and preview metadata depends on them.",
+   "how": "source",
+   "ref": "server.py:websocket_handler"
+  },
+  {
+   "claim": "--preview-method defaults to none and extra_data can override it.",
+   "how": "source",
+   "ref": "execution.py:set_preview_method"
+  }
+ ],
+ "unchecked": [
+  "The captures used a stand-in for the server and our own test nodes, so the socket layer itself was read and not run. The progress hook in the capture was our copy of the one in main.py.",
+  "We did not capture a run of the KSampler or a live preview frame. The lab builds its frames from the source's layouts."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

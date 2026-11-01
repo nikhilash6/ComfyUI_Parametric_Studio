@@ -1,0 +1,10 @@
+same seed twice, same noise: True   seed + 1, same noise: False
+first of a batch of 4 equals a single: True
+third of a batch of 4 equals a single with that seed: False
+third of a batch of 4 equals seed + 2: False
+third, rebuilt with batch_index [2] (LatentFromBatch): True
+
+read from the PNG: {'seed': 424242, 'steps': 20, 'cfg': 7.0, 'sampler_name': 'euler', 'scheduler': 'karras'} {'ckpt_name': 'model.safetensors'}
+a screenshot, or a re-saved JPEG, has no such chunk: {}
+differs: ('5', 'cfg', 7.0, 8.0)
+differs: ('5', 'scheduler', 'karras', 'normal')

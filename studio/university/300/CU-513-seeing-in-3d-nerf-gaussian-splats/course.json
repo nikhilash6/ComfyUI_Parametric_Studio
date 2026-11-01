@@ -2,13 +2,64 @@
  "title": "History 13: Seeing in 3D: NeRF, Gaussian splats and structured latents",
  "level": "300",
  "char": "latent",
- "hook": "Explore how modern 3D generation moves from implicit fields to explicit particles and structured latent spaces to render photorealistic scenes.",
+ "hook": "Ask a network for every point on every ray, or just draw blobs? How 3D went from one to the other, then to sparse latents.",
  "code": "CU-513",
  "prereq": [
   "CU-307"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy_extras/nodes_gaussian_splat.py:_render_gaussian",
+  "comfy_extras/nodes_gaussian_splat.py:RenderSplat",
+  "comfy_extras/nodes_gaussian_splat.py:TransformSplat",
+  "comfy/ldm/triposplat/gaussian.py:GaussianModel",
+  "comfy/ldm/triposplat/preview.py:render_splat",
+  "comfy/ldm/triposplat/model.py:LatentSeqMMFlowModel",
+  "comfy/ldm/trellis2/model.py:SLatFlowModel",
+  "comfy/ldm/chroma_radiance/layers.py:NerfEmbedder",
+  "comfy_extras/nodes_trellis2.py:VaeDecodeShapeTrellis"
+ ],
  "track": "three-d",
- "order": 20
+ "order": 20,
+ "graphs": [
+  "hunyuan3d_mesh"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "NeRF's input is a 5D coordinate and its outputs are volume density and view-dependent radiance, projected with classic volume rendering.",
+   "how": "docs",
+   "ref": "arXiv 2003.08934 abstract, fetched 2026-11-01"
+  },
+  {
+   "claim": "SLAT combines a sparse 3D grid with dense multiview visual features and decodes to radiance fields, Gaussians and meshes.",
+   "how": "docs",
+   "ref": "arXiv 2412.01506 abstract, fetched 2026-11-01"
+  },
+  {
+   "claim": "NerfEmbedder in Chroma Radiance adds a 2D positional encoding to image patches, so it has nothing to do with 3D.",
+   "how": "source",
+   "ref": "comfy/ldm/chroma_radiance/layers.py:NerfEmbedder"
+  },
+  {
+   "claim": "RenderSplat composites front to back through depth slabs.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_gaussian_splat.py:_render_gaussian"
+  },
+  {
+   "claim": "The lab's three-slice result matches a hand calculation.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graph passes validate_prompt with file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We could not extract text from the NeRF PDF in this session, so the lab's sum is the standard emission-absorption form, labelled as such. We confirmed from the abstract only that NeRF uses classic volume rendering.",
+  "The 192 samples in the cost line is an example number we picked. We did not confirm the paper's sample counts.",
+  "We ran no 3D model for this lesson. No 3D checkpoint is on our test machine.",
+  "The real-time claim for splats is the paper's own, and we did not time it."
+ ]
 }

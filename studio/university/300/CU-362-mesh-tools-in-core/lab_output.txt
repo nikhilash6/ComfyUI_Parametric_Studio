@@ -1,0 +1,17 @@
+icosphere: 642 vertices, 1280 faces. True sphere radius 1.
+target faces   faces left   vertices   mean distance from the sphere   worst
+640            640          322        0.00245                         0.00500
+320            320          162        0.00599                         0.00926
+160            160          82         0.01307                         0.02047
+80             80           42         0.02604                         0.04135
+
+RemeshMesh memory_required floor
+resolution  128:   0.12 GiB
+resolution  256:   1.00 GiB
+resolution  512:   8.00 GiB
+resolution 1024:  64.00 GiB
+
+A cube has 8 corners. Cut into 6 separate squares its vertex list becomes 24 ; laid out as one cross, 14 ; the geometry is the same
+    6 charts in a 1024 atlas with padding 1: at most 99.0% of the texels hold colour
+   96 charts in a 1024 atlas with padding 1: at most 95.3% of the texels hold colour
+ 1536 charts in a 1024 atlas with padding 1: at most 84.4% of the texels hold colour

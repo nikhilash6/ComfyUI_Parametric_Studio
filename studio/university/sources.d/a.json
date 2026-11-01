@@ -1,0 +1,21 @@
+{
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/utils/executionUtil.ts": {"title": "ComfyUI front end, src/utils/executionUtil.ts", "checked": "fetched raw 2026-11-01, commit 4b24c63: graphToPrompt"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/lib/litegraph/src/subgraph/ExecutableNodeDTO.ts": {"title": "ComfyUI front end, ExecutableNodeDTO.ts", "checked": "fetched raw 2026-11-01: resolveInput, resolveOutput, _getBypassSlotIndex"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/packages/graph-model/src/globalEnums.ts": {"title": "ComfyUI front end, globalEnums.ts", "checked": "fetched raw 2026-11-01: LGraphEventMode"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/packages/graph-model/src/workflowSchema.ts": {"title": "ComfyUI front end, workflowSchema.ts", "checked": "fetched raw 2026-11-01: models, definitions.subgraphs, cnr_id, aux_id"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/packages/api-client/src/ComfyApi.ts": {"title": "ComfyUI front end, ComfyApi.ts", "checked": "fetched raw 2026-11-01: queuePrompt"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/extensions/core/rerouteNode.ts": {"title": "ComfyUI front end, rerouteNode.ts", "checked": "fetched raw 2026-11-01: isVirtualNode and its comment"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/extensions/core/noteNode.ts": {"title": "ComfyUI front end, noteNode.ts", "checked": "fetched raw 2026-11-01: Note and MarkdownNote are virtual"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/extensions/core/groupOptions.ts": {"title": "ComfyUI front end, groupOptions.ts", "checked": "fetched raw 2026-11-01: group menu sets modes"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/extensions/core/saveImageExtraOutput.ts": {"title": "ComfyUI front end, saveImageExtraOutput.ts", "checked": "fetched raw 2026-11-01"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/utils/searchAndReplace.ts": {"title": "ComfyUI front end, searchAndReplace.ts", "checked": "fetched raw 2026-11-01: %date:...% replacement"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/platform/keybindings/defaults.ts": {"title": "ComfyUI front end, keybindings/defaults.ts", "checked": "fetched raw 2026-11-01: Ctrl+B and Ctrl+M"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/platform/workflowErrors/missingModel/modelUrlAllowlist.ts": {"title": "ComfyUI front end, modelUrlAllowlist.ts", "checked": "fetched raw 2026-11-01"},
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/platform/workflowErrors/missingModel/missingModelDownload.ts": {"title": "ComfyUI front end, missingModelDownload.ts", "checked": "fetched raw 2026-11-01: allowed suffixes"},
+ "https://docs.comfy.org/development/core-concepts/nodes": {"title": "ComfyUI Nodes: Types, Inputs, and Outputs", "checked": "fetched 2026-11-01, title confirmed: node states"},
+ "https://docs.comfy.org/development/core-concepts/models": {"title": "ComfyUI Models: Files, Folders, and Loader Nodes", "checked": "fetched 2026-11-01, title confirmed: folders, refresh, GGUF"},
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/app/assets/lifecycle.py": {"title": "ComfyUI v0.43.0, app/assets/lifecycle.py", "checked": "read 2026-11-01: cleanup_temp_filesystem"},
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/extra_model_paths.yaml.example": {"title": "ComfyUI v0.43.0, extra_model_paths.yaml.example", "checked": "read 2026-11-01"},
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/controlnet.py": {"title": "ComfyUI v0.43.0, comfy/controlnet.py", "checked": "read 2026-11-01"},
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_api_nodes/nodes_bfl.py": {"title": "ComfyUI v0.43.0, comfy_api_nodes/nodes_bfl.py", "checked": "read 2026-11-01: FluxProUltraImageNode"}
+}

@@ -1,0 +1,258 @@
+{
+ "https://arxiv.org/abs/2104.09864": {
+  "title": "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+  "checked": "fetched from the arXiv export API 2026-11-01, exact title"
+ },
+ "https://arxiv.org/abs/2305.13245": {
+  "title": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+  "checked": "fetched from the arXiv export API 2026-11-01, exact title"
+ },
+ "https://arxiv.org/abs/2212.09748": {
+  "title": "Scalable Diffusion Models with Transformers",
+  "checked": "fetched from the arXiv export API 2026-11-01, exact title"
+ },
+ "https://arxiv.org/abs/2403.03206": {
+  "title": "Scaling Rectified Flow Transformers for High-Resolution Image Synthesis",
+  "checked": "fetched from the arXiv export API 2026-11-01, exact title"
+ },
+ "https://arxiv.org/abs/2010.11929": {
+  "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+  "checked": "fetched from the arXiv export API 2026-11-01, exact title"
+ },
+ "https://arxiv.org/abs/1701.06538": {
+  "title": "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer",
+  "checked": "fetched from the arXiv export API 2026-11-01, exact title"
+ },
+ "https://arxiv.org/abs/2101.03961": {
+  "title": "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity",
+  "checked": "fetched from the arXiv export API 2026-11-01, exact title"
+ },
+ "https://arxiv.org/abs/2103.14030": {
+  "title": "Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+  "checked": "fetched from the arXiv export API 2026-11-01, exact title"
+ },
+ "https://arxiv.org/abs/2004.05150": {
+  "title": "Longformer: The Long-Document Transformer",
+  "checked": "fetched from the arXiv export API 2026-11-01, exact title"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/lumina/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/lumina/model.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: JointAttention, n_kv_heads, n_rep"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/layers.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/flux/layers.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: Modulation, DoubleStreamBlock, EmbedND"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_detection.py": {
+  "title": "ComfyUI v0.43.0, comfy/model_detection.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: Lumina and FLUX sizes"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/llama.py": {
+  "title": "ComfyUI v0.43.0, comfy/text_encoders/llama.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: num_key_value_heads, FixedKV, BaseGenerate"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/diffusionmodules/mmdit.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/modules/diffusionmodules/mmdit.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: modulate, _block_mixing, sincos tables"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/wan/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/wan/model.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: rope_embedder, rope_encode"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/pixart/pixartms.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/pixart/pixartms.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: get_2d_sincos_pos_embed_torch"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/wan/ar_model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/wan/ar_model.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: CausalWanSelfAttention kv_cache"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_ar_video.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_ar_video.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: SamplerARVideo docstring"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/hidream/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/hidream/model.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: MoEGate, MOEFeedForwardSwiGLU"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/hunyuan3dv2_1/hunyuandit.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/hunyuan3dv2_1/hunyuandit.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: MoEBlock, AddAuxLoss"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/sam3/sam.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/sam3/sam.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: window_partition, Block"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/trellis2/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/trellis2/model.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: SparseMultiHeadAttention"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/seedvr/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/seedvr/model.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: make_shifted_720Pwindows_bysize"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/math.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/flux/math.py",
+  "checked": "read in the v0.43.0 checkout, 2026-11-01: rope, apply_rope"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/minimax_music/ar.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/minimax_music/ar.py",
+  "checked": "read 2026-11-01: MiniMaxMusic3AR.generate, init_kv_cache call"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/gpt_oss.py": {
+  "title": "ComfyUI v0.43.0, comfy/text_encoders/gpt_oss.py",
+  "checked": "read 2026-11-01: num_local_experts, num_experts_per_tok"
+ },
+ "https://arxiv.org/abs/1706.08500": {
+  "title": "GANs Trained by a Two Time-Scale Update Rule Converge to a Local Nash Equilibrium",
+  "checked": "title from the arXiv export API, abstract read, 2026-11-01"
+ },
+ "https://arxiv.org/abs/1801.03924": {
+  "title": "The Unreasonable Effectiveness of Deep Features as a Perceptual Metric",
+  "checked": "title from the arXiv export API, abstract read, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2103.00020": {
+  "title": "Learning Transferable Visual Models From Natural Language Supervision",
+  "checked": "title from the arXiv export API, abstract read, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2104.08718": {
+  "title": "CLIPScore: A Reference-free Evaluation Metric for Image Captioning",
+  "checked": "title from the arXiv export API, abstract read, 2026-11-01; w = 2.5 and the observed range of 0 to 0.4 read in the HTML version"
+ },
+ "https://arxiv.org/abs/2303.11897": {
+  "title": "TIFA: Accurate and Interpretable Text-to-Image Faithfulness Evaluation with Question Answering",
+  "checked": "title from the arXiv export API, abstract read, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/app/agent_host.py": {
+  "title": "ComfyUI v0.43.0, app/agent_host.py",
+  "checked": "read 2026-11-01: module docstring, comfyui.agent entry point"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_api_nodes/util/client.py": {
+  "title": "ComfyUI v0.43.0, comfy_api_nodes/util/client.py",
+  "checked": "read 2026-11-01: poll_op, sync_op"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sample.py": {
+  "title": "ComfyUI v0.43.0, comfy/sample.py",
+  "checked": "read and run on a CPU 2026-11-01: prepare_noise"
+ },
+ "https://docs.comfy.org/development/comfyui-server/comms_messages": {
+  "title": "ComfyUI docs: Messages",
+  "checked": "fetched 2026-11-01: table of built-in message types"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/SECURITY.md": {
+  "title": "ComfyUI v0.43.0, SECURITY.md",
+  "checked": "read at v0.43.0 on 2026-11-01: threat model and what is not a vulnerability"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/main.py": {
+  "title": "ComfyUI v0.43.0, main.py",
+  "checked": "read at v0.43.0 on 2026-11-01: prompt_worker and the progress hook"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/protocol.py": {
+  "title": "ComfyUI v0.43.0, protocol.py",
+  "checked": "read at v0.43.0 on 2026-11-01: BinaryEventTypes"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_execution/progress.py": {
+  "title": "ComfyUI v0.43.0, comfy_execution/progress.py",
+  "checked": "read at v0.43.0 on 2026-11-01: WebUIProgressHandler, progress_state"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_execution/jobs.py": {
+  "title": "ComfyUI v0.43.0, comfy_execution/jobs.py",
+  "checked": "read at v0.43.0 on 2026-11-01: validate_job_id"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/app/user_manager.py": {
+  "title": "ComfyUI v0.43.0, app/user_manager.py",
+  "checked": "read at v0.43.0 on 2026-11-01: get_request_user_id, /users, /userdata routes"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/api_server/routes/internal/internal_routes.py": {
+  "title": "ComfyUI v0.43.0, internal_routes.py",
+  "checked": "read at v0.43.0 on 2026-11-01: /internal/logs, folder_paths, files"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/default_workflow.json": {
+  "title": "ComfyUI v0.43.0, default_workflow.json",
+  "checked": "read at v0.43.0 on 2026-11-01 and converted to API format in a test"
+ },
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/stores/appModeStore.ts": {
+  "title": "ComfyUI front end, appModeStore.ts",
+  "checked": "fetched raw 2026-11-01, commit 9458ec9: selected inputs and outputs, nodeTypeValidForApp"
+ },
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/platform/workflow/management/stores/comfyWorkflow.ts": {
+  "title": "ComfyUI front end, comfyWorkflow.ts",
+  "checked": "fetched raw 2026-11-01: LinearInput, LinearData, extra.linearMode"
+ },
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/renderer/extensions/linearMode/LinearControls.vue": {
+  "title": "ComfyUI front end, LinearControls.vue",
+  "checked": "fetched raw 2026-11-01: the Run button calls Comfy.QueuePrompt"
+ },
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/components/actionbar/ComfyRunButton/ComfyQueueButton.vue": {
+  "title": "ComfyUI front end, ComfyQueueButton.vue",
+  "checked": "fetched raw 2026-11-01: the ordinary Run button uses the same command"
+ },
+ "https://github.com/mdn/content/blob/main/files/en-us/web/http/guides/cors/index.md": {
+  "title": "MDN: Cross-Origin Resource Sharing (CORS)",
+  "checked": "fetched raw from MDN's content repository 2026-11-01: simple requests"
+ },
+ "https://github.com/Comfy-Org/ComfyUI_frontend/blob/main/src/core/graph/widgets/valueControlWidgets.ts": {
+  "title": "ComfyUI front end, valueControlWidgets.ts",
+  "checked": "fetched raw 2026-11-01: the control widget is marked not to be serialized into the prompt"
+ },
+ "https://arxiv.org/abs/2204.03458": {
+  "title": "Video Diffusion Models",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2304.08818": {
+  "title": "Align your Latents: High-Resolution Video Synthesis with Latent Diffusion Models",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2311.15127": {
+  "title": "Stable Video Diffusion: Scaling Latent Video Diffusion Models to Large Datasets",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2408.06072": {
+  "title": "CogVideoX: Text-to-Video Diffusion Models with An Expert Transformer",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2501.03575": {
+  "title": "Cosmos World Foundation Model Platform for Physical AI",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2210.03142": {
+  "title": "On Distillation of Guided Diffusion Models",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2311.05556": {
+  "title": "LCM-LoRA: A Universal Stable-Diffusion Acceleration Module",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2311.17042": {
+  "title": "Adversarial Diffusion Distillation",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2402.13929": {
+  "title": "SDXL-Lightning: Progressive Adversarial Diffusion Distillation",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2306.00978": {
+  "title": "AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration",
+  "checked": "title, date and abstract from the arXiv export API, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/hydit/models.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/hydit/models.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/cosmos/cosmos_tokenizer/layers3d.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/cosmos/cosmos_tokenizer/layers3d.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/cosmos/position_embedding.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/cosmos/position_embedding.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/cogvideo/vae.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/cogvideo/vae.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/cogvideo/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/cogvideo/model.py",
+  "checked": "read in a v0.43.0 checkout, 2026-11-01"
+ }
+}

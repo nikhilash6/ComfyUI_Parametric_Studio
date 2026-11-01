@@ -1,0 +1,83 @@
+{
+ "code": "CU-382",
+ "title": "Same name, different maths",
+ "level": "300",
+ "prereq": [
+  "CU-208"
+ ],
+ "char": "graph",
+ "hook": "Two nodes called NAG differ by one on the same slider. Blue noise isn't always blue. Our reading of packs' source found names you can't trust, so read the formula.",
+ "track": "packs",
+ "order": 30,
+ "graphs": [
+  "g_nag",
+  "nm_sigmas"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_nag.py:NAGuidance",
+  "comfy/model_sampling.py:time_snr_shift",
+  "comfy/model_sampling.py:flux_time_shift",
+  "comfy_extras/nodes_perpneg.py:perp_neg",
+  "comfy_extras/nodes_custom_sampler.py:BasicScheduler",
+  "comfy_extras/nodes_align_your_steps.py:AlignYourStepsScheduler",
+  "comfy/samplers.py:ddim"
+ ],
+ "verified": [
+  {
+   "claim": "Core's NAG uses z_pos × scale − z_neg × (scale − 1).",
+   "how": "source",
+   "ref": "comfy_extras/nodes_nag.py"
+  },
+  {
+   "claim": "sd-perturbed-attention's NAG uses z_pos + scale × (z_pos − z_neg).",
+   "how": "source",
+   "ref": "pamparamm/sd-perturbed-attention nag_nodes.py, read as text"
+  },
+  {
+   "claim": "With σ = 1, flux_time_shift at μ equals time_snr_shift at α = e^μ.",
+   "how": "run here",
+   "ref": "lab.py, formulas from comfy/model_sampling.py"
+  },
+  {
+   "claim": "Core's perp is neg minus its projection on pos, and bvhari's variable named perp is pos projected on neg.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_perpneg.py, bvhari/ComfyUI_PerpNeg perpneg.py, read as text"
+  },
+  {
+   "claim": "PowerNoiseSuite's blue_noise defaults to alpha 2 and divides the FFT by the square root of (fx² + fy²)^(alpha/2).",
+   "how": "source",
+   "ref": "WASasquatch/PowerNoiseSuite modules/latent_noise.py, read as text"
+  },
+  {
+   "claim": "BasicScheduler keeps the step count at low denoise, and AlignYourSteps cuts it to round(steps × denoise).",
+   "how": "source",
+   "ref": "comfy_extras/nodes_custom_sampler.py, comfy_extras/nodes_align_your_steps.py"
+  },
+  {
+   "claim": "The sampler named ddim runs euler with an inpaint option, and our one-seed renders matched pixel for pixel.",
+   "how": "run here",
+   "ref": "comfy/samplers.py, studio/sampling_lab/renders.json"
+  },
+  {
+   "claim": "Both graphs pass validate_prompt, and nm_sigmas ran on a CPU.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "Core's NAG sets an attn1 output patch and reads z_pos and z_neg from the CFG batch. sd-perturbed-attention replaces attn2 and runs its own negative attention.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_nag.py, pamparamm/sd-perturbed-attention nag_nodes.py, read as text"
+  }
+ ],
+ "unchecked": [
+  "Pack code was read as text and never run. Our reproductions are of the formulas we read, written in our own code.",
+  "Packs change. These readings are of the copies we had on 2026-11-01.",
+  "A different formula isn't a bug unless its author meant something else. We don't say which author is right.",
+  "Which of these differences shows in a picture, beyond what the Sampling Lab renders cover.",
+  "Whether core's NAG at 5 and the pack's at 4 give similar pictures. They hook into different attention, and we compared only the formula."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 2
+ }
+}

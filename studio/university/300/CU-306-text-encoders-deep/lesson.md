@@ -1,86 +1,127 @@
 # CU-306 - Text encoders: CLIP, T5 and LLM encoders
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Say what each encoder hands to the diffusion model, how long a prompt it takes, and what a token can see while it is encoded. Taught by Madame Attention.
 
 ## Why this matters
-Welcome back to the studio. You have mastered the diffusion process; you know how noise becomes image. But who tells the noise *what* to become? That is the text encoder. It is the bridge between human language and the latent space. In ComfyUI, this is not a single black box. It is a family of architectures, each with a different philosophy on how to read a sentence.
 
-We are moving from the simple "bag of words" era to the era of context. Whether you are using the classic `CLIP` for stability, the robust `T5` for complex semantics, or the massive LLM-based encoders like `Llama` or `Qwen`, the core question remains: How does the model decide which part of your prompt influences which part of the image? Today, we dissect the machinery that answers that question.
+The diffusion model never sees your words. It sees a tensor from a text encoder, and it was trained with one particular encoder. So the encoder decides how long your prompt can be, whether brackets mean anything, and how much memory the text costs.
 
-## The intuition
-Imagine a sentence: "A red car drives fast."
-In a **bidirectional** encoder (like BERT or the CLIP text tower), the word "red" can look at "car" and "drives." It sees the whole context at once. It is like a room where everyone can see everyone else.
-In a **causal** encoder (like GPT or Llama), the word "red" only sees itself. The word "car" sees "red" and "car." The word "fast" sees "red," "car," "drives," and "fast." It is a one-way mirror.
+## Who can see whom
 
-This distinction is critical. When you use a causal LLM as a text encoder, you are often taking the representation of the *last* token. Why? Because in a causal model, the last token has seen everything that came before it. It is the only token that has the full context of the sentence. The first token is blind to the future; the last token is the sum of the past.
+All of these are stacks of self-attention (CU-301): each token looks at other tokens and mixes in what it finds. The difference is a mask, which sets which tokens each may look at.
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
-At the heart of all these encoders is Self-Attention. Let us define the math plainly.
+| Encoder | Mask in ComfyUI | So token 3 can see |
+|---|---|---|
+| CLIP | Causal: `triu` of the scores | Tokens 0 to 3 only |
+| T5 | Padding only | Every real token, before and after it |
+| Llama-family LLMs | Causal, when encoding a sequence | Tokens 0 to 3 only |
 
-Let $x$ be your input sequence of token embeddings. Let $d$ be the dimension of these embeddings.
-We compute three matrices: Query ($Q$), Key ($K$), and Value ($V$). In our simplified lab, $Q=K=V=x$.
+CLIP is often called a bidirectional encoder. In ComfyUI's code it isn't:
 
-The attention score is calculated as:
-$$ \text{scores} = \frac{Q K^T}{\sqrt{d}} $$
+```python
+causal_mask = torch.full((x.shape[1], x.shape[1]), -torch.finfo(x.dtype).max, ...).triu_(1)
+```
 
-Here, $Q K^T$ computes the dot product between every query and every key. This tells us how much each token should "attend" to every other token. We divide by $\sqrt{d}$ to keep the values stable.
+The lab shows what that means. Change the last token, and the earlier tokens' CLIP output doesn't move at all, while T5's does.
 
-Then, we apply a **mask**.
-1.  **Bidirectional Mask**: A matrix of all 1s. Every position is allowed to attend to every other position.
-2.  **Causal Mask**: A lower-triangular matrix. Position $i$ can only attend to positions $0$ through $i$. Positions $j > i$ are masked out.
+## What gets handed on
 
-We apply the mask by setting disallowed scores to a very large negative number (effectively $-\infty$). Then we apply Softmax:
-$$ \text{attn\_weights} = \text{softmax}(\text{scores}) $$
+Here is the other thing people get wrong. The model gets a **row for every token**, not a single summary from the last one. A summary vector does exist, for some families, as a second output called pooled.
 
-Finally, the output is the weighted sum of values:
-$$ \text{output} = \text{attn\_weights} \times V $$
+| Family | Encoders | Tensor | Pooled |
+|---|---|---|---|
+| SD 1.5 | CLIP-L | `[1, 77, 768]` per chunk | Not used by the model |
+| SDXL | CLIP-L + CLIP-G, side by side | `[1, 77, 2048]` per chunk | CLIP-G's |
+| SD3 | CLIP-L, CLIP-G, T5 | `[1, 154, 4096]` at the shortest | Both CLIPs' |
+| FLUX.1 | T5, with CLIP-L for its pooled only | `[1, 256, 4096]` at the shortest | CLIP-L's |
+| FLUX.2 Klein 4B | Qwen3, three layers side by side | `[1, 512, 7680]` at the shortest | Not used by the model, as we read it |
 
-In ComfyUI, you will see this logic implemented in various forms. For LLMs, you might see `Llama2_` in `comfy/text_encoders/llama.py` handling the core transformer logic. For T5, you will see `T5Attention` in `comfy/text_encoders/t5.py`, which adds relative position bias to the standard attention. For Qwen, the `QwenImageTransformerBlock` in `comfy/ldm/qwen_image/model.py` uses `apply_rotary_emb` to handle positional information, ensuring the model knows the order of tokens.
+The pooled vector in CLIP is the row at the end token, `x[..., eos_index]`. In a causal model, that row has seen the whole prompt, which is a good reason to use it as a summary. SD3 and FLUX.1 use the text encoders' output in two ways at once, then: rows for attention, plus one vector for the model's global input.
 
-## In ComfyUI
-ComfyUI organizes these encoders in the `comfy/text_encoders` folder.
-*   **CLIP**: The classic. It uses a bidirectional transformer. The output is typically pooled to a single vector or a sequence of vectors that are projected into the diffusion model's space.
-*   **T5**: Implemented in `comfy/text_encoders/t5.py`. It is a bidirectional encoder-decoder architecture. The `T5` class handles the forward pass. It is known for better handling of long prompts and complex grammar than CLIP.
-*   **LLM Encoders**: This is the modern frontier.
-    *   `comfy/text_encoders/llama.py` contains `Llama2_`, the core implementation for Llama models. It uses `precompute_freqs_cis` for Rotary Position Embeddings (RoPE).
-    *   `comfy/text_encoders/qwen35.py` contains `Qwen35`, which supports Multi-Token Prediction (MTP) and uses `GatedDeltaNet` for attention.
-    *   `comfy/text_encoders/gemma4.py` contains `Gemma4Base` for Gemma variants.
+Which layer also matters. SD 1.5 uses the last layer by default, and SDXL takes the second to last. Klein reads layers 9, 18 and 27 of its Qwen3, and stacks them side by side, which is why the width is 3 × 2560. It also wraps your text in a chat template before encoding.
 
-When you load a model in ComfyUI, the specific class in these files is instantiated. The text is tokenized (using `BPETokenizer` or `LlamaTokenizerFast` from `comfy/text_encoders/bpe_tokenizer.py`), passed through the transformer layers, and the final hidden states are extracted. For causal models, ComfyUI often extracts the last token's embedding as the primary conditioning signal, or uses a specific pooling strategy defined by the model's architecture.
+## Prompt length
+
+CLIP has 77 positions, because its position table has 77 rows. So `tokenize_with_weights` cuts long prompts into chunks: start token, 75 of yours, end token. Each chunk is encoded alone, then the rows are joined. A word in chunk 2 can't see a word in chunk 1 while being encoded.
+
+T5 and Qwen3 use `max_length=99999999` with a minimum, so a long prompt stays one sequence. T5 on Flux is padded to at least 256, and Qwen3 on Klein to at least 512.
+
+{{play:chunks}}
+
+## Three real graphs
+
+SD 1.5, where `CheckpointLoaderSimple` hands you the one CLIP:
+
+{{graph:sd15_txt2img}}
+
+SD 3.5, with three encoders:
+
+{{graph:sd35_flow}}
+
+Klein, with one LLM encoder through `CLIPLoader`:
+
+{{graph:c_klein_fast}}
+
+## What goes wrong
+
+- **A word past token 75 seems ignored on SD 1.5.** It went into a new chunk, and it can't see the words of the first one while encoded. Move it earlier, or shorten the prompt.
+- **`clip skip` copied from another family.** Each family already picks its own layer. Check before changing it. SDXL's choice is the second to last by default.
+- **Weights on an LLM encoder.** Many of these turn weights off (CU-261).
+- **An out-of-memory error at the text stage.** T5-XXL has 24 layers at width 4096 with 64 heads, far bigger than CLIP-L's 12 at 768. This is separate from the diffusion model's memory (CU-305).
+- **Mixing up encoders.** Each family's tokenizer and encoder are a pair. `CLIPLoader`'s `type` input picks how the file is read, so set it to match.
+- **Assuming the last token is what the model uses.** It uses every row. Only the pooled vector comes from one row, and only on families that use it.
 
 ## Lab
-We ran a small experiment to visualize the difference between bidirectional and causal attention. We created a sequence of 5 random vectors and computed attention weights for both mask types.
 
-Here are the key results from the lab output:
+The first part is an experiment on the mask, using random weights. It changes only the last of 6 tokens.
 
-1.  `RESULT causal_visible_count_token_0 = 1`
-    **Proof**: The first token in a causal model can only see itself. It has no context.
-2.  `RESULT causal_visible_count_token_4 = 5`
-    **Proof**: The last token in a causal model can see all 5 tokens. It has the full context.
-3.  `RESULT causal_first_token_attn_to_0 = 1`
-    **Proof**: Since the first token can only attend to itself, its attention weight to position 0 is 1.0 (100%).
-4.  `RESULT causal_last_token_attn_to_4 = 0.88373`
-    **Proof**: The last token attends heavily to itself (0.88), but also distributes attention to previous tokens.
-5.  `RESULT causal_last_token_earlier_sum = 0.11627`
-    **Proof**: The sum of attention weights the last token gives to all *previous* tokens is 0.116. This proves that the last token aggregates information from the entire sequence, not just itself.
-6.  `RESULT bidir_visible_count_token_0 = 5`
-    **Proof**: In a bidirectional model, even the first token can see all 5 tokens. Context is available from the start.
+```text
+change only the last of 6 tokens. How far does each token's output move?
+token   with CLIP's causal mask   with no mask, as in T5
+0       0.0000                    0.1054
+1       0.0000                    3.7270
+2       0.0000                    5.1937
+3       0.0000                    4.7433
+4       0.0000                    5.3531
+5       12.7101                   12.7101
+```
 
-This lab confirms the intuition: Causal models build context sequentially. The last token is the "summary" of the sentence. Bidirectional models have global context from the start.
+Where the pooled vector comes from: the end token, the first place its id appears.
 
-## Common mistakes
-1.  **Assuming all LLMs are the same**: `Llama`, `Qwen`, and `Gemma` have different attention mechanisms. `Qwen35` uses `GatedDeltaNet`, while `Llama2_` uses standard RoPE. Do not assume weights are interchangeable.
-2.  **Ignoring the tokenizer**: The `BPETokenizer` or `LlamaTokenizerFast` must match the model. If you use a Llama model with a CLIP tokenizer, the embeddings will be garbage.
-3.  **Misunderstanding pooling**: For causal models, taking the *first* token as the conditioning vector is usually wrong. It lacks context. Always check if your workflow uses the last token or a specific pooling method.
-4.  **Forgetting position embeddings**: `apply_rotary_emb` is crucial. Without it, the model doesn't know the order of words. "Cat eats dog" is different from "Dog eats cat."
+```text
+tokens [49406, 320, 1125, 49407, 49407, 49407] -> row 3
+```
 
-## Go deeper
-To understand the origins of these architectures, read the foundational papers:
-*   **arXiv:2103.00020**: "Learning Transferable Visual Models From Natural Language Supervision" (CLIP). This paper introduced the concept of learning image representations from raw text, enabling zero-shot transfer.
-*   **arXiv:1910.10683**: "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer" (T5). This paper established the unified text-to-text framework that T5 uses, treating all NLP tasks as text-to-text problems.
+The chunking rule, for single-token words. Real words can use several tokens.
 
-These papers are the bedrock. The LLM encoders in ComfyUI are built upon the same transformer principles, scaled up and adapted for image generation.
+```text
+tokens in the prompt    chunks   tensor for SD 1.5   tensor for SDXL
+1                       1        [1, 77, 768]        [1, 77, 2048]
+75                      1        [1, 77, 768]        [1, 77, 2048]
+76                      2        [1, 154, 768]       [1, 154, 2048]
+150                     2        [1, 154, 768]       [1, 154, 2048]
+151                     3        [1, 231, 768]       [1, 231, 2048]
+```
 
-> UNVERIFIED: name not in evidence:  for complex semantics, or the massive LLM-based encoders like 
+And the joins each family does, with the shapes from the source.
 
+```text
+SDXL        CLIP-L and CLIP-G side by side    [1, 77, 2048]
+SD3         padded to 4096, T5 on the end     [1, 154, 4096]
+FLUX.1      T5 tokens, CLIP-L's pooled vector [1, 256, 4096] and [1, 768]
+Klein 4B    three hidden layers side by side  [1, 512, 7680]
+```
 
+## Sources
+
+- [Radford et al. 2021. Learning Transferable Visual Models From Natural Language Supervision](https://arxiv.org/abs/2103.00020)
+- [Raffel et al. 2019. Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer](https://arxiv.org/abs/1910.10683)
+- [ComfyUI v0.43.0, comfy/clip_model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/clip_model.py)
+- [ComfyUI v0.43.0, comfy/sd1_clip.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sd1_clip.py)
+- [ComfyUI v0.43.0, comfy/sd1_clip_config.json](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sd1_clip_config.json)
+- [ComfyUI v0.43.0, comfy/sdxl_clip.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sdxl_clip.py)
+- [ComfyUI v0.43.0, comfy/text_encoders/sd3_clip.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/sd3_clip.py)
+- [ComfyUI v0.43.0, comfy/text_encoders/flux.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/flux.py)
+- [ComfyUI v0.43.0, comfy/text_encoders/t5.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/t5.py)
+- [ComfyUI v0.43.0, comfy/text_encoders/t5_config_xxl.json](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/t5_config_xxl.json)
+- [ComfyUI v0.43.0, comfy/text_encoders/llama.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/llama.py)

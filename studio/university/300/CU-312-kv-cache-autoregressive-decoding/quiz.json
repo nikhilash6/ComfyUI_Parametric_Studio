@@ -4,56 +4,59 @@
  "level": "300",
  "questions": [
   {
-   "q": "What is the primary computational benefit of using a KV cache in autoregressive decoding?",
+   "q": "Why can a KV cache keep an old token's key and value?",
    "options": [
-    "It reduces the total generation time from quadratic O(N^2) to linear O(N) by avoiding recomputation of past tokens.",
-    "It eliminates the need for GPU memory by storing keys and values on the CPU.",
-    "It allows the model to generate multiple tokens in parallel without any sequential dependency.",
-    "It reduces the dimension of the key vectors (d_k) to speed up matrix multiplication."
+    "Earlier tokens don't change while later ones are generated",
+    "Keys and values are the same number",
+    "The cache stores pixels",
+    "Attention ignores old tokens"
    ],
-   "answer": "It reduces the total generation time from quadratic O(N^2) to linear O(N) by avoiding recomputation of past tokens.",
-   "why": "The lesson states that without caching, recomputing history leads to O(N^2) total work, while the KV cache transforms this into a linear process by storing previous Key and Value projections."
+   "answer": "Earlier tokens don't change while later ones are generated",
+   "why": "A causal decoder's earlier tokens see only what's before them, so their numbers stay fixed."
   },
   {
-   "q": "In the context of the KV cache mechanism described, what is the time-space trade-off involved?",
+   "q": "After a cache, what work is left for each new token?",
    "options": [
-    "We spend memory (space) to store the past Keys and Values, which saves computation (time) in future steps.",
-    "We spend computation (time) to compress the cache, which saves memory (space) for the model weights.",
-    "We spend memory (space) to store the entire hidden state history, which saves the need for attention scores.",
-    "We spend computation (time) to recompute the cache, which saves memory (space) by discarding old tokens."
+    "Project one token and attend one row against everything stored",
+    "Nothing",
+    "Re-project all tokens",
+    "Attend all rows, but with fewer heads"
    ],
-   "answer": "We spend memory (space) to store the past Keys and Values, which saves computation (time) in future steps.",
-   "why": "The lesson explicitly defines this as a 'classic time-space trade-off' where memory is spent to store the past to save computation in the future."
+   "answer": "Project one token and attend one row against everything stored",
+   "why": "That is step_cached in the lab."
   },
   {
-   "q": "According to the lesson, why is it valid to store the Key ($K_j$) and Value ($V_j$) vectors for previous tokens ($j < t$) in the cache?",
+   "q": "What's the main price of a KV cache?",
    "options": [
-    "Because they are constant and do not change as new tokens are generated.",
-    "Because they are smaller in dimension than the Query vectors.",
-    "Because they are computed using a different set of weights than the current token.",
-    "Because they are only needed for the first few tokens of the sequence."
+    "Memory that grows with tokens, layers and key/value heads",
+    "Lower quality",
+    "A second GPU",
+    "Slower first token only"
    ],
-   "answer": "Because they are constant and do not change as new tokens are generated.",
-   "why": "The lesson states: 'The critical insight is that $K_j$ and $V_j$ for $j < t$ are constant. They do not change. Therefore, storing them is valid.'"
+   "answer": "Memory that grows with tokens, layers and key/value heads",
+   "why": "Each layer stores two arrays. The table in the lab sizes them."
   },
   {
-   "q": "In the ComfyUI codebase, which class in `comfy/text_encoders/llama.py` is dedicated to KV cache management?",
+   "q": "Why don't ordinary diffusion samplers use a KV cache from step to step?",
    "options": [
-    "FixedKV",
-    "LinearKV",
-    "BaseGenerate",
-    "MMDiT"
+    "Each step changes every token in the latent, so old keys are stale",
+    "They have no attention",
+    "They don't use a GPU",
+    "Their prompts are too short"
    ],
-   "answer": "FixedKV",
-   "why": "The lesson states: 'In `comfy/text_encoders/llama.py`, we find the class `FixedKV`. This class is dedicated to KV cache management.'"
+   "answer": "Each step changes every token in the latent, so old keys are stale",
+   "why": "The cache rule needs earlier tokens to stay the same. Sampling changes all of them."
   },
   {
-   "q": "In the lab results, what does the assertion `cache_consistency = True` verify about the KV cache update process?",
+   "q": "You edit an early token and keep the old cache. What happens?",
    "options": [
-    null
+    "The output goes wrong, as the lab shows",
+    "It's still correct",
+    "The token is ignored and the output is unchanged",
+    "The model reloads"
    ],
-   "answer": "It verifies that the first 10 rows of the updated cache exactly match the old cache, proving that the historical data was preserved and not modified or corrupted during the append operation.",
-   "why": "The lesson explains that `cache_consistency = True` confirms that 'the historical data in the cache was preserved exactly during the update' and that 'we are not modifying history, only appending to it.'"
+   "answer": "The output goes wrong, as the lab shows",
+   "why": "The lab's stale cache gives an answer far from a full recompute."
   }
  ]
 }

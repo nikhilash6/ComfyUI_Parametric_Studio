@@ -19,5 +19,47 @@
   "comfy_extras/nodes_lora_debug.py:LoraLoaderBypass"
  ],
  "track": "lora-training",
- "order": 10
+ "order": 10,
+ "kit": true,
+ "graphs": [
+  "sd15_lora",
+  "sd15_train_lora"
+ ],
+ "verified": [
+  {
+   "claim": "A LoRA's sum is weight += strength x scale x up @ down, with scale alpha / rank, or 1 with no alpha. The lab's version equals the real one, difference 0.",
+   "how": "run here",
+   "ref": "comfy/weight_adapter/lora.py:LoRAAdapter.calculate_weight"
+  },
+  {
+   "claim": "ModelPatcher merges per module when it fits, and otherwise applies LowVramPatch on each forward pass.",
+   "how": "source",
+   "ref": "comfy/model_patcher.py:LowVramPatch"
+  },
+  {
+   "claim": "FP8 stores back through stochastic rounding, seeded by the key.",
+   "how": "source",
+   "ref": "comfy/float.py:stochastic_rounding"
+  },
+  {
+   "claim": "create_train sets up random and down 0.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/lora.py:LoRAAdapter.create_train"
+  },
+  {
+   "claim": "The tables come from the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graphs validate.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The low-rank target in the lab is built by hand, and it doesn't test the low-rank hypothesis on diffusion models.",
+  "We don't know how large real image LoRAs' updates are against their weights.",
+  "Which rounding looks better in a picture is untested."
+ ]
 }

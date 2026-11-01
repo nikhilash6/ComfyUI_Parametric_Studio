@@ -2,13 +2,66 @@
  "title": "Multi-head, GQA and RoPE",
  "level": "300",
  "char": "attn",
- "hook": "Splitting attention, sharing keys, and rotating positions.",
+ "hook": "Split attention into heads, share keys to save memory, and rotate by position so only the gap between tokens counts.",
  "code": "CU-302",
  "prereq": [
   "CU-301"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/ldm/flux/math.py:rope",
+  "comfy/ldm/flux/math.py:apply_rope",
+  "comfy/ldm/flux/math.py:attention",
+  "comfy/ldm/flux/layers.py:EmbedND",
+  "comfy/ldm/lumina/model.py:JointAttention",
+  "comfy/ldm/hydit/attn_layers.py:apply_rotary_emb",
+  "comfy/ldm/sam3/tracker.py:apply_rope_memory",
+  "comfy/text_encoders/llama.py:num_key_value_heads"
+ ],
  "track": "architecture",
- "order": 20
+ "order": 20,
+ "graphs": [
+  "wf_flux2_klein"
+ ],
+ "verified": [
+  {
+   "claim": "JointAttention has n_kv_heads, n_rep, and one Linear of (n_heads + 2 n_kv_heads) head_dim outputs.",
+   "how": "source",
+   "ref": "comfy/ldm/lumina/model.py:JointAttention"
+  },
+  {
+   "claim": "Lumina 2's original size uses 24 heads and 8 key/value heads; the Z image size uses 30 and 30.",
+   "how": "source",
+   "ref": "comfy/model_detection.py:n_kv_heads"
+  },
+  {
+   "claim": "rope asserts an even width and uses position times 1/theta^scale.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/math.py:rope"
+  },
+  {
+   "claim": "The attention function rotates q and k, not v.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/math.py:attention"
+  },
+  {
+   "claim": "The lab's rotation matched _apply_rope1 on a CPU, largest gap 2.4e-07.",
+   "how": "run here",
+   "ref": "comfy/ldm/flux/math.py:_apply_rope1"
+  },
+  {
+   "claim": "Same gap gives the same score, and added positions do not.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "RoPE and GQA come from those papers, titles from the arXiv API.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2104.09864"
+  }
+ ],
+ "unchecked": [
+  "The speed and quality of GQA against full multi-head are Ainslie et al.'s reported results on text models. We did not measure them, and we did not test image models.",
+  "We read the papers' abstracts through the arXiv API and did not rerun anything from them."
+ ],
+ "kit": true
 }

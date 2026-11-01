@@ -1,0 +1,20 @@
+a scene from 2 m to 10 m. Grey value at each distance; 1 is white
+distance   DA3 v2_style   DA3 min_max   MoGe disparity
+2 m       1.000          1.000         1.000
+3 m       0.883          0.875         0.586
+4 m       0.755          0.750         0.377
+6 m       0.500          0.500         0.167
+8 m       0.245          0.250         0.063
+10 m       0.000          0.000         0.000
+all three put near at white. Depth-linear greys spend even steps per metre, disparity spends most of its range up close
+half of the grey range covers: v2_style from 2 m to 6.0 m   disparity from 2 m to 3.3 m
+
+add pixels at 500 m (sky). Distinct 8-bit grey levels left for the 2 m to 10 m part
+sky share   min_max   v2_style   v2_style with a sky mask   disparity
+0.0         256       256        256                        256
+0.005       5         256        256                        206
+0.02        5         5          256                        206
+0.3         5         5          256                        206
+
+by-eye check: near object 0.95, far wall 0.05: near is brighter, this map is near-white
+after ImageInvert: near object 0.05, far wall 0.95: the same geometry as a negative. correlation with the original -1.000

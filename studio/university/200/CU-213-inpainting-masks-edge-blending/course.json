@@ -22,5 +22,42 @@
   "comfy_extras/nodes_post_processing.py:Blur"
  ],
  "track": "control",
- "order": 30
+ "order": 30,
+ "kit": true,
+ "graphs": [
+  "sd15_inpaint",
+  "sd15_inpaint_vae",
+  "nm_mask_canny"
+ ],
+ "verified": [
+  {
+   "claim": "KSamplerX0Inpaint applies the blend at every step.",
+   "how": "source",
+   "ref": "comfy/samplers.py:KSamplerX0Inpaint"
+  },
+  {
+   "claim": "reshape_mask resizes bilinear with no antialias, so a cell reads the 4th and 5th of its 8 pixels. The new browser lab uses that rule, and it gave the lab's 0, 0.5, 1, 1, 0.5, 0, 0, 0 for a 3-pixel stripe.",
+   "how": "run here",
+   "ref": "comfy/utils.py:reshape_mask"
+  },
+  {
+   "claim": "VAEEncodeForInpaint rounds, grows and greys. Its growth is off-centre at even sizes.",
+   "how": "source",
+   "ref": "nodes.py:VAEEncodeForInpaint"
+  },
+  {
+   "claim": "FeatherMask and ImagePadForOutpaint ramps, and the other tables, come from the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graphs validate.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The lab uses a stand-in model, so it says nothing about how a seam looks in a real image: see What is contested.",
+  "We do not say ComfyUI's blend is RePaint. The mechanism is of the same kind, and the code does not cite it."
+ ]
 }

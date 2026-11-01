@@ -1,0 +1,62 @@
+{
+ "code": "CU-274",
+ "title": "Outpainting with ImagePadForOutpaint",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does ImagePadForOutpaint fill new pixels with?",
+   "options": [
+    "Black",
+    "White",
+    "Mid-grey, 0.5",
+    "Stretched edge pixels"
+   ],
+   "answer": "Mid-grey, 0.5",
+   "why": "new_image starts as ones times 0.5, and your picture is copied in."
+  },
+  {
+   "q": "You pad a 512 x 512 picture and set feathering 40, then use VAEEncodeForInpaint with grow_mask_by 6. How many of your pixels get repainted, counted from the join?",
+   "options": [
+    "About 40",
+    "About 13",
+    "None",
+    "All of them"
+   ],
+   "answer": "About 13",
+   "why": "Rounding keeps only the ramp above one half, 11 pixels, and growth adds 2. The lab's table says 13."
+  },
+  {
+   "q": "You pad an 80 x 512 picture with feathering 40. What happens?",
+   "options": [
+    "It errors",
+    "The feather is skipped, and you get a hard edge",
+    "The mask is inverted",
+    "It works normally"
+   ],
+   "answer": "The feather is skipped, and you get a hard edge",
+   "why": "The node needs feathering x 2 to be below both sides. 80 is not below 80."
+  },
+  {
+   "q": "Which edges of your picture get a feather if you only pad the left?",
+   "options": [
+    "All four",
+    "The left only",
+    "Left and right",
+    "Top and bottom"
+   ],
+   "answer": "The left only",
+   "why": "Each distance is only used if that side was padded. In the lab the far column and the top row stay at 0."
+  },
+  {
+   "q": "Your padded picture is 644 wide. A VAE route crops it. To what?",
+   "options": [
+    "640, from the centre",
+    "648, padded",
+    "644, no crop",
+    "512"
+   ],
+   "answer": "640, from the centre",
+   "why": "The width goes to (644 // 8) x 8, with the offset taken from the middle."
+  }
+ ]
+}

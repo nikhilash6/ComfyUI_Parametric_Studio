@@ -1,0 +1,25 @@
+You ask for 5 seconds at 24 fps, 120 frames, at 832 x 480.
+model             frames you get   seconds   latent (C, T, H, W)      latent values   video tokens
+LTX-2.5           113              4.708     (128, 15, 15, 26)        748,800         5,850
+Wan 2.2 5B        117              4.875     (48, 30, 30, 52)         2,246,400       11,700
+Wan 2.1 and 14B   117              4.875     (16, 30, 60, 104)        2,995,200       46,800
+MiniMax H3        124              5.167     (24, 37, 30, 52)         1,385,280       14,430
+
+Frame counts on each grid, up to 130:
+LTX-2.5       17 counts, the last few [105, 113, 121, 129]
+Wan 2.2 5B    33 counts, the last few [117, 121, 125, 129]
+MiniMax H3     8 counts, the last few [73, 90, 107, 124]
+
+H3 frames per latent frame, summed:
+   5 frames ->   2 latent frames ->   5 frames back
+  22 frames ->   7 latent frames ->  22 frames back
+  39 frames ->  12 latent frames ->  39 frames back
+ 124 frames ->  37 latent frames -> 124 frames back
+
+Frame counts of real clips in our gallery, against the grid:
+LTX-2.5, 6 s asked        145 frames  on the grid: True
+LTX-2.5, virtual set      121 frames  on the grid: True
+Wan 2.2, 5 s asked        121 frames  on the grid: True
+MiniMax H3, 5 s asked     124 frames  on the grid: True
+
+Width 850 asked of a node that floors: LTX keeps 832  Wan 2.2 5B keeps 848

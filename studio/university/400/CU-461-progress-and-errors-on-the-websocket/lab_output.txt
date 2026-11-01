@@ -1,0 +1,15 @@
+job             nodes run  cached  progress  files  result       why
+first run               3       0         2      1  success      
+same again              0       3         0      1  success      
+a node raises           1       1         0      0  error        Boom ValueError: boom on purpose
+interrupted             1       1         0      0  interrupted  stopped in Stop
+
+sent to me:           ['me']
+sent to everyone:     ['me', 'other']
+sent while I am away: []
+
+a job queued with no client_id can still send: ['progress', 'progress_state', 'execution_interrupted']
+
+('preview', 'JPEG', b'\xff\xd8..')
+('preview+meta', {'node_id': '5', 'image_type': 'image/jpeg'}, b'\xff\xd8..')
+('text', '5', 'loading')

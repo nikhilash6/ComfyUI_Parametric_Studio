@@ -1,106 +1,102 @@
 # CU-309 - Positional encodings in 2D and 3D
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Say why tokens need a position, and pick apart the two main ways ComfyUI's models give one: a table added to the tokens, and rotation by coordinates. Taught by Madame Attention.
 
-## Why this matters
+## The idea
 
-Welcome back, students. In CU-302, we discussed the architecture of the Transformer. You learned that self-attention is a permutation-invariant operation. If you shuffle the tokens in a sequence, the attention scores remain identical. The model is blind to order. It does not know which token is first, which is last, or which pixel is in the top-left corner versus the bottom-right.
+CU-301 showed that attention can't see order. Shuffle the tokens and the output just shuffles with them. So a model has to be told where each token is, or a picture has no top or bottom.
 
-For language, this is a problem. For images and video, it is a catastrophe. A pixel at $(x=0, y=0)$ is fundamentally different from a pixel at $(x=1023, y=1023)$. If the network cannot distinguish these positions, it cannot learn spatial relationships. It cannot know that "sky" is usually above "ground," or that a face has two eyes symmetrically placed.
+Two methods are the main ones in ComfyUI's models. A third exists in the literature: a table learned in training. We did not survey which models use it here.
 
-Positional encodings are the solution. They inject spatial or temporal information into the token embeddings before they enter the attention mechanism. In this lesson, we focus on **sinusoidal positional encodings** for 2D (images) and 3D (video/volumes). We will see how simple trigonometric functions create a continuous, differentiable map from discrete grid coordinates to vector space. This allows the network to generalize to resolutions it has never seen during training.
+- **Fixed sine and cosine, added to tokens.** One table per grid.
+- **RoPE from coordinates (CU-302).** No table, nothing added. Each token has ids such as (time, row, column).
 
-## The intuition
+## The mechanism
 
-Imagine you are a librarian. You have a shelf of books. If I hand you a book without a call number, you have no idea where it belongs. You might put it anywhere. The "call number" is the positional encoding.
+**One axis.** Vaswani et al. (2017) use sine and cosine at many frequencies. ComfyUI's `get_1d_sincos_pos_embed_from_grid` does the same: each frequency ω gets sin(position × ω) and cos(position × ω), and ω falls from 1 towards 1/10000.
 
-In a standard 1D sequence, we often use sinusoidal functions of the form $\sin(pos \cdot \theta)$ and $\cos(pos \cdot \theta)$. Why sine and cosine? Because they are periodic. A position $pos$ and a position $pos + 2\pi$ have the same encoding. But more importantly, the encoding of position $pos + k$ can be computed as a linear transformation of the encoding of position $pos$. This linearity is crucial. It allows the attention mechanism to easily compute relative distances. If I want to know how far token A is from token B, the dot product of their encodings reveals that distance.
+```
+ωᵢ = 1 ÷ 10000^(i ÷ (D ÷ 2))        code = [ sin(p ω₀), sin(p ω₁), ... , cos(p ω₀), cos(p ω₁), ... ]
+```
 
-In 2D, we have two axes: $x$ (horizontal) and $y$ (vertical). We treat them independently. We compute a sinusoidal encoding for $x$ and a separate sinusoidal encoding for $y$, then concatenate them. The result is a vector that uniquely identifies a 2D coordinate.
+Why so many? A single wave repeats, so two far positions can get the same code. Try it.
 
-In 3D, we add a third axis: $z$ (depth or time). We compute encodings for $x$, $y$, and $z$ separately and concatenate all three. This is the "axial" approach. It is simple, efficient, and highly effective for grid-based data like images and video frames.
+{{play:bands}}
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+**Two axes.** Give half the width to the row and half to the column, compute each code alone, and join them. That's `get_2d_sincos_pos_embed_from_grid` in `comfy/ldm/modules/diffusionmodules/mmdit.py`.
 
-Let us define the mechanism precisely.
+**Three axes.** The same, split more ways. In RoPE this shows up as `axes_dim`. WanModel splits the head width d like this: `[d − 4 (d // 6), 2 (d // 6), 2 (d // 6)]`, for time, height and width.
 
-**Input:**
-*   $x$: The horizontal coordinate (integer or float).
-*   $y$: The vertical coordinate (integer or float).
-*   $z$: The depth or temporal coordinate (integer or float), used only in 3D.
-*   $f$: The frequency. In our simplified lab, $f = 1.0$. In real models, multiple frequencies are often used to capture both fine and coarse details.
-
-**2D Encoding:**
-The 2D positional encoding vector $E_{2d}$ is constructed by concatenating the sine and cosine of the scaled coordinates:
-$$ E_{2d} = [\sin(x \cdot f), \cos(x \cdot f), \sin(y \cdot f), \cos(y \cdot f)] $$
-This results in a vector of dimension 4.
-
-**3D Encoding:**
-The 3D positional encoding vector $E_{3d}$ extends this by adding the $z$-axis:
-$$ E_{3d} = [\sin(x \cdot f), \cos(x \cdot f), \sin(y \cdot f), \cos(y \cdot f), \sin(z \cdot f), \cos(z \cdot f)] $$
-This results in a vector of dimension 6.
-
-**Properties:**
-1.  **Bounded:** Since sine and cosine outputs are always in the range $[-1, 1]$, the encoding values are bounded. This helps with numerical stability.
-2.  **Continuous:** The function is differentiable. If you shift a pixel by a tiny amount $\epsilon$, the encoding changes smoothly. This allows the network to generalize to sub-pixel positions or different resolutions.
-3.  **Unique (for small grids):** For a grid smaller than the period of the sine wave ($2\pi/f$), each coordinate maps to a unique vector.
-
-In ComfyUI, these encodings are often added to the token embeddings or used to modulate attention. For example, in the `comfy/ldm/sam3` module, the function `gen_sineembed_for_position` generates per-coordinate sinusoidal embeddings for position tensors. This is used in the detector to encode the positions of points and boxes.
+**A different size.** A table is built for one grid. A model that runs at another size needs a rule. PixArt divides its coordinates by a scale, `pe_interpolation`, and `base_size`, so the grid stays the same span. RoPE has no table, so it asks only for ids.
 
 ## In ComfyUI
 
-Our sources reveal several implementations of positional encodings in ComfyUI:
+**SD 3's file** has fixed table functions (`get_2d_sincos_pos_embed_torch` in `mmdit.py`), and `MMDiT` takes a `pos_embed_scaling_factor`. **PixArt** computes its own in `comfy/ldm/pixart/pixartms.py`. **HunYuanDiT** has both kinds in `comfy/ldm/hydit/posemb_layers.py`.
 
-1.  **`comfy/ldm/sam3/detector.py`**: Contains the function `gen_sineembed_for_position`. This function generates per-coordinate sinusoidal embeddings for position tensors. It is used in the `GeometryEncoder` to encode geometric prompts like points and boxes. This is a direct application of the 2D sinusoidal encoding we discussed.
+**FLUX** has no table. `process_img` builds `img_ids`, a (time index, row, column) for each token, and `EmbedND` turns them into rotations. Text tokens get ids too.
 
-2.  **`comfy/ldm/sam3/tracker.py`**: Contains the function `get_1d_sine_pe`. This generates 1D sinusoidal positional encoding for temporal positions. This is used in video tracking to encode the time step of each frame.
+**Wan** does this over time and space, in `rope_encode`, so a video's tokens rotate by frame as well.
 
-3.  **`comfy/ldm/cosmos/position_embedding.py`**: Contains the class `VideoRopePosition3DEmb`. This implements 3D Rotary Position Embeddings (RoPE) for video sequences. While RoPE is a different mechanism (using rotation matrices rather than simple addition), it serves the same purpose: injecting positional information into the attention mechanism. The evidence notes that RoPE "encodes the absolute position with a rotation matrix and meanwhile incorporates the explicit relative position dependency in self-attention formulation."
+{{graph:wf_wan22_t2v}}
 
-4.  **`comfy/ldm/trellis2`**: This module operates on sparse 3D voxel grids. While the evidence does not explicitly name a sinusoidal encoding function, the `SparseTensor` class manages coordinates. In such architectures, positional information is often derived directly from the coordinates or via learned embeddings. The `compute_stage_proj_feats` function back-projects feature maps onto sparse coordinates, implying that position is a critical part of the feature representation.
+The `rope_options` settings in those functions let a caller scale and shift ids.
+
+## What goes wrong
+
+- **A model trained at one size is used at another, and its structure drifts.** Position isn't the only cause, but a stretched table or id grid changes what "near" means. Generate at its trained sizes first, and move away slowly.
+- **You mix up the axes.** Keep height, width and frames in the order the code expects. In `process_img` rows come before columns.
+- **Width doesn't split.** `get_2d_sincos_pos_embed_from_grid` asserts an even width, and each 1D half asserts too. A custom block with an odd width stops there.
+- **You think adding and rotating are the same.** They aren't. An added code changes the token's numbers, and values too. RoPE changes only the score, and leaves V alone (CU-302).
+- **Very long videos.** Sine waves with long wavelengths stay distinct for a long way, but a token's id can run past anything in training. The maths still works; nothing promises quality there.
 
 ## Lab
 
-In this lab, we implemented a simplified 2D and 3D sinusoidal positional encoding using PyTorch. We defined a small 4x4 grid for 2D and a 2x4x4 grid for 3D. We used a single frequency $f=1.0$ for clarity.
+The reason for all this first.
 
-We computed the encodings and verified their shapes and value ranges.
-
-Here are the results from the lab:
-
+```text
+shuffle tokens then attend, against attend then shuffle: max difference 1.9e-06
 ```
-RESULT enc_2d_shape = torch.Size([1, 4, 4, 4])
+
+Then a table, from the same formula as ComfyUI's. We compared the 1D formula against the real function on a CPU, and the largest gap was 0.
+
+```text
+2D table for an 8x8 grid, width 16: (64, 16), values in [-0.990, 1.000]
+first 4 values for row 0, column 0: [0.0, 0.0, 0.0, 0.0]  every position different: True
+frequency  wavelength in positions
+0          6.3
+1          62.8
+2          628.3
+3          6283.2
 ```
-This proves that the 2D encoding produces a tensor with the same spatial dimensions as the input grid (4x4) and a feature dimension of 4 (2 for x, 2 for y).
 
+The first four are the sines, all zero at position 0. The wavelengths show the point of many frequencies: the short wave tells neighbours apart, and the long one keeps far positions distinct. Now see how the code's dot product falls with distance. This isn't a perfect ruler, as the last value shows.
+
+```text
+similarity of column 0 to column k, same row: [(0, 1.0), (1, 0.979), (2, 0.929), (4, 0.864), (8, 0.829), (16, 0.748), (31, 0.782)]
 ```
-RESULT enc_2d_first = [0.0, 1.0, 0.0, 1.0]
+
+Rescaling the grid for a bigger image, as PixArt does:
+
+```text
+position grid scaled by 1/2 for a double-size image: token 2 of 32 equals token 1 of 16: True
 ```
-This is the encoding for the coordinate $(x=0, y=0)$. Since $\sin(0) = 0$ and $\cos(0) = 1$, the encoding is $[0, 1, 0, 1]$. This confirms the formula is implemented correctly.
 
+And ids instead of a table, with widths that add to 128.
+
+```text
+RoPE on 3 axes, widths [16, 56, 56]: offset (0, 2, 3) near the corner 8.964835, far beyond any training grid 8.964835
+head width 128: axes for time, height, width = [44, 42, 42], sum 128
+head width 96: axes for time, height, width = [32, 32, 32], sum 96
+latent 21x90x160, patch 1x2x2: 75,600 tokens
 ```
-RESULT enc_3d_shape = torch.Size([1, 2, 4, 4, 6])
-```
-This proves that the 3D encoding produces a tensor with the same spatial dimensions as the input volume (2x4x4) and a feature dimension of 6 (2 for x, 2 for y, 2 for z).
 
-```
-RESULT enc_3d_first = [0.0, 1.0, 0.0, 1.0, 0.0, 1.0]
-```
-This is the encoding for the coordinate $(x=0, y=0, z=0)$. Since all coordinates are 0, all sine terms are 0 and all cosine terms are 1. This confirms the 3D extension is correct.
+The last line is a toy size, and shows how fast video grows.
 
-These results demonstrate that sinusoidal encodings are deterministic, bounded, and easy to compute. They provide a stable foundation for the attention mechanism to learn spatial relationships.
+## Sources
 
-## Common mistakes
-
-1.  **Forgetting to scale coordinates:** If you use large integer coordinates (e.g., 1024) with a high frequency, the sine and cosine functions will oscillate rapidly, leading to aliasing. Always normalize coordinates or choose frequencies carefully.
-2.  **Using the same frequency for all axes:** In 2D and 3D, it is often beneficial to use different frequencies for different axes to capture anisotropic structures. However, using the same frequency is a valid starting point.
-3.  **Confusing absolute and relative encodings:** Sinusoidal encodings are absolute. They encode the position of a token in the grid. Relative encodings, like RoPE, encode the distance between tokens. Both are useful, but they serve different purposes.
-4.  **Ignoring the batch dimension:** When implementing encodings, ensure that the batch dimension is preserved. The encoding should be broadcastable to the batch size.
-
-## Go deeper
-
-To understand the theoretical underpinnings of positional encodings, I recommend the following paper:
-
-*   **arXiv:2104.09864**: "RoFormer: Enhanced Transformer with Rotary Position Embedding" by Jiang et al. This paper introduces RoPE, a method that encodes absolute position with a rotation matrix while incorporating explicit relative position dependency in self-attention. It provides a theoretical analysis of why RoPE works well and how it enables flexibility in sequence length.
-
-This paper is essential for understanding how positional information can be integrated into the attention mechanism in a way that preserves relative distance information. It complements the sinusoidal approach we discussed in this lesson.
-
+- [Vaswani et al. 2017. Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+- [Su et al. 2021. RoFormer: Enhanced Transformer with Rotary Position Embedding](https://arxiv.org/abs/2104.09864)
+- [ComfyUI v0.43.0, comfy/ldm/modules/diffusionmodules/mmdit.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/diffusionmodules/mmdit.py)
+- [ComfyUI v0.43.0, comfy/ldm/pixart/pixartms.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/pixart/pixartms.py)
+- [ComfyUI v0.43.0, comfy/ldm/flux/layers.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/layers.py)
+- [ComfyUI v0.43.0, comfy/ldm/wan/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/wan/model.py)

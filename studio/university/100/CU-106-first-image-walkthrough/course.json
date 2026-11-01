@@ -17,5 +17,48 @@
   "latent_preview.py:def prepare_callback"
  ],
  "track": "first-graph",
- "order": 30
+ "order": 30,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "CheckpointLoaderSimple returns MODEL, CLIP and VAE from one file.",
+   "how": "source",
+   "ref": "nodes.py:CheckpointLoaderSimple"
+  },
+  {
+   "claim": "KSampler defaults are 20 steps and cfg 8.0.",
+   "how": "source",
+   "ref": "nodes.py:KSampler"
+  },
+  {
+   "claim": "With denoise below 1, the list is built with int(steps / denoise) steps and the tail is kept.",
+   "how": "source",
+   "ref": "comfy/samplers.py:KSampler.calculate_sigmas"
+  },
+  {
+   "claim": "At a cfg of 1 the negative is skipped.",
+   "how": "source",
+   "ref": "comfy/samplers.py:sampling_function"
+  },
+  {
+   "claim": "The 20-step normal list matches the list printed in the documentation to four decimals.",
+   "how": "docs",
+   "ref": "docs.comfy.org/custom-nodes/backend/datatypes, checked by an assert in lab.py"
+  },
+  {
+   "claim": "The graph passes validate_prompt. The picture is from the Sampling Lab render set, one seed.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py and studio/sampling_lab/renders.json"
+  }
+ ],
+ "unchecked": [
+  "The picture is one seed on one model, and it isn't a measurement of anything.",
+  "What a low denoise on an empty latent looks like was not rendered for this lesson."
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

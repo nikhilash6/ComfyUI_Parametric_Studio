@@ -2,13 +2,114 @@
  "title": "History 15: The size era: FP8, GGUF and 4-bit formats arrive",
  "level": "300",
  "char": "bits",
- "hook": "Discover how quantization formats like FP8 and GGUF revolutionized local AI by shrinking model sizes without sacrificing too much quality.",
+ "hook": "Each format answers one question: what do the weights share? The same test across all of them shows why int4 with one scale is ruined, and why fp8 hardly notices an outlier.",
  "code": "CU-515",
  "prereq": [
   "CU-211"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/quant_ops.py:QUANT_ALGOS",
+  "comfy/quant_ops.py:TensorCoreFP8E4M3Layout",
+  "nodes.py:UNETLoader",
+  "comfy/model_management.py:supports_fp8_compute",
+  "comfy/model_management.py:supports_nvfp4_compute",
+  "comfy/ops.py:get_disabled_quant_formats",
+  "comfy/ops.py:pick_operations",
+  "comfy/cli_args.py:fp8_e4m3fn-unet"
+ ],
  "track": "history",
- "order": 120
+ "order": 120,
+ "graphs": [
+  "b_unet_fp8"
+ ],
+ "verified": [
+  {
+   "claim": "The formats listed, with group sizes 16 and 32.",
+   "how": "source",
+   "ref": "comfy/quant_ops.py:QUANT_ALGOS"
+  },
+  {
+   "claim": "The recalculate branch is largest value over the format's maximum.",
+   "how": "source",
+   "ref": "comfy/quant_ops.py:_TensorCoreFP8LayoutBase.quantize"
+  },
+  {
+   "claim": "weight_dtype options.",
+   "how": "source",
+   "ref": "nodes.py:UNETLoader"
+  },
+  {
+   "claim": "False on CPU, and the version checks.",
+   "how": "source",
+   "ref": "comfy/model_management.py:supports_fp8_compute"
+  },
+  {
+   "claim": "Wants major 10 or newer.",
+   "how": "source",
+   "ref": "comfy/model_management.py:supports_nvfp4_compute"
+  },
+  {
+   "claim": "Lists formats the device can't run.",
+   "how": "source",
+   "ref": "comfy/ops.py:get_disabled_quant_formats"
+  },
+  {
+   "claim": "Logs native and emulated ops.",
+   "how": "source",
+   "ref": "comfy/ops.py:pick_operations"
+  },
+  {
+   "claim": "The word appears in the warning, and a search of comfy, comfy_extras, nodes.py and folder_paths.py finds no GGUF code.",
+   "how": "source",
+   "ref": "main.py:gguf"
+  },
+  {
+   "claim": "A layer in a disabled format is marked for full precision and dequantizes before the plain linear call.",
+   "how": "source",
+   "ref": "tests-unit/comfy_quant/test_mixed_precision.py:test_int8_disabled_on_unsupported_device_falls_back_to_full_precision"
+  },
+  {
+   "claim": "The error table, the missing-scale line, the ranges and the sizes print as shown, using real torch dtypes.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title, date and abstract from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/1905.12322"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2208.07339"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2209.05433"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2210.17323"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2306.00978"
+  },
+  {
+   "claim": "The opening of the specification and its list of types, fetched this session from the main branch; the link in Sources pins an earlier commit.",
+   "how": "docs",
+   "ref": "ggml docs/gguf.md"
+  }
+ ],
+ "unchecked": [
+  "We read the abstracts of the papers, not their full text.",
+  "The weights are synthetic. We measured no real model and rendered no pictures.",
+  "The two block rows are a simple stand-in, not the exact algorithm of any named format.",
+  "We did not compare GGUF with native formats for speed. The line from main.py is the project's own claim.",
+  "We don't name a GGUF pack here and did not test one."
+ ],
+ "kit": true
 }

@@ -1,0 +1,73 @@
+{
+ "code": "CU-265",
+ "title": "Reference images: CLIP vision, unCLIP and style models",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does StyleModelApply do to the text tensor?",
+   "options": [
+    "Replaces it",
+    "Averages with it",
+    "Adds the picture's rows on the end, along tokens",
+    "Nothing at all"
+   ],
+   "answer": "Adds the picture's rows on the end, along tokens",
+   "why": "torch.cat((txt, cond), dim=1)."
+  },
+  {
+   "q": "Which field of the vision output does unCLIP use?",
+   "options": [
+    "image_embeds, one summary vector",
+    "last_hidden_state, per patch",
+    "The pixels",
+    "The text tokens"
+   ],
+   "answer": "image_embeds, one summary vector",
+   "why": "unclip_adm loops over clip_vision_output.image_embeds."
+  },
+  {
+   "q": "What does CLIPVisionEncode produce?",
+   "options": [
+    "Numbers describing a picture, not a new picture",
+    "A latent",
+    "A generated image",
+    "A mask"
+   ],
+   "answer": "Numbers describing a picture, not a new picture",
+   "why": "It returns an output object with embeddings."
+  },
+  {
+   "q": "You add unCLIPConditioning on an SD 1.5 model. What should you expect?",
+   "options": [
+    "An error at validation",
+    "No effect, since that model class doesn't read the key",
+    "A double-strength prompt",
+    "A tensor 8 tokens longer"
+   ],
+   "answer": "No effect, since that model class doesn't read the key",
+   "why": "unclip_conditioning is read only by classes that look for it."
+  },
+  {
+   "q": "A style model at multiply strength 0 is",
+   "options": [
+    "Still there as zero rows the model attends to",
+    "Removed entirely",
+    "Twice as strong",
+    "Converted to unCLIP"
+   ],
+   "answer": "Still there as zero rows the model attends to",
+   "why": "The lab shows 85 tokens with zero rows. Bypass the node to turn it off."
+  },
+  {
+   "q": "How does load_style_model pick the architecture?",
+   "options": [
+    "By its file name",
+    "By the prompt",
+    "By looking for keys in the file",
+    "By asking the user"
+   ],
+   "answer": "By looking for keys in the file",
+   "why": "style_embedding gives StyleAdapter, redux_down.weight gives Redux, and anything else raises."
+  }
+ ]
+}

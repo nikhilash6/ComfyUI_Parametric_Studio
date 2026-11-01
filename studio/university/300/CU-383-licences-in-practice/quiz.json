@@ -1,0 +1,73 @@
+{
+ "code": "CU-383",
+ "title": "Licences in practice: AGPL, GPL, MIT, OpenRAIL",
+ "level": "300",
+ "questions": [
+  {
+   "q": "You change a GPL-3.0 pack and use it only on your own machine. Does the source duty apply?",
+   "options": [
+    "No, nothing has been conveyed",
+    "Yes, you must publish it",
+    "Yes, within 30 days",
+    "Only if it is a node pack"
+   ],
+   "answer": "No, nothing has been conveyed",
+   "why": "The duties attach to conveying a copy."
+  },
+  {
+   "q": "What does AGPL-3.0 add to GPL-3.0?",
+   "options": [
+    "An offer of source to remote users of a modified version",
+    "A ban on commercial use",
+    "A fee for hosting",
+    "A requirement to publish your pictures"
+   ],
+   "answer": "An offer of source to remote users of a modified version",
+   "why": "That is section 13."
+  },
+  {
+   "q": "You run an unmodified AGPL-3.0 pack on a website. Does section 13 ask anything of you?",
+   "options": [
+    "Not by its words, since it says if you modify",
+    "Yes, publish everything",
+    "Yes, shut it down",
+    "Only on Sundays"
+   ],
+   "answer": "Not by its words, since it says if you modify",
+   "why": "Section 13 begins with modifying the program. This is a reading, not legal advice."
+  },
+  {
+   "q": "Which of these applies at home, with nothing shared?",
+   "options": [
+    "OpenRAIL-M's banned uses",
+    "MIT's notice condition",
+    "GPL's source duty",
+    "AGPL's network offer"
+   ],
+   "answer": "OpenRAIL-M's banned uses",
+   "why": "Its use restrictions apply to use itself."
+  },
+  {
+   "q": "You find a useful pack with no licence. What does that generally mean?",
+   "options": [
+    "You have no permission to use, modify or share it",
+    "It is public domain",
+    "It is MIT by default",
+    "You can use it if you credit the author"
+   ],
+   "answer": "You have no permission to use, modify or share it",
+   "why": "As choosealicense.com puts it. Ask the author, or write your own."
+  },
+  {
+   "q": "What is the one condition of the MIT licence?",
+   "options": [
+    "Keep the copyright and permission notice",
+    "Publish your changes",
+    "Pay a fee",
+    "Use it only for research"
+   ],
+   "answer": "Keep the copyright and permission notice",
+   "why": "In all copies or substantial portions."
+  }
+ ]
+}

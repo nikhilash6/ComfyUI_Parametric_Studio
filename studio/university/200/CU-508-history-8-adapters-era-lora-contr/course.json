@@ -8,15 +8,75 @@
  "char": "tune",
  "hook": "What a rank can and cannot follow, measured against the best possible matrix, and how LoRA and ControlNet both start as the base model and then begin to learn. With the matching ComfyUI code.",
  "code_refs": [
-  "comfy/weight_adapter/lora.py:class LoRAAdapter",
-  "comfy/weight_adapter/lora.py:def create_train",
-  "comfy/weight_adapter/bypass.py:bypass(f)(x)",
-  "comfy/cldm/cldm.py:def make_zero_conv",
-  "comfy/cldm/cldm.py:middle_block_out",
-  "comfy/ldm/modules/diffusionmodules/openaimodel.py:def apply_control",
-  "comfy/controlnet.py:def control_merge",
-  "comfy/t2i_adapter/adapter.py:class Adapter"
+  "comfy/weight_adapter/lora.py:LoRAAdapter",
+  "comfy/weight_adapter/lora.py:LoRAAdapter.create_train",
+  "comfy/weight_adapter/bypass.py:BypassForwardHook",
+  "comfy/lora.py:load_lora",
+  "comfy/cldm/cldm.py:ControlNet.make_zero_conv",
+  "comfy/ldm/modules/diffusionmodules/openaimodel.py:apply_control",
+  "comfy/controlnet.py:ControlBase.control_merge",
+  "comfy/t2i_adapter/adapter.py:Adapter"
  ],
  "track": "history",
- "order": 80
+ "order": 80,
+ "graphs": [
+  "sd15_lora",
+  "sd15_controlnet"
+ ],
+ "verified": [
+  {
+   "claim": "alpha is v[2] / mat2.shape[0], and otherwise 1.0.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/lora.py:LoRAAdapter.calculate_weight"
+  },
+  {
+   "claim": "mat1 is Kaiming-uniform and mat2 zeros.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/lora.py:LoRAAdapter.create_train"
+  },
+  {
+   "claim": "Bypass mode as a forward hook.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/bypass.py:BypassForwardHook"
+  },
+  {
+   "claim": "Logs lora key not loaded for keys it can't place.",
+   "how": "source",
+   "ref": "comfy/lora.py:load_lora"
+  },
+  {
+   "claim": "Zero convolutions are made here, with weights from the file.",
+   "how": "source",
+   "ref": "comfy/cldm/cldm.py:ControlNet.make_zero_conv"
+  },
+  {
+   "claim": "h += ctrl on the middle block and skips.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/openaimodel.py:apply_control"
+  },
+  {
+   "claim": "Multiplies by strength and adds a previous ControlNet's output.",
+   "how": "source",
+   "ref": "comfy/controlnet.py:ControlBase.control_merge"
+  },
+  {
+   "claim": "The rank tables, the zero start and the merged and side-path comparison print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title and date from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2106.09685"
+  }
+ ],
+ "unchecked": [
+  "The paper quotes and table numbers were read in an earlier audit of this lesson. In this pass we rechecked the arXiv titles and abstracts only.",
+  "We did not run the two graphs here. They were validated and need model files.",
+  "That a missing alpha makes LoRAs hard to compare is reasoning from the formula. We did not measure it on real files."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

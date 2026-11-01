@@ -1,0 +1,83 @@
+{
+ "meta": {
+  "title": "Join two clips and drop the repeated frame",
+  "about": "The join step of a chain, with no model: blue frames, then red frames, with the first frame of the second clip removed.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "Stands in for clip 1: 9 frames.",
+   "2": "Stands in for clip 2: 9 frames that begin on clip 1's last frame.",
+   "3": "Takes frames 1 to 8 of clip 2, so the shared frame is kept only once.",
+   "4": "Puts the two batches end to end: 17 frames.",
+   "5": "Sets the playback rate.",
+   "6": "Writes the file."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 128,
+    "height": 128,
+    "batch_size": 9,
+    "color": 2613375
+   }
+  },
+  "2": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 128,
+    "height": 128,
+    "batch_size": 9,
+    "color": 15086655
+   }
+  },
+  "3": {
+   "class_type": "ImageFromBatch",
+   "inputs": {
+    "image": [
+     "2",
+     0
+    ],
+    "batch_index": 1,
+    "length": 8
+   }
+  },
+  "4": {
+   "class_type": "ImageBatch",
+   "inputs": {
+    "image1": [
+     "1",
+     0
+    ],
+    "image2": [
+     "3",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "CreateVideo",
+   "inputs": {
+    "images": [
+     "4",
+     0
+    ],
+    "fps": 8.0
+   }
+  },
+  "6": {
+   "class_type": "SaveVideo",
+   "inputs": {
+    "video": [
+     "5",
+     0
+    ],
+    "filename_prefix": "video/university_chain",
+    "format": "auto",
+    "codec": "auto"
+   }
+  }
+ }
+}

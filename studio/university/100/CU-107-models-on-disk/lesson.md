@@ -18,6 +18,10 @@ The layout is short enough to hold in your head (the safetensors README).
 
 The bytes of a tensor are the product of its shape times the bytes per value, and END − BEGIN must equal that. Little-endian means the least significant byte comes first: the bytes e0 00 00 00 00 00 00 00 read as 224, not as a huge number. Reading one tensor takes the header plus one slice, so a loader can list what a file of many gigabytes contains by reading only its start.
 
+Now mend some damaged headers. These are the checks a loader does, on a file small enough to hold in your head.
+
+{{play:sfheader}}
+
 **Safe to load, and what that means.** A safetensors file contains data and no instructions. A loader reads N, parses JSON, checks the ranges and slices bytes. The README lists the checks, among them a header limit of 100 MB and a guarantee that the ranges do not overlap. A pickle is different: the file names a callable and its arguments, and unpickling calls it. The Python documentation says that the pickle module is not secure, that it is possible to construct malicious pickle data which will execute arbitrary code during unpickling, and that you should only unpickle data you trust. PyTorch's `torch.load` defaults to `weights_only=True`, which restricts the unpickler to tensors, primitive types, dictionaries and types you register, and its documentation still says never to load data from an untrusted source. "Safe" here means that the load step runs no code. It does not mean the weights are what the label claims.
 
 ## In ComfyUI
@@ -26,7 +30,23 @@ The bytes of a tensor are the product of its shape times the bytes per value, an
 
 `load_state_dict_guess_config` in `comfy/sd.py` then finds the prefix of the denoiser's keys, counts parameters, notes the dominant dtype, and calls `model_config_from_unet`. For the classic UNets, `detect_unet_config` in `comfy/model_detection.py` reads shapes: the first dimension of `input_blocks.0.0.weight` gives the channel count, `label_emb.0.0.weight` gives the size of the extra conditioning vector, and the cross-attention weight `attn2.to_k.weight` gives the width of the text context. Each family class in `comfy/supported_models.py` lists the values it expects, and `matches` in `supported_models_base.py` requires every listed entry to be equal. `SD15` expects a context of 768 and no extra vector. `SDXL` expects a context of 2048 and an extra vector of 2816. If nothing matches, ComfyUI warns that the file is not a checkpoint and tries it as a bare diffusion model, and if that fails it reports that it could not detect the model type.
 
+These two graphs are the same seven nodes. The checkpoint loader finds out which family it has from the file, so only the file and the size change.
+
+{{graph:sd15_txt2img}}
+
+{{graph:sdxl_txt2img}}
+
 The family also fixes what surrounds the denoiser. The latent has 4 channels for SD 1.x and SDXL and 16 for SD3 and Flux (`comfy/latent_formats.py`), and the text encoders differ (CU-104). A file trained against layers of one shape, a LoRA or a ControlNet for example, cannot be applied to layers of another shape.
+
+## What goes wrong
+
+- **`The safetensors file is corrupt/incomplete`.** ComfyUI turns a `MetadataIncompleteBuffer` error into this message, and it usually means a cut-off copy or download. Compare the file's size with the source, and download it again.
+- **`The safetensors file is corrupt or invalid`.** This comes from `HeaderTooLarge`. The first eight bytes read as an absurd size, which often means it isn't a safetensors file. Its message suggests a ckpt or pt renamed by hand.
+- **`Could not detect model type`.** No family matched the names and shapes. Your ComfyUI may be too old for this model, or the file may not be a denoiser at all (CU-114).
+- **A LoRA or ControlNet won't apply.** It was made for another family, and the layer shapes differ.
+- **You took a name at face value.** The family comes from the tensors, and "sdxl" in a file name proves nothing. Nor does `__metadata__`, since the author wrote that too.
+- **A `.ckpt` from someone you don't know.** Prefer `.safetensors`. If there's no choice, remember that the safety of `weights_only=True` is limited and that PyTorch still warns against untrusted files.
+- **Thinking `.safetensors` means safe to use.** The load step runs no code. The model can still be mislabelled, or a pack beside it can run code.
 
 ## Lab
 

@@ -13,6 +13,14 @@ A tensor is a block of numbers with named axes, and its shape lists how long eac
 
 B is the batch size, H the height, W the width and C the channels: 3 for RGB, and 4 for the latents of SD 1.x and SDXL (16 for SD3 and Flux). PyTorch's convolution layers take [N, C, H, W], so the VAE nodes must convert. A mask has one value per pixel and no channel axis: the mask from `LoadImage` is [B, H, W], and 1 marks a transparent pixel.
 
+Here's a graph where you can see one without any model. It makes a latent, doubles its size, multiplies it, and prints what it holds.
+
+{{graph:nm_latent_ops}}
+
+The size rule differs by family, and it's easier to feel than to read. Try this.
+
+{{play:latent}}
+
 ## The mechanism
 
 Three steps happen between pixels and the VAE, and the reverse on the way out.
@@ -32,6 +40,15 @@ Number formats decide how much room the last bits have. Float32 has 1 sign, 8 ex
 `LoadImage` turns 8-bit pixels into float32 by dividing by 255 and adds the batch axis (the Pillow fallback in `nodes.py` reads `np.array(image).astype(np.float32) / 255.0`, then `[None,]`). `SaveImage` multiplies the image by 255, clips to 0 to 255 and calls `astype(np.uint8)`, which truncates. Images between nodes are float32 unless the experimental `--fp16-intermediates` flag is set, and they sit in system RAM unless `--gpu-only` is set.
 
 In `comfy/sd.py`, `VAE.encode` crops with `vae_encode_crop_pixels`, calls `movedim(-1, 1)` and applies `process_input`, which doubles the values and subtracts 1. `VAE.decode` ends with `process_output`, which adds 1, divides by 2 and clamps, then `movedim(1, -1)`. If either direction runs out of memory it retries in tiles. `EmptyLatentImage` makes `torch.zeros([batch_size, 4, height // 8, width // 8])`, so a size that is not a multiple of 8 is rounded down by the division.
+
+## What goes wrong
+
+- **`expected input to have 3 channels` or a similar error in your own node.** The tensor is channels last and the layer wants channels first. Use `movedim(-1, 1)`.
+- **The picture comes out as coloured stripes or mixed-up patches, and no error.** Somewhere the axes were relabelled with `reshape` when they should have been moved. The lab shows that a convolution takes the scrambled tensor without complaint.
+- **A size off by a few pixels.** A size that isn't a multiple of 8 is rounded down by the empty latent node, and cropped from both sides by VAE encode. Pick multiples of 8.
+- **An error about the number of dimensions.** An IMAGE always has a batch axis, even for one picture. A mask has no channel axis. In your own node, `image[None,]` adds a batch axis and `image[0]` takes one out.
+- **Treating a latent as a picture.** Its numbers aren't limited to 0 to 1 and don't mean brightness in any simple way. Decode it to look at it. CU-201 goes further.
+- **A saved and reloaded picture differs by one level.** Saving truncates, as the lab shows at the end. Only worry if you need exact bytes.
 
 ## Lab
 

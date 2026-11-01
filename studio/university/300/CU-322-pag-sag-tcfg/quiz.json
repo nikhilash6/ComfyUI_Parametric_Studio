@@ -1,0 +1,73 @@
+{
+ "code": "CU-322",
+ "title": "PAG, SAG and TCFG: what the extra guidance costs",
+ "level": "300",
+ "questions": [
+  {
+   "q": "How many predictions per step does cfg 7 with PAG cost?",
+   "options": [
+    "Two",
+    "Three",
+    "Four",
+    "One"
+   ],
+   "answer": "Three",
+   "why": "Positive, negative, and the positive with damaged attention."
+  },
+  {
+   "q": "Why is SAG not cheap at cfg 1?",
+   "options": [
+    "It runs at double the resolution",
+    "It runs PAG too",
+    "It calls the VAE each step",
+    "It forces the unconditional back on, then adds another prediction: three in all"
+   ],
+   "answer": "It forces the unconditional back on, then adds another prediction: three in all",
+   "why": "It sets disable_cfg1_optimization, because it needs the unconditional's attention."
+  },
+  {
+   "q": "What does TCFG add per step?",
+   "options": [
+    "One extra prediction",
+    "One SVD, and no extra prediction",
+    "Two extra predictions",
+    "A VAE decode"
+   ],
+   "answer": "One SVD, and no extra prediction",
+   "why": "It's a pre-cfg hook working on predictions the sampler already has."
+  },
+  {
+   "q": "Core PAG's damage is what?",
+   "options": [
+    "The text is zeroed",
+    "The latent is blurred",
+    "The seed changes",
+    "Self-attention returns its values unchanged"
+   ],
+   "answer": "Self-attention returns its values unchanged",
+   "why": "perturbed_attention returns v, the identity map the paper describes."
+  },
+  {
+   "q": "What would we expect core PAG to do on a Flux transformer?",
+   "options": [
+    "Pay for an extra prediction and add almost nothing, since that model never reads the attn1 patch",
+    "Double the picture's contrast",
+    "Refuse to validate",
+    "Disable the guidance number"
+   ],
+   "answer": "Pay for an extra prediction and add almost nothing, since that model never reads the attn1 patch",
+   "why": "From reading the code, not from a run: the lesson says so."
+  },
+  {
+   "q": "What is PAG scale 0?",
+   "options": [
+    "Still three predictions",
+    "Maximum strength",
+    "A real off switch: the source returns before making the extra prediction",
+    "An error"
+   ],
+   "answer": "A real off switch: the source returns before making the extra prediction",
+   "why": "post_cfg_function returns cfg_result at once when scale is 0."
+  }
+ ]
+}

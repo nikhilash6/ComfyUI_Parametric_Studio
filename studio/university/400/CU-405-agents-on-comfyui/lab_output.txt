@@ -1,10 +1,24 @@
-RESULT valid = VALID
-RESULT unknown_class = Node 1 has unknown class_type: NonExistentNode
-RESULT missing_input = Node 1 (KSampler) missing required input: steps
-RESULT bad_link = Node 1 input model links to non-existent node: 99
-RESULT cycle = Graph contains a cycle
-RESULT valid = VALID
-RESULT unknown_class = Node 1 has unknown class_type: NonExistentNode
-RESULT missing_input = Node 1 (KSampler) missing required input: steps
-RESULT bad_link = Node 1 input model links to non-existent node: 99
-RESULT cycle = Graph contains a cycle
+graph                  problems
+good                   []
+invented node          [('2', 'missing_node_type'), ('3', 'exception_during_inner_validation:images')]
+forgot an input        [('1', 'required_input_missing:height')]
+wire to nothing        [('2', 'exception_during_inner_validation:image')]
+output slot too big    [('2', 'exception_during_inner_validation:image')]
+wrong type on a wire   [('2', 'return_type_mismatch:image')]
+no output node         [('-', 'prompt_no_outputs')]
+
+8192 wide passes these checks: True  so a size limit is your job, or the agent queues a huge job
+
+action                 allowed?
+GET /object_info       yes
+POST /prompt           yes
+POST /queue clear      ask a person
+POST /free             ask a person
+API node in graph      ask a person
+shell command          no
+fourth POST /prompt with a limit of 3: ask a person
+
+run              what the agent should do
+ok               1 file: fetch it and look before reporting
+failed           failed: read status messages
+ran, no images   no files: don't report success

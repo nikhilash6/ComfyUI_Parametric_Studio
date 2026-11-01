@@ -1,0 +1,73 @@
+{
+ "code": "CU-360",
+ "title": "Image to mesh with core nodes",
+ "level": "300",
+ "questions": [
+  {
+   "q": "What does resolution 3072 mean on EmptyLatentHunyuan3Dv2?",
+   "options": [
+    "3072 tokens of 64 numbers, a list with no grid in it",
+    "A 3072-pixel image",
+    "A 3072-cell cube",
+    "The maximum triangle count"
+   ],
+   "answer": "3072 tokens of 64 numbers, a list with no grid in it",
+   "why": "The latent is [batch, 64, resolution]. The shape comes from decoding those tokens at points in space."
+  },
+  {
+   "q": "Which part of this graph generates, and which only converts?",
+   "options": [
+    "KSampler generates; the VAE decode and the mesh node convert",
+    "All of it generates",
+    "The mesh node generates the shape",
+    "CLIPVisionEncode generates the shape"
+   ],
+   "answer": "KSampler generates; the VAE decode and the mesh node convert",
+   "why": "The sampler is where noise becomes tokens. Everything after is a fixed calculation from those tokens."
+  },
+  {
+   "q": "Why do blocky meshes never reach the true area, however fine the grid?",
+   "options": [
+    "Stairs keep the same total area when they get smaller: about 3/2 for a sphere",
+    "The grid is too small",
+    "The threshold is wrong",
+    "GLB stores area badly"
+   ],
+   "answer": "Stairs keep the same total area when they get smaller: about 3/2 for a sphere",
+   "why": "The lab prints about 1.5 at 16, 32 and 64. Only reading values between grid points fixes it."
+  },
+  {
+   "q": "What does doubling octree_resolution do to decode cost?",
+   "options": [
+    "About 8 times the queries, as it grows with the cube",
+    "Twice the queries",
+    "Four times the queries",
+    "Nothing, if num_chunks is unchanged"
+   ],
+   "answer": "About 8 times the queries, as it grows with the cube",
+   "why": "257 cubed against 513 cubed is 16,974,593 against 135,005,697. num_chunks only batches them."
+  },
+  {
+   "q": "The negative conditioning in this graph is what?",
+   "options": [
+    "Zeros of the same shape as the image embedding",
+    "An empty text prompt",
+    "A second image",
+    "The same as the positive"
+   ],
+   "answer": "Zeros of the same shape as the image embedding",
+   "why": "Hunyuan3Dv2Conditioning builds it with torch.zeros_like(embeds)."
+  },
+  {
+   "q": "Your mesh has very few triangles and parts missing. Which setting do you try first?",
+   "options": [
+    "A lower threshold on the mesh node",
+    "More num_chunks",
+    "A different seed for SaveGLB",
+    "Higher resolution on the VAE only"
+   ],
+   "answer": "A lower threshold on the mesh node",
+   "why": "The threshold decides what counts as inside. In the lab, raising it from 0 to 0.6 falls from 4,620 to 108 triangles."
+  }
+ ]
+}

@@ -1,0 +1,62 @@
+{
+ "code": "CU-243",
+ "title": "Reading the Sampling Lab",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does the label 'from code' promise?",
+   "options": [
+    "It was read in the source, and a script found the file and line",
+    "It works on your model",
+    "A person rendered it",
+    "An author says so"
+   ],
+   "answer": "It was read in the source, and a script found the file and line",
+   "why": "It proves the code is there. It does not prove the method works well."
+  },
+  {
+   "q": "A render says 'measured here', one seed. What can you conclude?",
+   "options": [
+    "It happened, and it shows a difference on that seed",
+    "This method is better in general",
+    "It will look the same on your seed",
+    "It is safe to install"
+   ],
+   "answer": "It happened, and it shows a difference on that seed",
+   "why": "One seed and one prompt show a difference. They do not rank."
+  },
+  {
+   "q": "On the bench, a slope of −2 means:",
+   "options": [
+    "Doubling the calls cuts the error to about a quarter",
+    "Doubling the calls halves the error",
+    "It uses two calls per step",
+    "The picture is twice as sharp"
+   ],
+   "answer": "Doubling the calls cuts the error to about a quarter",
+   "why": "2 to the power of −2 is 0.25. The lab shows 0.21 for heun's −2.24."
+  },
+  {
+   "q": "How many methods outside core are proven by a render?",
+   "options": [
+    "None",
+    "All of them",
+    "About half",
+    "Six"
+   ],
+   "answer": "None",
+   "why": "Six attempts failed because the sandbox's control render failed too."
+  },
+  {
+   "q": "Roughly what share of the second reader's entries needed a fix or a caveat?",
+   "options": [
+    "About a fifth",
+    "None",
+    "About half",
+    "All of them"
+   ],
+   "answer": "About a fifth",
+   "why": "68 imprecise and 14 wrong of 378 is 22%."
+  }
+ ]
+}

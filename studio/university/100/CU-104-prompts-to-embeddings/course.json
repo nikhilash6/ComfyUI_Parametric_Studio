@@ -14,5 +14,57 @@
   "comfy/text_encoders/flux.py:class FluxClipModel"
  ],
  "track": "first-graph",
- "order": 70
+ "order": 70,
+ "kit": true,
+ "graphs": [
+  "nm_text",
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "CLIPTextEncode tokenizes then encodes, and returns a list of tensor and dictionary pairs with pooled_output.",
+   "how": "source",
+   "ref": "nodes.py:CLIPTextEncode"
+  },
+  {
+   "claim": "Start and end tokens are 49406 and 49407, with 77 positions.",
+   "how": "source",
+   "ref": "comfy/sd1_clip.py:SDClipModel"
+  },
+  {
+   "claim": "Weights apply as (z - z_empty) * w + z_empty.",
+   "how": "source",
+   "ref": "comfy/sd1_clip.py:ClipTokenWeightEncoder"
+  },
+  {
+   "claim": "Long prompts are cut into chunks, not truncated.",
+   "how": "source",
+   "ref": "comfy/sd1_clip.py:SDTokenizer.tokenize_with_weights"
+  },
+  {
+   "claim": "embedding: is the identifier for embeddings, and backslash escapes keep a literal bracket.",
+   "how": "source",
+   "ref": "comfy/sd1_clip.py:escape_important"
+  },
+  {
+   "claim": "SDXL width is 768 + 1280.",
+   "how": "source",
+   "ref": "comfy/sdxl_clip.py and the CLIP configs"
+  },
+  {
+   "claim": "BPE merges, table lookup and causal mask results are from running the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The no-model text graph passes validate_prompt and ran on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The chunk table is worked out from reading the code. We did not encode real prompts with real weights.",
+  "The lab's attention uses random weights, so it shows structure and says nothing about meaning.",
+  "We read the warning for a missing embedding in the parser's code and did not trigger one."
+ ]
 }

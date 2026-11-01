@@ -1,0 +1,70 @@
+{
+ "code": "CU-272",
+ "title": "Depth: conventions and core's depth nodes",
+ "level": "200",
+ "prereq": [
+  "CU-219",
+  "CU-270"
+ ],
+ "char": "latent",
+ "hook": "Which end is white, what the grey steps mean, and which depth nodes core really has: Lotus, MoGe and Depth Anything 3, read from the source.",
+ "track": "control",
+ "order": 24,
+ "kit": true,
+ "graphs": [
+  "d_depth_moge",
+  "sd15_controlnet_depth"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_depth_anything_3.py:DA3Render",
+  "comfy_extras/nodes_moge.py:MoGeRender",
+  "comfy_extras/nodes_moge.py:_normalize_disparity",
+  "comfy/ldm/depth_anything_3/preprocess.py:normalize_depth_v2_style",
+  "comfy/ldm/depth_anything_3/preprocess.py:normalize_depth_min_max",
+  "comfy_extras/nodes_lotus.py:LotusConditioning",
+  "comfy/supported_models.py:LotusD",
+  "comfy/model_base.py:Lotus"
+ ],
+ "verified": [
+  {
+   "claim": "The lab's v2_style, min_max and disparity give the same values as the real functions on a test ramp, difference 0.0.",
+   "how": "run here",
+   "ref": "comfy/ldm/depth_anything_3/preprocess.py, comfy_extras/nodes_moge.py"
+  },
+  {
+   "claim": "All three renders put near at the bright end.",
+   "how": "source",
+   "ref": "comfy/ldm/depth_anything_3/preprocess.py:normalize_depth_v2_style"
+  },
+  {
+   "claim": "DA3Render's normalization choices are v2_style, min_max and raw, and raw is neither scaled nor clamped.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_depth_anything_3.py:DA3Render"
+  },
+  {
+   "claim": "MoGeRender's depth is 1/depth, cut at the 0.1 and 99.9 percentiles.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_moge.py:_normalize_disparity"
+  },
+  {
+   "claim": "Core's Lotus node has no inputs and returns a fixed conditioning. Core's Lotus blueprint runs one step with SetFirstSigma 999 and ends in ImageInvert.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_lotus.py:LotusConditioning, blueprints/Image Depth Estimation (Lotus Depth).json"
+  },
+  {
+   "claim": "ControlNet 1.1's depth model was trained on Midas, Leres and Zoe depth at three resolutions, and the page states no near or far convention.",
+   "how": "docs",
+   "ref": "ControlNet-v1-1-nightly README, fetched 2026-11-01"
+  },
+  {
+   "claim": "d_depth_moge and sd15_controlnet_depth validate.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We ran no depth model and no depth ControlNet for this lesson. All numbers are from a synthetic ramp.",
+  "Near-is-white for the common SD 1.5 depth ControlNets is what the graph note and common practice assume. The model's own page does not state it, so check with one render.",
+  "Whether the Lotus blueprint's result before ImageInvert is far-is-white is an inference from the invert, not a run."
+ ]
+}

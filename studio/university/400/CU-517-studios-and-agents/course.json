@@ -2,13 +2,45 @@
  "title": "History 17: Studios and agents: when models became pipelines",
  "level": "400",
  "char": "graph",
- "hook": "Discover how ComfyUI transforms static model calls into dynamic, agent-driven pipelines that orchestrate complex creative workflows.",
+ "hook": "From one model call to pipelines of graphs driven by programs, and the ledger that keeps a pipeline honest.",
  "code": "CU-517",
  "prereq": [
   "CU-405"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "app/agent_host.py:ENTRY_POINT_GROUP",
+  "comfy_api_nodes/util/client.py:poll_op",
+  "comfy_execution/caching.py:CacheKeySetInputSignature",
+  "server.py:post_prompt"
+ ],
  "track": "automation",
- "order": 60
+ "order": 60,
+ "graphs": [
+  "sd15_hires",
+  "sd15_two_stage"
+ ],
+ "verified": [
+  {
+   "claim": "agent_host discovers the comfyui.agent entry point.",
+   "how": "source",
+   "ref": "app/agent_host.py:ENTRY_POINT_GROUP"
+  },
+  {
+   "claim": "API nodes poll through poll_op.",
+   "how": "source",
+   "ref": "comfy_api_nodes/util/client.py:poll_op"
+  },
+  {
+   "claim": "The ledger behaviour is from the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "We date nothing here: this is a reading of v0.43.0's code, not a history with sources for who did what first.",
+  "The definition of studio is our own working one.",
+  "The claim that separate graphs share the loaded-model cache is from general use of the engine, not tested in this lesson.",
+  "The lab runs against a stub, not a real server."
+ ],
+ "kit": true
 }

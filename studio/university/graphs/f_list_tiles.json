@@ -1,0 +1,69 @@
+{
+ "meta": {
+  "title": "A list, one call per item",
+  "about": "SplitImageToTileList returns a list. ImageInvert runs once per tile. ImageMergeTileList takes the whole list in one call.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "256 by 256.",
+   "2": "OUTPUT_IS_LIST: makes 4 tiles.",
+   "3": "An ordinary node, so it is called 4 times.",
+   "4": "INPUT_IS_LIST: one call, every tile.",
+   "5": "The whole picture again."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 256,
+    "height": 256,
+    "batch_size": 1,
+    "color": 3368652
+   }
+  },
+  "2": {
+   "class_type": "SplitImageToTileList",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "tile_width": 128,
+    "tile_height": 128,
+    "overlap": 0
+   }
+  },
+  "3": {
+   "class_type": "ImageInvert",
+   "inputs": {
+    "image": [
+     "2",
+     0
+    ]
+   }
+  },
+  "4": {
+   "class_type": "ImageMergeTileList",
+   "inputs": {
+    "image_list": [
+     "3",
+     0
+    ],
+    "final_width": 256,
+    "final_height": 256,
+    "overlap": 0
+   }
+  },
+  "5": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "4",
+     0
+    ]
+   }
+  }
+ }
+}

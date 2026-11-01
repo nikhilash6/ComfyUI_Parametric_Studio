@@ -4,54 +4,70 @@
  "level": "400",
  "questions": [
   {
-   "q": "According to the lesson, what is the primary difference between static memory allocation and dynamic computational load?",
+   "q": "Why isn't a job's peak memory just the sum of its tensors?",
    "options": [
-    "Static memory is a capacity constraint regarding how much data can be held, while dynamic load is a throughput constraint regarding processing speed.",
-    "Static memory refers to the speed of the GPU, while dynamic load refers to the size of the model weights.",
-    "Static memory is always larger than dynamic load, while dynamic load is a hard limit that causes crashes.",
-    "Static memory scales quadratically with resolution, while dynamic load scales linearly with batch size only."
+    "Some tensors die before others are born",
+    "Tensors are compressed on the card",
+    "Only the largest tensor counts",
+    "VRAM is shared by every model evenly"
    ],
-   "answer": "Static memory is a capacity constraint regarding how much data can be held, while dynamic load is a throughput constraint regarding processing speed.",
-   "why": "The 'Why this matters' section explicitly states: 'Memory is a capacity constraint; it is about how much data you can hold at once. Time is a throughput constraint; it is about how fast you can process that data.'"
+   "answer": "Some tensors die before others are born",
+   "why": "The peak depends on what is alive at once. The lab gets 800 or 1100 MB from the same four tensors."
   },
   {
-   "q": "In the provided lab example, a batch of 2 images (3 channels, 8x8 pixels) is processed. What is the calculated `memory_bytes` for the input tensor using FP32?",
+   "q": "nvidia-smi shows most of your card as used, yet nothing is running. What is a likely reason?",
    "options": [
-    "768",
-    "1536",
-    "12288",
-    "384"
+    "PyTorch's allocator keeps freed memory in its cache",
+    "The card is broken",
+    "Weights were written to disk",
+    "nvidia-smi only counts free memory"
    ],
-   "answer": "1536",
-   "why": "The 'Lab' section states: 'RESULT memory_bytes = 1536' and explains the calculation: 'numel is 2 * 3 * 8 * 8 = 384 elements. element_size for FP32 is 4 bytes. 384 * 4 = 1536.'"
+   "answer": "PyTorch's allocator keeps freed memory in its cache",
+   "why": "The PyTorch docs say unused memory managed by the allocator still shows as used in nvidia-smi."
   },
   {
-   "q": "What is the formula for calculating the number of floating-point operations (FLOPs) for a linear layer, and what does the factor of 2 represent?",
-   "options": null,
-   "answer": "The formula is flops = 2 * M * N * K, where M is batch size, N is output features, and K is input features. The factor of 2 accounts for the multiply and the add in each dot product.",
-   "why": "The 'Under the hood' section defines the formula as `flops = 2 * M * N * K` and explicitly states: 'The factor of 2 accounts for the multiply and the add in each dot product.'"
+   "q": "Why can a stopwatch around GPU code be wrong?",
+   "options": [
+    "GPU operations are asynchronous, so the call may return early",
+    "Stopwatches don't work on Linux",
+    "The clock pauses during matmuls",
+    "It always includes loading"
+   ],
+   "answer": "GPU operations are asynchronous, so the call may return early",
+   "why": "Use torch.cuda.synchronize() before reading the time."
   },
   {
-   "q": "Which ComfyUI class is responsible for tracking which weights are on the GPU versus the CPU and uses `LowVramPatch` to estimate VRAM usage?",
+   "q": "Text encoding is 2 s of a 110 s run. How much can making it ten times faster save?",
    "options": [
-    "VRAMState",
-    "ModelPatcher",
-    "KSAMPLER",
-    "free_memory"
+    "Under 2 s",
+    "About 10%",
+    "About 90 s",
+    "Half the run"
    ],
-   "answer": "ModelPatcher",
-   "why": "The 'In ComfyUI' section states: 'The ModelPatcher class in comfy/model_patcher.py is responsible for tracking which weights are on the GPU versus the CPU. It uses LowVramPatch to estimate VRAM usage.'"
+   "answer": "Under 2 s",
+   "why": "You can't save more than a stage takes. Measure first, then attack the largest stage."
   },
   {
-   "q": "Why does switching from FP32 to FP16 not necessarily halve the `flops` count, even though it halves the `memory_bytes`?",
+   "q": "Five runs: 66, 1.5, 1.5, 1.5, 1.5 s. What is the fair summary of the repeat cost?",
    "options": [
-    "Because the number of operations remains the same, but the GPU can often process FP16 operations faster due to specialized hardware units.",
-    "Because FP16 requires more memory per element than FP32, increasing the total workload.",
-    "Because the batch size automatically doubles when switching to FP16 to maintain precision.",
-    "Because the weight matrix size changes dynamically based on the data type."
+    "The median, 1.5 s",
+    "The mean, 14.4 s",
+    "The first run, 66 s",
+    "The sum, 72 s"
    ],
-   "answer": "Because the number of operations remains the same, but the GPU can often process FP16 operations faster due to specialized hardware units.",
-   "why": "The 'Common mistakes' section states: 'Switching from FP32 to FP16 halves the memory_bytes... but it does not necessarily halve the flops. The number of operations remains the same, but the GPU can often process FP16 operations faster due to specialized hardware units.'"
+   "answer": "The median, 1.5 s",
+   "why": "The first includes loading. The mean mixes a load with the runs."
+  },
+  {
+   "q": "Which tool gives you free VRAM from a running ComfyUI without touching the graph?",
+   "options": [
+    "GET /system_stats",
+    "POST /free",
+    "--reserve-vram",
+    "SaveImage"
+   ],
+   "answer": "GET /system_stats",
+   "why": "It reports vram_free and torch_vram_free per device. POST /free would unload things."
   }
  ]
 }

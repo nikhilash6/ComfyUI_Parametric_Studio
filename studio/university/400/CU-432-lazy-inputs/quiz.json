@@ -1,0 +1,12 @@
+{
+ "code": "CU-432",
+ "title": "Lazy inputs and check_lazy_status",
+ "level": "400",
+ "questions": [
+  {"q": "How does a lazy input look to check_lazy_status before it has run?", "options": ["It is None", "It is an empty tensor", "It is the wire as a list", "It is left out and raises KeyError"], "answer": "It is None", "why": "A lazy wire with no result yet is marked missing, and arrives as None."},
+  {"q": "A switch uses one lazy branch. How many times is check_lazy_status called?", "options": ["Once", "At least twice", "Once per branch, always", "Never, when the switch is on"], "answer": "At least twice", "why": "Once to ask, and again after the branch has run. A real run showed check, branch, check, execute."},
+  {"q": "Your check returns [\"a\"], but a is an optional input with no wire. What happens?", "options": ["a is treated as None and the node runs", "The prompt fails: the node says it needs input a, but there is no input", "Validation catches it first", "The check is retried forever"], "answer": "The prompt fails: the node says it needs input a, but there is no input", "why": "make_input_strong_link raises this while the prompt runs. Validation doesn't call your check."},
+  {"q": "A required input is marked lazy and left unwired. What happens?", "options": ["It waits until asked", "It gets None", "required_input_missing at validation", "Its default is used"], "answer": "required_input_missing at validation", "why": "Lazy says when to evaluate a wire. It doesn't make the input optional."},
+  {"q": "Which is the better way to skip part of a graph?", "options": ["A lazy input, since it never starts the work", "ExecutionBlocker, since it is faster", "Raising an exception", "An unwired output"], "answer": "A lazy input, since it never starts the work", "why": "The ExecutionBlocker docstring and the docs both recommend lazy where it can do the job."}
+ ]
+}

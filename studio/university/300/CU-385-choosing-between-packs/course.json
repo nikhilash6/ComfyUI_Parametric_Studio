@@ -1,0 +1,60 @@
+{
+ "code": "CU-385",
+ "title": "How to pick between packs, and when core already does it",
+ "level": "300",
+ "prereq": [
+  "CU-380"
+ ],
+ "char": "graph",
+ "hook": "Most searches for a pack should end in core. A short ladder: does core do it, what does the gap really need, is the code what you think, and can you live with its side effects?",
+ "track": "packs",
+ "order": 45,
+ "graphs": [
+  "sd15_pag",
+  "g_easycache"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_pag.py:PerturbedAttentionGuidance",
+  "comfy_extras/nodes_easycache.py:EasyCacheNode",
+  "comfy_extras/nodes_easycache.py:LazyCacheNode"
+ ],
+ "verified": [
+  {
+   "claim": "Core has PerturbedAttentionGuidance, EasyCache, LazyCache, ImageGrid and ImageCompare. ImageGrid takes images, columns, cell sizes and padding.",
+   "how": "run here",
+   "ref": "the server's read-only object_info and the source"
+  },
+  {
+   "claim": "sd-perturbed-attention is MIT and has pag_nodes.py and tpg_nodes.py, with its own PerturbedAttention and TokenPerturbationGuidance classes.",
+   "how": "source",
+   "ref": "the pack's LICENSE and files, read as text and not run"
+  },
+  {
+   "claim": "ComfyUI-MiniMaxH3-FirstBlockCache is MIT, works by first-block residual, and its README reports 1.44× to 1.49× and calls itself an approximation.",
+   "how": "source",
+   "ref": "the pack's LICENSE, nodes.py and README, read as text"
+  },
+  {
+   "claim": "ComfyUI-SweepGrid is MIT with nodes for sweep combinations and video grids.",
+   "how": "source",
+   "ref": "the pack's LICENSE and nodes folder, read as text"
+  },
+  {
+   "claim": "All three are on our hand-read pick list, as candidates for a sandbox test.",
+   "how": "source",
+   "ref": "our hand-read list of packs"
+  },
+  {
+   "claim": "Both graphs pass validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We didn't run any of these packs for this lesson. Being on our list means someone read it, not that it works for you.",
+  "The speed figure is the pack author's own. We didn't test it.",
+  "The 2% in the lab is an example for the arithmetic, not a measured rate.",
+  "Other good packs do these jobs. We read only these."
+ ],
+ "kit": true
+}

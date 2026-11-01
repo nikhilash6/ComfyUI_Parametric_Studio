@@ -1,0 +1,30 @@
+timed renders of one graph on our test machine, from sampling_lab/renders.json, seconds
+  sampler-euler (first render of this model)    66.0
+  sampler-euler_ancestral                        1.5
+  sampler-heun                                   1.5
+  sampler-dpmpp_2m                               1.5
+  sampler-ddim                                   1.5
+  sampler-lcm                                    1.5
+  mean 12.2 s, median 1.5 s. The first run measures the loader.
+
+measure on identical terms: with the polling used there, 1.5 s is the smallest step a timing can show, so these renders can't rank samplers
+
+what each lever changes, by counting. One image, SD-like, baseline 20 steps at CFG 7, 1024 px
+  baseline                               calls x cells =   655360   100.0% of baseline
+  distilled: 4 steps, CFG 1              calls x cells =    65536    10.0% of baseline
+  fewer steps on a normal model: 10      calls x cells =   327680    50.0% of baseline
+  smaller latent: 768 px                 calls x cells =   368640    56.2% of baseline
+  smaller latent: 512 px                 calls x cells =   163840    25.0% of baseline
+  cached prompt: no change to sampling   calls x cells =   655360   100.0% of baseline
+
+tiled VAE: get_tiled_scale_steps, ported. Memory falls with the tile, passes rise
+  a 1024 px image is a 128 x 128 latent. decode_tiled_ decodes three times, with tiles of three shapes, and averages
+  tile 64, overlap 16:  23 tile decodes, each 25.0% of the whole latent's cells
+  tile 64, overlap 8:  19 tile decodes, each 25.0% of the whole latent's cells
+  tile 32, overlap 8: 115 tile decodes, each  6.2% of the whole latent's cells
+
+from our own process notes, not re-run here: one video graph, 40 steps, core EasyCache at 0.2 / 0.15-0.95: 419 s to 189 s
+  that is 2.22 times faster on that graph, and we have no number for any other
+
+an honest small report
+  graph, seed, steps, card, what changed, first run left out, three runs each, median, and did the picture change?

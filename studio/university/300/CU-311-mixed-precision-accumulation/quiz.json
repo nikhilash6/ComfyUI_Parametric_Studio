@@ -4,49 +4,70 @@
  "level": "300",
  "questions": [
   {
-   "q": "According to the lesson, why is fp16 considered a trap for gradient accumulation in training?",
+   "q": "About how many mantissa bits does fp16 keep?",
    "options": [
-    "Because fp16 has a larger exponent range than fp32, causing overflow.",
-    "Because small gradient values can fall below the resolution of the running sum and vanish due to the limited mantissa.",
-    "Because fp16 cannot represent negative numbers, which are common in gradients.",
-    "Because fp16 requires more VRAM than fp32 during the accumulation phase."
+    "10",
+    "23",
+    "3",
+    "15 to 16"
    ],
-   "answer": "Because small gradient values can fall below the resolution of the running sum and vanish due to the limited mantissa.",
-   "why": "The lesson explains that fp16 has a 10-bit mantissa, meaning it has limited resolution. When adding small numbers (gradients) to a large running sum, the small numbers may not be significant enough to change the result, effectively vanishing."
+   "answer": "10",
+   "why": "fp16 has 10 mantissa bits, about three decimal digits. It is not 15 or 16 digits."
   },
   {
-   "q": "What is the machine epsilon (epsilon_mach) for fp16 as stated in the lesson?",
+   "q": "Why does 1.0 + 0.0001 equal 1.0 in fp16?",
    "options": [
-    "Approximately 1.2 x 10^-7",
-    "Approximately 9.8 x 10^-4",
-    "Approximately 6.1 x 10^-5",
-    "Approximately 1.0 x 10^-4"
+    "0.0001 is less than half the gap between numbers near 1",
+    "fp16 can't store 0.0001 at all",
+    "Addition is not defined for fp16",
+    "It is a bug in PyTorch"
    ],
-   "answer": "Approximately 9.8 x 10^-4",
-   "why": "The 'Under the hood' section explicitly lists the machine epsilon for fp16 as approximately 9.8 x 10^-4."
+   "answer": "0.0001 is less than half the gap between numbers near 1",
+   "why": "The gap near 1 is 2^-10, about 0.001, and half of that is larger than 0.0001."
   },
   {
-   "q": "In the lab results, what was the calculated difference (grad_accum_diff) between the fp16 and fp32 accumulated gradients over 10 batches?",
-   "options": null,
-   "answer": "0.121216",
-   "why": "The lab output section explicitly states: 'RESULT grad_accum_diff = 0.121216'."
-  },
-  {
-   "q": "How does ComfyUI handle the potential precision loss in linear layers when fp16 is not safe?",
+   "q": "In the lab an fp16 running sum of 0.0001 stalls at 0.25. Why there?",
    "options": [
-    "It automatically converts all weights to fp64 for every operation.",
-    "It disables all mixed precision features on unsupported hardware.",
-    "It uses a full-precision matrix multiplication fallback to fp32.",
-    "It raises an error and stops the inference process."
+    "Above 0.25, half the gap is larger than what is being added",
+    "0.25 is fp16's largest number",
+    "It ran out of memory",
+    "Rounding only begins at 0.25"
    ],
-   "answer": "It uses a full-precision matrix multiplication fallback to fp32.",
-   "why": "The lesson mentions that unit tests verify that the system 'respects the full-precision matrix multiplication fallback' and that 'if the hardware or the operation is not safe in fp16, ComfyUI falls back to fp32'."
+   "answer": "Above 0.25, half the gap is larger than what is being added",
+   "why": "The gap doubles at each power of two, and at 0.25 half of it reaches 0.000122."
   },
   {
-   "q": "According to the lesson, what is the recommended precision for storing weights to save VRAM versus the precision for computation in critical training scenarios?",
-   "options": null,
-   "answer": "Weights can be stored in fp16 to save VRAM, but should be cast to fp32 for computation (specifically matrix multiplications/gradient accumulation) if accuracy is critical.",
-   "why": "The 'Common mistakes' section states: 'Weights can be stored in fp16 to save VRAM, but they should be cast to fp32 for matrix multiplications if accuracy is critical.' Additionally, the 'In ComfyUI' section notes that LazyCastingParam allows weights to be cast on-the-fly."
+   "q": "Where is a long sum hidden in every linear layer?",
+   "options": [
+    "In each dot product of the matmul",
+    "In the file header",
+    "In the model's name",
+    "In the scheduler"
+   ],
+   "answer": "In each dot product of the matmul",
+   "why": "Each output is a sum of many products. --fast fp16_accumulation changes how that sum is carried."
+  },
+  {
+   "q": "What does GradScaler solve?",
+   "options": [
+    "Very small fp16 gradients becoming 0",
+    "Too many steps",
+    "fp16's lack of a sign bit",
+    "A slow text encoder"
+   ],
+   "answer": "Very small fp16 gradients becoming 0",
+   "why": "It scales values up into range and back. In the lab 1e-8 becomes 0 in fp16, and survives when scaled."
+  },
+  {
+   "q": "What does this lesson show about fp16 for making pictures?",
+   "options": [
+    "Nothing direct: it shows sums lose numbers, and a picture needs its own test",
+    "It always ruins pictures",
+    "It is always the same as fp32",
+    "fp16 is banned in ComfyUI"
+   ],
+   "answer": "Nothing direct: it shows sums lose numbers, and a picture needs its own test",
+   "why": "The lab measures sums on a CPU. Nothing here compares images."
   }
  ]
 }

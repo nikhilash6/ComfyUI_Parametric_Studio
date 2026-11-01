@@ -1,0 +1,125 @@
+{
+ "meta": {
+  "title": "A distilled LoRA in core: LCM",
+  "about": "Core runs distilled weights. It has no node that trains them.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader.",
+   "An LCM LoRA for SD 1.5 in models/loras, made by you or by someone you trust."
+  ],
+  "packs": [],
+  "notes": {
+   "2": "The distilled change, as a LoRA.",
+   "3": "Tells the sampler the model predicts in the LCM form.",
+   "7": "Four steps and cfg 1. Those numbers suit an LCM file; check your file's notes."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "LoraLoaderModelOnly",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "lora_name": "your_lcm_lora.safetensors",
+    "strength_model": 1.0
+   }
+  },
+  "3": {
+   "class_type": "ModelSamplingDiscrete",
+   "inputs": {
+    "model": [
+     "2",
+     0
+    ],
+    "sampling": "lcm",
+    "zsnr": false
+   }
+  },
+  "4": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "5": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "6": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "7": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "3",
+     0
+    ],
+    "seed": 424242,
+    "steps": 4,
+    "cfg": 1.0,
+    "sampler_name": "lcm",
+    "scheduler": "sgm_uniform",
+    "denoise": 1.0,
+    "positive": [
+     "4",
+     0
+    ],
+    "negative": [
+     "5",
+     0
+    ],
+    "latent_image": [
+     "6",
+     0
+    ]
+   }
+  },
+  "8": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "7",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "9": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "8",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

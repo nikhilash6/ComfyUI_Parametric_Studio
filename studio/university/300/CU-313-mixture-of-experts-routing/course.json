@@ -2,13 +2,51 @@
  "title": "Mixture of experts routing",
  "level": "300",
  "char": "attn",
- "hook": "Discover how ComfyUI's advanced diffusion models intelligently select the right expert for each token to boost efficiency and quality.",
+ "hook": "A gate picks a few feed-forward networks per token, so storage grows with experts while work grows only with how many each token uses.",
  "code": "CU-313",
  "prereq": [
   "CU-301"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/ldm/hidream/model.py:MoEGate",
+  "comfy/ldm/hidream/model.py:MOEFeedForwardSwiGLU.forward",
+  "comfy/ldm/hidream/model.py:MOEFeedForwardSwiGLU.moe_infer",
+  "comfy/ldm/hunyuan3dv2_1/hunyuandit.py:MoEBlock",
+  "comfy/ldm/hunyuan3dv2_1/hunyuandit.py:AddAuxLoss",
+  "comfy/text_encoders/llama.py:moe_experts_forward",
+  "comfy/text_encoders/gpt_oss.py:num_local_experts"
+ ],
  "track": "architecture",
- "order": 50
+ "order": 50,
+ "graphs": [
+  "hunyuan3d_mesh"
+ ],
+ "verified": [
+  {
+   "claim": "HiDream's gate uses softmax and topk, with norm_topk_prob False and aux_loss None.",
+   "how": "source",
+   "ref": "comfy/ldm/hidream/model.py:MoEGate.forward"
+  },
+  {
+   "claim": "forward routes tokens to experts, sums by weight, and adds shared_experts.",
+   "how": "source",
+   "ref": "comfy/ldm/hidream/model.py:MOEFeedForwardSwiGLU.forward"
+  },
+  {
+   "claim": "Hunyuan 3D v2.1 uses MoEBlock only for the last num_moe_layers.",
+   "how": "source",
+   "ref": "comfy/ldm/hunyuan3dv2_1/hunyuandit.py:num_moe_layers"
+  },
+  {
+   "claim": "Routed and brute-force outputs match exactly in the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "The graph hunyuan3d_mesh is not confirmed to load a v2.1 model; it says Hunyuan3D 2. We use it only to show the family.",
+  "The load balancing loss is described from the papers' subject matter and the name AddAuxLoss; we did not reread the papers' full text.",
+  "No trained expert routing was measured here."
+ ],
+ "kit": true
 }

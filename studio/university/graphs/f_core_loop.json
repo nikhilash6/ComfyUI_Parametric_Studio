@@ -1,0 +1,73 @@
+{
+ "meta": {
+  "title": "Core's loop, built on node expansion",
+  "about": "Start Loop expands into copies of the loop body while the prompt runs. Here it inverts a picture three times. Our no-server checker can only validate this one: the node reports progress through the running server.",
+  "runs": "model",
+  "needs": [
+   "a running server, no model files"
+  ],
+  "packs": [],
+  "notes": {
+   "1": "The value carried round the loop.",
+   "2": "Expands into the iterations.",
+   "3": "The loop body.",
+   "4": "Closes the loop.",
+   "5": "The result."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 32,
+    "height": 32,
+    "batch_size": 1,
+    "color": 3368652
+   }
+  },
+  "2": {
+   "class_type": "StartLoop",
+   "inputs": {
+    "mode": "simple",
+    "mode.num_iterations": 3,
+    "cache_iterations": false,
+    "initial_iteration_value": [
+     "1",
+     0
+    ]
+   }
+  },
+  "3": {
+   "class_type": "ImageInvert",
+   "inputs": {
+    "image": [
+     "2",
+     4
+    ]
+   }
+  },
+  "4": {
+   "class_type": "EndLoop",
+   "inputs": {
+    "output_value": [
+     "3",
+     0
+    ],
+    "next_iteration_value": [
+     "3",
+     0
+    ],
+    "accumulate": false
+   }
+  },
+  "5": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "4",
+     0
+    ]
+   }
+  }
+ }
+}

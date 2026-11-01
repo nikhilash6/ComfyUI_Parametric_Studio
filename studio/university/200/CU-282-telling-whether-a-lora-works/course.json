@@ -1,0 +1,44 @@
+{
+ "code": "CU-282",
+ "title": "Telling whether a LoRA works",
+ "level": "200",
+ "prereq": [
+  "CU-280"
+ ],
+ "char": "tune",
+ "hook": "Same seed, off and on. Then a strength sweep and more than one seed. How to get an answer you can trust from a few renders.",
+ "track": "lora-training",
+ "order": 14,
+ "kit": true,
+ "graphs": [
+  "d_lora_compare"
+ ],
+ "code_refs": [
+  "nodes.py:LoraLoader.load_lora",
+  "comfy/weight_adapter/lora.py:LoRAAdapter.calculate_weight",
+  "nodes.py:KSampler",
+  "nodes.py:ImageBatch"
+ ],
+ "verified": [
+  {
+   "claim": "Strength enters the weight as a straight multiple, and both strengths at 0 returns the inputs unchanged.",
+   "how": "source",
+   "ref": "nodes.py:LoraLoader.load_lora"
+  },
+  {
+   "claim": "The pixel differences of the real picture pairs were computed from train_art at 256 x 256: about 0.13 for the lighthouse, 0.25 for the harbour, 0.23 for two unrelated base pictures.",
+   "how": "run here",
+   "ref": "studio/web/train_art"
+  },
+  {
+   "claim": "d_lora_compare validates.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The sweep and seed numbers come from a small stand-in network, not an image model, so its near-straight line is not a claim about any real LoRA. Real sweeps can bend far more or less.",
+  "Our real pictures are two prompts at one seed each, at strength 1. We have no sweep from a real LoRA in this lesson.",
+  "That testing with several seeds and four on/off pictures is enough is our advice, not something proved."
+ ]
+}

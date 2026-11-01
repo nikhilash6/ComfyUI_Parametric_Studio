@@ -1,0 +1,19 @@
+make(3) outputs: [[0, 1, 2], ['s']]
+each outputs: [[0, 10, 20]]
+whole outputs: [[30]]
+  call ('make', 3)
+  call ('each', 0, 10, 's')
+  call ('each', 1, 10, 's')
+  call ('each', 2, 10, 's')
+  call ('whole', [0, 10, 20], [1])
+
+lists of 3 and 1: [(1, 1), (2, 1), (3, 1)]
+lists of 3 and 2: [(1, 10), (2, 20), (3, 20)]
+
+return a list with OUTPUT_IS_LIST: [[1, 2, 3]]  3 items
+return a list without the flag:    [[[1, 2, 3]]]  1 item, which is a list
+
+batch: 1 list item, shape (4, 8, 8, 3): a node is called 1 time
+list:  4 list items, each shape (1, 8, 8, 3): a node is called 4 times
+a list may hold different sizes: [(1, 8, 8, 3), (1, 16, 16, 3)]
+a batch may not: Sizes of tensors must match except in dimension 0

@@ -1,72 +1,23 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility as required
-torch.manual_seed(0)
-
-# Define the list of (claim, reported_metric, baseline_metric) tuples
-# These represent claims from a hypothetical generative AI paper
-claims = [
-    ("Model A improves accuracy", 0.85, 0.83),
-    ("Model B reduces latency", 120.5, 125.0),
-    ("Model C increases F1 score", 0.72, 0.715),
-    ("Model D boosts throughput", 1000, 990),
-    ("Model E enhances diversity", 0.45, 0.44),
-]
-
-# Assumed noise level for determining if improvement is within noise
-NOISE_THRESHOLD = 0.015  # 1.5%
-
-# Function to compute relative improvement
-def compute_relative_improvement(reported, baseline):
-    """
-    Compute relative improvement as (reported - baseline) / baseline.
-    For metrics where lower is better (like latency), we invert the logic.
-    Here we assume all metrics are 'higher is better' for simplicity,
-    but in practice, you'd need to know the metric direction.
-    """
-    if baseline == 0:
-        return float('inf') if reported > 0 else 0.0
-    return (reported - baseline) / baseline
-
-# Process each claim
-results = []
-for claim, reported, baseline in claims:
-    # Convert to float32 CPU tensors as required
-    reported_tensor = torch.tensor(reported, dtype=torch.float32)
-    baseline_tensor = torch.tensor(baseline, dtype=torch.float32)
-    
-    # Compute relative improvement
-    rel_improvement = compute_relative_improvement(reported_tensor.item(), baseline_tensor.item())
-    
-    # Check if improvement is within noise (less than 2% improvement)
-    # The problem states: flag improvements under 2% as within-noise given assumed noise of 1.5%
-    # So if relative improvement < 0.02, it's considered within noise
-    is_within_noise = abs(rel_improvement) < 0.02
-    
-    # A claim "survives" if it's NOT within noise
-    survives = not is_within_noise
-    
-    results.append({
-        "claim": claim,
-        "relative_improvement": rel_improvement,
-        "survives": survives
-    })
-
-# Print results in the required format
-for result in results:
-    name = result["claim"]
-    value = result["relative_improvement"]
-    # Format floats with f"{x:.6g}" to keep small values' digits
-    print(f"RESULT {name} = {value:.6g}")
-
-# Assert statements to check the concept holds
-# 1. Check that a claim with >2% improvement survives
-assert any(r["survives"] for r in results if r["relative_improvement"] > 0.02), "Claims with >2% improvement should survive"
-
-# 2. Check that a claim with <2% improvement does NOT survive
-assert not any(r["survives"] for r in results if abs(r["relative_improvement"]) < 0.02), "Claims with <2% improvement should be flagged as within-noise"
+# CU-407 lab: three traps in a paper's results table, simulated. Every number is made up by this script and stands for no real paper.
+import math, torch
+torch.manual_seed(0); torch.set_num_threads(1)
+# 1. Best of K runs. Two methods with the SAME true score, some noise per run. The paper reports its method's best run against the baseline's mean.
+def trial(K, sd=1.0, n=20000):
+    new = 10 + sd * torch.randn(n, K); base = 10 + sd * torch.randn(n, 3); return (new.max(1).values - base.mean(1)).mean().item()
+print("runs tried, best one reported   average apparent gain, true gain is 0 (noise sd 1)")
+g = {}
+for K in (1, 3, 5, 10, 30): g[K] = trial(K); print(f"{K:<31d} {g[K]:.2f}")
+assert g[30] > g[10] > g[3] and abs(g[1]) < .05
+# 2. Is the difference bigger than the noise? Mean of n runs each, standard error of the difference, and a rough 95% range of plus or minus 2 standard errors.
+def read(m1, s1, m2, s2, n):
+    se = math.sqrt(s1 ** 2 / n + s2 ** 2 / n); d = m1 - m2; return d, se, d - 2 * se, d + 2 * se
+print("\nnew    sd    base   sd    runs  difference  range             verdict")
+for r in ((2.30, .05, 2.40, .05, 5), (2.30, .20, 2.40, .20, 5), (2.30, .20, 2.40, .20, 50), (2.30, None, 2.40, None, 1)):
+    if r[1] is None: print(f"{r[0]:<6.2f} ?     {r[2]:<6.2f} ?     1     {r[0] - r[2]:<11.2f} can't tell        no spread given, so no judgement"); continue
+    d, se, lo, hi = read(*r); v = "clear of 0" if hi < 0 or lo > 0 else "includes 0, no claim"; print(f"{r[0]:<6.2f} {r[1]:<5.2f} {r[2]:<6.2f} {r[3]:<5.2f} {r[4]:<5d} {d:<11.2f} {lo:+.3f} to {hi:+.3f}  {v}")
+assert read(2.30, .05, 2.40, .05, 5)[3] < 0 and read(2.30, .20, 2.40, .20, 5)[3] > 0
+# 3. Percent gains flatter a small base. Same absolute change.
+print("\nbase  new   change  percent")
+for b, n in ((10.0, 9.9), (1.0, .9), (.2, .1)): print(f"{b:<5.1f} {n:<5.1f} {n - b:<7.1f} {(n - b) / b:+.0%}")
+# 4. Several metrics, one winner. With 8 metrics, each a coin flip, how often is there at least one metric where the new method wins by a clear margin?
+n = 20000; z = torch.randn(n, 8); print(f"\n8 unrelated metrics, no true difference: at least one looks 'clear of 0' in {(z.abs() > 2).any(1).float().mean().item():.0%} of papers"); assert (z.abs() > 2).any(1).float().mean() > .25

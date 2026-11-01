@@ -1,0 +1,62 @@
+{
+ "code": "CU-331",
+ "title": "LTX-2.5, node by node",
+ "level": "300",
+ "questions": [
+  {
+   "q": "The graph's CFGGuider has cfg 1.0. What does the negative prompt do?",
+   "options": [
+    "Nothing: at 1 the conditional result is used alone, and the negative pass is skipped",
+    "It is subtracted at half strength",
+    "It sets the frame rate",
+    "It selects the noise list"
+   ],
+   "answer": "Nothing: at 1 the conditional result is used alone, and the negative pass is skipped",
+   "why": "sampling_function sets the unconditional to None when cond_scale is close to 1, so that pass is never run."
+  },
+  {
+   "q": "What does frame_rate on LTXVConditioning do beyond being a label?",
+   "options": [
+    "The model divides time coordinates by it, so it sets how far apart frames are in seconds",
+    "It sets how fast the file plays",
+    "It changes the number of frames",
+    "Nothing, it is ignored by the model"
+   ],
+   "answer": "The model divides time coordinates by it, so it sets how far apart frames are in seconds",
+   "why": "_prepare_positional_embeddings multiplies the time coordinate by 1 / frame_rate. Playback speed is CreateVideo's fps, a separate number."
+  },
+  {
+   "q": "How many model calls does the graph's sampling take?",
+   "options": [
+    "8: nine sigmas make 8 steps, and CFG 1 means one call per step",
+    "9, one per sigma",
+    "16, two per step",
+    "20, the usual default"
+   ],
+   "answer": "8: nine sigmas make 8 steps, and CFG 1 means one call per step",
+   "why": "euler_ancestral makes one call per step, and the list has 8 intervals."
+  },
+  {
+   "q": "The temporal_size is 64 and the temporal overlap 8 in VAEDecodeTiled. What does the VAE receive?",
+   "options": [
+    "Tiles of 8 latent frames, overlapping by 1, since LTX's temporal factor is 8",
+    "Tiles of 64 latent frames, overlapping by 8",
+    "One tile of 64 pixels",
+    "8 tiles in total"
+   ],
+   "answer": "Tiles of 8 latent frames, overlapping by 1, since LTX's temporal factor is 8",
+   "why": "decode divides both by vae.temporal_compression_decode(), so 64 // 8 = 8, and 8 // 8 = 1."
+  },
+  {
+   "q": "Why does LTXVEmptyLatentAudio take the audio VAE as an input?",
+   "options": [
+    "It reads the channel count, the frequency bins and latents per second from it",
+    "To decode audio as the latent is created",
+    "To load the vocoder early",
+    "It uses it to set the seed"
+   ],
+   "answer": "It reads the channel count, the frequency bins and latents per second from it",
+   "why": "The node reads audio_vae.latent_channels and first_stage_model.latent_frequency_bins, and calls num_of_latents_from_frames."
+  }
+ ]
+}

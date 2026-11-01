@@ -9,8 +9,46 @@
  "hook": "One line of arithmetic, and it does not sample the distribution people usually say it does.",
  "code_refs": [
   "comfy/samplers.py:cfg_function",
-  "comfy/samplers.py:sampling_function"
+  "comfy/samplers.py:sampling_function",
+  "comfy/samplers.py:calc_cond_batch",
+  "comfy/model_patcher.py:set_model_options_post_cfg_function",
+  "nodes.py:KSampler"
  ],
  "track": "guidance",
- "order": 10
+ "order": 10,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "cfg_function computes uncond + (cond minus uncond) times cfg on denoised predictions, and runs any post-cfg hooks after it.",
+   "how": "source",
+   "ref": "comfy/samplers.py:cfg_function"
+  },
+  {
+   "claim": "sampling_function drops the second conditioning when cfg is close to 1, unless disable_cfg1_optimization is set.",
+   "how": "source",
+   "ref": "comfy/samplers.py:sampling_function"
+  },
+  {
+   "claim": "The two predictions may share one batch when memory allows.",
+   "how": "source",
+   "ref": "comfy/samplers.py:_calc_cond_batch"
+  },
+  {
+   "claim": "On a toy with exact predictions, samples leave the tilted density as cfg rises.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The cfg 7 and 14 pictures and their figures come from the same seed and graph.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  }
+ ],
+ "unchecked": [
+  "The wipe is one prompt and one seed on SDXL. It shows what happened, not what always happens.",
+  "We quote the papers' statements on what CFG samples. We did not re-derive their proofs."
+ ]
 }

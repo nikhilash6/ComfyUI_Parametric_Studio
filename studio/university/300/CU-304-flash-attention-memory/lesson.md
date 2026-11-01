@@ -1,96 +1,113 @@
-# CU-304 - Why attention is O(n^2) and how Flash/Sage fix the memory
+# CU-304 - Why attention is O(n^2), and what Flash and Sage change
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Work out the size of an attention score matrix from an image size, and tell apart the methods that hold less of it from the methods that round it. Taught by Madame Attention.
 
-## Why this matters
+## Why it grows with the square
 
-Welcome back. You have mastered the architecture in CU-301; you know *what* the model does. Today, we discuss *how* it survives. In ComfyUI, whether you are running SDXL, SD3, or Kandinsky 5, the bottleneck is rarely the convolutional layers. It is attention.
+Attention scores every query against every key. With n tokens that is a table of n × n numbers, and in the plainest form you hold the whole table before softmax turns each row into weights.
 
-The standard definition of attention requires every token to look at every other token. If your sequence length is $n$, the computational cost is $O(n^2)$. More critically, the memory footprint is $O(n^2)$. For a 64k token sequence, this is not a "slow" problem; it is an "out of memory" problem. We will dissect why this quadratic explosion occurs and how algorithms like FlashAttention and SageAttention (via quantization) decouple memory usage from sequence length, allowing us to process long contexts without blowing up your VRAM.
+```
+scores = Q Kᵀ            shape n × n
+weights = softmax(scores)    shape n × n
+output = weights V       shape n × d
+```
 
-## The intuition
+`attention_basic` in `comfy/ldm/modules/attention.py` does exactly this. Double the tokens and the table is four times larger.
 
-Imagine a ballroom where every guest must shake hands with every other guest. If there are 10 guests, there are 90 handshakes. If there are 100 guests, there are 9,900. If there are 10,000 guests, there are nearly 50 million handshakes. The number of interactions grows quadratically.
+Tokens come from the picture. With an 8× VAE and one token per latent cell, 1024 px gives 128 × 128 = 16,384 tokens. Double the image side and you have four times the tokens, so sixteen times the table. Real models attend at lower resolutions for this very reason, and a batch and several heads multiply the table again.
 
-In standard attention, we compute a matrix of scores $S = QK^T$. This matrix is $n \times n$. We must store this entire matrix in high-bandwidth memory (HBM) before we can apply softmax and multiply by $V$. For large $n$, this $n \times n$ matrix becomes the dominant memory consumer.
+Print a latent and read its shape:
 
-The "Flash" insight is that we do not need to see the whole ballroom at once. We can process the guests in small groups (tiles). We compute the attention for one tile, update our running statistics (max and sum for softmax), and discard the tile. We never form the full $n \times n$ matrix in HBM. We keep the computation on the fast, small on-chip SRAM. This is IO-awareness: we optimize for data movement, not just arithmetic.
+{{graph:nm_latent_ops}}
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+Then see the numbers:
 
-Let $Q, K, V$ be matrices of shape $(n, d)$, where $n$ is sequence length and $d$ is head dimension.
+{{play:attnmem}}
 
-**Standard Attention:**
-1.  Compute scores: $S = Q K^T$. Shape: $(n, n)$.
-2.  Compute weights: $A = \text{softmax}(S / \sqrt{d})$. Shape: $(n, n)$.
-3.  Compute output: $O = A V$. Shape: $(n, d)$.
+## Three ways to hold less, or smaller
 
-Memory cost: $O(n^2)$ for $S$ and $A$.
+**Slice the queries.** The answer for one query needs only that query's row. So score a slice of queries, turn it into output, drop the scores, and go on. The sums are the same, and only less is held at once. `attention_split` works out what it needs and doubles the number of slices until that fits free memory. It costs more passes.
 
-**FlashAttention (Tiled/Online Softmax):**
-We partition $K$ and $V$ into tiles of size $t$. We iterate over these tiles. For each tile $j$:
-1.  Compute partial scores: $S_j = Q K_j^T$. Shape: $(n, t)$.
-2.  Update running max $m$ and sum $l$ for the softmax denominator.
-    *   $m_{new} = \max(m_{old}, \max(S_j))$
-    *   $l_{new} = l_{old} \cdot \exp(m_{old} - m_{new}) + \sum \exp(S_j - m_{new})$
-3.  Update output accumulator:
-    *   $O_{new} = O_{old} \cdot \exp(m_{old} - m_{new}) + \exp(S_j - m_{new}) V_j$
+**Online softmax.** The rows themselves can be built piece by piece, which is the idea of FlashAttention (Dao et al. 2022). Walk the keys and values in blocks, and for each query keep three running things: the largest score so far, the sum of exponentials so far, and the output so far.
 
-Crucially, $S_j$ is only $(n, t)$. If $t \ll n$, the memory footprint is $O(n \cdot t)$, which is linear in $n$ if $t$ is fixed. We never store the full $(n, n)$ matrix.
+```
+m_new = max(m, max(S_block))
+l_new = l × exp(m − m_new) + Σ exp(S_block − m_new)
+o_new = o × exp(m − m_new) + Σ exp(S_block − m_new) V_block
+final = o / l
+```
 
-**Sage/Quantized Attention:**
-In ComfyUI, we also see `attention_comfy_kitchen_int8`. This reduces the precision of $Q, K, V$ from fp16 to int8. This halves the memory bandwidth requirement and allows more tiles to fit in SRAM, further accelerating the IO-bound process.
+Its title says exact, and our lab agrees to rounding error. The paper's reason is that on a GPU, moving data between big memory and small on-chip memory is the expensive part, so it arranges the work around that.
+
+**Round the numbers.** SageAttention's title says 8-bit: it trades numeric precision for speed. That is a different bargain, because the numbers change. If it stays close enough for your pictures is a question to test by eye, and when a backend misbehaves, black output is a known sign (see below).
 
 ## In ComfyUI
 
-ComfyUI abstracts this complexity behind a registry system. You do not manually select FlashAttention; the system does it for you.
+The backend is one choice made when ComfyUI starts, read from the flags. In `attention.py` the order is:
 
-In `comfy/ldm/modules/attention.py`, the function `optimized_attention_for_device` selects the best backend based on your hardware. It checks for available libraries and registers them via `register_attention_function`.
+1. `--use-sage-attention`: `attention_sage`. It falls back to `attention_pytorch` when low precision is turned off, or when a mask is present and the library can't take one.
+2. `--use-flash-attention`: `attention_flash`, which uses the separate flash_attn library and raises on a mask, then falls back on error.
+3. xformers, if installed and enabled.
+4. PyTorch's `scaled_dot_product_attention`, through `attention_pytorch`. On an NVIDIA card with PyTorch 2 this is the default, and `model_management.py` turns on PyTorch's flash and memory-efficient backends for it.
+5. Otherwise `--use-split-cross-attention` gives `attention_split`, and with no flag `attention_sub_quad`.
 
-Key implementations include:
-*   `attention_flash`: Wrapper for Flash Attention implementations.
-*   `attention_sub_quad`: Implements sub-quadratic attention for memory efficiency.
-*   `attention_comfy_kitchen_int8`: Implements quantized attention using int8 precision.
-*   `attention_basic`: The fallback standard dot-product attention.
+`--use-ck-attention` overrides that with `attention_comfy_kitchen_int8`. `optimized_attention_for_device` also has side rules: on a CPU device it uses `attention_sub_quad`, and masked calls get their own variable.
 
-For models like Kandinsky 5 (`comfy/ldm/kandinsky5/model.py`), the `SelfAttention` and `CrossAttention` modules support chunked forward passes (`_forward_chunked`) to manage memory usage, effectively applying the tiling logic at the module level.
+So you usually already have a form of flash attention, through PyTorch, without any flag. The console tells you which one you got: `Using pytorch attention`, and so on.
+
+## What goes wrong
+
+- **You installed Sage expecting less VRAM.** It is sold on speed through low precision. Test it with a timer and a peak reading before you decide it helped.
+- **Black or broken images after changing backend.** Change back first. `--force-upcast-attention` has the help text "please report if it fixes black images", and several flags exist because low precision bites. One seed proves little, so test more.
+- **A flag does nothing.** The library behind it may be missing, or the flags are mutually exclusive. Read the line that names the backend at startup.
+- **A mask-using node falls back quietly.** Sage takes masks only if its version supports them, and flash does not. You may be running PyTorch attention for those calls.
+- **Out of memory at high resolution, even with flash.** The rows are smaller, not gone. Outputs, Q, K and V still have to fit. Lower the size or the batch first.
 
 ## Lab
 
-In this lab, we quantify the memory explosion and verify that tiled attention produces identical results to standard attention while using a fraction of the memory.
+The first table is arithmetic:
 
-We first calculate the memory footprint of the full $n \times n$ attention matrix in fp16 (2 bytes per element) for various sequence lengths. Then, we implement `online_softmax_tiled_attention` and compare its output to `standard_attention`. Finally, we compare the memory required for the full matrix versus the tiled matrix for a 64k sequence.
+```text
+score matrix for one head and one batch row, fp16 (2 bytes)
+    1024 tokens:        2 MB
+    4096 tokens:       32 MB
+   16384 tokens:      512 MB
+   65536 tokens:     8192 MB
+  double the tokens: x4
+```
 
-Here are the results from the lab:
+Now the three methods on random Q, K and V, 512 tokens. The reference is the full calculation in fp64. The int8 row is a toy of ours, rounding only Q and K with one scale, not SageAttention's algorithm.
 
-`RESULT mem_n_1024 = 2`
-This proves that for a 1k sequence, the attention matrix is only 2 MB. It is negligible.
+```text
+512 tokens, 64 dimensions: largest difference from the full calculation, in fp32
+  method                        scores held at once   difference
+  full matrix                                262144     3.43e-07
+  4 slices of queries                         65536     3.43e-07
+  16 slices of queries                        16384     3.43e-07
+  online softmax, blocks of 128                65536     2.68e-07
+  online softmax, blocks of 32                16384     2.53e-07
+  toy: Q and K rounded to int8               262144     9.52e-03
+```
 
-`RESULT mem_n_65536 = 8192`
-This proves that for a 64k sequence, the attention matrix is 8 GB. This is why standard attention fails on long sequences; it consumes 8 GB of VRAM just for the score matrix, before even storing $Q, K, V$.
+Holding a sixteenth of the scores changes nothing beyond rounding. Rounding the inputs moves the answer tens of thousands of times further.
 
-`RESULT max_abs_diff = 2.08616e-07`
-This proves that our tiled implementation is numerically equivalent to standard attention. The difference is within floating-point precision limits.
+```text
+relative change from int8 Q and K: 0.0141. Exact methods stay at rounding level. Low precision is a real change.
+```
 
-`RESULT full_mem_64k_mb = 8192`
-Reiterates the 8 GB cost of the full matrix for 64k tokens.
+Tokens from image size:
 
-`RESULT tiled_mem_64k_mb = 32`
-This is the critical result. By using a tile size of 256, we reduce the peak memory usage for the attention scores from 8192 MB to 32 MB. This is a 256x reduction in memory for the attention computation.
+```text
+tokens from an image: one token per latent cell, 8x VAE
+    512 px, patch 1:   4096 tokens, matrix     32.0 MB per head per row
+   1024 px, patch 1:  16384 tokens, matrix    512.0 MB per head per row
+   1024 px, patch 2:   4096 tokens, matrix     32.0 MB per head per row
+   2048 px, patch 2:  16384 tokens, matrix    512.0 MB per head per row
+```
 
-`RESULT all_checks_passed = 1`
-Confirms that the tiled attention matches standard attention across multiple tile sizes (64, 128, 256) and that the memory savings are consistent with the theoretical ratio.
+## Sources
 
-## Common mistakes
-
-1.  **Assuming FlashAttention changes the math.** It does not. It is an exact algorithm. If your results change when switching backends, you have a bug in your implementation or a numerical instability in your inputs, not a difference in attention logic.
-2.  **Ignoring the IO bottleneck.** On modern GPUs, arithmetic is fast; memory movement is slow. If you implement tiling but still move data back and forth to HBM inefficiently, you will not see the speedup. FlashAttention is "IO-aware" for a reason.
-3.  **Using `attention_basic` for long sequences.** In ComfyUI, if `optimized_attention_for_device` fails to select a faster backend, you may fall back to `attention_basic`. This will OOM on long sequences. Ensure your environment has the correct libraries installed so `attention_flash` or `attention_sub_quad` is selected.
-
-## Go deeper
-
-To understand the theoretical underpinnings, read:
-
-*   **arXiv:2205.14135**: *FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness*. This paper introduces the tiling strategy and proves the IO complexity is optimal for a range of SRAM sizes. It highlights the 15% end-to-end speedup on BERT-large and 3x speedup on GPT-2.
-*   **arXiv:2307.08691**: *FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning*. This paper addresses the inefficiencies in the first version, achieving 50-73% of theoretical maximum FLOPs/s on A100 GPUs by improving work partitioning between thread blocks and warps.
-
+- [ComfyUI v0.43.0, comfy/ldm/modules/attention.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/attention.py)
+- [ComfyUI v0.43.0, comfy/model_management.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_management.py)
+- [Dao et al. 2022. FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness](https://arxiv.org/abs/2205.14135)
+- [Zhang et al. 2024. SageAttention: Accurate 8-Bit Attention for Plug-and-play Inference Acceleration](https://arxiv.org/abs/2410.02367)

@@ -16,5 +16,45 @@
   "execution.py:value_bigger_than_max"
  ],
  "track": "first-graph",
- "order": 90
+ "order": 90,
+ "kit": true,
+ "graphs": [
+  "a_pixel_budget"
+ ],
+ "verified": [
+  {
+   "claim": "EmptyLatentImage takes 16 to 16384 in steps of 8, default 1024, and divides by 8.",
+   "how": "source",
+   "ref": "nodes.py:EmptyLatentImage"
+  },
+  {
+   "claim": "The server checks min and max. No step check appears in validate_inputs.",
+   "how": "source",
+   "ref": "execution.py:validate_inputs"
+  },
+  {
+   "claim": "ImageScaleToTotalPixels uses the square root, and rounds to resolution_steps.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_post_processing.py:ImageScaleToTotalPixels"
+  },
+  {
+   "claim": "The graph passes validate_prompt and ran on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "The 40 sizes are typed from Appendix I of the SDXL paper. The browser lab uses the same list, compared by script against the lab's list.",
+   "how": "docs",
+   "ref": "arXiv 2307.01952"
+  },
+  {
+   "claim": "The memory numbers come from the formula in comfy/sd.py and are estimates.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE"
+  }
+ ],
+ "unchecked": [
+  "Nothing here tests picture quality at any size.",
+  "We did not measure real memory use at each size."
+ ]
 }

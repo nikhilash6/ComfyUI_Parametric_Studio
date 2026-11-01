@@ -1,0 +1,59 @@
+{
+ "code": "CU-235",
+ "title": "Choosing a scheduler from the curves",
+ "level": "200",
+ "prereq": [
+  "CU-206",
+  "CU-234"
+ ],
+ "char": "denoise",
+ "hook": "A schedule is a list you can read before you spend a second of GPU. Two lists warned of the two broken renders in our sweep.",
+ "code_refs": [
+  "comfy/samplers.py:SCHEDULER_HANDLERS",
+  "comfy/samplers.py:ddim_scheduler",
+  "comfy/samplers.py:linear_quadratic_schedule",
+  "comfy/samplers.py:simple_scheduler",
+  "comfy/samplers.py:normal_scheduler",
+  "comfy/k_diffusion/sampling.py:get_sigmas_karras",
+  "comfy_extras/nodes_custom_sampler.py:SplitSigmas"
+ ],
+ "track": "sampling",
+ "order": 60,
+ "kit": true,
+ "graphs": [
+  "nm_sigmas",
+  "sd15_karras_rho",
+  "sd35_flow"
+ ],
+ "verified": [
+  {
+   "claim": "The stored sigma lists come from ComfyUI's scheduler code with the model's real range.",
+   "how": "run here",
+   "ref": "scripts/build_sampling_measures.py, measures.json"
+  },
+  {
+   "claim": "The lab's ports of ddim_uniform and linear_quadratic match those lists within 0.001.",
+   "how": "run here",
+   "ref": "assert in lab.py"
+  },
+  {
+   "claim": "We looked at the linear_quadratic, flow simple, flow karras and ddim_uniform renders before describing them.",
+   "how": "run here",
+   "ref": "studio/web/sampling_lab"
+  },
+  {
+   "claim": "nm_sigmas ran on a CPU and printed its lists.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "sd15_karras_rho and sd35_flow pass validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "Linking a curve's shape to a broken render is our reasoning on one seed for each case. We did not sweep seeds or test other models.",
+  "SD 3.5 renders used a small preview VAE (TAESD3), because no full SD3 VAE was on the test machine, so fine detail in them should not be judged."
+ ]
+}

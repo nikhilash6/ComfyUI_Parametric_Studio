@@ -1,0 +1,66 @@
+{
+ "code": "CU-370",
+ "title": "Reading ComfyUI's console during a run",
+ "level": "300",
+ "prereq": [
+  "CU-102"
+ ],
+ "char": "bits",
+ "hook": "Which backend, which format, how much loaded, how fast, and why the progress bar may understate the wait. It's all printed. Learn to read it.",
+ "track": "performance",
+ "order": 5,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "code_refs": [
+  "server.py:got prompt",
+  "comfy/model_management.py:load_models_gpu",
+  "comfy/model_patcher.py:loaded partially",
+  "comfy/model_patcher.py:prepared for dynamic VRAM loading",
+  "comfy/sd.py:VAE load device",
+  "comfy/ops.py:pick_operations",
+  "comfy/utils.py:model_trange",
+  "execution.py:Got an OOM",
+  "main.py:Prompt executed in",
+  "app/logger.py:LogInterceptor",
+  "comfy/cli_args.py:--verbose"
+ ],
+ "verified": [
+  {
+   "claim": "Each quoted line is formatted by the log call named in the lesson.",
+   "how": "source",
+   "ref": "server.py, main.py, comfy/sd.py, comfy/model_management.py, comfy/model_patcher.py, execution.py"
+  },
+  {
+   "claim": "The job in the Lab is real: lines and times copied from one run on our test machine.",
+   "how": "run here",
+   "ref": "the server's own log, read 2026-11-01"
+  },
+  {
+   "claim": "With dynamic VRAM, model_trange moves the bar's start time after step 2, to take load overhead out of the rate.",
+   "how": "source",
+   "ref": "comfy/utils.py:model_trange"
+  },
+  {
+   "claim": "Prompt executed in N seconds is logged at the end of each job, with no check for success in that branch.",
+   "how": "source",
+   "ref": "main.py"
+  },
+  {
+   "claim": "On a run here the log held a timestamp per write, and validation failures, exceptions and the OOM line come from execution.py.",
+   "how": "source",
+   "ref": "app/logger.py, execution.py"
+  },
+  {
+   "claim": "The graph passes validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The example load lines labelled as ours have real wording and made-up numbers.",
+  "One job's times show one job. The gap between bar and clock will differ per model and card.",
+  "Custom node packs print their own lines, which this lesson can't cover."
+ ],
+ "kit": true
+}

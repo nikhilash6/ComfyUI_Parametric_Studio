@@ -2,13 +2,68 @@
  "title": "History 11: Audio models: WaveNet to autoregressive music to diffusion music",
  "level": "300",
  "char": "sound",
- "hook": "Trace the evolution of AI audio from sample-by-sample prediction to holistic diffusion synthesis.",
+ "hook": "From one call per sample to one model call per step, then a model that does both. Where the time goes in each era.",
  "code": "CU-511",
  "prereq": [
   "CU-216"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/ldm/minimax_music/ar.py:AUDIO_FRAMES_PER_SECOND",
+  "comfy/ldm/ace/ace_step15.py:AceStepDiTModel",
+  "comfy/ldm/ace/ace_step15.py:AceStepAudioTokenizer",
+  "comfy/ldm/ace/ace_step15.py:FSQ",
+  "comfy/ldm/lightricks/av_model.py:LTXAVModel",
+  "comfy/ldm/lightricks/vae/causal_audio_autoencoder.py:CausalAudioAutoencoder",
+  "comfy/ldm/lightricks/vocoders/vocoder.py:Vocoder",
+  "comfy/ldm/audio/autoencoder.py:AudioOobleckVAE"
+ ],
  "track": "audio",
- "order": 20
+ "order": 20,
+ "graphs": [
+  "wf_music3"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "WaveNet works on raw waveforms with at least 16,000 samples per second, predicts sequentially, and a dilation stack 1, 2, 4 ... 512 has a receptive field of 1024.",
+   "how": "docs",
+   "ref": "arXiv 1609.03499, PDF read 2026-11-01"
+  },
+  {
+   "claim": "MusicGen is one transformer over EnCodec tokens: 32 kHz audio, a stride of 640, 50 Hz, with 4 codebooks.",
+   "how": "docs",
+   "ref": "arXiv 2306.05284, PDF read 2026-11-01"
+  },
+  {
+   "claim": "The lab's dilated stack measured 1024 samples by autograd, matching the paper.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Music 3's AR stage runs 25 frames a second in ComfyUI, then a DiT runs on the result.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax_music/ar.py:AUDIO_FRAMES_PER_SECOND"
+  },
+  {
+   "claim": "ACE-Step 1.5 has AceStepDiTModel, plus an AceStepAudioTokenizer using residual FSQ.",
+   "how": "source",
+   "ref": "comfy/ldm/ace/ace_step15.py:AceStepAudioTokenizer"
+  },
+  {
+   "claim": "LTX's audio path has CausalAudioAutoencoder and a Vocoder.",
+   "how": "source",
+   "ref": "comfy/ldm/lightricks/vae/causal_audio_autoencoder.py:CausalAudioAutoencoder"
+  },
+  {
+   "claim": "The graph passes validate_prompt with file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The call counts are simple counts. Time per call varies hugely between models. A diffusion call covers far more data, so fewer calls does not mean faster.",
+  "We did not read how ACE-Step uses its tokenizer during generation beyond what the class names and module docstrings show. The lesson says so where it matters.",
+  "WaveNet's count assumes one call per sample with no caching, which is what the paper's sequential description means. Later work sped this up, and we did not cover that.",
+  "The first version said NADiffusionDecoder is part of LTX 2.4's audio path. It's a video VAE decoder, per its file's first line, so that's removed."
+ ]
 }

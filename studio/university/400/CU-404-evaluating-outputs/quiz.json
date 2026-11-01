@@ -4,49 +4,59 @@
  "level": "400",
  "questions": [
   {
-   "q": "According to the lesson, what is the primary difference in sensitivity between PSNR and Structural Correlation?",
+   "q": "Why is PSNR between two seeds of one prompt no use as a quality score?",
    "options": [
-    "PSNR is sensitive to linear relationships, while Correlation is sensitive to pixel-level differences.",
-    "PSNR is sensitive to pixel-level differences, while Correlation is sensitive to linear relationships and invariant to global shifts.",
-    "PSNR measures semantic similarity, while Correlation measures pixel fidelity.",
-    "PSNR is invariant to brightness shifts, while Correlation is destroyed by spatial shifts."
+    "The two pictures aren't meant to match pixel for pixel",
+    "PSNR can't read JPEG files",
+    "Seeds change the file size",
+    "PSNR only works on video"
    ],
-   "answer": "PSNR is sensitive to pixel-level differences, while Correlation is sensitive to linear relationships and invariant to global shifts.",
-   "why": "The 'Intuition' section states that PSNR is like a strict accountant sensitive to pixel-level differences, whereas Structural Correlation is like a structural engineer sensitive to linear relationships and invariant to global shifts and scales."
+   "answer": "The two pictures aren't meant to match pixel for pixel",
+   "why": "PSNR measures error from a target. Different seeds have no shared target."
   },
   {
-   "q": "In the lab experiment, what were the exact PSNR and Correlation values recorded for the 'brightness shift' distortion?",
-   "options": null,
-   "answer": "PSNR: 14.1514, Correlation: 1",
-   "why": "The 'Lab' section lists the exact result lines: 'RESULT psnr_brightness = 14.1514' and 'RESULT corr_brightness = 1'."
-  },
-  {
-   "q": "Why does a uniform brightness shift result in a perfect correlation score of 1.0, despite significantly lowering the PSNR?",
+   "q": "Two changes have the same PSNR. What does that tell you?",
    "options": [
-    "Because brightness shifts do not change the total number of pixels in the image.",
-    "Because correlation is invariant to affine transformations, meaning D_i = a * O_i + b still yields r = 1.",
-    "Because PSNR is linear and Correlation is logarithmic.",
-    "Because the human eye perceives brightness shifts as identical to the original image."
+    "The same mean squared error, not the same kind of damage",
+    "They look the same",
+    "They have the same SSIM",
+    "They have the same correlation"
    ],
-   "answer": "Because correlation is invariant to affine transformations, meaning D_i = a * O_i + b still yields r = 1.",
-   "why": "The 'Under the hood' section explains that correlation is invariant to affine transformations. If D_i = a * O_i + b, then r = 1, regardless of a or b. This is explicitly cited as the reason why brightness shifts don't hurt correlation."
+   "answer": "The same mean squared error, not the same kind of damage",
+   "why": "The lab's brighter and noisy rows are both 20.00 dB, with very different SSIM."
   },
   {
-   "q": "What does the lab result 'psnr_shift = 8.45098' and 'corr_shift = 0.666667' demonstrate about spatial misalignment?",
+   "q": "Why does adding a constant leave Pearson r at 1?",
    "options": [
-    "Spatial misalignment has no effect on PSNR but severely degrades correlation.",
-    "Spatial misalignment is catastrophic for PSNR, while correlation drops to a moderate level, indicating the pattern is still somewhat recognizable.",
-    "Spatial misalignment results in infinite PSNR and zero correlation.",
-    "Spatial misalignment proves that PSNR is a better metric for alignment than Correlation."
+    "It removes each image's mean before comparing",
+    "It rounds to 1",
+    "It only looks at edges",
+    "It uses only one channel"
    ],
-   "answer": "Spatial misalignment is catastrophic for PSNR, while correlation drops to a moderate level, indicating the pattern is still somewhat recognizable.",
-   "why": "The 'Lab' section analysis for point 4 states that spatial misalignment is 'catastrophic for PSNR' (8.45 dB is very low) and that correlation drops to 0.66, showing the gradient pattern is 'still somewhat recognizable'."
+   "answer": "It removes each image's mean before comparing",
+   "why": "Correlation subtracts means, so a constant shift vanishes."
   },
   {
-   "q": "According to the 'Common mistakes' section, why should you never use PSNR as your sole metric for 'goodness'?",
-   "options": null,
-   "answer": "Because a uniform brightness shift can tank PSNR while leaving the image structurally perfect, meaning PSNR does not accurately reflect perceptual quality in all cases.",
-   "why": "The 'Common mistakes' section, point 1, states: 'As shown, a brightness shift can tank PSNR while leaving the image structurally perfect. Never use PSNR as your sole metric for \"goodness.\"'"
+   "q": "You compare FID of a model at 500 samples with another at 10,000. What's wrong?",
+   "options": [
+    "FID is biased upward at small sample sizes, so they aren't comparable",
+    "Nothing, FID ignores sample size",
+    "FID needs exactly 1,000 samples",
+    "It should be measured on one image"
+   ],
+   "answer": "FID is biased upward at small sample sizes, so they aren't comparable",
+   "why": "The lab shows FID falling with sample size when the true distance is 0."
+  },
+  {
+   "q": "Which pair fits a pixel metric best?",
+   "options": [
+    "An image and its VAE round trip",
+    "Two seeds of a prompt",
+    "A prompt and an image",
+    "Two models' favourite pictures"
+   ],
+   "answer": "An image and its VAE round trip",
+   "why": "That pair should match, so error is meaningful. This lesson's graph makes one."
   }
  ]
 }

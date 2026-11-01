@@ -1,0 +1,62 @@
+{
+ "code": "CU-234",
+ "title": "Choosing a sampler from real renders and measures",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does the ddim sampler name run in this version of ComfyUI?",
+   "options": [
+    "Euler, with different noise for masked regions",
+    "The full DDIM algorithm from its paper",
+    "An ancestral sampler",
+    "The ddim_uniform scheduler"
+   ],
+   "answer": "Euler, with different noise for masked regions",
+   "why": "sampler_object builds it with ksampler('euler', inpaint_options={'random': True}). Our renders on one seed have the same pixels."
+  },
+  {
+   "q": "Our sweep has one seed per sampler. What can it fairly show?",
+   "options": [
+    "That a choice makes a difference, and what kind",
+    "Which sampler is best",
+    "Which sampler is fastest",
+    "That heun is sharper in general"
+   ],
+   "answer": "That a choice makes a difference, and what kind",
+   "why": "One seed and one prompt show a difference. They cannot rank."
+  },
+  {
+   "q": "What does a low error on the bench mean?",
+   "options": [
+    "The solver follows its equation closely on a toy with no image",
+    "Pictures will look better",
+    "The sampler adds less noise to images",
+    "The model is more accurate"
+   ],
+   "answer": "The solver follows its equation closely on a toy with no image",
+   "why": "The bench has no network and no picture."
+  },
+  {
+   "q": "Which question should you settle first when choosing a sampler?",
+   "options": [
+    "Whether you want noise added at each step",
+    "Which name is newest",
+    "How many letters are in the name",
+    "Which one the most packs use"
+   ],
+   "answer": "Whether you want noise added at each step",
+   "why": "In our renders that split the results with no overlap: 20.92 to 30.17 against 45.92 to 75.13."
+  },
+  {
+   "q": "At CFG 7 and 20 steps, how do heun and dpmpp_2m compare in cost?",
+   "options": [
+    "78 against 40 evaluations",
+    "40 against 40",
+    "20 against 20",
+    "39 against 20 evaluations"
+   ],
+   "answer": "78 against 40 evaluations",
+   "why": "Calls are 39 and 20, and CFG above 1 doubles them."
+  }
+ ]
+}

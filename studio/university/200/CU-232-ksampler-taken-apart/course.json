@@ -1,0 +1,58 @@
+{
+ "code": "CU-232",
+ "title": "KSampler taken apart: SamplerCustomAdvanced",
+ "level": "200",
+ "prereq": [
+  "CU-230"
+ ],
+ "char": "denoise",
+ "hook": "Noise, guider, sampler, sigmas and a latent: the same run as separate parts, so you can change any one of them.",
+ "code_refs": [
+  "comfy_extras/nodes_custom_sampler.py:SamplerCustomAdvanced",
+  "comfy_extras/nodes_custom_sampler.py:SamplerCustom",
+  "comfy_extras/nodes_custom_sampler.py:RandomNoise",
+  "comfy_extras/nodes_custom_sampler.py:CFGGuider",
+  "comfy_extras/nodes_custom_sampler.py:KSamplerSelect",
+  "comfy_extras/nodes_custom_sampler.py:BasicScheduler",
+  "comfy_extras/nodes_custom_sampler.py:SplitSigmas",
+  "comfy/samplers.py:KSampler.calculate_sigmas",
+  "comfy/samplers.py:CFGGuider",
+  "nodes.py:common_ksampler"
+ ],
+ "track": "sampling",
+ "order": 45,
+ "kit": true,
+ "graphs": [
+  "sd15_custom"
+ ],
+ "verified": [
+  {
+   "claim": "Both routes end in CFGGuider.sample: KSampler through comfy.samplers.sample and SamplerCustomAdvanced directly.",
+   "how": "source",
+   "ref": "comfy/samplers.py:sample, comfy_extras/nodes_custom_sampler.py:SamplerCustomAdvanced"
+  },
+  {
+   "claim": "KSampler alone drops the second to last sigma for dpm_2, dpm_2_ancestral, uni_pc and uni_pc_bh2.",
+   "how": "source",
+   "ref": "comfy/samplers.py:KSampler.DISCARD_PENULTIMATE_SIGMA_SAMPLERS"
+  },
+  {
+   "claim": "The last sigmas printed for dpm_2 through KSampler are 0.1137, 0.0744, 0.0473.",
+   "how": "run here",
+   "ref": "comfy.samplers.KSampler with a stub holding the real ModelSamplingDiscrete"
+  },
+  {
+   "claim": "SplitSigmas at step 12 returns 13 and 9 values.",
+   "how": "run here",
+   "ref": "the node's execute, on a 21-value tensor"
+  },
+  {
+   "claim": "sd15_custom passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not render KSampler and SamplerCustomAdvanced side by side for this lesson. That they match with euler is read from the code and shown on a toy with the same formulas."
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "code": "CU-380",
+ "title": "Finding out what a pack really does before you install it",
+ "level": "300",
+ "questions": [
+  {
+   "q": "When does top-level code in a pack's __init__.py run?",
+   "options": [
+    "Every time ComfyUI starts, whether or not you use a node",
+    "Only when you add one of its nodes",
+    "Only after you press Queue",
+    "Only when you update the pack"
+   ],
+   "answer": "Every time ComfyUI starts, whether or not you use a node",
+   "why": "load_custom_node executes the module on import."
+  },
+  {
+   "q": "Which runs earliest?",
+   "options": [
+    "prestartup_script.py",
+    "A node's run method",
+    "A route handler",
+    "The pack's JavaScript"
+   ],
+   "answer": "prestartup_script.py",
+   "why": "main.py runs it before the rest of ComfyUI starts."
+  },
+  {
+   "q": "What is an honest result from reading a pack?",
+   "options": [
+    "What you read, what you found, and what you didn't read",
+    "It is safe",
+    "It has many stars, so it is fine",
+    "The README agrees with the code, so it is safe"
+   ],
+   "answer": "What you read, what you found, and what you didn't read",
+   "why": "You can't prove safety from reading."
+  },
+  {
+   "q": "Why not run Python from inside a pack's folder to inspect it?",
+   "options": [
+    "A pack can plant files that shadow standard modules",
+    "Python can't read other folders",
+    "It would delete the folder",
+    "It uses too much VRAM"
+   ],
+   "answer": "A pack can plant files that shadow standard modules",
+   "why": "An interpreter looks in the script's folder first."
+  },
+  {
+   "q": "A pack has a compiled .so file for its core logic. What do you note?",
+   "options": [
+    "You can't read that part, so your review doesn't cover it",
+    "It is safer, because it is compiled",
+    "It must be malware",
+    "Nothing, compiled files don't run"
+   ],
+   "answer": "You can't read that part, so your review doesn't cover it",
+   "why": "It may have a normal reason, but your report must say what you didn't read."
+  },
+  {
+   "q": "You read version 1.2, and the pack updates. What now?",
+   "options": [
+    "Read the difference, because new commits are new code",
+    "Nothing, you read it once",
+    "Delete the pack",
+    "Only check the stars again"
+   ],
+   "answer": "Read the difference, because new commits are new code",
+   "why": "Pin what you read and review changes."
+  }
+ ]
+}

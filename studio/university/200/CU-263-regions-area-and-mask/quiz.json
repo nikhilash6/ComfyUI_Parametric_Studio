@@ -1,0 +1,73 @@
+{
+ "code": "CU-263",
+ "title": "Regions: ConditioningSetArea and ConditioningSetMask",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does the model see for a ConditioningSetArea prompt?",
+   "options": [
+    "The whole latent, then a mask",
+    "Only the text",
+    "A downscaled picture",
+    "Only the cropped box of latent"
+   ],
+   "answer": "Only the cropped box of latent",
+   "why": "get_area_and_mult narrows input_x to the area."
+  },
+  {
+   "q": "A box at strength 3 over a whole-picture prompt at strength 1 gets what share at its centre?",
+   "options": [
+    "100%",
+    "33%",
+    "75%",
+    "50%"
+   ],
+   "answer": "75%",
+   "why": "3 / (3 + 1), from sum of answer times weight over sum of weights."
+  },
+  {
+   "q": "What happens in a cell no entry covers?",
+   "options": [
+    "Its prediction is zero",
+    "It copies the nearest box",
+    "It uses the negative",
+    "It raises an error"
+   ],
+   "answer": "Its prediction is zero",
+   "why": "out_conds starts at zero, and out_counts at 1e-37, so the division gives 0."
+  },
+  {
+   "q": "Your box is alone over its cells. What does strength 5 do?",
+   "options": [
+    "Five times stronger guidance",
+    "Nothing: it divides away",
+    "Blurs the box",
+    "Crops tighter"
+   ],
+   "answer": "Nothing: it divides away",
+   "why": "The lab shows 1.0 at both strengths."
+  },
+  {
+   "q": "How many predictions per step for one box, one whole prompt and one negative at cfg 7?",
+   "options": [
+    "Four",
+    "Two",
+    "Three",
+    "Five"
+   ],
+   "answer": "Four",
+   "why": "The negative gets a same-area copy from create_cond_with_same_area_if_none."
+  },
+  {
+   "q": "Why might ConditioningSetArea land in the wrong place on FLUX.2?",
+   "options": [
+    "It always divides pixels by 8",
+    "It ignores x",
+    "It flips the picture",
+    "It only works on batches"
+   ],
+   "answer": "It always divides pixels by 8",
+   "why": "The tuple uses // 8. Prefer ConditioningSetAreaPercentage on other latent scales."
+  }
+ ]
+}

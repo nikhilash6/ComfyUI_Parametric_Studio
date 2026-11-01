@@ -4,49 +4,59 @@
  "level": "300",
  "questions": [
   {
-   "q": "What is the primary geometric advantage of rectified flow over standard diffusion models?",
+   "q": "You take one Euler step from pure noise on a model trained with rectified flow on random pairs. Where does every sample land?",
    "options": [
-    "It uses curved trajectories to better capture complex data distributions.",
-    "It allows the model to take large steps during inference because the path is a straight line.",
-    "It eliminates the need for any time discretization during the training phase.",
-    "It reduces the number of parameters required in the U-Net backbone."
+    "On the mean of the data",
+    "On a random training image",
+    "On a nearby data point",
+    "Back on its own noise"
    ],
-   "answer": "It allows the model to take large steps during inference because the path is a straight line.",
-   "why": "The lesson states that straight paths can be simulated exactly without time discretization errors, meaning large steps can be taken during inference, and a single Euler step can suffice."
+   "answer": "On the mean of the data",
+   "why": "Noise at t = 0 says nothing about which data point it will meet, so the field there is the mean of the data minus x. The lab prints it."
   },
   {
-   "q": "In the context of the DiT architecture described in the lesson, how is spatial information maintained within the transformer blocks?",
+   "q": "Why are the paths of a model trained on random pairs curved, if each training pair is a straight line?",
    "options": [
-    "Through the inherent properties of convolutional kernels.",
-    "By using skip connections from the U-Net structure.",
-    "Via explicit positional embeddings such as Rotary Positional Embeddings (RoPE) or sincos embeddings.",
-    "By relying on the global receptive field of self-attention alone."
+    "Lines cross, and at a crossing least squares learns the average of the right answers",
+    "Euler bends them",
+    "The VAE curves them",
+    "The transformer adds curvature"
    ],
-   "answer": "Via explicit positional embeddings such as Rotary Positional Embeddings (RoPE) or sincos embeddings.",
-   "why": "The 'Common mistakes' section notes that spatial information is not inherent in the convolution kernel and must be explicitly encoded using functions like `get_2d_sincos_pos_embed` or `apply_rotary_emb`."
+   "answer": "Lines cross, and at a crossing least squares learns the average of the right answers",
+   "why": "Each point x_t is reached by many pairs, so the model learns E[x1 − x0 | x_t]."
   },
   {
-   "q": "According to the lab results provided in the lesson, what is the calculated velocity vector when the start point is (0, 0) and the end point is (1, 1)?",
-   "options": null,
-   "answer": "1 1",
-   "why": "The lab output explicitly states `RESULT velocity = 1 1`, which corresponds to the calculation $v = x_1 - x_0$."
-  },
-  {
-   "q": "Which specific class in the ComfyUI codebase is identified as the main entry point for Multi-Modal Diffusion Transformer models like SD3/Flux?",
+   "q": "What does reflow change, and what does it cost?",
    "options": [
-    "HunYuanDiT",
-    "AceStepDiTModel",
-    "MMDiT",
-    "DismantledBlock"
+    "It trains on the pairs the first flow made, which don't cross. It needs those pairs and a second training run",
+    "It uses more Euler steps at no training cost",
+    "It changes the shift setting",
+    "It swaps the transformer for a U-Net"
    ],
-   "answer": "MMDiT",
-   "why": "The 'In ComfyUI' section states: 'The class `MMDiT` is the main entry point for Multi-Modal Diffusion Transformer models (like SD3/Flux).'"
+   "answer": "It trains on the pairs the first flow made, which don't cross. It needs those pairs and a second training run",
+   "why": "In the lab straightness falls from 0.7470 to 0.0019 and one-step error falls 13.5 times."
   },
   {
-   "q": "Why does the lesson argue that DiT is not merely a 'faster U-Net'?",
-   "options": null,
-   "answer": "Because it is a different architectural paradigm that relies on global attention and patch tokens rather than local convolutions and skip connections.",
-   "why": "The 'Common mistakes' section explicitly states: 'Do not think of DiT as a \"faster U-Net.\" It is a different architectural paradigm. U-Nets rely on local convolutions and skip connections; DiTs rely on global attention and patch tokens.'"
+   "q": "HunyuanDiT in ComfyUI is a transformer and predicts v. What does that show?",
+   "options": [
+    "A transformer doesn't have to be a flow model: network and path are separate choices",
+    "It is a bug in the model",
+    "All transformers are flow models",
+    "All U-Nets predict v"
+   ],
+   "answer": "A transformer doesn't have to be a flow model: network and path are separate choices",
+   "why": "DiT itself was a diffusion model. SD3 is where the two ideas were put together."
+  },
+  {
+   "q": "You read CONST in ComfyUI. Its sigma 1 is noise, and the model output is what?",
+   "options": [
+    "Noise minus data, the opposite sign to the paper's v",
+    "Data minus noise, same as the paper",
+    "The clean image",
+    "The noise alone"
+   ],
+   "answer": "Noise minus data, the opposite sign to the paper's v",
+   "why": "calculate_denoised is input − output · sigma. The lab recovers the clean value from it."
   }
  ]
 }

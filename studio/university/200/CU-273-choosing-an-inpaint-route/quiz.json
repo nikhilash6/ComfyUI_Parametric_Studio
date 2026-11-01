@@ -1,0 +1,62 @@
+{
+ "code": "CU-273",
+ "title": "Choosing an inpaint route",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does VAEEncodeForInpaint do that SetLatentNoiseMask doesn't?",
+   "options": [
+    "It keeps your feathered mask",
+    "It paints the masked pixels mid-grey before encoding, and rounds and grows the mask",
+    "It needs no VAE",
+    "It adds a second model"
+   ],
+   "answer": "It paints the masked pixels mid-grey before encoding, and rounds and grows the mask",
+   "why": "Read the node: mask.round(), a box growth, then pixels pulled to 0.5 under the mask, then vae.encode."
+  },
+  {
+   "q": "Why does VAEEncodeForInpaint want denoise 1?",
+   "options": [
+    "It's a rule the node enforces",
+    "Below that, too little noise is added to fill the grey hole, and flat grey is left behind",
+    "Denoise has no effect on it",
+    "Other values raise an error"
+   ],
+   "answer": "Below that, too little noise is added to fill the grey hole, and flat grey is left behind",
+   "why": "In the lab the hole's spread is 0.62 at denoise 0.3, against about 0.93 at denoise 1, with zero correlation to the original either way."
+  },
+  {
+   "q": "You have an ordinary SD 1.5 checkpoint and want to recolour a jacket. Which route fits best?",
+   "options": [
+    "VAEEncodeForInpaint at denoise 1",
+    "SetLatentNoiseMask at denoise below 1",
+    "InpaintModelConditioning, which makes it an inpainting model",
+    "No route works"
+   ],
+   "answer": "SetLatentNoiseMask at denoise below 1",
+   "why": "You want the old content to guide the new, and only this kind of start keeps it. An ordinary checkpoint has no use for the extra channels."
+  },
+  {
+   "q": "How many input channels does the SD 1.5 inpainting U-Net take, and why?",
+   "options": [
+    "4, the same as the ordinary one",
+    "9: the noisy latent's 4, plus 1 for the mask and 4 for the masked picture",
+    "16, for colour",
+    "8: two latents"
+   ],
+   "answer": "9: the noisy latent's 4, plus 1 for the mask and 4 for the masked picture",
+   "why": "concat_keys is mask and masked_image, which concat_cond joins to the input."
+  },
+  {
+   "q": "You pass a soft mask to InpaintModelConditioning with noise_mask on. What does the sampler get?",
+   "options": [
+    "A rounded mask",
+    "The soft mask, resized to the latent grid later",
+    "No mask",
+    "The inverse of it"
+   ],
+   "answer": "The soft mask, resized to the latent grid later",
+   "why": "The node stores the interpolated mask, unrounded, as noise_mask. It rounds only for its grey-out, and concat_cond rounds the copy for the extra channel."
+  }
+ ]
+}

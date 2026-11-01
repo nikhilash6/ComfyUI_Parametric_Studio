@@ -1,0 +1,63 @@
+{
+ "code": "CU-260",
+ "title": "What CONDITIONING really is",
+ "level": "200",
+ "prereq": [
+  "CU-104"
+ ],
+ "char": "attn",
+ "hook": "A plain Python list. Each entry is a tensor and a dict. Nearly every conditioning node just changes one of those, and that explains what they can and can't do.",
+ "code_refs": [
+  "nodes.py:CLIPTextEncode.encode",
+  "node_helpers.py:conditioning_set_values",
+  "comfy/sd.py:CLIP.encode_from_tokens_scheduled",
+  "comfy/sampler_helpers.py:convert_cond",
+  "comfy/samplers.py:encode_model_conds",
+  "comfy/model_base.py:BaseModel.extra_conds",
+  "nodes.py:ConditioningCombine.combine",
+  "nodes.py:ConditioningZeroOut.zero_out"
+ ],
+ "track": "conditioning",
+ "order": 2,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img",
+  "sd15_cond_time"
+ ],
+ "verified": [
+  {
+   "claim": "encode_from_tokens_scheduled returns a list of [cond tensor, dict], with pooled_output in the dict.",
+   "how": "source",
+   "ref": "comfy/sd.py:encode_from_tokens_scheduled"
+  },
+  {
+   "claim": "conditioning_set_values copies each dict and shares each tensor.",
+   "how": "source",
+   "ref": "node_helpers.py:conditioning_set_values"
+  },
+  {
+   "claim": "Combine, SetArea, SetTimestepRange and Concat, run as the real nodes on a CPU, give these shapes and keys.",
+   "how": "test",
+   "ref": "Our comparison, v0.43.0"
+  },
+  {
+   "claim": "convert_cond turns each entry into a dict with cross_attn, model_conds and uuid.",
+   "how": "source",
+   "ref": "comfy/sampler_helpers.py:convert_cond"
+  },
+  {
+   "claim": "The dict's keys reach the model through extra_conds as keyword arguments, and a class reads only the ones it looks for.",
+   "how": "source",
+   "ref": "comfy/samplers.py:encode_model_conds, comfy/model_base.py"
+  },
+  {
+   "claim": "SD 1.5's tensor has width 768, from the config's hidden_size.",
+   "how": "source",
+   "ref": "comfy/sd1_clip_config.json"
+  }
+ ],
+ "unchecked": [
+  "The lab uses random tensors with the real shapes. It didn't load a text encoder.",
+  "We list keys used by the nodes in this track, not every key in core."
+ ]
+}

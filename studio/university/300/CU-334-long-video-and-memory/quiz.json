@@ -1,0 +1,73 @@
+{
+ "code": "CU-334",
+ "title": "Long video and memory: chunks, tiled decode, and what truly helps",
+ "level": "300",
+ "questions": [
+  {
+   "q": "Your LTX run dies on the first sampling step. Which fix can work?",
+   "options": [
+    "Lower the length or the picture size",
+    "VAEDecodeTiled with smaller tiles",
+    "A larger temporal overlap",
+    "More sampling steps"
+   ],
+   "answer": "Lower the length or the picture size",
+   "why": "Sampling runs before decoding. Tile settings act only at the decode node, so only fewer tokens can help."
+  },
+  {
+   "q": "Why does VAEDecodeTiled do nothing useful on H3?",
+   "options": [
+    "H3's decode_tiled ignores the tile settings and calls decode, which already chunks internally",
+    "H3's latents are too small",
+    "H3 has no VAE",
+    "It needs a higher overlap"
+   ],
+   "answer": "H3's decode_tiled ignores the tile settings and calls decode, which already chunks internally",
+   "why": "comfy/ldm/minimax/vae.py defines decode_tiled(self, z, **kwargs) as return self.decode(z)."
+  },
+  {
+   "q": "With a temporal tile, what happens to LTX's decode estimate as the clip gets longer?",
+   "options": [
+    "It stops growing, because the estimate is for one tile",
+    "It grows in line with the frames",
+    "It grows with the square of the frames",
+    "It falls"
+   ],
+   "answer": "It stops growing, because the estimate is for one tile",
+   "why": "_tile_bounded_shape clamps the shape to one tile. The lab shows 18.7 GiB at 121, 241 and 481 frames with temporal tile 8."
+  },
+  {
+   "q": "A chain of clips replaces one long render. What gets better, and what's the new cost?",
+   "options": [
+    "Peak sampler memory stays at one clip's; the cost moves to seams and drift between clips",
+    "Everything gets better, with no new cost",
+    "Peak memory is the sum of all clips",
+    "It uses less total work and no seams"
+   ],
+   "answer": "Peak sampler memory stays at one clip's; the cost moves to seams and drift between clips",
+   "why": "Each clip samples alone, so peak stays the same. Every join can show, and each clip starts from a generated frame."
+  },
+  {
+   "q": "60 s at 1920 x 1088 finishes sampling and decoding, then the machine runs out of RAM. What's a sensible fix?",
+   "options": [
+    "Save clips to disk and join files, since the frames alone are 33.6 GiB as float32",
+    "Use a smaller tile",
+    "Lower the CFG",
+    "Change the sampler"
+   ],
+   "answer": "Save clips to disk and join files, since the frames alone are 33.6 GiB as float32",
+   "why": "An IMAGE is 3 x 4 bytes a pixel. RAM here has nothing to do with the VAE's tiles or with the sampler."
+  },
+  {
+   "q": "Why does the join graph take frames from index 1 of the second clip?",
+   "options": [
+    "Clip 2 begins on clip 1's last frame, so keeping it twice would stutter",
+    "Index 0 is always black",
+    "ImageBatch requires it",
+    "The video codec can't start at 0"
+   ],
+   "answer": "Clip 2 begins on clip 1's last frame, so keeping it twice would stutter",
+   "why": "ImageFromBatch with batch_index 1 and length 8 drops the repeated first frame, so 9 + 8 = 17 frames."
+  }
+ ]
+}

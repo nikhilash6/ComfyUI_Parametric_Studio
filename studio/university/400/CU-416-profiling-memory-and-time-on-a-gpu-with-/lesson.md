@@ -1,103 +1,111 @@
 # CU-416 - Profiling memory and time on a GPU (with a CPU model of it)
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Find where a run's time and peak memory really went, with tools you already have, before changing anything. Taught by Tinker Tune.
 
-## Why this matters
+## Two questions, two answers
 
-In ComfyUI, the difference between a workflow that runs smoothly and one that crashes with an Out-Of-Memory (OOM) error often comes down to two distinct resources: static memory allocation and dynamic computational load. Many users conflate these. They assume that if a model fits in VRAM, it will run fast. They are wrong. A model can fit in memory but take hours to run if the computational load is too high for the hardware. Conversely, a small model might crash if the batch size or resolution causes the static memory footprint to exceed available VRAM.
+"It's slow" and "it ran out of memory" are different problems, and they have different cures. A model can fit and crawl. A small model can run out of memory on a large batch. Profiling means getting a number for each before you touch anything.
 
-As engineers, we must separate these concerns. Memory is a capacity constraint; it is about how much data you can hold at once. Time is a throughput constraint; it is about how fast you can process that data. In this lesson, we build a simple CPU-based model to predict these two metrics without needing a high-end GPU. This allows us to debug workflow bottlenecks and optimize node configurations before deploying to expensive hardware.
+## Memory: what was alive at the peak
 
-## The intuition
+The bytes in one tensor are easy: elements times bytes each. The peak is harder, because it depends on what is alive at the same moment. It isn't the sum of all tensors, since some die before others are born, and it isn't the largest one either. The order of work can change it.
 
-Think of your GPU VRAM as a warehouse and the computation as the workers moving boxes.
+So a useful memory question is never "how big is it?". It's "what was alive when it peaked?".
 
-1.  **Static Memory (The Warehouse):** This is the space occupied by the model weights, the input images, and the intermediate tensors (activations) required for the forward pass. If the warehouse is full, you cannot bring in more boxes. In ComfyUI, this is managed by classes like `ModelPatcher` and functions like `free_memory` in `comfy/model_management.py`. If you try to load a model that is too large, or if your batch size creates too many intermediate tensors, the warehouse overflows. This is a hard limit.
+On a real card there are three readings, and they disagree for good reasons. The PyTorch documentation explains this: it keeps freed memory in a cache for speed, and that memory still shows as used in `nvidia-smi`.
 
-2.  **Dynamic Computational Load (The Workers):** This is the actual work being done. Even if the warehouse has plenty of space, if you have only one worker (low GPU throughput) and a mountain of boxes (high FLOPs), the job takes forever. The number of operations (FLOPs) determines how long the workers are busy. This is a soft limit; it doesn't crash the system, but it determines your iterations per second (it/s).
+| reading | what it counts |
+|---|---|
+| `torch.cuda.memory_allocated()` and `max_memory_allocated()` | memory occupied by tensors, now and at the peak |
+| `torch.cuda.memory_reserved()` | everything PyTorch's allocator holds, including its cache |
+| `nvidia-smi` | what the whole card has given out, to every process |
 
-The key insight is that memory usage scales linearly with the number of elements in your tensors, while computational cost scales with the dimensions of your matrix multiplications. We can model both using simple arithmetic on the CPU.
+So a high `nvidia-smi` number doesn't mean you are out of room. `GET /system_stats` on ComfyUI reports `vram_total`, `vram_free`, `torch_vram_total` and `torch_vram_free` for each device, which you can poll while a job runs. If a job does run out of memory, ComfyUI logs a memory summary above the line `Got an OOM, unloading all loaded models.`
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+## Time: where it really went
 
-To predict performance, we need two formulas. We will use a simple linear layer as our proxy for the heavy operations in a diffusion model (like the attention mechanisms in `comfy/ldm/sam3/detector.py` or the UNet blocks).
+Use the clock you have first. ComfyUI prints `Prompt executed in N seconds`, the sampler bar gives time per step, and the server's log keeps a timestamp for each write. CU-370 shows how to read them, including a case where the bar and the clock disagree.
 
-**1. Memory Footprint**
+Split a run into loading, text encoding, sampling and decoding. Then ask how much a speed-up can possibly save. A tenfold speed-up of something that takes 2% of the run saves less than 2%. Use the lab to feel this.
 
-The memory required to store a tensor is determined by the total number of elements multiplied by the size of each element in bytes.
+{{play:amdahl}}
 
-*   `numel`: The total number of scalar elements in the tensor. For a 4D image tensor, this is `batch_size * channels * height * width`.
-*   `element_size`: The number of bytes per element. For standard FP32 tensors, this is 4 bytes. For FP16/BF16, it is 2 bytes.
+For code you wrote, there is a trap: GPU work is asynchronous by default. A call can return before the work is done, so a stopwatch around it may measure almost nothing. Call `torch.cuda.synchronize()` before reading the time. For a per-operation breakdown, `torch.profiler` exists, and we don't cover it here.
 
-The formula is:
-`memory_bytes = numel * element_size`
+Work counts help when you have no GPU to measure on. A matmul of M rows, K inputs and N outputs takes about 2 M N K operations. That tells you how things scale, and it can't tell you seconds.
 
-This tells us if the data fits in VRAM. It is static in the sense that for a given input shape and dtype, the memory requirement is fixed before computation begins.
+Here is a graph with a probe on its latent, a good thing to run while you watch the readings:
 
-**2. Computational Cost (FLOPs)**
+{{graph:f_txt2img_probe}}
 
-The dominant cost in neural networks is matrix multiplication. For a linear layer that transforms an input vector of size `K` to an output vector of size `N` for a batch of `M` items, the number of floating-point operations (FLOPs) is:
+## What goes wrong
 
-`flops = 2 * M * N * K`
-
-*   `M`: The batch size (number of independent items being processed).
-*   `N`: The number of output features (e.g., the number of neurons in the next layer).
-*   `K`: The number of input features (e.g., the flattened size of the input image).
-
-The factor of 2 accounts for the multiply and the add in each dot product. This value represents the dynamic load. If you double the batch size `M`, you double the FLOPs, but you also double the memory for the input and output tensors. However, the weight matrix `W` (size `N x K`) remains the same size in memory, regardless of the batch size. This distinction is crucial: increasing batch size increases memory linearly but also increases compute linearly. Increasing resolution (which increases `K`) increases memory quadratically (for the input) and linearly for the compute per item, but the total compute scales with `K`.
-
-## In ComfyUI
-
-ComfyUI manages these resources through its core engine. The `comfy/model_management.py` module contains the `VRAMState` enum, which tracks whether the system is in `NORMAL`, `LOW`, or `OOM` states. The `free_memory` function is called to offload models or clear caches when memory pressure is high.
-
-The `ModelPatcher` class in `comfy/model_patcher.py` is responsible for tracking which weights are on the GPU versus the CPU. It uses `LowVramPatch` to estimate VRAM usage. When you run a workflow, ComfyUI calculates the memory requirements for the current step. If the predicted `memory_bytes` exceeds the available VRAM, it triggers offloading.
-
-For computational load, ComfyUI does not explicitly report FLOPs in the UI, but the time taken per step is a direct proxy. Nodes like `KSAMPLER` in `comfy/samplers.py` execute the denoising loop. The time this loop takes is proportional to the `flops` calculated above. If you see high latency but no OOM errors, your bottleneck is computational load, not memory.
+- **Timing the first run.** It includes loading. Run twice, and time the second.
+- **Reading `nvidia-smi` as tensors.** Reserved and cached memory counts there. Use `max_memory_allocated` for tensors, in your own code.
+- **Changing several things at once.** You won't know which one helped. Change one, and keep the seed.
+- **A faster GPU for a memory error, or more VRAM for a slow graph.** More memory doesn't speed up a job that already fits, unless it was swapping layers in and out. Check the console for `loaded partially` first.
+- **Polling too slowly.** A short peak can fall between two readings. A reading taken every second can miss it, so treat a low reading as a lower limit.
+- **Trusting an average when a stray load is in it.** Use the median, as the lab shows.
 
 ## Lab
 
-In this lab, we simulate a small batch of images on the CPU to verify our arithmetic models. We create a tensor representing a batch of 2 images, each with 3 channels, 8 pixels high, and 8 pixels wide. We then apply a linear transformation to simulate a layer in a neural network.
+No GPU here. The arithmetic is real, and the sizes and times are examples we chose.
 
-The lab code calculates the memory footprint of the input tensor and the theoretical FLOPs for the linear operation. It asserts that the calculations match the expected formulas.
-
-Here are the real `RESULT` lines from the lab output:
-
-```
-RESULT memory_bytes = 1536
-RESULT flops = 12288
-RESULT output_shape = (2, 16)
+```text
+a tensor's bytes = elements x bytes each: (2, 3, 8, 8) fp32 = 1536 bytes
+  SD latent, 64x64                 0.06 MB
+  IMAGE 1024x1024                 12.00 MB
+  16 channel latent, 128x128       0.50 MB
 ```
 
-Let's analyze what each line proves:
+The peak walk:
 
-1.  `RESULT memory_bytes = 1536`:
-    *   **Calculation:** `numel` is `2 * 3 * 8 * 8 = 384` elements. `element_size` for FP32 is 4 bytes. `384 * 4 = 1536`.
-    *   **Proof:** This confirms that memory usage is strictly proportional to the number of elements and the data type. If we switched to FP16, this number would drop to 768. This is the static cost of holding the data.
+```text
+the peak is not the sum, and not the biggest tensor. Four tensors, in MB: {'a': 300, 'b': 500, 'c': 200, 'd': 100}
+  each freed after the next one is made: peak 800 MB, alive ['a', 'b']
+  nothing freed: peak 1100 MB, alive ['a', 'b', 'c', 'd']
+  sum of all = 1100, biggest alone = 500
+```
 
-2.  `RESULT flops = 12288`:
-    *   **Calculation:** `M` (batch) is 2. `N` (out_features) is 16. `K` (in_features) is `3 * 8 * 8 = 192`. The formula is `2 * 2 * 16 * 192`.
-    *   `2 * 2 = 4`.
-    *   `4 * 16 = 64`.
-    *   `64 * 192 = 12288`.
-    *   **Proof:** This confirms the computational load formula. Notice that this number is much larger than the memory byte count. This highlights that compute is a separate, often larger, resource constraint. If your GPU is slow, this number determines your speed, not the 1536 bytes.
+Same four tensors, 800 MB or 1100 MB, depending only on when they die. Reserved against allocated, in a toy allocator. Peak allocated is what you'd want when sizing a job.
 
-3.  `RESULT output_shape = (2, 16)`:
-    *   **Proof:** This verifies the tensor dimensions after the linear transformation. The batch size `M` (2) is preserved, and the feature dimension changes from `K` (192) to `N` (16). This shape determines the memory footprint of the *next* layer's input, which will be `2 * 16 * 4 = 128` bytes (for FP32). This shows how memory requirements propagate through the network.
+```text
+allocated, reserved and what nvidia-smi shows: a toy caching allocator
+  after freeing: allocated 1000  reserved 6000  peak allocated 6000
+  after empty_cache: allocated 1000  reserved 1000  peak allocated 6000
+```
 
-## Common mistakes
+Work grows with the number of tokens. These are one linear layer's operations, with sizes picked as an example:
 
-1.  **Confusing VRAM with Speed:** Users often upgrade their GPU to get more VRAM when their problem is actually slow inference. If you are not hitting OOM, more VRAM will not make your workflow faster. You need higher FLOPs throughput (a faster GPU or better optimization).
-2.  **Ignoring Batch Size Impact on Memory:** Increasing batch size increases both memory and compute. However, memory increases linearly with batch size, while some intermediate activations might scale differently. Always check `memory_bytes` before increasing batch size.
-3.  **Assuming FP16 Halves Compute:** Switching from FP32 to FP16 halves the `memory_bytes` (as seen in the lab: 1536 vs 768), but it does not necessarily halve the `flops`. The number of operations remains the same, but the GPU can often process FP16 operations faster due to specialized hardware units. The `flops` count is a measure of work, not time.
-4.  **Forgetting Weight Memory:** The lab only calculated the memory for the input tensor `x`. In a real model, you must also account for the weight matrix `W`. In our lab, `W` is `16 * 192 = 3072` elements, or `12288` bytes in FP32. This is larger than the input memory! For large models, weight memory dominates the static footprint, while activation memory (like `x`) dominates the dynamic scaling with batch size.
+```text
+work in a matmul. y = x W for M rows, K inputs and N outputs is 2 M N K operations, and doubling the side changes M
+  512 px, 4096 tokens           838,860,800
+  1024 px, 16384 tokens       3,355,443,200
+```
 
-## Go deeper
+The time split, and why the biggest slice is the one to attack:
 
-The principles of memory and compute profiling are fundamental to high-performance computing. For a deeper understanding of how these metrics are measured and optimized in modern architectures, refer to the following papers:
+```text
+where the time went, example numbers
+  load models   40.0 s   36.4%
+  text encode    2.0 s    1.8%
+  sampling      60.0 s   54.5%
+  VAE decode     8.0 s    7.3%
+  text encode 10 times faster: 108.2 s.  sampling 2 times faster: 80.0 s
+```
 
-*   **arXiv:1910.02054** - "Benchmarking Deep Learning Systems" (This paper provides methodologies for benchmarking FLOPs and memory bandwidth, which are the core metrics we modeled in this lesson.)
-*   **arXiv:2006.04768** - "Efficient Transformers: A Survey" (This paper discusses how different attention mechanisms affect the `flops` and `memory_bytes` calculations, which is relevant for the `SplitMHA` and `MemoryAttnLayer` modules in ComfyUI's SAM3 implementation.)
+And why one timing lies:
 
-> UNVERIFIED: name not in evidence: batch_size * channels * height * width; name not in evidence:  elements, or ; name not in evidence: flops = 2 * M * N * K; name not in evidence: . In a real model, you must also account for the weight matrix ; name not in evidence:  to an output vector of size ; name not in evidence: memory_bytes = numel * element_size
+```text
+why one timing lies: the first run includes loading. Same example, median of five runs
+  runs [66.0, 1.5, 1.5, 1.5, 1.5]  mean 14.4 s  median 1.5 s
+```
 
+## Sources
 
+- [ComfyUI v0.43.0, server.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/server.py)
+- [ComfyUI v0.43.0, execution.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/execution.py)
+- [ComfyUI v0.43.0, main.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/main.py)
+- [ComfyUI v0.43.0, app/logger.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/app/logger.py)
+- [ComfyUI v0.43.0, comfy/model_management.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_management.py)
+- [PyTorch 2.15, CUDA semantics](https://docs.pytorch.org/docs/2.15/notes/cuda.html)

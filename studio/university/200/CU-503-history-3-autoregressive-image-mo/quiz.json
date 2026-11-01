@@ -68,6 +68,17 @@
    ],
    "answer": "Denoises the latent video one block of frames at a time, each block attending to a cache of the earlier blocks",
    "why": "sample_ar_video in comfy/k_diffusion/sampling.py loops over blocks and runs the sigma loop on each; CausalWanSelfAttention stores keys and values in a KV cache. The widget text reads \"1 = framewise, 3 = chunkwise\"."
+  },
+  {
+   "q": "You test your own masked layer and the derivative of output i with respect to input i is not zero. What does that mean?",
+   "options": [
+    "The position can read itself, so the model can cheat by copying",
+    "The mask is working, because a position should see itself",
+    "The network needs more layers",
+    "Sampling will be faster"
+   ],
+   "answer": "The position can read itself, so the model can cheat by copying",
+   "why": "The chain rule needs each factor to depend only on earlier elements. The lab's masked network gives exactly zero for j at or after i."
   }
  ]
 }

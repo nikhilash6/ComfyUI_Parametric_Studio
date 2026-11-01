@@ -1,0 +1,76 @@
+{
+ "code": "CU-320",
+ "title": "RescaleCFG, CFGNorm, APG and CFG-Zero-Star",
+ "level": "300",
+ "prereq": [
+  "CU-208",
+  "CU-250"
+ ],
+ "char": "denoise",
+ "hook": "Four nodes that try to fix high cfg, each read from source, each on the same seed. One washed the picture grey, one barely touched it, and one's default setting skips its main idea.",
+ "code_refs": [
+  "comfy_extras/nodes_model_advanced.py:RescaleCFG.patch",
+  "comfy_extras/nodes_cfg.py:CFGNorm.execute",
+  "comfy_extras/nodes_cfg.py:CFGZeroStar.execute",
+  "comfy_extras/nodes_cfg.py:optimized_scale",
+  "comfy_extras/nodes_apg.py:APG.execute",
+  "comfy_extras/nodes_apg.py:project",
+  "comfy/samplers.py:cfg_function"
+ ],
+ "track": "guidance",
+ "order": 40,
+ "kit": true,
+ "graphs": [
+  "sd15_rescale",
+  "sd15_cfgnorm",
+  "c_apg",
+  "c_cfgzero"
+ ],
+ "verified": [
+  {
+   "claim": "All four sums in the lab give the same numbers as the real nodes on test tensors, at the settings tried.",
+   "how": "test",
+   "ref": "Our comparison on a CPU, v0.43.0, importing each node"
+  },
+  {
+   "claim": "RescaleCFG has one branch for flow models and another that converts to v-prediction.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_model_advanced.py:RescaleCFG"
+  },
+  {
+   "claim": "CFGNorm caps each cell's vector length at the positive's, then multiplies everything by strength.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_cfg.py:CFGNorm"
+  },
+  {
+   "claim": "With eta 1 and threshold 0 the APG node's result equals plain cfg at s + 1.",
+   "how": "test",
+   "ref": "Our comparison on a CPU against the real node, and lab.py"
+  },
+  {
+   "claim": "The node's defaults are eta 1, threshold 5, momentum 0. The paper's default eta is 0, and it lists r from 2.5 to 15 by model, with 15 for SDXL.",
+   "how": "docs",
+   "ref": "nodes_apg.py and arXiv 2410.02416, fetched 2026-11-01"
+  },
+  {
+   "claim": "The core CFG-Zero-Star node has no zero-init input, and its result differs from the paper's velocity formula by x times (1 minus w) times (1 minus alpha).",
+   "how": "test",
+   "ref": "nodes_cfg.py, lab.py, arXiv 2503.18886 fetched 2026-11-01"
+  },
+  {
+   "claim": "The render figures and pictures are stored measurements from one seed.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  }
+ ],
+ "unchecked": [
+  "All pictures are one prompt and one seed on SDXL. A fix that fails here may work elsewhere.",
+  "That CFGNorm's grey comes from shrinking the latent is our reading of the source plus one picture. We did not decode a shrunken latent to prove it.",
+  "We have no render of APG at eta 0: the stored APG render uses eta 1. The c_apg graph has not been run.",
+  "We don't know why the core CFG-Zero-Star node applies alpha to the denoised prediction and not to the velocity. We state what the code does. Whether it matters on real models is unmeasured here.",
+  "We read the APG and CFG-Zero-Star papers through a text extraction of their web versions, and for Lin et al. only the abstract."
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

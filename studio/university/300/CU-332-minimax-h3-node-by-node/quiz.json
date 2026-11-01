@@ -1,0 +1,73 @@
+{
+ "code": "CU-332",
+ "title": "MiniMax H3, node by node, with sound in the same latent",
+ "level": "300",
+ "questions": [
+  {
+   "q": "How do VAEDecode and VAEDecodeAudio both read from one sampler output?",
+   "options": [
+    "The latent is nested: VAEDecode takes the first stream and VAEDecodeAudio takes the last",
+    "The sampler has two output sockets, one for each",
+    "The audio is hidden in the alpha channel",
+    "VAEDecode makes both and VAEDecodeAudio copies it"
+   ],
+   "answer": "The latent is nested: VAEDecode takes the first stream and VAEDecodeAudio takes the last",
+   "why": "VAEDecode uses latent.unbind()[0] when the latent is nested, and vae_decode_audio uses unbind()[-1]."
+  },
+  {
+   "q": "Where does the number 5/3 come from?",
+   "options": [
+    "40 audio latent frames a second divided by 24 video frames a second",
+    "5 video latent frames per 3 cycles",
+    "The audio shift divided by the video shift",
+    "The stereo channel count"
+   ],
+   "answer": "40 audio latent frames a second divided by 24 video frames a second",
+   "why": "FRAME_RESCALE puts both streams on one clock: 32000 Hz over a hop of 800 is 40 a second, and 40 / 24 = 5/3."
+  },
+  {
+   "q": "The sampler only follows one schedule. How can audio use a different shift?",
+   "options": [
+    "The audio stream is carried scaled by the ratio of shifts, and the model converts the noise level with time_shift_sigma",
+    "Audio is sampled in a second run afterwards",
+    "The audio shift is ignored",
+    "The audio latent gets no noise"
+   ],
+   "answer": "The audio stream is carried scaled by the ratio of shifts, and the model converts the noise level with time_shift_sigma",
+   "why": "ModelSamplingAV's audio_scale is shift / audio_shift, 4 by default, and the model maps the video sigma to the audio sigma."
+  },
+  {
+   "q": "Decoding H3 runs short of memory, so you swap in VAEDecodeTiled with small tiles. What changes?",
+   "options": [
+    "Nothing much: H3's decode_tiled ignores the tile settings and calls decode, which already chunks internally",
+    "Memory falls with the tile size, as on other VAEs",
+    "The audio is decoded in tiles too",
+    "The sampler restarts with fewer tokens"
+   ],
+   "answer": "Nothing much: H3's decode_tiled ignores the tile settings and calls decode, which already chunks internally",
+   "why": "handles_tiling is true for this VAE and decode_tiled(z, **kwargs) just returns decode(z). The chunks are built in."
+  },
+  {
+   "q": "Someone changed the graph's seconds value from 5 to 30. What should you do on a first run?",
+   "options": [
+    "Set it near 5: 30 s is 736 frames, past the tooltip's trained range of about 124 to 362",
+    "Leave it: the model handles any length equally",
+    "Set it to 124, since it counts frames",
+    "Leave it, and lower the steps"
+   ],
+   "answer": "Set it near 5: 30 s is 736 frames, past the tooltip's trained range of about 124 to 362",
+   "why": "The PrimitiveFloat holds seconds. The tooltip on the node says longer than about 362 frames is untested, and tokens grow with length."
+  },
+  {
+   "q": "How much of the token count does audio add at 5 seconds and 1344 x 768?",
+   "options": [
+    "About 1.1%",
+    "About half",
+    "About a quarter",
+    "It adds no tokens"
+   ],
+   "answer": "About 1.1%",
+   "why": "The lab prints 414 audio tokens against 37,296 video tokens."
+  }
+ ]
+}

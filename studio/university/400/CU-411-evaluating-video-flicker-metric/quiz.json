@@ -4,49 +4,70 @@
  "level": "400",
  "questions": [
   {
-   "q": "According to the lesson, what is the core statistical intuition behind the Flicker Metric?",
+   "q": "Which clip has the highest temporal variance in the lab, despite having no flicker?",
    "options": [
-    "Stability is the inverse of variance",
-    "Stability is the inverse of mean",
-    "Flicker is the sum of pixel values",
-    "Stability is the product of time and space"
+    "The fade to black",
+    "The still frame",
+    "The 4% strobe",
+    "The noise boil"
    ],
-   "answer": "Stability is the inverse of variance",
-   "why": "The lesson states: 'Our intuition is simple: Stability is the inverse of variance.' It explains that if pixel values do not change over time, their variance is zero, indicating perfect stability."
+   "answer": "The fade to black",
+   "why": "Variance counts any change over time. The fade reads 1314.57 and the strobe 25.26."
   },
   {
-   "q": "In the provided mathematical definition, what does the symbol $\\bar{v}_{c,h,w}$ represent?",
+   "q": "Why does a textured pan score high on the second difference?",
    "options": [
-    "The variance of the pixel at location (c, h, w)",
-    "The mean value of that pixel over time",
-    "The total number of frames in the video",
-    "The spatial width of the video tensor"
+    "Edges crossing a pixel make its value zigzag, even with smooth motion",
+    "The formula has a bug",
+    "Pans always flicker",
+    "Second differences measure only colour"
    ],
-   "answer": "The mean value of that pixel over time",
-   "why": "The lesson explicitly defines $\\bar{v}_{c,h,w}$ as 'the mean value of that pixel over time' in the formula for temporal variance."
+   "answer": "Edges crossing a pixel make its value zigzag, even with smooth motion",
+   "why": "At 1 pixel a frame it reads 16.898. So a raw score mixes motion with flicker."
   },
   {
-   "q": "Why is it a common mistake to apply the raw Flicker Metric to a video of a fast-moving car without prior processing?",
+   "q": "What happens to the scores after aligning frames?",
    "options": [
-    "Because the car's color changes randomly",
-    "Because the metric would measure motion as flicker",
-    "Because the video has too few frames",
-    "Because the car is not in the center of the frame"
+    "Pans drop to 0, and strobes and boils stay",
+    "Everything drops to 0",
+    "Everything doubles",
+    "Pans rise and strobes drop"
    ],
-   "answer": "Because the metric would measure motion as flicker",
-   "why": "The 'Common mistakes' section states: 'If you apply this metric to a video of a fast-moving car, you will get a high score. This is not flicker; it is motion.' It advises using optical flow to align frames first."
+   "answer": "Pans drop to 0, and strobes and boils stay",
+   "why": "Undoing a shift removes motion only. The lab prints 0.000 for pans and 19.428 for the strobe."
   },
   {
-   "q": "In PyTorch, if a video tensor has the shape $(T, C, H, W)$, along which dimension index must you compute the variance to correctly measure temporal flicker?",
-   "options": null,
-   "answer": "dim=0",
-   "why": "The lesson states: 'In PyTorch, if your tensor is shaped $(T, C, H, W)$, you must compute variance along `dim=0`.' It warns that using dim=1 would measure color inconsistency instead."
+   "q": "flicker_score returns 0.0 on a 2-frame clip. What does that mean?",
+   "options": [
+    "There was no measurement, since it needs 3 frames",
+    "The clip is perfect",
+    "The clip is black",
+    "The score failed and should be retried"
+   ],
+   "answer": "There was no measurement, since it needs 3 frames",
+   "why": "The function returns 0.0 for fewer than 3 frames. Treat that as missing."
   },
   {
-   "q": "According to the Lab Analysis, what was the calculated Flicker Metric value for the 'stable' video sequence, and what does this value signify?",
-   "options": null,
-   "answer": "0; it signifies that the temporal variance is exactly zero for a perfectly stable video where pixel values are identical across frames.",
-   "why": "The Lab Output shows 'RESULT stable_metric = 0'. The analysis explains: 'This proves that for a perfectly stable video... the temporal variance is exactly zero.'"
+   "q": "One frame in 32 is 20% too bright. What should you report?",
+   "options": [
+    "The worst moment too, since the mean is 3.2 and the worst is 48.6",
+    "The mean, which is enough",
+    "Only the variance",
+    "Nothing, since it's one frame"
+   ],
+   "answer": "The worst moment too, since the mean is 3.2 and the worst is 48.6",
+   "why": "Averages hide single bad frames, which viewers notice."
+  },
+  {
+   "q": "The H3 dragon clip tops our table. What can you conclude from that alone?",
+   "options": [
+    "Little: fast detail and real flicker both raise this score",
+    "H3 flickers more than LTX",
+    "The clip is broken",
+    "The prompt was bad"
+   ],
+   "answer": "Little: fast detail and real flicker both raise this score",
+   "why": "The clips differ in content and it's one seed. Without alignment the score can't separate the causes."
   }
  ]
 }

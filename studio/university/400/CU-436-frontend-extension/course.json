@@ -1,0 +1,31 @@
+{
+ "code": "CU-436",
+ "title": "A front-end extension: WEB_DIRECTORY and registerExtension",
+ "level": "400",
+ "prereq": ["CU-430"],
+ "char": "graph",
+ "hook": "One line of Python and one JavaScript file put your code in the editor. Here is what gets served, what gets loaded, and which hook to use.",
+ "track": "custom-nodes",
+ "order": 30,
+ "kit": true,
+ "graphs": ["nm_first"],
+ "code_refs": [
+  "nodes.py:WEB_DIRECTORY",
+  "nodes.py:EXTENSION_WEB_DIRS",
+  "server.py:get_extensions",
+  "comfy_config/types.py:web"
+ ],
+ "verified": [
+  {"claim": "A pack's WEB_DIRECTORY is added to EXTENSION_WEB_DIRS under the pack's folder name.", "how": "source", "ref": "nodes.py:load_custom_node"},
+  {"claim": "The /extensions route lists **/*.js under each folder, and each folder is served as a static path at /extensions/<name>.", "how": "source", "ref": "server.py:get_extensions"},
+  {"claim": "A pyproject web setting registers the folder under the project name, not the folder name.", "how": "source", "ref": "nodes.py:load_custom_node"},
+  {"claim": "Only .js files are added to the page, other files are reached by URL, and the page's example imports app from ../../scripts/app.js.", "how": "docs", "ref": "docs.comfy.org custom-nodes js javascript_overview, fetched 2026-11-01"},
+  {"claim": "The hook order on page load.", "how": "docs", "ref": "docs.comfy.org custom-nodes js javascript_hooks, fetched 2026-11-01"},
+  {"claim": "A running server here answered GET /extensions with a JSON list of .js paths.", "how": "run here", "ref": "a read-only request on our test machine"}
+ ],
+ "unchecked": [
+  "We did not load an extension in a browser for this lesson. The hook order is what the docs state, and we did not trace it through the shipped front-end bundle.",
+  "The arguments each hook receives are from the docs. Apart from the example here, we did not test them.",
+  "Whether editing a served .js file needs only a page reload. We expect so, since files are served from disk, and we did not try it."
+ ]
+}

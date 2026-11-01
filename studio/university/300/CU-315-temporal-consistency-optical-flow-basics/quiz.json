@@ -4,54 +4,59 @@
  "level": "300",
  "questions": [
   {
-   "q": "What is the mathematical expression for the brightness constancy assumption in optical flow?",
+   "q": "What's the difference between optical flow and a frame difference?",
    "options": [
-    "I_{t+1}(x, y) = I_t(x, y)",
-    "I_{t+1}(x + u, y + v) = I_t(x, y)",
-    "F = I_{t+1} + I_t",
-    "V(x, y) = (x, y)"
+    "Flow gives a direction and distance per pixel; a difference gives only one number of change",
+    "They are the same thing",
+    "A frame difference is more accurate",
+    "Flow works only on stills"
    ],
-   "answer": "I_{t+1}(x + u, y + v) = I_t(x, y)",
-   "why": "The lesson explicitly defines the brightness constancy assumption with the equation I_{t+1}(x + u, y + v) = I_t(x, y), stating that the intensity of a moving pixel remains constant over time when shifted by the flow vector."
+   "answer": "Flow gives a direction and distance per pixel; a difference gives only one number of change",
+   "why": "Flow is a field of (u, v). Subtracting frames can't say where anything went."
   },
   {
-   "q": "In the context of the provided lab experiment, what does a flow standard deviation (flow_std) of 0 indicate about the motion?",
+   "q": "A camera pans 3 pixels, with a larger raw difference than a 10% brightness jump. What separates them?",
    "options": [
-    "The object is rotating or deforming.",
-    "Every single pixel moved by the exact same amount, indicating rigid body motion.",
-    "The video contains significant noise or flicker.",
-    "The flow is erratic and complex."
+    "Undo the best shift: the pan leaves nothing and the jump stays",
+    "The size of the raw difference",
+    "The file size",
+    "Which came first"
    ],
-   "answer": "Every single pixel moved by the exact same amount, indicating rigid body motion.",
-   "why": "The lab section states that a standard deviation of 0 means 'every single pixel moved by the exact same amount' and that this indicates 'rigid body motion, which is easy for a neural network to model.'"
+   "answer": "Undo the best shift: the pan leaves nothing and the jump stays",
+   "why": "The lab prints 0.1036 against 0.0498 raw, then 0.0000 against 0.0498 after the best shift."
   },
   {
-   "q": "Why is 'Causal' 3D convolution (such as CarriedConv3d) critical for autoregressive video generation?",
+   "q": "Why does Lucas-Kanade read 0.35 for a true motion of 8 pixels?",
    "options": [
-    "It allows the model to look at future frames to improve prediction accuracy.",
-    "It ensures temporal consistency is built from history forward, preventing 'future leakage' artifacts.",
-    "It reduces the computational cost of attention mechanisms.",
-    "It treats time as a symmetric spatial dimension."
+    "It assumes small motion, by turning the equation into a straight line",
+    "It needs colour",
+    "It rounds down",
+    "It has a bug"
    ],
-   "answer": "It ensures temporal consistency is built from history forward, preventing 'future leakage' artifacts.",
-   "why": "The lesson explains that 'Causal' means it only looks at past and present frames, which is critical for autoregressive generation to ensure consistency is built from history forward and to prevent 'future leakage' which can cause artifacts."
+   "answer": "It assumes small motion, by turning the equation into a straight line",
+   "why": "The linear form holds only near the current position. In the lab it's close at 0.3 pixels and far off at 8."
   },
   {
-   "q": "According to the lesson, what is the primary architectural mechanism used in ComfyUI to enforce temporal consistency, given that specific optical flow estimation nodes are not covered?",
-   "options": null,
-   "answer": "3D causal convolutions (such as VideoConv3d, CarriedConv3d, and CausalConv3d)",
-   "why": "The 'In ComfyUI' section notes that specific optical flow estimation nodes are not covered, and states that consistency is 'enforced architecturally via these 3D causal layers' like VideoConv3d and CarriedConv3d."
+   "q": "What does VideoConv3d's padding mean?",
+   "options": [
+    "Frames are padded before the clip only, so no output depends on a later frame",
+    "It looks at future frames",
+    "It doubles the frame rate",
+    "It pads space but not time"
+   ],
+   "answer": "Frames are padded before the clip only, so no output depends on a later frame",
+   "why": "The padding tuple gives kernel_size - 1 frames at the start and 0 at the end."
   },
   {
-   "q": "What is the 'common mistake' associated with treating time as just another spatial dimension in video architectures?",
+   "q": "Where does core ComfyUI use optical flow?",
    "options": [
-    "It causes the model to ignore local pixel-level displacements.",
-    "It leads to 'wobble' or 'jitter' because it fails to capture the directionality of motion.",
-    "It results in 'smearing' due to looking at future frames.",
-    "It makes the VAE unable to compress the video in space."
+    "OpticalFlowLoader and VOIDWarpedNoise warp noise along a clip's motion",
+    "Every video VAE computes it",
+    "KSampler uses it for all video",
+    "Nowhere at all"
    ],
-   "answer": "It leads to 'wobble' or 'jitter' because it fails to capture the directionality of motion.",
-   "why": "The 'Common mistakes' section states that architectures treating time symmetrically (like static image models) 'often fail to capture the directionality of motion, leading to \"wobble\" or \"jitter.\"'"
+   "answer": "OpticalFlowLoader and VOIDWarpedNoise warp noise along a clip's motion",
+   "why": "nodes_void.py loads a RAFT checkpoint and passes it to get_noise_from_video. Other models don't use flow unless a node adds it."
   }
  ]
 }

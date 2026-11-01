@@ -1,81 +1,130 @@
 # CU-409 - Distillation math: teacher, student, consistency
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Explain how a many-step sampler's work can be compressed into few model calls, say what a student inherits from its teacher, and run distilled weights in core. Taught by Tinker Tune.
 
-## Why this matters
+## The idea
 
-In ComfyUI, you are used to dragging a `KSampler` node, setting steps to 20 or 30, and waiting. But in production pipelines, latency is money. Every extra step is a matrix multiplication that costs GPU cycles. Distillation is the engineering discipline that lets us compress the "thinking time" of a diffusion model.
+A sampler takes many small steps because each one is only right for a small move. Distillation trains a second model, the student, to make the big move in one go. The target for that big move comes from the slow model, the teacher. Training costs a lot and runs once. After that, generating is cheap.
 
-As a tinkerer, I’ve tried merging models to get better quality, but merging doesn’t make things faster. Distillation does. It takes a "teacher" model that is slow but accurate and trains a "student" model that is fast but slightly less accurate. The goal is to get 95% of the quality with 10% of the compute. This lesson focuses on the mathematical mechanism that makes this possible: mapping a complex, multi-step trajectory onto a simpler, direct path.
+Note what's being compressed: the path, not the file. A student usually has the same architecture and size as its teacher. Merging doesn't make things faster, but distillation can.
 
-## The intuition
+## A problem with an exact answer
 
-Imagine you are hiking down a mountain to a valley (the clean image). The "teacher" model takes tiny, careful steps, checking the slope at every point. It’s safe, but it takes hours. The "student" model looks at where it is and jumps directly to the valley floor.
+To see the method clearly, take data with an exact solution: numbers drawn from a Gaussian with spread 1. For that data, the perfect denoiser is D(x, σ) = x / (1 + σ²), and the probability-flow path from σa to σb has an exact form: multiply x by √(1 + σb²) / √(1 + σa²). So we can measure any sampler's error exactly.
 
-The problem with jumping is that the valley floor isn't a single point; it’s a region. If you jump from a high altitude, you might land on a steep slope instead of the flat bottom. Distillation teaches the student that *any* point along the hiking path should map to the same final destination. This is the core of **consistency**.
+Plain Euler, with the Karras schedule from 80 down to 0.002:
 
-In our lab, we simulate a 1D process where the "true data" is a standard normal distribution $N(0,1)$. The teacher takes 100 tiny Euler steps to denoise. The student takes one big jump. If the student is consistent, it should land closer to the true data than the teacher, because the teacher accumulates numerical error and noise over 100 steps, while the student makes a single, direct estimate.
+```text
+plain Euler. Model calls, error against the exact path, and the std of the result (should be 1.000)
+calls   error    std
+1       0.9858   0.012
+2       0.9838   0.014
+4       0.5338   0.464
+8       0.3076   0.691
+16      0.1574   0.841
+32      0.0795   0.919
+64      0.0400   0.958
+128     0.0200   0.978
+```
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+One call is worthless, as the std of 0.012 shows: a single step lands on the denoiser's mean, which is nearly zero. Error halves each time you double the calls. That's the slow road.
 
-Let's define the variables we are manipulating:
-*   $x_t$: The noisy data at time step $t$.
-*   $x_0$: The clean data (the target).
-*   $\sigma$: The noise level (standard deviation).
-*   $f_\theta(x_t, t)$: The student model (consistency function) parameterized by $\theta$.
+## Progressive distillation
 
-The **Consistency Loss** is the key constraint. It forces the student model to be consistent across the entire trajectory. Specifically, if you take a small step from $x_t$ to $x_{t-\Delta t}$ using the teacher's dynamics, the student's prediction of $x_0$ from $x_t$ should be the same as its prediction from $x_{t-\Delta t}$.
+Salimans and Ho's method is simple. Take a teacher with N steps. Train a student so that its one step does what two teacher steps do. That student, with N/2 steps, then becomes the new teacher. Repeat. Each round halves the calls.
 
-Mathematically, we want:
-$$f_\theta(x_t, t) \approx f_\theta(x_{t-\Delta t}, t-\Delta t)$$
+On this problem each step just multiplies by a number, so a student here is a list of numbers fitted to samples.
 
-In our simplified 1D lab, the teacher step is defined as:
-$$x_{new} = x_{old} - x_{old} \cdot dt + \text{noise} \cdot \sqrt{dt}$$
-Here, $dt$ is the time step size (0.01 in our lab), and the noise term simulates the stochastic nature of diffusion.
+```text
+progressive distillation from a 64-step teacher. Each round halves the steps
+student calls   student error   Euler at the same calls   std of student
+64              0.0400          0.0400                    0.958
+32              0.0400          0.0795                    0.958
+16              0.0400          0.1574                    0.958
+8               0.0400          0.3076                    0.958
+4               0.0400          0.5338                    0.958
+2               0.0400          0.9838                    0.958
+1               0.0400          0.9858                    0.958
+```
 
-The student model in our lab uses a heuristic approximation for a linear flow:
-$$x_0 \approx \frac{x_t}{1 + \sigma^2}$$
-This formula assumes that as $\sigma$ (noise) increases, the signal $x_t$ is diluted, so we scale it back up. The "distillation" happens when we train $\theta$ (or in this case, verify the heuristic) such that this direct jump minimizes the Mean Squared Error (MSE) against the true $x_0$.
+The student's error stays at 0.04 all the way down to one call, where Euler at one call is useless. That's what the method promises.
 
-The geometric interpretation is crucial: The teacher traces a curved path through the noise space. The student learns a "shortcut" function that maps any point on that curve directly to the origin (or the clean data manifold). The consistency loss ensures that this shortcut is smooth and doesn't have discontinuities that would cause artifacts in the generated image.
+Two warnings about that column. First, it's flat because this problem is too easy: a step here is a multiplication, and a product of two numbers is one number, so the student copies exactly. A real network can't copy two steps perfectly, and each round adds some error. Second, the student matches its teacher, not the truth. Its error can't fall below the teacher's:
+
+```text
+the student copies the teacher, errors included. One-step student from each teacher, against the teacher's own error
+teacher steps   teacher error   one-step student error
+4               0.5338          0.5338
+16              0.1574          0.1574
+64              0.0400          0.0400
+```
+
+A 4-step teacher makes a one-step student with exactly its 0.5338 error. A bad teacher gets you a fast bad student.
+
+## Consistency
+
+Song et al. come at it differently. Instead of halving rounds, they ask for one function f(x, σ) with a single property: any point on a path, at any noise level, should give the same answer, the path's end. Enforce two things. At the smallest noise level, f returns its input. And neighbouring levels on a path agree. Train with those, and the answer spreads back from low noise to high.
+
+In this toy f is x times a number c(σ). We fit c level by level, from the smallest noise up, with the teacher's Euler step linking neighbours.
+
+```text
+consistency: fit c(sigma) so that f(x, sigma) = c x agrees across neighbouring levels of an Euler teacher
+levels   c at sigma max   exact c   one-call error   Euler one-call error
+8        0.00865          0.01250   0.3076           0.9858
+32       0.01150          0.01250   0.0795           0.9858
+128      0.01225          0.01250   0.0200           0.9858
+```
+
+With more levels (a finer teacher) the one-call error falls to about 0.02, again the size of the error in the Euler teacher at 128 steps. And here's the property itself: one path, predictions read at five noise levels, all the same.
+
+```text
+self-consistency on one path, 128 levels: the answer read from different points on it. Exact end value of this path is the first column
+exact end 1.0000   predictions from levels 80.000 17.295 2.428 0.157 0.002
+  0.9799 0.9799 0.9799 0.9799 0.9799
+```
+
+They agree to the last digit. They're also 2% off the exact end, 1.0000: that's the teacher's error again.
+
+The paper's abstract also says that consistency models support multistep sampling, to trade compute for quality, and that they can be trained by distilling a diffusion model, or alone with no teacher. We did only the distilling form.
+
+Try the cost side of this: count model calls, not steps, on a toy where the true end is known.
+
+{{play:solvers}}
 
 ## In ComfyUI
 
-Our sources do not contain specific node names for a "Consistency Distillation Trainer" in the standard ComfyUI interface. The `comfy/k_diffusion` folder contains sampling logic like `sample_euler` and `get_sigmas_karras`, which are used by the teacher during inference. However, the training loop for distillation is typically handled by external scripts or specific custom nodes not detailed in our provided evidence.
+Core runs distilled weights, and has no node that trains them. `TrainLoraNode`'s loss compares with the clean latent, not with a teacher's steps.
 
-We do see references to model architectures in `comfy/ldm/mage_flow` and `comfy/ldm/ace`, which include components like `DConvDenoiser` and `AceStepDiTModel`. These are the types of models that *can* be distilled, but the distillation math itself is not exposed as a simple node in the standard workflow. For this lab, we are simulating the math in Python to understand the mechanics before applying them to a real model.
+To run them:
+
+- **LCM.** The Latent Consistency Models paper applies the idea in latent space, and reports 2 to 4 steps. Core has an `LCM` sampling type in `comfy_extras/nodes_model_advanced.py`, chosen by `ModelSamplingDiscrete` with `sampling` set to `lcm`, and a `lcm` sampler (`sample_lcm`).
+- **Turbo.** `SDTurboScheduler` in `comfy_extras/nodes_custom_sampler.py` is a scheduler for such models.
+- **A distilled LoRA.** It's the student's difference, stored as a LoRA. Load it like any other, and set the sampler for it.
+
+{{graph:d_lcm}}
+
+Our graph uses 4 steps and CFG 1. That's the usual way for LCM files, and we haven't tested it here. The maker's notes for your file come first.
+
+## What goes wrong
+
+- **Ordinary settings on a distilled model.** 30 steps at CFG 7 is what you'd use for its teacher. Read its notes: few steps, and CFG often at or near 1.
+- **A distilled model with no `ModelSamplingDiscrete` set up.** LCM has its own prediction form. Without it, or the lcm sampler, you're running the wrong sums.
+- **Expecting a distilled file to be smaller or to need less memory.** It usually isn't. The cost saved is in model calls, and memory depends on the network.
+- **One step when more are allowed.** Consistency models support multistep sampling. Try two or four.
+- **Teaching from a poor teacher.** The student inherits it, as the table above shows.
+- **Merging a distilled model with its base.** It was trained for a different path, and there's no reason for the blend to work at either's step count. We have not tested it.
 
 ## Lab
 
-The lab simulates a 1D diffusion process. We generate 100 samples from $N(0,1)$ as our ground truth. We add noise to create $x_{noisy}$.
-1.  **Teacher**: Takes 100 small steps ($dt=0.01$) using a simple Euler-like update with added noise.
-2.  **Student**: Makes a single jump using the consistency approximation $x / (1 + \sigma^2)$.
+No network is trained in this lab: a student is a list of numbers, fitted by least squares on samples from an exact problem. It's built to show where the error goes, and it runs in seconds. It leaves out what makes real distillation hard: a network that can't copy exactly, an EMA target, and data that isn't Gaussian. We rewrote this lab, because the earlier draft's "student" was a fixed formula tested against a noisy stand-in that wasn't a teacher, and its result proved nothing.
 
-We then compare the Mean Squared Error (MSE) of both estimates against the true data.
+## Sources
 
-Here are the exact `RESULT` lines from the lab output:
-
-```text
-RESULT mse_teacher = 0.589503
-RESULT mse_student = 0.54106
-RESULT improvement_ratio = 1.08953
-```
-
-**What each proves:**
-1.  `mse_teacher = 0.589503`: The teacher, despite taking 100 steps, has an error of ~0.59. This is high because each step adds a small amount of random noise (`torch.randn_like(x) * 0.1`), and these errors accumulate. The teacher is "wandering" around the true value.
-2.  `mse_student = 0.54106`: The student, with a single step, has a lower error of ~0.54. This proves that in this simplified linear regime, the direct consistency jump is more accurate than the noisy iterative process. The student effectively "filters out" the accumulated noise by making a direct estimate.
-3.  `improvement_ratio = 1.08953`: The student is ~9% more accurate than the teacher in this specific simulation. While 9% might seem small, in a real 2D image generation context, this translates to significant visual fidelity gains for a massive reduction in compute (1 step vs 100 steps).
-
-## Common mistakes
-
-1.  **Ignoring the noise schedule**: Distillation is sensitive to the noise schedule. If your teacher uses a Karras schedule (`get_sigmas_karras`) but your student is trained on a linear schedule, the consistency loss will fail. The student will learn to jump to the wrong place.
-2.  **Overfitting to the teacher's errors**: If the teacher model is bad, the student will learn to be bad faster. Always verify the teacher's quality before distilling.
-3.  **Assuming 1-step is always better**: Consistency models support multi-step sampling. Sometimes, taking 2 or 4 steps with a consistency model yields better results than 1 step, especially for complex prompts. Don't force 1-step if you can afford 4.
-
-## Go deeper
-
-For the full mathematical derivation of how to train these models, read these papers:
-
-*   **arXiv:2202.00512**: *Progressive Distillation for Fast Sampling of Diffusion Models*. This paper introduces the idea of halving the number of steps iteratively. It explains how to distill a 8192-step model down to 4 steps.
-*   **arXiv:2303.01469**: *Consistency Models*. This is the foundational paper for the consistency loss. It defines the mathematical framework for mapping noise to data directly and proves that this approach outperforms previous distillation techniques in one-step generation.
-
+- [Progressive Distillation for Fast Sampling of Diffusion Models](https://arxiv.org/abs/2202.00512)
+- [Consistency Models](https://arxiv.org/abs/2303.01469)
+- [Latent Consistency Models: Synthesizing High-Resolution Images with Few-Step Inference](https://arxiv.org/abs/2310.04378)
+- [Elucidating the Design Space of Diffusion-Based Generative Models](https://arxiv.org/abs/2206.00364)
+- [ComfyUI v0.43.0, comfy_extras/nodes_model_advanced.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_model_advanced.py)
+- [ComfyUI v0.43.0, comfy/k_diffusion/sampling.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/k_diffusion/sampling.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_custom_sampler.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_custom_sampler.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_train.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_train.py)

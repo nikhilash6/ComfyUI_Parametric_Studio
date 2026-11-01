@@ -1,3 +1,10 @@
-RESULT seed = 82
-RESULT node_b = 164
-RESULT node_c = 174
+first try: stopped at refine  calls: ['draft', 'refine']
+second try: upscale_00004_.png  calls: ['draft', 'refine', 'refine', 'upscale']
+again, nothing changed: upscale_00004_.png  calls so far: 4
+new prompt: upscale_00007_.png  calls so far: 7
+
+split                  change the last step   why
+one graph              1 node runs            the engine's cache keeps earlier results, while they stay in memory
+three graphs + ledger  1 graph runs           your ledger keeps file names, for as long as the files stay
+
+poll: ('done', 3) ('failed', 2) ('gave up', 10)

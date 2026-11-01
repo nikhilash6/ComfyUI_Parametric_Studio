@@ -1,0 +1,62 @@
+{
+ "code": "CU-281",
+ "title": "Train a LoRA with core nodes",
+ "level": "200",
+ "questions": [
+  {
+   "q": "In TrainLoraNode, what does a single step measure with its loss?",
+   "options": [
+    "How much the picture looks like the trigger",
+    "How far the model's prediction of the clean latent is from the real clean latent, at a random noise level",
+    "How close the LoRA is to the checkpoint",
+    "The CFG scale's error"
+   ],
+   "answer": "How far the model's prediction of the clean latent is from the real clean latent, at a random noise level",
+   "why": "fwd_bwd makes xt from a random sigma and noise, predicts x0, and compares it with the clean latent."
+  },
+  {
+   "q": "In our 300-step run the first tenth averaged 0.1626 and the last 0.1849. What should you conclude?",
+   "options": [
+    "The LoRA got worse",
+    "Training failed",
+    "Nothing: the shuffle test shows such a gap appears about half the time by chance",
+    "It needs twice the steps"
+   ],
+   "answer": "Nothing: the shuffle test shows such a gap appears about half the time by chance",
+   "why": "Random noise levels and pictures make the list so jumpy that this gap isn't evidence either way. The pictures still changed."
+  },
+  {
+   "q": "Why does a LoRA trained with these core nodes not patch the text encoder?",
+   "options": [
+    "Text encoders can't be patched",
+    "The captions were encoded once before training, and adapters are added only to the model",
+    "It's a setting you must turn on",
+    "The VAE does it instead"
+   ],
+   "answer": "The captions were encoded once before training, and adapters are added only to the model",
+   "why": "MakeTrainingDataset encodes text ahead of time. _setup_lora_adapters walks mp.model only."
+  },
+  {
+   "q": "What does our run actually show?",
+   "options": [
+    "300 steps is the best number",
+    "Rank 8 beats other ranks",
+    "This path produces a file that changes pictures, in one run with two test prompts",
+    "Any dataset will work"
+   ],
+   "answer": "This path produces a file that changes pictures, in one run with two test prompts",
+   "why": "One run has no comparison in it. It can't rank settings."
+  },
+  {
+   "q": "Your run crashes at step 280 of 300. What do you have?",
+   "options": [
+    "The file from step 200",
+    "Nothing from that run: the node saves no mid-run checkpoints",
+    "The optimizer state",
+    "A half-sized LoRA"
+   ],
+   "answer": "Nothing from that run: the node saves no mid-run checkpoints",
+   "why": "SaveLoRA runs only after TrainLoraNode returns."
+  }
+ ]
+}

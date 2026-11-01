@@ -1,96 +1,45 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility as required
-torch.manual_seed(0)
-
-# Define hyperparameters for a simple convolutional layer
-kernel_size = 3
-stride = 2
-dilation = 1
-
-# Calculate the receptive field of a single layer
-# Formula: (kernel_size - 1) * dilation + 1
-receptive_field = (kernel_size - 1) * dilation + 1
-print(f"RESULT single_layer_rf = {receptive_field}")
-
-# Assert that the base receptive field calculation is correct
-assert receptive_field == 3, "Base receptive field calculation failed"
-
-# Calculate cumulative receptive field after 2 layers
-# The receptive field grows as we stack layers
-# For layer i (0-indexed), the contribution is (kernel_size - 1) * dilation * (stride ** i)
-# However, the standard formula for cumulative RF with stride is:
-# RF_total = 1 + sum_{i=0}^{L-1} (kernel_size - 1) * dilation * (stride ** i)
-# But the prompt's example uses (2 ** i) which implies stride=2 in the growth factor
-# Let's follow the prompt's logic: total_rf = 1 + sum((k-1)*d*(2**i) for i in range(2))
-total_rf = 1
-for i in range(2):
-    total_rf = total_rf + (kernel_size - 1) * dilation * (2 ** i)
-
-print(f"RESULT total_rf_2_layers = {total_rf}")
-
-# Assert that the cumulative receptive field calculation is correct
-assert total_rf == 7, "Cumulative receptive field calculation failed"
-
-# Demonstrate with a tiny tensor to show how spatial dimensions change
-# Input: 1 batch, 1 channel, 7x7 spatial
-x = torch.randn(1, 1, 7, 7, dtype=torch.float32)
-
-# Create a simple conv layer (CPU only, float32)
-conv = torch.nn.Conv2d(1, 1, kernel_size=3, stride=stride, padding=0, dilation=dilation)
-
-# Forward pass
-y = conv(x)
-
-# Calculate expected output spatial size
-# Formula: floor((H + 2*padding - dilation*(kernel_size-1) - 1) / stride) + 1
-H_in = 7
-H_out = math.floor((H_in + 2*0 - dilation*(kernel_size-1) - 1) / stride) + 1
-
-print(f"RESULT input_spatial = {H_in}")
-print(f"RESULT output_spatial = {H_out}")
-
-# Assert that the output spatial dimension matches our calculation
-assert y.shape[2] == H_out, "Output spatial dimension calculation failed"
-
-# Verify that the receptive field concept holds:
-# With RF=7 after 2 layers, a center pixel in the final output
-# should depend on 7 pixels in the original input
-# We can verify this by checking that changing pixels outside the RF
-# doesn't affect the center output pixel
-
-# Create a second input that differs only outside the receptive field
-x2 = x.clone()
-# The center of the 7x7 input is at (3,3)
-# After 2 conv layers with stride 2, the center of output is at (1,1)
-# The receptive field of 7 means it covers input pixels from (3-3) to (3+3) = 0 to 6
-# So actually the entire 7x7 input is within the RF for the center pixel
-# Let's use a larger input to make this clearer
-
-x_large = torch.randn(1, 1, 11, 11, dtype=torch.float32)
-x_large2 = x_large.clone()
-
-# Modify a pixel far outside the receptive field of the center
-# Center of 11x11 is (5,5)
-# RF=7 means it covers (5-3) to (5+3) = 2 to 8
-# So pixel (0,0) is outside the RF
-x_large2[0, 0, 0, 0] += 100.0
-
-y_large = conv(conv(x_large))
-y_large2 = conv(conv(x_large2))
-
-# The center pixel of the output should be the same
-center_idx = (0, 0, 1, 1)  # batch, channel, h, w for 3x3 output from 11x11 input
-center_val1 = y_large[center_idx].item()
-center_val2 = y_large2[center_idx].item()
-
-print(f"RESULT center_pixel_1 = {center_val1:.6g}")
-print(f"RESULT center_pixel_2 = {center_val2:.6g}")
-
-# Assert that the center pixel is unchanged (within floating point tolerance)
-assert abs(center_val1 - center_val2) < 1e-5, "Receptive field isolation failed"
+# CU-316 lab: receptive fields measured by experiment, the causal first-frame rule, and tile overlap. Real torch convolutions, CPU, seeded.
+import math, torch
+import torch.nn.functional as F
+torch.manual_seed(0); torch.set_num_threads(1)
+# 1. The formula: r = 1 + sum over layers of (k - 1) * (product of the strides before that layer).
+def rf(layers):
+    r, j = 1, 1
+    for k, s in layers: r += (k - 1) * j; j *= s
+    return r, j
+def measured(layers, n=301):
+    """push a weight of 1 through each conv: which inputs reach the middle output? Measured with autograd, not with the formula."""
+    x = torch.zeros(1, 1, n, requires_grad=True); y = x + 1
+    for k, s in layers: y = F.conv1d(y, torch.ones(1, 1, k), stride=s)
+    y[0, 0, y.shape[2] // 2].backward(); return int((x.grad != 0).sum().item())
+print("layers (kernel, stride)                        formula r  measured  output spacing j")
+for L in ([(3, 1)], [(3, 2)], [(3, 2), (3, 2)], [(3, 1), (3, 1), (3, 1), (3, 1)], [(3, 2), (3, 2), (3, 2), (3, 2)], [(3, 1), (3, 2), (3, 1), (3, 2), (3, 1), (3, 2)]):
+    r, j = rf(L); m = measured(L); print(f"{str(L):46s} {r:<10d} {m:<9d} {j}"); assert r == m
+# 2. The draft of this lesson's lab claimed two stride-2 layers on 7 pixels give 3 pixels. One layer does. Two give 1.
+c = lambda n: (n - 3) // 2 + 1; print(f"\nspatial size with kernel 3, stride 2, no padding: 7 -> {c(7)} after one layer, {c(c(7))} after two")
+assert c(c(7)) == 1
+# 3. Causal padding and the first frame. Pad 2 frames before, none after, stride 2, twice: a stride-4 stack. The output count follows (n - 1) // 4 + 1.
+def causal_t(n):
+    x = torch.zeros(1, 1, n, 1, 1); k = torch.ones(1, 1, 3, 1, 1)
+    for _ in range(2): x = F.conv3d(F.pad(x, (0, 0, 0, 0, 2, 0), mode="replicate"), k, stride=(2, 1, 1))
+    return x.shape[2]
+print("\nframes in -> latent frames from two causal stride-2 layers, against (n - 1) // 4 + 1:")
+for n in (1, 5, 9, 17, 21, 81, 120, 121):
+    o = causal_t(n); print(f"{n:>4d} -> {o:>3d}   {(n - 1) // 4 + 1}"); assert o == (n - 1) // 4 + 1
+# 4. No future leak: change a late frame and check an earlier output.
+x = torch.rand(1, 1, 21, 1, 1); y = x.clone(); y[0, 0, 20] += 5.0; k = torch.rand(1, 1, 3, 1, 1)
+def stack(v):
+    for _ in range(2): v = F.conv3d(F.pad(v, (0, 0, 0, 0, 2, 0), mode="replicate"), k, stride=(2, 1, 1))
+    return v
+a, b = stack(x), stack(y); ch = (a != b).flatten().nonzero().flatten().tolist(); print(f"\nchange frame 20 of 21: the {a.shape[2]} latent frames that move are {ch}")
+assert ch == [5]
+# 5. Why tiles need overlap: decode a 1D latent with a stack of receptive radius 3, in two tiles, and compare. Error stops when the overlap covers the radius.
+torch.manual_seed(1); w = [torch.randn(1, 1, 3) * 0.6 for _ in range(3)]; z = torch.randn(1, 1, 64)
+def dec(v):
+    for k in w: v = torch.tanh(F.conv1d(v, k, padding=1))
+    return v
+t = dec(z); print("\ntwo tiles of a 64-long latent, zero padding at each tile edge, hard join in the middle of the overlap")
+print("overlap   largest error at the join"); errs = []
+for ov in (0, 2, 4, 6, 8, 12):
+    m = 32; a = dec(z[..., :m + ov // 2 + ov % 2 + ov // 2]) if False else dec(z[..., :m + ov]); b = dec(z[..., m - ov:]); o = torch.cat([a[..., :m], b[..., ov:]], -1); e = (o - t).abs().max().item(); errs.append(e); print(f"{ov:<9d} {e:.6f}")
+assert errs[0] > 1e-3 and errs[-1] < 1e-9

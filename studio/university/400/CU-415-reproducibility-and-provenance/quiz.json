@@ -4,54 +4,59 @@
  "level": "400",
  "questions": [
   {
-   "q": "According to the lesson, why is saving the random seed alone considered a dangerous misconception for reproducibility?",
+   "q": "Same graph hash, different pictures. What's a likely cause the hash can't see?",
    "options": [
-    "Because seeds are randomly generated and cannot be stored.",
-    "Because if the lock (node version, operation order, or precision) changes, the key (seed) will not open the same door.",
-    "Because seeds only work with specific hardware configurations.",
-    "Because seeds are not part of the cryptographic hash function."
+    "New weights under the same file name",
+    "A different seed",
+    "A different sampler name",
+    "A different prompt"
    ],
-   "answer": "Because if the lock (node version, operation order, or precision) changes, the key (seed) will not open the same door.",
-   "why": "The lesson states: 'A seed is merely a key to a lock; if the lock itself changes—due to a different node version, a different order of operations, or a floating-point precision shift—the key will not open the same door.'"
+   "answer": "New weights under the same file name",
+   "why": "The graph holds the name only. Seed, sampler and prompt are in the graph."
   },
   {
-   "q": "What is the purpose of 'canonicalization' in the context of hashing a workflow graph?",
+   "q": "Why sort keys before hashing a graph?",
    "options": [
-    "To compress the graph size for faster transmission.",
-    "To convert the graph into a single, unambiguous string by sorting keys and standardizing format.",
-    "To encrypt the graph so only authorized users can view it.",
-    "To remove all seed values from the graph structure."
+    "The same graph can otherwise give different text",
+    "It's faster",
+    "It removes the seed",
+    "It shrinks the file"
    ],
-   "answer": "To convert the graph into a single, unambiguous string by sorting keys and standardizing format.",
-   "why": "The lesson explains: 'To prove that two workflows are identical... we must convert them into a single, unambiguous string of text. This is called canonicalization. By sorting the keys and standardizing the format, we remove ambiguity.'"
+   "answer": "The same graph can otherwise give different text",
+   "why": "Hash the same text for the same graph."
   },
   {
-   "q": "In the provided lab example, what does the output line 'RESULT tensor_op = 2' prove?",
+   "q": "Changing width by itself at one seed. What happens to the noise?",
    "options": [
-    "That the SHA-256 hash was calculated correctly.",
-    "That the PyTorch environment is deterministic and floating-point operations yield consistent results.",
-    "That the KSampler node was successfully initialized.",
-    "That the server history was retrieved without errors."
+    "It changes, as the shape changes the draws",
+    "It stays in the same place",
+    "It disappears",
+    "It doubles"
    ],
-   "answer": "That the PyTorch environment is deterministic and floating-point operations yield consistent results.",
-   "why": "The lesson states: 'This line confirms that the PyTorch environment is deterministic. The operation tensor * 2.0 on a float32 tensor yields exactly 2.0. If this value varied between runs, our entire reproducibility framework would be compromised by floating-point non-determinism.'"
+   "answer": "It changes, as the shape changes the draws",
+   "why": "The lab and the real function both show that."
   },
   {
-   "q": "What specific parameter must be set to True during JSON serialization to ensure that identical graphs produce identical hashes, and why?",
-   "options": null,
-   "answer": "sort_keys=True, because without it, the order of keys in the JSON may vary depending on the Python version or dictionary construction order, leading to different hashes for identical graphs.",
-   "why": "The lesson lists 'Non-canonical serialization' as a common mistake: 'If you serialize the graph without sorting keys, the order of keys in the JSON may vary... This will lead to different hashes for identical graphs. Always use sort_keys=True.'"
+   "q": "Two PNG files differ in hash, and the pictures look equal. What should you compare?",
+   "options": [
+    "Decoded pixels",
+    "File sizes",
+    "File names",
+    "Modified times"
+   ],
+   "answer": "Decoded pixels",
+   "why": "Metadata changes the bytes."
   },
   {
-   "q": "According to the 'Common mistakes' section, what is the risk of assuming the server state is immutable when verifying provenance?",
+   "q": "What does the PNG metadata not tell you?",
    "options": [
-    "The server will delete the history after 24 hours.",
-    "If you modify the graph after execution, the hash of the current graph will not match the hash of the executed graph.",
-    "The get_history function will return a null value.",
-    "The cryptographic hash function will fail to compute."
+    "The content of the weights file and the versions used",
+    "The seed",
+    "The node inputs",
+    "The API graph"
    ],
-   "answer": "If you modify the graph after execution, the hash of the current graph will not match the hash of the executed graph.",
-   "why": "The lesson states: 'If you modify the graph after execution, the hash of the current graph will not match the hash of the executed graph. Always hash the prompt as it was sent.'"
+   "answer": "The content of the weights file and the versions used",
+   "why": "The graph is there. Files and versions aren't."
   }
  ]
 }

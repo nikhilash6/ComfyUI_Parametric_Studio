@@ -1,0 +1,58 @@
+{
+ "code": "CU-262",
+ "title": "Combine, Concat and Average",
+ "level": "200",
+ "prereq": [
+  "CU-260"
+ ],
+ "char": "attn",
+ "hook": "Three ways to use two prompts, read from nodes.py. One blends the model's answers, one makes one long prompt, and one blends the embeddings. They cost different amounts, and they give different pictures.",
+ "code_refs": [
+  "nodes.py:ConditioningCombine.combine",
+  "nodes.py:ConditioningConcat.concat",
+  "nodes.py:ConditioningAverage.addWeighted",
+  "comfy/samplers.py:_calc_cond_batch"
+ ],
+ "track": "conditioning",
+ "order": 6,
+ "kit": true,
+ "graphs": [
+  "sd15_cond_combine",
+  "sd15_cond_concat",
+  "sd15_cond_average"
+ ],
+ "verified": [
+  {
+   "claim": "Combine adds lists, Concat joins tensors along tokens, and Average blends values and pooled vectors.",
+   "how": "source",
+   "ref": "nodes.py"
+  },
+  {
+   "claim": "The real Concat gave [1, 154, 8] and kept the pooled vector of 'to', and the real Average gave blended values, on test tensors on a CPU.",
+   "how": "test",
+   "ref": "Our comparison, v0.43.0"
+  },
+  {
+   "claim": "Each entry in the list runs the model, and answers are summed by weight and divided by total weight.",
+   "how": "source",
+   "ref": "comfy/samplers.py:_calc_cond_batch"
+  },
+  {
+   "claim": "Concat and Average use only the first entry of 'from' and log a warning when it has more.",
+   "how": "source",
+   "ref": "nodes.py"
+  },
+  {
+   "claim": "In the toy, Combine's answer equals the mean of the two separate answers.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "We have no renders of these three graphs, so no picture here compares them. We've listed them as wanted.",
+  "The toy model is a tiny cross-attention with random numbers. It shows that the three differ, not how far apart real pictures will be."
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

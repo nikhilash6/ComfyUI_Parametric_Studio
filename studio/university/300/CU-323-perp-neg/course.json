@@ -1,0 +1,59 @@
+{
+ "code": "CU-323",
+ "title": "Perp-Neg: negatives that do not fight the prompt",
+ "level": "300",
+ "prereq": [
+  "CU-208",
+  "CU-209"
+ ],
+ "char": "denoise",
+ "hook": "Plain cfg cancels whatever your two prompts share. Perp-Neg removes only the part of the negative at right angles to the positive, for one more prediction per step.",
+ "code_refs": [
+  "comfy_extras/nodes_perpneg.py:perp_neg",
+  "comfy_extras/nodes_perpneg.py:Guider_PerpNeg.predict_noise",
+  "comfy_extras/nodes_perpneg.py:PerpNegGuider.execute",
+  "comfy_extras/nodes_perpneg.py:PerpNeg"
+ ],
+ "track": "guidance",
+ "order": 70,
+ "kit": true,
+ "graphs": [
+  "sd15_perpneg"
+ ],
+ "verified": [
+  {
+   "claim": "perp_neg computes nocond + cfg times (pos minus neg_scale times perp), with perp the negative's part at right angles to the positive.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_perpneg.py:perp_neg"
+  },
+  {
+   "claim": "The lab's port equals the real perp_neg on test tensors.",
+   "how": "test",
+   "ref": "Our comparison on a CPU, v0.43.0"
+  },
+  {
+   "claim": "The formula matches Eq. 8 of the paper, with its negative weight equal to cfg times neg_scale.",
+   "how": "docs",
+   "ref": "arXiv 2304.04968, fetched 2026-11-01"
+  },
+  {
+   "claim": "The dot product in the source sums over the whole tensor, batch included.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_perpneg.py:perp_neg"
+  },
+  {
+   "claim": "The guider predicts positive, negative and empty together, and drops the negative at neg_scale 0, and the empty as well at cfg 1.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_perpneg.py:Guider_PerpNeg.predict_noise"
+  },
+  {
+   "claim": "Our render's settings and difference figure are stored from one seed.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  }
+ ],
+ "unchecked": [
+  "Our one render uses an ordinary negative that doesn't overlap the prompt. It doesn't test the overlap case Perp-Neg is for. We list that render as wanted.",
+  "That the batch-wide dot product matters in practice is our inference. The lab only shows that the sum isn't per image."
+ ]
+}

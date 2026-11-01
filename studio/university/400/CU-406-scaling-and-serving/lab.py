@@ -1,99 +1,39 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility
-torch.manual_seed(0)
-
-# --- Cost Model Parameters ---
-# Fixed overhead per batch (e.g., kernel launch, synchronization)
-FIXED_OVERHEAD = 1.0
-# Per-item cost (e.g., FLOPs per token/item)
-PER_ITEM_COST = 0.1
-# Memory cap: max number of items that can fit in memory at once
-MEMORY_CAP = 32
-
-# --- Helper: Calculate total cost for a batch ---
-def batch_cost(batch_size):
-    """
-    Total time/cost to process a batch of size B.
-    Cost = Fixed Overhead + (Per-Item Cost * B)
-    """
-    return FIXED_OVERHEAD + PER_ITEM_COST * batch_size
-
-# --- Helper: Calculate throughput (items per unit time) ---
-def throughput(batch_size):
-    """
-    Throughput = Number of items / Total Cost
-    """
-    if batch_size == 0:
-        return 0.0
-    return batch_size / batch_cost(batch_size)
-
-# --- Step 1: Compare throughput for batch sizes 1, 4, 16 ---
-# We simulate a simple scenario where we process a fixed number of total items
-# and measure how efficiently different batch sizes handle them.
-
-total_items_to_process = 1000
-
-results = {}
-
-for bs in [1, 4, 16]:
-    # Number of batches needed
-    num_batches = math.ceil(total_items_to_process / bs)
-    
-    # Total cost = num_batches * cost_per_batch
-    total_cost = num_batches * batch_cost(bs)
-    
-    # Throughput = total_items / total_cost
-    tp = total_items_to_process / total_cost
-    results[f"throughput_bs_{bs}"] = tp
-
-# Print results for batch sizes 1, 4, 16
-for bs in [1, 4, 16]:
-    print(f"RESULT throughput_bs_{bs} = {results[f'throughput_bs_{bs}']:.6g}")
-
-# --- Step 2: Find the optimal batch size given a memory cap ---
-# We want to find the batch size B (1 <= B <= MEMORY_CAP) that maximizes throughput.
-# Throughput(B) = B / (FIXED_OVERHEAD + PER_ITEM_COST * B)
-
-best_bs = 1
-best_tp = -1.0
-
-for bs in range(1, MEMORY_CAP + 1):
-    tp = throughput(bs)
-    if tp > best_tp:
-        best_tp = tp
-        best_bs = bs
-
-print(f"RESULT optimal_batch_size = {best_bs:.6g}")
-print(f"RESULT max_throughput = {best_tp:.6g}")
-
-# --- Step 3: Verify the concept with assertions ---
-
-# Assertion 1: Throughput should increase as batch size increases from 1 to 4
-# because the fixed overhead is amortized over more items.
-assert results["throughput_bs_4"] > results["throughput_bs_1"], \
-    "Throughput for batch size 4 should be higher than for batch size 1"
-
-# Assertion 2: The optimal batch size should be within the memory cap
-# and should be greater than 1 (since batching helps amortize overhead).
-assert 1 < best_bs <= MEMORY_CAP, \
-    "Optimal batch size should be greater than 1 and within memory cap"
-
-# Additional check: Throughput should be monotonically increasing up to a point
-# In this linear cost model, throughput = B / (a + bB) = 1 / (a/B + b)
-# As B increases, a/B decreases, so throughput increases asymptotically to 1/b.
-# So for any B1 < B2, throughput(B1) < throughput(B2)
-tp_1 = throughput(1)
-tp_2 = throughput(2)
-tp_4 = throughput(4)
-assert tp_1 < tp_2 < tp_4, "Throughput should increase with batch size in this model"
-
-# Print a few more diagnostic values
-print(f"RESULT cost_bs_1 = {batch_cost(1):.6g}")
-print(f"RESULT cost_bs_4 = {batch_cost(4):.6g}")
-print(f"RESULT cost_bs_16 = {batch_cost(16):.6g}")
+# CU-406 lab: a small simulator of jobs, workers and model loads. All costs are made up by us: read the shape, not the numbers. CPU, no server.
+import heapq, random
+random.seed(0)
+# 1. One server process runs one job at a time, in order of a number. The heap below is what PromptQueue does, and "front" means a negative number.
+q = []; n = 0
+for name, front in (("a", False), ("b", False), ("urgent", True), ("c", False)):
+    n += 1; heapq.heappush(q, (-n if front else n, name))
+print("run order with front on one job:", [heapq.heappop(q)[1] for _ in range(4)])
+# 2. Batch size: a fixed cost for each job plus a cost per image, and a memory cap.
+def job(bs, fixed=2.0, per=1.0): return fixed + per * bs
+print("\nbatch  seconds per job  images per second  seconds until you see anything")
+for bs in (1, 2, 4, 8, 16): print(f"{bs:<6d} {job(bs):<16.1f} {bs / job(bs):<18.2f} {job(bs):.1f}")
+assert 16 / job(16) > 1 / job(1)
+# 3. Workers and model loads. Each job needs one of 3 models. Loading costs 20 s, a job costs 5 s. Sticky routing sends a job to a worker that has its model.
+def simulate(workers, route, jobs=300, gap=2.5, load=20.0, run=5.0, seed=1):
+    r = random.Random(seed); free = [0.0] * workers; have = [None] * workers; waits = []; loads = 0; t = 0.0; rr = 0
+    for j in range(jobs):
+        t += r.expovariate(1 / gap); m = r.randrange(3)
+        if route == "round robin": w = rr % workers; rr += 1
+        elif route == "least busy": w = min(range(workers), key=lambda i: free[i])
+        else: w = min(range(workers), key=lambda i: (free[i] + (0 if have[i] == m else load)))
+        start = max(t, free[w]); cost = run
+        if have[w] != m: cost += load; have[w] = m; loads += 1
+        free[w] = start + cost; waits.append(free[w] - t)
+    waits.sort(); return sum(waits) / len(waits), waits[int(.95 * len(waits))], loads
+print("\nworkers  routing        mean wait s  95th pct s  model loads")
+res = {}
+for w in (2, 4):
+    for rt in ("round robin", "least busy", "sticky"):
+        m, p, l = simulate(w, rt); res[(w, rt)] = (m, l); print(f"{w:<8d} {rt:<14s} {m:<12.1f} {p:<11.1f} {l}")
+assert res[(4, "sticky")][1] < res[(4, "round robin")][1] and res[(4, "sticky")][0] < res[(4, "round robin")][0]
+# 4. Load: at what arrival rate does a queue stop being usable? Above 100% busy it grows without limit.
+print("\none worker, one model, 5 s per job\none job every   busy   mean wait s")
+for gap in (20, 10, 6, 5.5, 4.5):
+    r = random.Random(2); free = 0.0; t = 0.0; ws = []
+    for _ in range(2000):
+        t += r.expovariate(1 / gap); s = max(t, free); free = s + 5; ws.append(free - t)
+    print(f"{gap:<15.1f} {5 / gap:<6.0%} {sum(ws) / len(ws):.1f}")
+assert 5 / 4.5 > 1

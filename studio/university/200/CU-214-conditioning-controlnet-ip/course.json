@@ -19,5 +19,53 @@
   "nodes.py:class unCLIPConditioning"
  ],
  "track": "control",
- "order": 10
+ "order": 10,
+ "kit": true,
+ "graphs": [
+  "sd15_img2img",
+  "sd15_controlnet",
+  "sd15_inpaint"
+ ],
+ "verified": [
+  {
+   "claim": "KSampler.set_steps builds int(steps / denoise) steps and keeps the last steps + 1.",
+   "how": "source",
+   "ref": "comfy/samplers.py:KSampler.set_steps"
+  },
+  {
+   "claim": "Percents become noise levels with percent_to_sigma, and the ControlNet is skipped outside the window.",
+   "how": "source",
+   "ref": "comfy/samplers.py:pre_run_control"
+  },
+  {
+   "claim": "control_merge multiplies residuals by strength and adds earlier residuals.",
+   "how": "source",
+   "ref": "comfy/controlnet.py:ControlBase.control_merge"
+  },
+  {
+   "claim": "A case-insensitive search of comfy/, comfy_extras/, comfy_api/ and nodes.py finds no IP-Adapter in v0.43.0.",
+   "how": "source",
+   "ref": "comfy_extras"
+  },
+  {
+   "claim": "The papers' equations and quoted words were read from the papers.",
+   "how": "docs",
+   "ref": "arXiv 2302.05543, 2308.06721"
+  },
+  {
+   "claim": "The lab's zero-convolution and attention tables come from running it.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graphs validate.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The zero-convolution gradient argument is ours, since we did not read the paper's supplement. The lab checks it on a toy.",
+  "Quality comparisons between adapter designs, and between control windows, are not tested: see What is contested.",
+  "IP-Adapter in ComfyUI comes from custom nodes. We recommend none in this lesson."
+ ]
 }

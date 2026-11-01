@@ -1,92 +1,126 @@
 # CU-509 - History 9: Transformers replace U-Nets: DiT and rectified flow
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Keep apart the two changes that arrived together, a new network shape and a new noise path, see from an exact answer what "straight" does and doesn't give you, and find both in ComfyUI. Taught by Madame Attention.
 
-## Why this matters
+## The idea
 
-Ladies and gentlemen, welcome to the lecture hall. Put away your U-Net diagrams. They are charming, but they are relics. For years, we believed that the U-Net architecture was the only way to structure the denoising process. We believed that spatial hierarchy, downsampling, upsampling, skip connections, was mandatory. We were wrong.
+Two papers from 2022 get told as one story. They are separate ideas.
 
-In this lesson, we examine the seismic shift in generative AI: the replacement of the U-Net backbone with the Diffusion Transformer (DiT). This is not merely an architectural swap; it is a fundamental change in how we view the geometry of generation. We are moving from curved, complex trajectories in latent space to straight, efficient lines. This shift enables scalability that U-Nets simply cannot match, allowing models to grow in depth and width without collapsing under their own complexity. As Madame Attention, I will show you that when you let the transformer attend to every patch, you unlock a new regime of performance.
+**DiT changes the network.** Peebles and Xie posted "Scalable Diffusion Models with Transformers" on 19 December 2022. They replace "the commonly-used U-Net backbone with a transformer that operates on latent patches". Cut the latent into patches, and each patch is a token that attends to every other (CU-303). Their abstract reports that models with more Gflops "consistently have lower FID", and an FID of 2.27 on ImageNet at 256. Those are still diffusion models, trained the older way.
 
-## The intuition
+**Rectified flow changes the path.** Liu, Gong and Liu posted "Flow Straight and Fast" on 7 September 2022. Pick a noise point and a data point, and join them with a straight line. Train a model to give the velocity along the line. It's a plain least-squares problem. Lipman et al. posted "Flow Matching for Generative Modeling" a month later, with Optimal Transport paths as one option, which its abstract says are more efficient than diffusion paths.
 
-Imagine you are transporting a crowd from Point A (pure noise) to Point B (a crisp image). In standard diffusion, the crowd takes a winding, chaotic path. They swirl, they loop, they hesitate. To get them from A to B, you need many small steps, carefully guided by a complex vector field.
+**SD3 put them together.** Esser et al. posted "Scaling Rectified Flow Transformers for High-Resolution Image Synthesis" in March 2024. Their abstract still says rectified flow "is not yet decisively established as standard practice", and it reports a large study in its favour, using their new way of sampling noise levels in training. It also brings a transformer with separate weights for image and text. That is the design ComfyUI runs as `MMDiT`.
 
-Rectified Flow changes the story. It asks: *What if the path were a straight line?*
+So a transformer doesn't need flow, and flow doesn't need a transformer. In ComfyUI, HunyuanDiT is a transformer trained to predict v, and PixArt has an old-style beta schedule.
 
-If the path is a straight line, the velocity is constant. You don’t need to calculate a new direction at every step; you just keep moving forward. This is the core intuition of rectified flow: learning an Ordinary Differential Equation (ODE) that transports points from the noise distribution $\pi_0$ to the data distribution $\pi_1$ along the straightest possible paths.
+## The mechanism
 
-Why do we care about straight lines? Because they are the shortest distance between two points. More importantly, straight paths can be simulated exactly without time discretization errors. This means we can take large steps during inference. In the lab, we will see that a single Euler step can suffice for high-quality results, a feat impossible with the curved trajectories of standard diffusion. This efficiency is what makes DiT architectures so powerful: they are not just better at attending to context; they are traveling a more efficient route through latent space.
+Pair a noise sample x0 with a data sample x1, and let t run from 0 at noise to 1 at data.
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+```
+x_t = (1 − t) · x0 + t · x1
+v   = x1 − x0
+loss = ‖ v_θ(x_t, t) − (x1 − x0) ‖²
+```
 
-Let us define the geometry. We have two distributions: $\pi_0$ (noise) and $\pi_1$ (data). We draw a point $x_0$ from $\pi_0$ and a point $x_1$ from $\pi_1$.
+For one pair, the velocity is the same all the way along the line. That part is true by construction.
 
-In rectified flow, we define the path $x_t$ between these points as a linear interpolation:
+Now the catch. Pairs are drawn at random, so lines cross. At a crossing point the model sees many different right answers, and least squares gives their average. So the model learns E[x1 − x0 | x_t]. That field has curved paths, and it is not the straight lines you trained on.
 
-$x_t = (1 - t) x_0 + t x_1$
+The extreme case is t = 0. Noise says nothing about which data point it will meet, so the field there is the mean of the data minus x. One Euler step from noise therefore lands every sample on the mean of the data, whatever the noise was.
 
-where $t$ is the time step, ranging from 0 to 1.
-
-The velocity $v$ along this path is the derivative of $x_t$ with respect to $t$:
-
-$v = \frac{dx_t}{dt} = x_1 - x_0$
-
-Notice something critical: $v$ does not depend on $t$. It is constant. This is the "rectification." The model learns to predict this constant velocity vector.
-
-In a standard diffusion model, the velocity field is highly curved and time-dependent. The model must learn a complex function $v(x_t, t)$ that changes direction as $t$ progresses. In rectified flow, the target is a straight line. The optimization problem is a nonlinear least squares problem that minimizes the deviation from straightness.
-
-The DiT architecture facilitates this by operating on latent patches. Instead of processing the entire image as a single tensor through convolutions, the DiT flattens the latent space into a sequence of tokens (patches). Each token attends to every other token via self-attention. This global receptive field allows the model to learn the complex correlations between distant parts of the image, which is essential for maintaining the straightness of the flow in high-dimensional spaces.
-
-The conditioning (text, class labels) is injected via adaptive layer normalization or cross-attention, allowing the transformer blocks to modulate the flow based on the prompt. The result is a model that scales linearly with the number of parameters, achieving lower FID scores as we increase the Gflops of the forward pass.
+**Reflow** is what the paper does about this. Run the trained flow to get pairs (start, where it ended). Those pairs were made by one smooth flow, so they don't cross. Train a new model on them. Its paths are much straighter, and that is when a single step can work. The paper's abstract says "nearly straight flows that give high quality results even with a single Euler discretization step", and it gets there by repeating this rectification.
 
 ## In ComfyUI
 
-In ComfyUI, this architecture is not a single node but a collection of modules that replace the traditional UNet.
+- **The network.** `MMDiT` in `comfy/ldm/modules/diffusionmodules/mmdit.py` is the SD3 family. `JointBlock` holds a `DismantledBlock` for each of image and text. The conditioning goes in through `adaLN_modulation`, which gives the numbers for `modulate` (CU-504). It scales and shifts the tokens after a norm. It doesn't reach into the attention scores.
+- **Other families.** FLUX has its own `Flux` class in `comfy/ldm/flux/model.py`, with `double_blocks` and `single_blocks`. `HunYuanDiT` is in `comfy/ldm/hydit/models.py` and uses rotary embeddings through `apply_rotary_emb`. Audio has `AceStepDiTModel` in `comfy/ldm/ace/ace_step15.py`.
+- **The path.** `CONST` in `comfy/model_sampling.py` writes the same line from the other end. Here sigma is 1 − t, so sigma 1 is pure noise. `noise_scaling` returns sigma · noise + (1 − sigma) · latent. `calculate_denoised` returns input − output · sigma. That makes the model's output noise minus data, the opposite sign to the paper's v, which the lab checks.
+- **The schedule.** `ModelSamplingDiscreteFlow` bends the steps with `time_snr_shift`, shift · t / (1 + (shift − 1) · t). The `SD3` config sets a shift of 3.0, and `ModelSamplingSD3` lets you change it.
 
-For the DiT backbone, look at `comfy/ldm/modules/diffusionmodules/mmdit.py`. The class `MMDiT` is the main entry point for Multi-Modal Diffusion Transformer models (like SD3/Flux). It uses `DismantledBlock`, which is a DiT block with gated adaptive layer norm conditioning. This is where the "who attends to whom" logic is refined; the conditioning signals modulate the attention weights directly.
+The tokens first. Set a 1024 image with a patch of 2 and see what a DiT has to attend over.
 
-For other DiT implementations, such as HunYuanDiT, see `comfy/ldm/hydit/models.py`. The class `HunYuanDiT` processes latent inputs through `HunYuanDiTBlock` layers. These blocks use `Attention` and `CrossAttention` mechanisms from `attn_layers.py`, incorporating Rotary Positional Embeddings (RoPE) via `apply_rotary_emb` to maintain spatial awareness.
+{{play:patches}}
 
-In the audio domain, `comfy/ldm/ace/ace_step15.py` contains `AceStepDiTModel`, the core diffusion transformer for audio generation. It uses `AceStepAttention` and `RotaryEmbedding` to handle the temporal and spectral dimensions of audio latents.
+And the graph. The node that says "flow" is `ModelSamplingSD3`, and it is the only thing here that says so.
 
-These modules demonstrate that the DiT is not a monolith but a flexible framework. Whether it is `MMDiT` for images or `AceStepDiTModel` for audio, the core principle remains: transformers replace convolutions, and rectified flow straightens the path.
+{{graph:sd35_flow}}
+
+FLUX.2 Klein is the same idea, with the parts laid out as separate nodes.
+
+{{graph:wf_flux2_klein}}
+
+## What goes wrong
+
+- **"Straight, so one step will do."** Not for a model trained on random pairs. The lab's trained first flow scores 1.30 at one step, about the same bad result as the exact field. One step needs reflow or another form of distillation (CU-514), and a file made that way.
+- **You read "transformer" as "flow".** They are separate choices. The model's sampling type is what tells ComfyUI how to read its output. Our `b_vpred` graph shows what that setting does, and why it has to match how the model was trained.
+- **You treat shift as a quality dial.** It only moves where the steps fall. In our one-dimensional toy, shift 3 is no better than even steps, at 8 steps or at 64. That says nothing about images, so test yours on a real picture.
+- **You use the wrong empty latent.** SD3's latent has 16 channels and needs `EmptySD3LatentImage`. `EmptyLatentImage` makes 4.
+- **You expect U-Nets to be gone.** ComfyUI still ships them and `sd15_txt2img` runs on one. The history here is about what new families chose, and doesn't say the old models broke.
+- **You compare token cost to U-Net cost by feel.** Twice the side means four times the tokens and sixteen times the attention pairs. The `patches` lab above shows this, and a transformer pays it in every block.
 
 ## Lab
 
-The lab verifies the geometric properties of rectified flow in a 2D space. We define a start point (noise) and an end point (data) and verify that the path between them is a straight line with constant velocity.
+The data is a mix of two Gaussians, so the true velocity field has a formula and needs no training. First the promise, for one pair, and then the catch.
 
-The lab output is as follows:
+```text
+one pair x0 = -0.7, x1 = 1.3: speed on each quarter of the line [2.0], x1 - x0 = 2.0
+one Euler step from t = 0: every one of 20,000 samples lands in [0.4500, 0.4500]; the mean of the data is 0.4500
+```
 
-`RESULT start = 0 0`
-`RESULT end = 1 1`
-`RESULT velocity = 1 1`
-`RESULT midpoint = 0.5 0.5`
-`RESULT rectified_flow_verified = True`
+Every one of the 20,000 samples lands on 0.4500, the mean of the data. No picture has ever looked like that. Now more steps. W1 is the average gap between sorted samples and the real data, so lower is better.
 
-Let us dissect these results:
+```text
+error (W1) against the real data, by number of Euler steps. Two real samples differ by 0.0271
+steps   even in t   shift 3 (SD3 default)
+1       1.4847      1.4847
+2       0.6290      0.9033
+4       0.3253      0.3253
+8       0.1736      0.1785
+16      0.0986      0.1032
+32      0.0614      0.0646
+64      0.0423      0.0441
+```
 
-1.  `RESULT start = 0 0`: This defines $x_0$, the initial noise state. It is the origin in our 2D latent space.
-2.  `RESULT end = 1 1`: This defines $x_1$, the target data state. It is the destination.
-3.  `RESULT velocity = 1 1`: This is $v = x_1 - x_0$. The velocity is constant. It does not change with time. This proves the "straight line" property. If the velocity were changing, the path would be curved.
-4.  `RESULT midpoint = 0.5 0.5`: At $t=0.5$, the position is exactly halfway between start and end. This confirms the linear interpolation formula $x_t = (1-t)x_0 + tx_1$.
-5.  `RESULT rectified_flow_verified = True`: This final assertion confirms that the path equation holds for all tested time steps ($t=0.0, 0.25, 0.5, 0.75, 1.0$). It proves that the flow is rectified: the path is straight, and the velocity is constant.
+Error nearly halves each time the steps double, until it nears the floor of what two real samples differ by. That is the ordinary behaviour of Euler on a curved path. Shift 3 is no better here. This is one small toy. How straight are those paths really?
 
-This simple 2D example encapsulates the entire philosophy of rectified flow. In high-dimensional latent spaces, the DiT learns to approximate this straight-line behavior, enabling efficient sampling with fewer steps.
+```text
+exact field: mean squared departure from a straight line 0.7936 (0 would be perfectly straight)
+```
 
-## Common mistakes
+Now two small networks with the same training code. The first has independent pairs, which makes it the first flow. The second has the pairs the first flow produced, which is reflow. One seed.
 
-1.  **Confusing DiT with U-Net:** Do not think of DiT as a "faster U-Net." It is a different architectural paradigm. U-Nets rely on local convolutions and skip connections; DiTs rely on global attention and patch tokens. Mixing these concepts leads to confusion about why DiTs scale better.
-2.  **Ignoring the conditioning mechanism:** In DiT, conditioning is not just an input; it modulates the attention layers. If you ignore how `DismantledBlock` or `HunYuanDiTBlock` injects conditioning, you will not understand how the model steers the flow.
-3.  **Assuming rectified flow is always perfect:** While rectified flow aims for straight paths, real-world data distributions are complex. The model learns an approximation. However, the key advantage is that even approximate straight paths are more efficient to simulate than curved ones.
-4.  **Overlooking positional embeddings:** In DiT, spatial information is not inherent in the convolution kernel. It must be explicitly encoded. Look at `get_2d_sincos_pos_embed` or `apply_rotary_emb` in the ComfyUI code. Without these, the transformer would not know which patch is where, and the flow would collapse.
+```text
+trained model                 departure from straight   W1 at 1 step   2 steps   4 steps   64 steps
+first flow, independent pairs 0.7470                    1.2999   0.8678   0.4121     0.0451
+reflow, the first flow's pairs 0.0019                    0.0962   0.0620   0.0442     0.0306
+one step: reflow's error is 13.5 times smaller
+```
 
-## Go deeper
+The first network behaves like the exact field: 0.7470 against 0.7936 for straightness, and about the same error at one step. Reflow drops straightness to 0.0019, and one step gets to 0.0962, 13.5 times better. The price is that you have to generate all those pairs first, and train a second time. And last, ComfyUI's form of the same line.
 
-To fully grasp the machinery, read the foundational papers:
+```text
+CONST: sigma 0.35, input 0.1350, output noise - data -1.9000, calculate_denoised gives 0.8000, the clean value is 0.8000
+```
 
-1.  **arXiv:2212.09748**: "Scalable Diffusion Models with Transformers" (Peebles & Xie). This paper introduces DiT and demonstrates that increasing the Gflops of the transformer backbone consistently lowers FID. It is the definitive proof that transformers can replace U-Nets.
-2.  **arXiv:2209.03003**: "Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow" (Liu et al.). This paper formalizes rectified flow and shows that straight paths can be simulated with a single Euler step. It is the mathematical backbone of the efficiency gains we discussed.
+The lab is one-dimensional. It checks the mathematics of paths, and says nothing about image quality or about why any one family made its choices.
 
-These papers are not just history; they are the blueprint for the models you run in ComfyUI today. Study them, and you will see that the future of generative AI is not just about bigger models, but about smarter, straighter paths.
+## What is contested
 
+"Better" depends on what you hold fixed. The SD3 study compares formulations under its own noise-level sampling, and the abstract reports that its approach beats established diffusion formulations. It doesn't say the straight path alone did that. Flow Matching's abstract reports faster training and sampling on ImageNet for the straight path. We did not re-run any of these.
+
+Scale is contested too. DiT's abstract ties lower FID to more Gflops within its own family. That doesn't show transformers always beat U-Nets at the same cost, and we don't have a measurement here that could.
+
+## Sources
+
+- [Peebles, Xie 2022. Scalable Diffusion Models with Transformers](https://arxiv.org/abs/2212.09748)
+- [Liu, Gong, Liu 2022. Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow](https://arxiv.org/abs/2209.03003)
+- [Lipman et al. 2022. Flow Matching for Generative Modeling](https://arxiv.org/abs/2210.02747)
+- [Esser et al. 2024. Scaling Rectified Flow Transformers for High-Resolution Image Synthesis](https://arxiv.org/abs/2403.03206)
+- [ComfyUI v0.43.0, comfy/ldm/modules/diffusionmodules/mmdit.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/diffusionmodules/mmdit.py)
+- [ComfyUI v0.43.0, comfy/ldm/flux/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/model.py)
+- [ComfyUI v0.43.0, comfy/ldm/hydit/models.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/hydit/models.py)
+- [ComfyUI v0.43.0, comfy/ldm/ace/ace_step15.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/ace/ace_step15.py)
+- [ComfyUI v0.43.0, comfy/model_sampling.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_sampling.py)
+- [ComfyUI v0.43.0, comfy/supported_models.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/supported_models.py)

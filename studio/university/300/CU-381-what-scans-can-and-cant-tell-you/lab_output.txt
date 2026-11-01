@@ -1,0 +1,27 @@
+truth    scan     line
+fine     hit      image = base64.b64decode(field)
+fine     hit      raise ImportError("run pip install onnx")
+fine     hit      x = pad(x, (1, 1), mode="replicate")
+fine     hit      # do not use eval( here
+fine     hit      requests.get("http://127.0.0.1:8188/object_info")
+fine     hit      env = dict(os.environ)
+bad      hit      exec(zlib.decompress(base64.b64decode(BLOB)))
+bad      hit      subprocess.check_call([sys.executable, "-m", "pip", "install", "-U
+bad      hit      return (eval(text_widget),)
+bad      clean    f = getattr(__builtins__, "ev" + "al"); f(user_text)
+bad      clean    import importlib; importlib.import_module("sub" + "process").run(c
+bad      clean    state = pickle.load(open(path, 'rb'))
+bad      clean    torch.load(path, weights_only=False)
+bad      clean    open(request.query["path"]).read()
+
+hit on a bad line 3, hit on a fine line 6, clean on a bad line 5, clean on a fine line 0
+of 9 hits, 6 were false alarms. of 5 clean lines, 5 were bad
+these are our own samples, picked to show both mistakes. The counts say nothing about real packs.
+
+adding patterns moves the mistakes, it does not end them
+with a loaders pattern: clean on a bad line 2, hit on a fine line 6
+same line, different place. The text is equal, the risk is not
+  tests/test_nodes.py, never imported            low
+  docs/build.py, a script nobody runs at start   low
+  a node's run method, on a text widget          high
+  __init__.py at top level                       high

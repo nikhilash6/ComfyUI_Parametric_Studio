@@ -1,122 +1,38 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility
-torch.manual_seed(0)
-
-# 1. Create a synthetic test image (8x8) with a smooth gradient pattern
-# A smooth gradient ensures that a 1-pixel shift preserves most structural information
-width, height = 8, 8
-x = torch.linspace(0, 1, width)
-y = torch.linspace(0, 1, height)
-xx, yy = torch.meshgrid(x, y, indexing='ij')
-# Create a smooth diagonal gradient pattern
-original = (xx + yy) * 255.0
-original = original.unsqueeze(0).unsqueeze(0)  # Shape: (1, 1, 8, 8)
-
-# 2. Define PSNR function
-def psnr(original, distorted, max_val=255.0):
-    """
-    Calculate Peak Signal-to-Noise Ratio.
-    PSNR = 10 * log10(max_val^2 / MSE)
-    """
-    mse = torch.mean((original - distorted) ** 2)
-    if mse == 0:
-        return float('inf')
-    return 10 * math.log10(max_val ** 2 / mse)
-
-# 3. Define Structural Correlation (Pearson correlation on flattened images)
-def structural_correlation(original, distorted):
-    """
-    Calculate Pearson correlation coefficient between two images.
-    This measures linear relationship, invariant to global shifts/scales.
-    """
-    orig_flat = original.flatten()
-    dist_flat = distorted.flatten()
-    
-    # Center the data
-    orig_mean = torch.mean(orig_flat)
-    dist_mean = torch.mean(dist_flat)
-    orig_centered = orig_flat - orig_mean
-    dist_centered = dist_flat - dist_mean
-    
-    # Calculate correlation
-    numerator = torch.sum(orig_centered * dist_centered)
-    denominator = torch.sqrt(torch.sum(orig_centered ** 2) * torch.sum(dist_centered ** 2))
-    
-    if denominator == 0:
-        return 0.0
-    return (numerator / denominator).item()
-
-# 4. Generate distorted versions
-
-# a) Blurred image (simple 3x3 box blur)
-# Create a 3x3 kernel
-kernel = torch.ones((1, 1, 3, 3)) / 9.0
-# Pad the image to handle borders
-padded = torch.nn.functional.pad(original, (1, 1, 1, 1), mode='replicate')
-# Apply convolution (manual implementation for CPU-only simplicity)
-blurred = torch.zeros_like(original)
-for i in range(height):
-    for j in range(width):
-        blurred[0, 0, i, j] = torch.sum(padded[0, 0, i:i+3, j:j+3] * kernel[0, 0, :, :])
-
-# b) Brightness shifted image (add 50 to all pixels)
-brightness_shifted = original + 50.0
-
-# c) Shifted image (shift by 1 pixel to the right, wrap around)
-# For a smooth gradient, this preserves most of the structure
-shifted = torch.roll(original, shifts=1, dims=3)
-
-# 5. Calculate metrics for each distortion
-
-# Original vs Original (baseline)
-psnr_original = psnr(original, original)
-corr_original = structural_correlation(original, original)
-
-# Original vs Blurred
-psnr_blur = psnr(original, blurred)
-corr_blur = structural_correlation(original, blurred)
-
-# Original vs Brightness Shifted
-psnr_brightness = psnr(original, brightness_shifted)
-corr_brightness = structural_correlation(original, brightness_shifted)
-
-# Original vs Shifted
-psnr_shift = psnr(original, shifted)
-corr_shift = structural_correlation(original, shifted)
-
-# 6. Print results
-print(f"RESULT psnr_original = {psnr_original:.6g}")
-print(f"RESULT corr_original = {corr_original:.6g}")
-print(f"RESULT psnr_blur = {psnr_blur:.6g}")
-print(f"RESULT corr_blur = {corr_blur:.6g}")
-print(f"RESULT psnr_brightness = {psnr_brightness:.6g}")
-print(f"RESULT corr_brightness = {corr_brightness:.6g}")
-print(f"RESULT psnr_shift = {psnr_shift:.6g}")
-print(f"RESULT corr_shift = {corr_shift:.6g}")
-
-# 7. Assertions to verify the concepts
-
-# Assertion 1: Blur should lower both PSNR and correlation compared to original
-assert psnr_blur < psnr_original, "Blur should lower PSNR"
-assert corr_blur < corr_original, "Blur should lower structural correlation"
-
-# Assertion 2: Brightness shift should hurt PSNR but not correlation (correlation should remain high)
-assert psnr_brightness < psnr_original, "Brightness shift should lower PSNR"
-assert corr_brightness > 0.99, "Brightness shift should preserve structural correlation (high value)"
-
-# Assertion 3: Shift should have bad PSNR but high correlation (perceptually similar structure)
-# For a smooth gradient, a 1-pixel shift preserves most of the linear structure
-assert psnr_shift < psnr_original, "Pixel shift should lower PSNR"
-assert corr_shift > 0.50, "Pixel shift should preserve structural correlation (moderately high value)"
-
-# Additional check: PSNR for identical images should be very high (infinity or large number)
-assert psnr_original > 100, "PSNR for identical images should be very high"
-
-# Check that correlation for identical images is 1.0
-assert abs(corr_original - 1.0) < 1e-6, "Correlation for identical images should be 1.0"
+# CU-404 lab: what pixel metrics and a distribution metric measure, on a made-up image and made-up features. CPU, no model.
+import math, torch
+torch.manual_seed(0); torch.set_num_threads(1)
+N = 64; ys, xs = torch.meshgrid(torch.linspace(0, 1, N), torch.linspace(0, 1, N), indexing="ij")
+img = 0.35 + 0.25 * torch.sin(xs * 9) * torch.cos(ys * 7) + 0.25 * ((xs - .5) ** 2 + (ys - .5) ** 2 < .08).float()   # values in 0..1
+img = img.clamp(0, 1)
+def psnr(a, b): m = ((a - b) ** 2).mean().item(); return float("inf") if m == 0 else 10 * math.log10(1 / m)
+def pearson(a, b):
+    x, y = a.flatten() - a.mean(), b.flatten() - b.mean(); return (x @ y / (x.norm() * y.norm())).item()
+def ssim(a, b, w=8):                                          # Wang et al. 2004, with plain square windows and their constants, in place of a Gaussian window
+    c1, c2 = .01 ** 2, .03 ** 2; out = []
+    for i in range(0, N - w + 1, w):
+        for j in range(0, N - w + 1, w):
+            p, q = a[i:i + w, j:j + w], b[i:i + w, j:j + w]; mp, mq = p.mean(), q.mean(); vp, vq = p.var(unbiased=False), q.var(unbiased=False); cv = ((p - mp) * (q - mq)).mean()
+            out.append(((2 * mp * mq + c1) * (2 * cv + c2) / ((mp ** 2 + mq ** 2 + c1) * (vp + vq + c2))).item())
+    return sum(out) / len(out)
+def blur(a):
+    k = torch.ones(1, 1, 5, 5) / 25; return torch.nn.functional.conv2d(torch.nn.functional.pad(a[None, None], (2, 2, 2, 2), mode="replicate"), k)[0, 0]
+d = {"identical": img.clone(), "brighter by 0.10": (img + .10), "shift 1 pixel": torch.roll(img, 1, 1), "shift 4 pixels": torch.roll(img, 4, 1), "box blur 5x5": blur(img)}
+gauss = torch.randn(N, N); gauss = gauss / gauss.pow(2).mean().sqrt(); d["noise, same MSE as +0.10"] = img + gauss * .10
+print("change                     PSNR dB   Pearson r   SSIM")
+for k, v in d.items(): print(f"{k:<26s} {psnr(img, v):<9.2f} {pearson(img, v):<11.4f} {ssim(img, v):.4f}")
+assert abs(psnr(img, d["brighter by 0.10"]) - psnr(img, d["noise, same MSE as +0.10"])) < 1e-3 and pearson(img, d["brighter by 0.10"]) > .9999
+assert ssim(img, d["brighter by 0.10"]) > ssim(img, d["noise, same MSE as +0.10"])
+# Two seeds of the same prompt share nothing pixel for pixel, so these scores are for pairs that should match, such as a VAE round trip.
+other = 0.35 + 0.25 * torch.sin(ys * 8 + 1) * torch.cos(xs * 11) + 0.25 * ((xs - .3) ** 2 + (ys - .7) ** 2 < .08).float(); print(f"\na different picture with the same style of content: PSNR {psnr(img, other.clamp(0, 1)):.2f}, r {pearson(img, other.clamp(0, 1)):.4f}")
+# FID: compare two clouds of features by mean and covariance, here 8-dim Gaussians, sampling both from one distribution.
+def sqrtm(m):
+    e, v = torch.linalg.eigh(m); return (v * e.clamp(min=0).sqrt()) @ v.T
+def fid(a, b):
+    ma, mb = a.mean(0), b.mean(0); ca, cb = a.T.cov(), b.T.cov(); s = sqrtm(ca); return ((ma - mb) @ (ma - mb) + (ca + cb - 2 * sqrtm(s @ cb @ s)).trace()).item()
+L = torch.eye(8) + .3 * torch.randn(8, 8)
+print("\nsamples per side  FID, both sides from the same distribution")
+last = []
+for n in (50, 200, 1000, 5000):
+    r = [fid(torch.randn(n, 8, dtype=torch.float64) @ L.double(), torch.randn(n, 8, dtype=torch.float64) @ L.double()) for _ in range(4)]; print(f"{n:<17d} {sum(r) / 4:.4f}"); last.append(sum(r) / 4)
+assert last[0] > last[1] > last[2] > last[3]
+print("the true distance is 0. a small sample still scores above 0, so only compare FIDs at the same sample size")

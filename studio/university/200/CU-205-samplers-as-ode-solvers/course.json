@@ -12,8 +12,45 @@
   "comfy/k_diffusion/sampling.py:sample_heun",
   "comfy/k_diffusion/sampling.py:sample_dpmpp_2m",
   "comfy/k_diffusion/sampling.py:get_sigmas_karras",
-  "comfy/samplers.py:KSAMPLER_NAMES"
+  "comfy/samplers.py:KSAMPLER_NAMES",
+  "comfy/samplers.py:SAMPLER_NAMES",
+  "comfy/samplers.py:sampler_object"
  ],
  "track": "sampling",
- "order": 20
+ "order": 20,
+ "kit": true,
+ "graphs": [
+  "sd15_custom"
+ ],
+ "verified": [
+  {
+   "claim": "The update formulas are read from sample_euler, sample_heun and sample_dpmpp_2m.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py"
+  },
+  {
+   "claim": "heun uses Euler for the last step to sigma 0.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_heun"
+  },
+  {
+   "claim": "Measured orders are about 1 for euler and about 2 for heun and dpmpp_2m on the toy.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "heun made 39 model calls at 20 steps with ComfyUI's own code.",
+   "how": "run here",
+   "ref": "measures.json, solvers"
+  },
+  {
+   "claim": "sd15_custom passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The toy is one-dimensional with a perfect denoiser. Rankings do not carry over to pictures.",
+  "The citations to Karras and to Lu et al. were checked at the first audit and not re-read this time."
+ ]
 }

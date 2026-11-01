@@ -1,0 +1,68 @@
+{
+ "code": "CU-240",
+ "title": "What a seed does",
+ "level": "200",
+ "prereq": [
+  "CU-105"
+ ],
+ "char": "latent",
+ "hook": "A seed picks one block of random numbers, on the CPU. What that does and does not guarantee, how batches share it, and what colour means in noise.",
+ "code_refs": [
+  "comfy/sample.py:prepare_noise",
+  "comfy/sample.py:prepare_noise_inner",
+  "comfy/k_diffusion/sampling.py:default_noise_sampler",
+  "comfy/k_diffusion/sampling.py:BrownianTreeNoiseSampler",
+  "nodes.py:LatentFromBatch",
+  "comfy_extras/nodes_latent.py:LatentBatchSeedBehavior",
+  "comfy_extras/nodes_custom_sampler.py:RandomNoise"
+ ],
+ "track": "noise-latent",
+ "order": 5,
+ "kit": true,
+ "graphs": [
+  "b_batch_pick",
+  "b_batch_fixed"
+ ],
+ "verified": [
+  {
+   "claim": "Starting noise uses torch.manual_seed(seed) and torch.randn with device='cpu' and float32.",
+   "how": "source",
+   "ref": "comfy/sample.py:prepare_noise_inner"
+  },
+  {
+   "claim": "Per-step noise in default_noise_sampler uses a generator on the latent's device, seeded with seed, or seed + 1 on the CPU.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:default_noise_sampler"
+  },
+  {
+   "claim": "The batch and batch_index results were reproduced with ComfyUI's own prepare_noise, including the shapes where picking fails.",
+   "how": "run here",
+   "ref": "comfy.sample.prepare_noise in a Python session, torch 2.16.0.dev"
+  },
+  {
+   "claim": "LatentFromBatch writes batch_index [2] for index 2, and seed_behavior fixed writes [0, 0, 0, 0].",
+   "how": "run here",
+   "ref": "the nodes' own functions"
+  },
+  {
+   "claim": "Core's two noise sources measured flat.",
+   "how": "run here",
+   "ref": "measures.json, noise_spectra"
+  },
+  {
+   "claim": "One pack's noise named blue divides the spectrum by |f|^(α/2), so power falls as 1/f^α.",
+   "how": "source",
+   "ref": "read as text, modules/latent_noise.py in that pack's repository"
+  },
+  {
+   "claim": "b_batch_pick and b_batch_fixed pass validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not run the same graph on two GPUs. That per-step noise differs by device is read from the code, not measured here.",
+  "Why picking from a batch fails when an item's value count is not a multiple of 16 is our reading of a measurement. We did not read torch's generator source. It may change between torch versions.",
+  "The claim that a pack's noise colours change pictures in any particular way is not tested. We read the code and did not render with it."
+ ]
+}

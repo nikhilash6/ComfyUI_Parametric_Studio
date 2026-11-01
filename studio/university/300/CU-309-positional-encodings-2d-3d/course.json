@@ -2,13 +2,62 @@
  "title": "Positional encodings in 2D and 3D",
  "level": "300",
  "char": "attn",
- "hook": "Discover how we inject spatial awareness into neural networks by transforming grid coordinates into rich frequency signals.",
+ "hook": "Attention can't see order. Sine tables added to tokens and rotations from coordinates are how a token learns where it is.",
  "code": "CU-309",
  "prereq": [
   "CU-302"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:get_1d_sincos_pos_embed_from_grid",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:get_2d_sincos_pos_embed_from_grid",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:get_2d_sincos_pos_embed_torch",
+  "comfy/ldm/pixart/pixartms.py:get_2d_sincos_pos_embed_torch",
+  "comfy/ldm/flux/layers.py:EmbedND",
+  "comfy/ldm/flux/model.py:process_img",
+  "comfy/ldm/wan/model.py:rope_encode",
+  "comfy/ldm/hydit/posemb_layers.py:get_2d_rotary_pos_embed"
+ ],
  "track": "architecture",
- "order": 40
+ "order": 40,
+ "graphs": [
+  "wf_wan22_t2v",
+  "sd35_flow"
+ ],
+ "verified": [
+  {
+   "claim": "The 1D table uses omega = 1/10000^(i/(D/2)), with sine then cosine.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/mmdit.py:get_1d_sincos_pos_embed_from_grid"
+  },
+  {
+   "claim": "The lab's table matched that function on a CPU, largest gap 0.",
+   "how": "run here",
+   "ref": "comfy/ldm/modules/diffusionmodules/mmdit.py:get_1d_sincos_pos_embed_from_grid"
+  },
+  {
+   "claim": "PixArt divides its grid by a scale.",
+   "how": "source",
+   "ref": "comfy/ldm/pixart/pixartms.py:get_2d_sincos_pos_embed_torch"
+  },
+  {
+   "claim": "FLUX builds img_ids of time, row, column.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/model.py:process_img"
+  },
+  {
+   "claim": "Wan's axis widths are computed from the head width.",
+   "how": "source",
+   "ref": "comfy/ldm/wan/model.py:rope_embedder"
+  },
+  {
+   "claim": "Everything in the tables comes from this lesson's lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "We did not measure structure drift at off-trained sizes; the warning rests on the mechanism, not a render.",
+  "We did not check every model's table type. The list names only the ones we read."
+ ],
+ "kit": true
 }

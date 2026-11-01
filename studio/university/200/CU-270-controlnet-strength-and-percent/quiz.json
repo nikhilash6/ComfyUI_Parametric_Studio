@@ -1,0 +1,62 @@
+{
+ "code": "CU-270",
+ "title": "ControlNet strength, start and end percent",
+ "level": "200",
+ "questions": [
+  {
+   "q": "On an SD 1.x model, what does end_percent 0.5 set?",
+   "options": [
+    "Half of your steps run with the control",
+    "A noise level, the sigma at timestep about 500, below which the control is off",
+    "The control strength falls by half",
+    "The last half of the steps run with the control"
+   ],
+   "answer": "A noise level, the sigma at timestep about 500, below which the control is off",
+   "why": "percent_to_sigma turns it into a noise level. Each step compares its own sigma with that level. Your step count is not part of it."
+  },
+  {
+   "q": "In the lab, end_percent 0.5 with 20 steps gives how many steps on with exponential?",
+   "options": [
+    "10",
+    "9",
+    "7",
+    "20"
+   ],
+   "answer": "7",
+   "why": "The exponential schedule spends more steps at low noise, under the end level. normal gives 10 and karras 9."
+  },
+  {
+   "q": "You run img2img at denoise 0.5 with start 0 and end 0.5, normal scheduler. What happens?",
+   "options": [
+    "The control runs for 10 steps",
+    "The control runs for 5 steps",
+    "The control runs on no step, with no warning",
+    "The node refuses the graph"
+   ],
+   "answer": "The control runs on no step, with no warning",
+   "why": "The run starts at sigma 1.548, already under the end level 1.616, so every step is outside the window."
+  },
+  {
+   "q": "You chain two ControlNets, each at strength 1.0. What does the U-Net get?",
+   "options": [
+    "The average of their residuals",
+    "The sum of their residuals",
+    "Only the last one's residuals",
+    "The first one's, with the second as a fallback"
+   ],
+   "answer": "The sum of their residuals",
+   "why": "control_merge adds the earlier ControlNet's residuals to its own, each scaled by its own strength."
+  },
+  {
+   "q": "You set start_percent 0.8 and end_percent 0.2. What happens?",
+   "options": [
+    "They are swapped for you",
+    "Validation fails",
+    "The control is never on",
+    "The control is always on"
+   ],
+   "answer": "The control is never on",
+   "why": "The level for 0.8 is below the level for 0.2, so every sigma is above one or below the other. The lab counts 0 steps."
+  }
+ ]
+}

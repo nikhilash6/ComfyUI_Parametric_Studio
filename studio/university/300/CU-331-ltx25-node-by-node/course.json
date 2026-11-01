@@ -1,0 +1,75 @@
+{
+ "code": "CU-331",
+ "title": "LTX-2.5, node by node",
+ "level": "300",
+ "prereq": [
+  "CU-330"
+ ],
+ "char": "frame",
+ "hook": "Eight model calls, a fixed noise list, video and sound in one latent: read the real graph one node at a time.",
+ "track": "video",
+ "order": 25,
+ "graphs": [
+  "wf_ltx25_t2v"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_lt.py:EmptyLTXVLatentVideo",
+  "comfy_extras/nodes_lt.py:LTXVConditioning",
+  "comfy_extras/nodes_lt.py:LTXVConcatAVLatent",
+  "comfy_extras/nodes_lt.py:LTXVSeparateAVLatent",
+  "comfy_extras/nodes_lt.py:LTXVScheduler",
+  "comfy_extras/nodes_lt_audio.py:LTXVEmptyLatentAudio",
+  "comfy_extras/nodes_lt_audio.py:LTXVAudioVAEDecode",
+  "comfy_extras/nodes_custom_sampler.py:ManualSigmas",
+  "comfy/ldm/lightricks/model.py:_prepare_positional_embeddings",
+  "comfy/ldm/lightricks/av_model.py:LTXAVModel",
+  "nodes.py:VAEDecodeTiled.decode",
+  "comfy/samplers.py:cfg_function"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "LTXVConditioning writes frame_rate into both conditionings, and the model divides time coordinates by it.",
+   "how": "source",
+   "ref": "comfy/ldm/lightricks/model.py:_prepare_positional_embeddings"
+  },
+  {
+   "claim": "LTXVConcatAVLatent packs video and audio into one NestedTensor, and LTXVSeparateAVLatent unpacks them.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_lt.py:LTXVConcatAVLatent"
+  },
+  {
+   "claim": "The graph's sigma list equals DISTILLED_SIGMA_VALUES in Lightricks' code, and that code's default is 121 frames at 24 fps.",
+   "how": "docs",
+   "ref": "packages/ltx-pipelines constants.py in Lightricks/LTX-2, fetched 2026-11-01"
+  },
+  {
+   "claim": "The file names in the graph follow the file names in the LTX-2 README, with a quantized copy of the transformer and encoder.",
+   "how": "docs",
+   "ref": "Lightricks/LTX-2 README, fetched 2026-11-01"
+  },
+  {
+   "claim": "The lab's LTXVScheduler port gave the same 8 sigmas as the real LTXVScheduler.execute at 4096 positions.",
+   "how": "run here",
+   "ref": "comfy_extras/nodes_lt.py:LTXVScheduler"
+  },
+  {
+   "claim": "The graph passes validate_prompt with its file menus skipped. It was not run for this lesson.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "The gallery clip has 145 frames at 960 x 544 and stereo sound at 48000 Hz.",
+   "how": "run here",
+   "ref": "ffprobe on web/showcase/v_ltx_ink.mp4"
+  }
+ ],
+ "unchecked": [
+  "The LTX-2.5 weights are not on our test machine today, so we did not run this graph for this lesson. The clips come from earlier renders recorded in the gallery data.",
+  "The audio latent sum uses the default config in causal_audio_autoencoder.py. A checkpoint can carry its own config, and we did not open the LTX-2.5 audio VAE to read it.",
+  "We read in Lightricks' constants that a second-stage sigma list exists, and the README's distilled command takes a spatial upsampler. We did not compare one stage against two."
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
+}

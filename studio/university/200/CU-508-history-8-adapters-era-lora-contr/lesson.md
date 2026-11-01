@@ -35,6 +35,25 @@ At the first training step both Z terms are zero, so y_c = y (eq. 3), and "harmf
 - **ControlNet.** `ControlNet` in `comfy/cldm/cldm.py` has an `input_hint_block`, the tiny condition encoder, a list `zero_convs` and a `middle_block_out`, each a 1×1 convolution made by `make_zero_conv`. Its forward returns `{"middle": ..., "output": ...}`. In `openaimodel.py`, `apply_control` does `h += ctrl` on the middle block and on the skip connections. `control_merge` in `comfy/controlnet.py` multiplies by the strength and adds a previous ControlNet's output, so ControlNets stack by addition. `make_zero_conv` is a plain convolution there. The weights come from the file, and zero is an initial value for training.
 - **T2I-Adapter.** `Adapter` and `Adapter_light` are in `comfy/t2i_adapter/adapter.py`.
 
+What a rank buys, on a real picture instead of a weight change. The bet is the same.
+
+{{play:lowrank}}
+
+And both ideas on a graph. The first patches weights, and the second adds to the skip connections.
+
+{{graph:sd15_lora}}
+
+{{graph:sd15_controlnet}}
+
+## What goes wrong
+
+- **The LoRA does nothing, or only half of it works.** Everything after the loader must use the loader's outputs. Wiring the original CLIP past it is the commonest mistake. The note on the `sd15_lora` graph marks it.
+- **The console says `lora key not loaded`.** The file does not match this model, usually a different family. `comfy/lora.py` logs each key it can't place. Pick a LoRA made for your base.
+- **Same strength, very different effect.** With no alpha in the file, ComfyUI scales by 1.0, not 1/r. Two LoRAs at strength 1 are not comparable. Go by eye, in small steps.
+- **ControlNet ignores your picture.** Check the map first. The note on `sd15_controlnet` says it: preview the edges before you trust them. Then check strength, and whether `end_percent` stops it early.
+- **Two ControlNets are too strong.** `control_merge` adds outputs together, so their strengths add up too. Lower each.
+- **You copy a rank number from somewhere.** The lab shows that rank is as good as the change is low-rank. The paper's "rank one" result is about its language datasets.
+
 ## Lab
 
 First the arithmetic. A LoRA replaces the update of a d×d layer, d² numbers, by 2dr:

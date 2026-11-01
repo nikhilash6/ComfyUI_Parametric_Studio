@@ -26,6 +26,16 @@ Sound on a computer is a pressure signal measured many times a second. ComfyUI's
 
 **Mel route.** `MusicDCAE` in `comfy/ldm/ace/vae/music_dcae_pipeline.py` computes a log-mel spectrogram of the audio with `LogMelSpectrogram`, whose defaults are a Hann window, n_fft 2048, hop 512 and 128 mel bands. It rescales the values from the range −11 to 3 into 0 to 1, and encodes them with an image autoencoder, `AutoencoderDC`. Decoding goes the other way, from latents to a mel spectrogram, and a vocoder turns that into a waveform. A mel spectrogram has lost the phase, so the vocoder has to invent it.
 
+## Try it
+
+Look at a chord and a beat through windows of different lengths, and find which shows the notes and which shows the hits.
+
+{{play:spectro}}
+
+An AUDIO value in a graph is a waveform and a sample rate. This one needs no model. CU-351 goes through the type in detail.
+
+{{graph:nm_audio}}
+
 ## Lab
 
 First aliasing. One second of a cosine at 10 kHz sampling, so the bins are exactly 1 Hz apart:
@@ -96,6 +106,15 @@ Quiet audio is left alone. Anything with a standard deviation above 0.2 comes ou
 ```
 
 Taking every second sample moves the tone to 2 kHz at full strength. A low-pass filter first, which is what the sinc in `resample` does, removes it.
+
+## What goes wrong
+
+- **A high tone turns into a low one.** It went above half the sample rate and folded. Filter before you lower the rate. `resample` in core does.
+- **A mix sounds dull or wrong after a sample-rate change.** The rate and the tensor disagree. Keep them together, as `AUDIO` does.
+- **Your track never gets loud.** `VAEDecodeAudio` caps the standard deviation at 0.2. That's the decoder's rule, not your settings. Master afterwards.
+- **The length is close but not exact.** `EmptyLatentAudio` rounds to an even number of latent frames. 10 seconds comes back as 10.031.
+- **Mel bands look blank at the bottom.** With n_fft 2048 and 128 bands, the bands at the bottom are only 1.4 bins apart. Use a longer window for fine low detail.
+- **A latent from one audio model fails in another's decoder.** Sizes and rates differ between models: `EmptyLatentAudio` has 64 channels and Music 3 has 128. A latent belongs to its VAE.
 
 ## What is contested
 

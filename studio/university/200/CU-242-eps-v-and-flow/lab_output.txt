@@ -1,0 +1,37 @@
+kind   sigma    largest error of the recovered clean latent   spread of what the model sees   spread of its perfect output
+eps    0.03     4.4e-16                                       1.007                           1.013
+eps    1.0      4.4e-16                                       1.009                           1.013
+eps    14.6     3.6e-15                                       1.013                           1.013
+v      0.03     8.9e-16                                       1.007                           1.013
+v      1.0      8.9e-16                                       1.009                           1.011
+v      14.6     8.9e-16                                       1.013                           1.007
+flow   0.05     4.4e-16                                       0.958                           1.430
+flow   0.5      4.4e-16                                       0.714                           1.430
+flow   0.95     8.9e-16                                       0.964                           1.430
+
+load a model as the wrong kind: RMS error of the clean-latent estimate, with otherwise perfect outputs
+sigma   right kind  v model read as eps  eps model read as v
+0.03    0.000       0.001                0.001
+0.3     0.000       0.088                0.084
+1.0     0.000       0.771                0.545
+3.0     0.000       3.539                1.119
+14.6    0.000       20.119               1.375
+
+the table of sigmas for an SD-style model
+sigma_min 0.02917   sigma_max 14.61464   signal left at the top: sqrt(alphabar) 0.06826
+with zsnr: sigma_min 0.02917   sigma_max 4518.76   signal left at the top: 0.000221
+
+shift: time_snr_shift(a, t) = a t / (1 + (a - 1) t)
+shift   t=0.9   t=0.75  t=0.5   t=0.25  t=0.1
+1.0     0.900   0.750   0.500   0.250   0.100  
+1.15    0.912   0.775   0.535   0.277   0.113  
+1.73    0.940   0.838   0.634   0.366   0.161  
+3.0     0.964   0.900   0.750   0.500   0.250  
+3.158   0.966   0.905   0.759   0.513   0.260  
+6.0     0.982   0.947   0.857   0.667   0.400  
+the number 1.15 at t=0.5: as ModelSamplingSD3 shift 0.535; as ModelSamplingFlux max_shift at 1024x1024 0.760
+ModelSamplingFlux at 1024x1024: tokens 4096, mu 1.150, the same bend as SD3 shift 3.158
+
+how a step finds its timestep: discrete models take the nearest table index, flow models multiply
+sigma 1.0, discrete: index 354; flow sigma 0.5 with multiplier 1000: 500
+percent_to_sigma(0.5): SD table 1.6156; flow shift 3 0.7500

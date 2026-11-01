@@ -1,0 +1,62 @@
+{
+ "code": "CU-461",
+ "title": "Progress and errors over the websocket",
+ "level": "400",
+ "questions": [
+  {
+   "q": "Which message arrives for every job, whatever happened?",
+   "options": [
+    "execution_success",
+    "progress",
+    "executed",
+    "executing with a null node"
+   ],
+   "answer": "executing with a null node",
+   "why": "prompt_worker sends it after every job. The others depend on the job."
+  },
+  {
+   "q": "A job is fully cached. What is missing compared with a first run?",
+   "options": [
+    "executed for the output node",
+    "execution_start",
+    "progress and executing for each node",
+    "execution_cached"
+   ],
+   "answer": "progress and executing for each node",
+   "why": "In the capture no node ran, and the output node still reported its file."
+  },
+  {
+   "q": "Your connection drops as a job finishes. What should you do on reconnect?",
+   "options": [
+    "Wait, the server replays the messages",
+    "Read /history for your prompt_id",
+    "Queue it again",
+    "Restart the server"
+   ],
+   "answer": "Read /history for your prompt_id",
+   "why": "There is no replay. The history keeps the status and the messages."
+  },
+  {
+   "q": "Why might a script see progress from a job that isn't its own?",
+   "options": [
+    "A job with no client_id sends progress to everyone",
+    "Sockets share a buffer",
+    "Progress always goes to everyone",
+    "The server randomises ids"
+   ],
+   "answer": "A job with no client_id sends progress to everyone",
+   "why": "sid None means all sockets, so compare prompt_id."
+  },
+  {
+   "q": "Why does the official example skip the first 8 bytes of a preview frame?",
+   "options": [
+    "They are padding for alignment",
+    "4 bytes of event type and 4 of image format",
+    "They hold the prompt id",
+    "They are a checksum"
+   ],
+   "answer": "4 bytes of event type and 4 of image format",
+   "why": "encode_bytes adds the first and send_image writes the second."
+  }
+ ]
+}

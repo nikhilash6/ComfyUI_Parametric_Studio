@@ -1,0 +1,73 @@
+{
+ "code": "CU-321",
+ "title": "CFG++ samplers, and why cfg is near 1 there",
+ "level": "300",
+ "questions": [
+  {
+   "q": "What is the one change CFG++ makes to Euler?",
+   "options": [
+    "It takes twice the steps",
+    "The noise added back comes from the unconditional prediction",
+    "It skips the unconditional prediction",
+    "It clamps the latent"
+   ],
+   "answer": "The noise added back comes from the unconditional prediction",
+   "why": "Compare the two update lines: only x − D_cfg becomes x − D_uncond."
+  },
+  {
+   "q": "How many predictions per step at cfg 1 on euler_cfg_pp?",
+   "options": [
+    "One",
+    "Two",
+    "Three",
+    "None"
+   ],
+   "answer": "Two",
+   "why": "The sampler sets disable_cfg1_optimization, so both still run."
+  },
+  {
+   "q": "In the paper's table, CFG++ lambda 1.0 looks most like which plain cfg?",
+   "options": [
+    "1.0",
+    "12.5",
+    "2.0",
+    "7.5"
+   ],
+   "answer": "12.5",
+   "why": "Matched by LPIPS at 50 steps. It isn't a formula, and it isn't exact."
+  },
+  {
+   "q": "You carry cfg 7 over to euler_cfg_pp. What should you expect?",
+   "options": [
+    "The same as euler at cfg 7",
+    "Weaker than euler",
+    "A validation error",
+    "Far too strong: the sampler's scale runs from about 0 to 1"
+   ],
+   "answer": "Far too strong: the sampler's scale runs from about 0 to 1",
+   "why": "The lab lands at 3.64 against 2.43, and the paper's lambda stops at 1."
+  },
+  {
+   "q": "Does the negative prompt matter on euler_cfg_pp at cfg 1?",
+   "options": [
+    "Yes, the unconditional prediction sets the noise",
+    "No, it is never run",
+    "Only at cfg above 7",
+    "Only with Karras"
+   ],
+   "answer": "Yes, the unconditional prediction sets the noise",
+   "why": "Unlike the usual cfg 1 case, the second prediction runs and is used."
+  },
+  {
+   "q": "Why does the toy's table differ from the paper's?",
+   "options": [
+    "The toy has a bug",
+    "The paper used the wrong sampler",
+    "Cfg means nothing",
+    "The paper matched real pictures, and the toy uses two blobs"
+   ],
+   "answer": "The paper matched real pictures, and the toy uses two blobs",
+   "why": "Only the direction carries over from the toy."
+  }
+ ]
+}

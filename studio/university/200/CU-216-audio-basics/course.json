@@ -16,5 +16,46 @@
   "comfy/ldm/ace/vae/music_dcae_pipeline.py:class MusicDCAE"
  ],
  "track": "audio",
- "order": 10
+ "order": 10,
+ "graphs": [
+  "nm_audio"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "EmptyLatentAudio's length is round((seconds x 44100 / 2048) / 2) x 2.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_audio.py:EmptyLatentAudio"
+  },
+  {
+   "claim": "AudioOobleckVAE has strides multiplying to 2048 and a latent size of 64.",
+   "how": "source",
+   "ref": "comfy/ldm/audio/autoencoder.py:AudioOobleckVAE"
+  },
+  {
+   "claim": "VAEDecodeAudio divides by max(1, 5 x std).",
+   "how": "source",
+   "ref": "comfy_extras/nodes_audio.py:vae_decode_audio"
+  },
+  {
+   "claim": "LogMelSpectrogram defaults to Hann, n_fft 2048, hop 512 and 128 mel bands.",
+   "how": "source",
+   "ref": "comfy/ldm/ace/vae/music_log_mel.py:LogMelSpectrogram"
+  },
+  {
+   "claim": "Shannon's Theorem 1, Slaney's filterbank factor, and torchaudio's HTK default.",
+   "how": "docs",
+   "ref": "Sources listed below"
+  },
+  {
+   "claim": "nm_audio validates and runs on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not run an audio VAE or a vocoder, so nothing here measures audio quality.",
+  "That a mel spectrogram loses phase follows from taking magnitudes. The lab doesn't test it.",
+  "Dips in the lab are for two equal tones and a Hann window only."
+ ]
 }

@@ -2,14 +2,63 @@
  "title": "Agents on ComfyUI: tools, verification, side-effect safety",
  "level": "400",
  "char": "graph",
- "hook": "Letting a model drive the graph without letting it break things.",
+ "hook": "The model proposes, plain code checks, and limits live outside the model. Before, gate, and after.",
  "code": "CU-405",
  "prereq": [
   "CU-102",
-  "CU-401"
+  "CU-224"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "execution.py:validate_prompt",
+  "execution.py:validate_inputs",
+  "server.py:api_node",
+  "app/agent_host.py:ENTRY_POINT_GROUP",
+  "server.py:post_prompt"
+ ],
  "track": "automation",
- "order": 30
+ "order": 30,
+ "graphs": [
+  "f_validation_base"
+ ],
+ "verified": [
+  {
+   "claim": "POST /prompt calls validate_prompt.",
+   "how": "source",
+   "ref": "server.py:post_prompt"
+  },
+  {
+   "claim": "The error names come from validate_inputs and validate_prompt.",
+   "how": "source",
+   "ref": "execution.py:validate_prompt"
+  },
+  {
+   "claim": "The agent host loads an optional package and leaves its trust boundary to that package.",
+   "how": "source",
+   "ref": "app/agent_host.py:ENTRY_POINT_GROUP"
+  },
+  {
+   "claim": "object_info reports api_node.",
+   "how": "source",
+   "ref": "server.py:api_node"
+  },
+  {
+   "claim": "All tables come from this lesson's lab, against a stub.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "A wire to a missing node and an output slot that doesn't exist both report exception_during_inner_validation, and an unknown node stops at missing_node_type.",
+   "how": "run here",
+   "ref": "execution.py:validate_prompt"
+  }
+ ],
+ "unchecked": [
+  "We did not read the comfy-agent package or run any agent.",
+  "How often a model invents nodes isn't measured here; 'often' is our experience, not a count.",
+  "The gate is our policy, not a ComfyUI feature."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

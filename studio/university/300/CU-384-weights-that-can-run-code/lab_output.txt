@@ -1,0 +1,28 @@
+a pickle, 145 bytes. Loading it with pickle.loads:
+  >>> this line was printed by loading a file. It could have been anything.
+
+the same trick in a file torch.save wrote
+torch.load(weights_only=True), which is what comfy/utils.py load_torch_file passes:
+  refused: UnpicklingError
+torch.load(weights_only=False):
+  >>> this line was printed by loading a file. It could have been anything.
+  loaded, keys ['extra', 'weight']
+
+plain weights pass the limit
+  keys ['state_dict'], tensor [1.0, 1.0]
+
+safetensors has no code path to attack this way: an 8 byte length, JSON, then raw numbers
+  header {'dtype': 'F32', 'shape': [2], 'data_offsets': [0, 8]}  numbers (1.0, 2.0)
+
+the word in a filename does not decide anything. Read what the bytes start with
+  a.ckpt from torch.save       zip, the torch.save format, holds a pickle
+  b.pt that is a raw pickle    raw pickle
+  c.bin that is safetensors    looks like safetensors
+
+what to search a pack for, as text
+  pickle.load
+  torch.load(
+  weights_only=False
+  trust_remote_code=True
+  numpy.load(
+  allow_pickle=True

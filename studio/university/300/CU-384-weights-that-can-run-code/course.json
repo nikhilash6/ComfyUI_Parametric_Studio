@@ -1,0 +1,73 @@
+{
+ "code": "CU-384",
+ "title": "Weights that can run code: pickle, safetensors, torch.load",
+ "level": "300",
+ "prereq": [
+  "CU-380"
+ ],
+ "char": "bits",
+ "hook": "A .ckpt can hold a program that runs when you load it. See it happen, safely, and learn what stops it in ComfyUI, and what doesn't in a pack.",
+ "track": "packs",
+ "order": 40,
+ "graphs": [
+  "sd15_lora"
+ ],
+ "code_refs": [
+  "comfy/utils.py:load_torch_file",
+  "folder_paths.py:supported_pt_extensions",
+  "SECURITY.md",
+  "comfy/cli_args.py:--mmap-torch-files"
+ ],
+ "verified": [
+  {
+   "claim": "load_torch_file reads .safetensors and .sft through the safetensors path, and everything else with torch.load(..., weights_only=True). Its safe_load argument isn't consulted in this version.",
+   "how": "source",
+   "ref": "comfy/utils.py:load_torch_file"
+  },
+  {
+   "claim": "A search of core's comfy, comfy_extras, app and top-level files found no weights_only=False and no pickle.load.",
+   "how": "source",
+   "ref": "comfy/utils.py"
+  },
+  {
+   "claim": "Model folders accept .ckpt, .pt, .pt2, .bin, .pth, .safetensors, .pkl and .sft.",
+   "how": "source",
+   "ref": "folder_paths.py:supported_pt_extensions"
+  },
+  {
+   "claim": "pickle.loads ran the payload. torch.load with weights_only=True refused it with UnpicklingError, and with weights_only=False ran it.",
+   "how": "run here",
+   "ref": "lab.py on PyTorch 2.16 dev"
+  },
+  {
+   "claim": "The Python docs say pickle can execute arbitrary code during unpickling, and the torch.load docs warn never to load data from an untrusted source.",
+   "how": "docs",
+   "ref": "docs.python.org and docs.pytorch.org, fetched 2026-11-01"
+  },
+  {
+   "claim": "The safetensors format is a length, a JSON header and raw data, and its README rates pickle as unsafe.",
+   "how": "docs",
+   "ref": "safetensors README"
+  },
+  {
+   "claim": "ComfyUI's security policy puts torch.load problems in old PyTorch versions out of scope and recommends recent versions.",
+   "how": "source",
+   "ref": "SECURITY.md"
+  },
+  {
+   "claim": "The graph passes validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "weights_only limits what the unpickler builds. We didn't try to attack it, and the PyTorch docs still warn against untrusted data, so don't treat it as a proof of safety.",
+  "Safetensors parsers can have bugs like any parser. We only say that its format has no pickle step.",
+  "What any given pack does: search it yourself. We name no pack here.",
+  "numpy.load with allow_pickle is listed from general knowledge of that option and not tested in the lab."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

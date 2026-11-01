@@ -4,49 +4,70 @@
  "level": "300",
  "questions": [
   {
-   "q": "According to the lesson, what is the formula for the total Number of Function Evaluations (NFE) when Classifier-Free Guidance (CFG) is enabled?",
+   "q": "How many model calls is Heun, 20 steps, CFG 7?",
    "options": [
-    "NFE = S",
-    "NFE = 2S",
-    "NFE = S / 2",
-    "NFE = S + 1"
+    "80",
+    "40",
+    "20",
+    "160"
    ],
-   "answer": "NFE = 2S",
-   "why": "The lesson states: 'If CFG is enabled, CFG_enabled = 1, so NFE = 2S.' This is because the model runs twice per step (once with prompt, once without)."
+   "answer": "80",
+   "why": "20 steps × 2 calls per step × 2 for CFG."
   },
   {
-   "q": "In the context of Progressive Distillation, what is the specific relationship between the target model $M_k$ and the previous model $M_{2k}$?",
+   "q": "Why does CFG 1 run about twice as fast as CFG 7?",
    "options": [
-    "$M_k$ is trained to match the output of $M_{2k}$ but with half the steps.",
-    "$M_k$ is a smaller version of $M_{2k}$ with fewer parameters.",
-    "$M_k$ doubles the noise level of $M_{2k}$.",
-    "$M_k$ replaces the attention mechanism of $M_{2k}$."
+    "sampling_function drops the second conditioning when CFG is 1",
+    "Steps are skipped at low CFG",
+    "The model loads in fp8",
+    "The scheduler halves the steps"
    ],
-   "answer": "$M_k$ is trained to match the output of $M_{2k}$ but with half the steps.",
-   "why": "The lesson defines Progressive Distillation as 'training a new model to match the output of a previous model, but with half the steps' and shows the approximation $M_k(x_t, t) \\approx M_{2k}(x_t, t)$."
+   "answer": "sampling_function drops the second conditioning when CFG is 1",
+   "why": "With one prediction needed, the unconditional call is left out."
   },
   {
-   "q": "What is the primary mechanism by which Node Caching in ComfyUI reduces computation time?",
+   "q": "Which lever is a property of the weights, not a ComfyUI feature?",
    "options": [
-    "It compiles Python code into optimized CUDA kernels.",
-    "It skips the execution of a node if its inputs have not changed since the last run.",
-    "It reduces the number of sampling steps required for generation.",
-    "It compresses the Key and Value tensors in the attention mechanism."
+    "Distillation",
+    "EasyCache",
+    "TorchCompileModel",
+    "The node cache"
    ],
-   "answer": "It skips the execution of a node if its inputs have not changed since the last run.",
-   "why": "The lesson explains Node Caching: 'If a node's inputs have not changed, its output is identical... If Inputs_new == Inputs_old, then Output_new = Output_old. We skip f.'"
+   "answer": "Distillation",
+   "why": "Core only runs distilled weights. The training happened elsewhere."
   },
   {
-   "q": "Based on the lab results provided, what is the error reduction factor when increasing the ODE solve from 1 step to 4 steps?",
-   "options": null,
-   "answer": "7.72686",
-   "why": "The lab results explicitly state: 'RESULT error_reduction_factor = 7.72686' and the text confirms 'Going from 1 step to 4 steps reduces the error by a factor of ~7.7.'"
+   "q": "What is different between the node cache and a step cache?",
+   "options": [
+    "The node cache reuses exact results, a step cache approximates inside a run",
+    "They are two names for one thing",
+    "A step cache only works on a CPU",
+    "The node cache changes the picture"
+   ],
+   "answer": "The node cache reuses exact results, a step cache approximates inside a run",
+   "why": "Same inputs give the same output for the node cache. A step cache reuses a change it expects to be close."
   },
   {
-   "q": "Why does the lesson advise against judging the performance of `torch.compile` based on the first run?",
-   "options": null,
-   "answer": "Because `torch.compile` has a first-run overhead where it compiles the graph, making the first run slower than subsequent runs.",
-   "why": "The 'Common mistakes' section states: 'Compile Overhead: torch.compile has a first-run overhead. It compiles the graph on the first run. Subsequent runs are faster. Do not judge performance on the first run.'"
+   "q": "In the lab, Heun with 4 steps and Euler with 8 steps both make 8 calls. What does that show?",
+   "options": [
+    "Compare solvers by calls, and Heun's error was far smaller on this toy",
+    "Heun is always better on every model",
+    "Steps are the right measure",
+    "Both have the same error"
+   ],
+   "answer": "Compare solvers by calls, and Heun's error was far smaller on this toy",
+   "why": "0.00637 against 0.04246 on a smooth toy problem. A real model may differ."
+  },
+  {
+   "q": "You test torch.compile. What do you leave out of your timing?",
+   "options": [
+    "The first run, which includes compiling",
+    "The sampling steps",
+    "The last run",
+    "Every run with a seed"
+   ],
+   "answer": "The first run, which includes compiling",
+   "why": "Compilation happens once, so time what repeats, and also time the same graph without the node."
   }
  ]
 }

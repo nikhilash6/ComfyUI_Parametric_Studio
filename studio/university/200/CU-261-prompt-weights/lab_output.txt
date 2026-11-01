@@ -1,0 +1,19 @@
+what you type                     what the parser hands on
+a (brass) b                       'a ' 1.0  'brass' 1.1  ' b' 1.0
+a ((brass)) b                     'a ' 1.0  'brass' 1.21  ' b' 1.0
+a (brass:1.3) b                   'a ' 1.0  'brass' 1.3  ' b' 1.0
+a ((brass:1.3)) b                 'a ' 1.0  'brass' 1.3  ' b' 1.0
+((a (b:1.5) c))                   'a ' 1.21  'b' 1.5  ' c' 1.21
+(brass:high)                      'brass:high' 1.1
+(a) (b:0)                         'a' 1.1  ' ' 1.0  'b' 0.0
+
+weight   distance from this token's row   distance from the empty prompt's row   length
+0.0      3.661                            0.000                                  1.042
+0.5      1.830                            1.830                                  1.784
+1.0      0.000                            3.661                                  3.462
+1.21     0.769                            4.430                                  4.204
+1.5      1.830                            5.491                                  5.243
+3.0      7.322                            10.983                                 10.686
+
+weight 0 gives the empty prompt's row at that position. The token is not removed: the tensor keeps its length.
+pooled_output comes from the unweighted pass: the line above only touches the token rows.

@@ -1,0 +1,18 @@
+Switch, use_a=True: result A
+    check_lazy_status a=None b=None
+    branch A runs
+    check_lazy_status a=value b=None
+    execute
+Switch, use_a=False: result B
+    check_lazy_status a=None b=None
+    branch B runs
+    check_lazy_status a=None b=value
+    execute
+Eager, use_a=True: result A
+    branch A runs
+    branch B runs
+    execute
+
+asks for an input with no wire: Node S says it needs input a, but there is no input to that node at all
+
+asking for every input, every time, undoes the saving: ['a', 'b']

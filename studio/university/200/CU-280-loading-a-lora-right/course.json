@@ -1,0 +1,73 @@
+{
+ "code": "CU-280",
+ "title": "Loading a LoRA right",
+ "level": "200",
+ "prereq": [
+  "CU-212"
+ ],
+ "char": "tune",
+ "hook": "LoraLoader or LoraLoaderModelOnly, two strengths, chains, and the one log line that tells you the file didn't fit your model.",
+ "track": "lora-training",
+ "order": 12,
+ "kit": true,
+ "graphs": [
+  "sd15_lora",
+  "d_lora_model_only"
+ ],
+ "code_refs": [
+  "nodes.py:LoraLoader.load_lora",
+  "nodes.py:LoraLoaderModelOnly.load_lora_model_only",
+  "comfy/sd.py:load_lora_for_models",
+  "comfy/lora.py:load_lora",
+  "comfy/lora.py:model_lora_keys_unet",
+  "comfy/lora.py:model_lora_keys_clip",
+  "comfy/lora_convert.py:convert_lora",
+  "comfy/model_patcher.py:ModelPatcher.add_patches",
+  "comfy/weight_adapter/lora.py:LoRAAdapter.calculate_weight",
+  "comfy_extras/nodes_lora_stack.py:LoadLoraModel"
+ ],
+ "verified": [
+  {
+   "claim": "A key nobody claims logs 'lora key not loaded: <key>'. We ran the real load_lora with a small fake file and saw these lines, and it patched only the matching layer.",
+   "how": "run here",
+   "ref": "comfy/lora.py:load_lora"
+  },
+  {
+   "claim": "LoraLoaderModelOnly calls load_lora_for_models with clip None, so no text-encoder keys are in the key map.",
+   "how": "source",
+   "ref": "comfy/sd.py:load_lora_for_models"
+  },
+  {
+   "claim": "If both strengths are 0, LoraLoader returns its inputs unchanged.",
+   "how": "source",
+   "ref": "nodes.py:LoraLoader.load_lora"
+  },
+  {
+   "claim": "A patched key that the model lacks logs NOT LOADED.",
+   "how": "source",
+   "ref": "comfy/sd.py:load_lora_for_models"
+  },
+  {
+   "claim": "A file with no alpha gets scale 1 whatever its rank.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/lora.py:LoRAAdapter.calculate_weight"
+  },
+  {
+   "claim": "A shape mismatch logs ERROR with the adapter name and key, and leaves the weight unchanged.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/lora.py:LoRAAdapter.calculate_weight"
+  },
+  {
+   "claim": "Both graphs validate.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "No real LoRA or checkpoint ran for this lesson. Which layer names a real file uses, and how its text-encoder part affects a picture, was not tested.",
+  "Strength advice (start at 1, try 0.5 to 1) is common practice, not measured here."
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

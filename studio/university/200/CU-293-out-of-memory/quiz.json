@@ -1,0 +1,13 @@
+{
+ "code": "CU-293",
+ "title": "Out of memory: what ComfyUI tries first",
+ "level": "200",
+ "questions": [
+  {"q": "A VAE decode runs out of memory. What does ComfyUI do?", "options": ["Fails at once", "Logs a warning and retries with tiles", "Restarts the server", "Lowers the resolution"], "answer": "Logs a warning and retries with tiles", "why": "VAE.decode catches it and calls a tiled decode. The warning is in the source."},
+  {"q": "Which part has no general retry of its own, in what we could find?", "options": ["VAE decode", "VAE encode", "Upscale with a model", "A sampling step"], "answer": "A sampling step", "why": "Apart from the split attention retry, we found no fallback in comfy/samplers.py. So the error usually appears at the sampler."},
+  {"q": "After an out of memory error reaches the engine, why is the next queue slower?", "options": ["The cache is corrupted", "All models were unloaded", "The card is throttled", "The seed changes"], "answer": "All models were unloaded", "why": "execute() calls unload_all_models, so they load again."},
+  {"q": "How does the upscale node's retry work?", "options": ["Doubles the tile until it fits", "Halves the tile from 512, and gives up below 128", "Moves to the CPU", "Lowers the batch"], "answer": "Halves the tile from 512, and gives up below 128", "why": "From ImageUpscaleWithModel. The lab shows 512, 256, 128."},
+  {"q": "What is the first thing to check, according to ComfyUI's own tip?", "options": ["The driver", "The batch size", "The prompt length", "The sampler"], "answer": "The batch size", "why": "The tip says: you might have accidentally set the batch_size to a large number."},
+  {"q": "The out of memory fallback tiles a 1024 square SD image at its default sizes. How many tile decodes?", "options": ["1", "4", "9", "23"], "answer": "23", "why": "Three passes of 9, 7 and 7, from get_tiled_scale_steps and decode_tiled_, whose default overlap is 16. The VAEDecodeTiled node's default overlap is 8, which gives 19."}
+ ]
+}

@@ -34,6 +34,23 @@ A factor f cuts the number of positions by f², and the cost of a layer depends 
 - **The latent.** `EmptyLatentImage` creates `torch.zeros([batch_size, 4, height // 8, width // 8])` and tags it `downscale_ratio_spacial: 8`. A 1024×1024 request is a 4×128×128 tensor.
 - **Cross-attention.** `BasicTransformerBlock` in `comfy/ldm/modules/attention.py` builds `attn2` as a `CrossAttention` whose keys and values come from `context`, the text conditioning.
 
+Try the grid yourself. Ask for a size off the grid and see what you really get.
+
+{{play:latent}}
+
+The seven nodes you see every day are this paper's three parts plus a loop.
+
+{{graph:sd15_txt2img}}
+
+## What goes wrong
+
+- **Your size gets quietly rounded down.** `EmptyLatentImage` divides by 8 with floor division. So 1000 stays 125 cells, but 1003 also becomes 125, and the picture is 1000 wide.
+- **You use `EmptyLatentImage` with a 16-channel family.** It always makes 4 channels. SD 3.5 has its own node, `EmptySD3LatentImage`, as the `sd35_flow` graph shows.
+- **You expect 64 times the speed.** The lab's 64 and 4096 are per layer. The paper's whole-model figure is 3 to 5 times.
+- **You ask SD 1.x for 1024.** The attention layer costs 16 times more, as the lab shows, and version 1 was finetuned on 512 × 512. Start at the size the file was trained at and upscale after that (the `sd15_hires` graph).
+- **You think a checkpoint's VAE is the only choice.** It is just the third output of the loader. `VAELoader` replaces it. Never mix families.
+- **You assume a detail the decoder can't produce will appear.** Reach is limited by the autoencoder, however good the denoiser. Round-trip a picture first, with `h_vae_roundtrip`.
+
 ## Lab
 
 PyTorch has a FLOP counter, which sums the cost of every operation that runs under it. It also works on tensors that have a shape and no data, so the lab can count a 3×3 convolution (64 to 64 channels) and an attention layer (320 dimensions, 8 heads) on a 512×512 pixel grid without ever computing one. A multiply-add counts as 2 FLOPs, and the lab asserts that the counter agrees with the textbook formulas 2·9·64·64·n and 4·n²·320.

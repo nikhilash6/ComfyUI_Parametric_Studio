@@ -1,93 +1,120 @@
 # CU-412 - Dataset curation and captioning for training
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Prepare a folder that core's training nodes read the way you intend, see how often each picture is really used, and write captions knowing what they do to a trigger word. Taught by Tinker Tune.
 
-## Why this matters
+## The idea
 
-In generative AI, the model does not just learn "what a car looks like"; it learns the statistical relationship between a specific text string and a visual concept. If your dataset is biased, your model will be biased. Specifically, if one caption appears far more frequently than others, the model will overfit to that specific phrasing. It will become rigid, failing to generalize to new prompts that describe the same concept differently.
+A LoRA learns from pairs: a picture and its text. Nothing else teaches it. So there are two questions. Does the trainer see what you think it sees? And what will it learn from the words you wrote?
 
-As a workshop tinkerer, I have seen models that can only generate "a red car" but fail completely on "a crimson automobile." This is not a model architecture problem; it is a data curation problem. In this lesson, we move from intuition to measurement. We will build a frequency analysis pipeline to identify these imbalances before they ruin your training run. We will measure the distribution of your captions, normalize them into a probability space, and apply balancing strategies to ensure your model learns concepts, not just specific strings.
+The first can be read in the source. The second is partly a matter of experience, and we'll say which parts are which.
 
-## The intuition
+{{graph:sd15_train_lora}}
 
-Think of your dataset as a library. If you have 100 books titled "The Red Car" and only 1 book titled "The Blue Sky," a librarian (your model) will become an expert on "The Red Car" but will know almost nothing about "The Blue Sky." Worse, they might start associating the *concept* of a car exclusively with the specific title "The Red Car."
+## What the nodes do with your folder
 
-Frequency analysis is the act of counting how often each "title" appears. If one title dominates, you have a skewed distribution. To fix this, you can either:
-1.  **Downsample:** Remove excess copies of the dominant caption.
-2.  **Upsample:** Duplicate the rare captions (risky, can cause artifacts).
-3.  **Weight:** Adjust the loss function during training to penalize the dominant caption more heavily.
+`LoadImageTextDataSetFromFolder` lists a subfolder of input. Pictures are PNG, JPG, JPEG or WEBP. A caption is a `.txt` with the same name. Missing means an empty caption, with no error. A folder inside it whose name starts with a number and an underscore repeats its pictures.
 
-In this lesson, we focus on the first step: **measurement**. You cannot balance what you have not measured. We will calculate the raw counts, identify the maximum frequency, and normalize these counts into a probability distribution. This normalized distribution tells you exactly how much "weight" each caption carries in your current dataset.
+```text
+files                                     pictures in the list
+['a.png', 'b.png']                        ['a.png', 'b.png']
+['5_lamp/a.png', 'b.png']                 ['a.png', 'a.png', 'a.png', 'a.png', 'a.png', 'b.png']
+['lamp/a.png', 'b.png']                   ['a.png', 'b.png']
+```
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+So `5_lamp` means five copies. That's the kohya-style layout, and a comment in the source says so.
 
-Let $C$ be the set of unique captions in your dataset. Let $N$ be the total number of images (samples) in the dataset.
+`MakeTrainingDataset` encodes each picture with the VAE and each caption with the text encoder, once, ahead of training. Nothing changes after that. So the same caption is used every time: there's no word shuffling and no caption dropout in this path. If you want those, you need a different trainer. And no cropping or resizing happens unless you add a node for it. Core has `ResizeImagesByLongerEdge`, `ResizeImagesByShorterEdge`, `CenterCropImages`, `RandomCropImages`, `ImageDeduplication`, and text nodes such as `AddTextPrefix` and `ReplaceText`, all in `comfy_extras/nodes_dataset.py`. We have read their names and not tested each.
 
-For each caption $c \in C$, we define its raw frequency count as $f(c)$:
-$$ f(c) = \sum_{i=1}^{N} \mathbb{I}(caption_i = c) $$
-where $\mathbb{I}$ is the indicator function, which equals 1 if the condition is true and 0 otherwise.
+Pictures of different shapes are allowed. `_prepare_latents_and_count` notices, and the trainer then handles the pictures of a step one at a time. `ResolutionBucket` is the other choice.
 
-The maximum frequency in the dataset is:
-$$ f_{max} = \max_{c \in C} f(c) $$
+## How often each picture is seen
 
-To understand the relative dominance of each caption, we normalize the frequencies to create a probability distribution $P(c)$:
-$$ P(c) = \frac{f(c)}{\sum_{k \in C} f(k)} $$
+There's no such thing as an epoch here. Each step draws a fresh random subset. So the counts aren't even.
 
-Note that $\sum_{k \in C} f(k) = N$, so:
-$$ P(c) = \frac{f(c)}{N} $$
+```text
+sightings per picture, one seeded run. Each step draws afresh, so the counts are uneven
+pictures   steps   batch   average   fewest   most
+12         300     1       25.0      16       38
+12         100     1       8.3       0        12
+12         25      1       2.1       0        4
+40         300     1       7.5       1        15
+200        300     1       1.5       0        6
+12         300     4       100.0     82       123
+```
 
-The sum of all probabilities must equal 1:
-$$ \sum_{c \in C} P(c) = 1 $$
+With 12 pictures and 300 steps, the average is 25, and this run's rarest picture gets 16 and its commonest 38. At 25 steps some pictures are never seen. At 200 pictures and 300 steps, about a quarter of them are never used at all:
 
-If $P(c)$ is significantly higher than $1/|C|$ (where $|C|$ is the number of unique captions), that caption is over-represented. In our lab, we will compute $P(c)$ for each caption and verify that the sum is approximately 1. This normalized value is critical because it allows you to compare datasets of different sizes and to calculate the "entropy" of your caption distribution, which is a measure of how "balanced" your data is.
+```text
+pictures never seen: 200 pictures at 300 steps 48   formula n (1 - 1/n)^steps = 44.5
+```
 
-## In ComfyUI
+That's the formula for picking with replacement, and it's a good check. So a big dataset needs more steps than you might think, and the average number of sightings is the number to work out first: steps × batch ÷ pictures.
 
-The specific nodes or files for dataset curation and captioning frequency analysis are **not covered in our sources**. The provided evidence focuses on server infrastructure, text encoder architectures (Llama, Qwen, T5, etc.), and the Cosmos video model. While ComfyUI has nodes for loading datasets and training, the specific logic for *frequency analysis* and *balancing* is typically handled in external Python scripts or custom nodes not detailed in the provided codebase. Therefore, we will implement the logic in pure Python/PyTorch as demonstrated in the lab.
+{{play:coverage}}
+
+## Long captions
+
+Our Train page warns when a caption is over 65 words, because the encoder's window is about 75 tokens. The end of a long caption isn't dropped in ComfyUI, though. The tokenizer starts another group of 77, and all the groups are joined:
+
+```text
+tokens in the caption   groups sent to the encoder (SD 1.5)   numbers in the conditioning
+10                      1                                     1 x 77 x 768
+75                      1                                     1 x 77 x 768
+76                      2                                     2 x 77 x 768
+150                     2                                     2 x 77 x 768
+151                     3                                     3 x 77 x 768
+```
+
+We checked that on the real tokenizer. So it's not cut, but the words after the split are encoded apart from the words before, without seeing them, which changes how they read. Keep captions under the window where you can. And a word isn't always one token.
+
+## What a caption does
+
+Now the part you can't read in a source file. Here's a toy, which we made for this: a linear model learns what each caption word adds to a picture. The pictures hold a new thing (a lamp) that's in all of them, and 90% are on a beach and 10% in a forest. The model is asked for the smallest weights that explain the data. It's linear algebra, not a diffusion model, but it shows the mechanism.
+
+```text
+the toy. Prompt: the trigger alone. What the model then produces: lamp, beach, forest (1 = fully present)
+captions                                  lamp    beach   forest
+trigger only                              1.00    0.92    0.08
+trigger + place words                     0.67    0.33    0.33
+trigger + place words, asking for forest  1.00    -0.00   1.00
+```
+
+Row 1: captions hold only the trigger. Then the trigger has to carry everything the pictures have in common, so asking for the trigger brings you the lamp and most of a beach. Row 2: captions name the place too. Now the place words carry the place, and the bare trigger brings much less beach. The lamp falls too (0.67), because in this data each picture has exactly one place, so the place words and the trigger can trade weight. Row 3: with the place word you asked for, you get what you asked for, a forest and a lamp.
+
+The rule that comes out of it: **what's in every picture and not in the caption gets attached to the trigger.**
+
+```text
+share of pictures on the beach, and how much beach the bare trigger brings when place is never captioned
+beach share   beach from trigger alone
+0.5           0.50
+0.75          0.75
+0.9           0.90
+1.0           1.00
+```
+
+Practical advice, and this part is common practice and not something we measured:
+
+- Name what should vary: background, lighting, pose, clothing. Don't name what the LoRA should learn: then the trigger takes it.
+- Vary what shouldn't stick. If every picture has the same background and you don't want it, change it, or name it.
+- Use a trigger word that means nothing to the model already. Check with the "off, trigger" picture from CU-282.
+- Cull. Blurry or near-duplicate pictures use up sightings. `ImageDeduplication` can help with duplicates.
+- Check the caption by reading it next to its picture. It's the only feedback you get before spending the run.
+
+## What goes wrong
+
+- **Empty captions, no warning.** A `.txt` with the wrong name counts as none. Our Train page's check blocks this. In a bare graph, read the `texts` output with a preview node first.
+- **The same picture counted several times.** A `5_` folder repeats it, and so can a copy under another name.
+- **The LoRA paints the same background everywhere.** It's in all your pictures and not in your captions. Vary it, or caption it.
+- **The trigger does nothing.** Your captions may spell it differently, or your word may split into tokens that mean other things. Check with CU-282's four pictures.
+- **Some pictures hardly matter.** Too many pictures for the steps. Work out the average sightings.
+- **Out of memory on one large picture.** Pictures aren't resized for you here. Add a resize node.
 
 ## Lab
 
-This lab simulates a small dataset of 5 images with 3 unique captions. It performs the following steps:
-1.  Counts the raw frequency of each caption.
-2.  Identifies the most frequent caption.
-3.  Normalizes the frequencies into a probability distribution.
-4.  Generates a balanced sample by selecting unique captions without replacement.
+The lab copies the folder rule and the sampling rule, so its counts have the same pattern as a real run, though not the same numbers, because a real run's random state is different. The token table was checked against the real tokenizer in a side script. The caption section is a toy, and says so. This lesson's earlier draft had a frequency table of identical captions, which we removed: the core path has no feature that uses it, and its claims about synonyms had no evidence.
 
-We run the script twice to ensure reproducibility. The output is identical both times.
+## Sources
 
-**Lab Output:**
-
-```
-Original counts: {'a red car': 3, 'a blue sky': 1, 'a green tree': 1}
-Most frequent caption: a red car with count 3
-RESULT norm_freq_a_red_car = 0.6
-RESULT norm_freq_a_blue_sky = 0.2
-RESULT norm_freq_a_green_tree = 0.2
-RESULT balanced_sample = ['a blue sky', 'a red car', 'a green tree']
-```
-
-**Analysis of Results:**
-
-1.  `RESULT norm_freq_a_red_car = 0.6`
-    This proves that "a red car" accounts for 60% of the dataset's caption weight. This is a severe imbalance. In a balanced dataset with 3 unique captions, each would ideally have a norm_freq of ~0.333. The value 0.6 indicates that the model will be heavily biased toward this specific caption.
-
-2.  `RESULT norm_freq_a_blue_sky = 0.2`
-    This proves that "a blue sky" accounts for 20% of the dataset. It is under-represented compared to the dominant caption.
-
-3.  `RESULT norm_freq_a_green_tree = 0.2`
-    This proves that "a green tree" also accounts for 20% of the dataset. It shares the same under-representation as "a blue sky."
-
-4.  `RESULT balanced_sample = ['a blue sky', 'a red car', 'a green tree']`
-    This proves that a simple balancing strategy (selecting unique captions) can create a sample where each concept is represented exactly once. This sample has a uniform distribution (1/3 each), which is the ideal target for training stability.
-
-## Common mistakes
-
-1.  **Ignoring the "Long Tail":** Many datasets have a few very frequent captions and many rare ones. Focusing only on the top 5 captions misses the fact that the "tail" of rare captions can cause the model to hallucinate or fail on niche prompts. Always analyze the full distribution.
-2.  **Balancing by Image Count, Not Caption Frequency:** If you have 100 images of "a red car" but 50 unique captions describing them, and 10 images of "a blue sky" with 10 unique captions, balancing by image count is misleading. You must balance by *caption string* frequency if you want to prevent overfitting to specific text.
-3.  **Forgetting to Normalize:** Raw counts are not comparable across datasets of different sizes. Always normalize to a probability distribution ($P(c)$) before comparing or applying weighting schemes.
-4.  **Assuming Balancing is Automatic:** ComfyUI does not automatically balance your dataset. If you feed it a skewed dataset, it will train on a skewed distribution. You must curate and balance your data *before* training.
-
-## Go deeper
-
-The provided evidence does not contain specific arXiv paper IDs related to dataset curation or captioning frequency analysis. The papers referenced in the evidence are related to model architectures (Llama, Qwen, T5, Cosmos) and server infrastructure. For further reading on dataset balancing and captioning strategies, I recommend looking into papers on "Data Pruning for Diffusion Models" or "Captioning for Text-to-Image Generation," but these are not included in the current evidence base.
-
+- [ComfyUI v0.43.0, comfy_extras/nodes_dataset.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_dataset.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_train.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_train.py)
+- [ComfyUI v0.43.0, comfy/sd1_clip.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sd1_clip.py)

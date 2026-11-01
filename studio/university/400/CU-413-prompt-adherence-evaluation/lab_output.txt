@@ -1,2 +1,22 @@
-RESULT sim_match = 1
-RESULT sim_mismatch = 0
+image holds: red, car, beach
+caption               cosine   score (w = 2.5)
+red car on a beach    0.816    2.040
+red car               0.837    2.092
+red car in a city     0.689    1.723
+blue ball at night    -0.001   0.000
+
+image with one more thing, a dog, against the old caption: 0.805, so extra things only lower it a little
+
+'red car, blue ball' against 'blue car, red ball': cosine 1.000
+same caption, vector from a different encoder (a random rotation here): cosine 0.054
+
+rank of the true caption among 24 captions: 1
+
+item                    euler  euler ancestral   (one seed, marked by one reader)
+brass astrolabe         1      1
+oak table               1      0
+stack of sea charts     0      1
+window light            1      0
+shallow depth of field  0      1
+score                   0.60   0.60
+the same total hides different failures. each row tells you what to fix

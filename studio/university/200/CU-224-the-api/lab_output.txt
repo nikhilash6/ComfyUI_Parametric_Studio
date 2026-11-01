@@ -20,3 +20,8 @@ GET /view?filename=app_00001_.png&subfolder=&type=output -> b'\x89PNG'
 
 same prompt again: ['execution_start', 'execution_cached', 'executed', 'execution_success', 'executing']  cached: ['3', '9']
 outputs recorded for that run: {'9': {'images': [{'filename': 'app_00001_.png', 'subfolder': '', 'type': 'output'}]}}
+
+partly valid -> 200 node_errors for: ['10'] required_input_missing
+failing job: ['execution_start', 'execution_cached', 'executing', 'execution_error', 'executing']
+its history status: error
+history of a job that has not finished: {}

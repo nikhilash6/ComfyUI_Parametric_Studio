@@ -1,0 +1,73 @@
+{
+ "code": "CU-251",
+ "title": "Embedded guidance against CFG",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What does the FluxGuidance node do by itself?",
+   "options": [
+    "Runs the model a second time",
+    "Writes one guidance key into the conditioning's dict",
+    "Multiplies the latent",
+    "Changes the sampler"
+   ],
+   "answer": "Writes one guidance key into the conditioning's dict",
+   "why": "It calls conditioning_set_values and nothing else. The model reads the key later."
+  },
+  {
+   "q": "You set FluxGuidance to 8 on a file with no guidance_in weights. What happens?",
+   "options": [
+    "Validation fails",
+    "Nothing: the number is never used, and no warning appears",
+    "Cfg becomes 8",
+    "The sampler runs twice"
+   ],
+   "answer": "Nothing: the number is never used, and no warning appears",
+   "why": "forward_orig only uses guidance if params.guidance_embed is true, and detection reads that from the file."
+  },
+  {
+   "q": "Which statement about the flux family is correct?",
+   "options": [
+    "All flux-family models need cfg 1",
+    "All flow-matching models need cfg 1",
+    "Cfg has no effect on any flux-family model",
+    "Whether cfg 1 is right depends on the file: Klein Base uses guidance above 1 while the distilled 4B uses 1"
+   ],
+   "answer": "Whether cfg 1 is right depends on the file: Klein Base uses guidance above 1 while the distilled 4B uses 1",
+   "why": "The Klein Base card shows guidance_scale 4.0 and the distilled card 1.0. Our SD 3.5 flow renders use cfg 4.5."
+  },
+  {
+   "q": "How many predictions per step does a file with guidance_in cost at cfg 1?",
+   "options": [
+    "One",
+    "Two",
+    "Three",
+    "It depends on the guidance number"
+   ],
+   "answer": "One",
+   "why": "The second conditioning is dropped at cfg 1. The guidance number is just an input to that one prediction."
+  },
+  {
+   "q": "Why is a negative prompt pointless on an ordinary sampler at cfg 1?",
+   "options": [
+    "The text encoder ignores it",
+    "FluxGuidance deletes it",
+    "VAE decode removes it",
+    "The second branch cancels and is not run"
+   ],
+   "answer": "The second branch cancels and is not run",
+   "why": "sampling_function drops the second conditioning when cfg is close to 1."
+  },
+  {
+   "q": "In the lab, guidance 3.6 is about as far from 3.5 as guidance 1.0 is. What does that tell you?",
+   "options": [
+    "The number is spread across sines and cosines, so closeness in value is not closeness in the vector",
+    "3.6 and 1.0 give the same picture",
+    "Guidance has no effect",
+    "The lab is broken"
+   ],
+   "answer": "The number is spread across sines and cosines, so closeness in value is not closeness in the vector",
+   "why": "timestep_embedding multiplies by 1000, then takes sines and cosines. The learned layer decides what it means."
+  }
+ ]
+}

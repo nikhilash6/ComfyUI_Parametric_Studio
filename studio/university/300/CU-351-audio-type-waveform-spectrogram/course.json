@@ -1,0 +1,64 @@
+{
+ "code": "CU-351",
+ "title": "Waveform, sample rate and spectrograms: ComfyUI's AUDIO type",
+ "level": "300",
+ "prereq": [
+  "CU-216"
+ ],
+ "char": "sound",
+ "hook": "An AUDIO value is a tensor and a number. Most audio bugs in graphs come from forgetting the number.",
+ "track": "audio",
+ "order": 15,
+ "graphs": [
+  "nm_audio",
+  "e_audio_channels"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_audio.py:EmptyAudio",
+  "comfy_extras/nodes_audio.py:AudioAdjustVolume",
+  "comfy_extras/nodes_audio.py:TrimAudioDuration",
+  "comfy_extras/nodes_audio.py:SplitAudioChannels",
+  "comfy_extras/nodes_audio.py:JoinAudioChannels",
+  "comfy_extras/nodes_audio.py:AudioConcat",
+  "comfy_extras/nodes_audio.py:AudioMerge",
+  "comfy_extras/nodes_audio.py:match_audio_sample_rates",
+  "comfy_extras/nodes_audio.py:vae_decode_audio"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "AUDIO is a dict of waveform [batch, channels, samples] and sample_rate.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_audio.py:EmptyAudio"
+  },
+  {
+   "claim": "AudioAdjustVolume multiplies by 10 ** (dB / 20) and does not clip.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_audio.py:AudioAdjustVolume"
+  },
+  {
+   "claim": "AudioConcat doubles mono to stereo, and match_audio_sample_rates resamples the lower rate up.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_audio.py:match_audio_sample_rates"
+  },
+  {
+   "claim": "H3's audio VAE uses 32000 Hz. Music 3's DAV takes the default 44100 Hz.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE"
+  },
+  {
+   "claim": "nm_audio and e_audio_channels validate and run on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "Gallery files read with ffprobe: H3 32000 Hz stereo, LTX 48000 Hz stereo, the Music 3 score 44100 Hz stereo.",
+   "how": "run here",
+   "ref": "ffprobe on web/showcase"
+  }
+ ],
+ "unchecked": [
+  "We searched for a general spectrogram node in core and found only internal functions inside model code. A later version may add one, and packs may have one. We did not survey packs for this lesson.",
+  "Whether a save node clips values above 1.0 depends on the codec. We did not test each format."
+ ]
+}

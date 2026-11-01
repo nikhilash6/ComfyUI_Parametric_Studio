@@ -1,0 +1,15 @@
+negative's angle to the positive   plain along   plain sideways   perp-neg along   perp-neg sideways
+0                                  1.00          0.00             7.00             0.00
+15                                 1.20          -1.55            7.00             -1.81
+45                                 2.76          -4.24            7.00             -4.95
+90                                 7.00          -6.00            7.00             -7.00
+135                                11.24         -4.24            7.00             -4.95
+180                                13.00         -0.00            7.00             -0.00
+
+at 0 degrees the two prompts are the same: plain cfg has nothing left to amplify, Perp-Neg still goes the full 7.
+at 180 degrees plain cfg goes to 13.0 and Perp-Neg stays at 7.0 : a negative pointing straight away from the positive adds nothing.
+
+batch of 2: the part left over is at right angles to the whole batch: +4.4e-16. Image 1 alone: +1.69, image 2 alone: -1.69
+
+cost: positive, negative and empty are all predicted each step: 3, not 2. Setting neg_scale to 0 drops the negative; adding cfg 1 also drops the empty.
+neg_scale 0 is plain cfg against the empty prompt: True

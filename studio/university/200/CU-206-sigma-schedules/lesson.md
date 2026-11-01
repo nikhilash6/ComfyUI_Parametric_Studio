@@ -2,6 +2,16 @@
 
 **Objective.** Compute what each ComfyUI scheduler returns, explain the flow shift, and measure why a schedule matters without pretending that one is always best. Taught by Dr. Denoise.
 
+## In plain words
+
+Twenty steps have to get from pure noise to clean. A scheduler decides where to put those twenty stops. Most of the visible structure forms over one part of the range, and fine detail over another, so where you spend your stops matters. The output is a plain list of numbers, and you can read it before you render anything.
+
+{{graph:nm_sigmas}}
+
+Pick a few schedulers and read how they spend their steps.
+
+{{play:sigmas}}
+
 ## The idea
 
 A sampler (CU-205) says how to step. A scheduler says which noise levels to stop at. Same model, same step count, different stops, different result.
@@ -34,6 +44,19 @@ FLUX ties the shift to image size: the `ModelSamplingFlux` node computes μ line
 
 `SCHEDULER_HANDLERS` in `comfy/samplers.py` lists the options. At full denoise, `EPS.noise_scaling` scales the first noise by √(1+σ²) rather than σ. The extra 1 is the variance of the latent itself, and the lab does the same. `ModelSamplingSD3` defaults to shift 3.0.
 
+This graph has its dial exposed, with rho 3 where the default is 7.
+
+{{graph:sd15_karras_rho}}
+
+## What goes wrong
+
+- **Carrying a scheduler across families.** `karras` is a fine default on SD and gave a broken render on SD 3.5 on our one seed. CU-235 shows the list that warned of it.
+- **Choosing a scheduler without the sampler.** The lab shows the best scheduler depends on the solver. Test them as a pair.
+- **Trusting the step count.** `ddim_uniform` can return more steps than you asked for and `beta` can return fewer. Print the list.
+- **Thinking `simple` is the simple choice everywhere.** At 10 steps on SD 1.x it stops near σ 0.34, so the last jump to zero is much larger than for `karras`.
+- **Typing a range into `KarrasScheduler`.** It does not read the model. Numbers from one family are wrong on another, with no error.
+- **Confusing a shift with a scheduler.** Shift changes the model's table, and then a scheduler picks from it. Both change the list. To see which did what, change one at a time.
+
 ## Lab
 
 The first table shows the schedules for SD 1.x. Note that `simple` and `sgm_uniform` stop near 0.34 and never visit the low levels that `karras` does.
@@ -56,7 +79,7 @@ exponential    0.15635   0.08059   0.03931   0.00898
 kl_optimal     0.10740   0.05393   0.06005   0.01579
 ```
 
-There is no single winner. For Euler the schedules are within 40 percent of each other. For DPM++ 2M at 10 steps, `normal` is six times worse than `exponential`. The best schedule depends on the solver, so the two choices are not independent.
+There is no single winner. For Euler the worst schedule is about one and a half times the best. For DPM++ 2M at 10 steps, `normal` is six times worse than `exponential`. The best schedule depends on the solver, so the two choices are not independent.
 
 ```text
 steps  shift=1.0  shift=1.5  shift=3.0  shift=6.0

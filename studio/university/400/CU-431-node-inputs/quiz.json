@@ -1,0 +1,12 @@
+{
+ "code": "CU-431",
+ "title": "Node inputs: widgets, optional, hidden, force_input",
+ "level": "400",
+ "questions": [
+  {"q": "An API client sends the string \"false\" to a BOOLEAN input. What does the node get?", "options": ["False", "True", "A validation error", "The default"], "answer": "True", "why": "validate_inputs calls bool(val), and any non-empty string is true. We ran it."},
+  {"q": "An optional input has default 3 in the schema and is left out of the prompt. What does the function receive?", "options": ["3", "No argument: its Python default applies", "An error is raised", "Zero"], "answer": "No argument: its Python default applies", "why": "get_input_data passes only what the prompt holds. The schema default is for the editor."},
+  {"q": "A FLOAT input has min 0 and max 1. The prompt sends \"nan\". What happens?", "options": ["invalid_input_type", "value_bigger_than_max", "It passes and the node gets NaN", "It is clamped to 1"], "answer": "It passes and the node gets NaN", "why": "float('nan') converts fine, and every comparison with NaN is false, so neither range check fires."},
+  {"q": "What does force_input do on the server?", "options": ["Rejects constants", "Nothing: a constant still works", "Converts the value to a wire", "Makes the input lazy"], "answer": "Nothing: a constant still works", "why": "It tells the editor to draw a socket. A constant in the prompt passed in our run."},
+  {"q": "What is a side effect of asking for the hidden input UNIQUE_ID?", "options": ["The node runs on every queue", "The node id joins its cache key, so identical copies stop sharing a result", "The node is hidden from the menu", "The output is written to the PNG"], "answer": "The node id joins its cache key, so identical copies stop sharing a result", "why": "include_unique_id_in_input in comfy_execution/caching.py."}
+ ]
+}

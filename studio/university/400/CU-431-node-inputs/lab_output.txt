@@ -1,0 +1,19 @@
+type    you sent  the node receives
+INT     3.7       3
+INT     '3.7'     'invalid_input_type: Failed to convert an input value to a INT value'
+INT     3         3
+INT     11        'value_bigger_than_max: Value 11 bigger than max of 10'
+FLOAT   '0.5'     0.5
+FLOAT   'nan'     nan
+FLOAT   2.0       'value_bigger_than_max: Value 2.0 bigger than max of 1.0'
+BOOLEAN 'false'   True
+BOOLEAN 0         False
+STRING  5         '5'
+STRING  None      'None'
+
+optional o, schema default 3, left out of the prompt: {'s': 'hi', 'o': None}
+required s, left out of the prompt:                 required_input_missing: s
+['1', 0]                 wire? True
+['a']                    wire? False
+{'__value__': ['a']}     wire? False
+5                        wire? False

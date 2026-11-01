@@ -8,11 +8,63 @@
  "char": "latent",
  "hook": "What a factor-8 latent grid does to the cost of a layer, counted by PyTorch's FLOP counter, what the paper measured end to end, and the price it admits. Plus the three parts of a checkpoint in ComfyUI.",
  "code_refs": [
-  "nodes.py:class CheckpointLoaderSimple",
-  "nodes.py:class EmptyLatentImage",
-  "comfy/ldm/modules/attention.py:class BasicTransformerBlock",
-  "comfy/ldm/modules/attention.py:class CrossAttention"
+  "nodes.py:CheckpointLoaderSimple",
+  "nodes.py:EmptyLatentImage",
+  "nodes.py:VAELoader",
+  "comfy/ldm/modules/attention.py:BasicTransformerBlock",
+  "comfy/ldm/modules/attention.py:CrossAttention"
  ],
  "track": "history",
- "order": 70
+ "order": 70,
+ "graphs": [
+  "sd15_txt2img",
+  "sd15_hires",
+  "h_vae_roundtrip"
+ ],
+ "verified": [
+  {
+   "claim": "Returns MODEL, CLIP and VAE with those tooltips.",
+   "how": "source",
+   "ref": "nodes.py:CheckpointLoaderSimple"
+  },
+  {
+   "claim": "Makes zeros of batch, 4, height // 8, width // 8.",
+   "how": "source",
+   "ref": "nodes.py:EmptyLatentImage"
+  },
+  {
+   "claim": "A separate loader for the VAE.",
+   "how": "source",
+   "ref": "nodes.py:VAELoader"
+  },
+  {
+   "claim": "attn2 is the cross-attention to context.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:BasicTransformerBlock"
+  },
+  {
+   "claim": "Keys and values come from context.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:CrossAttention"
+  },
+  {
+   "claim": "The FLOP tables print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title and date from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2112.10752"
+  }
+ ],
+ "unchecked": [
+  "The paper quotes and table numbers were read in an earlier audit of this lesson. In this pass we rechecked the arXiv titles and abstracts only.",
+  "The CompVis README, Stability's post and the Hugging Face post were read in the earlier audit and not reopened here.",
+  "We did not render SD 1.x at 1024, so the cost is arithmetic and nothing here shows the picture."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

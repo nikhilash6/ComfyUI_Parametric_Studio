@@ -1,3 +1,20 @@
-RESULT mean_temporal_diff = 1
-RESULT diff_0_1 = [1.0, 1.0]
-RESULT diff_1_2 = [1.0, 1.0]
+output frame 4 reads input frames
+centred convolution       [3, 4, 5]
+causal, zero padding       [2, 3, 4]
+causal, first frame copied [2, 3, 4]
+change frames 6 to 8: outputs 0 to 5 move by 0.0 with causal padding, 2.38 with centred
+
+frames in   latent frames, two stride-2 layers   ((T - 1) // 4) + 1   decoded back, 4 L - 3
+1           1                                    1                    1
+5           2                                    2                    5
+17          5                                    5                    17
+48          12                                   12                   45
+49          13                                   13                   49
+81          21                                   21                   81
+82          21                                   21                   81
+
+clip                     latent grid after patching   tokens    joint pairs     spatial + temporal pairs   joint / factorised
+Wan 832x480, 81 frames   21 x 30 x 52                  32,760    1.073e+09       5.179e+07                  20.7
+Wan 832x480, 161 frames  41 x 30 x 52                  63,960    4.091e+09       1.024e+08                  40.0
+LTX 768x512, 121 frames  16 x 16 x 24                  6,144     3.775e+07       2.458e+06                  15.4
+double the frames, joint pairs grow 3.81 times; the same clip at twice the side grows them 16 times

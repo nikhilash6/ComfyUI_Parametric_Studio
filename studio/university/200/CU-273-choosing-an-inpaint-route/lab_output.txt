@@ -1,0 +1,24 @@
+one row of a soft mask, as drawn:               0.0 0.0 0.2 0.4 0.6 0.8 1.0 1.0
+SetLatentNoiseMask keeps it:                    0.0 0.0 0.2 0.4 0.6 0.8 1.0 1.0
+VAEEncodeForInpaint rounds and grows it (6):    0.0 0.0 1.0 1.0 1.0 1.0 1.0 1.0
+InpaintModelConditioning, noise_mask:           0.0 0.0 0.2 0.4 0.6 0.8 1.0 1.0
+InpaintModelConditioning, its grey-out, rounded: 0.0 0.0 0.0 0.0 1.0 1.0 1.0 1.0
+
+the masked part, 20 Euler steps, normal scheduler, stand-in denoiser. Correct content here has spread 1.00
+denoise   first sigma   original kept in the latent: correlation, spread     greyed first (VAEEncodeForInpaint): correlation, spread
+1.0       14.615        0.069        0.930                                    0.001        0.928
+0.8       4.904         0.201        0.946                                    0.001        0.926
+0.5       1.548         0.544        0.972                                    0.001        0.815
+0.3       0.810         0.778        0.987                                    0.001        0.620
+
+sampler blend, 12 Euler steps: largest change outside the mask
+SetLatentNoiseMask    denoise 1.0   0.0e+00
+SetLatentNoiseMask    denoise 0.5   0.0e+00
+VAEEncodeForInpaint   denoise 1.0   0.0e+00
+VAEEncodeForInpaint   denoise 0.5   0.0e+00
+
+an inpainting checkpoint takes 4 + 1 + 4 = 9 channels. Where the last 5 come from
+route                     mask channel           masked_image channels
+SetLatentNoiseMask        noise_mask, rounded    the latent, not blanked
+VAEEncodeForInpaint       noise_mask, rounded    the latent, greyed first
+InpaintModelConditioning  concat_mask, rounded   concat_latent_image, greyed first

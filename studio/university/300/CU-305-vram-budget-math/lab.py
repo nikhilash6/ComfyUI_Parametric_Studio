@@ -1,125 +1,32 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility
-torch.manual_seed(0)
-
-# Define constants
-GB = 1024 ** 3  # 1 GB in bytes
-MB = 1024 ** 2  # 1 MB in bytes
-
-# Define precisions and their bytes per parameter
-PRECISIONS = {
-    "fp32": 4,
-    "bf16": 2,
-    "fp8": 1,
-    "4bit": 0.5
-}
-
-# Define model sizes in billions of parameters
-MODELS = {
-    "12B": 12e9,
-    "4B": 4e9
-}
-
-# Define GPU memory configurations
-GPUS = {
-    "24GB": 24 * GB,
-    "96GB": 96 * GB
-}
-
-# Reserve memory for safety (4 GB)
-RESERVE = 4 * GB
-
-# Safety factor for activations and caches (e.g., 1.2x)
-SAFETY_FACTOR = 1.2
-
-# Estimate activation memory as a fraction of weights (simplified model)
-# In practice, this depends on batch size, sequence length, etc.
-# For this lab, we assume activations are ~10% of weights for a small batch
-ACTIVATION_FRACTION = 0.1
-
-# Estimate latent/cache memory as a fraction of weights
-# For example, KV cache in transformers can be significant
-LATENT_FRACTION = 0.05
-
-def calculate_memory(params, bytes_per_param, activation_fraction=ACTIVATION_FRACTION, latent_fraction=LATENT_FRACTION, safety_factor=SAFETY_FACTOR):
-    """
-    Calculate total memory required for a model.
-    
-    Args:
-        params: Number of parameters
-        bytes_per_param: Bytes per parameter (e.g., 4 for fp32)
-        activation_fraction: Fraction of weights for activations
-        latent_fraction: Fraction of weights for latent/cache
-        safety_factor: Safety multiplier
-    
-    Returns:
-        Total memory in bytes
-    """
-    # Weights memory
-    weights_bytes = params * bytes_per_param
-    
-    # Activation memory estimate
-    activation_bytes = weights_bytes * activation_fraction
-    
-    # Latent/cache memory estimate
-    latent_bytes = weights_bytes * latent_fraction
-    
-    # Total before safety factor
-    total_bytes = weights_bytes + activation_bytes + latent_bytes
-    
-    # Apply safety factor
-    total_bytes *= safety_factor
-    
-    return total_bytes
-
-# Calculate and print results
-results = {}
-
-for model_name, params in MODELS.items():
-    for prec_name, bytes_per_param in PRECISIONS.items():
-        # Calculate total memory
-        total_bytes = calculate_memory(params, bytes_per_param)
-        
-        # Store result
-        key = f"{model_name}_{prec_name}"
-        results[key] = total_bytes
-        
-        # Print result
-        print(f"RESULT {key} = {total_bytes:.6g}")
-
-# Check which models fit in which GPUs
-print("\n--- Fit Analysis ---")
-for gpu_name, gpu_mem in GPUS.items():
-    available_mem = gpu_mem - RESERVE
-    print(f"\n{gpu_name} GPU (available: {available_mem / GB:.2f} GB after reserve):")
-    for model_name, params in MODELS.items():
-        for prec_name, bytes_per_param in PRECISIONS.items():
-            key = f"{model_name}_{prec_name}"
-            total_bytes = results[key]
-            fits = total_bytes <= available_mem
-            status = "FITS" if fits else "DOES NOT FIT"
-            print(f"  {model_name} @ {prec_name}: {total_bytes / GB:.2f} GB -> {status}")
-
-# Assertions to verify concepts
-# 1. Higher precision should require more memory
-assert results["12B_fp32"] > results["12B_bf16"], "fp32 should require more memory than bf16"
-assert results["12B_bf16"] > results["12B_fp8"], "bf16 should require more memory than fp8"
-assert results["12B_fp8"] > results["12B_4bit"], "fp8 should require more memory than 4bit"
-
-# 2. Larger model should require more memory at same precision
-assert results["12B_fp32"] > results["4B_fp32"], "12B model should require more memory than 4B model"
-assert results["12B_bf16"] > results["4B_bf16"], "12B model should require more memory than 4B model at bf16"
-
-# 3. 4-bit should fit in 24GB for 4B model
-assert results["4B_4bit"] <= (24 * GB - RESERVE), "4B model at 4-bit should fit in 24GB GPU"
-
-# 4. 12B model at fp32 should NOT fit in 24GB
-assert results["12B_fp32"] > (24 * GB - RESERVE), "12B model at fp32 should not fit in 24GB GPU"
-
-print("\nAll assertions passed!")
+# CU-305 lab: the three numbers in a VRAM budget, using formulas read from ComfyUI v0.43.0. No GPU.
+# Weights are parameters x bytes. Working memory is model_base.memory_required. Room asked for is load_models_gpu's sum.
+MB = 1024 ** 2; GB = 1024 ** 3
+RESERVED = 400 * MB                                  # EXTRA_RESERVED_VRAM on Linux, without --reserve-vram
+def min_inference(): return 0.8 * GB + RESERVED      # minimum_inference_memory: 1024*1024*1024*0.8 + extra reserved
+def memory_required(batch, h, w, dtype_bytes, factor, frames=None):
+    """model_base.BaseModel.memory_required, the path taken with pytorch or flash attention. Shape is [batch, channels, ...], and channels are not counted."""
+    area = batch * h * w * (frames or 1)
+    return area * dtype_bytes * 0.01 * factor * MB
+def room_asked(weights, required):
+    """load_models_gpu: free_memory(total_memory_required * 1.1 + extra_mem), extra_mem = max(inference_memory, memory_required + reserved)."""
+    return weights * 1.1 + max(min_inference(), required + RESERVED)
+print("weights: parameters x bytes per parameter (parameter counts from Table 1 of the SDXL paper)")
+for name, p in (("SD 1.x U-Net, 860M", 860e6), ("SDXL U-Net, 2.6B", 2.6e9)):
+    print(f"  {name:20s} " + "  ".join(f"{d} {p * b / GB:5.2f} GB" for d, b in (("fp32", 4), ("fp16", 2), ("fp8", 1))))
+assert abs(860e6 * 2 / GB - 1.60) < 0.01
+print("\nworking memory estimate, fp16, CFG on (estimate_memory doubles the batch)")
+rows = (("SD 1.5  512 px", 64, 64, 1.0), ("SD 1.5  768 px", 96, 96, 1.0), ("SDXL   1024 px", 128, 128, 0.8), ("SD3    1024 px", 128, 128, 1.6))
+for name, h, w, f in rows:
+    print(f"  {name}  latent {h}x{w}  factor {f}:  {memory_required(2, h, w, 2, f) / MB:7.1f} MB")
+a = memory_required(2, 64, 64, 2, 1.0); b = memory_required(2, 128, 128, 2, 1.0); c = memory_required(4, 64, 64, 2, 1.0)
+print(f"\ndouble the side: x{b / a:.0f}.  double the batch: x{c / a:.0f}.  channels make no difference to this estimate.")
+assert b / a == 4 and c / a == 2
+print("\nroom asked for before loading, on a 12 GB card with nothing else loaded")
+for name, p, bytes_, h, f in (("SD 1.5 fp16, 512 px", 860e6, 2, 64, 1.0), ("SDXL fp16, 1024 px", 2.6e9, 2, 128, 0.8), ("SDXL fp8, 1024 px", 2.6e9, 1, 128, 0.8)):
+    w = p * bytes_; need = room_asked(w, memory_required(2, h, h, 2, f))
+    print(f"  {name:21s} weights {w / GB:5.2f} GB  asks for {need / GB:5.2f} GB  left {(12 * GB - need) / GB:6.2f} GB")
+assert room_asked(2.6e9 * 2, memory_required(2, 128, 128, 2, 0.8)) < 12 * GB
+print("\nwhat a finished result costs in system RAM (node outputs live on intermediate_device, the CPU, unless --gpu-only)")
+for name, n in (("latent 128x128, 4 channels, fp32", 128 * 128 * 4 * 4), ("IMAGE 1024x1024, 3 channels, fp32", 1024 * 1024 * 3 * 4), ("IMAGE batch, 81 frames 1280x720", 81 * 1280 * 720 * 3 * 4)):
+    print(f"  {name:36s} {n / MB:8.2f} MB")
+assert 128 * 128 * 4 * 4 / MB == 0.25

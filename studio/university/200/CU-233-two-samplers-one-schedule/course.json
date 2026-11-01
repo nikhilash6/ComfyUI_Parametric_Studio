@@ -1,0 +1,60 @@
+{
+ "code": "CU-233",
+ "title": "Two samplers, one schedule: leftover noise",
+ "level": "200",
+ "prereq": [
+  "CU-230",
+  "CU-232"
+ ],
+ "char": "denoise",
+ "hook": "Stop a run part-way with its noise still in, hand it on, and finish with another sampler or model. Three settings make it work and each one fails differently.",
+ "code_refs": [
+  "nodes.py:KSamplerAdvanced",
+  "nodes.py:common_ksampler",
+  "comfy/samplers.py:KSampler.sample",
+  "comfy/sample.py:prepare_empty_noise",
+  "comfy/model_sampling.py:EPS.noise_scaling",
+  "comfy/k_diffusion/sampling.py:sample_dpmpp_2m",
+  "comfy/samplers.py:CFGGuider.inner_sample"
+ ],
+ "track": "sampling",
+ "order": 50,
+ "kit": true,
+ "graphs": [
+  "sd15_two_stage"
+ ],
+ "verified": [
+  {
+   "claim": "return_with_leftover_noise disable sets force_full_denoise, which sets the last kept sigma to 0.",
+   "how": "source",
+   "ref": "nodes.py:KSamplerAdvanced.sample, comfy/samplers.py:KSampler.sample"
+  },
+  {
+   "claim": "add_noise disable uses a zero noise tensor.",
+   "how": "source",
+   "ref": "nodes.py:common_ksampler, comfy/sample.py:prepare_empty_noise"
+  },
+  {
+   "claim": "start_at_step at or past the end returns the latent unchanged.",
+   "how": "source",
+   "ref": "comfy/samplers.py:KSampler.sample"
+  },
+  {
+   "claim": "dpmpp_2m keeps the previous prediction in a local variable, so a new call starts without it.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:sample_dpmpp_2m"
+  },
+  {
+   "claim": "sd15_two_stage passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "All numbers come from a one-dimensional toy with a perfect denoiser, which forgives some mistakes a real model may not. We did not render the failure cases on a real model for this lesson.",
+  "Whether a sampler change part-way helps a real picture is an open question here. We have no render that shows it."
+ ],
+ "second_read": {
+  "errors_fixed": 3
+ }
+}

@@ -1,0 +1,73 @@
+{
+ "code": "CU-362",
+ "title": "Mesh tools in core: decimate, remesh, unwrap",
+ "level": "300",
+ "questions": [
+  {
+   "q": "In which order should you run these nodes on a generated mesh?",
+   "options": [
+    "Remesh, decimate, unwrap",
+    "Unwrap, remesh, decimate",
+    "Decimate, unwrap, remesh",
+    "Unwrap, decimate, remesh"
+   ],
+   "answer": "Remesh, decimate, unwrap",
+   "why": "The nodes' descriptions say to remesh before decimating, and to unwrap after both. Later steps would destroy the UVs."
+  },
+  {
+   "q": "Why does UnwrapMesh return more vertices than it was given?",
+   "options": [
+    "Vertices on chart seams are duplicated, one per chart, with the same position and different UVs",
+    "It subdivides the triangles",
+    "It adds padding vertices",
+    "It keeps the old mesh too"
+   ],
+   "answer": "Vertices on chart seams are duplicated, one per chart, with the same position and different UVs",
+   "why": "Its description says so. Our sphere went from 2562 to 2960 on the same 5120 faces."
+  },
+  {
+   "q": "What does RemeshMesh's resolution do to its memory floor?",
+   "options": [
+    "It grows with the cube: doubling it costs 8 times as much",
+    "It grows in line with resolution",
+    "It's fixed",
+    "It grows with the face count only"
+   ],
+   "answer": "It grows with the cube: doubling it costs 8 times as much",
+   "why": "memory_required takes resolution cubed x 64 bytes against faces x 512, whichever is larger."
+  },
+  {
+   "q": "You get thousands of one-triangle charts from UnwrapMesh. What's the likely cause?",
+   "options": [
+    "The input isn't welded, so raise weld_distance",
+    "padding is too low",
+    "The atlas is too small",
+    "The segmenter is too fast"
+   ],
+   "answer": "The input isn't welded, so raise weld_distance",
+   "why": "The tooltip says to raise it to about 0.001 for per-triangle charts on unwelded input. Basic voxel meshes are unwelded."
+  },
+  {
+   "q": "Which triangles does QEM decimation remove first?",
+   "options": [
+    "Those where a collapse changes the shape least, such as flat areas",
+    "The largest",
+    "The oldest",
+    "A random sample"
+   ],
+   "answer": "Those where a collapse changes the shape least, such as flat areas",
+   "why": "An edge's cost measures how far the merged vertex sits from the original planes, and low-cost edges go first."
+  },
+  {
+   "q": "What's the difference between udf and sdf in RemeshMesh's sign_mode?",
+   "options": [
+    "udf is robust to messy input and sdf gives a clean surface but needs consistent winding",
+    "udf is for images and sdf for video",
+    "udf is on a CPU and sdf on a GPU",
+    "They are the same"
+   ],
+   "answer": "udf is robust to messy input and sdf gives a clean surface but needs consistent winding",
+   "why": "The sign_mode tooltip says so, and adds that solid makes one watertight solid by a graph cut."
+  }
+ ]
+}

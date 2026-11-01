@@ -1,0 +1,32 @@
+loader node              folder name        looks in models/            gives
+CheckpointLoaderSimple   checkpoints        checkpoints                 MODEL, CLIP, VAE
+UNETLoader               diffusion_models   unet, diffusion_models      MODEL
+CLIPLoader               text_encoders      text_encoders, clip         CLIP
+VAELoader                vae                vae                         VAE
+LoraLoader               loras              loras                       MODEL, CLIP
+ControlNetLoader         controlnet         controlnet, t2i_adapter     CONTROL_NET
+CLIPVisionLoader         clip_vision        clip_vision                 CLIP_VISION
+UpscaleModelLoader       upscale_models     upscale_models              UPSCALE_MODEL
+
+checkpoints menu:      ['a.safetensors', 'e.sft', 'sub/b.ckpt']
+diffusion_models menu: ['u1.safetensors', 'u2.safetensors']
+text_encoders menu:    ['same.safetensors', 't1.safetensors', 't2.safetensors']
+same name in two folders loads: models/text_encoders/same.safetensors
+the old name unet gives the same list: True
+
+file    what the names say      holds
+file_1  checkpoint              denoiser, text encoder, VAE
+file_2  denoiser only           denoiser
+file_3  denoiser with a prefix  denoiser
+file_4  text encoder            text encoder
+file_5  text encoder            text encoder
+file_6  VAE                     VAE
+file_7  LoRA                    changes to another model
+file_8  ControlNet              control
+
+the file                the loader               what happens
+whole checkpoint        CheckpointLoaderSimple   MODEL, CLIP and VAE
+denoiser only           CheckpointLoaderSimple   warns, gives a MODEL; using CLIP or VAE then fails
+whole checkpoint        UNETLoader               takes the denoiser out of it; you still need the other two
+denoiser only           UNETLoader               gives a MODEL
+file of no known kind   either                   Could not detect model type

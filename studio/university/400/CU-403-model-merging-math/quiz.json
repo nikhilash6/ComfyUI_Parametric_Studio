@@ -4,54 +4,70 @@
  "level": "400",
  "questions": [
   {
-   "q": "What is the primary computational advantage of model merging (creating a 'model soup') over using an ensemble of models?",
+   "q": "In ModelMergeSimple, what does ratio mean?",
    "options": [
-    "It requires less VRAM and compute during inference because it results in a single checkpoint.",
-    "It allows for real-time fine-tuning during the inference process.",
-    "It eliminates the need for a base model entirely.",
-    "It automatically corrects hallucinations without any manual intervention."
+    "model2's share",
+    "model1's share",
+    "The learning rate",
+    "The number of blocks"
    ],
-   "answer": "It requires less VRAM and compute during inference because it results in a single checkpoint.",
-   "why": "The lesson states that unlike an ensemble, which doubles VRAM and compute by running multiple models, a merged model is a single checkpoint where you pay the cost once at merge time and then just run one model."
+   "answer": "model1's share",
+   "why": "add_patches(k, 1 - ratio, ratio) multiplies model1 by ratio and adds model2 times 1 - ratio. Default 1.0 gives model1 unchanged."
   },
   {
-   "q": "In the context of Task Arithmetic, how is the 'task vector' defined?",
+   "q": "Two fine-tunes 8 degrees apart: how much do lerp and slerp differ?",
    "options": [
-    "The sum of the weights of the fine-tuned model and the base model.",
-    "The difference between the fine-tuned model and the base model ($W_{fine} - W_{base}$).",
-    "The average of the weights of two different fine-tuned models.",
-    "The L2 norm of the fine-tuned model's weights."
+    "Hugely, slerp always wins",
+    "By about 0.00024 per weight at most, on weights of about 0.02: hardly at all",
+    "Lerp gives zero",
+    "They can't be compared"
    ],
-   "answer": "The difference between the fine-tuned model and the base model ($W_{fine} - W_{base}$).",
-   "why": "The lesson explicitly defines the task vector $V$ as $V = W_{fine} - W_{base}$, describing it as the difference between the fine-tuned model and the base model."
+   "answer": "By about 0.00024 per weight at most, on weights of about 0.02: hardly at all",
+   "why": "The two differ only when the parents are far apart. At 90 degrees, lerp's length is 0.707 of the parents'."
   },
   {
-   "q": "Why is SLERP (Spherical Linear Interpolation) often preferred over linear interpolation for merging models where weight magnitude carries semantic meaning?",
+   "q": "What is task arithmetic at x = 0.5 and y = 0.5?",
    "options": [
-    "It is computationally cheaper than linear interpolation.",
-    "It preserves the magnitude (norm) of the weights, avoiding the 'shrinkage' effect toward the origin.",
-    "It assumes the path between weights is a straight line through the center of the sphere.",
-    "It automatically scales the output to zero to prevent overfitting."
+    "The same sum as a halfway lerp",
+    "A rotation",
+    "Twice the change",
+    "Undefined"
    ],
-   "answer": "It preserves the magnitude (norm) of the weights, avoiding the 'shrinkage' effect toward the origin.",
-   "why": "The lesson explains that linear interpolation can cause the resulting vector to have a smaller norm (shrink toward the origin), while SLERP, when scaled to the average norm, perfectly preserves the magnitude of the weights."
+   "answer": "The same sum as a halfway lerp",
+   "why": "base + 0.5(A - base) + 0.5(B - base) = 0.5A + 0.5B. The lab finds the difference is rounding."
   },
   {
-   "q": "According to the lab results, what was the norm of the SLERP merged vector, and how did it compare to the average of the parent norms?",
-   "options": null,
-   "answer": "The norm was 3.49621, which was exactly equal to the average of the parent norms.",
-   "why": "The lab results show `RESULT norm_slerp = 3.49621`. The analysis states that the average of the parent norms is $(3.61211 + 3.38031) / 2 = 3.49621$, confirming that SLERP perfectly preserved the magnitude."
+   "q": "Why merge unquantized files and quantize after, by the numbers?",
+   "options": [
+    "It runs faster",
+    "Merging quantized parents rounds again, on top of the parents' rounding: FP8's error grows from 0.026 to 0.036, and a small task vector drowns",
+    "Quantized files can't be loaded",
+    "FP8 is always better"
+   ],
+   "answer": "Merging quantized parents rounds again, on top of the parents' rounding: FP8's error grows from 0.026 to 0.036, and a small task vector drowns",
+   "why": "The final file is rounded either way. Quantizing parents adds their two errors to that one. The lab's correlation with the true change falls to 0.408 at a 1% change."
   },
   {
-   "q": "What is a common mistake when using SLERP that can result in a model producing black images?",
+   "q": "You subtract a base from a fine-tune, using FP8 files of both, and the change is 1% of the weights' size. What's read back?",
    "options": [
-    "Using a scalar weight ($\\alpha$) greater than 1.",
-    "Forgetting to scale the unit vector output back to the average norm of the inputs.",
-    "Adding the task vectors instead of interpolating the full weights.",
-    "Using a base model that has not been fine-tuned."
+    "The change, nearly exact",
+    "More rounding error than change: error is about 2.2 times the change",
+    "Exactly zero",
+    "The base"
    ],
-   "answer": "Forgetting to scale the unit vector output back to the average norm of the inputs.",
-   "why": "The 'Common mistakes' section states that the raw SLERP output is a unit vector, and if you forget to scale it back to the average norm, the model will have near-zero weights and produce black images."
+   "answer": "More rounding error than change: error is about 2.2 times the change",
+   "why": "The two rounding errors don't cancel, and they're bigger than a change that small."
+  },
+  {
+   "q": "Why keep your unquantized file after you quantize a copy?",
+   "options": [
+    "For the licence",
+    "It's your only clean source for any later merge",
+    "Quantized files expire",
+    "It's smaller"
+   ],
+   "answer": "It's your only clean source for any later merge",
+   "why": "Rounding can't be undone, so any later merge starts from the file you kept."
   }
  ]
 }

@@ -27,6 +27,23 @@ A KSampler on an SD or Flux model is not autoregressive. It updates every positi
 - **Language-model text encoders.** In `comfy/text_encoders/llama.py` the forward pass, when it handles more than one token at once, builds a causal mask by filling a square matrix with a large negative number and keeping only its strict upper triangle (`triu_(1)`), so a token cannot read later tokens. `generate` then draws one token at a time: `sample_token` scales the logits by temperature, trims with top-k and top-p, and calls `torch.multinomial`, with a KV cache so earlier tokens are not recomputed.
 - **Video that is autoregressive over blocks of frames.** `SamplerARVideo` in `comfy_extras/nodes_ar_video.py` has a widget `num_frame_per_block`: "1 = framewise, 3 = chunkwise". Its `sample_ar_video` in `comfy/k_diffusion/sampling.py` visits the blocks in order and runs the usual sigma loop on each one. `CausalWanSelfAttention` in `comfy/ldm/wan/ar_model.py` writes a block's keys and values into a cache and attends over the cache up to and including that block, so each block sees all earlier blocks and none later. Each factor p(block | earlier blocks) is itself a diffusion run.
 
+The price of going one token at a time, and how much a cache takes back. This is the loop that `generate` runs.
+
+{{play:kvcache}}
+
+The easiest autoregressive model to reach from a graph is Music 3. CU-312 follows its text encoder into `MiniMaxMusic3AR.generate`, which draws tokens one at a time. The name "text encode" hides that.
+
+{{graph:wf_music3}}
+
+## What goes wrong
+
+- **You think a KSampler draws one latent cell at a time.** It updates every position at every step, so nothing here applies to it. Autoregression shows up in the language-model encoders and in the AR video sampler.
+- **You set `num_frame_per_block` by taste.** Its tooltip says it "must match the checkpoint's training mode". It is a fact about the file, and not a quality dial.
+- **The same settings give different output.** `sample_token` draws with `torch.multinomial`, so a run depends on its generator. Keep the seed fixed if you want to repeat a result.
+- **Your own mask leaks.** An off-by-one lets a position read itself. Test it the way the lab does: differentiate each output with respect to each input. Everything at or after the position must be exactly zero.
+- **You rank models by bits per dimension to find the best-looking one.** A likelihood is a compression score. CU-506 shows a model with a worse likelihood than Gated PixelCNN and the best FID of its day.
+- **You budget by the training speed.** Scoring is one pass and sampling is one pass per element: 64 against 1 in the lab, with 8 × 8 pictures.
+
 ## Lab
 
 The data are 8×8 black and white images of a vertical bar two pixels wide, in one of 7 positions, with every pixel then flipped with probability 0.05. The generator is known, so the exact conditionals can be computed. First the chain rule, on 20000 images: the 64 exact conditionals, each a Bayes average over the bar position, multiply to the joint probability.

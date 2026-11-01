@@ -2,11 +2,17 @@
 
 **Objective.** Separate the velocity of one training pair, which is constant, from the field you integrate, which is not. Say what reflow changes. Taught by Dr. Denoise.
 
+## In plain words
+
+Older models learned to spot noise. Flow models learn a direction. Pick a picture and some static, and draw a straight line between them. Train the network to say which way that line points. To generate, start at static and follow the direction to a picture. It sounds as if you could do that in one big step, since each line is straight. You can't, and this lesson shows why. When ComfyUI runs SD3, FLUX or similar models, this is the machinery underneath, and the schedule usually has a shift, which you can see here with model kind set to Flow.
+
+{{play:sigmas}}
+
 ## The idea
 
 Pick a data sample x_0 and a noise sample ε, and draw a straight line between them. Train a network to predict the direction of that line. Three groups published versions of this within weeks: Lipman et al. (flow matching), Liu et al. (rectified flow) and Albergo and Vanden-Eijnden (stochastic interpolants).
 
-A common mistake, which an earlier draft of this very course made, is to conclude that sampling is a straight line and one Euler step is exact. It is not, and this lesson shows why.
+A common mistake is to conclude that sampling is a straight line and one Euler step is exact. It is not.
 
 ## The maths
 
@@ -29,6 +35,17 @@ Rectified flow (Liu et al. 2022) uses this. Integrate the learned ODE to get pai
 ## In ComfyUI
 
 The `CONST` class in `comfy/model_sampling.py` implements this: `noise_scaling` is σ·noise + (1−σ)·latent, with t written as σ, and `calculate_denoised` is x − σ·output, which is the formula above rearranged. So a flow model enters the same samplers as everything else, through a denoised estimate. `ModelSamplingDiscreteFlow` holds the shifted schedule (CU-206).
+
+{{graph:sd35_flow}}
+
+## What goes wrong
+
+- **Using one step because "flow is straight".** The lab's first row: one Euler step has an error of 1.67 on a mixture. Only reflowed models come close to doing that.
+- **Using a noise-prediction schedule on a flow model.** `karras` gave a broken render on SD 3.5 on our one seed (CU-235).
+- **Using SD latents with an SD3 graph.** It needs its own 16-channel empty latent. `EmptySD3LatentImage` does that.
+- **Expecting a flow model to have σ up to 14.** Its range is about 0 to 1. Check typed-in schedule numbers.
+- **Setting shift by habit.** It's a real choice, and it changes where steps go. Change it on purpose and compare (CU-242).
+- **Calling a model "rectified" because it uses straight training pairs.** Liu et al.'s reflow is a second training round. Most flow models have not been through that, and we can't tell you which from their names.
 
 ## Lab
 

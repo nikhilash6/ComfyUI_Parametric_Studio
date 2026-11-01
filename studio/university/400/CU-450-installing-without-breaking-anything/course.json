@@ -1,0 +1,68 @@
+{
+ "code": "CU-450",
+ "title": "Installing without breaking anything",
+ "level": "400",
+ "prereq": [
+  "CU-380"
+ ],
+ "char": "tune",
+ "hook": "Venvs, constraints, dry runs, a container with no way out, and a smoke test. How to try a pack so that a bad one costs you nothing.",
+ "track": "packs",
+ "order": 50,
+ "graphs": [
+  "nm_first"
+ ],
+ "code_refs": [
+  "comfy/cli_args.py:--disable-all-custom-nodes",
+  "comfy/cli_args.py:--whitelist-custom-nodes",
+  "comfy/cli_args.py:--disabled-nodes-config",
+  "comfy/cli_args.py:--base-directory",
+  "main.py:prestartup_script.py",
+  "nodes.py:load_custom_node",
+  "SECURITY.md"
+ ],
+ "verified": [
+  {
+   "claim": "Constraints files only control which version is installed, not whether it is installed.",
+   "how": "docs",
+   "ref": "pip user guide, fetched 2026-11-01"
+  },
+  {
+   "claim": "pip install --dry-run prints what would be installed without installing it, and --report writes a JSON report.",
+   "how": "docs",
+   "ref": "pip install reference, fetched 2026-11-01"
+  },
+  {
+   "claim": "venv creates a separate environment, isolated by default from the base environment's packages.",
+   "how": "docs",
+   "ref": "Python docs, venv, fetched 2026-11-01"
+  },
+  {
+   "claim": "docker network create --internal restricts external access, and docker's mounts can be read-only.",
+   "how": "docs",
+   "ref": "docs.docker.com, fetched 2026-11-01"
+  },
+  {
+   "claim": "ComfyUI has --disable-all-custom-nodes, --whitelist-custom-nodes and --base-directory.",
+   "how": "source",
+   "ref": "comfy/cli_args.py"
+  },
+  {
+   "claim": "The version checker in the Lab ran here, on example names and versions.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graph ran on a CPU.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "A sandbox lowers the risk and doesn't remove it. Container escapes exist, and we don't claim any setup is proof against one.",
+  "A successful load tells you little about what a pack does later or under other inputs.",
+  "Whether any tool that installs packs for you runs requirements automatically. Check the tool you use.",
+  "We describe the method in general. Commands vary with your system, and we did not run these exact ones for this lesson."
+ ],
+ "kit": true
+}

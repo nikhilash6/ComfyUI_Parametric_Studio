@@ -1,0 +1,77 @@
+{
+ "code": "CU-333",
+ "title": "Wan 2.2 5B, node by node, and how it differs from the 14B pair",
+ "level": "300",
+ "prereq": [
+  "CU-330"
+ ],
+ "char": "frame",
+ "hook": "One small model with a stronger VAE, or two big ones that hand over mid-run. What the configs say, and what our graph changes.",
+ "track": "video",
+ "order": 28,
+ "graphs": [
+  "wf_wan22_t2v"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_wan.py:Wan22ImageToVideoLatent",
+  "comfy/supported_models.py:WAN22_T2V",
+  "comfy/supported_models.py:WAN21_T2V",
+  "comfy/model_base.py:WAN22",
+  "comfy/latent_formats.py:Wan22",
+  "comfy/sd.py:wan22_layout",
+  "comfy_extras/nodes_model_advanced.py:ModelSamplingSD3",
+  "nodes.py:KSamplerAdvanced"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "Wan22ImageToVideoLatent makes [1, 48, (n - 1) // 4 + 1, H / 16, W / 16], and uses batch_size only on the branch with a start image.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_wan.py:Wan22ImageToVideoLatent"
+  },
+  {
+   "claim": "WAN22_T2V matches model_type t2v with out_dim 48, and is built with image_to_video True.",
+   "how": "source",
+   "ref": "comfy/supported_models.py:WAN22_T2V"
+  },
+  {
+   "claim": "With a mask, WAN22.process_timestep gives each latent frame its own timestep.",
+   "how": "source",
+   "ref": "comfy/model_base.py:WAN22"
+  },
+  {
+   "claim": "5B: VAE stride (4, 16, 16), dim 3072, 30 layers, sample_shift 5, 50 steps, guide scale 5, 24 fps, 121 frames.",
+   "how": "docs",
+   "ref": "wan/configs/wan_ti2v_5B.py in Wan-Video/Wan2.2, fetched 2026-11-01"
+  },
+  {
+   "claim": "T2V A14B: VAE stride (4, 8, 8), dim 5120, 40 layers, low and high noise checkpoints, boundary 0.875, sample_shift 12, 40 steps, guide scale (3, 4).",
+   "how": "docs",
+   "ref": "wan/configs/wan_t2v_A14B.py in Wan-Video/Wan2.2, fetched 2026-11-01"
+  },
+  {
+   "claim": "The README lists TI2V-5B as high-compression, T2V and I2V, 720P at 24 fps.",
+   "how": "docs",
+   "ref": "Wan-Video/Wan2.2 README, fetched 2026-11-01"
+  },
+  {
+   "claim": "Gallery Wan clips have 121 frames with no sound stream.",
+   "how": "run here",
+   "ref": "ffprobe on web/showcase/v_wan_waves.mp4"
+  },
+  {
+   "claim": "The graph passes validate_prompt with its file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "Wan's weights are not on our test machine today, so we did not run this graph for this lesson. Clips are earlier renders from the gallery.",
+  "How a 14B file is detected in ComfyUI is inferred from the unet_config match rules. We did not load a 14B file.",
+  "The step split on the lab's plain even grid is close to, not the same as, what Wan's own sampler schedule produces.",
+  "We did not compare shift 8 and 20 steps against Wan's shift 5 and 50 steps. Our graph's numbers are a studio choice."
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

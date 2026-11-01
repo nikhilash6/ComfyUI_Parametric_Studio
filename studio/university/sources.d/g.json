@@ -1,0 +1,142 @@
+{
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_base.py": {
+  "title": "ComfyUI v0.43.0, comfy/model_base.py",
+  "checked": "read at v0.43.0 on 2026-11-01: BaseModel.memory_required"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/sampler_helpers.py": {
+  "title": "ComfyUI v0.43.0, comfy/sampler_helpers.py",
+  "checked": "read at v0.43.0 on 2026-11-01: estimate_memory"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/supported_models.py": {
+  "title": "ComfyUI v0.43.0, comfy/supported_models.py",
+  "checked": "read at v0.43.0 on 2026-11-01: memory_usage_factor per family"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_easycache.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_easycache.py",
+  "checked": "read at v0.43.0 on 2026-11-01: EasyCache and LazyCache"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_torch_compile.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_torch_compile.py",
+  "checked": "read at v0.43.0 on 2026-11-01: TorchCompileModel"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/qwen_image21/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/qwen_image21/model.py",
+  "checked": "read at v0.43.0 on 2026-11-01: PrefixCache"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/seedvr/vae.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/seedvr/vae.py",
+  "checked": "read at v0.43.0 on 2026-11-01: _fp16_accumulate_wanted"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/app/logger.py": {
+  "title": "ComfyUI v0.43.0, app/logger.py",
+  "checked": "read at v0.43.0 on 2026-11-01: LogInterceptor"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_cond.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_cond.py",
+  "checked": "read at v0.43.0 on 2026-11-01: SaveConditioning, ConditioningLoader"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/tests-unit/comfy_quant/test_mixed_precision.py": {
+  "title": "ComfyUI v0.43.0, tests-unit/comfy_quant/test_mixed_precision.py",
+  "checked": "read at v0.43.0 on 2026-11-01: the fallback test"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_nag.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_nag.py",
+  "checked": "read at v0.43.0 on 2026-11-01: NAGuidance formula"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/SECURITY.md": {
+  "title": "ComfyUI v0.43.0, SECURITY.md",
+  "checked": "read at v0.43.0 on 2026-11-01: threat model"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/LICENSE": {
+  "title": "ComfyUI v0.43.0, LICENSE",
+  "checked": "read at v0.43.0 on 2026-11-01: GPL version 3"
+ },
+ "https://arxiv.org/abs/2410.02367": {
+  "title": "SageAttention: Accurate 8-Bit Attention for Plug-and-play Inference Acceleration",
+  "checked": "title from the arXiv API, 2026-11-01"
+ },
+ "https://docs.pytorch.org/docs/2.15/backends.html": {
+  "title": "PyTorch 2.15, torch.backends",
+  "checked": "fetched 2026-11-01; allow_fp16_accumulation is not on this page, which CU-311 records"
+ },
+ "https://docs.pytorch.org/docs/2.15/notes/cuda.html": {
+  "title": "PyTorch 2.15, CUDA semantics",
+  "checked": "fetched 2026-11-01: memory management and asynchronous execution sections"
+ },
+ "https://docs.pytorch.org/docs/2.15/generated/torch.load.html": {
+  "title": "PyTorch 2.15, torch.load",
+  "checked": "fetched 2026-11-01: warning, and weights_only description"
+ },
+ "https://github.com/calcuis/gguf": {
+  "title": "calcuis/gguf",
+  "checked": "local copy read as text 2026-11-01, pig.py and LICENSE; not run"
+ },
+ "https://github.com/pamparamm/sd-perturbed-attention": {
+  "title": "pamparamm/sd-perturbed-attention",
+  "checked": "local copy read as text 2026-11-01, nag_nodes.py, tpg_nodes.py, LICENSE; not run"
+ },
+ "https://github.com/bvhari/ComfyUI_PerpNeg": {
+  "title": "bvhari/ComfyUI_PerpNeg",
+  "checked": "local copy read as text 2026-11-01, perpneg.py; not run"
+ },
+ "https://github.com/WASasquatch/PowerNoiseSuite": {
+  "title": "WASasquatch/PowerNoiseSuite",
+  "checked": "local copy read as text 2026-11-01, modules/latent_noise.py; not run"
+ },
+ "https://github.com/duckyshell/ComfyUI-MiniMaxH3-FirstBlockCache": {
+  "title": "duckyshell/ComfyUI-MiniMaxH3-FirstBlockCache",
+  "checked": "local copy read as text 2026-11-01, nodes.py, README, LICENSE; not run"
+ },
+ "https://github.com/embedding-shapes/ComfyUI-SweepGrid": {
+  "title": "embedding-shapes/ComfyUI-SweepGrid",
+  "checked": "local copy read as text 2026-11-01, nodes folder, LICENSE; not run"
+ },
+ "https://www.gnu.org/licenses/gpl-3.0.txt": {
+  "title": "GNU General Public License v3.0",
+  "checked": "fetched 2026-11-01: sections 0 and 5"
+ },
+ "https://www.gnu.org/licenses/agpl-3.0.txt": {
+  "title": "GNU Affero General Public License v3.0",
+  "checked": "fetched 2026-11-01: section 13"
+ },
+ "https://raw.githubusercontent.com/spdx/license-list-data/main/text/MIT.txt": {
+  "title": "MIT licence text, SPDX",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://raw.githubusercontent.com/spdx/license-list-data/main/text/Apache-2.0.txt": {
+  "title": "Apache-2.0 licence text, SPDX",
+  "checked": "fetched 2026-11-01: section 4"
+ },
+ "https://huggingface.co/spaces/CompVis/stable-diffusion-license/raw/main/license.txt": {
+  "title": "CreativeML Open RAIL-M, text from CompVis",
+  "checked": "fetched 2026-11-01: paragraphs 4, 5, 6, Attachment A"
+ },
+ "https://choosealicense.com/no-permission": {
+  "title": "No Permission, choosealicense.com",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://opensource.org/ai/open-source-ai-definition": {
+  "title": "The Open Source AI Definition",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://pip.pypa.io/en/stable/user_guide": {
+  "title": "pip user guide, Constraints Files",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://pip.pypa.io/en/stable/cli/pip_install": {
+  "title": "pip install reference",
+  "checked": "fetched 2026-11-01: --dry-run, --report"
+ },
+ "https://docs.python.org/3/library/venv.html": {
+  "title": "Python docs, venv",
+  "checked": "fetched 2026-11-01"
+ },
+ "https://docs.docker.com/reference/cli/docker/network/create": {
+  "title": "Docker, network create",
+  "checked": "fetched 2026-11-01: --internal"
+ },
+ "https://docs.docker.com/reference/cli/docker/container/run": {
+  "title": "Docker, container run",
+  "checked": "fetched 2026-11-01: --read-only, mount modes"
+ }
+}

@@ -1,0 +1,44 @@
+percent to noise level, SD 1.x
+percent  timestep  sigma
+0.0      999.0     above every step
+0.25     749.2     4.086
+0.5      499.5     1.616
+0.75     249.8     0.695
+0.8      199.8     0.571
+1.0      0.0       0.000
+
+20 steps, start_percent 0: steps with the ControlNet on
+end_percent   normal   karras   exponential   simple
+0.25          5        6        4             5
+0.5           10       9        7             10
+0.75          15       12       10            15
+0.8           16       12       10            16
+1.0           20       20       20            20
+
+same window, start 0 end 0.8, different step counts, karras
+steps   on   share
+8       5    0.62
+20      12   0.60
+40      25   0.62
+
+other windows, 20 steps, normal
+start   end   steps on
+0.0     0.5   10
+0.2     0.8   12
+0.5     1.0   10
+0.8     0.2   0
+
+the window is on the model's scale, so denoise moves your steps under it. 20 steps, normal, start 0
+denoise  first sigma   end 0.25   end 0.5   end 0.8
+1.0      14.615        5          10        16
+0.8      4.904         2          8         15
+0.5      1.548         0          0         12
+0.3      0.810         0          0         7
+
+same percent on a flow model, shift 3
+percent  sigma on SD 1.x   sigma on flow
+0.25     4.086             0.900
+0.5      1.616             0.750
+0.75     0.695             0.500
+
+strength multiplies the residuals: |0.5 x| / |x| = 0.5   chained: difference from 0.5 r1 + 0.5 r2 = 0.0

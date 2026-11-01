@@ -1,0 +1,79 @@
+{
+ "code": "CU-360",
+ "title": "Image to mesh with core nodes",
+ "level": "300",
+ "prereq": [
+  "CU-307"
+ ],
+ "char": "latent",
+ "hook": "A sampler again, with a very strange latent, then a step that turns a grid of numbers into triangles. Why one option makes cubes.",
+ "track": "three-d",
+ "order": 14,
+ "graphs": [
+  "hunyuan3d_mesh",
+  "e_hunyuan3d_surfnet"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_hunyuan3d.py:EmptyLatentHunyuan3Dv2",
+  "comfy_extras/nodes_hunyuan3d.py:Hunyuan3Dv2Conditioning",
+  "comfy_extras/nodes_hunyuan3d.py:VAEDecodeHunyuan3D",
+  "comfy_extras/nodes_hunyuan3d.py:voxel_to_mesh",
+  "comfy_extras/nodes_hunyuan3d.py:voxel_to_mesh_surfnet",
+  "comfy_extras/nodes_hunyuan3d.py:VoxelToMesh",
+  "comfy_extras/nodes_hunyuan3d.py:VoxelToMeshBasic",
+  "comfy/ldm/hunyuan3d/vae.py:VanillaVolumeDecoder",
+  "nodes.py:CLIPVisionEncode",
+  "comfy_extras/nodes_save_3d.py:SaveGLB"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "The empty latent is [batch, 64, resolution]: a list of tokens, not a grid.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_hunyuan3d.py:EmptyLatentHunyuan3Dv2"
+  },
+  {
+   "claim": "Positive conditioning is the image embedding and negative is zeros of the same shape.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_hunyuan3d.py:Hunyuan3Dv2Conditioning"
+  },
+  {
+   "claim": "The decoder queries a grid of octree_resolution + 1 points per side, num_chunks at a time.",
+   "how": "source",
+   "ref": "comfy/ldm/hunyuan3d/vae.py:VanillaVolumeDecoder"
+  },
+  {
+   "claim": "VoxelToMeshBasic is marked deprecated, and VoxelToMesh offers surface net and basic.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_hunyuan3d.py:VoxelToMeshBasic"
+  },
+  {
+   "claim": "The real voxel_to_mesh on the lab's 32 grid returned 4,620 triangles, the same as the lab.",
+   "how": "run here",
+   "ref": "comfy_extras/nodes_hunyuan3d.py:voxel_to_mesh"
+  },
+  {
+   "claim": "The real voxel_to_mesh_surfnet on that grid returned 4,728 triangles and the lab's simpler version 4,620, so its surface net is the same idea and not the same code.",
+   "how": "run here",
+   "ref": "comfy_extras/nodes_hunyuan3d.py:voxel_to_mesh_surfnet"
+  },
+  {
+   "claim": "Both graphs pass validate_prompt with file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  },
+  {
+   "claim": "Hunyuan3D 2.0's abstract describes a shape model built on a flow-based diffusion transformer.",
+   "how": "docs",
+   "ref": "arXiv 2501.12202, fetched 2026-11-01"
+  }
+ ],
+ "unchecked": [
+  "These graphs were validated and not run: the Hunyuan3D checkpoint is not on our test machine, so we have no output of our own to show.",
+  "The graph's steps, cfg and threshold came from a template. We did not test which values are best. The threshold range is the node's, and what values the decoder gives on real shapes wasn't measured.",
+  "The picture in this lesson is from ComfyUI's template library, and was not rendered by us."
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

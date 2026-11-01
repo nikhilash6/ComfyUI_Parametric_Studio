@@ -1,0 +1,102 @@
+{
+ "https://github.com/lllyasviel/ControlNet-v1-1-nightly/blob/main/README.md": {
+  "title": "ControlNet 1.1 nightly README",
+  "checked": "fetched 2026-11-01: depth and Canny training data notes"
+ },
+ "https://arxiv.org/abs/2409.18124": {
+  "title": "Lotus: Diffusion-based Visual Foundation Model for High-quality Dense Prediction",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/blueprints/Image%20Depth%20Estimation%20(Lotus%20Depth": {
+  "title": "ComfyUI v0.43.0, blueprints/Image%20Depth%20Estimation%20(Lotus%20Depth).json",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/lora_convert.py": {
+  "title": "ComfyUI v0.43.0, comfy/lora_convert.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_lora_stack.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_lora_stack.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_dataset.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_dataset.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2402.09353": {
+  "title": "DoRA: Weight-Decomposed Low-Rank Adaptation",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://arxiv.org/abs/2108.06098": {
+  "title": "FedPara: Low-Rank Hadamard Product for Communication-Efficient Federated Learning",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://arxiv.org/abs/2212.10650": {
+  "title": "KronA: Parameter Efficient Tuning with Kronecker Adapter",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://arxiv.org/abs/2306.07280": {
+  "title": "Controlling Text-to-Image Diffusion by Orthogonal Finetuning",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://arxiv.org/abs/2306.07967": {
+  "title": "One-for-All: Generalized LoRA for Parameter-Efficient Fine-tuning",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://arxiv.org/abs/2309.14859": {
+  "title": "Navigating Text-To-Image Customization: From LyCORIS Fine-Tuning to Model Evaluation",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/weight_adapter/__init__.py": {
+  "title": "ComfyUI v0.43.0, comfy/weight_adapter/__init__.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/weight_adapter/base.py": {
+  "title": "ComfyUI v0.43.0, comfy/weight_adapter/base.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/weight_adapter/loha.py": {
+  "title": "ComfyUI v0.43.0, comfy/weight_adapter/loha.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/weight_adapter/lokr.py": {
+  "title": "ComfyUI v0.43.0, comfy/weight_adapter/lokr.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/weight_adapter/oft.py": {
+  "title": "ComfyUI v0.43.0, comfy/weight_adapter/oft.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/weight_adapter/glora.py": {
+  "title": "ComfyUI v0.43.0, comfy/weight_adapter/glora.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/weight_adapter/boft.py": {
+  "title": "ComfyUI v0.43.0, comfy/weight_adapter/boft.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2203.05482": {
+  "title": "Model soups: averaging weights of multiple fine-tuned models improves accuracy without increasing inference time",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://arxiv.org/abs/2212.04089": {
+  "title": "Editing Models with Task Arithmetic",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_model_merging.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_model_merging.py",
+  "checked": "read the v0.43.0 file on our install, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2202.00512": {
+  "title": "Progressive Distillation for Fast Sampling of Diffusion Models",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://arxiv.org/abs/2303.01469": {
+  "title": "Consistency Models",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ },
+ "https://arxiv.org/abs/2310.04378": {
+  "title": "Latent Consistency Models: Synthesizing High-Resolution Images with Few-Step Inference",
+  "checked": "arXiv API title and abstract read 2026-11-01"
+ }
+}

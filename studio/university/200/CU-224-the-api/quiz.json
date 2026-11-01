@@ -57,6 +57,28 @@
    ],
    "answer": "GET /view with filename, subfolder and type",
    "why": "The executed event or history gives those three values."
+  },
+  {
+   "q": "A job failed. Which is true of the message that ends it?",
+   "options": [
+    "No end message arrives",
+    "It is execution_success with an error flag",
+    "It is still executing with a null node, so you must read the status in the history",
+    "It closes the websocket"
+   ],
+   "answer": "It is still executing with a null node, so you must read the status in the history",
+   "why": "prompt_worker sends it after every job, and status_str says success or error."
+  },
+  {
+   "q": "POST /prompt returns 200 and node_errors lists one of your two save nodes. What happens?",
+   "options": [
+    "Nothing runs",
+    "The good output runs and the broken one is dropped",
+    "Both run",
+    "The server retries"
+   ],
+   "answer": "The good output runs and the broken one is dropped",
+   "why": "validate_prompt returns the outputs that passed, and a real test showed it."
   }
  ]
 }

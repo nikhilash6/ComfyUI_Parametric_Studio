@@ -1,0 +1,28 @@
+31.93  attention    Using pytorch attention in VAE
+32.11  device       VAE load device: cuda:0, offload device: cpu, dtype: torch.bfloat16
+33.09  wants model  Requested to load AutoencoderKL
+33.12  staged       Model AutoencoderKL prepared for dynamic VRAM loading. 160MB Staged. 0 pat
+34.15  device       CLIP/text encoder model load device: cuda:0, offload device: cpu, current:
+34.15  wants model  Requested to load Flux2TEModel_
+34.20  staged       Model Flux2TEModel_ prepared for dynamic VRAM loading. 8262MB Staged. 0 pa
+36.95  dtype        model weight dtype torch.bfloat16, manual cast: None
+36.95  family       model_type FLUX
+36.96  wants model  Requested to load Flux2
+36.99  staged       Model Flux2 prepared for dynamic VRAM loading. 17316MB Staged. 0 patches a
+36.99  steps          0%|          | 0/4 [00:00<?, ?it/s]
+47.31  queued       got prompt
+51.13  steps        100%|##########| 4/4 [00:04<00:00,  1.05s/it]
+
+models asked for, in order: ['AutoencoderKL', 'Flux2TEModel_', 'Flux2']
+staged in total: 25738 MB, the size set up for loading on demand, not bytes held on the card
+the bar says 4 steps at 1.05 s/it = 4.2 s. The clock says the bar was open from 36.99 to 51.13 = 14.14 s.
+from the first line to the last step: 19.20 s, of which sampling steps by the bar's count 22%
+
+the other kind of load line, from the estimate-based path. Numbers here are ours, the wording is the source's
+full load    loaded completely; 7000.00 MB usable, 4900.00 MB loaded, full load: True
+part load    loaded partially; 5120.00 MB usable, 4890.00 MB loaded, 2377.00 MB offloaded, 128.00 MB buffer reserved, lowvram patches: 0
+share on the card: 67%
+
+the two ways tqdm writes speed
+  1.05s/it   is 1.050 seconds per step
+  3.40it/s   is 0.294 seconds per step

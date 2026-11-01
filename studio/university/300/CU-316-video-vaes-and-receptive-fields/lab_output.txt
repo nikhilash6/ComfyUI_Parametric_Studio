@@ -1,6 +1,30 @@
-RESULT single_layer_rf = 3
-RESULT total_rf_2_layers = 7
-RESULT input_spatial = 7
-RESULT output_spatial = 3
-RESULT center_pixel_1 = 0.726815
-RESULT center_pixel_2 = 0.726815
+layers (kernel, stride)                        formula r  measured  output spacing j
+[(3, 1)]                                       3          3         1
+[(3, 2)]                                       3          3         2
+[(3, 2), (3, 2)]                               7          7         4
+[(3, 1), (3, 1), (3, 1), (3, 1)]               9          9         1
+[(3, 2), (3, 2), (3, 2), (3, 2)]               31         31        16
+[(3, 1), (3, 2), (3, 1), (3, 2), (3, 1), (3, 2)] 29         29        8
+
+spatial size with kernel 3, stride 2, no padding: 7 -> 3 after one layer, 1 after two
+
+frames in -> latent frames from two causal stride-2 layers, against (n - 1) // 4 + 1:
+   1 ->   1   1
+   5 ->   2   2
+   9 ->   3   3
+  17 ->   5   5
+  21 ->   6   6
+  81 ->  21   21
+ 120 ->  30   30
+ 121 ->  31   31
+
+change frame 20 of 21: the 6 latent frames that move are [5]
+
+two tiles of a 64-long latent, zero padding at each tile edge, hard join in the middle of the overlap
+overlap   largest error at the join
+0         0.136897
+2         0.036592
+4         0.000000
+6         0.000000
+8         0.000000
+12        0.000000

@@ -1,0 +1,171 @@
+{
+ "meta": {
+  "title": "A prompt for a masked region",
+  "about": "The same picture as the area graph, with a mask: the model sees the whole latent.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader."
+  ],
+  "packs": [],
+  "notes": {
+   "8": "Paints a 256 by 256 square into an all-zero mask.",
+   "9": "default keeps the model looking at the whole latent. 'mask bounds' would crop to the mask's box instead."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a calm sea at dawn",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "3": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a small wooden boat",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "5": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 768,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "6": {
+   "class_type": "SolidMask",
+   "inputs": {
+    "value": 0.0,
+    "width": 768,
+    "height": 512
+   }
+  },
+  "7": {
+   "class_type": "SolidMask",
+   "inputs": {
+    "value": 1.0,
+    "width": 256,
+    "height": 256
+   }
+  },
+  "8": {
+   "class_type": "MaskComposite",
+   "inputs": {
+    "destination": [
+     "6",
+     0
+    ],
+    "source": [
+     "7",
+     0
+    ],
+    "x": 256,
+    "y": 200,
+    "operation": "add"
+   }
+  },
+  "9": {
+   "class_type": "ConditioningSetMask",
+   "inputs": {
+    "conditioning": [
+     "3",
+     0
+    ],
+    "mask": [
+     "8",
+     0
+    ],
+    "strength": 1.0,
+    "set_cond_area": "default"
+   }
+  },
+  "10": {
+   "class_type": "ConditioningCombine",
+   "inputs": {
+    "conditioning_1": [
+     "2",
+     0
+    ],
+    "conditioning_2": [
+     "9",
+     0
+    ]
+   }
+  },
+  "11": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "seed": 424242,
+    "steps": 20,
+    "cfg": 7.0,
+    "sampler_name": "euler",
+    "scheduler": "karras",
+    "positive": [
+     "10",
+     0
+    ],
+    "negative": [
+     "4",
+     0
+    ],
+    "latent_image": [
+     "5",
+     0
+    ],
+    "denoise": 1.0
+   }
+  },
+  "12": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "11",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "13": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "12",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

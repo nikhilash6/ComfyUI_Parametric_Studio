@@ -2,13 +2,57 @@
  "title": "KV cache and autoregressive decoding",
  "level": "300",
  "char": "attn",
- "hook": "Discover how ComfyUI's text encoders and diffusion schedulers leverage caching to speed up sequential generation without sacrificing quality.",
+ "hook": "Old tokens don't change, so keep their keys and values. The same answer for far less work, paid for in memory.",
  "code": "CU-312",
  "prereq": [
   "CU-301"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/text_encoders/llama.py:BaseGenerate",
+  "comfy/text_encoders/llama.py:FixedKV",
+  "comfy/text_encoders/llama.py:init_kv_cache",
+  "comfy/text_encoders/llama.py:get_past_len",
+  "comfy/ldm/minimax_music/ar.py:MiniMaxMusic3AR.generate",
+  "comfy/ldm/wan/ar_model.py:CausalWanSelfAttention",
+  "comfy/ldm/wan/ar_model.py:init_kv_caches",
+  "comfy_extras/nodes_ar_video.py:ARVideoI2V"
+ ],
  "track": "architecture",
- "order": 60
+ "order": 60,
+ "graphs": [
+  "wf_music3"
+ ],
+ "verified": [
+  {
+   "claim": "Generation allocates a cache and passes it per layer.",
+   "how": "source",
+   "ref": "comfy/text_encoders/llama.py:init_kv_cache"
+  },
+  {
+   "claim": "MiniMax Music 3's model calls init_kv_cache with capacity prompt tokens plus decode limit plus one.",
+   "how": "source",
+   "ref": "comfy/ldm/minimax_music/ar.py:MiniMaxMusic3AR.generate"
+  },
+  {
+   "claim": "CausalWanSelfAttention appends k and v to a per-layer dict.",
+   "how": "source",
+   "ref": "comfy/ldm/wan/ar_model.py:CausalWanSelfAttention.forward"
+  },
+  {
+   "claim": "Cached and recomputed outputs match to 1.4e-05 and the counts are as printed.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The cost formulas are checked by asserts at n = 40 in the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "We did not time a real model with and without its cache.",
+  "That MiniMaxMusic3TextEncode reaches this class is from reading the model file names and classes; we did not trace the full call path at run time.",
+  "The memory table uses illustrative sizes, not a real model's."
+ ],
+ "kit": true
 }

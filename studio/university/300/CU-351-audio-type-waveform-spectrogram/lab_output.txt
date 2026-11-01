@@ -1,0 +1,23 @@
+EmptyAudio(1.0 s, 44100, 2): [1, 2, 44100] [batch, channels, samples], sample_rate 44100
+
+volume dB   gain      peak of a 0.5 peak sine
+-6          0.5012    0.2506
+0           1.0000    0.5000
+6           1.9953    0.9976
+12          3.9811    1.9905
+a peak above 1.0 is not clipped by this node; nothing here limits it
+88200 samples read at 32000 Hz last 2.756 s
+88200 samples read at 44100 Hz last 2.000 s
+88200 samples read at 48000 Hz last 1.837 s
+
+trim 0.25 s from 0.5 s at 44100 Hz: 11025 samples
+AudioConcat of 32000 Hz (H3) and 44100 Hz (Music 3): both become 44100 Hz
+
+n_fft   hop    frames  bins   Hz per bin  ms per window  strongest bin in the first half
+128     32     501     65     125.00      8.0            4 = 500.0 Hz
+512     128    126     257    31.25       32.0           14 = 437.5 Hz
+2048    512    32      1025   7.81        128.0          56 = 437.5 Hz
+the single-sample click with n_fft 128: visible in 3 frames, 6 ms of the picture
+the single-sample click with n_fft 2048: visible in 4 frames, 128 ms of the picture
+30 s of stereo at 44100 Hz in RAM as float32: 10.1 MiB
+300 s of stereo at 44100 Hz in RAM as float32: 100.9 MiB

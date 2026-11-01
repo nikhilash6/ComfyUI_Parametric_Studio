@@ -1,107 +1,151 @@
 # CU-314 - Flow-matching losses and velocity targets
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Write the flow matching target and loss, explain why the loss has a floor, convert an error between velocity, clean latent and noise, and read what ComfyUI's own trainer minimises. Taught by Dr. Denoise.
 
-Welcome back to the lab. I am Dr. Denoise. You have spent the last few weeks staring at UNets and VAEs, trying to understand how we coax structure out of static. In CU-202, you learned that diffusion models predict noise. Today, we are going to look under the hood of a different, arguably more elegant, paradigm: Flow Matching.
+## The idea
 
-I have watched ten thousand images emerge from static. I have seen the pixels settle. But I have also seen the math break. And I have seen it fix itself. The key to that fix is understanding what the model is actually trying to predict. Is it the noise? Or is it the direction?
+CU-204 explains the field you integrate. This lesson is the training side. It is one regression. Take a clean latent and a noise sample, draw the straight line between them, pick a point on the line, and ask the network for the direction.
 
-## Why this matters
+{{graph:sd35_flow}}
 
-Traditional diffusion models are often described as "denoising." You add noise to an image, and the model learns to subtract it. This works, but it is a bit like trying to drive a car by constantly checking how far you are from the destination and guessing the steering angle. It is effective, but it is not the most direct path.
+That graph is a flow model at sampling time. Its shift also appears below, because it can decide which noise levels get trained.
 
-Flow Matching (FM) changes the question. Instead of asking "how much noise is there?", we ask "what is the instantaneous velocity required to move from the noise distribution to the data distribution?"
+## The target
 
-This matters for three reasons:
-1.  **Stability:** The evidence suggests that Flow Matching provides a "more robust and stable alternative for training diffusion models."
-2.  **Efficiency:** By using Optimal Transport (OT) displacement interpolation, we can define paths that are "more efficient than diffusion paths," leading to faster sampling.
-3.  **Geometric Clarity:** We are no longer fighting against a stochastic process; we are following a deterministic vector field.
+Symbols: x₀ is a clean latent, ε is noise, t is between 0 and 1.
 
-## The intuition
+```
+x_t = (1 − t) x₀ + t ε        the point on the line
+v   = ε − x₀                  the target, which is the same all along the line
+L   = E ‖ v_θ(x_t, t) − v ‖²  the loss
+```
 
-Imagine you have a cloud of points representing pure noise, and a tight cluster of points representing real data (say, faces).
+This is the same mix as `CONST.noise_scaling` in `comfy/model_sampling.py`, with t written as σ. Try it on a real picture: choose the flow formula and find where signal equals noise.
 
-In a standard diffusion model, you might imagine a random walk. You take a step, add some randomness, take another step. It is messy.
+{{play:noise}}
 
-In Flow Matching, we imagine a straight line connecting each noise point to its corresponding data point. We define a path $x_t$ that moves linearly from the noise $x_1$ to the data $x_0$ as time $t$ goes from 1 to 0 (or vice versa, depending on convention).
+## Why the loss doesn't go to zero
 
-The "velocity" is simply the direction and speed of this movement. If you are at point $x_t$, the velocity tells you exactly where to go next to stay on the path to the data. It is the instantaneous direction of the probability flow.
+The network sees x_t and t, and never the pair. Many pairs pass through the same point. So the best it can do is the average of their targets, and CU-204 calls that average u(x, t). Anything left over can't be removed by training:
 
-This is distinct from score-based approaches. The score function points you toward the high-density regions of the data distribution (the gradient of the log-probability). It is a local guide. The velocity field in Flow Matching is a global guide for the specific path you are on. It is the derivative of the interpolation path.
+```
+floor at t = E ‖ v − u(x_t, t) ‖²
+```
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+A flow matching loss that stops falling may well be at its floor. It isn't telling you the model is finished, or that it's bad. A loss value on its own says little, and you can't compare it across datasets.
 
-Let us define the symbols clearly.
+## The same error in other units
 
-*   $x_0$: A sample from the data distribution (the clean image).
-*   $x_1$: A sample from the noise distribution (pure Gaussian noise).
-*   $t$: A scalar timestep, typically in the range $[0, 1]$.
-*   $x_t$: The interpolated point at time $t$.
+Given a velocity estimate, the other estimates follow by algebra:
 
-In the simplest case, using linear interpolation (which is a specific instance of Gaussian probability paths), the path is defined as:
+```
+clean estimate   x̂₀ = x_t − t · v̂
+noise estimate   ε̂  = x_t + (1 − t) · v̂
+```
 
-$x_t = (1 - t) * x_0 + t * x_1$
+So a velocity error of δ is a clean-latent error of t·δ and a noise error of (1 − t)·δ. At low t the same velocity error barely moves the clean estimate. At high t it moves it nearly fully. That means choosing what to regress on is choosing a weight for each noise level.
 
-Note: In some conventions, $t=0$ is noise and $t=1$ is data. In our lab code, we will follow the convention where $t=0$ is data and $t=1$ is noise, or vice versa. Let us look at the lab code to see the specific convention used. The code defines `x_t = (1 - t) * data + t * noise`. This implies that at $t=0$, $x_t = data$, and at $t=1$, $x_t = noise$.
+```
+loss on clean estimate  = t²       × loss on velocity
+loss on noise estimate  = (1 − t)² × loss on velocity
+```
 
-The velocity target $v$ is the derivative of this path with respect to $t$:
+## Which noise levels get trained
 
-$v = \frac{d}{dt} x_t = \frac{d}{dt} [(1 - t) * x_0 + t * x_1] = -x_0 + x_1 = x_1 - x_0$
-
-So, the velocity target is simply the difference between the noise and the data.
-
-The model $v_\theta(x_t, t)$ is a neural network (often a Diffusion Transformer or UNet) that takes the current state $x_t$ and the timestep $t$ as input and predicts the velocity $v$.
-
-The loss function is the Mean Squared Error (MSE) between the predicted velocity and the target velocity:
-
-$L = \frac{1}{N} \sum_{i=1}^{N} || v_\theta(x_t, t) - (x_1 - x_0) ||^2$
-
-This is a regression problem. We are regressing the vector field.
+Weight can also come from how often each t is drawn. Esser et al. (2024) write this as an equivalent weighted loss, and aim to train intermediate timesteps more often. One of their options is logit-normal sampling: draw u from a normal distribution with parameters m and s, then map it through the logistic function. In their rank table, `rf/lognorm(0.00, 1.00)` comes first overall.
 
 ## In ComfyUI
 
-ComfyUI is built to handle various sampling strategies. The `comfy/k_diffusion` folder contains the core mathematical implementations.
+Core does have a trainer, in `comfy_extras/nodes_train.py`, and it's worth reading. `TrainSampler.fwd_bwd` does this:
 
-While the primary focus of `comfy/k_diffusion/sampling.py` is on samplers like `sample_euler` and `sample_heun` which implement algorithms from Karras et al. (2022), these samplers operate on the noise schedule $\sigma$. The distinction between "noise prediction" and "velocity prediction" is often handled in the model's output interpretation or the specific scheduler configuration.
+```
+xt      = noise_scaling(σ, noise, latent)
+x0      = the latent
+x0_pred = model(xt, σ)            the clean estimate after calculate_denoised
+loss    = loss_fn(x0_pred, x0)    MSE, L1, Huber or SmoothL1
+```
 
-The evidence highlights `comfy/k_diffusion/sampling.py` containing `get_sigmas_karras`, `get_sigmas_exponential`, and others. These define the noise schedule. The actual flow-matching loss calculation is typically part of the training loop, not the sampling loop. However, the architecture supports the necessary components.
+So it does not compare velocities at all. It compares clean estimates, whatever the model's type. On a flow model, x0_pred = x_t − σ·v̂, so with MSE the loss equals σ² × velocity loss. The lab confirms that exactly. Low noise levels count for very little.
 
-For example, `comfy/ldm/hunyuan3dv2_1/hunyuandit.py` defines `HunYuanDiTPlain`, which returns the "predicted noise or velocity field." This indicates that the model architecture is agnostic to whether it is predicting noise or velocity; it is the training objective that defines the target.
+Its noise levels come from `_generate_batch_sigmas`: `percent_to_sigma` of a uniform random number. On a flow model with shift 3, that bends the draw so half of all samples have σ above 0.75.
 
-Specific nodes for "Flow Matching Loss" are not covered in our sources. The mechanism is embedded in the training utilities and the model forward pass.
+The same arithmetic applies to a noise-prediction model, where x0_pred = x − σ·ε̂, so this trainer's weight on noise error is σ² there too. That's a design choice, and we can't tell you from reading it whether it helps or harms. Training a LoRA with these nodes is covered in the LoRA track.
+
+## What goes wrong
+
+- **Waiting for the loss to approach zero.** It won't. The lab's small model settles at 2.20, and its floor is 2.19. That model works.
+- **Comparing loss numbers between trainers.** Velocity loss, clean-latent loss and noise loss are different sizes on the same model. In the lab, one perfect model scores 1.92 and 0.48 at the same t.
+- **Getting the direction of t backwards.** Here t = 1 is noise. Some papers run the other way, and then v changes sign. Check before you copy a formula.
+- **Ignoring t when reading errors.** A good average can hide a poor fit at one end, since that end may carry little weight in the loss you're watching.
+- **Assuming a straight target means straight sampling.** Each pair is straight. The field isn't. See CU-204.
+- **Forgetting shift when you resume or sample.** Training with one shift and sampling with another moves the noise levels in use. That is legal, and worth knowing about.
 
 ## Lab
 
-Let us run a simple 1D experiment to see the numbers. We have three data points and three noise points. We pick a timestep $t=0.5$.
+One pair first. The target is the same at all t, and `x_t − t v` returns x₀ every time.
 
-The lab code computes the interpolated point $x_t$ and the velocity target $v_{target}$. It then simulates a model prediction that is slightly off from the target, and calculates the loss.
+```text
+one pair: x0 1.5, noise -0.7
+t     x_t      target v  x_t - t v  (the CONST.calculate_denoised formula)
+0.1   +1.280   -2.200    +1.500
+0.5   +0.400   -2.200    +1.500
+0.9   -0.480   -2.200    +1.500
+```
 
-Here are the results from the lab:
+Now the floor, on a mixture where the perfect model has a formula. The last column is what a model that ignores x would score.
 
-`RESULT x_t = [0.75, 0.5, 1.600000023841858]`
-This proves that the interpolated point lies between the data and the noise. For the first point, data is 1.0 and noise is 0.5. At $t=0.5$, $x_t = 0.5*1.0 + 0.5*0.5 = 0.75$. The math checks out.
+```text
+t     floor (perfect model)  constant guess
+0.05  1.0914                 3.7710
+0.2   1.1554                 3.7710
+0.5   1.9241                 3.7710
+0.8   3.6701                 3.7710
+0.95  3.0493                 3.7710
+```
 
-`RESULT v_target = [-0.5, -3.0, -2.799999952316284]`
-This proves that the velocity target is indeed `noise - data`. For the first point, $0.5 - 1.0 = -0.5$. For the second, $-1.0 - 2.0 = -3.0$. The direction is from data to noise (since $t$ goes from 0 to 1 in this convention).
+At high t the point on the line says almost nothing about x₀, so a perfect model only beats a constant by a little.
 
-`RESULT model_pred = [-0.24590039253234863, -2.4293429851531982, -2.457879066467285]`
-This is the simulated model output. It is close to the target but not exact, due to the added random noise in the simulation.
+```text
+t     clean-latent error (t x 0.1)   noise error ((1 - t) x 0.1)
+0.05  0.005                          0.095
+0.5   0.050                          0.050
+0.95  0.095                          0.005
+```
 
-`RESULT loss = 0.169088`
-This is the MSE loss. It quantifies how far the model's predicted velocity is from the true velocity. A lower loss means the model is better at predicting the direction of the flow.
+ComfyUI's loss against velocity loss, with one perfect model at the same t:
 
-## Common mistakes
+```text
+sigma  velocity loss  clean-latent loss  ratio  sigma^2
+0.2    1.1554         0.0462             0.040  0.040
+0.5    1.9241         0.4810             0.250  0.250
+0.8    3.6701         2.3489             0.640  0.640
+```
 
-1.  **Confusing Score and Velocity:** The score is the gradient of the log-density. The velocity is the time derivative of the path. They are related, but they are not the same. In Flow Matching, we regress the velocity.
-2.  **Ignoring the Timestep:** The velocity field depends on $t$. A model that ignores $t$ will fail because the direction of the flow changes as you move along the path.
-3.  **Wrong Interpolation Path:** Not all paths are created equal. Linear interpolation is simple, but Optimal Transport paths can be more efficient. Using the wrong path can lead to slower convergence or lower quality samples.
-4.  **Assuming Determinism:** While the path is deterministic, the sampling process can still involve stochasticity if you use ancestral samplers. However, the core FM training is deterministic regression.
+How often each noise level is drawn. Logit-normal puts more in the middle. Core's trainer with shift 3 leans high.
 
-## Go deeper
+```text
+sampling                                  t<0.25   0.25-0.75  t>0.75
+uniform                                   0.249    0.501      0.250
+logit-normal m 0, s 1 (Esser et al.)      0.136    0.729      0.135
+uniform through shift 3 (core's trainer)  0.100    0.401      0.499
+```
 
-To understand the theoretical underpinnings, you should read the foundational paper:
+Then a real small training run, on the per-pair target.
 
-*   **arXiv:2210.02747**: "Flow Matching for Generative Modeling" by Lipman et al. This paper introduces the notion of Flow Matching, a simulation-free approach for training CNFs based on regressing vector fields of fixed conditional probability paths. It demonstrates that FM with diffusion paths is a robust alternative to standard diffusion training, and that using OT displacement interpolation leads to faster training and sampling.
+```text
+floor of the loss averaged over uniform t: 2.190
+step   running velocity loss
+500    2.345
+1000   2.230
+2500   2.201
+32 Euler steps from that model: W1 to the data 0.057, two real samples of this size differ by 0.007
+```
 
-Now, go back to your lab. What is the noise level at this step? It is not a question of magnitude, but of direction. Find the vector. Follow the flow.
+The loss flattens just above the floor, and the model samples close to the data. A small remaining gap in sampling is not visible in the loss, which is another reason not to judge a model by its loss alone.
 
+## Sources
+
+- [Lipman et al. 2022. Flow Matching for Generative Modeling](https://arxiv.org/abs/2210.02747)
+- [Esser et al. 2024. Scaling Rectified Flow Transformers for High-Resolution Image Synthesis](https://arxiv.org/abs/2403.03206)
+- [ComfyUI v0.43.0, comfy/model_sampling.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_sampling.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_train.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_train.py)

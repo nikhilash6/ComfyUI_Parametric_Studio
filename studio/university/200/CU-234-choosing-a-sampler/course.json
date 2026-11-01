@@ -1,0 +1,56 @@
+{
+ "code": "CU-234",
+ "title": "Choosing a sampler from real renders and measures",
+ "level": "200",
+ "prereq": [
+  "CU-205",
+  "CU-207"
+ ],
+ "char": "denoise",
+ "hook": "Fifteen real renders on one seed and a bench of 45 sampler names. What they can tell you, what they cannot, and a way to choose that survives both.",
+ "code_refs": [
+  "comfy/samplers.py:sampler_object",
+  "comfy/samplers.py:KSAMPLER_NAMES",
+  "comfy/samplers.py:SAMPLER_NAMES",
+  "comfy/k_diffusion/sampling.py:sample_euler",
+  "comfy/k_diffusion/sampling.py:sample_dpmpp_2m",
+  "comfy/k_diffusion/sampling.py:sample_heun"
+ ],
+ "track": "sampling",
+ "order": 55,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img",
+  "sd15_custom"
+ ],
+ "verified": [
+  {
+   "claim": "The ddim name is built with ksampler('euler', inpaint_options={'random': True}).",
+   "how": "source",
+   "ref": "comfy/samplers.py:sampler_object"
+  },
+  {
+   "claim": "The ddim and euler renders on SD 1.5, seed 424242, have the same hash and the same measures.",
+   "how": "run here",
+   "ref": "renders.json from the Sampling Lab sweep"
+  },
+  {
+   "claim": "Bench numbers are copied from measures.json, made by ComfyUI's own samplers on a Gaussian toy with no network.",
+   "how": "run here",
+   "ref": "scripts/build_sampling_measures.py"
+  },
+  {
+   "claim": "We looked at the euler, euler_ancestral, dpmpp_2m and lcm renders before describing them.",
+   "how": "run here",
+   "ref": "studio/web/sampling_lab"
+  }
+ ],
+ "unchecked": [
+  "Every render is one seed, one prompt and one model. None of them shows that one sampler is better than another.",
+  "The render times in renders.json were polled every 1.5 s, so we do not use them to compare speed.",
+  "That euler_cfg_pp equals euler on the bench because the bench has no guidance is our inference. We read the numbers, not a trace."
+ ],
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

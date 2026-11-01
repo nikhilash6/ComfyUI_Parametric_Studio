@@ -4,54 +4,59 @@
  "level": "400",
  "questions": [
   {
-   "q": "According to the cost model defined in the lesson, what is the formula for the total cost to process a batch of size B?",
+   "q": "Why does a batch cost you latency?",
    "options": [
-    "Cost(B) = FIXED_OVERHEAD + (PER_ITEM_COST * B)",
-    "Cost(B) = (FIXED_OVERHEAD * B) + PER_ITEM_COST",
-    "Cost(B) = FIXED_OVERHEAD * PER_ITEM_COST * B",
-    "Cost(B) = B / (FIXED_OVERHEAD + PER_ITEM_COST)"
+    "All images in it finish together, after the whole job",
+    "It uses a slower sampler",
+    "It reloads the model per image",
+    "It disables the cache"
    ],
-   "answer": "Cost(B) = FIXED_OVERHEAD + (PER_ITEM_COST * B)",
-   "why": "The lesson explicitly defines the total cost formula as Cost(B) = FIXED_OVERHEAD + (PER_ITEM_COST * B) in the 'Under the hood' section."
+   "answer": "All images in it finish together, after the whole job",
+   "why": "The first image appears when the whole job is done."
   },
   {
-   "q": "In the lab results, what was the calculated throughput for a batch size of 16?",
+   "q": "A worker gets one 5 s job every 5.5 s. What should you expect?",
    "options": [
-    "2.85714",
-    "6.10501",
-    "7.61905",
-    "0.909091"
+    "Waits several times the job length, since it's 91% busy",
+    "No waiting",
+    "An error from the server",
+    "A queue that empties fast"
    ],
-   "answer": "6.10501",
-   "why": "The lab output line 'RESULT throughput_bs_16 = 6.10501' directly provides this value."
+   "answer": "Waits several times the job length, since it's 91% busy",
+   "why": "The lab reads 25.9 s at 91%."
   },
   {
-   "q": "Why does the lesson state that if you cannot batch efficiently on a single device, sharding across multiple devices will just multiply your inefficiency?",
+   "q": "Why does sticky routing help with several models?",
    "options": [
-    "Sharding requires more memory than batching.",
-    "Sharding increases the fixed overhead per item.",
-    "Sharding relies on the same fundamental principle of amortization, so poor single-device efficiency scales up.",
-    "Sharding is only possible if the batch size is 1."
+    "It avoids model loads, which dominate the cost here",
+    "It makes jobs faster on the GPU",
+    "It uses more memory per job",
+    "It removes the queue"
    ],
-   "answer": "Sharding relies on the same fundamental principle of amortization, so poor single-device efficiency scales up.",
-   "why": "The 'Why this matters' section states: 'If you cannot batch efficiently on a single device, sharding across multiple devices will just multiply your inefficiency.' This implies that the core efficiency gain (amortization) must work on a single unit first."
+   "answer": "It avoids model loads, which dominate the cost here",
+   "why": "The lab's loads fall from 203 to 59 at four workers."
   },
   {
-   "q": "What is the primary risk associated with ignoring memory fragmentation in a scaled deployment, as described in the lesson?",
+   "q": "How do you add a second GPU to serve more jobs in core ComfyUI?",
    "options": [
-    "Increased latency for real-time requests.",
-    "A batch size that fits in theory might fail in practice due to fragmentation.",
-    "The GPU will automatically reduce the batch size to 1.",
-    "The fixed overhead will increase exponentially."
+    "Run a second process, and route jobs between them yourself",
+    "Set batch_size to 2",
+    "Use front: true",
+    "Add a second KSampler"
    ],
-   "answer": "A batch size that fits in theory might fail in practice due to fragmentation.",
-   "why": "Under 'Common mistakes', point 2 states: 'A batch size that fits in theory might fail in practice due to fragmentation.'"
+   "answer": "Run a second process, and route jobs between them yourself",
+   "why": "We found no built-in cluster. --cuda-device and --port set up each process."
   },
   {
-   "q": "According to the lesson, what two specific states must a system distinguish between when cancelling a job to prevent VRAM leaks?",
-   "options": null,
-   "answer": "Running and pending",
-   "why": "The 'In ComfyUI' section states: 'Ensure your cancellation logic distinguishes between \"running\" and \"pending\" jobs.' It explains that running jobs need to be interrupted to free VRAM, while pending jobs can be dequeued."
+   "q": "Why can't a client ask any worker for a job's status?",
+   "options": [
+    "Each process has its own queue and history",
+    "The ids are random",
+    "History is deleted at once",
+    "Websockets block it"
+   ],
+   "answer": "Each process has its own queue and history",
+   "why": "A prompt_id only means something to the server that took it."
   }
  ]
 }

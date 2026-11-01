@@ -2,14 +2,56 @@
  "title": "Video VAEs and receptive fields",
  "level": "300",
  "char": "latent",
- "hook": "Discover how Video VAEs compress temporal dimensions and why understanding receptive fields is key to controlling motion artifacts.",
+ "hook": "How far one latent can see, measured by experiment, and why that sets the first-frame rule and the overlap your tiles need.",
  "code": "CU-316",
  "prereq": [
   "CU-215",
   "CU-201"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/ldm/lightricks/vae/causal_conv3d.py:CausalConv3d",
+  "comfy/ldm/wan/vae.py:CausalConv3d",
+  "comfy/ldm/modules/diffusionmodules/model.py:VideoConv3d",
+  "comfy/ldm/minimax/vae.py:decode_tiled",
+  "comfy/sd.py:VAE.decode_tiled_3d",
+  "comfy/utils.py:tiled_scale_multidim"
+ ],
  "track": "video",
- "order": 50
+ "order": 50,
+ "graphs": [
+  "wf_wan22_t2v"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "The formula for the receptive field matched autograd measurements on six stacks.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Two causal stride-2 layers gave (n - 1) // 4 + 1 frames for every length tested, the rule from the empty-latent nodes.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Wan's CausalConv3d pads only on the past side in time, with an optional cache from the previous chunk.",
+   "how": "source",
+   "ref": "comfy/ldm/wan/vae.py:CausalConv3d"
+  },
+  {
+   "claim": "LTX's CausalConv3d has a causal flag in forward, so that VAE can run both ways.",
+   "how": "source",
+   "ref": "comfy/ldm/lightricks/vae/causal_conv3d.py:CausalConv3d"
+  },
+  {
+   "claim": "The graph passes validate_prompt with file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not measure the receptive field of a real video VAE. Real stacks add attention, up and down sampling blocks, and residual paths, so the numbers here are for plain convolution stacks.",
+  "The first version of this lesson's references to LTX-Video and HunyuanVideo paper titles and arXiv numbers were wrong and are removed. CU-215 cites the LTX-Video paper with its right title.",
+  "We have not tested how large a tile overlap each real VAE needs. The rule here is that the overlap should reach as far as the receptive field."
+ ]
 }

@@ -1,0 +1,73 @@
+{
+ "code": "CU-370",
+ "title": "Reading ComfyUI's console during a run",
+ "level": "300",
+ "questions": [
+  {
+   "q": "Your second run has no Requested to load line for the model. What does that mean?",
+   "options": [
+    "The model was already loaded",
+    "The run failed",
+    "The model was skipped",
+    "The console is broken"
+   ],
+   "answer": "The model was already loaded",
+   "why": "That line is printed only when a load is needed."
+  },
+  {
+   "q": "Does Prompt executed in 12.40 seconds prove the job worked?",
+   "options": [
+    "No, failed jobs reach that line too",
+    "Yes, it only prints on success",
+    "Yes, unless it took over 10 minutes",
+    "Only for image jobs"
+   ],
+   "answer": "No, failed jobs reach that line too",
+   "why": "main.py logs it at the end of a job. Look above it for an exception."
+  },
+  {
+   "q": "A bar reads 3.40it/s. Another reads 3.40s/it. Which is faster?",
+   "options": [
+    "The first, by about eleven times",
+    "The second",
+    "They are equal",
+    "You can't tell"
+   ],
+   "answer": "The first, by about eleven times",
+   "why": "it/s is steps per second and s/it is seconds per step. 3.4 it/s is 0.29 s per step."
+  },
+  {
+   "q": "In the lab the bar says 4.2 s and the clock says 14.14 s. Why?",
+   "options": [
+    "model_trange moves the bar's start time to leave out load overhead",
+    "The clock was wrong",
+    "Another job took the time",
+    "tqdm can't divide"
+   ],
+   "answer": "model_trange moves the bar's start time to leave out load overhead",
+   "why": "That is in comfy/utils.py, used with dynamic VRAM. For how long you waited, use the clock."
+  },
+  {
+   "q": "A line says 17316MB Staged, on a 12 GB card. Should you panic?",
+   "options": [
+    "No, Staged is the size set up for on-demand loading, not bytes on the card",
+    "Yes, it has already overflowed",
+    "Yes, it means an out-of-memory error",
+    "No, MB here means megabits"
+   ],
+   "answer": "No, Staged is the size set up for on-demand loading, not bytes on the card",
+   "why": "The figure is allocated_size for dynamic loading."
+  },
+  {
+   "q": "Where do you start reading after a failed job?",
+   "options": [
+    "At the first !!! Exception during processing !!! line",
+    "At the very last line",
+    "At the startup lines",
+    "At the first got prompt"
+   ],
+   "answer": "At the first !!! Exception during processing !!! line",
+   "why": "The first line names the error. The rest follows from it."
+  }
+ ]
+}

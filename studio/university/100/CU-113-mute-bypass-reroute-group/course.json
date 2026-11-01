@@ -1,0 +1,33 @@
+{
+ "code": "CU-113",
+ "title": "Mute, bypass, reroutes and groups: what the server really gets",
+ "level": "100",
+ "prereq": ["CU-102", "CU-110"],
+ "char": "graph",
+ "hook": "Bypass rewires the graph, Mute cuts it, and reroutes and groups never leave your browser. See the JSON each one produces.",
+ "track": "first-graph",
+ "order": 45,
+ "kit": true,
+ "graphs": ["a_modes_chain"],
+ "code_refs": [
+  "execution.py:validate_prompt",
+  "execution.py:required_input_missing",
+  "execution.py:prompt_no_outputs",
+  "execution.py:missing_node_type",
+  "comfy_execution/graph_utils.py:is_link"
+ ],
+ "verified": [
+  {"claim": "Muted and bypassed nodes, and virtual nodes, are left out of the API graph, and a wire to a dropped node is removed.", "how": "docs", "ref": "ComfyUI front end main branch at commit 4b24c63, src/utils/executionUtil.ts:graphToPrompt, fetched 2026-11-01"},
+  {"claim": "A bypassed node passes on an input: the same slot number if the types fit, else the first input of the wanted type, else the first that fits, else nothing.", "how": "docs", "ref": "front end main branch, ExecutableNodeDTO.resolveOutput and _getBypassSlotIndex, fetched 2026-11-01"},
+  {"claim": "Mode numbers are 0 ALWAYS, 2 NEVER and 4 BYPASS. Ctrl+B and Ctrl+M toggle Bypass and Mute. The group menu has Set Group Nodes to Always, Never and Bypass Group Nodes.", "how": "docs", "ref": "front end main branch, globalEnums.ts, keybindings/defaults.ts, groupOptions.ts, fetched 2026-11-01"},
+  {"claim": "Reroute and Note set isVirtualNode, and neither is a server node: posting a Reroute gives missing_node_type.", "how": "run here", "ref": "execution.validate_prompt on hand-written prompts, and rerouteNode.ts and noteNode.ts"},
+  {"claim": "Removing the blur's wire gives required_input_missing, a wire to an absent node fails validation, and removing the only output gives prompt_no_outputs.", "how": "run here", "ref": "execution.validate_prompt on hand-written prompts"},
+  {"claim": "Extra fields in _meta are ignored by validation.", "how": "run here", "ref": "execution.validate_prompt"},
+  {"claim": "The docs describe Never as 'as if it's been deleted', and Bypass as not executing while later nodes can still try to obtain data.", "how": "docs", "ref": "docs.comfy.org/development/core-concepts/nodes, fetched 2026-11-01"}
+ ],
+ "unchecked": [
+  "The front-end rules come from reading its main branch. We did not press these keys in a browser and export the result, and the installed bundle may be an older version than main.",
+  "Our port leaves out subgraphs. Bypass and Mute on a subgraph node go through extra code that we read only in part.",
+  "Bypass rules for nodes whose inputs have list types use the editor's own connection test, and our port compares types by plain equality."
+ ]
+}

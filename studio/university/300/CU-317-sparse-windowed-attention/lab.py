@@ -1,67 +1,38 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-torch.manual_seed(0)
-
-# Define small sequence length and head dimension for CPU-only lab
-seq_len = 8
-head_dim = 4
-
-# Create random Q, K, V tensors with shape (batch=1, seq_len, head_dim)
-q = torch.randn(1, seq_len, head_dim)
-k = torch.randn(1, seq_len, head_dim)
-v = torch.randn(1, seq_len, head_dim)
-
-# Standard Full Attention: each token attends to all tokens
-scores_full = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(head_dim)
-weights_full = torch.softmax(scores_full, dim=-1)
-out_full = torch.matmul(weights_full, v)
-
-# Windowed Attention with window_size=2: each token attends to itself and previous token
-window_size = 2
-# Create a boolean mask where mask[i, j] is True if token i can attend to token j
-# For sliding window: token i attends to j where j >= i - window_size + 1 and j <= i
-mask = torch.zeros(seq_len, seq_len, dtype=torch.bool)
-for i in range(seq_len):
-    start = max(0, i - window_size + 1)
-    mask[i, start:i+1] = True
-
-# Apply mask to scores: set disallowed positions to -inf before softmax
-scores_windowed = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(head_dim)
-# Expand mask to match batch dimension
-mask_expanded = mask.unsqueeze(0)  # (1, seq_len, seq_len)
-scores_windowed = scores_windowed.masked_fill(~mask_expanded, float('-inf'))
-weights_windowed = torch.softmax(scores_windowed, dim=-1)
-out_windowed = torch.matmul(weights_windowed, v)
-
-# Sparse Attention: only attend to even-indexed tokens (sparse pattern)
-# Create sparse mask: token i attends to j only if j % 2 == 0
-sparse_mask = torch.zeros(seq_len, seq_len, dtype=torch.bool)
-for i in range(seq_len):
-    for j in range(seq_len):
-        if j % 2 == 0:
-            sparse_mask[i, j] = True
-
-scores_sparse = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(head_dim)
-sparse_mask_expanded = sparse_mask.unsqueeze(0)
-scores_sparse = scores_sparse.masked_fill(~sparse_mask_expanded, float('-inf'))
-weights_sparse = torch.softmax(scores_sparse, dim=-1)
-out_sparse = torch.matmul(weights_sparse, v)
-
-# Verify that windowed attention weights sum to 1 for each token
-assert torch.allclose(weights_windowed.sum(dim=-1), torch.ones(1, seq_len), atol=1e-5), "Windowed attention weights should sum to 1"
-
-# Verify that full attention output differs from windowed attention output
-assert not torch.allclose(out_full, out_windowed, atol=1e-5), "Full and windowed attention should produce different outputs"
-
-# Print results
-print(f"RESULT out_full[0,0,0] = {out_full[0,0,0].item():.6g}")
-print(f"RESULT out_windowed[0,0,0] = {out_windowed[0,0,0].item():.6g}")
-print(f"RESULT out_sparse[0,0,0] = {out_sparse[0,0,0].item():.6g}")
-print(f"RESULT weights_full[0,0,0] = {weights_full[0,0,0].item():.6g}")
-print(f"RESULT weights_windowed[0,0,0] = {weights_windowed[0,0,0].item():.6g}")
-print(f"RESULT weights_sparse[0,0,0] = {weights_sparse[0,0,0].item():.6g}")
+# CU-317 lab: full attention against windows, with the partition rule of comfy/ldm/sam3/sam.py. Counts and a small run. CPU, no model.
+import math, torch
+torch.manual_seed(0); torch.set_num_threads(1)
+def window_partition(x, ws):   # x: (B, H, W, C), must already be a multiple of ws here
+    B, H, W, C = x.shape; return x.view(B, H // ws, ws, W // ws, ws, C).permute(0, 1, 3, 2, 4, 5).reshape(-1, ws, ws, C)
+def window_unpartition(w, ws, H, W):
+    B = w.shape[0] // (H * W // ws // ws); return w.view(B, H // ws, W // ws, ws, ws, -1).permute(0, 1, 3, 2, 4, 5).reshape(B, H, W, -1)
+x = torch.randn(1, 16, 16, 8); w = window_partition(x, 4); print(f"grid {tuple(x.shape)} -> {w.shape[0]} windows of {w.shape[1]}x{w.shape[2]}, back again identical: {torch.equal(window_unpartition(w, 4, 16, 16), x)}"); assert torch.equal(window_unpartition(w, 4, 16, 16), x)
+print("\ngrid side  tokens    full pairs        window 8 pairs   share of full")
+for s in (32, 64, 128, 256):
+    n = s * s; full = n * n; win = (s // 8) ** 2 * 64 ** 2; print(f"{s:<10d} {n:<9,d} {full:<17,d} {win:<16,d} {win / full:.4f}"); assert win == n * 64
+print("window pairs grow with the tokens (n x 64). full pairs grow with the square of the tokens.")
+# Reach: what can token (0, 0) be influenced by after L layers, with a fixed grid against shifted windows?
+def reach(side, ws, layers, shift):
+    seen = torch.zeros(side, side, dtype=torch.bool); seen[0, 0] = True
+    for L in range(layers):
+        off = (ws // 2) if (shift and L % 2) else 0; new = seen.clone(); key = lambda i: (i + off) // ws
+        for key_y in range(0, side // ws + 2):
+            for key_x in range(0, side // ws + 2):
+                ys = [i for i in range(side) if key(i) == key_y]; xs = [i for i in range(side) if key(i) == key_x]
+                if ys and xs and seen[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1].any(): new[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1] = True
+        seen = new
+    return int(seen.sum())
+print("\nlayers  tokens reachable, fixed windows  tokens reachable, shifted every second layer   (grid 32x32, window 8, 1024 tokens)")
+R = {}
+for L in (1, 2, 4, 8, 12): R[L] = (reach(32, 8, L, False), reach(32, 8, L, True)); print(f"{L:<7d} {R[L][0]:<32d} {R[L][1]}")
+assert R[12][0] == 64 and R[12][1] > 64
+# Masking is not windowing: a mask gives the same answer but still spends a full matrix.
+n = 16; q, k, v = [torch.randn(1, n, 8) for _ in range(3)]
+def attend(q, k, v, m=None):
+    s = q @ k.transpose(-1, -2) / math.sqrt(8)
+    if m is not None: s = s.masked_fill(~m, float("-inf"))
+    return s.softmax(-1) @ v
+gr = torch.arange(n) // 4; mask = gr[:, None] == gr[None]; masked = attend(q, k, v, mask); parts = torch.cat([attend(q[:, i:i + 4], k[:, i:i + 4], v[:, i:i + 4]) for i in range(0, n, 4)], 1)
+print(f"\nmasked full attention against four separate windows: max difference {(masked - parts).abs().max():.1e}. pairs computed: {n * n} against {4 * 16}"); assert (masked - parts).abs().max() < 1e-5
+# Sparse: only occupied cells are tokens, as Trellis 2 voxels. Attention is over the occupied list, whatever the grid.
+for side, frac in ((64, 0.02), (128, 0.01)):
+    occ = int(side ** 3 * frac); print(f"3D grid {side}^3 = {side ** 3:,d} cells, {frac:.0%} occupied: {occ:,d} tokens, {occ * occ:,d} pairs against {side ** 6:,d} if every cell were a token")

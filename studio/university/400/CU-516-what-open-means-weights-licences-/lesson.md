@@ -1,97 +1,89 @@
 # CU-516 - History 16: What open means: weights, licences and the ecosystem
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Separate four things people mean by open, and read what each lets you do with what you downloaded. Taught by Captain Graph.
 
-## Why this matters
+## Four questions under one word
 
-Welcome aboard, cadets. You’ve spent the last few modules learning how to wire up nodes, how to manage VRAM, and how to sample latents. But you are navigating in a sea that is not just made of water; it is made of legal and technical currents. In the world of generative AI, the word "open" is often used loosely, like a loose plank on a deck. If you don’t know what it actually holds, the whole ship can capsize.
+When someone calls a model open, they might mean any of these, and they often don't say which.
 
-"Open" in AI is not just about code availability. It is a triad: the transparency of model weights, the legal frameworks (licences) that govern their use, and the ecosystem of community-driven innovation and safety. A model might have open code but closed weights. It might have open weights but a restrictive licence that forbids commercial use. Understanding this distinction is critical for engineering at Level 400. You are not just running scripts; you are building systems that must be reproducible, legally sound, and scalable. If you cannot verify the weights or the licence, you cannot guarantee the integrity of your pipeline.
+1. **Do you have the weights?** Then you can run it yourself. No weights, no running it at home.
+2. **Do you have the code?** Then you can read how it works, and change it.
+3. **Do you know the data?** Then you could, in principle, build something equivalent.
+4. **What does the licence let you do?** Having a thing isn't the same as permission.
 
-## The intuition
+The first three are about what you were given, and the fourth is about what you're allowed. A model can have downloadable weights and a licence with a list of banned uses. A project can have a permissive code licence and weights you can't get.
 
-Think of a model as a ship. The code (the architecture) is the blueprint. The weights are the actual steel and wood. The licence is the flag it flies and the laws of the sea it must obey.
+The Open Source Initiative has a written definition for AI systems. It asks for the freedoms to use, study, modify and share, and it asks that weights, code and enough information about the data be available. It's a useful test, and most things people call open weights don't claim to meet it. So "open weights" is the honest phrase when weights are what you have.
 
-If you have the blueprint but not the steel, you can’t build the ship. That’s a closed model with open code. If you have the steel but the flag says "No Entry," you can’t sail it in international waters (commercial use). That’s open weights with a restrictive licence.
+## How this reaches your graph
 
-True openness in our context means you can inspect the steel (weights), you know the laws of the sea (licence), and you can share the blueprint (code). This transparency allows the community to audit for safety, fine-tune for specific tasks, and build upon previous work without fear of legal retribution. It is the foundation of the "open ecosystem."
+ComfyUI is under the GPL version 3. Your graph can pull in things under other terms at the same moment:
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+{{graph:sd15_lora}}
 
-To quantify "openness" in a rigorous way, we can model it as a system of transparency scores. Let us define a vector $T$ of transparency scores for each component of a model system.
+In that one small graph there are three separate sets of terms: ComfyUI's, the checkpoint's and the LoRA's. Add a node pack and that's a fourth. Each comes from a different person and travels on its own terms. CU-383 goes through what the common licences say.
 
-Let $T = [t_1, t_2, ..., t_n]$ where each $t_i \in [0, 1]$.
-*   $t_i$ represents the transparency of the $i$-th component (e.g., weights, code, data provenance).
-*   A score of 1.0 means fully transparent (open).
-*   A score of 0.0 means fully opaque (closed).
+A second meaning of open matters here: it doesn't mean safe. `SECURITY.md` in ComfyUI's repository says custom nodes "are arbitrary Python code and are trusted as much as any other software the user chooses to install". Being able to read code is what lets you check it. It doesn't mean anyone has. CU-380 covers how.
 
-We define the **Average Transparency** ($\bar{T}$) as:
-$$ \bar{T} = \frac{1}{n} \sum_{i=1}^{n} t_i $$
+## A short timeline, from the texts
 
-We define a threshold $\tau$ (e.g., 0.75). If $\bar{T} > \tau$, the model is considered "Open" in a general sense.
+| date | what | the idea |
+|---|---|---|
+| 29 June 2007 | GNU GPL 3 | source must come with copies you pass on |
+| 19 November 2007 | GNU AGPL 3 | same, plus users over a network |
+| August 22, 2022 | CreativeML Open RAIL-M | free to use, with banned uses you must pass on |
 
-However, an "Open Ecosystem" requires more than just an average. It requires that no single component is critically closed. We define a minimum component score $t_{min}$ (e.g., 0.5). The condition for all components being open is:
-$$ \forall i, t_i \ge t_{min} $$
+That last one was new for this field: permission is broad, and some uses are written out of it. Whether it counts as open in the older sense is exactly the kind of argument this lesson is about, and we won't settle it. Read the terms that apply to what you have.
 
-The final status `open_ecosystem` is true if and only if:
-$$ \text{is\_open} = (\bar{T} > \tau) \quad \text{AND} \quad \text{all\_components\_open} = (\forall i, t_i \ge t_{min}) $$
+{{play:licence}}
 
-We also measure **Reproducibility**, which is inversely related to the variance of the transparency scores. High variance means some parts are very open and others are very closed, leading to inconsistent behavior. Let $\sigma^2$ be the variance of $T$.
-$$ \text{Reproducibility Score} = \frac{1}{1 + \sigma^2} $$
+## What goes wrong
 
-A score close to 1.0 indicates high consistency and reproducibility, a hallmark of a healthy open standard.
-
-## In ComfyUI
-
-In ComfyUI, the "openness" is physically manifested in how we load and manage these weights. The `comfy` folder is the core engine that handles this.
-
-*   **Weight Loading**: The function `load_checkpoint_guess_config` in `comfy/sd.py` is the primary entry point. It automatically detects the model architecture and loads the UNet, VAE, and CLIP components. This detection relies on the structure of the checkpoint file, which must be standardized (open format) for the system to work.
-*   **Weight Management**: The `ModelPatcher` class in `comfy/model_patcher.py` manages the state of model weights. It handles which weights are on GPU vs CPU and applies runtime patches. This is crucial for "open" models because it allows users to apply LoRA weights (also open assets) dynamically.
-*   **Text Encoders**: The `comfy/text_encoders` folder contains implementations for various open architectures like Llama, Qwen, and T5. For example, `comfy/text_encoders/llama.py` contains `Llama2_`, the core transformer implementation. The fact that these are implemented in pure Python/PyTorch within the ComfyUI codebase demonstrates the open nature of the code layer.
-*   **Specific Models**: For video, `comfy/ldm/wan/model.py` defines `WanModel`. The weights for these models are often released under open licences, allowing the community to build variants like `VaceWanModel` or `CameraWanModel` within the same framework.
-
-Note: Specific licence files are not covered in our sources, but the code structure assumes the availability of these weight files for the `ModelPatcher` to function.
+- **"It's on the internet, so it's free to use."** A public download isn't a licence. See CU-383 for what no licence means.
+- **Checking only the main model.** Text encoders, VAEs, LoRAs and packs have their own terms. Check each part you ship.
+- **Assuming open means reproducible.** Without data information you can't rebuild it, even with weights and code.
+- **Assuming a licence names your use.** Read it. Commercial use may be allowed, restricted or banned, and only the text can tell you.
+- **Treating open code as reviewed code.** Nobody may have read it. Read it yourself or sandbox it.
 
 ## Lab
 
-In this lab, we simulate the "openness" of a model using simple tensor operations. We create a small tensor representing "weight transparency" scores, where each value is between 0 and 1. We then calculate the average transparency, check if all components meet a minimum threshold, and compute a reproducibility score based on variance.
+The lab sorts what you can do by what you have. The logic is simple, and that's the point: each ability needs specific parts.
 
-We run the following checks:
-1.  Calculate the average transparency score.
-2.  Determine if the model is "open" based on a threshold of 0.75.
-3.  Check if all components are above a minimum score of 0.5.
-4.  Combine these to determine the final "open ecosystem" status.
-5.  Calculate a reproducibility score using the variance of the scores.
-6.  Calculate a community contribution metric (sum of scores).
+```text
+                                    run it on your o  read how it work  fine-tune it, a   rebuild somethin
+closed API                          no                no                no                no              
+weights only, in a binary runner    yes               no                no                no              
+weights and code                    yes               yes               yes               no              
+weights, code and data details      yes               yes               yes               yes             
+```
 
-Here are the real `RESULT` lines from the lab output:
+Then the licences, from the texts we fetched:
 
-`RESULT avg_transparency = 0.84`
-This proves that the average transparency of our simulated model components is high, exceeding the 0.75 threshold.
+```text
+and separately, what the licence lets you do. Dates and rules from the texts we fetched
+  GNU GPL 3                29 June 2007       source duty when you convey; remote use alone is not conveying
+  GNU AGPL 3               19 November 2007   adds an offer of source to remote users of a modified version
+  CreativeML Open RAIL-M   August 22, 2022    free use, with a list of banned uses that you must pass on
+  MIT                      no version date    keep the notice
+```
 
-`RESULT is_open = True`
-This confirms that based on the average score, the model qualifies as "open."
+And one graph's parts:
 
-`RESULT all_components_open = True`
-This proves that no single component is critically closed (all are above 0.5), which is a necessary condition for a robust open ecosystem.
+```text
+one graph can carry several of these at once
+  ComfyUI itself             GPL 3
+  a checkpoint               CreativeML Open RAIL-M
+  a LoRA from someone else   its own terms: read them
+  a node pack                its own LICENSE file
+  your pictures              the Open RAIL-M says the licensor claims no rights in the output, with limits on use
+```
 
-`RESULT open_ecosystem = True`
-This is the final verdict: the model is both generally open and has no critical closed components, making it a true part of an open ecosystem.
+## Sources
 
-`RESULT reproducibility_score = 0.990835`
-This high score indicates very low variance in transparency. The model is consistently open across all components, which is essential for reproducible research and engineering.
-
-`RESULT community_score = 4.2`
-This represents the cumulative "openness" or potential for community contribution. A higher sum suggests a richer ecosystem for collaboration.
-
-## Common mistakes
-
-1.  **Confusing Open Code with Open Weights**: Many models have open-source code (like the `comfy` folder) but the weights are proprietary. You cannot run the model without the weights. Always check the weight file's licence.
-2.  **Ignoring Component Licences**: A model might have open weights, but the text encoder (e.g., T5) might have a different licence than the UNet. You must ensure *all* components are compatible with your use case.
-3.  **Assuming "Open" Means "Unrestricted"**: Open licences like Apache 2.0 or MIT allow redistribution, but they still have terms. Always read the licence.
-4.  **Neglecting Reproducibility**: If the transparency scores are inconsistent (high variance), your results may not be reproducible. Use the reproducibility score as a metric for system health.
-
-## Go deeper
-
-The papers in the evidence are not provided in the source text. However, the concepts of open weights and licences are well-documented in the literature on open-source AI. For a deeper dive, look into the specific licence agreements of the models you use (e.g., Apache 2.0, MIT, Creative Commons) and the technical papers describing the architectures implemented in `comfy/text_encoders` and `comfy/ldm`.
-
+- [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.txt)
+- [GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.txt)
+- [CreativeML Open RAIL-M, text from CompVis](https://huggingface.co/spaces/CompVis/stable-diffusion-license/raw/main/license.txt)
+- [MIT licence text, SPDX](https://raw.githubusercontent.com/spdx/license-list-data/main/text/MIT.txt)
+- [The Open Source AI Definition](https://opensource.org/ai/open-source-ai-definition)
+- [ComfyUI v0.43.0, SECURITY.md](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/SECURITY.md)
+- [ComfyUI v0.43.0, LICENSE](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/LICENSE)

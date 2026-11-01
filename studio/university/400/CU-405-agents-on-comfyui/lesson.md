@@ -1,85 +1,104 @@
 # CU-405 - Agents on ComfyUI: tools, verification, side-effect safety
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Give a model tools to queue graphs, with checks before and after each run and limits it can't talk its way past. Taught by Captain Graph.
 
-## Why this matters
+## The idea
 
-Welcome back to the bridge, crew. In CU-401, we learned to steer the ship manually. Now, in CU-405, we are installing the autopilot. An "agent" in this context is a program that can look at a goal, decide which nodes to wire up, and execute the graph. But an autopilot that doesn't check its instruments is a liability. If your agent sends a malformed graph to the server, you don't just get an error; you get a broken state, wasted compute, or worse, a side-effect you didn't intend.
+An agent is a program that asks a language model what to do next, runs a tool it picks, and shows the result to the model. On ComfyUI, the tools are HTTP calls from CU-224. The model is good at guessing node names, and it guesses wrong often. A graph it wrote may invent a node, skip an input, or quietly ask for something huge.
 
-This lesson focuses on the **verification layer**. Before any wire is connected or any prompt is queued, we must prove the graph is structurally sound. We will build a verifier that checks for unknown nodes, missing inputs, broken links, and cycles. This is the safety net that allows agents to operate autonomously without sinking the ship.
+So the rule on the bridge is simple: **the model proposes, plain code checks, and limits live outside the model.**
 
-## The intuition
+Three layers.
 
-Think of a ComfyUI graph as a nautical chart. Before you set sail, you check the chart for three things:
-1.  **Known Waters:** Are all the landmarks (nodes) on your chart actually real? (Do the `class_type` values exist?)
-2.  **Provisioning:** Does every ship (node) have the supplies it needs? (Are all `required_inputs` present?)
-3.  **Course Correction:** Does the route make sense? (Do links point to existing nodes, and does the path loop back on itself?)
+1. **Before the run.** Check the graph against facts from `/object_info`, not from the model's memory.
+2. **The gate.** Decide which actions may run with no person involved.
+3. **After the run.** Read what really happened. "I queued it" isn't "it worked".
 
-If you try to sail to a non-existent island (unknown node), you run aground. If you forget the water (missing input), you die of thirst. If you draw a circle on the map that never ends (cycle), you sail forever. Our verifier is the navigator who checks the chart before the engine starts.
+## Before the run
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+`POST /prompt` calls `validate_prompt`, so the server gives you most of a verifier free. It reports `missing_node_type`, `required_input_missing`, `return_type_mismatch`, `value_not_in_list`, `prompt_no_outputs` and more. Pass those messages back to the model and let it fix the graph.
 
-We model the graph as a directed acyclic graph (DAG) where nodes are vertices and wires are edges. Let $G = (V, E)$ be the graph, where $V$ is the set of node IDs and $E$ is the set of directed edges.
+Practise reading them.
 
-We define a specification set $S$ containing valid node types. For each node type $t \in S$, we define:
-*   $R(t)$: The set of required input names for type $t$.
-*   $O(t)$: The set of optional input names for type $t$.
+{{play:graphfix}}
 
-A node $n \in V$ has a type $type(n)$ and a set of inputs $I(n)$. An input $i \in I(n)$ is either a literal value or a link. A link is a tuple $(src, idx)$, where $src$ is the ID of the source node and $idx$ is the output index.
+A cheap first check on your own side still pays. It catches invented nodes before they use up a turn, and it can apply rules the server doesn't have, such as a size limit.
 
-The verification function $Verify(G)$ returns a set of problems $P$. $P$ is empty if and only if $G$ is valid. The checks are:
+{{graph:f_validation_base}}
 
-1.  **Type Validity:** For all $n \in V$, $type(n)$ must be in $S$. If not, add "unknown class_type" to $P$.
-2.  **Input Completeness:** For all $n \in V$ where $type(n) \in S$, for all $r \in R(type(n))$, $r$ must be in $I(n)$. If not, add "missing required input" to $P$.
-3.  **Link Integrity:** For all $n \in V$, for all inputs $i \in I(n)$ that are links $(src, idx)$, $src$ must be in $V$. If not, add "links to non-existent node" to $P$.
-4.  **Acyclicity:** The graph must not contain a cycle. We use Depth-First Search (DFS) to detect cycles. If a node is encountered again while it is still on the current recursion stack, a cycle exists. If a cycle is found, add "Graph contains a cycle" to $P$.
+## The gate
 
-This is a static analysis. It does not execute the nodes; it only inspects the structure. This is crucial for safety: we verify before we act.
+Decide for each action, in code. Here's one policy.
 
-## In ComfyUI (name real nodes/files/classes ONLY if they appear in the evidence; otherwise say 'not covered in our sources')
+{{play:agentgate}}
 
-In the ComfyUI ecosystem, the logic for making HTTP requests is separated from the data models. The `comfy_api_nodes/apis` folder contains the Python data models and request/response schemas. For example, `comfy_api_nodes/apis/bfl.py` defines `BFLFluxProGenerateRequest`, and `comfy_api_nodes/apis/kling.py` defines `KlingTaskQueryResponse`. These Pydantic models validate the payloads sent to external APIs.
+Things to know when you write yours:
 
-However, the internal execution engine uses the `comfy_api/internal` folder. The `_ComfyNodeInternal` class is the base for all V3-based ComfyNode APIs. The `AsyncToSyncConverter` in `comfy_api/internal/async_to_sync.py` converts asynchronous node definitions into synchronous ones, ensuring the main UI thread is not blocked.
+- ComfyUI's routes don't ask who's calling (CU-463). Your gate is the only one there is.
+- Nodes marked as API nodes spend credits on outside services. `/object_info` reports `api_node` for them, so a checker can see one before the run. Treat them as asking a person.
+- A file an agent reads, or a pack's README, can hold instructions aimed at the model. Treat tool output as data. Don't widen permissions because some text asks you to.
+- Limit the jobs per task, the sizes and the step counts. A loop that re-queues forever is the classic failure.
 
-For programmatic interaction, the `script_examples` folder provides templates. The `queue_prompt(prompt, prompt_id)` function sends a prompt to the server. The `get_history(prompt_id)` function fetches the execution history and metadata, which is essential for verifying that the execution state matches our expectations. The `get_image(filename, subfolder, folder_type)` function retrieves the output.
+## After the run
 
-Note: The specific implementation of a "graph verifier" node is not covered in our sources. The verification logic we are building in this lesson is a pre-execution check that an agent would perform before calling `queue_prompt`.
+Read `/history/<id>`. Check `status`, then check `outputs`, then fetch the file. A model can only report what your tool returns, so return the real facts. Showing the picture to a person, or to a vision model, is the only check of whether it's the right picture.
 
-## Lab (explain what the lab does, then quote 3-6 of its real `RESULT` lines exactly as printed and say what each proves)
+## In ComfyUI
 
-The lab implements the `verify_graph` function described above. It defines a `NODE_SPECS` dictionary with four node types: `KSampler`, `CheckpointLoader`, `VAEDecode`, and `CLIPTextEncode`. It then tests five graphs:
-1.  `valid`: A correct chain of nodes.
-2.  `unknown_class`: A node with a type not in `NODE_SPECS`.
-3.  `missing_input`: A `KSampler` missing the `steps` input.
-4.  `bad_link`: A link pointing to node ID `99`, which does not exist.
-5.  `cycle`: Two nodes linking to each other.
+`app/agent_host.py` loads an optional package through the `comfyui.agent` entry point, and leaves the agent process, its storage and its trust boundary to that package. We read that loader, not the package. So this lesson teaches the rules for any agent, not that one.
 
-The lab prints the results for each graph. Here are the key outputs:
+## What goes wrong
 
-`RESULT valid = VALID`
-This proves that a correctly structured graph with all required inputs and valid links passes all checks. The verifier returns an empty problem list.
+- **Invented nodes.** The model names a node that sounds right. Fix: send it a short list of real ones from `/object_info`, and check with code.
+- **It passes, and it's wrong.** Validation sees types. A swapped positive and negative prompt passes, and so does 8192 wide in the lab. Add your own limits.
+- **Reporting success without looking.** A job can finish with no file, as the lab's third case shows. Require a fetched file.
+- **The model is told to be careful.** Instructions aren't limits. A rule in a prompt can be ignored or argued with. Code can't.
+- **Stale facts.** Node lists change as packs change. Fetch `/object_info` per session and don't bake it into a prompt.
+- **The agent stops others' jobs.** `/interrupt`, `/free` and clearing the queue touch everyone on that server. Keep them behind a person.
 
-`RESULT unknown_class = Node 1 has unknown class_type: NonExistentNode`
-This proves that the verifier catches nodes that are not defined in the specification. An agent cannot use a node it doesn't know about.
+## Lab
 
-`RESULT missing_input = Node 1 (KSampler) missing required input: steps`
-This proves that the verifier enforces input completeness. Even if the node type is known, missing a required parameter like `steps` will block execution.
+The verifier is a plain-code copy of a few rules. The names are the server's. The real server stops at the first unknown node, and this copy carries on.
 
-`RESULT bad_link = Node 1 input model links to non-existent node: 99`
-This proves that the verifier checks link integrity. A wire cannot connect to a node that isn't in the graph. This prevents "dangling wires" that would cause runtime errors.
+```text
+graph                  problems
+good                   []
+invented node          [('2', 'missing_node_type'), ('3', 'exception_during_inner_validation:images')]
+forgot an input        [('1', 'required_input_missing:height')]
+wire to nothing        [('2', 'exception_during_inner_validation:image')]
+output slot too big    [('2', 'exception_during_inner_validation:image')]
+wrong type on a wire   [('2', 'return_type_mismatch:image')]
+no output node         [('-', 'prompt_no_outputs')]
+```
 
-`RESULT cycle = Graph contains a cycle`
-This proves that the DFS-based cycle detection works. A graph where Node 1 depends on Node 2, and Node 2 depends on Node 1, is invalid because it can never be executed in a topological order.
+```text
+8192 wide passes these checks: True  so a size limit is your job, or the agent queues a huge job
+```
 
-## Common mistakes
+The gate is plain code too, so a model can't talk it round.
 
-1.  **Confusing Verification with Execution:** Verification is static. It does not run the model. Do not expect the verifier to tell you if the image will be good; it only tells you if the graph is structurally sound.
-2.  **Ignoring Optional Inputs:** The verifier only checks `required_inputs`. If you omit an optional input like `cfg`, the graph is still valid, but the behavior might differ from your intent. Always document your assumptions about optional parameters.
-3.  **Assuming Topological Order:** The verifier ensures there are no cycles, but it does not sort the nodes. When you execute the graph, you must still perform a topological sort to determine the execution order. The verifier is a prerequisite for topological sorting, not a replacement for it.
-4.  **Hardcoding Node Specs:** In a real agent, `NODE_SPECS` should be dynamic, fetched from the ComfyUI server's API. Hardcoding them means your agent will break when new nodes are added or old ones are removed.
+```text
+action                 allowed?
+GET /object_info       yes
+POST /prompt           yes
+POST /queue clear      ask a person
+POST /free             ask a person
+API node in graph      ask a person
+shell command          no
+fourth POST /prompt with a limit of 3: ask a person
+```
 
-## Go deeper (the papers in the evidence, by arXiv id)
+And what to do with a result:
 
-The evidence provided does not contain specific arXiv IDs for papers. The sources are internal ComfyUI code documentation and lab code. For further reading on graph verification in AI pipelines, look into research on "DAG validation for machine learning workflows" or "static analysis for neural network graphs." The principles here are standard graph theory applied to a specific domain.
+```text
+run              what the agent should do
+ok               1 file: fetch it and look before reporting
+failed           failed: read status messages
+ran, no images   no files: don't report success
+```
 
+## Sources
+
+- [ComfyUI v0.43.0, server.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/server.py)
+- [ComfyUI v0.43.0, execution.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/execution.py)
+- [ComfyUI v0.43.0, app/agent_host.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/app/agent_host.py)

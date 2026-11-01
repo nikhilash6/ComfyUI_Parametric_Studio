@@ -1,0 +1,12 @@
+{
+ "code": "CU-430",
+ "title": "Your first node, in V1 and in V3",
+ "level": "400",
+ "questions": [
+  {"q": "A V1 node's function returns the integer x, not (x,). What do you see when it runs?", "options": ["The value is wrapped for you", "TypeError: object of type 'int' has no len()", "Validation fails before the run", "The node is skipped with no message"], "answer": "TypeError: object of type 'int' has no len()", "why": "merge_result_data calls len on what you returned. We ran this. Validation can't catch it, because it never runs your function."},
+  {"q": "What do the V1 and V3 forms of a node share by the time the validator sees them?", "options": ["Nothing, there are two validators", "The same file on disk", "The same INPUT_TYPES dictionary shape", "The same class name, Clone"], "answer": "The same INPUT_TYPES dictionary shape", "why": "The V3 base class builds that dictionary from your schema, in get_v1_info."},
+  {"q": "Your node does image += 0.25. Each queue changes only a setting on your node. What happens to the picture?", "options": ["It stays the same", "It gets brighter on each queue", "The queue is refused", "It goes black at once"], "answer": "It gets brighter on each queue", "why": "The input is the cached output of the node upstream, and you changed it in place. A real run went 0.3755, 0.6255, 0.8755."},
+  {"q": "A pack defines both NODE_CLASS_MAPPINGS and comfy_entrypoint. Which does the loader use?", "options": ["Both", "comfy_entrypoint", "NODE_CLASS_MAPPINGS, and it stops there", "Neither, it is an error"], "answer": "NODE_CLASS_MAPPINGS, and it stops there", "why": "load_custom_node reads the mapping first and returns True, so the entry point is never called."},
+  {"q": "You edit your node's Python while the server runs and queue again. What changes?", "options": ["Nothing until you restart", "It reloads at the next queue", "Only the schema updates", "Only the function updates"], "answer": "Nothing until you restart", "why": "Packs are imported once at startup, in init_external_custom_nodes."}
+ ]
+}

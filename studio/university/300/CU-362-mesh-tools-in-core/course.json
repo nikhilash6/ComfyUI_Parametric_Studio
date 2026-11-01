@@ -1,0 +1,74 @@
+{
+ "code": "CU-362",
+ "title": "Mesh tools in core: decimate, remesh, unwrap",
+ "level": "300",
+ "prereq": [
+  "CU-360"
+ ],
+ "char": "latent",
+ "hook": "A generated mesh is messy, huge and has no UVs. Three core nodes fix that, if you run them in the right order.",
+ "track": "three-d",
+ "order": 16,
+ "graphs": [
+  "e_mesh_cleanup"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_mesh_postprocess.py:DecimateMesh",
+  "comfy_extras/nodes_mesh_postprocess.py:RemeshMesh",
+  "comfy_extras/nodes_mesh_postprocess.py:UnwrapMesh",
+  "comfy_extras/mesh3d/postprocess/qem_decimate.py:qem_simplify",
+  "comfy_extras/mesh3d/postprocess/qem_decimate.py:QEMConfig",
+  "comfy_extras/mesh3d/postprocess/remesh.py:remesh_narrow_band_dc",
+  "comfy_extras/mesh3d/postprocess/remesh.py:_dual_contour_manifold",
+  "comfy_extras/mesh3d/uv_unwrap/parameterize.py:solve_least_squares",
+  "comfy_extras/mesh3d/uv_unwrap/segment.py:DEFAULT_MAX_COST"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "DecimateMesh uses QEM with midpoint or qem placement, and leaves a mesh alone when it's already under target.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_mesh_postprocess.py:DecimateMesh"
+  },
+  {
+   "claim": "RemeshMesh rebuilds the surface with a narrow-band distance field and Dual Contouring, with udf, sdf and solid sign modes.",
+   "how": "source",
+   "ref": "comfy_extras/mesh3d/postprocess/remesh.py:remesh_narrow_band_dc"
+  },
+  {
+   "claim": "RemeshMesh asks for at least resolution cubed x 64 bytes.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_mesh_postprocess.py:RemeshMesh"
+  },
+  {
+   "claim": "UnwrapMesh segments into charts, parameterizes, packs, and duplicates seam vertices. Its description says to run it after remesh and decimate.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_mesh_postprocess.py:UnwrapMesh"
+  },
+  {
+   "claim": "On a CPU, the real qem_simplify took an icosphere of 5120 faces to 1280, 320 and 80 faces, with mean distances from the sphere of 0.00137, 0.00653 and 0.02586.",
+   "how": "run here",
+   "ref": "comfy_extras/mesh3d/postprocess/qem_decimate.py:qem_simplify"
+  },
+  {
+   "claim": "On a CPU, the real remesh_narrow_band_dc gave 7,980 faces at resolution 32 and 31,740 at 64 on that sphere.",
+   "how": "run here",
+   "ref": "comfy_extras/mesh3d/postprocess/remesh.py:remesh_narrow_band_dc"
+  },
+  {
+   "claim": "On a CPU, the real _uv_unwrap with the adaptive segmenter took 2562 vertices to 2960, on the same 5120 faces.",
+   "how": "run here",
+   "ref": "comfy_extras/nodes_mesh_postprocess.py:_uv_unwrap"
+  },
+  {
+   "claim": "The cleanup graph passes validate_prompt with file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "These checks ran on one synthetic sphere, which is an easy shape. Real generated meshes are messier. We did not run the cleanup graph from a real generated mesh, since the checkpoint is not on our test machine.",
+  "The node's faces-per-resolution tooltip (256 about 100k, 512 about 1M) is the node's own figure. The sphere run gives far fewer faces at low resolutions, as its surface fills less of the box.",
+  "The lab's decimator shows the idea only. The real one runs parallel rounds with quality checks we did not port."
+ ]
+}

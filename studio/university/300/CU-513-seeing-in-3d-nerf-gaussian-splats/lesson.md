@@ -1,80 +1,110 @@
 # CU-513 - History 13: Seeing in 3D: NeRF, Gaussian splats and structured latents
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Explain how NeRF and Gaussian splatting draw a picture, why the second is so much faster, and where structured latents fit. Taught by Professor Latent.
 
-## Why this matters
+## The idea
 
-Welcome back to the compressed world. In previous lectures, we treated the latent space as a flat, 2D manifold where pixels are just coordinates. But reality is not flat; it has depth, volume, and light that changes as you move. To generate 3D content, we must move beyond simple pixel prediction and into the realm of volumetric representation.
+For decades, 3D meant triangles. Then, around 2020, researchers asked a different question. Forget surfaces. If you want a picture from a new angle, what's the least you need to know? Only how much light each point along each ray gives and blocks.
 
-This lesson explores the two dominant paradigms for 3D generation: **Neural Radiance Fields (NeRF)** and **3D Gaussian Splatting**. We will examine how modern systems like `TripoSplat` and `ChromaRadiance` bridge the gap between 2D diffusion models and 3D geometry. The core tension here is computational: NeRFs offer continuous, high-fidelity representations but are slow to render; Gaussian Splatting offers explicit, real-time rendering but requires careful management of explicit primitives. Understanding this trade-off is essential for architecting efficient 3D-aware diffusion pipelines.
+## NeRF: a network that answers questions
 
-## The intuition
+**NeRF (2020)** trains a network on photos of one scene. Its input is a 5D coordinate: a position (x, y, z) and a viewing direction. Its output is a volume density and a colour for that view. There's no stored shape. The scene lives in the network's weights.
 
-Imagine you are standing in a foggy forest.
+To draw one pixel, walk along its ray, ask the network at many points, and add up. The usual sum looks like this:
 
-**NeRF** is like describing the fog with a mathematical function. You don’t store the fog; you store the *rules* for how dense and colored the fog is at any point $(x,y,z)$ and viewing direction $(\theta, \phi)$. To see a pixel, you cast a ray into the forest and sample this function thousands of times along the ray. It is precise, continuous, and differentiable, but asking the function for every pixel in a high-resolution image is computationally expensive. It is an *implicit* representation.
+```
+alpha_i = 1 - exp(-density_i x step_i)
+T_i     = product over earlier samples of (1 - alpha_j)
+colour  = sum of T_i x alpha_i x colour_i
+```
 
-**Gaussian Splatting** is like the forest being made of millions of tiny, semi-transparent, colored balloons (Gaussians). Each balloon has a position, a size (scale), an orientation (rotation), and a color. To render an image, you project these balloons onto the 2D screen and blend them together. This is an *explicit* representation. Because you are just moving and blending pre-computed shapes, it is incredibly fast, capable of real-time rendering.
+T is what light gets through so far. That's what makes near things hide far things. The cost is the catch. At 192 samples per ray, an 800 x 800 image is about 123 million network queries.
 
-In ComfyUI, we see this evolution in the `comfy/ldm/triposplat` and `comfy/ldm/chroma_radiance` modules. `ChromaRadiance` integrates NeRF-style positional embeddings into a flow-matching transformer, allowing the model to "think" in 3D space. `TripoSplat` goes further, using a diffusion model to generate latents that are then decoded into explicit Gaussian parameters, enabling the fast, splat-based rendering we desire.
+## Gaussian splatting: just draw the blobs
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+**3D Gaussian Splatting (2023)** keeps the idea of soft, see-through material, and drops the network at drawing time. It fits a cloud of 3D Gaussians to the photos, then rasterizes them. Its paper reports real-time rendering at 1080p.
 
-The fundamental operation in both methods is **volume rendering** or **splatting**, which composites contributions from different depths.
+{{play:splat}}
 
-For NeRF, we use front-to-back compositing. For a ray passing through $N$ slices, the final color $C$ is:
+Each blob has a place, a size in three directions, a rotation, an opacity and a colour. Order matters: blending the same blobs in a different order gives a different picture, so renderers sort them. Core's `RenderSplat` composites front to back through depth slabs.
 
-$$ C = \sum_{i=1}^{N} \alpha_i T_i c_i $$
+## Then: generating 3D
 
-Where:
-*   $\alpha_i$ is the opacity (density) at slice $i$.
-*   $c_i$ is the color (radiance) at slice $i$.
-*   $T_i$ is the transmittance, representing the probability that light reaches slice $i$ without being absorbed by previous slices. It is defined recursively:
-    $$ T_1 = 1 $$
-    $$ T_i = T_{i-1} (1 - \alpha_{i-1}) $$
+Both of those fit one scene from photos. They don't invent anything. To generate, you need a latent space for 3D, and a sampler.
 
-In `TripoSplat`, the decoder outputs explicit Gaussian parameters. A Gaussian is defined by:
-*   $\mathbf{x}$: Position (xyz).
-*   $\mathbf{s}$: Scale (anisotropic covariance).
-*   $\mathbf{q}$: Rotation (quaternion).
-*   $\mathbf{c}$: Color (RGB).
-*   $\alpha$: Opacity.
+**Structured latents (2024)**, or SLAT, the idea behind TRELLIS, keeps a sparse 3D grid with features attached, then decodes to radiance fields, Gaussians or meshes. In ComfyUI, `SLatFlowModel` is the flow model, and `VaeDecodeShapeTrellis` is one of its decoders.
 
-The `GaussianModel` class in `comfy/ldm/triposplat/gaussian.py` stores these. The rendering process projects these 3D Gaussians to 2D screen space. The `render_splat` function in `preview.py` handles this projection, using parameters like `yaw` and `pitch` to define the camera view. The key advantage is that once the Gaussians are optimized, rendering is a simple rasterization step, avoiding the iterative sampling of NeRF.
+**TripoSplat** in core uses `LatentSeqMMFlowModel`, then `VAEDecodeTripoSplat` makes a `SPLAT`. `render_splat` draws previews during sampling. **Hunyuan3D 2** uses a list of tokens and queries points, which you can read through in CU-360.
 
-## In ComfyUI
+{{graph:hunyuan3d_mesh}}
 
-Our sources provide specific evidence for the following implementations:
+![A sample for Hunyuan3D 2.1 from ComfyUI's template library. MIT licensed, and not rendered by us.](families/lib_hunyuan3d-2-1.webp)
 
-1.  **`comfy/ldm/triposplat`**: This module contains the core implementation for the TripoSplat model. It uses a diffusion-based transformer (`LatentSeqMMFlowModel`) to generate latents, which are then decoded into explicit 3D Gaussian parameters. Key classes include `GaussianModel` for storing parameters and `OctreeGaussianDecoder` for hierarchical decoding. The `preview.py` file includes `render_splat`, which renders these Gaussians to an image using a view matrix constructed from `yaw` and `pitch`.
-2.  **`comfy/ldm/chroma_radiance`**: This module implements the `ChromaRadiance` model, a variant of the Chroma transformer designed for flow matching on sequences. It integrates NeRF capabilities via `NerfEmbedder` and `NerfGLUBlock`. The `forward_nerf` method executes the forward pass for NeRF-related computations, while `forward_tiled_nerf` offers a memory-optimized version by processing inputs in chunks.
-3.  **`comfy_extras/nodes_gaussian_splat.py`**: This file defines `RenderSplat` and `TransformSplat` nodes, allowing users to manipulate and visualize Gaussian splats within the ComfyUI graph. It also includes serialization functions like `_gaussian_ply_bytes` for exporting the data.
+## A name that misleads
+
+`comfy/ldm/chroma_radiance` has `NerfEmbedder` and `nerf_blocks`. An earlier draft of this lesson claimed that it lets the model "think in 3D". It doesn't. The docstring says `NerfEmbedder` adds a 2D positional encoding to image patches. Chroma Radiance is an image model that borrows the coordinate-network idea for pixels. Read the code, not the name.
+
+## What goes wrong
+
+- **Treating NeRF as a generator.** The original fits one scene from photos. It can't dream up a new one.
+- **Too few samples on a thin surface.** A wall thinner than the sample spacing can be missed entirely. In the lab, 16 and 64 samples see nothing.
+- **Blobs in the wrong order.** Wrong blending looks like the near object is see-through. Use the renderer's sort.
+- **Calling Chroma Radiance 3D.** See above.
+- **Asking for a mesh from a splat without loss.** A surface has to be invented. See CU-361.
+- **Assuming "real time" applies to your job.** That claim is about drawing a finished splat. Generating one is another matter.
 
 ## Lab
 
-The lab simulates the core volume rendering equation used in NeRF and adapted for splatting. We define three slices with fixed opacities ($\alpha = 0.5$) and distinct colors (Red, Green, Blue). We calculate the transmittance $T$ and the final composited color $C$.
-
-Here are the real `RESULT` lines from the lab output:
+The sum on three slices of opacity 0.5, red, green and blue. Each one takes half of what's left:
 
 ```text
-RESULT final_color = 0.5 0.25 0.125
-RESULT transmittance = 1 0.5 0.25
+three slices, alpha 0.5: colour [0.5, 0.25, 0.125]  transmittance [1.0, 0.5, 0.25]  background keeps 0.125
 ```
 
-**What each proves:**
-1.  `RESULT final_color = 0.5 0.25 0.125`: This proves the correctness of the front-to-back compositing formula. The red component is $0.5$ because the first slice has $\alpha=0.5$ and $T=1.0$ ($0.5 \times 1.0 \times 1.0 = 0.5$). The green component is $0.25$ because the second slice has $\alpha=0.5$ and $T=0.5$ ($0.5 \times 0.5 \times 1.0 = 0.25$). The blue component is $0.125$ because the third slice has $\alpha=0.5$ and $T=0.25$ ($0.5 \times 0.25 \times 1.0 = 0.125$).
-2.  `RESULT transmittance = 1 0.5 0.25`: This proves the recursive calculation of transmittance. $T_1 = 1$. $T_2 = T_1 (1 - \alpha_1) = 1 \times (1 - 0.5) = 0.5$. $T_3 = T_2 (1 - \alpha_2) = 0.5 \times (1 - 0.5) = 0.25$. This decay in transmittance is why deeper layers contribute less to the final image, a fundamental property of volumetric rendering.
+A soft ball of fog is easy. With few samples the answer is rough, and it soon settles:
 
-## Common mistakes
+```text
+ray through fog, exact opacity 0.864665
+samples per ray   opacity
+5                 0.909282
+7                 0.819908
+16                0.864665
+64                0.864665
+192               0.864664
+```
 
-1.  **Confusing Implicit and Explicit**: Assuming that because a model uses a transformer, it is "implicit." In `TripoSplat`, the transformer generates *explicit* Gaussian parameters. The "implicit" part is the diffusion process in latent space, but the final 3D representation is explicit.
-2.  **Ignoring Memory in NeRF**: Using `forward_nerf` without `forward_tiled_nerf` on large scenes can exhaust VRAM. The tiled version is crucial for memory optimization, as noted in the `chroma_radiance` documentation.
-3.  **Misinterpreting Transmittance**: Forgetting that transmittance is cumulative. A high opacity in the foreground drastically reduces the contribution of background layers, which is essential for correct depth perception in rendered images.
+A thin wall is hard. Evenly spaced samples miss it, then hit it by luck:
 
-## Go deeper
+```text
+a thin wall, 0.04 thick, density 200, seen through evenly spaced samples:
+  16 samples: opacity 0.0000
+  64 samples: opacity 0.0000
+ 128 samples: opacity 1.0000
+ 256 samples: opacity 0.9981
+ 512 samples: opacity 0.9999
+```
 
-To understand the theoretical foundations and the specific algorithms implemented in ComfyUI, refer to these papers:
+That is why NeRF-style methods put effort into where to sample. Then the cost:
 
-*   **arXiv:2003.08934**: *NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis*. This paper introduces the 5D coordinate function and volume rendering technique that `ChromaRadiance` builds upon.
-*   **arXiv:2308.04079**: *3D Gaussian Splatting for Real-Time Radiance Field Rendering*. This paper details the explicit Gaussian representation, anisotropic covariance optimization, and the fast visibility-aware rendering algorithm used in `TripoSplat`.
+```text
+NeRF at 800 x 800, 192 samples a ray: 122,880,000 network queries per image. Splats: no network at render time, one projection per Gaussian
+```
 
+And order. The same three blobs, sorted against unsorted:
+
+```text
+three Gaussians at depths 2, 1, 3, sorted before blending: [0.25, 0.5, 0.125] (the nearest colour wins most)
+unsorted, in stored order: [0.5, 0.25, 0.125]
+```
+
+## Sources
+
+- [NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis](https://arxiv.org/abs/2003.08934)
+- [3D Gaussian Splatting for Real-Time Radiance Field Rendering](https://arxiv.org/abs/2308.04079)
+- [Structured 3D Latents for Scalable and Versatile 3D Generation](https://arxiv.org/abs/2412.01506)
+- [ComfyUI v0.43.0, comfy_extras/nodes_gaussian_splat.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_gaussian_splat.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_trellis2.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_trellis2.py)
+- [ComfyUI v0.43.0, comfy/ldm/trellis2/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/trellis2/model.py)
+- [ComfyUI v0.43.0, comfy/ldm/triposplat/preview.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/triposplat/preview.py)
+- [ComfyUI v0.43.0, comfy/ldm/triposplat/gaussian.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/triposplat/gaussian.py)
+- [ComfyUI v0.43.0, comfy/ldm/chroma_radiance/layers.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/chroma_radiance/layers.py)

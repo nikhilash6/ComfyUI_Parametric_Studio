@@ -16,8 +16,48 @@
   "comfy/latent_formats.py:class Flux",
   "nodes.py:class VAEDecode",
   "nodes.py:class VAEEncode",
-  "comfy/sd.py:class VAE"
+  "comfy/sd.py:class VAE",
+  "comfy/ldm/models/autoencoder.py:DiagonalGaussianRegularizer",
+  "comfy/latent_formats.py:LatentFormat.process_in",
+  "latent_preview.py:Latent2RGBPreviewer"
  ],
  "track": "noise-latent",
- "order": 10
+ "order": 10,
+ "kit": true,
+ "graphs": [
+  "b_latent_gain",
+  "nm_latent_ops"
+ ],
+ "verified": [
+  {
+   "claim": "The scale factors are read from the format classes.",
+   "how": "source",
+   "ref": "comfy/latent_formats.py"
+  },
+  {
+   "claim": "process_in multiplies by scale_factor, and SD3's and Flux's subtract a shift first.",
+   "how": "source",
+   "ref": "comfy/latent_formats.py"
+  },
+  {
+   "claim": "DiagonalGaussianRegularizer returns the mode unless sample is set.",
+   "how": "source",
+   "ref": "comfy/ldm/models/autoencoder.py:DiagonalGaussianRegularizer"
+  },
+  {
+   "claim": "The KL formula matched a Monte Carlo estimate, and the small VAE's trade-off was measured.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "nm_latent_ops ran on a CPU; b_latent_gain passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The toy VAE has one true degree of freedom, so its behaviour does not transfer directly to image VAEs, as the lesson says.",
+  "We did not run wrong-VAE or out-of-memory cases for this lesson. Those lines describe the shapes and what we expect.",
+  "The statements about Rombach et al. were checked at the first audit and not re-read this time."
+ ]
 }

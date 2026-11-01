@@ -1,0 +1,62 @@
+{
+ "code": "CU-231",
+ "title": "Denoise and image to image",
+ "level": "200",
+ "questions": [
+  {
+   "q": "At 20 steps and denoise 0.5, what does KSampler run?",
+   "options": [
+    "10 steps of a 20-step schedule",
+    "The last 20 steps of a 40-step schedule",
+    "20 steps of a 20-step schedule at half strength",
+    "40 steps"
+   ],
+   "answer": "The last 20 steps of a 40-step schedule",
+   "why": "new_steps = int(20 / 0.5) = 40, and the last 21 values are kept, which is 20 steps."
+  },
+  {
+   "q": "What does denoise control?",
+   "options": [
+    "How much noise the picture gets first, by choosing where the schedule starts",
+    "The strength of the model's weights",
+    "How many model calls run",
+    "The VAE's precision"
+   ],
+   "answer": "How much noise the picture gets first, by choosing where the schedule starts",
+   "why": "The model behaves the same at each level. The start level is what moves."
+  },
+  {
+   "q": "Why can denoise 0.9 and 1.0 look alike?",
+   "options": [
+    "Most of the schedule's range is at very high noise, where the picture is already nearly gone",
+    "They are the same code path",
+    "The model clamps it",
+    "CFG cancels the difference"
+   ],
+   "answer": "Most of the schedule's range is at very high noise, where the picture is already nearly gone",
+   "why": "The lab's last column barely moves between 1 and 0.75. The picture's share only grows in the low range."
+  },
+  {
+   "q": "You move a graph from BasicScheduler to AlignYourStepsScheduler with denoise 0.5 and 20 steps. What changes?",
+   "options": [
+    "It runs 10 steps instead of 20",
+    "Nothing",
+    "It runs 40 steps",
+    "It ignores denoise"
+   ],
+   "answer": "It runs 10 steps instead of 20",
+   "why": "Align Your Steps uses round(steps × denoise). BasicScheduler keeps steps."
+  },
+  {
+   "q": "You feed your picture to KSampler at denoise 1. Is the picture gone?",
+   "options": [
+    "A trace remains, because the latent is always added",
+    "Yes, the latent is ignored",
+    "Yes, the sampler zeros it",
+    "No, nothing changes"
+   ],
+   "answer": "A trace remains, because the latent is always added",
+   "why": "noise_scaling adds latent_image in both branches. For a clean start, use an empty latent."
+  }
+ ]
+}

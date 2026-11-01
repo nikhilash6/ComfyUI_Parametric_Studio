@@ -59,15 +59,15 @@
    "why": "modulate returns shift + x(1 + scale), and ResBlock multiplies by (1 + scale) and adds shift when use_scale_shift_norm is set. ComfyUI has no StyleGAN generator; model_animate.py only borrows some StyleGAN2 layers."
   },
   {
-   "q": "Which paper introduced AdaIN, and for what?",
+   "q": "What does Apply Style Model do to the conditioning in ComfyUI?",
    "options": [
-    "Huang and Belongie, 2017, for arbitrary style transfer in real time",
-    "Karras, Laine and Aila, 2018, for face generation",
-    "Perez et al., 2017, for visual reasoning",
-    "Goodfellow et al., 2014, for adversarial training"
+    "Adds the reference's tokens to the conditioning, so the prompt tensor gets longer",
+    "Runs AdaIN on the feature maps",
+    "Loads a StyleGAN generator",
+    "Scales the VAE's latent"
    ],
-   "answer": "Huang and Belongie, 2017, for arbitrary style transfer in real time",
-   "why": "Their AdaIN layer aligns the mean and variance of content features with those of style features and has no learned affine parameters. StyleGAN, posted in December 2018, borrowed it and computes the scale and shift from a learned affine map of w."
+   "answer": "Adds the reference's tokens to the conditioning, so the prompt tensor gets longer",
+   "why": "StyleModelApply joins the style output on to the conditioning. The word style there has nothing to do with StyleGAN's mechanism."
   }
  ]
 }

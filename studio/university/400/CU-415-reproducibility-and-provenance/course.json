@@ -2,14 +2,55 @@
  "title": "Reproducibility and provenance: hashing graphs and seeds",
  "level": "400",
  "char": "graph",
- "hook": "Learn how to cryptographically fingerprint your ComfyUI workflows and seeds to ensure bit-perfect reproducibility across different machines and sessions.",
+ "hook": "A seed fixes one input. Hash the graph, the files and the versions, and find out why two runs differ.",
  "code": "CU-415",
  "prereq": [
   "CU-105",
   "CU-405"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "nodes.py:SaveImage.save_images",
+  "comfy/sample.py:prepare_noise",
+  "comfy/cli_args.py:--disable-metadata",
+  "comfy/cli_args.py:--deterministic",
+  "execution.py:MAXIMUM_HISTORY_SIZE"
+ ],
  "track": "automation",
- "order": 50
+ "order": 50,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "SaveImage writes prompt and extra_pnginfo text chunks unless metadata is disabled.",
+   "how": "source",
+   "ref": "nodes.py:SaveImage.save_images"
+  },
+  {
+   "claim": "prepare_noise uses a CPU generator from the seed.",
+   "how": "source",
+   "ref": "comfy/sample.py:prepare_noise"
+  },
+  {
+   "claim": "Real prepare_noise on a CPU: equal at one seed, batch first image equal, wider image different.",
+   "how": "run here",
+   "ref": "comfy/sample.py:prepare_noise"
+  },
+  {
+   "claim": "The deterministic flag exists and its help says it may not always work.",
+   "how": "source",
+   "ref": "comfy/cli_args.py:--deterministic"
+  },
+  {
+   "claim": "Hash and PNG tables come from the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "We did not compare the same graph across GPUs or drivers. Rounding differences are a known risk, not something measured here.",
+  "A full render's bit-for-bit repeat wasn't tested in this lesson. Only the noise was run.",
+  "The lab's PNG is a minimal one we built. Real SaveImage files were read from source, not parsed here."
+ ],
+ "kit": true
 }

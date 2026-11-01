@@ -1,0 +1,12 @@
+{
+ "code": "CU-434",
+ "title": "Lists and batches: INPUT_IS_LIST, OUTPUT_IS_LIST",
+ "level": "400",
+ "questions": [
+  {"q": "An ordinary node gets a batch of 4 images on one wire. How many times is it called?", "options": ["Once", "4 times", "Twice", "It depends on the VRAM"], "answer": "Once", "why": "A batch is one item in the list the engine carries."},
+  {"q": "An ordinary node gets a list of 4 images on one wire and a number widget. How many calls?", "options": ["One", "Four, with the widget repeating", "Four, and the widget is lost", "An error, as the lengths differ"], "answer": "Four, with the widget repeating", "why": "One call per item of the longest list. A shorter list repeats its last item."},
+  {"q": "Lists of 3 and 2 meet at a node. What is the third call?", "options": ["Third of a, first of b", "Third of a, second of b", "There is no third call", "It raises an error"], "answer": "Third of a, second of b", "why": "The shorter list repeats its last item. The lab prints (3, 20)."},
+  {"q": "You set INPUT_IS_LIST. How does an INT widget with value 5 arrive?", "options": ["5", "[5]", "(5,)", "It is dropped"], "answer": "[5]", "why": "The flag covers every input. Our real run saw k=[1], and core reads final_width[0]."},
+  {"q": "Your function returns a list, and you did not set OUTPUT_IS_LIST. What does the next node get?", "options": ["One call for each item", "One call, with the whole list as a single value", "An error", "Only the first item"], "answer": "One call, with the whole list as a single value", "why": "Without the flag, merge_result_data keeps your list as one item."}
+ ]
+}

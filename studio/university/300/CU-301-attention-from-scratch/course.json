@@ -14,5 +14,41 @@
   "comfy/ldm/flux/math.py:def attention"
  ],
  "track": "architecture",
- "order": 10
+ "order": 10,
+ "graphs": [
+  "sd15_txt2img",
+  "wf_flux2_klein"
+ ],
+ "verified": [
+  {
+   "claim": "optimized_attention is chosen once at module load from several backends.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:optimized_attention"
+  },
+  {
+   "claim": "CrossAttention takes q from x and k, v from context.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:CrossAttention"
+  },
+  {
+   "claim": "flux attention applies RoPE and then calls optimized_attention.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/math.py:attention"
+  },
+  {
+   "claim": "All tables come from this lesson's lab, run here on a CPU.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The scale and the formula are eq. 1 and the footnote of Vaswani et al. 2017.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/1706.03762"
+  }
+ ],
+ "unchecked": [
+  "We did not compare the backends' pixel output on one seed.",
+  "The figure of 77 tokens per chunk is the usual SD 1.5 chunk size in ComfyUI's tokenizer; the page does not measure a specific prompt."
+ ],
+ "kit": true
 }

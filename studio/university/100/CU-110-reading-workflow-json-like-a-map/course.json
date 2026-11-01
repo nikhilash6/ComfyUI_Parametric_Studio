@@ -15,5 +15,46 @@
   "server.py:json_data[\"prompt\"]"
  ],
  "track": "first-graph",
- "order": 40
+ "order": 40,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img",
+  "nm_first"
+ ],
+ "verified": [
+  {
+   "claim": "The API body takes prompt, and optionally extra_data and client_id.",
+   "how": "source",
+   "ref": "server.py:post_prompt"
+  },
+  {
+   "claim": "is_link accepts only a list of a string and a number.",
+   "how": "source",
+   "ref": "comfy_execution/graph_utils.py:is_link"
+  },
+  {
+   "claim": "SaveImage writes prompt and each key of extra_pnginfo as PNG text.",
+   "how": "source",
+   "ref": "nodes.py:SaveImage.save_images"
+  },
+  {
+   "claim": "Passing the save format to validate_prompt raises a TypeError.",
+   "how": "run here",
+   "ref": "execution.validate_prompt on default_workflow.json"
+  },
+  {
+   "claim": "The save-format fields and the link row come from the documentation.",
+   "how": "docs",
+   "ref": "docs.comfy.org/specs/workflow_json_0.4"
+  },
+  {
+   "claim": "The two-way translation and the damage checks come from running the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "The lab's save file is built from the schema, not exported from the editor. Real exports carry more fields.",
+  "We read the note about --disable-metadata in the source and did not run a server with that flag."
+ ]
 }

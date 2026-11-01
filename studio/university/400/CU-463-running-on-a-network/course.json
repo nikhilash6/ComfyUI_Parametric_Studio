@@ -1,0 +1,94 @@
+{
+ "code": "CU-463",
+ "title": "Running ComfyUI safely on a network",
+ "level": "400",
+ "prereq": [
+  "CU-224"
+ ],
+ "char": "graph",
+ "hook": "ComfyUI has no login. What --listen, CORS, TLS and --multi-user each really do, tested against the real middleware.",
+ "track": "automation",
+ "order": 18,
+ "graphs": [
+  "a_save_preview"
+ ],
+ "code_refs": [
+  "server.py:create_origin_only_middleware",
+  "server.py:create_cors_middleware",
+  "server.py:is_loopback",
+  "server.py:system_stats",
+  "server.py:post_prompt",
+  "app/user_manager.py:UserManager.get_request_user_id",
+  "folder_paths.py:get_save_image_path",
+  "execution.py:SENSITIVE_EXTRA_DATA_KEYS",
+  "api_server/routes/internal/internal_routes.py:folder_paths"
+ ],
+ "verified": [
+  {
+   "claim": "The threat model and the quotes.",
+   "how": "source",
+   "ref": "SECURITY.md:trusted"
+  },
+  {
+   "claim": "The status table: the real middleware functions, extracted with ast, on mocked aiohttp requests. The lab's port gives the same answers.",
+   "how": "run here",
+   "ref": "server.py:create_origin_only_middleware"
+  },
+  {
+   "claim": "Turning on CORS installs its middleware instead of the origin check.",
+   "how": "source",
+   "ref": "server.py:create_cors_middleware"
+  },
+  {
+   "claim": "--listen with no value means 0.0.0.0,:: and main.py splits on the comma.",
+   "how": "source",
+   "ref": "comfy/cli_args.py:listen"
+  },
+  {
+   "claim": "TLS needs both files, and verify_mode is CERT_NONE.",
+   "how": "source",
+   "ref": "server.py:tls_keyfile"
+  },
+  {
+   "claim": "--multi-user trusts the comfy-user header.",
+   "how": "source",
+   "ref": "app/user_manager.py:UserManager.get_request_user_id"
+  },
+  {
+   "claim": "The open routes in the table.",
+   "how": "source",
+   "ref": "server.py:PromptServer.add_routes"
+  },
+  {
+   "claim": "Partner tokens are removed from what is stored.",
+   "how": "source",
+   "ref": "execution.py:SENSITIVE_EXTRA_DATA_KEYS"
+  },
+  {
+   "claim": "SaveImage refuses a path outside the output folder.",
+   "how": "source",
+   "ref": "folder_paths.py:get_save_image_path"
+  },
+  {
+   "claim": "Simple POST requests need no preflight.",
+   "how": "docs",
+   "ref": "MDN CORS guide, fetched from its repository 2026-11-01"
+  },
+  {
+   "claim": "GET /queue returns extra_data with the client id, and a socket that reuses a clientId replaces the old one.",
+   "how": "source",
+   "ref": "server.py:websocket_handler"
+  }
+ ],
+ "unchecked": [
+  "We did not attack a running server. The table comes from the middleware functions alone, with mocked requests, and the browser rows assume what a browser would send.",
+  "Browsers keep adding rules of their own for pages that call private addresses. We did not test any.",
+  "We did not read the Manager, agent, deploy-to-cloud or assets routes in depth. They add more surface.",
+  "The proxy advice is general. We did not test a proxy, including websocket passing.",
+  "The lab's port only knows localhost and addresses as loopback, while the real is_loopback also looks up names."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

@@ -1,0 +1,23 @@
+perturbed-attention guidance                 core: PerturbedAttentionGuidance  
+  -> use core, and measure before looking further
+token perturbation guidance                  core: None                        
+  -> read it, test it in a sandbox, then decide
+a step cache                                 core: EasyCache, LazyCache        
+  -> use core, and measure before looking further
+a labelled sweep grid with video             core: ImageGrid, ImageCompare     
+  -> read it, test it in a sandbox, then decide
+an idea from a pack that patches every job   core: None                        
+  -> borrow the idea, not the pack
+code from a pack with no licence             core: None                        
+  -> do not copy. Write your own from the idea
+
+cost of a dependency: packs multiply what must keep working
+   1 packs, each with a 2% chance of breaking per ComfyUI update:  2.0% chance something breaks. The 2% is an example, not a measurement.
+   5 packs, each with a 2% chance of breaking per ComfyUI update:  9.6% chance something breaks. The 2% is an example, not a measurement.
+  20 packs, each with a 2% chance of breaking per ComfyUI update: 33.2% chance something breaks. The 2% is an example, not a measurement.
+
+what speed claims need before they count
+  whose number is it
+  same graph and seed with and without
+  first run left out
+  picture compared, not just the clock

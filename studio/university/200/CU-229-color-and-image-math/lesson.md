@@ -31,7 +31,24 @@ A blend (1 − f) a + f b is a correct mixture of light only when a and b are li
 
 **Saving.** `SaveImage` multiplies the image by 255, clips it to the range 0 to 255 and calls `astype(np.uint8)`. NumPy's cast to an integer truncates toward zero. It does not round.
 
-**Converting.** `ImageColorSpace`, "Convert Image Color Space", is in `comfy_extras/nodes_images.py`. It converts between sRGB, linear, HDR (Rec.2020 HLG), HDR PQ, LogC3, linear ACEScg and ACEScct. Its `srgb_to_linear` function is the decode above, labelled in the code "Inverse sRGB EOTF (IEC 61966-2-1)", and its sRGB output uses the encode above. So a blend in light can be built from nodes: convert sRGB to linear, blend, convert back. The node's description says that conversion to SDR tone-maps excess luminance and compresses out-of-gamut colours, so keep values within 0 to 1. We read this node and did not run it.
+**Converting.** `ImageColorSpace`, "Convert Image Color Space", is in `comfy_extras/nodes_images.py`. It converts between sRGB, linear, HDR (Rec.2020 HLG), HDR PQ, LogC3, linear ACEScg and ACEScct. Its `srgb_to_linear` function is the decode above, labelled in the code "Inverse sRGB EOTF (IEC 61966-2-1)", and its sRGB output uses the encode above. So a blend in light can be built from nodes: convert sRGB to linear, blend, convert back. The node's description says that conversion to SDR tone-maps excess luminance and compresses out-of-gamut colours, so keep values within 0 to 1.
+
+This graph does both, on black and white, with no model. It ran on a CPU here. Half and half on stored values gave 0.5000 and in light gave 0.7354, the same as the formula.
+
+{{graph:b_blend_light}}
+
+Try it. Compare your own blend with the real half-light mix.
+
+{{play:blendlight}}
+
+## What goes wrong
+
+- **Gradients or soft edges look dark in the middle.** That is a blend on stored values. It may be what you want. If not, blend in linear.
+- **A shrunk picture of fine lines looks darker.** Resizing averages stored values. Convert to linear first, or accept it.
+- **Blending in linear and forgetting to convert back.** The result then looks too dark, since the numbers are light and the screen expects codes.
+- **Treating latents as if they had a gamma.** They aren't sRGB codes. These formulas are for pixels.
+- **Assuming a colour profile was used.** `LoadImage` doesn't read one, as far as the code we read goes. A wide-gamut file will have its numbers taken at face value.
+- **Expecting exact values after save.** `SaveImage` truncates. A value of 0.999 becomes code 254.
 
 ## Lab
 

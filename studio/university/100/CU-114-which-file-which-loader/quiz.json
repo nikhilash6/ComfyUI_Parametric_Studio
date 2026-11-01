@@ -1,0 +1,12 @@
+{
+ "code": "CU-114",
+ "title": "Which file goes in which loader and folder",
+ "level": "100",
+ "questions": [
+  {"q": "A file's tensor names all begin with double_blocks, single_blocks or img_in. Which loader fits?", "options": ["UNETLoader, the diffusion model loader", "CheckpointLoaderSimple", "VAELoader", "LoraLoader"], "answer": "UNETLoader, the diffusion model loader", "why": "Those are denoiser layers with no text encoder and no VAE, so you load those separately."},
+  {"q": "A new file doesn't show in the loader's menu. What is the first thing to check?", "options": ["Whether it sits under the folder that loader reads, with a known extension", "Whether the file is too big", "Whether the seed changed", "Whether your VRAM is free"], "answer": "Whether it sits under the folder that loader reads, with a known extension", "why": "A menu is a directory listing filtered by extension. .gguf, for example, is not on the list."},
+  {"q": "You put the same file name in models/clip and models/text_encoders. Which one loads?", "options": ["The one in text_encoders, because that folder is listed first", "The one in clip", "The newer one", "ComfyUI refuses with an error"], "answer": "The one in text_encoders, because that folder is listed first", "why": "get_full_path returns the first match in folder order. The menu shows just one entry, so you can't tell from the menu."},
+  {"q": "What does moving a checkpoint from models/checkpoints to models/diffusion_models change?", "options": ["Which menu lists it, and nothing about the file", "It strips out the VAE", "It changes the model family", "It makes it smaller"], "answer": "Which menu lists it, and nothing about the file", "why": "The folder only decides which menu shows it. The file is the same bytes. UNETLoader would then take just the denoiser out."},
+  {"q": "A graph uses Load Checkpoint with a denoiser-only file, and CLIPTextEncode fails with clip input is invalid: None. Why?", "options": ["The file has no text encoder, so the CLIP output is empty", "The prompt is too long", "The CLIP model is the wrong family", "The negative prompt is empty"], "answer": "The file has no text encoder, so the CLIP output is empty", "why": "The loader warns and tries it as a diffusion model, then returns None for CLIP. Load the text encoder and VAE with their own loaders."}
+ ]
+}

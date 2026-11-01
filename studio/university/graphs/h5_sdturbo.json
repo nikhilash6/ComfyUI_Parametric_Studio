@@ -1,0 +1,124 @@
+{
+ "meta": {
+  "title": "One step: SDTurboScheduler",
+  "about": "A distilled checkpoint run with one model call: one step, cfg 1. The scheduler picks timesteps from a fixed list.",
+  "runs": "model",
+  "needs": [
+   "An SD Turbo or SDXL Turbo checkpoint in models/checkpoints. Change the name to yours."
+  ],
+  "packs": [],
+  "notes": {
+   "5": "Fixed list: 999, 899, 799 and so on. Steps sets how many it takes.",
+   "6": "cfg 1 skips the second, negative call, so one step is one model call.",
+   "4": "Empty, and at cfg 1 it isn't used."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "sd_xl_turbo_1.0_fp16.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "3": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 512,
+    "height": 512,
+    "batch_size": 1
+   }
+  },
+  "5": {
+   "class_type": "SDTurboScheduler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "steps": 1,
+    "denoise": 1.0
+   }
+  },
+  "7": {
+   "class_type": "KSamplerSelect",
+   "inputs": {
+    "sampler_name": "euler_ancestral"
+   }
+  },
+  "6": {
+   "class_type": "SamplerCustom",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "add_noise": true,
+    "noise_seed": 424242,
+    "cfg": 1.0,
+    "positive": [
+     "2",
+     0
+    ],
+    "negative": [
+     "4",
+     0
+    ],
+    "sampler": [
+     "7",
+     0
+    ],
+    "sigmas": [
+     "5",
+     0
+    ],
+    "latent_image": [
+     "3",
+     0
+    ]
+   }
+  },
+  "8": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "6",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "9": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "8",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

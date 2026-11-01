@@ -1,0 +1,84 @@
+{
+ "code": "CU-251",
+ "title": "Embedded guidance against CFG",
+ "level": "200",
+ "prereq": [
+  "CU-208",
+  "CU-209"
+ ],
+ "char": "denoise",
+ "hook": "Cfg is a sum done outside the model. FluxGuidance is a number handed to it. Why some flux-family graphs run at cfg 1, and why not all of them do.",
+ "code_refs": [
+  "comfy_extras/nodes_flux.py:FluxGuidance.execute",
+  "comfy_extras/nodes_flux.py:FluxDisableGuidance.execute",
+  "comfy/ldm/flux/model.py:forward_orig",
+  "comfy/ldm/flux/layers.py:timestep_embedding",
+  "comfy/model_base.py:Flux",
+  "comfy/model_detection.py:detect_unet_config",
+  "comfy/supported_models.py:FluxSchnell",
+  "comfy/samplers.py:sampling_function",
+  "comfy_extras/nodes_custom_sampler.py:BasicGuider"
+ ],
+ "track": "guidance",
+ "order": 30,
+ "kit": true,
+ "graphs": [
+  "c_flux_guidance",
+  "c_klein_fast",
+  "wf_flux2_klein"
+ ],
+ "verified": [
+  {
+   "claim": "FluxGuidance only sets a guidance key in the conditioning's dict.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_flux.py:FluxGuidance.execute"
+  },
+  {
+   "claim": "The Flux model adds guidance_in(timestep_embedding(guidance, 256)) to its vector, only when the model has guidance_embed and the value is not None.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/model.py:forward_orig"
+  },
+  {
+   "claim": "Flux's extra_conds uses 3.5 if the guidance key is absent, and FluxDisableGuidance sets it to None.",
+   "how": "source",
+   "ref": "comfy/model_base.py:Flux.extra_conds and comfy_extras/nodes_flux.py:FluxDisableGuidance"
+  },
+  {
+   "claim": "For a Flux-style file, guidance_embed is read from whether the file has guidance_in weights.",
+   "how": "source",
+   "ref": "comfy/model_detection.py"
+  },
+  {
+   "claim": "The FLUX.2 repository's table marks Klein 4B and 9B as step- and guidance-distilled and the Base files as neither.",
+   "how": "docs",
+   "ref": "github.com/black-forest-labs/flux2 README, fetched 2026-11-01"
+  },
+  {
+   "claim": "The Klein 4B Base card shows guidance_scale 4.0 with 50 steps, and the distilled 4B card shows guidance_scale 1.0 with 4 steps.",
+   "how": "docs",
+   "ref": "huggingface.co model cards, fetched 2026-11-01"
+  },
+  {
+   "claim": "Our Klein workflow leaves cfg as a slot, and the studio fills 1.0 with 4 steps or 5.0 with 20 steps depending on the file.",
+   "how": "source",
+   "ref": "workflows/flux2_klein4b_t2i_api.json and studio/goals.py:KLEIN_MODES"
+  },
+  {
+   "claim": "One FLUX.3 Klein file on our test machine has no guidance_in weights in its header, and our workflow runs it at cfg 1.",
+   "how": "run here",
+   "ref": "safetensors header, workflows/flux3_klein_core_t2i_api.json"
+  },
+  {
+   "claim": "The lab's prediction counts follow sampling_function's skip at cfg 1, with a stand-in model.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "We did not run FLUX.1 dev or Klein for this lesson, and no render here compares guidance values. We read the code and the cards.",
+  "That FLUX.1 dev was trained with guidance as an input is our inference from the guidance_in layer. We did not read Black Forest Labs' training code.",
+  "ComfyUI's examples page says to set cfg to 1.0 for the FLUX.1 dev FP8 checkpoint. It doesn't state a reason, so the reason given here is our reading of the source.",
+  "We did not check the Klein file headers: those weights aren't on our test machine at the moment. So we don't say whether a Klein file has guidance_in.",
+  "The Klein cards use Diffusers' guidance_scale. We take it as the same idea as ComfyUI's cfg because our template uses cfg 1 for the distilled file and 5 for Base, but we did not read Diffusers' pipeline code."
+ ]
+}

@@ -1,5 +1,18 @@
-RESULT flow_mean = 1
-RESULT flow_std = 0
-RESULT flow_max = 1
-RESULT flow_min = 1
-RESULT flow_tensor = [[1.0, 1.0], [1.0, 1.0]]
+frame difference: 1 number per pixel, mean -0.0000, largest 0.504. True motion (+3.0, -1.5) cannot be read from it
+search over whole and half pixels: best motion (+3.0, -1.5), mean squared error left 0.000000
+
+true motion   Lucas-Kanade over the whole frame
+(+0.3, -0.2)  ->  (+0.29, -0.19)
+(+1.0, +0.5)  ->  (+0.94, +0.44)
+(+3.0, -1.5)  ->  (+0.70, -0.53)
+(+8.0, +4.0)  ->  (+0.35, +0.09)
+
+change between two frames   mean |difference|   left after the best whole-pixel shift
+camera pans 3 pixels        0.1036              0.0000
+brightness jumps 10%        0.0498              0.0498
+fine noise re-rolled        0.0405              0.0405
+still frame                 0.0000              0.0000
+
+an impulse at frame 4 through a 3-frame kernel:
+causal  output non-zero at frames [4, 5, 6]
+centred output non-zero at frames [3, 4, 5]

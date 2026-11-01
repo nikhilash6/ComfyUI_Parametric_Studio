@@ -39,6 +39,18 @@ Each model family has its own empty-latent node, and the latent shape is written
 
 Every default is 1 plus a multiple of the node's step. The nodes themselves only floor, they do not check. On the other side, `comfy/sd.py` gives each video VAE its ratios as functions of the latent frame count a. For Wan-type and CogVideoX VAEs the upscale is a · 4 − 3 frames with spatial factor 8, for Mochi a · 6 − 5 with factor 8, for the Cosmos tokenizer a · 8 − 7 with factor 8, and for LTXV a · 8 − 7 with factor 32. The matching downscale is the floor of (frames + k − 1) / k. The transformer side is set in the model code. Wan's default patch size is (1, 2, 2) in `comfy/ldm/wan/model.py`, and the LTXV model uses `SymmetricPatchifier(1)`, so one token per latent position.
 
+## Try it
+
+Pick a model. Set seconds and frame rate until what you ask for lands exactly on the grid.
+
+{{play:frames}}
+
+MiniMax H3, in that lab, follows a different rule from the table above: it rounds up to 17k + 5. CU-330 compares all of them.
+
+A video in ComfyUI is an image batch with a frame rate. Here is the smallest one, with no model at all: `batch_size` is the frame count.
+
+{{graph:nm_video}}
+
 ## Lab
 
 The lab is arithmetic on those constants. First, five seconds at three frame rates, then what happens to a requested length for each temporal factor:
@@ -89,6 +101,14 @@ frames  latent frames  tokens    attention share n/(n+6d)
 ```
 
 At 25 frames attention is about a third of the block's operations. At 121 frames it is nearly three quarters. This is why long clips cost more than their length suggests, and why window or sparse attention appears in video models.
+
+## What goes wrong
+
+- **The clip comes back a few frames short.** Your length is off the grid, and the node floored it. 120 becomes 117 on Wan. Use 1 + k x m. 121 fits all three factors.
+- **The clip is the right length and the wrong duration.** `CreateVideo` defaults to 30 fps. Frames made for 24 and played at 30 run fast. Set it yourself.
+- **Doubling the length costs far more than double.** Attention pairs grow with the square of the tokens. Check the last table in the lab before queueing a long clip.
+- **Moving a graph from one model to another breaks the shape.** Channels and spatial factors differ: 16 at 8x on Wan 2.1, 128 at 32x on LTX. A latent belongs to its VAE. Use the family's own empty-latent node.
+- **`LTXVConditioning` says 25, and your video plays at 24.** They're separate values. Set them equal.
 
 ## What is contested
 

@@ -1,0 +1,66 @@
+{
+ "code": "CU-271",
+ "title": "Preprocessors: Canny in core, and looking at your map",
+ "level": "200",
+ "prereq": [
+  "CU-219",
+  "CU-270"
+ ],
+ "char": "graph",
+ "hook": "Canny's thresholds aren't fractions of white. Learn what they are measured in, how to preview a control image, and what a bad map does.",
+ "track": "control",
+ "order": 22,
+ "kit": true,
+ "graphs": [
+  "d_canny_preview",
+  "nm_mask_canny",
+  "sd15_controlnet"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_canny.py:Canny.execute",
+  "comfy/controlnet.py:ControlNet.get_control",
+  "comfy/utils.py:common_upscale"
+ ],
+ "verified": [
+  {
+   "claim": "The lab's Canny gives the same edge map as kornia.filters.canny 0.9.0, pixel for pixel, on the lab's noisy scene at four threshold pairs.",
+   "how": "run here",
+   "ref": "kornia.filters.canny, compared in a side script"
+  },
+  {
+   "claim": "A straight step needs contrast above high_threshold / 2.59 to start an edge: 0.3 fails and 0.31 passes at high 0.8, 0.38 fails and 0.39 passes at high 0.99.",
+   "how": "run here",
+   "ref": "kornia.filters.canny"
+  },
+  {
+   "claim": "A low threshold above the high threshold raises an error in kornia, even though the node's sliders allow it.",
+   "how": "run here",
+   "ref": "kornia.filters.canny"
+  },
+  {
+   "claim": "The node's sliders run from 0.01 to 0.99, defaults 0.4 and 0.8.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_canny.py:Canny"
+  },
+  {
+   "claim": "The hint is fitted with common_upscale, crop center, and resized by nearest-exact by default.",
+   "how": "source",
+   "ref": "comfy/controlnet.py:ControlNet.get_control"
+  },
+  {
+   "claim": "The Canny ControlNet 1.1 was trained on Canny with random thresholds.",
+   "how": "docs",
+   "ref": "ControlNet-v1-1-nightly README, fetched 2026-11-01"
+  },
+  {
+   "claim": "d_canny_preview ran on a CPU here and validates.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We ran no ControlNet for this lesson. How a noisy or empty map changes a picture is described from what the map contains, and is not measured. The scene in the lab is synthetic.",
+  "Core's pose nodes were only found by name and not read. No core preprocessor for line art, soft edges or scribbles rests on a search of node names, not on reading every file.",
+  "The share of edge pixels that suits a given ControlNet is not something we measured. The 4% to 12% in the browser lab is that lab's exercise, not a rule."
+ ]
+}

@@ -44,7 +44,7 @@ class LatentContrast(io.ComfyNode):
 # ---------- what the engine does with it, reduced ----------
 def to_input_types(schema):                           # V3 schemas become the classic INPUT_TYPES shape on the way to the front-end and validator
     out = {"required": {}, "optional": {}}
-    for i in schema.inputs: out["optional" if i.optional else "required"][i.id] = (i.type, {k: getattr(i, k) for k in ("default", "min", "max", "lazy") if getattr(i, k) not in (None, False)})
+    for i in schema.inputs: out["optional" if i.optional else "required"][i.id] = (i.type, {k: getattr(i, k) for k in ("default", "min", "max", "lazy") if getattr(i, k) is not None and getattr(i, k) is not False})
     return out
 print(to_input_types(LatentContrast.define_schema()))
 latent = {"samples": torch.randn(1, 4, 8, 8)}; print("input std:", round(latent["samples"].std().item(), 4))
@@ -54,10 +54,30 @@ assert abs(out.std().item() / latent["samples"].std().item() - 2) < .05 and r.ar
 print("validate amount=-1:", LatentContrast.validate_inputs(amount=-1), "| amount=1:", LatentContrast.validate_inputs(amount=1))
 print("lazy, amount=1:", LatentContrast.check_lazy_status(amount=1), "| amount=0, wire not computed yet:", LatentContrast.check_lazy_status(amount=0), "| amount=0, computed:", LatentContrast.check_lazy_status(amount=0, fallback=latent))
 assert LatentContrast.check_lazy_status(amount=1) == [] and LatentContrast.check_lazy_status(amount=0) == ["fallback"]
-print("classmethods: called on the class, no instance. Attributes you set on cls are shared by every copy of the node in every run.")
+# The real engine calls execute on a locked copy of your class. This stand-in copies that rule from lock_class in comfy_api/internal/__init__.py, with the same message.
+class Locked(type):
+    def __setattr__(c, k, v): raise AttributeError(f"Cannot modify class attribute '{k}' on locked class '{c.__name__}'")
+def run_locked(cls, *a):
+    clone = Locked(cls.__name__ + "Clone", (cls,), {}); return cls.execute.__func__(clone, *a)
 class Bad(io.ComfyNode):
     calls = 0
     @classmethod
-    def execute(cls, x): cls.calls += 1; return io.NodeOutput(x + cls.calls)      # hidden state: same inputs, different outputs
-print("a node with hidden state, same input twice:", Bad.execute(1).args[0], Bad.execute(1).args[0], " the cache cannot see this, so do not do it")
-assert Bad.calls == 2
+    def execute(cls, x): cls.calls += 1; return io.NodeOutput(x + cls.calls)      # hidden state: the engine stops this one
+try: run_locked(Bad, 1)
+except AttributeError as e: print("hidden state on cls:", e); assert "locked class 'BadClone'" in str(e)
+class Sneaky(io.ComfyNode):
+    box = {"calls": 0}
+    @classmethod
+    def execute(cls, x): cls.box["calls"] += 1; return io.NodeOutput(x + cls.box["calls"])      # a dict on the class is not stopped
+print("hidden state in a dict on cls, same input twice:", run_locked(Sneaky, 1).args[0], run_locked(Sneaky, 1).args[0], " the lock cannot see this, and the cache cannot either")
+assert Sneaky.box["calls"] == 2
+# What execute may return. A port of EXECUTE_NORMALIZED.
+def normalized(r):
+    if r is None: return "NodeOutput()"
+    if isinstance(r, io.NodeOutput): return "as it is"
+    if isinstance(r, tuple): return "NodeOutput(*r)"
+    if isinstance(r, dict): return "NodeOutput.from_dict(r)"
+    raise Exception(f"Invalid return type from node: {type(r)}")
+for v in (None, io.NodeOutput(1), (1,), {"result": (1,)}): print("execute returns", type(v).__name__, "->", normalized(v))
+try: normalized(5)
+except Exception as e: print("execute returns int ->", e); assert "Invalid return type" in str(e)

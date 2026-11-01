@@ -15,8 +15,46 @@
   "comfy/samplers.py:ddim_scheduler",
   "comfy/k_diffusion/sampling.py:get_sigmas_exponential",
   "comfy/model_sampling.py:time_snr_shift",
-  "comfy/model_sampling.py:flux_time_shift"
+  "comfy/model_sampling.py:flux_time_shift",
+  "comfy/samplers.py:SCHEDULER_HANDLERS",
+  "comfy/samplers.py:calculate_sigmas"
  ],
  "track": "sampling",
- "order": 30
+ "order": 30,
+ "kit": true,
+ "graphs": [
+  "nm_sigmas",
+  "sd15_karras_rho"
+ ],
+ "verified": [
+  {
+   "claim": "The formulas are read from the scheduler functions.",
+   "how": "source",
+   "ref": "comfy/samplers.py, comfy/k_diffusion/sampling.py"
+  },
+  {
+   "claim": "The lab's lists agree with ComfyUI's stored lists to rounding, for the first values printed at 10 steps on karras.",
+   "how": "run here",
+   "ref": "assert in lab.py"
+  },
+  {
+   "claim": "At full denoise the first noise is scaled by sqrt(1 + sigma^2).",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:EPS.noise_scaling"
+  },
+  {
+   "claim": "ModelSamplingFlux computes mu linearly in the token count.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_model_advanced.py:ModelSamplingFlux"
+  },
+  {
+   "claim": "nm_sigmas ran on a CPU; sd15_karras_rho passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The statements about Karras et al.'s rho, about Esser et al.'s Figure 6, and about Sabour et al. were checked at the first audit and not re-read this time.",
+  "The lab's error table is for a one-dimensional toy, so the ranking does not carry over to pictures."
+ ]
 }

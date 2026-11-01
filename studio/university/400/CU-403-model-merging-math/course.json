@@ -1,14 +1,61 @@
 {
+ "code": "CU-403",
  "title": "Model merging: weighted, SLERP, task arithmetic",
  "level": "400",
- "char": "tune",
- "hook": "Why averaging weights can work and when it fails.",
- "code": "CU-403",
  "prereq": [
-  "CU-212"
+  "CU-212",
+  "CU-211"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "tune",
+ "hook": "Why averaging weights can work, what ModelMergeSimple's ratio really is, and the sums behind the rule: merge unquantized files, quantize after.",
  "track": "lora-training",
- "order": 30
+ "order": 30,
+ "kit": true,
+ "graphs": [
+  "sd15_merge",
+  "d_merge_add_difference"
+ ],
+ "code_refs": [
+  "comfy_extras/nodes_model_merging.py:ModelMergeSimple.merge",
+  "comfy_extras/nodes_model_merging.py:ModelSubtract.merge",
+  "comfy_extras/nodes_model_merging.py:ModelAdd.merge",
+  "comfy_extras/nodes_model_merging.py:ModelMergeBlocks",
+  "comfy/lora.py:calculate_weight",
+  "comfy/model_patcher.py:ModelPatcher.get_key_patches",
+  "comfy/model_patcher.py:ModelPatcher.patch_weight_to_device",
+  "comfy/float.py:stochastic_rounding"
+ ],
+ "verified": [
+  {
+   "claim": "ModelMergeSimple adds model2 with strength 1 - ratio and multiplies model1 by ratio. The real calculate_weight gave 4.4 for model1 10, model2 2, ratio 0.3, and 10 for ratio 1.",
+   "how": "run here",
+   "ref": "comfy_extras/nodes_model_merging.py:ModelMergeSimple.merge"
+  },
+  {
+   "claim": "A merged weight is stored by stochastic_rounding, seeded per key, when the stored format is FP8.",
+   "how": "source",
+   "ref": "comfy/model_patcher.py:ModelPatcher.patch_weight_to_device"
+  },
+  {
+   "claim": "No SLERP node for merging exists in core's merging files.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_model_merging.py"
+  },
+  {
+   "claim": "Task vectors are defined by subtraction in the Task Arithmetic paper, and its abstract covers negation and addition. Model soups' abstract says averaging often improves accuracy and robustness with no extra inference or memory cost.",
+   "how": "docs",
+   "ref": "arXiv abstracts, fetched 2026-11-01"
+  },
+  {
+   "claim": "Both graphs validate.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The numbers use stand-in Gaussian weights and rounding to nearest. ComfyUI itself uses stochastic rounding when it stores FP8 again, which CU-212 shows costs more noise. Real weights have other distributions.",
+  "We ran no real merge and no render here. Whether a merged image model looks good is untested.",
+  "Those two papers study classifiers and language models, mostly. They say nothing about image-generation checkpoints, so 'it often helps' is not shown for them.",
+  "That lerp shrinking weights by a tiny amount harms pictures is not shown. We removed the draft's claims about grey noise, black images and washed-out output."
+ ]
 }

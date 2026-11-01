@@ -4,59 +4,70 @@
  "level": "300",
  "questions": [
   {
-   "q": "In the VRAM budget formula provided in the lesson, what is the value of the safety factor (S) used to account for fragmentation and overhead?",
+   "q": "You double the image's side. What happens to ComfyUI's working memory estimate?",
    "options": [
-    "1.0",
-    "1.2",
-    "1.5",
-    "2.0"
+    "It goes up four times",
+    "It doubles",
+    "Nothing, it depends on the file",
+    "It goes up eight times"
    ],
-   "answer": "1.2",
-   "why": "The lesson explicitly states: 'In our lab, S = 1.2. This means we expect to use 20% more memory than the raw sum of weights, activations, and caches.'"
+   "answer": "It goes up four times",
+   "why": "The estimate is proportional to latent height times width, and both doubled."
   },
   {
-   "q": "According to the lesson, what is the activation fraction (fa) used to estimate activation memory (A) relative to weight memory (W)?",
+   "q": "You double the batch. What happens to the weights on the card?",
    "options": [
-    "0.05",
-    "0.1",
-    "0.2",
-    "0.5"
+    "They stay the same size",
+    "They double",
+    "They halve",
+    "They move to system RAM"
    ],
-   "answer": "0.1",
-   "why": "The text defines the activation memory formula as A = W × fa and states: 'In our lab, we set fa = 0.1 (10% of weight size).'"
+   "answer": "They stay the same size",
+   "why": "One copy of the model serves the batch. Working memory doubles, weights do not."
   },
   {
-   "q": "Based on the lab results, why is a 12B model in BF16 precision considered too large for a 24GB GPU?",
+   "q": "Why is a model's file size not enough to tell you it fits?",
    "options": [
-    "The weight memory alone exceeds the available VRAM.",
-    "The total estimated VRAM usage is approximately 30.85 GB, which exceeds the ~20GB available after reserve.",
-    "The safety factor is too high for BF16 models.",
-    "BF16 requires more memory than FP32."
+    "Working memory, reserved memory and a 10% margin come on top",
+    "The file is compressed about tenfold",
+    "ComfyUI always loads two copies",
+    "Files on disk use different units from VRAM"
    ],
-   "answer": "The total estimated VRAM usage is approximately 30.85 GB, which exceeds the ~20GB available after reserve.",
-   "why": "The lesson states: 'RESULT 12B_bf16 = 3.312e+10: This is approximately 30.85 GB. It proves that even BF16 is too large for a 24GB card...'"
+   "answer": "Working memory, reserved memory and a 10% margin come on top",
+   "why": "load_models_gpu asks for model size × 1.1 + extra_mem."
   },
   {
-   "q": "Which class in ComfyUI is described as the 'gatekeeper' that tracks which weights are on the GPU and which are offloaded to CPU?",
+   "q": "SDXL and SD3 at 1024 px have the same latent side, 128. Why does SD3's estimate come out twice as large?",
    "options": [
-    "LazyCastingParam",
-    "VRAMState",
-    "ModelPatcher",
-    "unet_dtype"
+    "Its memory_usage_factor is 1.6, against 0.8",
+    "Its latent has 16 channels, and channels count",
+    "It always runs CFG twice",
+    "SD3 has twice the steps"
    ],
-   "answer": "ModelPatcher",
-   "why": "The lesson states: 'The ModelPatcher class in comfy/model_patcher.py is the gatekeeper. It tracks which weights are on the GPU and which are offloaded to CPU.'"
+   "answer": "Its memory_usage_factor is 1.6, against 0.8",
+   "why": "Channels are not in this formula. The factor differs per family."
   },
   {
-   "q": "According to the 'Common mistakes' section, why might increasing the batch size break the VRAM budget even if the weights fit?",
+   "q": "Where does a finished latent wait for the next node, by default?",
    "options": [
-    "Because weights are loaded in higher precision.",
-    "Because activations depend on batch size and increase linearly.",
-    "Because the safety factor increases with batch size.",
-    "Because KV caches are ignored."
+    "In system RAM",
+    "On the card, next to the weights",
+    "On disk in the temp folder",
+    "In the browser"
    ],
-   "answer": "Because activations depend on batch size and increase linearly.",
-   "why": "The lesson lists 'Assuming Activations are Constant' as a mistake, noting: 'in practice, increasing batch size will increase A linearly, potentially breaking your budget even if weights fit.'"
+   "answer": "In system RAM",
+   "why": "intermediate_device returns the CPU unless --gpu-only is set."
+  },
+  {
+   "q": "How much should you trust memory_required as a peak?",
+   "options": [
+    "It is an estimate, and its source says it needs tweaking",
+    "It is measured live from the card",
+    "It is always an exact upper limit",
+    "It only applies to fp32"
+   ],
+   "answer": "It is an estimate, and its source says it needs tweaking",
+   "why": "The comment in model_base.py says so, and this lesson did not compare it with a measured peak."
   }
  ]
 }

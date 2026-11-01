@@ -1,0 +1,17 @@
+no output node                        prompt_no_outputs: Prompt has no outputs
+class not installed                   missing_node_type: Node 'SuperKSampler' not found. The custom node may not be installed.
+no class_type at all                  missing_node_type: Node 'ID #1' has no class_type. The workflow may be corrupted or a custom node is missing.
+input left out                        required_input_missing: Required input is missing: image
+wire with 3 items                     bad_linked_input: Bad linked input, must be a length-2 list of [node_id, slot_index]: images
+MASK into IMAGE                       return_type_mismatch: Return type mismatch between linked nodes: images, received_type(MASK) mismatch input_type(IMAGE)
+text in a number                      invalid_input_type: Failed to convert an input value to a INT value: width, wide, invalid literal for int() with base 10: 'wide'
+width 0                               value_smaller_than_min: Value 0 smaller than min of 1: width
+width 999999                          value_bigger_than_max: Value 999999 bigger than max of 16384: width
+menu value not offered                value_not_in_list: Value not in list: upscale_method: 'magic' not in ['nearest-exact', 'bilinear', 'area', 'bicubic', 'lanczos']
+file not there                        custom_validation_failed: Custom validation failed for node: image - Invalid image file: nothing_here.png
+two nodes in a loop                   dependency_cycle: Dependency cycle detected: 1 (ImageInvert) -> 3 (ImageInvert) -> 1 (ImageInvert)
+wire to a missing node, mid graph     exception_during_inner_validation: Exception when validating inner node: '99'
+wire to a missing node, on the output exception_during_validation: Exception when validating node: '99'
+wire to a missing slot                exception_during_validation: Exception when validating node: tuple index out of range
+
+two outputs, one broken: runs ['2']  reported: required_input_missing

@@ -33,8 +33,8 @@ print("the server sees", len(p), "nodes and no sub-graph node at all")
 # 2. Expansion. A node returns {"result": ..., "expand": graph}: new nodes appear while the prompt runs. This is how a loop can be written.
 RAN = []
 class GraphBuilder:
-    def __init__(self, prefix): self.prefix, self.nodes, self.n = prefix, {}, 0
-    def node(self, cls, **inputs): self.n += 1; i = f"{self.prefix}.{self.n}"; self.nodes[i] = {"class_type": cls, "inputs": inputs}; return i
+    def __init__(self, prefix): self.prefix, self.nodes, self.n = f"{prefix}.0.0.", {}, 0   # the real default prefix: parent id, call index, builder index
+    def node(self, cls, **inputs): self.n += 1; i = f"{self.prefix}{self.n}"; self.nodes[i] = {"class_type": cls, "inputs": inputs}; return i
     def finalize(self): return self.nodes
 def AddOne(x): RAN.append("AddOne"); return x + 1
 def Const(v): RAN.append("Const"); return v

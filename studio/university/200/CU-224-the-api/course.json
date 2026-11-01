@@ -3,7 +3,7 @@
  "title": "The API: queue, watch, fetch",
  "level": "200",
  "prereq": [
-  "CU-109",
+  "CU-110",
   "CU-220"
  ],
  "char": "graph",
@@ -28,5 +28,57 @@
   "script_examples/websockets_api_example.py:get_images"
  ],
  "track": "automation",
- "order": 10
+ "order": 10,
+ "graphs": [
+  "a_save_preview"
+ ],
+ "verified": [
+  {
+   "claim": "Validation runs inside POST /prompt, and a bad graph gets a 400 with error and node_errors.",
+   "how": "source",
+   "ref": "server.py:post_prompt"
+  },
+  {
+   "claim": "A client prompt_id must be a canonical lowercase UUID.",
+   "how": "source",
+   "ref": "comfy_execution/jobs.py:validate_job_id"
+  },
+  {
+   "claim": "Event order for first, cached, failing and interrupted jobs, captured from the real executor on a CPU with a recording fake server.",
+   "how": "run here",
+   "ref": "execution.py:PromptExecutor.execute_async"
+  },
+  {
+   "claim": "prompt_worker sends executing with a null node after every job.",
+   "how": "source",
+   "ref": "main.py:prompt_worker"
+  },
+  {
+   "claim": "A prompt with one bad output of two passes validation and lists the bad one in node_errors.",
+   "how": "run here",
+   "ref": "execution.py:validate_prompt"
+  },
+  {
+   "claim": "GET /history/{id} returns an empty dict for a job that has no entry.",
+   "how": "source",
+   "ref": "execution.py:PromptQueue.get_history"
+  },
+  {
+   "claim": "Routes also exist with /api in front.",
+   "how": "source",
+   "ref": "server.py:PromptServer.add_routes"
+  },
+  {
+   "claim": "The graph a_save_preview validated and ran on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The lab is a stub, and its timing says nothing about a real server. We did not post to a live server for this lesson. The executor run used a stand-in for the server, so the HTTP layer and the socket sends were read, not run."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
 }

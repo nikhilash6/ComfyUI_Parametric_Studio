@@ -1,0 +1,22 @@
+the prompt asks for the blob at 1.5, with width .5
+cfg     euler mean   euler width   euler_cfg_pp mean   euler_cfg_pp width
+0.2     0.58         1.09          1.31                0.60
+0.4     0.90         0.90          1.69                0.35
+0.6     1.15         0.71          1.88                0.29
+0.8     1.33         0.56          2.03                0.26
+1.0     1.45         0.46          2.15                0.24
+1.5     1.64         0.35          2.38                0.20
+2.0     1.78         0.31          2.57                0.19
+5.0     2.23         0.21          3.31                0.14
+7.0     2.43         0.19          3.64                0.13
+12.5    2.82         0.16          4.31                0.10
+
+same cfg number, different strength: which plain cfg lands closest to each CFG++ setting on this toy
+cfg_pp 0.2   is nearest plain cfg 1.0
+cfg_pp 0.4   is nearest plain cfg 1.5
+cfg_pp 0.6   is nearest plain cfg 3.0
+cfg_pp 0.8   is nearest plain cfg 3.0
+cfg_pp 1.0   is nearest plain cfg 4.0
+
+predictions per step: euler at cfg 1 = 1, euler_cfg_pp at cfg 1 = 2 (the sampler sets disable_cfg1_optimization)
+one step at cfg 1: same clean estimate, plain re-noises to 0.8816, CFG++ to 1.3574

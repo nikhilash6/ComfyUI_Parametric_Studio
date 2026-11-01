@@ -1,0 +1,79 @@
+{
+ "code": "CU-420",
+ "title": "Rank, alpha, DoRA, LoKr and the other adapters",
+ "level": "400",
+ "prereq": [
+  "CU-212"
+ ],
+ "char": "tune",
+ "hook": "Every patch format in comfy/weight_adapter, as a sum you can check: what it stores, what it can reach, and what alpha means in each.",
+ "track": "lora-training",
+ "order": 15,
+ "kit": true,
+ "graphs": [
+  "sd15_lora",
+  "sd15_train_lora"
+ ],
+ "code_refs": [
+  "comfy/weight_adapter/__init__.py:adapters",
+  "comfy/weight_adapter/__init__.py:adapter_maps",
+  "comfy/weight_adapter/lora.py:LoRAAdapter.calculate_weight",
+  "comfy/weight_adapter/loha.py:LoHaAdapter.calculate_weight",
+  "comfy/weight_adapter/lokr.py:LoKrAdapter.calculate_weight",
+  "comfy/weight_adapter/lokr.py:LoKrAdapter.create_train",
+  "comfy/weight_adapter/oft.py:OFTAdapter.calculate_weight",
+  "comfy/weight_adapter/oft.py:OFTAdapter.create_train",
+  "comfy/weight_adapter/glora.py:GLoRAAdapter",
+  "comfy/weight_adapter/boft.py:BOFTAdapter",
+  "comfy/weight_adapter/base.py:weight_decompose",
+  "comfy/weight_adapter/base.py:factorization",
+  "comfy/weight_adapter/lora.py:LoRAAdapter.h",
+  "comfy_extras/nodes_train.py:_create_weight_adapter"
+ ],
+ "verified": [
+  {
+   "claim": "The lab's lora, loha, lokr, dora and factorization match ComfyUI's real functions on test tensors, largest difference 0.0. The real OFTAdapter keeps the weight's norm in a test.",
+   "how": "run here",
+   "ref": "comfy/weight_adapter"
+  },
+  {
+   "claim": "adapter_maps lists LoRA, LoHa, LoKr and OFT for training, with GLoRA and BOFT commented out, while all six can load.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/__init__.py:adapter_maps"
+  },
+  {
+   "claim": "TrainLoraNode passes its rank widget as factor to LoKr and OFT, through create_train.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/lokr.py:LoKrAdapter.create_train"
+  },
+  {
+   "claim": "LoKr uses alpha only when a factor was itself decomposed. OFT uses alpha as a norm limit.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/oft.py:OFTAdapter.calculate_weight"
+  },
+  {
+   "claim": "Train adapters ignore dora_scale, and create_train passes None, so the core trainer does not make DoRA.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/lora.py:LoRAAdapter.create_train"
+  },
+  {
+   "claim": "The bypass docstring says bypass is designed for quantized models.",
+   "how": "source",
+   "ref": "comfy/weight_adapter/lora.py:LoRAAdapter.h"
+  },
+  {
+   "claim": "Paper titles came from the arXiv API. We read abstracts only: the claims attributed to them come from those.",
+   "how": "docs",
+   "ref": "export.arxiv.org, fetched 2026-11-01"
+  }
+ ],
+ "unchecked": [
+  "We read abstracts of the adapter papers, not the full texts, and ComfyUI's code does not cite most of them directly. Linking a code path to a paper by its method's name is our reading.",
+  "Nothing here compares picture quality. Which adapter suits which job is open and untested here.",
+  "GLoRA's and BOFT's sums were not worked through in the lab.",
+  "That bypass and a merge can differ slightly in a picture follows from the rounding in CU-212. We did not test it on a picture."
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
+}

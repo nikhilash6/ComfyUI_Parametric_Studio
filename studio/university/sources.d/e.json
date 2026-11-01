@@ -1,0 +1,222 @@
+{
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_mesh_postprocess.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_mesh_postprocess.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/mesh3d/postprocess/qem_decimate.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/mesh3d/postprocess/qem_decimate.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/mesh3d/postprocess/remesh.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/mesh3d/postprocess/remesh.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/mesh3d/uv_unwrap/segment.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/mesh3d/uv_unwrap/segment.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/mesh3d/uv_unwrap/parameterize.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/mesh3d/uv_unwrap/parameterize.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/mesh3d/uv_unwrap/pack.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/mesh3d/uv_unwrap/pack.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/lightricks/vae/causal_conv3d.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/lightricks/vae/causal_conv3d.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/wan/vae.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/wan/vae.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/diffusionmodules/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/modules/diffusionmodules/model.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/minimax/vae.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/minimax/vae.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_minimax_h3.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_minimax_h3.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/minimax/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/minimax/model.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/minimax/audio_vae.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/minimax/audio_vae.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_wandancer.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_wandancer.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2308.04079": {
+  "title": "3D Gaussian Splatting for Real-Time Radiance Field Rendering",
+  "checked": "opened 2026-11-01"
+ },
+ "https://arxiv.org/abs/2412.01506": {
+  "title": "Structured 3D Latents for Scalable and Versatile 3D Generation",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_api/latest/_util/geometry_types.py": {
+  "title": "ComfyUI v0.43.0, comfy_api/latest/_util/geometry_types.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/trellis2/vae.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/trellis2/vae.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/trellis2/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/trellis2/model.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/triposplat/model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/triposplat/model.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/triposplat/vae.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/triposplat/vae.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_context_windows.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_context_windows.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/MiniMax-AI/MiniMax-Music3": {
+  "title": "MiniMax Music 3 README",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_minimax_music.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_minimax_music.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/minimax_music/ar.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/minimax_music/ar.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/minimax_music/dit.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/minimax_music/dit.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/minimax_music/dav.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/minimax_music/dav.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/minimax_music/prompt.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/minimax_music/prompt.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/minimax_music.py": {
+  "title": "ComfyUI v0.43.0, comfy/text_encoders/minimax_music.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Wan-Video/Wan2.2": {
+  "title": "Wan2.2 README",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Wan-Video/Wan2.2/blob/main/wan/configs/wan_ti2v_5B.py": {
+  "title": "Wan2.2 config, wan_ti2v_5B.py",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Wan-Video/Wan2.2/blob/main/wan/configs/wan_t2v_A14B.py": {
+  "title": "Wan2.2 config, wan_t2v_A14B.py",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Wan-Video/Wan2.2/blob/main/wan/text2video.py": {
+  "title": "Wan2.2 text2video.py",
+  "checked": "opened 2026-11-01"
+ },
+ "https://arxiv.org/abs/2003.12039": {
+  "title": "RAFT: Recurrent All-Pairs Field Transforms for Optical Flow",
+  "checked": "opened 2026-11-01"
+ },
+ "https://arxiv.org/abs/1609.03499": {
+  "title": "WaveNet: A Generative Model for Raw Audio",
+  "checked": "opened 2026-11-01"
+ },
+ "https://arxiv.org/abs/2306.05284": {
+  "title": "Simple and Controllable Music Generation",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/ace/ace_step15.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/ace/ace_step15.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/lightricks/av_model.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/lightricks/av_model.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/lightricks/vae/causal_audio_autoencoder.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/lightricks/vae/causal_audio_autoencoder.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2501.12202": {
+  "title": "Hunyuan3D 2.0: Scaling Diffusion Models for High Resolution Textured 3D Assets Generation",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_hunyuan3d.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_hunyuan3d.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/hunyuan3d/vae.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/hunyuan3d/vae.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_save_3d.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_save_3d.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_void.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_void.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/void_noise_warp.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/void_noise_warp.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_gaussian_splat.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_gaussian_splat.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_triposplat.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_triposplat.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://arxiv.org/abs/2003.08934": {
+  "title": "NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_trellis2.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_trellis2.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/triposplat/preview.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/triposplat/preview.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/triposplat/gaussian.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/triposplat/gaussian.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/chroma_radiance/layers.py": {
+  "title": "ComfyUI v0.43.0, comfy/ldm/chroma_radiance/layers.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ },
+ "https://github.com/Lightricks/LTX-2": {
+  "title": "LTX-2 README",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Lightricks/LTX-2/blob/main/packages/ltx-pipelines/src/ltx_pipelines/utils/constants.py": {
+  "title": "LTX-2 pipeline constants",
+  "checked": "opened 2026-11-01"
+ },
+ "https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_lt_audio.py": {
+  "title": "ComfyUI v0.43.0, comfy_extras/nodes_lt_audio.py",
+  "checked": "read in the local ComfyUI v0.43.0 checkout, 2026-11-01"
+ }
+}

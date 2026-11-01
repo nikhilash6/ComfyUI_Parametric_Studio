@@ -8,7 +8,7 @@ all ids renamed    ran: []
 file node, first   ran: ['f', 'out']
 file unchanged     ran: []
 file edited on disk ran: ['f', 'out']
-NaN == NaN: False   so a key holding NaN never matches, and the node always runs
+NaN == NaN: False   so a key holding a new NaN never matches, and the node always runs
 same inputs, not_idempotent, two nodes: keys equal? False
 same inputs, ordinary node, two nodes: keys equal? True
 

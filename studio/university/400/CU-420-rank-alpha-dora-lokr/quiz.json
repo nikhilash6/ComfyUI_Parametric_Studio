@@ -1,0 +1,62 @@
+{
+ "code": "CU-420",
+ "title": "Rank, alpha, DoRA, LoKr and the other adapters",
+ "level": "400",
+ "questions": [
+  {
+   "q": "What can a LoKr change reach that a rank 4 LoRA change can't, from far fewer numbers?",
+   "options": [
+    "Lower strength",
+    "Full rank, since a Kronecker product's rank is the product of its factors' ranks",
+    "Exact fit to any target",
+    "A faster sampler"
+   ],
+   "answer": "Full rank, since a Kronecker product's rank is the product of its factors' ranks",
+   "why": "The lab measures rank 96 from 208 numbers. But it's one shape repeated, so it fits a low-rank target poorly."
+  },
+  {
+   "q": "In TrainLoraNode with algorithm LoKr and rank 8, what does the 8 mean?",
+   "options": [
+    "The rank of each matrix",
+    "A factor for splitting the layer's size: 1280 becomes 8 and 160",
+    "Eight layers",
+    "Eight steps"
+   ],
+   "answer": "A factor for splitting the layer's size: 1280 becomes 8 and 160",
+   "why": "create_train calls factorization(out_dim, rank). Plain w1 and w2 come out of it, with no rank at all."
+  },
+  {
+   "q": "A LoKr file has plain lokr_w1 and lokr_w2 and an alpha of 1. What does alpha do?",
+   "options": [
+    "Sets scale 1 / rank",
+    "Nothing: scale is 1.0 without a decomposed factor",
+    "Limits the norm",
+    "Doubles the strength"
+   ],
+   "answer": "Nothing: scale is 1.0 without a decomposed factor",
+   "why": "calculate_weight only uses alpha if dim was set, which only happens when a factor was decomposed."
+  },
+  {
+   "q": "What does a dora_scale key do to a layer at strength 1, in the column form?",
+   "options": [
+    "Adds the change only",
+    "Rescales each column to the stored size after adding the change",
+    "Removes the change",
+    "Rotates the weight"
+   ],
+   "answer": "Rescales each column to the stored size after adding the change",
+   "why": "weight_decompose divides by the new column norm and multiplies by dora_scale. The lab's sizes come out at the stored value."
+  },
+  {
+   "q": "Why does comfy offer a bypass path for quantized models?",
+   "options": [
+    "It's faster on every model",
+    "The change is computed beside the layer, so it needn't survive rounding into the stored format",
+    "It lowers rank",
+    "It needs less text"
+   ],
+   "answer": "The change is computed beside the layer, so it needn't survive rounding into the stored format",
+   "why": "h(x) is added to the output. Merging into 8 bits can lose a small change, as CU-212 measures."
+  }
+ ]
+}

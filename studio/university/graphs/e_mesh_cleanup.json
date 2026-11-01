@@ -1,0 +1,167 @@
+{
+ "meta": {
+  "title": "Generate a mesh, then clean it",
+  "about": "Remesh for even topology, decimate to a face budget, unwrap for texturing, in that order.",
+  "runs": "model",
+  "needs": [
+   "A Hunyuan3D 2 checkpoint in models/checkpoints. Not on our test machine, so we validated this graph but did not run it."
+  ],
+  "packs": [],
+  "notes": {
+   "10": "A new surface, evenly tessellated, from a distance field.",
+   "11": "Removes faces down to the budget.",
+   "12": "Makes charts and a UV atlas. Vertices on seams are duplicated."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "ImageOnlyCheckpointLoader",
+   "inputs": {
+    "ckpt_name": "hunyuan3d-dit-v2_fp16.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "3": {
+   "class_type": "CLIPVisionEncode",
+   "inputs": {
+    "clip_vision": [
+     "1",
+     1
+    ],
+    "image": [
+     "2",
+     0
+    ],
+    "crop": "center"
+   }
+  },
+  "4": {
+   "class_type": "Hunyuan3Dv2Conditioning",
+   "inputs": {
+    "clip_vision_output": [
+     "3",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "EmptyLatentHunyuan3Dv2",
+   "inputs": {
+    "resolution": 3072,
+    "batch_size": 1
+   }
+  },
+  "6": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "seed": 424242,
+    "steps": 30,
+    "cfg": 5.5,
+    "sampler_name": "euler",
+    "scheduler": "normal",
+    "positive": [
+     "4",
+     0
+    ],
+    "negative": [
+     "4",
+     1
+    ],
+    "latent_image": [
+     "5",
+     0
+    ],
+    "denoise": 1.0
+   }
+  },
+  "7": {
+   "class_type": "VAEDecodeHunyuan3D",
+   "inputs": {
+    "samples": [
+     "6",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ],
+    "num_chunks": 8000,
+    "octree_resolution": 256
+   }
+  },
+  "8": {
+   "class_type": "VoxelToMesh",
+   "inputs": {
+    "voxel": [
+     "7",
+     0
+    ],
+    "algorithm": "surface net",
+    "threshold": 0.6
+   }
+  },
+  "10": {
+   "class_type": "RemeshMesh",
+   "inputs": {
+    "mesh": [
+     "8",
+     0
+    ],
+    "resolution": 256,
+    "sign_mode": "udf",
+    "band": 1.0,
+    "project_back": 0.0,
+    "fix_poles": false,
+    "smooth_iters": 2,
+    "drop_small_components": 0.01,
+    "precluster_max_verts": 20000000,
+    "sign_mode.qef": false,
+    "sign_mode.drop_inverted_components": false,
+    "sign_mode.drop_enclosed_components": false
+   }
+  },
+  "11": {
+   "class_type": "DecimateMesh",
+   "inputs": {
+    "mesh": [
+     "10",
+     0
+    ],
+    "target_face_count": 40000,
+    "placement_mode": "midpoint"
+   }
+  },
+  "12": {
+   "class_type": "UnwrapMesh",
+   "inputs": {
+    "mesh": [
+     "11",
+     0
+    ],
+    "segmenter": "pec",
+    "resolution": 1024,
+    "padding": 1,
+    "weld_distance": 0.0
+   }
+  },
+  "13": {
+   "class_type": "SaveGLB",
+   "inputs": {
+    "mesh": [
+     "12",
+     0
+    ],
+    "filename_prefix": "3d/university_clean"
+   }
+  }
+ }
+}

@@ -1,0 +1,23 @@
+file                          loader                 keys in file   patches   warnings
+denoiser + text encoder       LoraLoader             12             4         0
+denoiser + text encoder       LoraLoaderModelOnly    12             2         6
+denoiser only                 LoraLoader             6              2         0
+made for another family       LoraLoader             6              0         6
+
+what the log says for row 2:
+lora key not loaded: lora_te_block0.lora_up.weight
+what the log says for row 4:
+lora key not loaded: lora_transformer_block0.lora_up.weight
+
+the same numbers, stored three ways, strength 1: size of the change to the weight
+alpha in file   scale   change
+4.0             1.0     0.6564
+1.0             0.25    0.1641
+None            1.0     0.6564
+
+two LoRAs chained, in either order: largest difference 2.4e-07 (rounding). Chaining adds their changes.
+
+strength_clip 1.0, prompt encoded through the loader's CLIP: output moved 0.7246   through the checkpoint's CLIP: 0.0
+
+shape mismatch: shape '[32, 32]' is invalid for input of size 512
+weight unchanged: True

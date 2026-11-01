@@ -1,14 +1,66 @@
 {
+ "code": "CU-416",
  "title": "Profiling memory and time on a GPU (with a CPU model of it)",
  "level": "400",
- "char": "tune",
- "hook": "Learn to predict GPU memory bottlenecks by simulating tensor lifecycles and operation costs on your CPU.",
- "code": "CU-416",
  "prereq": [
   "CU-305"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "tune",
+ "hook": "A peak isn't the sum of your tensors, and the slowest thing isn't always where you look. Learn to read both before you change anything.",
  "track": "performance",
- "order": 70
+ "order": 70,
+ "graphs": [
+  "f_txt2img_probe"
+ ],
+ "code_refs": [
+  "comfy/model_management.py:debug_memory_summary",
+  "comfy/model_management.py:get_free_memory",
+  "server.py:system_stats",
+  "execution.py:format_value",
+  "app/logger.py:LogInterceptor",
+  "main.py:execution_time"
+ ],
+ "verified": [
+  {
+   "claim": "nvidia-smi can show memory held by PyTorch's caching allocator as used; memory_allocated tracks tensors and memory_reserved what the allocator holds; empty_cache releases unused cached memory.",
+   "how": "docs",
+   "ref": "PyTorch 2.15 CUDA semantics, fetched 2026-11-01"
+  },
+  {
+   "claim": "GPU operations are asynchronous by default, so timings need care.",
+   "how": "docs",
+   "ref": "PyTorch 2.15 CUDA semantics, fetched 2026-11-01"
+  },
+  {
+   "claim": "GET /system_stats returns vram_total, vram_free, torch_vram_total and torch_vram_free per device.",
+   "how": "run here",
+   "ref": "server.py"
+  },
+  {
+   "claim": "On an out-of-memory error ComfyUI logs torch.cuda.memory.memory_summary on NVIDIA and AMD.",
+   "how": "source",
+   "ref": "execution.py, comfy/model_management.py:debug_memory_summary"
+  },
+  {
+   "claim": "ComfyUI prints Prompt executed in N seconds for each job, and keeps a timestamp per log write.",
+   "how": "source",
+   "ref": "main.py, app/logger.py"
+  },
+  {
+   "claim": "Peaks and bytes in the Lab come from a run here. Sizes and times are examples we chose.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graph passes validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We ran no GPU profile for this lesson, and no number here describes a real model's peak.",
+  "We did not read how Dynamic VRAM's memory is reported to torch or nvidia-smi, so a reading on that path may differ from what the allocator model suggests.",
+  "The toy allocator keeps the idea of reserved memory and leaves out everything else a real allocator does."
+ ],
+ "kit": true
 }

@@ -8,12 +8,59 @@
  "char": "latent",
  "hook": "How a style vector controls a feature map in StyleGAN, AdaIN then weight demodulation, checked with numbers, and where the same scale-and-shift idea lives in ComfyUI today.",
  "code_refs": [
-  "comfy/ldm/wan/model_animate.py:class EqualConv2d",
-  "comfy/ldm/wan/model_animate.py:class EqualLinear",
-  "comfy/ldm/modules/diffusionmodules/mmdit.py:def modulate",
-  "comfy/ldm/modules/diffusionmodules/mmdit.py:class DismantledBlock",
-  "comfy/ldm/modules/diffusionmodules/openaimodel.py:use_scale_shift_norm"
+  "comfy/ldm/wan/model_animate.py:EqualConv2d",
+  "comfy/ldm/wan/model_animate.py:EqualLinear",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:modulate",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:DismantledBlock",
+  "comfy/ldm/modules/diffusionmodules/openaimodel.py:ResBlock",
+  "nodes.py:StyleModelApply"
  ],
  "track": "history",
- "order": 40
+ "order": 40,
+ "graphs": [
+  "sd35_flow"
+ ],
+ "verified": [
+  {
+   "claim": "Returns shift + x(1 + scale).",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/mmdit.py:modulate"
+  },
+  {
+   "claim": "Documented as a DiT block with gated adaLN conditioning.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/mmdit.py:DismantledBlock"
+  },
+  {
+   "claim": "use_scale_shift_norm splits the embedding into scale and shift.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/openaimodel.py:ResBlock"
+  },
+  {
+   "claim": "StyleGAN2-style layers with comments pointing at BasicSR.",
+   "how": "source",
+   "ref": "comfy/ldm/wan/model_animate.py:EqualConv2d"
+  },
+  {
+   "claim": "Combines the style model's output with the conditioning tensor.",
+   "how": "source",
+   "ref": "nodes.py:StyleModelApply"
+  },
+  {
+   "claim": "AdaIN, the (1 + scale) form and demodulation print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title and date from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/1812.04948"
+  }
+ ],
+ "unchecked": [
+  "The paper quotes and table numbers were read in an earlier audit of this lesson. In this pass we rechecked the arXiv titles and abstracts only.",
+  "We did not train a StyleGAN or see droplets ourselves. That part is the paper's account.",
+  "The advice about normalising inside a custom node is reasoning from the paper, not a test."
+ ],
+ "kit": true
 }

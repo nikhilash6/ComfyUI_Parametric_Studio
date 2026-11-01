@@ -1,0 +1,55 @@
+{
+ "meta": {
+  "title": "A chain to mute and bypass",
+  "about": "Open it, select the blur, and try Ctrl+B then Ctrl+M. Export the API format each time and compare.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "The start of the chain.",
+   "2": "Bypass this one and the invert reads node 1 straight. Mute it and the invert has no input.",
+   "3": "Has one IMAGE input and one IMAGE output, so it bypasses cleanly too.",
+   "4": "Mute this and the server says the prompt has no outputs."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 256,
+    "height": 256,
+    "batch_size": 1,
+    "color": 2245734
+   }
+  },
+  "2": {
+   "class_type": "ImageBlur",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "blur_radius": 8,
+    "sigma": 3.0
+   }
+  },
+  "3": {
+   "class_type": "ImageInvert",
+   "inputs": {
+    "image": [
+     "2",
+     0
+    ]
+   }
+  },
+  "4": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "3",
+     0
+    ]
+   }
+  }
+ }
+}

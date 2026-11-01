@@ -21,6 +21,10 @@ Two facts follow from the algebra. First, BA has rank at most r, however large t
 
 How much can rank r hold? The best rank-r approximation of a matrix, in the least-squares sense, is its truncated SVD, the result of Eckart and Young (1936). The lab uses it as a yardstick.
 
+Here is what a low rank can hold, in a picture you can drag. It's the same bet.
+
+{{play:lowrank}}
+
 ## In ComfyUI
 
 **The file.** A LoRA is a set of tensors named per layer: `<layer>.lora_up.weight` is B with shape [out, r], `<layer>.lora_down.weight` is A with shape [r, in], and an optional `<layer>.alpha`. `LoRAAdapter.load` in `comfy/weight_adapter/lora.py` also accepts other spellings, such as `lora_B` and `lora_A`. The same folder holds other adapter types (LoHa, LoKr, OFT and more) that this lesson does not cover.
@@ -41,6 +45,10 @@ The product is computed in float32 and added to a copy of the weight held in a w
 **Quantized base weights.** The merge path dequantizes, adds the patch, and stores again. For plain bf16 or fp16 weights that last step is a normal cast. For FP8, `comfy/float.py` uses stochastic rounding, seeded by a CRC-32 of the weight's key so that the same merge gives the same result every time, and for FP8 weights with a stored scale `set_weight` in `comfy/ops.py` recalculates the scale first (CU-211). A layer that gets its patch at run time through `LowVramPatch` is dequantized and patched in the compute dtype instead.
 
 **Training.** "Train LoRA" in `comfy_extras/nodes_train.py` is marked experimental. Its defaults are rank 8, 16 steps, learning rate 0.0005, AdamW and an MSE loss. A new adapter gets alpha 1.0, so its scale is 1/rank.
+
+Here's a LoRA in a graph, and CU-280 goes through loading it right.
+
+{{graph:sd15_lora}}
 
 ## Lab
 
@@ -106,6 +114,14 @@ FP8, rounding to nearest: share of weights whose 8-bit code is unchanged by the 
 ```
 
 With an update 0.5% the size of the weights (std 0.0001), rounding FP8 to nearest keeps 0.200 of the update, because 0.928 of the weights get back the same 8-bit code they had. Stochastic rounding keeps the mean (1.005), at the price of noise 3.36 times as large as the update. At 5% the roles blur: nearest is closer (output correlation 0.901 against 0.827). Even bf16 keeps only 0.306 of a very small update. So stochastic rounding trades a bias for noise and does not make the merge exact.
+
+## What goes wrong
+
+- **The prompt's CLIP goes round the loader.** Your text-encoder patch never reaches it. See CU-280.
+- **A high rank, and a big file with little gain.** The lab's table shows where the saving goes. Rank 128 on a 320 × 320 layer is 80% of the layer.
+- **A file with no alpha is much stronger than you expect.** Scale is 1.0 with no alpha, whatever the rank.
+- **A small LoRA vanishes when merged into FP8.** The last table shows 0.2 of an update kept, by rounding to nearest. Merge into bf16 or fp16, and quantize afterwards (CU-403).
+- **Keys didn't load.** Read the log. CU-280 shows each line.
 
 ## What is contested
 

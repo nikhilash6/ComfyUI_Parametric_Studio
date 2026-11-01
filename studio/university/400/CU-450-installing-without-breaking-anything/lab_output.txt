@@ -1,0 +1,21 @@
+dry run with no constraints
+  pack A, modest             newlib None -> 1.2.0
+  pack B, wants old opencv   opencv-python 5.0.0 -> 4.11.0
+  pack C, wants old numpy    numpy 2.1.0 -> 1.26.4 PROTECTED
+  pack D, pins torch         torch 2.8.0 -> 2.5.0 PROTECTED
+
+dry run with the constraints file
+  pack A, modest             newlib None -> 1.2.0
+  pack B, wants old opencv   opencv-python 5.0.0 -> 4.11.0
+  pack C, wants old numpy    no moves  FAILS: numpy: nothing fits <2 with ==2.1.0
+  pack D, pins torch         no moves  FAILS: torch: nothing fits ==2.5.0 with ==2.8.0
+
+a failure in the second list is good news: it happened on paper, not in your environment
+
+what each layer of the method protects against
+  read the text first                                a surprise at import
+  dry run with constraints                           a version moving under other packs
+  a second venv                                      breaking the one you use
+  a container, no outside network, read-only models  a pack reaching out, or changing weights
+  a no-model graph, then a real graph                a pack that imports but does not work
+  --disable-all-custom-nodes                         not knowing whether a pack is to blame

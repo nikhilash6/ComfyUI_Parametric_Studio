@@ -57,6 +57,17 @@
    ],
    "answer": "No, some training images have been extracted, mostly heavily duplicated ones",
    "why": "Carlini et al. 2023 extracted some images. Models are neither databases nor proven free of copying."
+  },
+  {
+   "q": "You press Queue fifty times with a model. What happens to its weights?",
+   "options": [
+    "Nothing: running a model does not change them",
+    "They improve a little each time",
+    "They slowly drift towards your prompts",
+    "They are saved over the old file"
+   ],
+   "answer": "Nothing: running a model does not change them",
+   "why": "Sampling runs under torch.inference_mode, with no training step. Changing weights takes training (the lora-training track)."
   }
  ]
 }

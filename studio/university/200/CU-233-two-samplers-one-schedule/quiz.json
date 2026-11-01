@@ -1,0 +1,62 @@
+{
+ "code": "CU-233",
+ "title": "Two samplers, one schedule: leftover noise",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What must a correct hand-over set on the second sampler?",
+   "options": [
+    "add_noise disable, the same steps and scheduler, start_at_step at the first's end",
+    "add_noise enable and a new seed",
+    "return_with_leftover_noise enable",
+    "start_at_step 0"
+   ],
+   "answer": "add_noise disable, the same steps and scheduler, start_at_step at the first's end",
+   "why": "Together these make the second start at the noise level the latent really has."
+  },
+  {
+   "q": "What does return_with_leftover_noise disable do on the first sampler?",
+   "options": [
+    "Overwrites its last sigma with 0, so its last step jumps to clean",
+    "Removes the seed",
+    "Adds noise after the run",
+    "Nothing unless the second sampler is present"
+   ],
+   "answer": "Overwrites its last sigma with 0, so its last step jumps to clean",
+   "why": "force_full_denoise sets sigmas[-1] = 0 in KSampler.sample."
+  },
+  {
+   "q": "With euler in both stages and correct settings, how does the result compare with one 20-step run?",
+   "options": [
+    "Identical, because Euler has no memory",
+    "Always a little worse",
+    "Better",
+    "Random"
+   ],
+   "answer": "Identical, because Euler has no memory",
+   "why": "The lab shows RMS 0.0000. Each step depends only on the current sample and σ."
+  },
+  {
+   "q": "Why is a split dpmpp_2m not identical to a single run?",
+   "options": [
+    "Its previous prediction is lost at the join",
+    "It adds noise",
+    "Its schedule is different",
+    "It always uses the seed twice"
+   ],
+   "answer": "Its previous prediction is lost at the join",
+   "why": "It reuses the last prediction as history, held in a local variable. A second call starts without any."
+  },
+  {
+   "q": "Step 12 of 20 and step 12 of 30 on karras are:",
+   "options": [
+    "Different noise levels",
+    "The same noise level",
+    "Both zero",
+    "Decided by the seed"
+   ],
+   "answer": "Different noise levels",
+   "why": "Here σ 0.565 and σ 2.07. That row has the worst W1 of the table."
+  }
+ ]
+}

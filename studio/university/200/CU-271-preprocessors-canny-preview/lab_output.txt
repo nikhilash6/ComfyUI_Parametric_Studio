@@ -1,0 +1,25 @@
+a straight edge of contrast h, on a scale where black is 0 and white is 1
+h      largest magnitude (raw, 2.59 x h)   found at 0.4/0.8   found at 0.1/0.2   found at 0.99/0.99
+0.1    0.259                               False              True               False
+0.3    0.776                               False              True               False
+0.31   0.802                               True               True               False
+0.38   0.983                               True               True               False
+0.39   1.009                               True               True               True
+0.5    1.294                               True               True               True
+smallest contrast that can start an edge = high_threshold / 2.59:  0.8 -> 0.309   0.2 -> 0.077   0.99 (the slider's top) -> 0.383
+
+noise 0.05, 128 x 128: what each threshold pair keeps
+low   high   pixels marked   disc outline   faint square   stray pixels
+0.05  0.1    32.5            1.00           1.00           0.3465
+0.1   0.2    4.8             1.00           1.00           0.0310
+0.2   0.4    2.0             1.00           1.00           0.0000
+0.4   0.8    1.3             1.00           0.00           0.0000
+0.8   0.9    1.3             1.00           0.00           0.0000
+0.95  0.99   1.3             1.00           0.00           0.0000
+
+hint size against the latent's shape (common_upscale, crop center)
+hint          render        part of the hint used   share kept
+1024 x 1024   512 x 512    1024 x 1024             1.00
+1024 x 768    512 x 512    768 x 768              0.75
+768 x 1024   512 x 768    682 x 1024             0.89
+1920 x 1080   512 x 512    1080 x 1080             0.56

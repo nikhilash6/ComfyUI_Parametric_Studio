@@ -1,0 +1,13 @@
+{
+ "code": "CU-292",
+ "title": "Shape and size errors: reading a traceback",
+ "level": "200",
+ "questions": [
+  {"q": "Where in a traceback do you find the error itself?", "options": ["The first line of the frames", "The last line", "The middle", "Only in the error box"], "answer": "The last line", "why": "Python prints the deepest call last, then the error. The engine's frames sit at the top."},
+  {"q": "The size of tensor a (4) must match the size of tensor b (16) at non-singleton dimension 1, on latents. What does it mean?", "options": ["Two heights differ", "Two model families met, with different channel counts", "Two batch sizes differ", "The VRAM is full"], "answer": "Two model families met, with different channel counts", "why": "A latent's dimension 1 is its channels."},
+  {"q": "mat1 and mat2 shapes cannot be multiplied (77x2048 and 768x320), in a sampler. What do you check first?", "options": ["The seed", "That the text encoder fits the model", "The image size", "The output folder"], "answer": "That the text encoder fits the model", "why": "Width 2048 went into a layer built for 768. ComfyUI's own tip says to check CLIP loaders."},
+  {"q": "You feed ImageBatch a 64 by 64 and a 128 by 128 image. What happens?", "options": ["A size error", "The second is resized to 64 by 64, with no message", "The first is resized to 128 by 128", "It keeps both as they are"], "answer": "The second is resized to 64 by 64, with no message", "why": "We ran it: the result is (2, 64, 64, 3)."},
+  {"q": "Why does a batch of 1 hide a mismatch that a batch of 2 reveals?", "options": ["A size of 1 broadcasts against anything", "A batch of 1 skips the check", "The cache handles it", "Only a GPU checks batches"], "answer": "A size of 1 broadcasts against anything", "why": "Torch stretches a size-1 axis. The lab gives (3, 4, 8, 8) with no error, and fails on 2 against 3."},
+  {"q": "An error appears in KSampler. Is the sampler the likely cause?", "options": ["Yes, always", "Often not: it runs the model, so faults in the model, conditioning or latent surface there", "No, KSampler never raises", "Only with euler"], "answer": "Often not: it runs the model, so faults in the model, conditioning or latent surface there", "why": "Read the frames below it and the sizes in the message."}
+ ]
+}

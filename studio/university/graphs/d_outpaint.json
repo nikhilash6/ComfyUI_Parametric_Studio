@@ -1,0 +1,132 @@
+{
+ "meta": {
+  "title": "Outpaint to the right",
+  "about": "ImagePadForOutpaint then VAEEncodeForInpaint at full denoise.",
+  "runs": "model",
+  "needs": [
+   "An inpainting checkpoint is the usual partner for this route. Pick yours in the loader."
+  ],
+  "packs": [],
+  "notes": {
+   "5": "Adds 128 pixels on the right. Feathering 40 reaches into your picture.",
+   "6": "Rounds the feather away, greys the masked pixels, then grows the mask by 8.",
+   "7": "Denoise 1: what is under the mask is grey and must be generated from noise."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "sd-v1-5-inpainting.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "the same scene continuing to the right, a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "3": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "blurry, low quality, watermark, text",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "4": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "5": {
+   "class_type": "ImagePadForOutpaint",
+   "inputs": {
+    "image": [
+     "4",
+     0
+    ],
+    "left": 0,
+    "top": 0,
+    "right": 128,
+    "bottom": 0,
+    "feathering": 40
+   }
+  },
+  "6": {
+   "class_type": "VAEEncodeForInpaint",
+   "inputs": {
+    "pixels": [
+     "5",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ],
+    "mask": [
+     "5",
+     1
+    ],
+    "grow_mask_by": 8
+   }
+  },
+  "7": {
+   "class_type": "KSampler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "seed": 424242,
+    "steps": 20,
+    "cfg": 7.0,
+    "sampler_name": "euler",
+    "scheduler": "karras",
+    "denoise": 1.0,
+    "positive": [
+     "2",
+     0
+    ],
+    "negative": [
+     "3",
+     0
+    ],
+    "latent_image": [
+     "6",
+     0
+    ]
+   }
+  },
+  "8": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "7",
+     0
+    ],
+    "vae": [
+     "1",
+     2
+    ]
+   }
+  },
+  "9": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "8",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

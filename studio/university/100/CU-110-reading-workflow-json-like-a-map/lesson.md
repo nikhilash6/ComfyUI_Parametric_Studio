@@ -18,6 +18,14 @@ Two facts make files harder to read than they look. The wiring is written twice,
 
 **Reading it.** Find the output nodes. Follow each input backwards: a link names the node and the output it comes from, and a constant is a setting. Everything reached this way is what the picture depends on, and it is the part of the graph the executor looks at (CU-102). What a workflow does not contain is just as important: the model files, the input images and the custom node packages must exist on the machine that runs it.
 
+Open this graph, then export it both ways and compare the two files with this lesson beside you.
+
+{{graph:sd15_txt2img}}
+
+Now fix some graphs by hand. This is the API format, and the check uses the server's own error names.
+
+{{play:graphfix}}
+
 ## In ComfyUI
 
 The server takes a POST on `/prompt` with a body that holds the API dictionary under `prompt`, and optionally `extra_data` and a `client_id`. It validates the graph and returns a prompt id, or an error with the nodes that failed (CU-102). `SaveImage` receives the API prompt and a hidden input called `extra_pnginfo`, and writes them into the PNG as text entries: one named `prompt` and one for every key of `extra_pnginfo`. The standard names are `prompt` and `workflow`.
@@ -25,6 +33,17 @@ The server takes a POST on `/prompt` with a body that holds the API dictionary u
 `is_link` in `comfy_execution/graph_utils.py` accepts a list only when it has two items, the first a string and the second a number. In v0.43.0 the repository's own `default_workflow.json` is a version 0.4 file, with links as rows of six.
 
 The documentation says to treat embedded metadata as optional and untrusted input, and that it is not a digital signature. A file that was re-encoded by another program may have lost it.
+
+## What goes wrong
+
+- **You post the save format to `/prompt`.** The server expects the API dictionary. On the default workflow file, `validate_prompt` raised a `TypeError` in our test, because `last_node_id` isn't a node. Export the API format.
+- **A source id written as a number.** `["4", 0]` is a wire and `[4, 0]` isn't. The lab shows the failed lookup.
+- **Editing `links` alone.** The wiring is written twice, so a hand edit to one copy leaves a file that disagrees with itself. The lab finds this for you.
+- **Reading `widgets_values` by position across versions.** Those lists have no names. A node whose widgets change in a new version can give an old list a new meaning.
+- **A script finds nodes by title.** Titles live in `_meta` and can be edited or repeated. Search on `class_type`, then confirm.
+- **The seed never changes in your script.** "randomize" stays behind in the save format, and the API format has only a number. Set a new seed each time, or the cache answers (CU-112).
+- **A PNG with no workflow.** Another program re-encoded it, or the server ran with `--disable-metadata`. CU-111 lets you cut one out yourself.
+- **Muted nodes are missing from your API export.** They're meant to be (CU-113).
 
 ## Lab
 

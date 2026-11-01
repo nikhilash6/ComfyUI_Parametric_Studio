@@ -1,0 +1,52 @@
+{
+ "code": "CU-243",
+ "title": "Reading the Sampling Lab",
+ "level": "200",
+ "prereq": [
+  "CU-234",
+  "CU-235"
+ ],
+ "char": "latent",
+ "hook": "720 methods, four kinds of proof, curves, a bench and renders. What each label promises, and how to use the page to answer a real question.",
+ "code_refs": [
+  "comfy/k_diffusion/sampling.py:get_ancestral_step",
+  "comfy/samplers.py:calculate_sigmas"
+ ],
+ "track": "noise-latent",
+ "order": 70,
+ "kit": true,
+ "graphs": [
+  "nm_sigmas"
+ ],
+ "verified": [
+  {
+   "claim": "The counts in the lab come from atlas.json and renders.json.",
+   "how": "run here",
+   "ref": "studio/sampling_lab, read 2026-11-01"
+  },
+  {
+   "claim": "The label meanings are the page's own text.",
+   "how": "source",
+   "ref": "studio/web/samplinglab_logic.js: LABEL_MEANS"
+  },
+  {
+   "claim": "The page's slope is fitted at 10, 20 and 40 steps.",
+   "how": "source",
+   "ref": "scripts/build_sampling_measures.py"
+  },
+  {
+   "claim": "The lab's slope for euler and heun matches the stored number.",
+   "how": "run here",
+   "ref": "assert in lab.py"
+  },
+  {
+   "claim": "nm_sigmas ran on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not re-read all 720 atlas entries for this lesson. We say what the labels promise, and how many a second reader checked.",
+  "The page's counts change when the atlas is rebuilt. These are the counts in the build we read."
+ ]
+}

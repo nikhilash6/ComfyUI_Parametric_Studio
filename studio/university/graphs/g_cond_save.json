@@ -1,0 +1,42 @@
+{
+ "meta": {
+  "title": "Save a prompt's conditioning",
+  "about": "Encode once and write the result to a file. Move it from the output folder to models/embeddings and Load Conditioning can use it with no text encoder.",
+  "runs": "model",
+  "needs": [
+   "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader."
+  ],
+  "packs": [],
+  "notes": {
+   "10": "Writes safetensors. One conditioning entry only: save it before combining."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "CheckpointLoaderSimple",
+   "inputs": {
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
+   }
+  },
+  "2": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "1",
+     1
+    ]
+   }
+  },
+  "10": {
+   "class_type": "SaveConditioning",
+   "inputs": {
+    "conditioning": [
+     "2",
+     0
+    ],
+    "filename_prefix": "conditioning/brass"
+   }
+  }
+ }
+}

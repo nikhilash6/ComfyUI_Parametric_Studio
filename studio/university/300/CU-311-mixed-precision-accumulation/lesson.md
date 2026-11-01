@@ -1,101 +1,107 @@
 # CU-311 - Mixed precision: where accumulation hides
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Predict when a sum in a small float format stops moving, find where such sums hide in a model, and choose formats for training. Taught by Bit Bandit.
 
-## Why this matters
+## The rounding that loses numbers
 
-Welcome back, students. I am Bit Bandit, and I live in the last few bits of your floating-point numbers. You think you are running "half precision" to save VRAM? Cute. But you are ignoring where I actually bite.
+A float keeps a fixed number of mantissa bits. So the gap between neighbouring numbers grows with the size of the number. Near 1 in fp16 that gap is 2^-10, about 0.001. Add something smaller than half a gap and the result rounds straight back.
 
-In ComfyUI, inference is a one-way street. You push pixels through the network, get an image, and discard the intermediate states. In that context, `fp16` is often safe. The error is small, and the final image looks fine. But the moment you step into training, fine-tuning, or even complex loss accumulation, the rules change. If you accumulate gradients or loss values in `fp16`, you are letting me eat your signal.
+```
+1.0 + 0.0001 = 1.0 in fp16
+```
 
-This lesson explains why `fp16` is a trap for accumulation. We will look at how rounding errors hide in the mantissa, why `fp32` is non-negotiable for gradient updates, and how ComfyUI’s architecture handles these precision boundaries.
+Nothing fails, and nothing warns you. The penny fell through a hole that is too wide for it.
 
-## The intuition
+One add loses almost nothing. A long sum is different, because the running total gets larger while each new number stays small. Sooner or later every add falls through. That is accumulation error, and it is the reason this lesson exists.
 
-Imagine you are counting pennies. You have a jar with $1,000,000$ pennies. If I add 1 penny to that jar, the total is $1,000,001$. But if your scale only has a resolution of 100 pennies, the scale still reads $1,000,000$. The penny didn't disappear; it just wasn't significant enough to change the reading.
+{{play:accum}}
 
-`fp16` is that scale. It has a 10-bit mantissa. This means it can only represent about 15-16 significant decimal digits. When you add a very small number to a very large number, the small number often falls below the "resolution" of the large number. In `fp32`, with its 23-bit mantissa, that penny is visible. In `fp16`, it vanishes.
+## Where the sums are
 
-This is not a bug; it is the nature of fixed-width floating point. But in training, those "vanished pennies" are your gradients. If you lose them, your model stops learning.
+**Inside a matmul.** Each output of a linear layer is a dot product: a sum of thousands of terms. PyTorch can compute terms in fp16 and add them up in a wider format. ComfyUI has a switch for the narrow way: `--fast fp16_accumulation`, under a flag whose help says "untested and potentially quality deteriorating optimizations". It sets `torch.backends.cuda.matmul.allow_fp16_accumulation`. Code in `comfy/ops.py` and `comfy/ldm/seedvr/vae.py` has its own fast path for it. `_fp16_linear_wanted` asks for that flag, an fp16 input and CUDA, and the plain linear path also checks that training is off. The lab shows what the narrow sum can do. Whether it matters for your picture is a test for your eyes.
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
+**Between steps, in a training loop.** Gradient accumulation sums gradients over batches. The total is a running sum, so keep it wide. An `fp16` accumulator loses small late gradients after large early ones.
 
-Let $x$ be a large value and $\epsilon$ be a small value. In floating point, the result of $x + \epsilon$ is determined by the precision of the format.
-
-For `fp16`:
-- Exponent bits: 5
-- Mantissa bits: 10
-- Smallest positive normal number: $\approx 6.1 \times 10^{-5}$
-- Machine epsilon ($\epsilon_{mach}$): $\approx 9.8 \times 10^{-4}$
-
-If $x = 1.0$ and $\epsilon = 0.0001$, the relative size of $\epsilon$ to $x$ is $10^{-4}$. This is comparable to $\epsilon_{mach}$. Depending on the rounding mode, $1.0 + 0.0001$ may round back to $1.0$.
-
-For `fp32`:
-- Exponent bits: 8
-- Mantissa bits: 23
-- Machine epsilon ($\epsilon_{mach}$): $\approx 1.2 \times 10^{-7}$
-
-Here, $10^{-4}$ is much larger than $\epsilon_{mach}$. The addition is preserved.
-
-In training, we compute gradients $g_i$ for each mini-batch. We accumulate them:
-$$ G = \sum_{i=1}^{N} g_i $$
-
-If $G$ is stored in `fp16`, and the individual $g_i$ are small relative to the running sum, the later terms may be lost. This is **catastrophic cancellation** in reverse: not subtracting close numbers, but adding small numbers to large ones until the small ones no longer register.
+**In one gradient.** The smallest positive number fp16 can hold is about 6e-8. A gradient smaller than that becomes exactly 0. `GradScaler` multiplies the loss by a big number first to lift gradients into range, then undoes it. bf16 has fp32's range, so it doesn't underflow like that, but it has only 7 mantissa bits. A comment in `nodes_train.py` notes that GradScaler handles float16 gradients, not bfloat16. The same file logs a warning if you train an fp16 model with `fp16_accumulation` on: it "can be numerically unstable during training and may cause NaN values".
 
 ## In ComfyUI
 
-ComfyUI is primarily an inference engine, but it supports fine-tuning and complex pipelines. The evidence shows that ComfyUI is aware of these precision traps.
+For image making, formats mainly mean memory. fp16 or bf16 weights and activations are the normal path, and flags like `--bf16-vae` choose one. `--fp16-vae` warns that it "might cause black images", which is range rather than accumulation.
 
-In `comfy/ldm/seedvr/vae.py`, the `InflatedCausalConv3d` layer explicitly supports **fp16 accumulation**. This is a specific optimization for video restoration where the temporal convolution requires careful memory management. However, note the function `_fp16_accumulate_wanted`. This checks if the current tensor and device *support* the optimization. This implies that not all operations are safe in `fp16` accumulation, and the system must verify hardware and tensor compatibility.
+For training, the core nodes let you choose. `training_dtype` is `bf16`, `fp32` or `none`, and `lora_dtype` is `bf16` or `fp32`, both defaulting to `bf16`. Run the graph with these in mind:
 
-In `comfy/ops.py`, we see `QuantLinearFunc` and `cast_bias_weight`. These utilities handle casting weights and biases to specific dtypes. The presence of `LazyCastingParam` in `comfy/model_patcher.py` allows weights to be cast on-the-fly. This is crucial: it means ComfyUI can keep weights in `fp16` for storage (saving VRAM) but cast them to `fp32` for computation if necessary, or vice versa.
+{{graph:sd15_train_lora}}
 
-The unit tests in `tests-unit/comfy_quant/test_mixed_precision.py` verify that `test_linear_input_act_respects_full_precision_mm_fallback`. This test ensures that when a linear layer is used, the system respects the full-precision matrix multiplication fallback. This is the safety net: if the hardware or the operation is not safe in `fp16`, ComfyUI falls back to `fp32`.
+`lora_compute_dtype` in `model_management.py` decides the format for merging LoRA patches: fp16 when `should_use_fp16` says so, otherwise fp32. That is the same concern in a place you might not look.
 
-**Crucial Point:** While inference can safely run in `fp16`, **training and loss accumulation must upcast to `fp32`**. The evidence does not show a specific "training loop" in ComfyUI core (as it is an inference UI), but the presence of `comfy_quant` tests and the `seedvr` accumulation logic confirms that the architecture is built to handle mixed precision carefully. If you are using ComfyUI for fine-tuning (via external scripts or nodes that hook into the model), you **must** ensure that gradient accumulation happens in `fp32`.
+## What goes wrong
+
+- **A LoRA barely changes after many steps at a very low learning rate.** Compare the size of an update with the gap between numbers at the weight's size. A format with few mantissa bits can swallow an update. Try `lora_dtype` fp32.
+- **`lora_dtype` bf16 with a tiny learning rate.** bf16's gap near 1 is 0.0078, so a small update to a weight near 1 rounds away entirely. Weights in LoRAs tend to be small, which helps. Check by measuring whether weights move.
+- **Loss becomes NaN in fp16.** fp16's largest number is 65,504. That is range, not accumulation. Try bf16 or fp32.
+- **A `--fast` flag changed your pictures.** It says it may. Turn it off and compare the same seed.
+- **Treating fp16 as "unsafe".** The lab shows a real effect in long sums. It does not show that fp16 inference is bad. Most of the time fp16 inference looks fine: test it on your own graph.
 
 ## Lab
 
-We ran a lab to demonstrate this. The lab code performs three steps:
-1.  Adds a small number to a large number in `fp16` vs `fp32`.
-2.  Sums 1000 small values in `fp16` vs `fp32`.
-3.  Simulates gradient accumulation over 10 batches in `fp16` vs `fp32`.
+All numbers here are from a run on a CPU.
 
-Here are the real `RESULT` lines from the lab output:
-
+```text
+format   mantissa bits   spacing just above 1 (eps)   smallest normal   largest
+fp16     10              9.766e-04                    6.104e-05         6.550e+04
+bf16     7               7.812e-03                    1.175e-38         3.390e+38
+fp32     23              1.192e-07                    1.175e-38         3.403e+38
 ```
-RESULT fp16_sum = 1
-RESULT fp32_sum = 1.0001
+
+```text
+1.0 + 0.0001 in fp16 = 1.000000    in fp32 = 1.000100
 ```
-*Proof:* In `fp16`, $1.0 + 0.0001$ rounds to $1.0$. The small value is lost. In `fp32`, it is preserved. This is the fundamental rounding error.
 
+The running sum. The true totals are 0.1 and 2.0.
+
+```text
+add 0.0001 again and again, rounding after each add. The true total is count x 0.0001
+format   count     result     stopped moving at
+fp16     1000      0.1058     never
+fp16     20000     0.2500     add number 2181
+bf16     1000      0.0312     add number 273
+bf16     20000     0.0312     add number 273
+fp32     1000      0.1000     never
+fp32     20000     2.0002     never
 ```
-RESULT fp32_accumulated = 0.1
-RESULT fp16_accumulated = 0.100037
+
+fp16 stalls at exactly 0.25. Above 0.25, half a gap is 2^-13 = 0.000122, which is larger than 0.0001. bf16 stalls far earlier. fp32 doesn't stall inside this range.
+
+The same thing inside one dot product: 4096 terms, each computed in fp16, summed two ways.
+
+```text
+the same loss inside one matmul: a dot product of 4096 terms, summed in the format named
+true -0.16062   fp16 terms summed in fp32 -0.16061   fp16 terms summed in fp16 -0.15454
+error: fp32 sum 0.00000   fp16 sum 0.00608
 ```
-*Proof:* When summing 1000 values of $0.0001$, the true sum is $0.1$. `fp32` gets it exactly right (within floating point limits). `fp16` gets $0.100037$. The error is small here, but it is non-zero.
 
+This is a plain loop on a CPU. A real GPU kernel may order its sum differently. A toy gradient sum, with one large early batch followed by small ones:
+
+```text
+a toy gradient sum: 64 small batches on one weight tensor
+relative error of the summed gradient: fp16 1.88e-03   fp32 2.30e-07
 ```
-RESULT fp16_error = 3.66211e-05
-RESULT fp32_error = 2.83122e-08
+
+And why `GradScaler` exists:
+
+```text
+gradients small enough to vanish: the reason GradScaler exists
+  1e-05 stored as fp16: 1.001e-05   scaled by 65536 first, then back: 9.999e-06
+  1e-07 stored as fp16: 1.192e-07   scaled by 65536 first, then back: 1.000e-07
+  1e-08 stored as fp16: 0.000e+00   scaled by 65536 first, then back: 9.997e-09
 ```
-*Proof:* The error in `fp16` is roughly $1000\times$ larger than in `fp32`. This is the "hidden" error.
 
-```
-RESULT grad_accum_diff = 0.121216
-```
-*Proof:* When we simulate gradient accumulation over 10 batches, the difference between the `fp16` accumulated gradient and the `fp32` accumulated gradient is $0.121216$. This is a **massive** error for a gradient. If your learning rate is $10^{-4}$, this error is $1000\times$ larger than your update step. Your model will not learn correctly.
+## Sources
 
-## Common mistakes
-
-1.  **Assuming `fp16` is safe for all operations.** It is safe for inference. It is **not** safe for accumulation.
-2.  **Forgetting to upcast gradients.** If you are fine-tuning, ensure that `grad_acc` is in `fp32`.
-3.  **Ignoring hardware fallbacks.** Some GPUs (like MPS on Mac) may not support `INT8` or certain `fp16` optimizations. ComfyUI handles this via `test_int8_disabled_on_unsupported_device_falls_back_to_full_precision`, but you must ensure your custom training loops do the same.
-4.  **Confusing storage precision with computation precision.** Weights can be stored in `fp16` to save VRAM, but they should be cast to `fp32` for matrix multiplications if accuracy is critical.
-
-## Go deeper
-
-For a deeper understanding of how lower-precision formats are designed to mitigate these issues, read:
-
-*   **arXiv:2209.05433** - "FP8 Formats for Deep Learning". This paper discusses how 8-bit floating point formats (E4M3 and E5M2) are designed to balance range and precision, allowing for training that matches 16-bit quality. It highlights that even with 8-bit formats, careful scaling and accumulation strategies are required to prevent the precision loss we discussed.
-
+- [ComfyUI v0.43.0, comfy/cli_args.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/cli_args.py)
+- [ComfyUI v0.43.0, comfy/model_management.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_management.py)
+- [ComfyUI v0.43.0, comfy/ops.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ops.py)
+- [ComfyUI v0.43.0, comfy/ldm/seedvr/vae.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/seedvr/vae.py)
+- [ComfyUI v0.43.0, comfy_extras/nodes_train.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy_extras/nodes_train.py)
+- [Micikevicius et al. 2022. FP8 Formats for Deep Learning](https://arxiv.org/abs/2209.05433)
+- [PyTorch 2.15, torch.backends](https://docs.pytorch.org/docs/2.15/backends.html)

@@ -1,6 +1,34 @@
-Original counts: {'a red car': 3, 'a blue sky': 1, 'a green tree': 1}
-Most frequent caption: a red car with count 3
-RESULT norm_freq_a_red_car = 0.6
-RESULT norm_freq_a_blue_sky = 0.2
-RESULT norm_freq_a_green_tree = 0.2
-RESULT balanced_sample = ['a blue sky', 'a red car', 'a green tree']
+files                                     pictures in the list
+['a.png', 'b.png']                        ['a.png', 'b.png']
+['5_lamp/a.png', 'b.png']                 ['a.png', 'a.png', 'a.png', 'a.png', 'a.png', 'b.png']
+['lamp/a.png', 'b.png']                   ['a.png', 'b.png']
+
+sightings per picture, one seeded run. Each step draws afresh, so the counts are uneven
+pictures   steps   batch   average   fewest   most
+12         300     1       25.0      16       38
+12         100     1       8.3       0        12
+12         25      1       2.1       0        4
+40         300     1       7.5       1        15
+200        300     1       1.5       0        6
+12         300     4       100.0     82       123
+pictures never seen: 200 pictures at 300 steps 48   formula n (1 - 1/n)^steps = 44.5
+
+tokens in the caption   groups sent to the encoder (SD 1.5)   numbers in the conditioning
+10                      1                                     1 x 77 x 768
+75                      1                                     1 x 77 x 768
+76                      2                                     2 x 77 x 768
+150                     2                                     2 x 77 x 768
+151                     3                                     3 x 77 x 768
+
+the toy. Prompt: the trigger alone. What the model then produces: lamp, beach, forest (1 = fully present)
+captions                                  lamp    beach   forest
+trigger only                              1.00    0.92    0.08
+trigger + place words                     0.67    0.33    0.33
+trigger + place words, asking for forest  1.00    -0.00   1.00
+
+share of pictures on the beach, and how much beach the bare trigger brings when place is never captioned
+beach share   beach from trigger alone
+0.5           0.50
+0.75          0.75
+0.9           0.90
+1.0           1.00

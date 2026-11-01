@@ -1,0 +1,29 @@
+bench: 45 sampler names, 22 deterministic, 23 stochastic
+calls at 20 steps, grouped: 18: 1  20: 31  39: 11  57: 1  58: 1
+
+same numbers on the bench as another name (no guidance on the bench)
+ddim row equals euler row: True   euler_cfg_pp equals euler: True   dpmpp_2m_sde_gpu equals dpmpp_2m_sde: True
+render, ddim against euler: difference 0.0  every measure equal: True
+
+deterministic samplers at 20 steps, best error first
+name           calls  error    slope  error per doubling of calls
+uni_pc         20     0.0016   -0.84  x0.56
+deis           20     0.0020   -2.26  x0.21
+ipndm          20     0.0035   -2.68  x0.16
+lms            20     0.0059   -2.88  x0.14
+dpm_2          39     0.0064   -2.33  x0.20
+heun           39     0.0114   -2.24  x0.21
+dpmpp_2m       20     0.0119   -2.26  x0.21
+res_multistep  20     0.0179   -2.35  x0.20
+gradient_estimation 20     0.0605   -0.71  x0.61
+euler          20     0.0768   -1.01  x0.50
+
+the same budget: evaluations at CFG above 1 are calls x 2
+euler      20 steps: 40 evaluations
+dpmpp_2m   20 steps: 40 evaluations
+heun       20 steps: 78 evaluations
+dpmpp_sde  20 steps: 78 evaluations
+heunpp2    20 steps: 114 evaluations
+
+render difference from euler, one seed: deterministic mean 24.7 (range 20.92 to 30.17); noise-adding mean 60.7 (range 45.92 to 75.13)
+rank correlation, bench error against render edge strength, 6 samplers, one seed: -0.09. Far too few points to mean anything, and that is the point.

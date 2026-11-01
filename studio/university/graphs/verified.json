@@ -18,7 +18,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.01
+   "ran_seconds": 0.0
   },
   "nm_dead_branch": {
    "sha": "1b8d7285a665372d",
@@ -28,7 +28,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.02
+   "ran_seconds": 0.01
   },
   "nm_first": {
    "sha": "4835b34a50dbf7a8",
@@ -38,7 +38,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.02
+   "ran_seconds": 0.0
   },
   "nm_latent_ops": {
    "sha": "8638b9a10f409a02",
@@ -48,7 +48,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.01
+   "ran_seconds": 0.0
   },
   "nm_mask_canny": {
    "sha": "9010f158e7bad652",
@@ -58,7 +58,7 @@
    "file_menus_skipped": 0,
    "errors": [],
    "ran": true,
-   "ran_seconds": 0.03
+   "ran_seconds": 0.02
   },
   "nm_sigmas": {
    "sha": "7172b209a0224ec1",
@@ -307,7 +307,7 @@
    "errors": []
   },
   "wf_flux2_klein": {
-   "sha": "a9d526b1ea36b4e1",
+   "sha": "81e51381d2f0a3b6",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -315,7 +315,7 @@
    "errors": []
   },
   "wf_h3_t2v": {
-   "sha": "4e3062cea40b2c89",
+   "sha": "85740262db0a755a",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -344,6 +344,456 @@
    "unknown": [],
    "validate": "ok",
    "file_menus_skipped": 3,
+   "errors": []
+  },
+  "a_modes_chain": {
+   "sha": "a9cef9b67df1cbbb",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.01
+  },
+  "a_own_picture": {
+   "sha": "d8524e30a07cdc70",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.01
+  },
+  "a_pixel_budget": {
+   "sha": "904e4f6e321a6f2d",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.03
+  },
+  "a_read_before_run": {
+   "sha": "ebf6fbe46dcc1a26",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "a_save_preview": {
+   "sha": "868511bac2f277f4",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "d_canny_preview": {
+   "sha": "e8c4554bb0b3b122",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.02
+  },
+  "d_depth_moge": {
+   "sha": "40171f77e6d2888d",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 3,
+   "errors": []
+  },
+  "d_inpaint_cond": {
+   "sha": "a81afd12e6d7fe7c",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "d_lcm": {
+   "sha": "34f2c0e781b465ab",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 2,
+   "errors": []
+  },
+  "d_lora_compare": {
+   "sha": "4f41cff42efe001b",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 2,
+   "errors": []
+  },
+  "d_lora_model_only": {
+   "sha": "84c1f65d573827b0",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 3,
+   "errors": []
+  },
+  "d_merge_add_difference": {
+   "sha": "8d448c4d9ac3b339",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 3,
+   "errors": []
+  },
+  "d_outpaint": {
+   "sha": "5ad492dba272614e",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "d_outpaint_mask": {
+   "sha": "9a70846ec1316406",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.02
+  },
+  "b_ancestral_eta": {
+   "sha": "6243b83d4dcc0179",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "b_batch_fixed": {
+   "sha": "35bde1e88dce2984",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "b_batch_pick": {
+   "sha": "30e11eca971f2855",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "b_blend_light": {
+   "sha": "fa5f44222b434465",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "b_latent_gain": {
+   "sha": "1fde96576e723525",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "b_unet_fp8": {
+   "sha": "9c541b6b03e0ae47",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 3,
+   "errors": []
+  },
+  "b_vpred": {
+   "sha": "6231aa9d6cd8dba7",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "c_apg": {
+   "sha": "ab2e3a631e90a068",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "c_cfgpp": {
+   "sha": "63a954afe1575adc",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "c_cfgzero": {
+   "sha": "f0888230eb57694a",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "c_cond_mask": {
+   "sha": "e577f70c10932d61",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "c_flux_guidance": {
+   "sha": "8bf73ad32b65f4af",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 4,
+   "errors": []
+  },
+  "c_klein_fast": {
+   "sha": "98259eac9b3d4bf9",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 3,
+   "errors": []
+  },
+  "c_style_redux": {
+   "sha": "90af2822bfd2f12d",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 6,
+   "errors": []
+  },
+  "c_tcfg": {
+   "sha": "907f2f16e35d1827",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "c_unclip": {
+   "sha": "6db19c76d103affd",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "c_weights": {
+   "sha": "812dd48fc77b9218",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "c_zero_out": {
+   "sha": "1ed9a4fb889646a6",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "f_bisect_probes": {
+   "sha": "b6a3c28f59a84684",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.01
+  },
+  "f_core_loop": {
+   "sha": "4920bbf6b64fc252",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": []
+  },
+  "f_fingerprint_image": {
+   "sha": "45d71d26a217064a",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "f_lazy_switch": {
+   "sha": "e408b20da373b4f8",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "f_list_tiles": {
+   "sha": "482f0b60d3c7241e",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "f_size_silent": {
+   "sha": "c0ba0f4007734837",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "f_txt2img_probe": {
+   "sha": "adf75157c1e895a3",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "f_validation_base": {
+   "sha": "f08929cb92091c91",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "f_widget_wire": {
+   "sha": "7ca0d76c97660e5e",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "e_audio_channels": {
+   "sha": "02e5402a3f0acc3b",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.0
+  },
+  "e_chain_join": {
+   "sha": "1a67b1baa9ea2b96",
+   "runs": "cpu",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 0,
+   "errors": [],
+   "ran": true,
+   "ran_seconds": 0.01
+  },
+  "e_hunyuan3d_surfnet": {
+   "sha": "c17ed03810ede639",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "e_mesh_cleanup": {
+   "sha": "89eb14b4217c8ef3",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "g_cond_save": {
+   "sha": "69c3d1005bf2411e",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "g_easycache": {
+   "sha": "fd04289a20e443d6",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "g_nag": {
+   "sha": "83418a4489fea8d1",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "g_torch_compile": {
+   "sha": "02b97b4d808b3068",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "h5_ddpm_sampler": {
+   "sha": "8b0e7c07890d6eff",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "h5_sdturbo": {
+   "sha": "d01201aec98b2dee",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
+   "errors": []
+  },
+  "h_vae_roundtrip": {
+   "sha": "d4205e26462bbb06",
+   "runs": "model",
+   "unknown": [],
+   "validate": "ok",
+   "file_menus_skipped": 1,
    "errors": []
   }
  }

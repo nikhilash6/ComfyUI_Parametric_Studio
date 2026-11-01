@@ -2,6 +2,10 @@
 
 **Objective.** Write Euler, Heun and DPM++ 2M from their formulas, measure their order of accuracy, and compare them fairly by model calls rather than by steps. Taught by Dr. Denoise.
 
+## In plain words
+
+At each noise level the model points toward a clean picture. A sampler is a rule for how far to walk in that direction before asking again. Walk in long straight strides and you cut corners. Ask twice per stride and you can correct, at twice the cost. Remember the last direction and you can guess the bend for free. Those three ideas are `euler`, `heun` and `dpmpp_2m`.
+
 ## The idea
 
 With a deterministic sampler, the image is decided the moment the starting noise is drawn. The probability-flow ODE (CU-203) maps noise to data, and a sampler is a numerical method for that ODE. Karras et al. (2022) set this out, and it turns a mysterious list of names into ordinary numerical analysis.
@@ -34,6 +38,22 @@ Euler is first order: double the steps, halve the error. Heun is second order an
 These are `sample_euler`, `sample_heun` and `sample_dpmpp_2m` in `comfy/k_diffusion/sampling.py`, and the formulas above are read from that code. The names offered in the KSampler widget are `KSAMPLER_NAMES` in `comfy/samplers.py`, plus `ddim` and two UniPC variants.
 
 Note: `heun` at 20 steps costs about 40 calls. Comparing it with `euler` at 20 steps is not a fair test.
+
+This graph has the sampler on its own wire. Swap `KSamplerSelect` to compare two rules with everything else fixed.
+
+{{graph:sd15_custom}}
+
+Now try them on a toy dataset with an exact answer. Watch the model calls as well as the error.
+
+{{play:solvers}}
+
+## What goes wrong
+
+- **Comparing at equal steps.** Compare at equal model calls. The last table in the lab does this, and it changes the order.
+- **Expecting more steps to always help.** A second-order sampler can be worse than Euler at very few steps. In the lab at 5 steps, `heun`'s median error is 1.14 and `euler`'s is 0.47. Order describes what happens as steps grow.
+- **Assuming higher order means a better picture.** All this measures distance from the exact path, on a toy. Real models have errors of their own, and CFG changes the equation.
+- **Changing step count and expecting the same composition.** A few paths sit near a boundary between outcomes, and a small error moves them over. That's the "wrong" column.
+- **Thinking samplers differ in which model they use.** They all ask the same model and differ in how they use its answers. To pick one, see CU-234.
 
 ## Lab
 

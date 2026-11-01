@@ -1,3 +1,36 @@
-RESULT mse_teacher = 0.589503
-RESULT mse_student = 0.54106
-RESULT improvement_ratio = 1.08953
+plain Euler. Model calls, error against the exact path, and the std of the result (should be 1.000)
+calls   error    std
+1       0.9858   0.012
+2       0.9838   0.014
+4       0.5338   0.464
+8       0.3076   0.691
+16      0.1574   0.841
+32      0.0795   0.919
+64      0.0400   0.958
+128     0.0200   0.978
+
+progressive distillation from a 64-step teacher. Each round halves the steps
+student calls   student error   Euler at the same calls   std of student
+64              0.0400          0.0400                    0.958
+32              0.0400          0.0795                    0.958
+16              0.0400          0.1574                    0.958
+8               0.0400          0.3076                    0.958
+4               0.0400          0.5338                    0.958
+2               0.0400          0.9838                    0.958
+1               0.0400          0.9858                    0.958
+
+the student copies the teacher, errors included. One-step student from each teacher, against the teacher's own error
+teacher steps   teacher error   one-step student error
+4               0.5338          0.5338
+16              0.1574          0.1574
+64              0.0400          0.0400
+
+consistency: fit c(sigma) so that f(x, sigma) = c x agrees across neighbouring levels of an Euler teacher
+levels   c at sigma max   exact c   one-call error   Euler one-call error
+8        0.00865          0.01250   0.3076           0.9858
+32       0.01150          0.01250   0.0795           0.9858
+128      0.01225          0.01250   0.0200           0.9858
+
+self-consistency on one path, 128 levels: the answer read from different points on it. Exact end value of this path is the first column
+exact end 1.0000   predictions from levels 80.000 17.295 2.428 0.157 0.002
+  0.9799 0.9799 0.9799 0.9799 0.9799

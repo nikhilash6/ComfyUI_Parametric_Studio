@@ -1,0 +1,46 @@
+{
+ "meta": {
+  "title": "Spend a pixel budget, no model",
+  "about": "A wide picture scaled to one megapixel, rounded to multiples of 64. Run it and read the size under the preview.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "A 1920 by 1080 picture.",
+   "2": "Scales both sides by the same factor, then rounds each to a multiple of resolution_steps.",
+   "3": "Shows the result. It comes out 1344 by 768."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 1920,
+    "height": 1080,
+    "batch_size": 1,
+    "color": 5921370
+   }
+  },
+  "2": {
+   "class_type": "ImageScaleToTotalPixels",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "upscale_method": "area",
+    "megapixels": 1.0,
+    "resolution_steps": 64
+   }
+  },
+  "3": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "2",
+     0
+    ]
+   }
+  }
+ }
+}

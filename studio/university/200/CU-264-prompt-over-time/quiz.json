@@ -1,0 +1,62 @@
+{
+ "code": "CU-264",
+ "title": "Changing the prompt over time",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What is end_percent 0.5 measured on?",
+   "options": [
+    "Your step count",
+    "The latent size",
+    "Seconds of run time",
+    "The model's noise scale, turned into a sigma"
+   ],
+   "answer": "The model's noise scale, turned into a sigma",
+   "why": "percent_to_sigma turns it into a sigma, and each step compares its own."
+  },
+  {
+   "q": "On SD 1.5, end 0.5 on 20 Karras steps gives the first prompt how many steps, in the lab?",
+   "options": [
+    "10",
+    "9",
+    "17",
+    "20"
+   ],
+   "answer": "9",
+   "why": "Sigma 1.616 is passed after 9 Karras steps. An even linear spacing gives 17."
+  },
+  {
+   "q": "Ranges 0 to 0.4 and 0.6 to 1: what happens in between?",
+   "options": [
+    "The nearest prompt carries on",
+    "The sampler stops",
+    "Those steps have no active prompt, and the positive prediction becomes zero",
+    "The negative takes over cleanly"
+   ],
+   "answer": "Those steps have no active prompt, and the positive prediction becomes zero",
+   "why": "get_area_and_mult returns None for both, and out_conds stays zero."
+  },
+  {
+   "q": "What does ConditioningSetTimestepRange itself compute?",
+   "options": [
+    "A new tensor",
+    "A schedule",
+    "Nothing: it writes start_percent and end_percent into the dict",
+    "A mask"
+   ],
+   "answer": "Nothing: it writes start_percent and end_percent into the dict",
+   "why": "It calls conditioning_set_values."
+  },
+  {
+   "q": "You want two prompts to split the run. What do you still need?",
+   "options": [
+    "ConditioningAverage",
+    "ConditioningCombine, so they travel as one list",
+    "A second sampler",
+    "A VAE encode"
+   ],
+   "answer": "ConditioningCombine, so they travel as one list",
+   "why": "The sampler picks entries from one list at each step."
+  }
+ ]
+}

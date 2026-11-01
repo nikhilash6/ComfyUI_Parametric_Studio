@@ -1,0 +1,89 @@
+{
+ "meta": {
+  "title": "Probes in the middle of a chain",
+  "about": "A chain of image nodes with a preview at the midpoint and one text probe. Add or move probes to split the chain in half.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "The start.",
+   "2": "First half.",
+   "3": "The midpoint.",
+   "4": "Probe at the midpoint.",
+   "5": "Second half.",
+   "6": "The end.",
+   "7": "The text probe prints numbers, which a picture can hide."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 32,
+    "height": 32,
+    "batch_size": 1,
+    "color": 3368652
+   }
+  },
+  "2": {
+   "class_type": "ImageBlur",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "blur_radius": 1,
+    "sigma": 1.0
+   }
+  },
+  "3": {
+   "class_type": "ImageInvert",
+   "inputs": {
+    "image": [
+     "2",
+     0
+    ]
+   }
+  },
+  "4": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "3",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "ImageScale",
+   "inputs": {
+    "image": [
+     "3",
+     0
+    ],
+    "upscale_method": "bilinear",
+    "width": 16,
+    "height": 16,
+    "crop": "disabled"
+   }
+  },
+  "6": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "5",
+     0
+    ]
+   }
+  },
+  "7": {
+   "class_type": "PreviewAny",
+   "inputs": {
+    "source": [
+     "5",
+     0
+    ]
+   }
+  }
+ }
+}

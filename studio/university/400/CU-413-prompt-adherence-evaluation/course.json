@@ -2,13 +2,51 @@
  "title": "Prompt adherence evaluation",
  "level": "400",
  "char": "tune",
- "hook": "Learn to quantify how well your generated images actually match the text prompts using deterministic CPU-based metrics.",
+ "hook": "Did it listen? What a CLIP-style score says, what a checklist says, and why the two pictures here tie on a total and differ on everything else.",
  "code": "CU-413",
  "prereq": [
   "CU-404"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "nodes.py:CLIPTextEncode",
+  "nodes.py:CLIPVisionEncode"
+ ],
  "track": "research",
- "order": 20
+ "order": 20,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "CLIPScore uses w = 2.5 and clips negatives. The authors saw cosines from about 0 to 0.4.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2104.08718"
+  },
+  {
+   "claim": "TIFA turns a prompt into questions answered by a question-answering model.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2303.11897"
+  },
+  {
+   "claim": "CLIPTextEncode and CLIPVisionEncode are nodes in core.",
+   "how": "source",
+   "ref": "nodes.py:CLIPVisionEncode"
+  },
+  {
+   "claim": "Toy scores, ranks and the table's totals come from the lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The two pictures were looked at for this lesson, and the marks are one reader's.",
+   "how": "run here",
+   "ref": "web/sampling_lab/sampler-euler.jpg"
+  }
+ ],
+ "unchecked": [
+  "No CLIP model was run here, so every cosine in the lab is from made-up vectors.",
+  "Binding as a weak spot of real encoders is widely reported, and we did not test it or cite a measurement.",
+  "Whether a given pack's score is comparable to another's was not checked."
+ ],
+ "kit": true
 }

@@ -8,12 +8,69 @@
  "char": "latent",
  "hook": "The 2013 paper in three checks on a model with a known answer: the exact gap in the lower bound, a gradient estimator with far lower variance, and an encoder that learns the posterior.",
  "code_refs": [
-  "nodes.py:class VAEEncode",
-  "comfy/sd.py:class VAE",
-  "comfy/ldm/models/autoencoder.py:class DiagonalGaussianRegularizer",
-  "comfy/ldm/models/autoencoder.py:class AutoencoderKL",
-  "comfy/ldm/modules/distributions/distributions.py:class DiagonalGaussianDistribution"
+  "nodes.py:VAEEncode",
+  "nodes.py:VAEDecodeTiled",
+  "comfy/sd.py:VAE",
+  "comfy/sd.py:VAE.vae_encode_crop_pixels",
+  "comfy/ldm/models/autoencoder.py:DiagonalGaussianRegularizer",
+  "comfy/ldm/models/autoencoder.py:AutoencoderKL",
+  "comfy/ldm/modules/distributions/distributions.py:DiagonalGaussianDistribution"
  ],
  "track": "history",
- "order": 20
+ "order": 20,
+ "graphs": [
+  "h_vae_roundtrip",
+  "sd15_tiled_vae"
+ ],
+ "verified": [
+  {
+   "claim": "sample defaults to False, and then it returns posterior.mode().",
+   "how": "source",
+   "ref": "comfy/ldm/models/autoencoder.py:DiagonalGaussianRegularizer"
+  },
+  {
+   "claim": "quant_conv takes (1 + double_z) times the channels.",
+   "how": "source",
+   "ref": "comfy/ldm/models/autoencoder.py:AutoencoderKL"
+  },
+  {
+   "claim": "The class has sample and mode.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/distributions/distributions.py:DiagonalGaussianDistribution"
+  },
+  {
+   "claim": "Each side is cut to a multiple of the factor, with the offset split evenly.",
+   "how": "source",
+   "ref": "comfy/sd.py:VAE.vae_encode_crop_pixels"
+  },
+  {
+   "claim": "Latent formats carry their own scale factor.",
+   "how": "source",
+   "ref": "comfy/latent_formats.py:scale_factor"
+  },
+  {
+   "claim": "The tiled decode node exists.",
+   "how": "source",
+   "ref": "nodes.py:VAEDecodeTiled"
+  },
+  {
+   "claim": "The bound, the two gradient estimators, the amortised encoder and the blur example print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title and date from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/1312.6114"
+  }
+ ],
+ "unchecked": [
+  "The paper quotes and table numbers were read in an earlier audit of this lesson. In this pass we rechecked the arXiv titles and abstracts only.",
+  "We did not render the wrong-VAE case or the round trip here, so what a mismatch looks like is not shown. The two scale factor values were read from source. Colour cast is what we expect, not what we saw.",
+  "The graph needs a VAE file. It was validated, not run."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 1
+ }
 }

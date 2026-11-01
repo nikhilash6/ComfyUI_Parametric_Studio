@@ -4,54 +4,70 @@
  "level": "400",
  "questions": [
   {
-   "q": "According to the lesson, why is the strategy of 'just quantize everything to INT8' considered dangerous without proper calibration?",
+   "q": "A linear layer's weights are rounded by ΔW. What is the error in its output?",
    "options": [
-    "Because INT8 format is not supported by most modern GPUs.",
-    "Because error is multiplicative and chaotic, meaning small errors in early layers can be amplified by subsequent layers.",
-    "Because INT8 quantization increases the memory footprint of the model.",
-    "Because it prevents the use of mixed-precision operations in ComfyUI."
+    "ΔW x, exactly",
+    "A random value unrelated to x",
+    "Always 0 for int8",
+    "ΔW squared"
    ],
-   "answer": "Because error is multiplicative and chaotic, meaning small errors in early layers can be amplified by subsequent layers.",
-   "why": "The lesson states that 'error is not additive; it is multiplicative and chaotic' and that 'a small error in an early layer can be amplified by subsequent layers,' making uncalibrated uniform quantization dangerous."
+   "answer": "ΔW x, exactly",
+   "why": "(W + ΔW)x = Wx + ΔWx. The lab confirms it to rounding error."
   },
   {
-   "q": "In the mathematical derivation for a two-layer network, what does the term $W_2 \\epsilon_1$ represent in the total error equation?",
+   "q": "What happens to an earlier error when a layer stretches its input?",
    "options": [
-    "The bias error introduced by the second layer.",
-    "The amplification of the first layer's error by the weights of the second layer.",
-    "The quantization error specific to the second layer's weights.",
-    "The cancellation of errors between the first and second layers."
+    "It gets stretched as well",
+    "It disappears",
+    "It becomes a new layer",
+    "It turns into a bias"
    ],
-   "answer": "The amplification of the first layer's error by the weights of the second layer.",
-   "why": "The lesson explicitly notes: 'Notice the term $W_2 \\epsilon_1$. The error from the first layer ($\\epsilon_1$) is multiplied by the weights of the second layer ($W_2$). If $W_2$ has large values, the error from Layer 1 is amplified.'"
+   "answer": "It gets stretched as well",
+   "why": "That is the carried term W₂ ε₁."
   },
   {
-   "q": "What is the primary purpose of calibration data in the context of quantization error propagation?",
+   "q": "In the lab, at gains up to 2, how did the output error grow from depth 1 to depth 16?",
    "options": [
-    "To increase the bit-width of the weights to 16-bit.",
-    "To estimate the distribution of inputs and activations to choose a quantization scale that minimizes error.",
-    "To automatically disable quantization on unsupported hardware.",
-    "To replace floating-point weights with binary integers."
+    "About 3.5 times, near the square root of depth",
+    "About 16 times, in proportion",
+    "Over 1000 times, chaotically",
+    "Not at all"
    ],
-   "answer": "To estimate the distribution of inputs and activations to choose a quantization scale that minimizes error.",
-   "why": "The lesson states: 'Calibration data allows you to estimate the distribution of $x$ (the inputs) and $y$ (the activations). By knowing the typical magnitude of $x$, you can choose a quantization scale that minimizes $\\Delta W x$ for the most common inputs.'"
+   "answer": "About 3.5 times, near the square root of depth",
+   "why": "Unrelated errors add like noise. At gain 4 the growth was much faster."
   },
   {
-   "q": "In the provided lab simulation, what was the calculated `max_abs_error` between the full-precision and quantized outputs?",
-   "options": null,
-   "answer": "0.0167379",
-   "why": "The lab output section explicitly lists: 'RESULT max_abs_error = 0.0167379'."
+   "q": "Does rounding weights need calibration data?",
+   "options": [
+    "No, the scale comes from the weights themselves",
+    "Yes, always, on a thousand images",
+    "Only for GGUF",
+    "Only for fp16"
+   ],
+   "answer": "No, the scale comes from the weights themselves",
+   "why": "QUANTIZATION.md ties calibration to fixed activation scales, not to weight rounding."
   },
   {
-   "q": "Which file in the ComfyUI codebase contains `LazyCastingParam`, which allows weights to be cast to different dtypes on-the-fly?",
+   "q": "A card lacks a fast kernel for a format, and ComfyUI dequantizes. What did that restore?",
    "options": [
-    "comfy/ops.py",
-    "tests-unit/comfy_quant/test_mixed_precision.py",
-    "comfy/model_patcher.py",
-    "comfy/ldm/ace"
+    "Nothing of the lost bits: the weight was rounded in the file",
+    "All the original precision",
+    "The original fp32 file",
+    "The calibration data"
    ],
-   "answer": "comfy/model_patcher.py",
-   "why": "The lesson states: 'The `comfy/model_patcher.py` file contains `LazyCastingParam`, which allows weights to be cast to different dtypes on-the-fly.'"
+   "answer": "Nothing of the lost bits: the weight was rounded in the file",
+   "why": "Dequantizing changes how it runs. It can't recover what was rounded away."
+  },
+  {
+   "q": "Why be careful applying this lab to a real diffusion model?",
+   "options": [
+    "It is a toy stack with random weights and no attention",
+    "It uses too many layers",
+    "It runs on a GPU only",
+    "Real models have no weights"
+   ],
+   "answer": "It is a toy stack with random weights and no attention",
+   "why": "It teaches the mechanism. It measures nothing about a real model's pictures."
   }
  ]
 }

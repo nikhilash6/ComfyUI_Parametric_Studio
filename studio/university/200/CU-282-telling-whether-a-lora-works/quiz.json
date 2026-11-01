@@ -1,0 +1,62 @@
+{
+ "code": "CU-282",
+ "title": "Telling whether a LoRA works",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Why compare a LoRA at the same seed?",
+   "options": [
+    "The LoRA needs that seed",
+    "A new seed's own change swamps the LoRA's: 0.49 against 0.087 in the lab",
+    "Seeds don't matter at all",
+    "It saves memory"
+   ],
+   "answer": "A new seed's own change swamps the LoRA's: 0.49 against 0.087 in the lab",
+   "why": "At a new seed the off-on difference is about the same as the off-off difference at a new seed. The LoRA's part can't be seen."
+  },
+  {
+   "q": "What does a high pixel difference between off and on prove?",
+   "options": [
+    "The LoRA is good",
+    "The LoRA is bad",
+    "That the picture moved a lot, and nothing about whether that's what you wanted",
+    "That the seed is wrong"
+   ],
+   "answer": "That the picture moved a lot, and nothing about whether that's what you wanted",
+   "why": "Our harbour pair moves about as far as two unrelated pictures. That measures the size of the change, not its value."
+  },
+  {
+   "q": "Strength is doubled. What is certain?",
+   "options": [
+    "The picture changes twice as much",
+    "The change to the weights doubles, while the change in the output may not",
+    "Nothing changes",
+    "The file doubles"
+   ],
+   "answer": "The change to the weights doubles, while the change in the output may not",
+   "why": "The weight's change is linear in strength. The network that follows isn't linear, so the output needn't be."
+  },
+  {
+   "q": "'LoRA on, no trigger' looks the same as 'LoRA on, with trigger'. What does that suggest?",
+   "options": [
+    "The LoRA failed to load",
+    "The trigger word isn't doing much, and the LoRA acts whenever it's on",
+    "The seed is broken",
+    "You need a higher CFG"
+   ],
+   "answer": "The trigger word isn't doing much, and the LoRA acts whenever it's on",
+   "why": "Four pictures separate the word's effect from the LoRA's."
+  },
+  {
+   "q": "Why use more than one seed for a verdict?",
+   "options": [
+    "Because seeds change the file",
+    "The same LoRA's effect varies a lot from seed to seed: nearly 14-fold in the stand-in",
+    "It is required by the sampler",
+    "To lower VRAM"
+   ],
+   "answer": "The same LoRA's effect varies a lot from seed to seed: nearly 14-fold in the stand-in",
+   "why": "One seed can flatter or sink a LoRA. Real models will differ by another amount, so test."
+  }
+ ]
+}

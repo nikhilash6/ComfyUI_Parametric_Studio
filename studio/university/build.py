@@ -39,7 +39,9 @@ def lesson_directives(md):
     return out
 def play_names():
     """Names in the PLAYS table of the page."""
-    t = (WEB / "university_plays.js").read_text(); return set(re.findall(r"^  ([a-z0-9_]+): \{ title:", t[t.index("export const PLAYS"):], re.M))
+    out = set()
+    for f in WEB.glob("university_plays*.js"): out |= set(re.findall(r"^  ([a-z0-9_]+): \{ title:", f.read_text(), re.M))
+    return out
 def symbol_exists(src, ref):
     """code_refs entries are file:symbol, where symbol is a name or Class.method. Looks it up with the parser, then falls back to the text for plain names and constants."""
     f, _, sym = ref.partition(":"); p = Path(src) / f
@@ -58,7 +60,7 @@ def symbol_exists(src, ref):
                 if isinstance(b, ast.AnnAssign) and isinstance(b.target, ast.Name) and b.target.id == member: return True
             return False
     return not head[0].isupper() and sym in text  # self.x or module.x, read as text
-LAB_IMPORTS = {"torch", "math", "random", "json", "itertools", "collections", "struct", "zlib", "io", "hashlib", "heapq", "functools", "re", "dataclasses", "typing", "base64", "asyncio", "pickle", "copy"}
+LAB_IMPORTS = {"torch", "math", "random", "json", "itertools", "collections", "struct", "zlib", "io", "hashlib", "heapq", "functools", "re", "dataclasses", "typing", "base64", "asyncio", "pickle", "copy", "uuid", "urllib"}
 REQUIRED = ["Objective", "## Lab", "## Sources"]
 
 def courses():
@@ -79,7 +81,13 @@ def run_lab(path, py=None, timeout=LIMIT):
         except subprocess.TimeoutExpired: return False, "", time.perf_counter() - t, f"timed out after {timeout} s"
     return p.returncode == 0, p.stdout, time.perf_counter() - t, "\n".join(p.stderr.splitlines()[-12:])
 
-def lab_imports(code): return {m.split(".")[0] for m in re.findall(r"^\s*(?:import|from)\s+([\w.]+)", code, re.M)}
+def lab_imports(code):
+    """Top-level names of everything a lab imports, parsed properly, so 'import a, b' counts both."""
+    out = set()
+    for n in ast.walk(ast.parse(code)):
+        if isinstance(n, ast.Import): out |= {a.name.split(".")[0] for a in n.names}
+        elif isinstance(n, ast.ImportFrom) and n.module and not n.level: out.add(n.module.split(".")[0])
+    return out
 
 def quiz_right(q, o, i):
     """The same rule the web page uses to mark an option right (Quiz in studio/web/app.js)."""
@@ -113,6 +121,7 @@ def check_course(c, codes, sources):
     bad = lab_imports((d / "lab.py").read_text()) - LAB_IMPORTS
     if bad: pr.append(f"lab imports {sorted(bad)}")
     if "assert " not in (d / "lab.py").read_text(): pr.append("lab has no assert")
+    if any(isinstance(n, (ast.Attribute, ast.Name)) and getattr(n, "attr", getattr(n, "id", "")) in ("urlopen", "urlretrieve") for n in ast.walk(ast.parse((d / "lab.py").read_text()))): pr.append("a lab must not touch the network")
     qs = json.loads((d / "quiz.json").read_text()).get("questions", [])
     if len(qs) < 3: pr.append("fewer than 3 quiz questions")
     for q in qs:
@@ -159,21 +168,21 @@ def write_catalogue(rows, meta):
     for c in rows:
         if not complete(c): continue
         md = (c["dir"] / "lesson.md").read_text(); e = lesson_directives(md)
-        pub.append({**{k: c[k] for k in ("code", "title", "level", "prereq", "char", "hook")}, "status": c.get("status", "audited"), "path": c["path"], "track": c.get("track"), "order": c.get("order", 999), "plays": sorted(set(e["play"])), "graphs": sorted(set(e["graph"]) | set(c.get("graphs", []))), "minutes": reading_minutes(md)})
+        pub.append({**{k: c[k] for k in ("code", "title", "level", "prereq", "char", "hook")}, "status": c.get("status", "audited"), "path": c["path"], "track": c.get("track"), "order": c.get("order", 999), "plays": sorted(set(e["play"])), "graphs": sorted(set(e["graph"]) | set(c.get("graphs", []))), "minutes": reading_minutes(md), "second_read": c.get("second_read")})
     t = TRACKS(); ver = VERIFIED(); tracks = []
     for tr in t["tracks"]:
         codes = [x["code"] for x in sorted((x for x in pub if x["track"] == tr["slug"]), key=lambda x: (x["order"], x["code"]))]
         if codes: tracks.append({**tr, "codes": codes})
     gids = all_graph_ids(); used = {g for x in pub for g in x["graphs"]}
-    counts = {"lessons": len(pub), "audited": sum(x["status"] != "draft" for x in pub), "draft": sum(x["status"] == "draft" for x in pub), "plays": len({p for x in pub for p in x["plays"]}), "graphs": len(gids), "graphs_ran": sum(1 for g in gids if ver.get(g, {}).get("ran")), "graphs_used": len(used), "code_refs": sum(len(c.get("code_refs", [])) for c in rows if complete(c))}
+    counts = {"lessons": len(pub), "audited": sum(x["status"] != "draft" for x in pub), "draft": sum(x["status"] == "draft" for x in pub), "second_read": sum(bool(x["second_read"]) for x in pub), "second_read_pending": sum(not x["second_read"] and x["status"] != "draft" for x in pub), "errors_fixed": sum((x["second_read"] or {}).get("errors_fixed", 0) for x in pub), "plays": len({p for x in pub for p in x["plays"]}), "graphs": len(gids), "graphs_ran": sum(1 for g in gids if ver.get(g, {}).get("ran")), "graphs_used": len(used), "code_refs": sum(len(c.get("code_refs", [])) for c in rows if complete(c))}
     (HERE / "catalogue.json").write_text(json.dumps({"levels": meta["levels"], "characters": meta["characters"], "tracks": tracks, "art": t.get("hero", []), "counts": counts, "courses": pub}, indent=1, ensure_ascii=False) + "\n")
     with open(HERE / "CATALOGUE.md", "w") as f:
-        f.write(f"# ComfyUniversity course catalogue\n\n{counts['lessons']} lessons in {len(tracks)} tracks. {counts['audited']} are checked by hand and {counts['draft']} are still labelled Draft. Every lesson has a CPU lab with stored output and a quiz. Rebuild with `python studio/university/build.py --labs`.\n")
+        f.write(f"# ComfyUniversity course catalogue\n\n{counts['lessons']} lessons in {len(tracks)} tracks. {counts['second_read']} have had an independent second read, which found and fixed {counts['errors_fixed']} errors. {counts['second_read_pending']} are checked by their author, with the second read pending. {counts['draft']} are labelled Draft. Every lesson has a CPU lab with stored output and a quiz. Rebuild with `python studio/university/build.py --labs`.\n")
         by = {x["code"]: x for x in pub}
         for tr in tracks:
             f.write(f"\n## {tr['title']}\n\n{tr['blurb']}\n\n")
             for code in tr["codes"]:
-                c = by[code]; f.write(f"- **{c['code']}** ({c['level']}) [{c['title']}]({c['path']}/lesson.md). {c['hook']}" + (" *Draft.*" if c["status"] == "draft" else "") + (f" Needs {', '.join(c['prereq'])}." if c["prereq"] else "") + "\n")
+                c = by[code]; f.write(f"- **{c['code']}** ({c['level']}) [{c['title']}]({c['path']}/lesson.md). {c['hook']}" + (" *Draft.*" if c["status"] == "draft" else "" if c["second_read"] else " *Author-checked, second read pending.*") + (f" Needs {', '.join(c['prereq'])}." if c["prereq"] else "") + "\n")
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--labs", action="store_true"); ap.add_argument("--only", nargs="*", default=[]); ap.add_argument("--workers", type=int, default=6); ap.add_argument("--py", default=sys.executable); ap.add_argument("--check-only", action="store_true", help="check, but do not rewrite the catalogue"); a = ap.parse_args()

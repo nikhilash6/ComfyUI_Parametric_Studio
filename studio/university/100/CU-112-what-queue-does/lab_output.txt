@@ -1,0 +1,21 @@
+sent:  job A, job B, job C, job D (front)
+runs:  job D (front), job A, job B, job C
+
+queued item:   number, prompt_id, prompt, extra_data, outputs_to_execute, sensitive
+in history:    number, prompt_id, prompt, extra_data, outputs_to_execute
+
+filename_prefix         subfolder   name        counter  file
+ComfyUI                 (none)      ComfyUI     10       ComfyUI_00010_.png
+Other                   (none)      Other       51       Other_00051_.png
+portraits/fox           portraits   fox         1        portraits/fox_00001_.png
+a/b/../c/x              a/c         x           1        a/c/x_00001_.png
+%width%x%height%/img    512x512     img         1        512x512/img_00001_.png
+portraits/              (none)      portraits   1        portraits_00001_.png
+../escape               refused: Saving image outside the output folder is not allowed.
+/tmp/x                  refused: Saving image outside the output folder is not allowed.
+a/../../b               refused: Saving image outside the output folder is not allowed.
+
+files 1, 2, 9 present: next is 10.   file 9 deleted: next is 3
+batch of 3, prefix run_%batch_num%: run_0_00001_.png, run_1_00002_.png, run_2_00003_.png
+record: {'filename': 'fox_00001_.png', 'subfolder': 'portraits', 'type': 'output'}
+fetched with: /view?filename=fox_00001_.png&subfolder=portraits&type=output

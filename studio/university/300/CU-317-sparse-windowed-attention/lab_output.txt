@@ -1,6 +1,19 @@
-RESULT out_full[0,0,0] = -0.670553
-RESULT out_windowed[0,0,0] = -0.569248
-RESULT out_sparse[0,0,0] = -0.654069
-RESULT weights_full[0,0,0] = 0.14138
-RESULT weights_windowed[0,0,0] = 1
-RESULT weights_sparse[0,0,0] = 0.442288
+grid (1, 16, 16, 8) -> 16 windows of 4x4, back again identical: True
+
+grid side  tokens    full pairs        window 8 pairs   share of full
+32         1,024     1,048,576         65,536           0.0625
+64         4,096     16,777,216        262,144          0.0156
+128        16,384    268,435,456       1,048,576        0.0039
+256        65,536    4,294,967,296     4,194,304        0.0010
+window pairs grow with the tokens (n x 64). full pairs grow with the square of the tokens.
+
+layers  tokens reachable, fixed windows  tokens reachable, shifted every second layer   (grid 32x32, window 8, 1024 tokens)
+1       64                               64
+2       64                               144
+4       64                               400
+8       64                               1024
+12      64                               1024
+
+masked full attention against four separate windows: max difference 2.4e-07. pairs computed: 256 against 64
+3D grid 64^3 = 262,144 cells, 2% occupied: 5,242 tokens, 27,478,564 pairs against 68,719,476,736 if every cell were a token
+3D grid 128^3 = 2,097,152 cells, 1% occupied: 20,971 tokens, 439,782,841 pairs against 4,398,046,511,104 if every cell were a token

@@ -1,0 +1,37 @@
+header 364 bytes read, data 4259904 bytes not touched
+tensors 4, parameters 2,113,552, by type {'F16': 2097152, 'F32': 16400}
+
+budget sheet. Every size here is an example. Replace them with your own files' sizes
+  card 24 GB, reserved 0.39 GB
+    diffusion model file              11.60 GB
+    text encoder file                  8.00 GB
+    VAE file                           0.34 GB
+    working memory (your estimate)     2.00 GB
+    total 22.33 GB, left over 1.67 GB
+  card 12 GB, reserved 0.39 GB
+    diffusion model file              11.60 GB
+    text encoder file                  8.00 GB
+    VAE file                           0.34 GB
+    working memory (your estimate)     2.00 GB
+    total 22.33 GB, left over -10.33 GB
+  card 12 GB, reserved 0.39 GB
+    diffusion model file              11.60 GB
+    VAE file                           0.34 GB
+    working memory (your estimate)     2.00 GB
+    total 14.33 GB, left over -2.33 GB
+  card 12 GB, reserved 0.39 GB
+    the same model, fp8                5.80 GB
+    VAE file                           0.34 GB
+    working memory (your estimate)     2.00 GB
+    total 8.53 GB, left over 3.47 GB
+
+the same model in other forms, weights only. File size is about parameters x bytes
+  6 billion parameters, fp16                  11.18 GB
+  6 billion parameters, fp8                    5.59 GB
+  6 billion parameters, 4-bit, with scales     3.14 GB
+
+the sizes that move with your settings: working memory estimate for a model with factor 1, fp16, CFG on
+  1024 px, batch 1:    655.4 MB
+  1024 px, batch 2:   1310.7 MB
+  1536 px, batch 1:   1474.6 MB
+  2048 px, batch 1:   2621.4 MB

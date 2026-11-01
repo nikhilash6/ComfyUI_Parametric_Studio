@@ -1,0 +1,16 @@
+setup                          predictions per step   over 20 steps
+cfg 1                          1                      20
+cfg 7                          2                      40
+cfg 7 + TCFG                   2                      40
+cfg 1 + PAG 3                  2                      40
+cfg 7 + PAG 3                  3                      60
+cfg 7 + PAG scale 0            2                      40
+cfg 1 + SAG .5                 3                      60
+cfg 7 + SAG .5                 3                      60
+cfg 7 + PAG + SAG              4                      80
+
+PAG: normal attention moves each token by 2.41 on average. The perturbed version moves it by 0.0.
+TCFG: unconditional score length 15.068, after damping 14.802, what was removed 2.817
+      angle to the conditional: cosine 0.938 before, 0.986 after
+      model calls added by that: 0. The cost is one SVD per step.
+SAG: tokens whose total incoming attention is above 1.0 are blurred. Here 7 of 16. The threshold is fixed at 1.0 in the source.

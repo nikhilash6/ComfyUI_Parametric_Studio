@@ -4,8 +4,58 @@
  "level": "100",
  "prereq": [],
  "char": "latent",
- "hook": "Learn a distribution, then sample from it. Three models on one dataset show the difference between learning and memorising.",
- "code_refs": [],
+ "hook": "Learn a distribution, then sample from it. Three models on one dataset show the difference between learning and memorising, and what that means for the file you download.",
+ "code_refs": [
+  "nodes.py:CheckpointLoaderSimple",
+  "nodes.py:common_ksampler",
+  "execution.py:PromptExecutor.execute_async",
+  "comfy/sample.py:prepare_noise"
+ ],
  "track": "first-graph",
- "order": 10
+ "order": 10,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {
+   "claim": "EM recovers the two-hump mixture, and the three models score as printed.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The sampler runs inside torch.inference_mode, so pressing Queue does not train anything.",
+   "how": "source",
+   "ref": "execution.py:PromptExecutor.execute_async"
+  },
+  {
+   "claim": "The sampler's start comes from noise drawn with the seed.",
+   "how": "source",
+   "ref": "comfy/sample.py:prepare_noise"
+  },
+  {
+   "claim": "CheckpointLoaderSimple loads weights from a file and returns models, with no image store.",
+   "how": "source",
+   "ref": "nodes.py:CheckpointLoaderSimple"
+  },
+  {
+   "claim": "The picture is a real render, one seed, from the Sampling Lab. We looked at it.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  },
+  {
+   "claim": "Carlini et al. extracted some training images, and Somepalli et al. studied replication.",
+   "how": "docs",
+   "ref": "arXiv 2301.13188 and 2212.03860, titles confirmed earlier in sources.json"
+  },
+  {
+   "claim": "The browser lab's EM uses the same two update steps as lab.py.",
+   "how": "test",
+   "ref": "a Node run of fitModels, gap shares 0.345 and 0.021 against 0.017 for the data"
+  }
+ ],
+ "unchecked": [
+  "The toy has one dimension and a known truth. Nothing here measures how much any real image model memorises.",
+  "We did not measure how a real model behaves for words outside its training data. That point is from the general idea, not a test."
+ ]
 }

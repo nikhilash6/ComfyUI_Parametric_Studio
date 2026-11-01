@@ -1,4 +1,46 @@
 {
+"APG": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"eta": [
+"FLOAT",
+{
+"default": 1.0,
+"min": -10.0,
+"max": 10.0
+}
+],
+"norm_threshold": [
+"FLOAT",
+{
+"default": 5.0,
+"min": 0.0,
+"max": 50.0
+}
+],
+"momentum": [
+"FLOAT",
+{
+"default": 0.0,
+"min": -5.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_apg",
+"is_output": false
+},
 "AudioAdjustVolume": {
 "input": {
 "required": {
@@ -148,6 +190,24 @@
 "module": "comfy_extras.nodes_cfg",
 "is_output": false
 },
+"CFGZeroStar": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"patched_model"
+],
+"module": "comfy_extras.nodes_cfg",
+"is_output": false
+},
 "CLIPLoader": {
 "input": {
 "required": {
@@ -253,6 +313,24 @@
 ],
 "output_name": [
 "CLIP_VISION_OUTPUT"
+],
+"module": "nodes",
+"is_output": false
+},
+"CLIPVisionLoader": {
+"input": {
+"required": {
+"clip_name": [
+"FILE"
+]
+},
+"optional": {}
+},
+"output": [
+"CLIP_VISION"
+],
+"output_name": [
+"CLIP_VISION"
 ],
 "module": "nodes",
 "is_output": false
@@ -521,6 +599,41 @@
 "module": "nodes",
 "is_output": false
 },
+"ConditioningSetMask": {
+"input": {
+"required": {
+"conditioning": [
+"CONDITIONING"
+],
+"mask": [
+"MASK"
+],
+"strength": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 10.0
+}
+],
+"set_cond_area": [
+[
+"default",
+"mask bounds"
+]
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
+"is_output": false
+},
 "ConditioningSetTimestepRange": {
 "input": {
 "required": {
@@ -694,6 +807,127 @@
 "VIDEO"
 ],
 "module": "comfy_extras.nodes_video",
+"is_output": false
+},
+"DecimateMesh": {
+"input": {
+"required": {
+"mesh": [
+"MESH"
+],
+"target_face_count": [
+"INT",
+{
+"default": 200000,
+"min": 0,
+"max": 50000000
+}
+],
+"placement_mode": [
+"COMFY_DYNAMICCOMBO_V3"
+]
+},
+"optional": {}
+},
+"output": [
+"MESH"
+],
+"output_name": [
+"mesh"
+],
+"module": "comfy_extras.nodes_mesh_postprocess",
+"is_output": false
+},
+"DualCLIPLoader": {
+"input": {
+"required": {
+"clip_name1": [
+"FILE"
+],
+"clip_name2": [
+"FILE"
+],
+"type": [
+[
+"sdxl",
+"sd3",
+"flux",
+"hunyuan_video",
+"hidream",
+"hunyuan_image",
+"hunyuan_video_15",
+"kandinsky5",
+"kandinsky5_image",
+"ltxv",
+"newbie",
+"ace"
+]
+]
+},
+"optional": {
+"device": [
+[
+"default",
+"cpu"
+]
+]
+}
+},
+"output": [
+"CLIP"
+],
+"output_name": [
+"CLIP"
+],
+"module": "nodes",
+"is_output": false
+},
+"EasyCache": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"reuse_threshold": [
+"FLOAT",
+{
+"default": 0.2,
+"min": 0.0,
+"max": 3.0
+}
+],
+"start_percent": [
+"FLOAT",
+{
+"default": 0.15,
+"min": 0.0,
+"max": 1.0
+}
+],
+"end_percent": [
+"FLOAT",
+{
+"default": 0.95,
+"min": 0.0,
+"max": 1.0
+}
+],
+"verbose": [
+"BOOLEAN",
+{
+"default": false
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_easycache",
 "is_output": false
 },
 "EmptyAudio": {
@@ -1008,6 +1242,37 @@
 "module": "comfy_extras.nodes_sd3",
 "is_output": false
 },
+"EndLoop": {
+"input": {
+"required": {
+"accumulate": [
+"BOOLEAN",
+{
+"default": false
+}
+]
+},
+"optional": {
+"output_value": [
+"COMFY_MATCHTYPE_V3"
+],
+"next_iteration_value": [
+"COMFY_MATCHTYPE_V3"
+],
+"terminations": [
+"COMFY_AUTOGROW_V3"
+]
+}
+},
+"output": [
+"COMFY_MATCHTYPE_V3"
+],
+"output_name": [
+"outputs"
+],
+"module": "comfy_extras.nodes_loop",
+"is_output": false
+},
 "ExponentialScheduler": {
 "input": {
 "required": {
@@ -1136,6 +1401,32 @@
 "module": "comfy_extras.nodes_flux",
 "is_output": false
 },
+"FluxGuidance": {
+"input": {
+"required": {
+"conditioning": [
+"CONDITIONING"
+],
+"guidance": [
+"FLOAT",
+{
+"default": 3.5,
+"min": 0.0,
+"max": 100.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "comfy_extras.nodes_flux",
+"is_output": false
+},
 "Hunyuan3Dv2Conditioning": {
 "input": {
 "required": {
@@ -1154,6 +1445,59 @@
 "negative"
 ],
 "module": "comfy_extras.nodes_hunyuan3d",
+"is_output": false
+},
+"ImageBatch": {
+"input": {
+"required": {
+"image1": [
+"IMAGE"
+],
+"image2": [
+"IMAGE"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "nodes",
+"is_output": false
+},
+"ImageBlend": {
+"input": {
+"required": {
+"image1": [
+"IMAGE"
+],
+"image2": [
+"IMAGE"
+],
+"blend_factor": [
+"FLOAT",
+{
+"default": 0.5,
+"min": 0.0,
+"max": 1.0
+}
+],
+"blend_mode": [
+"COMBO"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_post_processing",
 "is_output": false
 },
 "ImageBlur": {
@@ -1188,6 +1532,36 @@
 "IMAGE"
 ],
 "module": "comfy_extras.nodes_post_processing",
+"is_output": false
+},
+"ImageColorSpace": {
+"input": {
+"required": {
+"image": [
+"IMAGE"
+],
+"source": [
+"COMBO",
+{
+"default": "sRGB"
+}
+],
+"destination": [
+"COMBO",
+{
+"default": "sRGB"
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_images",
 "is_output": false
 },
 "ImageCompositeMasked": {
@@ -1237,6 +1611,40 @@
 "module": "comfy_extras.nodes_mask",
 "is_output": false
 },
+"ImageFromBatch": {
+"input": {
+"required": {
+"image": [
+"IMAGE"
+],
+"batch_index": [
+"INT",
+{
+"default": 0,
+"min": -16384,
+"max": 16384
+}
+],
+"length": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_images",
+"is_output": false
+},
 "ImageInvert": {
 "input": {
 "required": {
@@ -1253,6 +1661,48 @@
 "IMAGE"
 ],
 "module": "nodes",
+"is_output": false
+},
+"ImageMergeTileList": {
+"input": {
+"required": {
+"image_list": [
+"IMAGE"
+],
+"final_width": [
+"INT",
+{
+"default": 1024,
+"min": 64,
+"max": 32768
+}
+],
+"final_height": [
+"INT",
+{
+"default": 1024,
+"min": 64,
+"max": 32768
+}
+],
+"overlap": [
+"INT",
+{
+"default": 128,
+"min": 0,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_images",
 "is_output": false
 },
 "ImageOnlyCheckpointLoader": {
@@ -1277,6 +1727,152 @@
 "module": "comfy_extras.nodes_video_model",
 "is_output": false
 },
+"ImagePadForOutpaint": {
+"input": {
+"required": {
+"image": [
+"IMAGE"
+],
+"left": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"top": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"right": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"bottom": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"feathering": [
+"INT",
+{
+"default": 40,
+"min": 0,
+"max": 16384
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE",
+"MASK"
+],
+"output_name": [
+"IMAGE",
+"MASK"
+],
+"module": "nodes",
+"is_output": false
+},
+"ImageScale": {
+"input": {
+"required": {
+"image": [
+"IMAGE"
+],
+"upscale_method": [
+[
+"nearest-exact",
+"bilinear",
+"area",
+"bicubic",
+"lanczos"
+]
+],
+"width": [
+"INT",
+{
+"default": 512,
+"min": 0,
+"max": 16384
+}
+],
+"height": [
+"INT",
+{
+"default": 512,
+"min": 0,
+"max": 16384
+}
+],
+"crop": [
+[
+"disabled",
+"center"
+]
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "nodes",
+"is_output": false
+},
+"ImageScaleToTotalPixels": {
+"input": {
+"required": {
+"image": [
+"IMAGE"
+],
+"upscale_method": [
+"COMBO"
+],
+"megapixels": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.01,
+"max": 16.0
+}
+],
+"resolution_steps": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 256
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_post_processing",
+"is_output": false
+},
 "ImageUpscaleWithModel": {
 "input": {
 "required": {
@@ -1296,6 +1892,67 @@
 "IMAGE"
 ],
 "module": "comfy_extras.nodes_upscale_model",
+"is_output": false
+},
+"InpaintModelConditioning": {
+"input": {
+"required": {
+"positive": [
+"CONDITIONING"
+],
+"negative": [
+"CONDITIONING"
+],
+"vae": [
+"VAE"
+],
+"pixels": [
+"IMAGE"
+],
+"mask": [
+"MASK"
+],
+"noise_mask": [
+"BOOLEAN",
+{
+"default": true
+}
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING",
+"CONDITIONING",
+"LATENT"
+],
+"output_name": [
+"positive",
+"negative",
+"latent"
+],
+"module": "nodes",
+"is_output": false
+},
+"JoinAudioChannels": {
+"input": {
+"required": {
+"audio_left": [
+"AUDIO"
+],
+"audio_right": [
+"AUDIO"
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO"
+],
+"output_name": [
+"audio"
+],
+"module": "comfy_extras.nodes_audio",
 "is_output": false
 },
 "KSampler": {
@@ -1760,6 +2417,85 @@
 "module": "comfy_extras.nodes_lt",
 "is_output": false
 },
+"LatentAdd": {
+"input": {
+"required": {
+"samples1": [
+"LATENT"
+],
+"samples2": [
+"LATENT"
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "comfy_extras.nodes_latent",
+"is_output": false
+},
+"LatentBatchSeedBehavior": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"seed_behavior": [
+"COMBO",
+{
+"default": "fixed"
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "comfy_extras.nodes_latent",
+"is_output": false
+},
+"LatentFromBatch": {
+"input": {
+"required": {
+"samples": [
+"LATENT"
+],
+"batch_index": [
+"INT",
+{
+"default": 0,
+"min": -16384,
+"max": 16384
+}
+],
+"length": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 64
+}
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT"
+],
+"output_name": [
+"LATENT"
+],
+"module": "nodes",
+"is_output": false
+},
 "LatentMultiply": {
 "input": {
 "required": {
@@ -1873,6 +2609,24 @@
 "texts"
 ],
 "module": "comfy_extras.nodes_dataset",
+"is_output": false
+},
+"LoadMoGeModel": {
+"input": {
+"required": {
+"model_name": [
+"COMBO"
+]
+},
+"optional": {}
+},
+"output": [
+"MOGE_MODEL"
+],
+"output_name": [
+"MOGE_MODEL"
+],
+"module": "comfy_extras.nodes_moge",
 "is_output": false
 },
 "LoraLoader": {
@@ -2017,6 +2771,64 @@
 "module": "comfy_extras.nodes_custom_sampler",
 "is_output": false
 },
+"MaskComposite": {
+"input": {
+"required": {
+"destination": [
+"MASK"
+],
+"source": [
+"MASK"
+],
+"x": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"y": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 16384
+}
+],
+"operation": [
+"COMBO"
+]
+},
+"optional": {}
+},
+"output": [
+"MASK"
+],
+"output_name": [
+"MASK"
+],
+"module": "comfy_extras.nodes_mask",
+"is_output": false
+},
+"MaskToImage": {
+"input": {
+"required": {
+"mask": [
+"MASK"
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_mask",
+"is_output": false
+},
 "MiniMaxH3ImageToVideo": {
 "input": {
 "required": {
@@ -2132,6 +2944,116 @@
 "module": "comfy_extras.nodes_minimax_music",
 "is_output": false
 },
+"MoGeInference": {
+"input": {
+"required": {
+"moge_model": [
+"MOGE_MODEL"
+],
+"image": [
+"IMAGE"
+],
+"resolution_level": [
+"INT",
+{
+"default": 9,
+"min": 0,
+"max": 9
+}
+],
+"fov_x_degrees": [
+"FLOAT",
+{
+"default": 0.0,
+"min": 0.0,
+"max": 170.0
+}
+],
+"batch_size": [
+"INT",
+{
+"default": 4,
+"min": 1,
+"max": 64
+}
+],
+"force_projection": [
+"BOOLEAN",
+{
+"default": true
+}
+],
+"apply_mask": [
+"BOOLEAN",
+{
+"default": true
+}
+],
+"refine_steps": [
+"INT",
+{
+"default": 3,
+"min": 0,
+"max": 8
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MOGE_GEOMETRY"
+],
+"output_name": [
+"moge_geometry"
+],
+"module": "comfy_extras.nodes_moge",
+"is_output": false
+},
+"MoGeRender": {
+"input": {
+"required": {
+"moge_geometry": [
+"MOGE_GEOMETRY"
+],
+"output": [
+"COMBO",
+{
+"default": "depth"
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_moge",
+"is_output": false
+},
+"ModelMergeAdd": {
+"input": {
+"required": {
+"model1": [
+"MODEL"
+],
+"model2": [
+"MODEL"
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_model_merging",
+"is_output": false
+},
 "ModelMergeSimple": {
 "input": {
 "required": {
@@ -2161,6 +3083,69 @@
 "module": "comfy_extras.nodes_model_merging",
 "is_output": false
 },
+"ModelMergeSubtract": {
+"input": {
+"required": {
+"model1": [
+"MODEL"
+],
+"model2": [
+"MODEL"
+],
+"multiplier": [
+"FLOAT",
+{
+"default": 1.0,
+"min": -10.0,
+"max": 10.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_model_merging",
+"is_output": false
+},
+"ModelSamplingDiscrete": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"sampling": [
+[
+"eps",
+"v_prediction",
+"lcm",
+"x0",
+"img_to_img",
+"img_to_img_flow"
+]
+],
+"zsnr": [
+"BOOLEAN",
+{
+"default": false
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_model_advanced",
+"is_output": false
+},
 "ModelSamplingSD3": {
 "input": {
 "required": {
@@ -2185,6 +3170,48 @@
 "MODEL"
 ],
 "module": "comfy_extras.nodes_model_advanced",
+"is_output": false
+},
+"NAGuidance": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"nag_scale": [
+"FLOAT",
+{
+"default": 5.0,
+"min": 0.0,
+"max": 50.0
+}
+],
+"nag_alpha": [
+"FLOAT",
+{
+"default": 0.5,
+"min": 0.0,
+"max": 1.0
+}
+],
+"nag_tau": [
+"FLOAT",
+{
+"default": 1.5,
+"min": 1.0,
+"max": 10.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_nag",
 "is_output": false
 },
 "PerpNegGuider": {
@@ -2395,6 +3422,81 @@
 "module": "comfy_extras.nodes_custom_sampler",
 "is_output": false
 },
+"RemeshMesh": {
+"input": {
+"required": {
+"mesh": [
+"MESH"
+],
+"resolution": [
+"INT",
+{
+"default": 512,
+"min": 32,
+"max": 2048
+}
+],
+"sign_mode": [
+"COMFY_DYNAMICCOMBO_V3"
+],
+"band": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.5,
+"max": 4.0
+}
+],
+"project_back": [
+"FLOAT",
+{
+"default": 0.0,
+"min": 0.0,
+"max": 1.0
+}
+],
+"fix_poles": [
+"BOOLEAN",
+{
+"default": false
+}
+],
+"smooth_iters": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 20
+}
+],
+"drop_small_components": [
+"FLOAT",
+{
+"default": 0.01,
+"min": 0.0,
+"max": 0.5
+}
+],
+"precluster_max_verts": [
+"INT",
+{
+"default": 20000000,
+"min": 0,
+"max": 100000000
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MESH"
+],
+"output_name": [
+"mesh"
+],
+"module": "comfy_extras.nodes_mesh_postprocess",
+"is_output": false
+},
 "RescaleCFG": {
 "input": {
 "required": {
@@ -2464,6 +3566,97 @@
 "module": "comfy_extras.nodes_resolution",
 "is_output": false
 },
+"SDTurboScheduler": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"steps": [
+"INT",
+{
+"default": 1,
+"min": 1,
+"max": 10
+}
+],
+"denoise": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"SIGMAS"
+],
+"output_name": [
+"SIGMAS"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"SamplerCustom": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"add_noise": [
+"BOOLEAN",
+{
+"default": true
+}
+],
+"noise_seed": [
+"INT",
+{
+"default": 0,
+"min": 0,
+"max": 18446744073709551615
+}
+],
+"cfg": [
+"FLOAT",
+{
+"default": 8.0,
+"min": 0.0,
+"max": 100.0
+}
+],
+"positive": [
+"CONDITIONING"
+],
+"negative": [
+"CONDITIONING"
+],
+"sampler": [
+"SAMPLER"
+],
+"sigmas": [
+"SIGMAS"
+],
+"latent_image": [
+"LATENT"
+]
+},
+"optional": {}
+},
+"output": [
+"LATENT",
+"LATENT"
+],
+"output_name": [
+"output",
+"denoised_output"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
 "SamplerCustomAdvanced": {
 "input": {
 "required": {
@@ -2492,6 +3685,37 @@
 "output_name": [
 "output",
 "denoised_output"
+],
+"module": "comfy_extras.nodes_custom_sampler",
+"is_output": false
+},
+"SamplerEulerAncestral": {
+"input": {
+"required": {
+"eta": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 100.0
+}
+],
+"s_noise": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 100.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"SAMPLER"
+],
+"output_name": [
+"SAMPLER"
 ],
 "module": "comfy_extras.nodes_custom_sampler",
 "is_output": false
@@ -2545,6 +3769,30 @@
 "audio"
 ],
 "module": "comfy_extras.nodes_audio",
+"is_output": true
+},
+"SaveConditioning": {
+"input": {
+"required": {
+"conditioning": [
+"CONDITIONING"
+],
+"filename_prefix": [
+"STRING",
+{
+"default": "conditioning/ComfyUI"
+}
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"conditioning"
+],
+"module": "comfy_extras.nodes_cond",
 "is_output": true
 },
 "SaveGLB": {
@@ -2762,6 +4010,68 @@
 "module": "comfy_extras.nodes_mask",
 "is_output": false
 },
+"SplitAudioChannels": {
+"input": {
+"required": {
+"audio": [
+"AUDIO"
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO",
+"AUDIO"
+],
+"output_name": [
+"left",
+"right"
+],
+"module": "comfy_extras.nodes_audio",
+"is_output": false
+},
+"SplitImageToTileList": {
+"input": {
+"required": {
+"image": [
+"IMAGE"
+],
+"tile_width": [
+"INT",
+{
+"default": 1024,
+"min": 64,
+"max": 16384
+}
+],
+"tile_height": [
+"INT",
+{
+"default": 1024,
+"min": 64,
+"max": 16384
+}
+],
+"overlap": [
+"INT",
+{
+"default": 128,
+"min": 0,
+"max": 4096
+}
+]
+},
+"optional": {}
+},
+"output": [
+"IMAGE"
+],
+"output_name": [
+"IMAGE"
+],
+"module": "comfy_extras.nodes_images",
+"is_output": false
+},
 "SplitSigmas": {
 "input": {
 "required": {
@@ -2790,6 +4100,45 @@
 "module": "comfy_extras.nodes_custom_sampler",
 "is_output": false
 },
+"StartLoop": {
+"input": {
+"required": {
+"mode": [
+"COMFY_DYNAMICCOMBO_V3"
+],
+"cache_iterations": [
+"BOOLEAN",
+{
+"default": false
+}
+]
+},
+"optional": {
+"parent_iteration": [
+"INT"
+],
+"initial_iteration_value": [
+"COMFY_MATCHTYPE_V3"
+]
+}
+},
+"output": [
+"INT",
+"BOOLEAN",
+"BOOLEAN",
+"COMFY_MATCHTYPE_V3",
+"COMFY_MATCHTYPE_V3"
+],
+"output_name": [
+"iteration_index",
+"is_first",
+"is_last",
+"list_item",
+"current_iteration_value"
+],
+"module": "comfy_extras.nodes_loop",
+"is_output": false
+},
 "StringConcatenate": {
 "input": {
 "required": {
@@ -2815,6 +4164,101 @@
 "STRING"
 ],
 "module": "comfy_extras.nodes_string",
+"is_output": false
+},
+"StyleModelApply": {
+"input": {
+"required": {
+"conditioning": [
+"CONDITIONING"
+],
+"style_model": [
+"STYLE_MODEL"
+],
+"clip_vision_output": [
+"CLIP_VISION_OUTPUT"
+],
+"strength": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.0,
+"max": 10.0
+}
+],
+"strength_type": [
+[
+"multiply",
+"attn_bias"
+]
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
+"is_output": false
+},
+"StyleModelLoader": {
+"input": {
+"required": {
+"style_model_name": [
+"FILE"
+]
+},
+"optional": {}
+},
+"output": [
+"STYLE_MODEL"
+],
+"output_name": [
+"STYLE_MODEL"
+],
+"module": "nodes",
+"is_output": false
+},
+"TCFG": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"patched_model"
+],
+"module": "comfy_extras.nodes_tcfg",
+"is_output": false
+},
+"TorchCompileModel": {
+"input": {
+"required": {
+"model": [
+"MODEL"
+],
+"backend": [
+"COMBO"
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL"
+],
+"output_name": [
+"MODEL"
+],
+"module": "comfy_extras.nodes_torch_compile",
 "is_output": false
 },
 "TrainLoraNode": {
@@ -2967,6 +4411,39 @@
 "module": "comfy_extras.nodes_train",
 "is_output": false
 },
+"TrimAudioDuration": {
+"input": {
+"required": {
+"audio": [
+"AUDIO"
+],
+"start_index": [
+"FLOAT",
+{
+"default": 0.0,
+"min": -18446744073709551615,
+"max": 18446744073709551615
+}
+],
+"duration": [
+"FLOAT",
+{
+"default": 60.0,
+"min": 0.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"AUDIO"
+],
+"output_name": [
+"AUDIO"
+],
+"module": "comfy_extras.nodes_audio",
+"is_output": false
+},
 "TripleCLIPLoader": {
 "input": {
 "required": {
@@ -3015,6 +4492,54 @@
 "MODEL"
 ],
 "module": "nodes",
+"is_output": false
+},
+"UnwrapMesh": {
+"input": {
+"required": {
+"mesh": [
+"MESH"
+],
+"segmenter": [
+"COMBO",
+{
+"default": "pec"
+}
+],
+"resolution": [
+"INT",
+{
+"default": 1024,
+"min": 0,
+"max": 8192
+}
+],
+"padding": [
+"INT",
+{
+"default": 1,
+"min": 0,
+"max": 16
+}
+],
+"weld_distance": [
+"FLOAT",
+{
+"default": 0.0,
+"min": 0.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MESH"
+],
+"output_name": [
+"mesh"
+],
+"module": "comfy_extras.nodes_mesh_postprocess",
 "is_output": false
 },
 "UpscaleModelLoader": {
@@ -3275,6 +4800,35 @@
 "module": "nodes",
 "is_output": false
 },
+"VoxelToMesh": {
+"input": {
+"required": {
+"voxel": [
+"VOXEL"
+],
+"algorithm": [
+"COMBO"
+],
+"threshold": [
+"FLOAT",
+{
+"default": 0.6,
+"min": -1.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"MESH"
+],
+"output_name": [
+"MESH"
+],
+"module": "comfy_extras.nodes_hunyuan3d",
+"is_output": false
+},
 "VoxelToMeshBasic": {
 "input": {
 "required": {
@@ -3353,6 +4907,67 @@
 "LATENT"
 ],
 "module": "comfy_extras.nodes_wan",
+"is_output": false
+},
+"unCLIPCheckpointLoader": {
+"input": {
+"required": {
+"ckpt_name": [
+"FILE"
+]
+},
+"optional": {}
+},
+"output": [
+"MODEL",
+"CLIP",
+"VAE",
+"CLIP_VISION"
+],
+"output_name": [
+"MODEL",
+"CLIP",
+"VAE",
+"CLIP_VISION"
+],
+"module": "nodes",
+"is_output": false
+},
+"unCLIPConditioning": {
+"input": {
+"required": {
+"conditioning": [
+"CONDITIONING"
+],
+"clip_vision_output": [
+"CLIP_VISION_OUTPUT"
+],
+"strength": [
+"FLOAT",
+{
+"default": 1.0,
+"min": -10.0,
+"max": 10.0
+}
+],
+"noise_augmentation": [
+"FLOAT",
+{
+"default": 0.0,
+"min": 0.0,
+"max": 1.0
+}
+]
+},
+"optional": {}
+},
+"output": [
+"CONDITIONING"
+],
+"output_name": [
+"CONDITIONING"
+],
+"module": "nodes",
 "is_output": false
 }
 }

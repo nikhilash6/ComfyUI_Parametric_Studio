@@ -4,49 +4,59 @@
  "level": "400",
  "questions": [
   {
-   "q": "Why is cosine similarity preferred over Euclidean distance for measuring prompt adherence in diffusion models?",
+   "q": "Why not compare a prompt's conditioning directly with a latent?",
    "options": [
-    "Cosine similarity is computationally faster than calculating Euclidean distance.",
-    "Cosine similarity normalizes out magnitude, focusing purely on direction which carries semantic meaning.",
-    "Euclidean distance cannot handle high-dimensional vectors.",
-    "Cosine similarity only works with binary vectors."
+    "They are in different spaces, so the cosine means nothing",
+    "Latents can't be saved",
+    "Conditioning has no numbers",
+    "They would always match"
    ],
-   "answer": "Cosine similarity normalizes out magnitude, focusing purely on direction which carries semantic meaning.",
-   "why": "The lesson states that magnitude can vary based on timestep or encoder, but direction carries semantic meaning. Cosine similarity normalizes out magnitude to measure pure semantic alignment."
+   "answer": "They are in different spaces, so the cosine means nothing",
+   "why": "Scores need a pair of encoders trained together. The lab's rotation shows what happens without that."
   },
   {
-   "q": "In the context of vector geometry, what does a cosine similarity score of 0.0 indicate about the relationship between the prompt vector and the image latent vector?",
+   "q": "A CLIP cosine of 0.35 on an image. What can you conclude alone?",
    "options": [
-    "The vectors are parallel and point in the same direction.",
-    "The vectors are anti-parallel and point in opposite directions.",
-    "The vectors are orthogonal, meaning the prompt provides no directional guidance for that feature.",
-    "The vectors are identical in magnitude but differ in direction."
+    "Little: compare it with other scores from the same model",
+    "35% of the prompt was followed",
+    "The image is poor",
+    "The prompt is too long"
    ],
-   "answer": "The vectors are orthogonal, meaning the prompt provides no directional guidance for that feature.",
-   "why": "The lesson defines a score of 0.0 as orthogonal, indicating no correlation and that the prompt does not influence that specific latent dimension."
+   "answer": "Little: compare it with other scores from the same model",
+   "why": "Hessel et al. report a range of about 0 to 0.4. An absolute doesn't translate into a percent."
   },
   {
-   "q": "According to the lesson, what specific mathematical operation is used to calculate the numerator of the cosine similarity formula?",
-   "options": null,
-   "answer": "The dot product of the vectors (sum of the products of their corresponding components).",
-   "why": "The lesson explicitly defines the numerator $u \\cdot v$ as the dot product, which is the sum of the products of their corresponding components."
-  },
-  {
-   "q": "Why is it a common mistake to assume global alignment when evaluating prompt adherence?",
+   "q": "A shorter caption scores higher than a fuller one on the same image. Why?",
    "options": [
-    "Global alignment scores are always negative.",
-    "A prompt can have high alignment for one concept (e.g., 'red') but low alignment for another (e.g., 'car'), making a single global score misleading.",
-    "Global alignment ignores the timestep of the diffusion process.",
-    "Global alignment requires comparing embeddings from different encoders."
+    "It asks for less, so less can be missing",
+    "Short captions are always truer",
+    "Long captions overflow the model",
+    "Cosine rewards short words"
    ],
-   "answer": "A prompt can have high alignment for one concept (e.g., 'red') but low alignment for another (e.g., 'car'), making a single global score misleading.",
-   "why": "The 'Common mistakes' section states that prompts must be decomposed into individual concepts because alignment can vary per concept, making a single global score misleading."
+   "answer": "It asks for less, so less can be missing",
+   "why": "The lab's 'red car' beats the full caption. A score isn't a count of what you asked for."
   },
   {
-   "q": "In the lab simulation, what were the specific values defined for `vec_a` and `vec_c`?",
-   "options": null,
-   "answer": "vec_a was [1.0, 0.0, 0.0, 0.0] and vec_c was [0.0, 1.0, 0.0, 0.0].",
-   "why": "The Lab section explicitly states: 'The script defines vec_a as [1.0, 0.0, 0.0, 0.0]... and vec_c as [0.0, 1.0, 0.0, 0.0].'"
+   "q": "Two renders tie on a five-item checklist. What should you read next?",
+   "options": [
+    "Which items each one failed",
+    "The file sizes",
+    "The seed values",
+    "Nothing: they're equal"
+   ],
+   "answer": "Which items each one failed",
+   "why": "Both are 0.60 in the lab, with opposite failures."
+  },
+  {
+   "q": "Why does a checklist mark count as a weak basis to pick the better sampler here?",
+   "options": [
+    "It's one seed, marked by one reader",
+    "Checklists can't include colours",
+    "Samplers can't be compared",
+    "The prompts differ"
+   ],
+   "answer": "It's one seed, marked by one reader",
+   "why": "See CU-470: one seed can name either winner."
   }
  ]
 }

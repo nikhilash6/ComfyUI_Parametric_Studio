@@ -2,6 +2,14 @@
 
 **Objective.** Derive the VAE loss, explain the scale factor ComfyUI applies, and see what a regular latent space buys and costs. Taught by Professor Latent.
 
+## In plain words
+
+Pictures have far more numbers than they need. A VAE is a pair of networks that squeezes a picture into a small grid of numbers and back. That small grid is the latent, and it's where diffusion models do their work. It costs far less memory, and the numbers still look a lot like a tiny picture. It is also why a latent is not a picture. You need the VAE to see it.
+
+Try the shapes for each family. It's arithmetic you'll use constantly.
+
+{{play:latent}}
+
 ## The idea
 
 Diffusion on a 1024×1024 RGB image handles three million numbers per step. A VAE trades that for a much smaller grid of latents, and the diffusion model works there. Rombach et al. (2021) built Stable Diffusion on this idea.
@@ -37,6 +45,25 @@ The weight on the KL term decides the trade. A high weight gives a smooth latent
 Why a scale factor? Samplers assume latents with variance about 1, for example the √(1+σ²) in CU-206, and a VAE's raw output need not have that. Dividing by the measured spread fixes it.
 
 The same file holds `latent_rgb_factors`, a plain linear map used for previews. That such a simple map gives a recognisable preview tells you these latents are still very image-like.
+
+`VAEEncode` keeps the Gaussian's middle by default: `DiagonalGaussianRegularizer` takes its mode unless told to sample. So encoding the same picture twice gives the same latent.
+
+This graph is a round trip with a multiplier in the middle. Set the multiplier to 1 to see what encode and decode alone do to your picture.
+
+{{graph:b_latent_gain}}
+
+And these latents you can run with no model:
+
+{{graph:nm_latent_ops}}
+
+## What goes wrong
+
+- **Using the wrong VAE.** A latent from one family decoded with another's VAE gives broken colours, or a shape error. SD 1.x and SDXL have 4 channels and different scale factors. SD3 and FLUX.1 have 16.
+- **Expecting encode then decode to be lossless.** It is not. Fine patterns and small text suffer most. If that matters, composite the original pixels back afterwards.
+- **Editing a latent as if it were an image.** One cell covers 8 by 8 pixels and the channels are not colours. CU-241 covers what maths on latents does.
+- **Off-grid sizes.** A width that isn't a multiple of 8 is floored, so the output size can change. The lab above shows it.
+- **Reading the preview as the real output.** The fast preview is a small map, not the decoder. It can look wrong while the render is fine.
+- **Decoding runs out of memory after sampling worked.** Decoding can use more memory than sampling. Try `VAEDecodeTiled` (CU-217).
 
 ## Lab
 

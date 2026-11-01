@@ -1,0 +1,44 @@
+{
+ "meta": {
+  "title": "One picture, two destinations",
+  "about": "SaveImage writes to the output folder. PreviewImage writes to the temp folder. Run it and look for both files.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "A solid picture, so no model is needed.",
+   "2": "Writes university/first_00001_.png, or the next free number, inside the output folder.",
+   "3": "Writes a throw-away file to the temp folder and shows it on the node."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 256,
+    "height": 256,
+    "batch_size": 1,
+    "color": 16106776
+   }
+  },
+  "2": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "1",
+     0
+    ],
+    "filename_prefix": "university/first"
+   }
+  },
+  "3": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "1",
+     0
+    ]
+   }
+  }
+ }
+}

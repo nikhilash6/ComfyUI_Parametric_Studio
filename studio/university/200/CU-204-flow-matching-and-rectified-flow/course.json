@@ -11,8 +11,46 @@
  "code_refs": [
   "comfy/model_sampling.py:CONST",
   "comfy/model_sampling.py:ModelSamplingDiscreteFlow",
-  "comfy/model_sampling.py:time_snr_shift"
+  "comfy/model_sampling.py:time_snr_shift",
+  "comfy/model_sampling.py:CONST.noise_scaling",
+  "comfy/model_sampling.py:CONST.calculate_denoised",
+  "comfy_extras/nodes_model_advanced.py:ModelSamplingSD3"
  ],
  "track": "noise-latent",
- "order": 30
+ "order": 30,
+ "kit": true,
+ "graphs": [
+  "sd35_flow"
+ ],
+ "verified": [
+  {
+   "claim": "CONST mixes as sigma * noise + (1 - sigma) * latent and reads the clean estimate as x - sigma * output.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:CONST"
+  },
+  {
+   "claim": "The measured average of real pairs matches the formula for u(x, t).",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "One Euler step has real error on a mixture, and none when the data is one point.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "A karras flow render came out brown and unfinished on one seed.",
+   "how": "run here",
+   "ref": "renders.json, flow-euler-karras"
+  },
+  {
+   "claim": "sd35_flow passes validate_prompt.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The results quoted from Lipman, Liu and Albergo were checked at the first audit and not re-read this time.",
+  "The rectified pairs being optimal holds in one dimension, as the lesson says. We ran one dimension only."
+ ]
 }

@@ -1,0 +1,121 @@
+{
+ "meta": {
+  "title": "Blend in stored values and in light",
+  "about": "Black and white mixed two ways, with no model.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "Black.",
+   "2": "White.",
+   "3": "Half and half on the stored values.",
+   "4": "Black converted to linear light.",
+   "5": "White converted to linear light.",
+   "6": "Half and half on light.",
+   "7": "Back to sRGB so it can be shown.",
+   "8": "Stored-value blend.",
+   "9": "Light blend. It comes out lighter."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 64,
+    "height": 64,
+    "batch_size": 1,
+    "color": 0
+   }
+  },
+  "2": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 64,
+    "height": 64,
+    "batch_size": 1,
+    "color": 16777215
+   }
+  },
+  "3": {
+   "class_type": "ImageBlend",
+   "inputs": {
+    "image1": [
+     "1",
+     0
+    ],
+    "image2": [
+     "2",
+     0
+    ],
+    "blend_factor": 0.5,
+    "blend_mode": "normal"
+   }
+  },
+  "4": {
+   "class_type": "ImageColorSpace",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "source": "sRGB",
+    "destination": "linear"
+   }
+  },
+  "5": {
+   "class_type": "ImageColorSpace",
+   "inputs": {
+    "image": [
+     "2",
+     0
+    ],
+    "source": "sRGB",
+    "destination": "linear"
+   }
+  },
+  "6": {
+   "class_type": "ImageBlend",
+   "inputs": {
+    "image1": [
+     "4",
+     0
+    ],
+    "image2": [
+     "5",
+     0
+    ],
+    "blend_factor": 0.5,
+    "blend_mode": "normal"
+   }
+  },
+  "7": {
+   "class_type": "ImageColorSpace",
+   "inputs": {
+    "image": [
+     "6",
+     0
+    ],
+    "source": "linear",
+    "destination": "sRGB"
+   }
+  },
+  "8": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "3",
+     0
+    ]
+   }
+  },
+  "9": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "7",
+     0
+    ]
+   }
+  }
+ }
+}

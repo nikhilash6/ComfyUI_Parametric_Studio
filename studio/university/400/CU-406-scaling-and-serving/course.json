@@ -2,13 +2,50 @@
  "title": "Scaling: sharding, batching and serving",
  "level": "400",
  "char": "tune",
- "hook": "From one GPU to many, and what throughput really means.",
+ "hook": "One process runs one job at a time. Batches, busy time, and routing that keeps models in place.",
  "code": "CU-406",
  "prereq": [
   "CU-305"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "main.py:prompt_worker",
+  "execution.py:PromptQueue",
+  "execution.py:MAXIMUM_HISTORY_SIZE",
+  "server.py:post_prompt",
+  "comfy/cli_args.py:--cuda-device"
+ ],
  "track": "automation",
- "order": 40
+ "order": 40,
+ "graphs": [
+  "b_batch_pick"
+ ],
+ "verified": [
+  {
+   "claim": "main.py starts one prompt_worker thread.",
+   "how": "source",
+   "ref": "main.py:prompt_worker"
+  },
+  {
+   "claim": "The queue is a heap, and front makes the number negative.",
+   "how": "source",
+   "ref": "execution.py:PromptQueue"
+  },
+  {
+   "claim": "History is capped at 10,000.",
+   "how": "source",
+   "ref": "execution.py:MAXIMUM_HISTORY_SIZE"
+  },
+  {
+   "claim": "Simulated tables come from this lesson's lab.",
+   "how": "run here",
+   "ref": "lab.py"
+  }
+ ],
+ "unchecked": [
+  "All timings are simulated with sizes we chose. No real server was load-tested.",
+  "We did not run two workers behind a router.",
+  "We found no route that reports loaded models among those we read, but we did not read every route in the app folder.",
+  "That dropping a connection doesn't cancel a job is from reading the worker loop, not a test."
+ ],
+ "kit": true
 }

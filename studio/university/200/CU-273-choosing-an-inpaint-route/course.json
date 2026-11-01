@@ -1,0 +1,62 @@
+{
+ "code": "CU-273",
+ "title": "Choosing an inpaint route",
+ "level": "200",
+ "prereq": [
+  "CU-213"
+ ],
+ "char": "graph",
+ "hook": "SetLatentNoiseMask, VAEEncodeForInpaint or InpaintModelConditioning: read what each one really does to your picture and your mask, then choose by model and denoise.",
+ "track": "control",
+ "order": 32,
+ "kit": true,
+ "graphs": [
+  "sd15_inpaint",
+  "sd15_inpaint_vae",
+  "d_inpaint_cond"
+ ],
+ "code_refs": [
+  "nodes.py:SetLatentNoiseMask.set_mask",
+  "nodes.py:VAEEncodeForInpaint.encode",
+  "nodes.py:InpaintModelConditioning.encode",
+  "comfy/samplers.py:KSamplerX0Inpaint",
+  "comfy/model_base.py:BaseModel.concat_cond",
+  "comfy/model_base.py:BaseModel.set_inpaint",
+  "comfy/supported_models_base.py:BASE.inpaint_model"
+ ],
+ "verified": [
+  {
+   "claim": "VAEEncodeForInpaint rounds the mask, grows it, greys the masked pixels, and stores the rounded grown mask. The lab's version gave the same mask and pixels as the real node with a pass-through VAE.",
+   "how": "run here",
+   "ref": "nodes.py:VAEEncodeForInpaint.encode"
+  },
+  {
+   "claim": "InpaintModelConditioning keeps the original in the latent, a soft noise_mask when enabled, and puts the greyed encode and the mask in the conditioning.",
+   "how": "source",
+   "ref": "nodes.py:InpaintModelConditioning.encode"
+  },
+  {
+   "claim": "A checkpoint whose U-Net takes more than 4 channels gets concat_keys mask and masked_image; the SD 1.5 one has 9. concat_cond rounds the mask, and takes the masked image from concat_latent_image, or else from the latent.",
+   "how": "source",
+   "ref": "comfy/model_base.py:BaseModel.concat_cond"
+  },
+  {
+   "claim": "Outside the mask the final latent equals the original, whichever route made it, with a sampler ending at sigma 0.",
+   "how": "source",
+   "ref": "comfy/samplers.py:KSamplerX0Inpaint"
+  },
+  {
+   "claim": "All three graphs validate.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "No real model ran. The hole's numbers come from an exact denoiser for Gaussian content, which shows the arithmetic and cannot show picture quality.",
+  "Which route looks best on a given model is untested here. The recommendations follow from what each route feeds the model, not from a comparison of pictures.",
+  "With InpaintModelConditioning on models other than the SD inpainting family we read only the tooltip, which warns that noise_mask can improve or break results."
+ ],
+ "second_read": {
+  "errors_fixed": 1
+ }
+}

@@ -1,5 +1,14 @@
-RESULT full_attn_shape = torch.Size([10, 4])
-RESULT updated_K_shape = torch.Size([11, 4])
-RESULT updated_V_shape = torch.Size([11, 4])
-RESULT new_token_output = -0.0775429
-RESULT cache_consistency = True
+first token, cached against recomputed: max difference 0.0e+00
+40 tokens generated, largest difference between the two outputs at any step: 1.4e-05
+              token projections   attention pairs
+no cache      820                 11,480
+KV cache      40                  820
+
+tokens stored   one layer, 8 kv heads, head width 128, bf16   24 layers
+256             1.0                                           0.02 GiB
+1,024           4.0                                           0.09 GiB
+4,096           16.0                                          0.38 GiB
+16,384          64.0                                          1.50 GiB
+
+edit token 3 and reuse the old cache: the output is off by 8.636, so a cache must be thrown away or rolled back
+cross-attention to a fixed text of 77 tokens over 40 steps: 77 key projections with a cache, 3080 without

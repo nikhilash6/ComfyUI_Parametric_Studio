@@ -16,5 +16,45 @@
   "comfy/ops.py:cast_bias_weight"
  ],
  "track": "performance",
- "order": 40
+ "order": 40,
+ "kit": true,
+ "graphs": [
+  "b_unet_fp8"
+ ],
+ "verified": [
+  {
+   "claim": "The registry of formats and their layouts is in QUANT_ALGOS and QUANTIZATION.md.",
+   "how": "source",
+   "ref": "comfy/quant_ops.py:QUANT_ALGOS"
+  },
+  {
+   "claim": "Formats a device cannot compute are dequantized for the matmul, and the split is logged as native and emulated ops.",
+   "how": "source",
+   "ref": "comfy/ops.py:pick_operations"
+  },
+  {
+   "claim": "Core's model folders do not accept .gguf, and main.py warns GGUF users when dynamic VRAM is turned off.",
+   "how": "source",
+   "ref": "folder_paths.py:supported_pt_extensions"
+  },
+  {
+   "claim": "The Q8_0 and Q4_0 round trips follow the ggml reference quantizers.",
+   "how": "docs",
+   "ref": "ggml src/ggml-quants.c at commit facdc44"
+  },
+  {
+   "claim": "Error figures in the Lab come from a run here on synthetic weights.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The graph passes validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "How much any format changes a real picture, and which format is fastest on a given card. This lesson measures weight and matmul error only.",
+  "The speed statement about native formats in main.py is the developers' own, and we did not test it."
+ ]
 }

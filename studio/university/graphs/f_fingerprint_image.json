@@ -1,0 +1,30 @@
+{
+ "meta": {
+  "title": "LoadImage notices a changed file",
+  "about": "LoadImage hashes the file on every queue. Overwrite the picture under the same name and it runs again. Pick any image of your own.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "IS_CHANGED returns a SHA-256 of the file, VALIDATE_INPUTS checks that it exists.",
+   "2": "Shows it."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "2": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "1",
+     0
+    ]
+   }
+  }
+ }
+}

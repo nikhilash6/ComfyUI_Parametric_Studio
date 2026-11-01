@@ -1,0 +1,62 @@
+{
+ "code": "CU-361",
+ "title": "Meshes, points and Gaussian splats",
+ "level": "300",
+ "questions": [
+  {
+   "q": "What does a Gaussian splat store that a coloured point doesn't?",
+   "options": [
+    "A size in three directions, a rotation and an opacity",
+    "Triangles",
+    "A texture map",
+    "A depth map"
+   ],
+   "answer": "A size in three directions, a rotation and an opacity",
+   "why": "SPLAT has scales, rotations and opacities besides positions and colour."
+  },
+  {
+   "q": "Why does SplatToMesh need Otsu's method?",
+   "options": [
+    "A splat has no surface, so the node must choose which density level counts as one",
+    "To pick colours",
+    "To sort blobs by depth",
+    "To compress the file"
+   ],
+   "answer": "A splat has no surface, so the node must choose which density level counts as one",
+   "why": "_otsu_level picks a split between empty and occupied density. level scales it."
+  },
+  {
+   "q": "A splat-to-mesh result has holes. What should you try?",
+   "options": [
+    "Raise kernel or lower level, so sparse blobs reach each other",
+    "Raise color_sharpen",
+    "Raise min_component",
+    "Raise min_opacity"
+   ],
+   "answer": "Raise kernel or lower level, so sparse blobs reach each other",
+   "why": "The lab shows many rays missing the surface with small blobs. min_component and min_opacity remove material and make holes worse."
+  },
+  {
+   "q": "How many floats does one Gaussian hold at spherical-harmonic degree 0?",
+   "options": [
+    "14",
+    "6",
+    "59",
+    "3"
+   ],
+   "answer": "14",
+   "why": "Centre 3, scale 3, rotation 4, opacity 1, colour 3. Degree 3 has 48 colour values, giving 59."
+  },
+  {
+   "q": "What does color_sharpen change?",
+   "options": [
+    "Colour only: it biases each voxel towards its strongest blob",
+    "The geometry of the surface",
+    "The number of triangles",
+    "The file format"
+   ],
+   "answer": "Colour only: it biases each voxel towards its strongest blob",
+   "why": "Its tooltip says colour only, geometry unchanged. _splat_density weights colour by w to that power."
+  }
+ ]
+}

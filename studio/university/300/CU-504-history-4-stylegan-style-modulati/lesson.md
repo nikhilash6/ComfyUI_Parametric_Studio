@@ -35,6 +35,23 @@ There is no StyleGAN generator in ComfyUI. There are two traces of it.
 - **StyleGAN2 layers.** `comfy/ldm/wan/model_animate.py` defines `EqualConv2d`, `EqualLinear`, `ConvLayer` and `ResBlock`, each with a comment pointing at the StyleGAN2 file of the BasicSR project. They multiply their weights at run time by 1/√fan-in, the equalised learning rate that the StyleGAN paper says it uses "for all layers". That file has no modulated convolution.
 - **The scale-and-shift pattern.** `modulate(x, shift, scale)` in `comfy/ldm/modules/diffusionmodules/mmdit.py` returns shift + x·(1 + scale). `DismantledBlock` is documented as "A DiT block with gated adaptive layer norm (adaLN) conditioning", and it applies `modulate` to the output of a LayerNorm (or RMSNorm) that has no learned affine. In `openaimodel.py`, the U-Net option `use_scale_shift_norm`, documented as "a FiLM-like conditioning mechanism", makes `ResBlock` normalise, multiplies by (1 + scale) and adds shift, with scale and shift as the two halves of the embedding. The DiT paper says its adaLN follows "the widespread usage of adaptive normalization layers" in GANs and in diffusion U-Nets, and FiLM (Perez et al.) names the general idea: a feature-wise affine transformation based on conditioning information.
 
+Compare the two forms yourself on one small feature map.
+
+{{play:adain}}
+
+The modern descendant is in this graph. SD 3.5's blocks are `DismantledBlock`s, so each one scales and shifts its tokens using numbers worked out from the timestep and the pooled text.
+
+{{graph:sd35_flow}}
+
+## What goes wrong
+
+- **You write AdaIN as content × (1 + style).** That is `modulate`, a different thing. AdaIN throws away the input's mean and spread first. The lab shows the difference: 3.6e-15 against 42.1.
+- **You think Apply Style Model is StyleGAN.** The name misleads. `StyleModelApply` in `nodes.py` encodes the reference and adds it to the conditioning tokens, so it changes what the model reads. Nothing about it modulates feature maps.
+- **You look for a StyleGAN node.** Core has no StyleGAN generator. Two traces are listed above.
+- **You trust one number.** The droplets survived FID: 4.40 to 4.39, with the artifact gone. Look at intermediate maps, or at a lot of images, before you say a flaw is absent.
+- **You normalise features inside your own node.** You have then thrown away anything the layer knew about its own magnitudes, which is what StyleGAN2 blames for its droplets. Keep a "do nothing" setting that really does nothing.
+- **You trust demodulation on smooth inputs.** Its promise of unit spread assumes independent inputs. Blurred ones gave 0.661 to 1.326 in the lab.
+
 ## Lab
 
 Part one gives AdaIN four feature maps whose means run from −2 to 40 and whose standard deviations run from 0.07 to 1.9, with four different styles.

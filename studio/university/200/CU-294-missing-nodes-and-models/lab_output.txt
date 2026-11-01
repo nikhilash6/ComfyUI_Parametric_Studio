@@ -1,0 +1,13 @@
+a good file                             looks whole: 2 tensors, first key first_stage_model.decoder.conv_in.weight
+cut short by a failed download          cut short or padded: header expects 219 bytes, file has 215
+a web page saved under a model's name   not safetensors: first 8 bytes say a 8,029,423,821,061,908,540 byte header, the file has 120 bytes
+an empty file                           too short to hold a header
+
+sha256 of the good file  8c5b44dcce089134
+sha256 of the short file 2d20da2de5c8d1a1
+
+Value not in list: ckpt_name: 'model_a.safetensors' not in []
+Value not in list: ckpt_name: 'model_a.safetensors' not in ['b.safetensors']
+Value not in list: ckpt_name: 'model_a.safetensors' not in (list of length 30)
+
+same file, but the graph was saved on a machine with a folder: Value not in list: ckpt_name: 'sd/model.safetensors' not in ['model.safetensors']

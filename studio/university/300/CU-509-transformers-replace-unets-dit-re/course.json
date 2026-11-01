@@ -2,13 +2,115 @@
  "title": "History 9: Transformers replace U-Nets: DiT and rectified flow",
  "level": "300",
  "char": "attn",
- "hook": "Discover how Diffusion Transformers (DiT) and rectified flow are reshaping the landscape of generative AI by moving away from traditional U-Net architectures.",
+ "hook": "DiT swapped the network and rectified flow swapped the path. One step from noise lands every sample on the mean, and what fixes that is a second round of training, not the straight line.",
  "code": "CU-509",
  "prereq": [
   "CU-303"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:MMDiT",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:DismantledBlock",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:JointBlock",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:modulate",
+  "comfy/ldm/flux/model.py:Flux",
+  "comfy/ldm/hydit/models.py:HunYuanDiT",
+  "comfy/ldm/hydit/attn_layers.py:apply_rotary_emb",
+  "comfy/ldm/ace/ace_step15.py:AceStepDiTModel",
+  "comfy/model_sampling.py:CONST",
+  "comfy/model_sampling.py:ModelSamplingDiscreteFlow",
+  "comfy/model_sampling.py:time_snr_shift",
+  "comfy/supported_models.py:SD3",
+  "comfy_extras/nodes_model_advanced.py:ModelSamplingSD3"
+ ],
  "track": "history",
- "order": 90
+ "order": 90,
+ "graphs": [
+  "sd35_flow",
+  "wf_flux2_klein",
+  "b_vpred"
+ ],
+ "verified": [
+  {
+   "claim": "sigma times noise plus (1 − sigma) times the latent.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:CONST.noise_scaling"
+  },
+  {
+   "claim": "Input minus output times sigma.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:CONST.calculate_denoised"
+  },
+  {
+   "claim": "The shift formula.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:time_snr_shift"
+  },
+  {
+   "claim": "sampling_settings has shift 3.0.",
+   "how": "source",
+   "ref": "comfy/supported_models.py:SD3"
+  },
+  {
+   "claim": "Defaults to V_PREDICTION, so a transformer need not be flow.",
+   "how": "source",
+   "ref": "comfy/model_base.py:HunyuanDiT"
+  },
+  {
+   "claim": "Holds a DismantledBlock for context and one for x.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/mmdit.py:JointBlock"
+  },
+  {
+   "claim": "Modulates tokens through adaLN_modulation.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/mmdit.py:DismantledBlock"
+  },
+  {
+   "claim": "Its own class with double_blocks.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/model.py:Flux"
+  },
+  {
+   "claim": "The class exists and its attention uses apply_rotary_emb.",
+   "how": "source",
+   "ref": "comfy/ldm/hydit/models.py:HunYuanDiT"
+  },
+  {
+   "claim": "The audio transformer class.",
+   "how": "source",
+   "ref": "comfy/ldm/ace/ace_step15.py:AceStepDiTModel"
+  },
+  {
+   "claim": "The field formula, the one-step result, the step table, straightness and reflow print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title, date and abstract from the arXiv export API, this session, including the single-step quote.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2209.03003"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2212.09748"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2403.03206"
+  },
+  {
+   "claim": "Title, date and abstract, as above.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/2210.02747"
+  }
+ ],
+ "unchecked": [
+  "We read the abstracts of the four papers, not their full text. Everything said about them is from the abstracts.",
+  "The lab is one-dimensional and one seed. It says nothing on image quality, and the reflow numbers would shift with another seed.",
+  "We did not run the SD 3.5 or FLUX.2 graphs here. They were validated and need model files.",
+  "We have no measurement of DiT against a U-Net at equal cost."
+ ],
+ "kit": true
 }

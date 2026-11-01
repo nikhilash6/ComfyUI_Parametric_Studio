@@ -14,5 +14,51 @@
   "comfy_extras/nodes_custom_sampler.py:class Noise_RandomNoise"
  ],
  "track": "first-graph",
- "order": 60
+ "order": 60,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img",
+  "sd15_custom"
+ ],
+ "verified": [
+  {
+   "claim": "prepare_noise seeds PyTorch's generator and draws on the CPU in float32.",
+   "how": "source",
+   "ref": "comfy/sample.py:prepare_noise"
+  },
+  {
+   "claim": "default_noise_sampler seeds a generator on the latent's device, adding 1 on the CPU.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:default_noise_sampler"
+  },
+  {
+   "claim": "noise_scaling multiplies by the square root of 1 + sigma squared at full denoise, and adds the latent in both branches.",
+   "how": "source",
+   "ref": "comfy/model_sampling.py:EPS.noise_scaling"
+  },
+  {
+   "claim": "The seed widget's range is 0 to 0xffffffffffffffff with control_after_generate.",
+   "how": "source",
+   "ref": "nodes.py:KSampler"
+  },
+  {
+   "claim": "The noise, the sum and the toy samplers come from running the lab on the CPU.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The three pictures come from the same seed (424242), the same prompt and 20 steps, per the Sampling Lab's renders.json. We looked at all three.",
+   "how": "run here",
+   "ref": "studio/sampling_lab/renders.json"
+  },
+  {
+   "claim": "The browser lab's step rules follow sample_euler and get_ancestral_step, in one dimension, with our own generator.",
+   "how": "source",
+   "ref": "comfy/k_diffusion/sampling.py:get_ancestral_step"
+  }
+ ],
+ "unchecked": [
+  "The pictures are one seed on one model. They show what can happen, and no rate.",
+  "We did not compare the same seed across two machines. The warning there comes from PyTorch's notes."
+ ]
 }

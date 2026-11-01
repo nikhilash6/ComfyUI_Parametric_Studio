@@ -1,144 +1,45 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility
-torch.manual_seed(0)
-
-# --- Part 1: Multi-head Split/Merge ---
-# Define dimensions
-seq_len = 4
-hidden_dim = 8
-num_heads = 4
-head_dim = hidden_dim // num_heads  # 2
-
-# Create a dummy input tensor
-x = torch.randn(seq_len, hidden_dim)
-
-# Split into heads: (seq_len, hidden_dim) -> (seq_len, num_heads, head_dim)
-# Reshape to (seq_len, num_heads, head_dim) then permute to (num_heads, seq_len, head_dim)
-x_heads = x.view(seq_len, num_heads, head_dim).permute(1, 0, 2)
-
-# Merge back: (num_heads, seq_len, head_dim) -> (seq_len, hidden_dim)
-x_merged = x_heads.permute(1, 0, 2).reshape(seq_len, hidden_dim)
-
-# Verify split/merge is identity
-assert torch.allclose(x, x_merged), "Multi-head split/merge failed"
-print(f"RESULT split_merge_identity = {torch.allclose(x, x_merged)}")
-
-# --- Part 2: GQA Parameter Count Reduction ---
-# Standard MHA: Q, K, V each have shape (hidden_dim, hidden_dim)
-# GQA: Q has (hidden_dim, hidden_dim), K and V have (hidden_dim, hidden_dim // group_size)
-# Let's use group_size = 2 for demonstration
-group_size = 2
-num_kv_heads = num_heads // group_size  # 2
-
-# Calculate parameter counts for a single layer (ignoring biases for simplicity)
-# MHA: Q_proj, K_proj, V_proj each are (hidden_dim, hidden_dim)
-mha_params = 3 * (hidden_dim * hidden_dim)
-
-# GQA: Q_proj is (hidden_dim, hidden_dim), K_proj and V_proj are (hidden_dim, hidden_dim // group_size)
-gqa_params = (hidden_dim * hidden_dim) + 2 * (hidden_dim * (hidden_dim // group_size))
-
-# The reduction ratio for K/V specifically
-# MHA K/V params: 2 * hidden_dim * hidden_dim
-# GQA K/V params: 2 * hidden_dim * (hidden_dim // group_size)
-kv_reduction_ratio = (2 * hidden_dim * hidden_dim) / (2 * hidden_dim * (hidden_dim // group_size))
-
-print(f"RESULT mha_total_params = {mha_params}")
-print(f"RESULT gqa_total_params = {gqa_params}")
-print(f"RESULT kv_reduction_ratio = {kv_reduction_ratio:.6g}")
-
-# Assert that GQA reduces parameters
-assert gqa_params < mha_params, "GQA should reduce parameter count"
-assert kv_reduction_ratio == group_size, "KV reduction ratio should equal group size"
-
-# --- Part 3: RoPE Implementation and Relative Position Verification ---
-def apply_rope(x, positions, dim):
-    """
-    Apply Rotary Position Embedding to input tensor x.
-    x: (seq_len, dim)
-    positions: (seq_len,)
-    dim: dimension of the vector (must be even)
-    """
-    # Generate frequencies: theta_i = 10000^(-2i/dim)
-    # For dim=2, we have one pair: theta_0 = 10000^0 = 1
-    # For dim=4, we have two pairs: theta_0 = 1, theta_1 = 10000^(-0.5)
-    
-    # Create frequency tensor
-    # i ranges from 0 to dim/2 - 1
-    i = torch.arange(0, dim, 2).float()
-    theta = 10000 ** (-i / dim)  # (dim/2,)
-    
-    # positions: (seq_len,)
-    # theta: (dim/2,)
-    # We need to compute positions * theta for each pair
-    # Expand positions to (seq_len, 1) and theta to (1, dim/2)
-    pos_expanded = positions.unsqueeze(1)  # (seq_len, 1)
-    theta_expanded = theta.unsqueeze(0)    # (1, dim/2)
-    
-    # Compute angles: (seq_len, dim/2)
-    angles = pos_expanded * theta_expanded
-    
-    # Compute cos and sin
-    cos = torch.cos(angles)  # (seq_len, dim/2)
-    sin = torch.sin(angles)  # (seq_len, dim/2)
-    
-    # Split x into pairs: (seq_len, dim) -> (seq_len, dim/2, 2)
-    x_pairs = x.view(x.shape[0], dim // 2, 2)
-    x1 = x_pairs[:, :, 0]  # (seq_len, dim/2)
-    x2 = x_pairs[:, :, 1]  # (seq_len, dim/2)
-    
-    # Apply rotation:
-    # new_x1 = x1 * cos - x2 * sin
-    # new_x2 = x1 * sin + x2 * cos
-    new_x1 = x1 * cos - x2 * sin
-    new_x2 = x1 * sin + x2 * cos
-    
-    # Merge back: (seq_len, dim/2, 2)
-    new_x_pairs = torch.stack([new_x1, new_x2], dim=-1)
-    new_x = new_x_pairs.view(x.shape[0], dim)
-    
-    return new_x
-
-# Test RoPE with dim=4 (2 pairs)
-rope_dim = 4
-seq_len_rope = 3
-x_rope = torch.randn(seq_len_rope, rope_dim)
-positions = torch.tensor([0, 1, 2], dtype=torch.float32)
-
-# Apply RoPE
-x_rope_rotated = apply_rope(x_rope, positions, rope_dim)
-
-# Verify that RoPE is a rotation (preserves norm)
-norms_before = torch.norm(x_rope, dim=1)
-norms_after = torch.norm(x_rope_rotated, dim=1)
-assert torch.allclose(norms_before, norms_after, atol=1e-5), "RoPE should preserve vector norms"
-print(f"RESULT rope_norm_preserved = {torch.allclose(norms_before, norms_after, atol=1e-5)}")
-
-# Verify relative position property:
-# For the SAME query and key vectors, if we rotate them by different absolute positions
-# but the same relative offset, the dot product should be the same.
-
-# Let's use the same base vectors for query and key
-base_q = torch.randn(1, rope_dim)
-base_k = torch.randn(1, rope_dim)
-
-# Case 1: Query at position 0, Key at position 2
-q_pos0 = apply_rope(base_q, torch.tensor([0.0]), rope_dim)
-k_pos2 = apply_rope(base_k, torch.tensor([2.0]), rope_dim)
-score_case1 = torch.sum(q_pos0 * k_pos2, dim=1).item()
-
-# Case 2: Query at position 1, Key at position 3 (same relative offset of -2)
-q_pos1 = apply_rope(base_q, torch.tensor([1.0]), rope_dim)
-k_pos3 = apply_rope(base_k, torch.tensor([3.0]), rope_dim)
-score_case2 = torch.sum(q_pos1 * k_pos3, dim=1).item()
-
-# These should be equal (within floating point tolerance)
-assert abs(score_case1 - score_case2) < 1e-5, "RoPE attention score should depend only on relative position"
-print(f"RESULT rope_relative_pos_score1 = {score_case1:.6g}")
-print(f"RESULT rope_relative_pos_score2 = {score_case2:.6g}")
-print(f"RESULT rope_relative_pos_equal = {abs(score_case1 - score_case2) < 1e-5}")
+# CU-302 lab: heads, grouped keys and rotary positions, with the same shapes and formulas as ComfyUI's code. CPU, no model.
+import math, torch
+torch.manual_seed(0); torch.set_num_threads(1)
+# 1. Heads: split the width, attend separately, join. The split itself loses nothing.
+B, N, D, H = 1, 6, 64, 8; x = torch.randn(B, N, D); hd = D // H
+split = x.view(B, N, H, hd).transpose(1, 2); back = split.transpose(1, 2).reshape(B, N, D)
+print(f"width {D}, {H} heads -> {split.shape[1]} heads of width {split.shape[3]}, split then join is identical: {torch.equal(x, back)}"); assert torch.equal(x, back)
+# 2. The attention sum, with fewer key/value heads repeated to match, as comfy/ldm/lumina/model.py does with n_rep.
+def attend(xq, xk, xv):                                   # all (B, heads, N, head_dim)
+    s = (xq @ xk.transpose(-1, -2)) / math.sqrt(xk.shape[-1]); return s.softmax(-1) @ xv
+def proj_size(dim, heads, kv): return dim * (heads + kv + kv) * (dim // heads)    # one Linear(dim, (heads + 2 kv) head_dim) with no bias
+def gqa(x, heads, kv, W):
+    b, n, d = x.shape; hd = d // heads; xq, xk, xv = (x @ W).split([heads * hd, kv * hd, kv * hd], -1)
+    q = xq.view(b, n, heads, hd).transpose(1, 2); k = xk.view(b, n, kv, hd).transpose(1, 2).repeat_interleave(heads // kv, 1); v = xv.view(b, n, kv, hd).transpose(1, 2).repeat_interleave(heads // kv, 1)
+    return attend(q, k, v), k
+W = torch.randn(D, (H + 2 * 4) * hd); out, k = gqa(x, H, 4, W)
+print(f"8 query heads, 4 key/value heads: output {tuple(out.shape)}, heads 0 and 1 share keys: {torch.equal(k[:, 0], k[:, 1])}, heads 1 and 2 share keys: {torch.equal(k[:, 1], k[:, 2])}")
+assert torch.equal(k[:, 0], k[:, 1]) and not torch.equal(k[:, 1], k[:, 2])
+print("\nprojection weights for one block, Lumina 2 sizes (dim 2304, head width 96, from model_detection.py)")
+print("key/value heads   weights        relative")
+base = proj_size(2304, 24, 24)
+for kv in (24, 12, 8, 4):
+    n = proj_size(2304, 24, kv); print(f"{kv:<17d} {n:<14,d} {n / base:.3f}")
+assert proj_size(2304, 24, 8) == 2304 * 40 * 96
+print("the attention matrix is still one per query head: 24 of them, whatever kv is")
+# 3. RoPE: the same formula as rope() in comfy/ldm/flux/math.py, on one axis.
+def angles(pos, dim, theta=10000.0): return pos * (1.0 / theta ** torch.linspace(0, (dim - 2) / dim, dim // 2, dtype=torch.float64))
+def rotate(x, pos, theta=10000.0):
+    a = angles(torch.tensor(float(pos), dtype=torch.float64), x.shape[-1], theta); c, s = a.cos(), a.sin(); p, r = x[..., 0::2], x[..., 1::2]
+    out = torch.empty_like(x); out[..., 0::2] = c * p - s * r; out[..., 1::2] = s * p + c * r; return out
+dim = 96; q = torch.randn(dim, dtype=torch.float64); k = torch.randn(dim, dtype=torch.float64)
+print(f"\nlength before {q.norm():.6f}, after rotating to position 500 {rotate(q, 500).norm():.6f}"); assert abs(q.norm() - rotate(q, 500).norm()) < 1e-9
+print("query at  key at  gap  score with RoPE  score with added position")
+pe = lambda p: torch.cat([angles(torch.tensor(float(p), dtype=torch.float64), dim).sin(), angles(torch.tensor(float(p), dtype=torch.float64), dim).cos()])
+scores = {}
+for a, b in ((0, 3), (10, 13), (500, 503), (0, 40)):
+    s = (rotate(q, a) @ rotate(k, b)).item(); s2 = ((q + pe(a)) @ (k + pe(b))).item(); scores[(a, b)] = (s, s2); print(f"{a:<9d} {b:<7d} {b - a:<4d} {s:<16.6f} {s2:.6f}")
+assert abs(scores[(0, 3)][0] - scores[(500, 503)][0]) < 1e-9 and abs(scores[(0, 3)][0] - scores[(0, 40)][0]) > 1e-3
+print("same gap, same RoPE score:", abs(scores[(0, 3)][0] - scores[(500, 503)][0]) < 1e-9, " same gap, same added-position score:", abs(scores[(0, 3)][1] - scores[(500, 503)][1]) < 1e-9)
+# 4. Several axes: split the head width and give each axis its own part. Image ids here are (time, row, column), FLUX.2 uses four axes of 32.
+axes = [32, 32, 32]; assert sum(axes) == dim
+def rotate_nd(x, ids):
+    parts = x.split(axes, -1); return torch.cat([rotate(p, i) for p, i in zip(parts, ids)], -1)
+a = rotate_nd(q, (0, 5, 9)) @ rotate_nd(k, (0, 7, 2)); b = rotate_nd(q, (3, 25, 49)) @ rotate_nd(k, (3, 27, 42))
+print(f"\n3 axes: score for offset (0, +2, -7) at two places in the grid: {a.item():.6f} {b.item():.6f}"); assert abs(a - b) < 1e-9

@@ -1,0 +1,62 @@
+{
+ "code": "CU-351",
+ "title": "Waveform, sample rate and spectrograms: ComfyUI's AUDIO type",
+ "level": "300",
+ "questions": [
+  {
+   "q": "What two things make up an AUDIO value?",
+   "options": [
+    "A waveform tensor [batch, channels, samples] and a sample rate",
+    "A tensor [samples, channels, batch] and a file name",
+    "A spectrogram and a length",
+    "Left and right tensors with no rate"
+   ],
+   "answer": "A waveform tensor [batch, channels, samples] and a sample rate",
+   "why": "Every node in nodes_audio.py passes {\"waveform\": ..., \"sample_rate\": ...}."
+  },
+  {
+   "q": "88,200 samples at 32000 Hz last how long?",
+   "options": [
+    "2.756 s",
+    "2 s",
+    "1.837 s",
+    "88.2 s"
+   ],
+   "answer": "2.756 s",
+   "why": "Duration is samples / rate. The same tensor lasts 2 s at 44100 Hz. That is why the rate has to travel with it."
+  },
+  {
+   "q": "You raise a 0.5 peak sine by 12 dB with AudioAdjustVolume. What's the peak?",
+   "options": [
+    "About 1.99, because the node has no limiter",
+    "1.0, the node clips it",
+    "0.5, volume is relative",
+    "6.5"
+   ],
+   "answer": "About 1.99, because the node has no limiter",
+   "why": "Gain is 10 ** (12 / 20) = 3.98, and the node just multiplies."
+  },
+  {
+   "q": "You join H3 audio and Music 3 audio with AudioConcat. What rate comes out?",
+   "options": [
+    "44100 Hz, the higher rate, after the lower one is resampled up",
+    "32000 Hz, the lower rate",
+    "38050 Hz, the mean",
+    "It refuses them"
+   ],
+   "answer": "44100 Hz, the higher rate, after the lower one is resampled up",
+   "why": "match_audio_sample_rates resamples whichever rate is lower. Upsampling can't restore what a 32000 Hz file never held."
+  },
+  {
+   "q": "Why does a short window smear notes together in a spectrogram?",
+   "options": [
+    "Its bins are wide: at 16 kHz a 128-sample window has 125 Hz per bin",
+    "It removes loud sounds",
+    "It lowers the sample rate",
+    "It only sees stereo"
+   ],
+   "answer": "Its bins are wide: at 16 kHz a 128-sample window has 125 Hz per bin",
+   "why": "Bin width is sample rate / window length. Long windows have narrow bins and smear events in time instead."
+  }
+ ]
+}

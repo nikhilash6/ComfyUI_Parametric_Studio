@@ -1,0 +1,12 @@
+{
+ "code": "CU-113",
+ "title": "Mute, bypass, reroutes and groups: what the server really gets",
+ "level": "100",
+ "questions": [
+  {"q": "You bypass an ImageBlur in the middle of a chain. What does the server receive?", "options": ["A graph with no blur, where the next node is wired to whatever fed the blur", "The blur node marked with mode 4", "The blur node with its radius set to 0", "A graph with a gap and an error"], "answer": "A graph with no blur, where the next node is wired to whatever fed the blur", "why": "The API format has no mode field. The editor follows the wire through the bypassed node and writes the result."},
+  {"q": "You mute the same ImageBlur. What happens when you queue?", "options": ["Validation fails: the next node is missing its required input", "The chain runs without the blur", "The node runs but its output is ignored", "The whole queue stops permanently"], "answer": "Validation fails: the next node is missing its required input", "why": "A muted node gives no output, so the wire is dropped and required_input_missing follows, unless that input was optional."},
+  {"q": "You bypass a VAEDecode, whose inputs are LATENT and VAE and whose output is IMAGE. What does the PreviewImage after it get?", "options": ["Nothing, because no input of VAEDecode has type IMAGE", "The latent, as if it were an image", "The VAE", "A blank image"], "answer": "Nothing, because no input of VAEDecode has type IMAGE", "why": "Bypass only passes something through when the types allow it. Here none fits, so the wire is dropped."},
+  {"q": "What does a Reroute dot add to the graph the server sees?", "options": ["Nothing: the wire goes straight from source to target", "One extra node that copies the value", "A short delay", "A cached copy of the value"], "answer": "Nothing: the wire goes straight from source to target", "why": "Reroute is a virtual node in the editor. Sent by hand to the server it gives missing_node_type, because the server has no such class."},
+  {"q": "A group is set to Bypass Group Nodes. What did that actually do?", "options": ["It set the mode of each node inside, and the group itself is never sent", "It told the server to skip a region of the canvas", "It deleted the nodes", "It turned the group into a subgraph"], "answer": "It set the mode of each node inside, and the group itself is never sent", "why": "A group is a rectangle in the save format. Its menu changes the modes of the nodes in it."}
+ ]
+}

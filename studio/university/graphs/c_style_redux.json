@@ -1,0 +1,202 @@
+{
+ "meta": {
+  "title": "A style model: Redux",
+  "about": "The picture becomes extra tokens on the end of the text.",
+  "runs": "model",
+  "needs": [
+   "FLUX.1 dev weights and encoders, a SigCLIP vision model and the Redux style model."
+  ],
+  "packs": [],
+  "notes": {
+   "9": "Appends the style model's output to the text tensor along the token dimension."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "UNETLoader",
+   "inputs": {
+    "unet_name": "flux1-dev.safetensors",
+    "weight_dtype": "default"
+   }
+  },
+  "2": {
+   "class_type": "DualCLIPLoader",
+   "inputs": {
+    "clip_name1": "clip_l.safetensors",
+    "clip_name2": "t5xxl_fp16.safetensors",
+    "type": "flux",
+    "device": "default"
+   }
+  },
+  "3": {
+   "class_type": "VAELoader",
+   "inputs": {
+    "vae_name": "ae.safetensors"
+   }
+  },
+  "4": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "a weathered brass astrolabe on an oak table, warm window light, photograph",
+    "clip": [
+     "2",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "CLIPVisionLoader",
+   "inputs": {
+    "clip_name": "sigclip_vision_patch14_384.safetensors"
+   }
+  },
+  "6": {
+   "class_type": "StyleModelLoader",
+   "inputs": {
+    "style_model_name": "flux1-redux-dev.safetensors"
+   }
+  },
+  "7": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "example.png"
+   }
+  },
+  "8": {
+   "class_type": "CLIPVisionEncode",
+   "inputs": {
+    "clip_vision": [
+     "5",
+     0
+    ],
+    "image": [
+     "7",
+     0
+    ],
+    "crop": "center"
+   }
+  },
+  "9": {
+   "class_type": "StyleModelApply",
+   "inputs": {
+    "conditioning": [
+     "4",
+     0
+    ],
+    "style_model": [
+     "6",
+     0
+    ],
+    "clip_vision_output": [
+     "8",
+     0
+    ],
+    "strength": 1.0,
+    "strength_type": "multiply"
+   }
+  },
+  "10": {
+   "class_type": "FluxGuidance",
+   "inputs": {
+    "conditioning": [
+     "9",
+     0
+    ],
+    "guidance": 3.5
+   }
+  },
+  "11": {
+   "class_type": "BasicGuider",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "conditioning": [
+     "10",
+     0
+    ]
+   }
+  },
+  "12": {
+   "class_type": "EmptySD3LatentImage",
+   "inputs": {
+    "width": 1024,
+    "height": 1024,
+    "batch_size": 1
+   }
+  },
+  "13": {
+   "class_type": "RandomNoise",
+   "inputs": {
+    "noise_seed": 424242
+   }
+  },
+  "14": {
+   "class_type": "KSamplerSelect",
+   "inputs": {
+    "sampler_name": "euler"
+   }
+  },
+  "15": {
+   "class_type": "BasicScheduler",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ],
+    "scheduler": "simple",
+    "steps": 20,
+    "denoise": 1.0
+   }
+  },
+  "16": {
+   "class_type": "SamplerCustomAdvanced",
+   "inputs": {
+    "noise": [
+     "13",
+     0
+    ],
+    "guider": [
+     "11",
+     0
+    ],
+    "sampler": [
+     "14",
+     0
+    ],
+    "sigmas": [
+     "15",
+     0
+    ],
+    "latent_image": [
+     "12",
+     0
+    ]
+   }
+  },
+  "17": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "16",
+     0
+    ],
+    "vae": [
+     "3",
+     0
+    ]
+   }
+  },
+  "18": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "17",
+     0
+    ],
+    "filename_prefix": "university"
+   }
+  }
+ }
+}

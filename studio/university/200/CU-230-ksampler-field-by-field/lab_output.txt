@@ -1,0 +1,12 @@
+field changed            evals  first sigma  last before 0  mean result  change from base
+nothing (base)           40     14.615       0.029          +3.236       0.000
+seed 42 -> 43            40     14.615       0.029          +3.238       0.384
+steps 20 -> 40           80     14.615       0.029          +3.233       0.014
+cfg 7 -> 1               20     14.615       0.029          +1.470       1.767
+cfg 7 -> 3               40     14.615       0.029          +2.058       1.178
+sampler euler -> heun    78     14.615       0.029          +3.229       0.033
+scheduler -> simple      40     14.615       0.223          +3.246       0.043
+denoise 1 -> 0.5         40     1.182        0.029          +2.524       0.712
+same fields again, identical numbers: True
+
+uncond 0.2, cond 0.5: cfg 0: 0.20   cfg 1: 0.50   cfg 3: 1.10   cfg 7: 2.30   cfg 14: 4.40

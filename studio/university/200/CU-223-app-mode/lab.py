@@ -27,3 +27,19 @@ assert prompt["6"]["inputs"]["text"] == "a fox"
 # A form cannot hide a type error: an out-of-range or wrong-type value still fails on the server, as for any client.
 def check(node, key, value): return {"width": lambda v: isinstance(v, int) and 16 <= v <= 16384}.get(key, lambda v: True)(value)
 print("width=768 valid:", check("5", "width", 768), "  width=4 valid:", check("5", "width", 4)); assert not check("5", "width", 4)
+# What a field costs: walk the wires down from the node it sits on. Everything already cached, one value changed.
+down = {n: [m for m, x in prompt.items() if any(is_link(v) and v[0] == n for v in x["inputs"].values())] for n in prompt}
+def reruns(n):
+    seen, todo = set(), [n]
+    while todo:
+        k = todo.pop()
+        if k not in seen: seen.add(k); todo += down[k]
+    return seen
+print("\nchange this field     nodes that run again")
+for n, k, label in [["6", "text", "Describe the image"], ["3", "seed", "Seed"], ["5", "width", "Width"], ["9", "filename_prefix", "File prefix"], ["4", "ckpt_name", "Checkpoint"]]:
+    print(f"{label:20}  {len(reruns(n))} of {len(prompt)}")
+assert len(reruns("3")) == 3 and len(reruns("9")) == 1 and len(reruns("4")) == 6
+# The shape the front end saves in the workflow's extra field. The first item is a widget id or a node id.
+saved = {"linearMode": True, "linearData": {"inputs": [[n, k] for n, k, _ in app["inputs"]], "outputs": app["outputs"]}}
+print("\nsaved with the workflow:", json.dumps(saved)); assert saved["linearData"]["outputs"] == ["9"]
+print("the prompt graph holds it:", "linearData" in json.dumps(prompt)); assert "linearData" not in json.dumps(prompt)

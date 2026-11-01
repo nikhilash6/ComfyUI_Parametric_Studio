@@ -1,0 +1,12 @@
+the page loads these as modules:
+  /extensions/my_pack/brighten.js
+  /extensions/my_pack/sub/more.js
+served, but not loaded by itself: /extensions/my_pack/style.css
+not served at all: None
+/extensions/my_pack/brighten.js: ../../scripts/app.js -> /scripts/app.js
+/extensions/my_pack/sub/more.js: ../../scripts/app.js -> /extensions/scripts/app.js
+so a file in a subfolder needs: /scripts/app.js from ../../../scripts/app.js
+
+hook order on page load: init > addCustomNodeDefs > getCustomWidgets > beforeRegisterNodeDef > registerCustomNodes > beforeConfigureGraph > nodeCreated > loadedGraphNode > afterConfigureGraph > setup
+both chain: ['first', 'second']
+second does not chain: ['rude']

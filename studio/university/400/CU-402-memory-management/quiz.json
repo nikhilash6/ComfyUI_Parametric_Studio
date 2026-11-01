@@ -57,6 +57,17 @@
    ],
    "answer": "Reports the error and unloads all models",
    "why": "The except branch of execute in execution.py calls unload_all_models."
+  },
+  {
+   "q": "Two idle models could be evicted, 1 GB and 8 GB, neither partly offloaded and with equal reference counts, and you need only 1 GB more. Which goes?",
+   "options": [
+    "The 1 GB one, and the walk stops",
+    "The 8 GB one, the largest first",
+    "Both, always",
+    "Neither, the new model loads partly"
+   ],
+   "answer": "The 1 GB one, and the walk stops",
+   "why": "The sort puts smaller sizes first after offloaded memory and reference count, and free_memory stops once there is room."
   }
  ]
 }

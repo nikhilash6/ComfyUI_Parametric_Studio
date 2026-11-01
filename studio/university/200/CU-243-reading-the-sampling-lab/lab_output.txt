@@ -1,0 +1,17 @@
+atlas: 720 methods; 183 in core; 13 in a live pack only; 524 need a pack; 44 rendered
+by family: guidance 174, latent 91, math 12, noise 79, patch 86, sampler 164, scheduler 114
+by label: from code 692, from pack README claim 2, inference 26
+second reader looked at 378: 296 right, 68 imprecise, 14 wrong, so 22% needed a fix or a caveat. Share of all methods checked this way: 52%
+renders: 44 real, all in core. Pack methods proven by a render: 0 of 6 tried
+
+Curves page: 'Sigma here' is the list at a step, 'Last before 0' is the last non-zero value
+karras step 0: 14.61464  step 10: 1.09079  last before 0: 0.02917
+linear_quadratic step 0: 14.61464  step 10: 14.24928  last before 0: 2.67448
+
+Bench page: slope is the straight-line fit of log error against log calls, at 10, 20 and 40 steps
+euler: -1.01, stored -1.01.  Double the calls and the error is multiplied by 0.50
+heun:  -2.24, stored -2.24.  Double the calls and the error is multiplied by 0.21
+
+noise panel: a bar at 1.00 holds its fair share of power
+bands 16, lowest 0.941, highest 1.017, mean 1.000
+ancestral panel, karras, first step [from, to, sigma down, sigma up]: [14.6146, 11.7254, 9.4073, 6.9991]

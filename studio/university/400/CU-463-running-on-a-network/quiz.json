@@ -1,0 +1,73 @@
+{
+ "code": "CU-463",
+ "title": "Running ComfyUI safely on a network",
+ "level": "400",
+ "questions": [
+  {
+   "q": "What does --listen add to security?",
+   "options": [
+    "A password prompt",
+    "Encryption",
+    "Nothing: it only changes which addresses answer",
+    "A firewall"
+   ],
+   "answer": "Nothing: it only changes which addresses answer",
+   "why": "The flag sets the bind address, and no other code depends on it for access."
+  },
+  {
+   "q": "You add --enable-cors-header with one named origin. What happens to the origin check?",
+   "options": [
+    "It stays on for other origins",
+    "It is not installed at all",
+    "It only blocks scripts",
+    "It turns into a login"
+   ],
+   "answer": "It is not installed at all",
+   "why": "PromptServer installs one or the other. Other pages can still send a simple POST."
+  },
+  {
+   "q": "What does a script on another device need to pass the origin check on a LAN address?",
+   "options": [
+    "A cookie",
+    "A matching Origin header",
+    "Nothing: it can send any header or none",
+    "A TLS certificate"
+   ],
+   "answer": "Nothing: it can send any header or none",
+   "why": "The real middleware returned 200 for a forged Origin. The check guards against browsers."
+  },
+  {
+   "q": "What does --multi-user check?",
+   "options": [
+    "A password",
+    "That the comfy-user header names a known user",
+    "A signed token",
+    "The client's IP address"
+   ],
+   "answer": "That the comfy-user header names a known user",
+   "why": "get_request_user_id reads the header and asks for nothing more."
+  },
+  {
+   "q": "Only --tls-keyfile is set. What do you get?",
+   "options": [
+    "HTTPS with a warning",
+    "A startup error",
+    "Plain HTTP",
+    "HTTPS without a certificate"
+   ],
+   "answer": "Plain HTTP",
+   "why": "The context is only made when both files are given."
+  },
+  {
+   "q": "What is the sound way to let others in?",
+   "options": [
+    "--listen and a hidden URL",
+    "--multi-user",
+    "Keep ComfyUI on loopback and put a proxy with a login in front",
+    "--enable-cors-header"
+   ],
+   "answer": "Keep ComfyUI on loopback and put a proxy with a login in front",
+   "why": "SECURITY.md leaves securing an exposed server to you, naming firewall, reverse proxy and authentication."
+  }
+ ]
+}

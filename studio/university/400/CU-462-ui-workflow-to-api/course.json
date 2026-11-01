@@ -1,0 +1,71 @@
+{
+ "code": "CU-462",
+ "title": "From a UI workflow to API format, and setting values by node id",
+ "level": "400",
+ "prereq": [
+  "CU-110",
+  "CU-224"
+ ],
+ "char": "graph",
+ "hook": "Let the editor export it, then change values with guard rails. Find out why widgets_values shifts by one, and why a mistyped input name fails silently.",
+ "track": "automation",
+ "order": 16,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "code_refs": [
+  "execution.py:validate_inputs",
+  "execution.py:get_input_data"
+ ],
+ "verified": [
+  {
+   "claim": "The export skips virtual, muted and bypassed nodes, writes widgets by name, wraps arrays, and adds _meta.",
+   "how": "docs",
+   "ref": "src/utils/executionUtil.ts:graphToPrompt in the front end, fetched 2026-11-01"
+  },
+  {
+   "claim": "Wires are followed through bypassed and virtual nodes.",
+   "how": "docs",
+   "ref": "ExecutableNodeDTO.ts in the front end, resolveInput and resolveOutput, fetched 2026-11-01"
+  },
+  {
+   "claim": "The seed's control widget is marked not to be sent.",
+   "how": "docs",
+   "ref": "valueControlWidgets.ts in the front end, fetched 2026-11-01"
+  },
+  {
+   "claim": "execution.py unwraps __value__.",
+   "how": "source",
+   "ref": "execution.py:validate_inputs"
+  },
+  {
+   "claim": "Export (API) and what it drops.",
+   "how": "docs",
+   "ref": "https://docs.comfy.org/development/api-development/workflow-api-format fetched 2026-11-01"
+  },
+  {
+   "claim": "A converter using object_info order on default_workflow.json passed validate_prompt, except for missing model menus on three loaders.",
+   "how": "run here",
+   "ref": "execution.py:validate_prompt"
+  },
+  {
+   "claim": "steps set to fixed gives invalid_input_type from the real function.",
+   "how": "run here",
+   "ref": "execution.py:validate_inputs"
+  },
+  {
+   "claim": "Unknown input names on EmptyImage pass validation and run without complaint.",
+   "how": "run here",
+   "ref": "execution.py:get_input_data"
+  }
+ ],
+ "unchecked": [
+  "The converter in the lab handles simple graphs only: no subgraphs, reroutes, bypass rewiring or widgets made by a pack's JavaScript.",
+  "We read the front end on its main branch, which may be newer than yours.",
+  "The docs page says the save format is keyed by titles. The files we read use a nodes list with ids, so we follow the files."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 0
+ }
+}

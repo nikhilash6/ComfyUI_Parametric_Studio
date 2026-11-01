@@ -8,11 +8,67 @@
  "char": "denoise",
  "hook": "Two networks play a game whose exact answer is a density ratio and a value of minus log 4. Then a real GAN trained on a CPU shows how far training gets from the theory.",
  "code_refs": [
-  "comfy/ldm/lightricks/vocoders/vocoder.py:class Vocoder",
-  "comfy/ldm/ace/vae/music_vocoder.py:class HiFiGANGenerator",
-  "comfy_extras/nodes_upscale_model.py:class UpscaleModelLoader",
-  "comfy/ldm/cascade/stage_a.py:class Discriminator"
+  "comfy/ldm/lightricks/vocoders/vocoder.py:Vocoder",
+  "comfy/ldm/ace/vae/music_vocoder.py:HiFiGANGenerator",
+  "comfy_extras/nodes_upscale_model.py:UpscaleModelLoader",
+  "comfy_extras/nodes_upscale_model.py:ImageUpscaleWithModel",
+  "comfy/ldm/cascade/stage_a.py:Discriminator"
  ],
  "track": "history",
- "order": 10
+ "order": 10,
+ "graphs": [
+  "sd15_upscale"
+ ],
+ "verified": [
+  {
+   "claim": "The only class named Discriminator in the core source, by searching comfy and comfy_extras, and nothing there builds it.",
+   "how": "source",
+   "ref": "comfy/ldm/cascade/stage_a.py:Discriminator"
+  },
+  {
+   "claim": "The docstring says it is based on hifi-gan and supports HiFi-GAN and BigVGAN v2.",
+   "how": "source",
+   "ref": "comfy/ldm/lightricks/vocoders/vocoder.py:Vocoder"
+  },
+  {
+   "claim": "The class exists in the ACE vocoder file.",
+   "how": "source",
+   "ref": "comfy/ldm/ace/vae/music_vocoder.py:HiFiGANGenerator"
+  },
+  {
+   "claim": "Upscale files are loaded through spandrel.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_upscale_model.py:UpscaleModelLoader"
+  },
+  {
+   "claim": "Tiles start at 512, halve on out of memory, and the node raises the error below 128.",
+   "how": "source",
+   "ref": "comfy_extras/nodes_upscale_model.py:ImageUpscaleWithModel"
+  },
+  {
+   "claim": "The value of the game, the two gradients and the four small GANs print as shown.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "Title and date from the arXiv export API, this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/1406.2661"
+  },
+  {
+   "claim": "The phrase hallucinated details is in the ESRGAN abstract, read this session.",
+   "how": "docs",
+   "ref": "https://arxiv.org/abs/1809.00219"
+  }
+ ],
+ "unchecked": [
+  "The paper quotes and table numbers were read in an earlier audit of this lesson. In this pass we rechecked the arXiv titles and abstracts only.",
+  "We did not train a real image GAN. The lab is one small network on one-dimensional data.",
+  "We did not check which upscale files were trained adversarially. The node can't tell you, and the file's own page has to.",
+  "The advice on faces and measurements is our judgement, not a measured result."
+ ],
+ "kit": true,
+ "second_read": {
+  "errors_fixed": 3
+ }
 }

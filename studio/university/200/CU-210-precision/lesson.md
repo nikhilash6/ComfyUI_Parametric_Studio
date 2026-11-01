@@ -2,6 +2,12 @@
 
 **Objective.** Read a float format's limits from its bits, predict where each format fails, and justify the rule "merge first, quantize after". Taught by Bit Bandit.
 
+## In plain words
+
+A computer stores a number in a fixed number of bits. Fewer bits save memory and lose exactness. There are two ways to lose: rough numbers, and numbers that can't be big or small enough. Models have billions of numbers, so saving half the memory matters a lot, and most small rounding errors go unseen. Then a certain sum goes wrong and you get a black picture. This lesson shows where.
+
+{{play:quant}}
+
 ## The idea
 
 A float stores a sign, an exponent that sets the range, and a mantissa that sets the precision. Spacing between neighbouring values grows with size. So a number can be stored only approximately, and a small number added to a big one may disappear.
@@ -25,6 +31,19 @@ The formats fail differently. fp16 has more precision but overflows at 65,504. b
 ## In ComfyUI
 
 `unet_dtype`, `vae_dtype` and `should_use_bf16` in `comfy/model_management.py` choose formats. You can force them, with flags such as `--bf16-unet`. The flag `--fp8_e4m3fn-unet` says "store": weights stay in FP8, and `manual_cast` in `comfy/ops.py` casts them when they are used, so computation runs in a wider format unless the device supports FP8 compute. The help text for `--fp16-vae` warns it "might cause black images". The third experiment below shows one way that can happen.
+
+You can also choose per model. `UNETLoader` has a `weight_dtype` menu with `default`, `fp8_e4m3fn`, `fp8_e4m3fn_fast` and `fp8_e5m2`.
+
+{{graph:b_unet_fp8}}
+
+## What goes wrong
+
+- **Black images or NaN after switching to fp16.** An inf or NaN spreads through everything after it. Try without `--fp16-vae`, or use bf16. CU-291 walks through it.
+- **Merging quantized models.** Small updates turn into rounding noise, as experiment 1 shows. Merge in bf16 or fp16 and quantize afterwards.
+- **A LoRA seems weak or noisy on an fp8 model.** Its small changes meet coarse weights. Compare with the same LoRA at default precision before you blame the LoRA.
+- **Assuming fp8 means fp8 compute.** It stores in fp8 and usually computes wider, through `manual_cast`. Memory and speed aren't halved in the same way.
+- **Reading "16-bit" as one thing.** fp16 and bf16 fail differently. fp16 runs out of range and bf16 runs out of precision.
+- **Summing many tiny values in a low-precision float.** Experiment 2 lost the entire total. Sum first in a wider format.
 
 ## Lab
 

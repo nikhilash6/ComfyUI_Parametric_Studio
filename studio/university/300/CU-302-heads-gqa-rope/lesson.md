@@ -1,94 +1,95 @@
 # CU-302 - Multi-head, GQA and RoPE
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Say what heads split, what grouped-query attention shares and saves, and why rotating by position makes attention care about gaps. Taught by Madame Attention.
 
-## Why this matters
+## The idea
 
-Welcome back. In CU-301, we looked at the Transformer as a black box that predicts the next token. Today, we open the hood. We are going to dissect the three mechanisms that allow a model to understand *structure*, *efficiency*, and *space*.
+CU-301 had one attention. Real blocks change it in three ways.
 
-Without **Multi-Head Attention (MHA)**, your model is a monolith; it sees the whole sentence but cannot simultaneously track syntax, semantics, and coreference. Without **Grouped-Query Attention (GQA)**, your inference is painfully slow because you are storing redundant memory for every single head. Without **Rotary Position Embedding (RoPE)**, your model is amnesiac regarding order; it treats "cat sat" and "sat cat" as identical sets of tokens.
+- **Heads.** Cut the width into pieces and attend separately in each. 64 channels and 8 heads means 8 attentions of 8 channels. Each head makes its own weights.
+- **Grouped-query attention (GQA).** Keep all the query heads, but make fewer keys and values and share them. Fewer weights and smaller caches. Same number of attention matrices.
+- **RoPE (rotary position embedding).** Turn each query and key by an angle that depends on its position. Nothing is added to the token. The score ends up depending on how far apart two tokens are.
 
-In ComfyUI, these are not just theoretical concepts. They are the gears turning inside `HunYuanDiT`, `SAM3`, and `TripoSplat`. Whether you are generating a 4K image or tracking an object in video, these mechanisms determine how the model attends to whom.
+## The mechanism
 
-## The intuition
+**Heads.** Reshape (batch, tokens, width) into (batch, heads, tokens, width ÷ heads), run CU-301's sum, and join back. No channels are lost. Heads see different numbers because of the projection before the split, so a head has no fixed job like "grammar" unless training happens to give it one.
 
-Imagine a committee deciding on a policy.
+**GQA.** Ainslie et al. (2023) generalise multi-query attention, which uses a single key and value head. With 24 query heads and 8 key and value heads, each key head is repeated three times to line up. Their abstract reports that GQA, retrained from a multi-head checkpoint, gets close to multi-head quality with speed comparable to multi-query. That is their result, on language models, and we repeat it as theirs.
 
-**Multi-Head Attention** is like having four different experts in the room. One expert looks only at the grammar, another at the emotional tone, another at the factual accuracy, and the fourth at the logical flow. They all look at the same document (the input sequence), but they extract different features. At the end, they merge their opinions. This is why we split the hidden dimension into heads.
+**RoPE.** Take a query or key at position m. Group its channels in pairs. Rotate pair i by the angle m × ωᵢ, where ωᵢ = 1 ÷ θ^(i ÷ (d÷2)), with θ usually 10,000. A rotation keeps length. When you take a dot product of a query at m and a key at n, each pair's contribution depends only on the angle between them, which is (n − m) × ωᵢ. So absolute position drops out. Su et al. (2021) introduced this.
 
-**Grouped-Query Attention (GQA)** is an optimization. In standard MHA, every expert (Query head) has its own dedicated notepad (Key/Value heads). This is expensive. GQA says: "Experts 1 and 2 can share a notepad. Experts 3 and 4 can share another." You reduce the number of notepads (KV heads) while keeping the number of experts (Q heads) the same. The quality remains close to MHA, but the memory footprint drops significantly.
+```
+pair i of x at position m:    x₀' = x₀ cos(m ωᵢ) − x₁ sin(m ωᵢ)
+                              x₁' = x₀ sin(m ωᵢ) + x₁ cos(m ωᵢ)
+```
 
-**RoPE** is how the experts know *where* things are. Instead of adding a position vector to the token (which can interfere with the content), RoPE *rotates* the vector itself. Think of it as a compass. If I rotate my compass needle by 10 degrees, I know my position relative to North. If I rotate it by 20 degrees, I know I am further away. The dot product between two rotated vectors depends only on the *difference* in their rotations (the relative distance), not their absolute orientation. This gives the model a built-in sense of relative distance.
+For an image you need two or more axes. Split the head's width into a part per axis, and rotate each part by that axis's coordinate.
 
-## Under the hood (the mechanism; math in plain text, define every symbol)
-
-Let us define the variables. Let $x$ be the input tensor of shape $(seq\_len, hidden\_dim)$.
-
-**1. Multi-Head Split**
-We split $x$ into $num\_heads$ sub-vectors.
-$$x\_heads = x.view(seq\_len, num\_heads, head\_dim).permute(1, 0, 2)$$
-Here, $head\_dim = hidden\_dim / num\_heads$. The result is a tensor of shape $(num\_heads, seq\_len, head\_dim)$. Each head computes attention independently.
-
-**2. GQA Parameter Reduction**
-In standard MHA, the Key and Value projections are matrices of size $(hidden\_dim, hidden\_dim)$.
-In GQA, we introduce a $group\_size$. The number of KV heads is $num\_kv\_heads = num\_heads / group\_size$.
-The Key projection matrix becomes $(hidden\_dim, hidden\_dim / group\_size)$.
-The parameter count for K and V drops by a factor of $group\_size$.
-
-**3. RoPE (Rotary Position Embedding)**
-For a vector $x$ at position $m$, we rotate it using a matrix $R_m$.
-The rotation is applied to pairs of dimensions. For a dimension $i$, the angle is:
-$$\theta_i = m \cdot 10000^{-2i/d}$$
-where $d$ is the head dimension.
-The rotation for a pair $(x_{2i}, x_{2i+1})$ is:
-$$x'_{2i} = x_{2i} \cos(\theta_i) - x_{2i+1} \sin(\theta_i)$$
-$$x'_{2i+1} = x_{2i} \sin(\theta_i) + x_{2i+1} \cos(\theta_i)$$
-Crucially, this is a rotation, so it preserves the norm (length) of the vector.
+{{play:rope}}
 
 ## In ComfyUI
 
-These mechanisms are deeply embedded in ComfyUI's model implementations.
+**Heads** are everywhere. `optimized_attention` takes a `heads` count, and `attention` in `comfy/ldm/flux/math.py` reads it off the tensor.
 
-*   **`comfy/ldm/hydit`**: The HunYuanDiT model uses `Attention` and `CrossAttention` modules from `attn_layers.py`. It explicitly uses `apply_rotary_emb` to apply RoPE to query and key tensors. The `posemb_layers.py` file contains `get_2d_rotary_pos_embed`, which generates the 2D rotary embeddings specific to image patches.
-*   **`comfy/ldm/sam3`**: The SAM3 tracker uses `apply_rope_memory` to apply 2D axial RoPE to memory attention. This allows the model to track objects across time and space by encoding their relative positions in the memory buffer.
-*   **`comfy/ldm/triposplat`**: The TripoSplat model uses `RopeMultiHeadAttention` and `RePo3DRotaryEmbedding`. This is a specialized adaptation of RoPE for 3D point clouds, allowing the model to understand spatial relationships in 3D Gaussian Splatting.
+**GQA is real here.** `JointAttention` in `comfy/ldm/lumina/model.py` has `n_kv_heads` and `n_rep = n_heads // n_kv_heads`, and one `Linear` that produces (n_heads + 2 n_kv_heads) × head_dim. `model_detection.py` sets 24 and 8 for the original Lumina 2 size, and 30 and 30 for the Z image size, which is ordinary multi-head. Text encoders do it too: `comfy/text_encoders/llama.py` has `num_key_value_heads` in its configs and `num_kv_heads` in its attention.
 
-Note: While GQA is a standard architectural choice in many modern LLMs, the specific ComfyUI code evidence provided here highlights the use of standard `MultiHeadAttention` and RoPE implementations. The specific GQA node configurations are not covered in our sources, but the mathematical principles apply to any transformer block where KV heads are grouped.
+**RoPE** is `rope` and `apply_rope` in `comfy/ldm/flux/math.py`, with `EmbedND` in `comfy/ldm/flux/layers.py` making one set per axis. FLUX.2's detection sets `axes_dim` to four axes of 32. The graph below uses that model. `comfy/ldm/hydit/attn_layers.py` has `apply_rotary_emb`, and `comfy/ldm/sam3/tracker.py` has `apply_rope_memory`.
+
+{{graph:wf_flux2_klein}}
+
+ComfyUI also applies RoPE to Q and K only, as `attention` shows. V isn't rotated. The score decides the mix, and the values are what get mixed.
+
+## What goes wrong
+
+- **You assume a head means something.** Nothing in the code gives a head a topic. Reading one head's map as "the grammar head" is a guess.
+- **Head width doesn't divide evenly.** The width must split by the head count, and `rope` asserts `dim % 2 == 0`. With a custom config, an odd head width stops there.
+- **Axis widths don't add up.** `Flux` raises an error if `sum(axes_dim)` differs from the positional width. If you see it, the checkpoint was detected as the wrong model or the config was edited by hand.
+- **You compare GQA with multi-head by weights alone.** The lab shows weights fall to 0.556 at 24 and 8. That says nothing about picture quality. Only a trained model can show that.
+- **You expect RoPE to give absolute place.** A pure dot product depends on the gap, so a token can't tell "top left" from it. Models still vary with size because scales and training data vary.
 
 ## Lab
 
-In this lab, we verify three properties:
-1.  **Split/Merge Identity**: Splitting a tensor into heads and merging it back should result in the original tensor.
-2.  **GQA Efficiency**: We calculate the parameter count for MHA vs. GQA with a group size of 2.
-3.  **RoPE Properties**: We verify that RoPE preserves vector norms and that the attention score depends only on relative position.
-
-Here are the results from our lab run:
+Heads first, then shared keys.
 
 ```text
-RESULT split_merge_identity = True
-RESULT mha_total_params = 192
-RESULT gqa_total_params = 128
-RESULT kv_reduction_ratio = 2
-RESULT rope_norm_preserved = True
-RESULT rope_relative_pos_score1 = -1.38599
-RESULT rope_relative_pos_score2 = -1.38599
-RESULT rope_relative_pos_equal = True
+width 64, 8 heads -> 8 heads of width 8, split then join is identical: True
+8 query heads, 4 key/value heads: output (1, 8, 6, 8), heads 0 and 1 share keys: True, heads 1 and 2 share keys: False
 ```
 
-*   `RESULT split_merge_identity = True`: Proves that the reshape and permute operations for multi-head attention are reversible and lossless.
-*   `RESULT mha_total_params = 192` and `RESULT gqa_total_params = 128`: Shows that with a group size of 2, GQA reduces the total parameter count for Q, K, V projections from 192 to 128.
-*   `RESULT kv_reduction_ratio = 2`: Confirms that the Key/Value parameter reduction is exactly equal to the group size.
-*   `RESULT rope_norm_preserved = True`: Proves that RoPE is a pure rotation; it does not change the magnitude of the vector, only its direction.
-*   `RESULT rope_relative_pos_score1 = -1.38599` and `RESULT rope_relative_pos_score2 = -1.38599`: These two scores are identical. In Case 1, the query is at position 0 and key at 2 (offset -2). In Case 2, query is at 1 and key at 3 (offset -2). The fact that the scores are equal proves that RoPE encodes *relative* position, not absolute position.
+The same counting at Lumina 2's sizes. The projection is one layer's worth, and the formula is the one in `JointAttention`.
 
-## Common mistakes
+```text
+key/value heads   weights        relative
+24                15,925,248     1.000
+12                10,616,832     0.667
+8                 8,847,360      0.556
+4                 7,077,888      0.444
+```
 
-1.  **Confusing Absolute and Relative Position**: If you use additive positional embeddings, the model learns absolute positions. If you use RoPE, the model learns relative positions. Do not mix them incorrectly. RoPE is applied to Q and K *before* the dot product.
-2.  **Ignoring Head Dimension Parity**: RoPE requires the head dimension to be even because it operates on pairs of dimensions. If your `head_dim` is odd, the rotation logic will break or require padding.
-3.  **Assuming GQA is Free**: While GQA reduces memory, it can slightly degrade quality if the group size is too large. The evidence from the GQA paper (arXiv:2305.13245) suggests that uptraining is required to maintain quality close to MHA.
+Now RoPE. We also checked the formula against ComfyUI's own `rope` and `_apply_rope1` on a CPU: the largest gap was 2.4e-07, which is rounding between float32 and float64.
 
-## Go deeper
+```text
+query at  key at  gap  score with RoPE  score with added position
+0         3       3    -15.734306       36.905059
+10        13      3    -15.734306       28.187126
+500       503     3    -15.734306       20.093070
+0         40      40   -16.555222       18.010450
+same gap, same RoPE score: True  same gap, same added-position score: False
+```
 
-*   **arXiv:2104.09864**: *RoFormer: Enhanced Transformer with Rotary Position Embedding*. This paper introduces RoPE and proves its ability to incorporate explicit relative position dependency into self-attention.
-*   **arXiv:2305.13245**: *GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints*. This paper introduces Grouped-Query Attention and provides a recipe for uptraining existing MHA checkpoints into GQA models using only 5% of the original pre-training compute.
+The vectors are random, so the scores mean nothing alone. What counts is the first three rows matching. Adding a position vector to the token does not give that, as the last column shows.
 
+```text
+3 axes: score for offset (0, +2, -7) at two places in the grid: -20.359071 -20.359071
+```
+
+## Sources
+
+- [Vaswani et al. 2017. Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+- [Su et al. 2021. RoFormer: Enhanced Transformer with Rotary Position Embedding](https://arxiv.org/abs/2104.09864)
+- [Ainslie et al. 2023. GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints](https://arxiv.org/abs/2305.13245)
+- [ComfyUI v0.43.0, comfy/ldm/flux/math.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/math.py)
+- [ComfyUI v0.43.0, comfy/ldm/flux/layers.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/layers.py)
+- [ComfyUI v0.43.0, comfy/ldm/lumina/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/lumina/model.py)
+- [ComfyUI v0.43.0, comfy/model_detection.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/model_detection.py)
+- [ComfyUI v0.43.0, comfy/text_encoders/llama.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/text_encoders/llama.py)

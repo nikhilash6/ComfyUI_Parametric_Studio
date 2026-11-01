@@ -2,6 +2,14 @@
 
 **Objective.** Show that predicting noise, predicting the clean image and learning the score are one thing, and know when a sampler is solving an ODE and when an SDE. Taught by Dr. Denoise.
 
+## In plain words
+
+Imagine every possible picture as a place on a map, with likely pictures as high ground. The score is an arrow at each spot pointing uphill. If you had those arrows, you could start anywhere and walk to a likely picture. Nobody can compute them directly. But a neat result says: a model trained to remove noise is secretly learning those arrows. So "predict the noise", "predict the clean image" and "learn the arrows" are one thing with three names.
+
+The second idea is about the walk. You can follow the arrows smoothly, and a start always leads to one end. Or you can follow them with extra jitter, which reaches the same overall spread of results but a different one each time. You pick between those every time you choose a sampler. Try `euler` and `euler_ancestral` here:
+
+{{play:solvers}}
+
 ## The idea
 
 The score of a density is the direction in which it rises fastest: s(x) = ∇ₓ log p(x). It needs no normalising constant, which is the hard part of density models. Hyvärinen (2005) showed that a score can be fitted without knowing the true score. Vincent (2011) made it practical by adding noise. Song and Ermon (2019) trained at many noise levels, and Song et al. (2020) unified everything as stochastic differential equations.
@@ -42,6 +50,18 @@ With f = 0 and σ(t) = t, g² = 2t. The ODE becomes dx/dσ = −σ s(x) = (x −
 ## In ComfyUI
 
 `to_d` in `comfy/k_diffusion/sampling.py` is that derivative, (x − denoised) / σ, and `sample_euler` integrates it. CU-205 covers solvers and CU-207 covers samplers that add noise.
+
+The dial between the two walks is `eta` on samplers that have it. This graph uses it: at 0 you follow the ODE, and at 1 you get the ancestral form of the noisy walk. Note it is one way to add noise, not the exact SDE of the formula above.
+
+{{graph:b_ancestral_eta}}
+
+## What goes wrong
+
+- **Thinking a noise-adding sampler has a different target.** Both routes aim at the same distribution. The noisy one reaches it by a route that changes per run.
+- **Expecting an SDE sampler's result to match an ODE sampler's on the same seed.** They agree in distribution, not per image. The lab's last line shows how far apart runs land.
+- **Treating the score as something ComfyUI stores.** It isn't. Samplers use the denoised estimate, and `to_d` turns that into a direction.
+- **Reading a low training loss as a good score everywhere.** A low average can hide poor fit at some noise levels.
+- **Mixing up σ and t.** The neat formula dx/dσ uses σ as time. Other papers use another clock, and their drift terms look different. It's the same path in other units.
 
 ## Lab
 

@@ -1,7 +1,19 @@
-RESULT grid_size = 32
-RESULT voxel_size = 0.0967742
-RESULT surface_voxel_count = 1488
-RESULT estimated_surface_area = 37.9854
-RESULT analytical_surface_area = 12.5664
-RESULT area_ratio = 3.02278
-RESULT relative_error = 2.02278
+grid    voxels stored   inside voxels   near-surface voxels   blocky area / true
+32      32,768          5,040           2,864                 1.511
+64      262,144         40,800          11,624                1.507
+128     2,097,152       325,184         46,184                1.500
+the area of the blocks stays near 3/2 of the truth. A finer grid gives smaller stairs, not less stair
+exact limit: 6 pi r^2 / 4 pi r^2 = 1.500
+counting both walls of a thin shell, as the first version of this lab did: ratio 3.04
+
+surface radius recovered along a ray by linear interpolation between SDF samples, against the staircase answer
+  8 samples: SDF crossing 1.0000   occupancy only 1.1250
+ 16 samples: SDF crossing 1.0000   occupancy only 1.0312
+ 32 samples: SDF crossing 1.0000   occupancy only 1.0312
+
+resolution   full grid, 1 float   thin band, coords + 1 float   triangle mesh, about   Gaussians at band count, 14 floats
+64           1.0                  0.2                           0.4                    0.6  MiB
+256          64.0                 2.8                           6.3                    9.8  MiB
+1024         4096.0               44.7                          100.5                  156.4  MiB
+
+one Gaussian of scale 0.1, value at a distance: [1.0, 0.607, 0.135, 0.011]

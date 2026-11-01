@@ -1,0 +1,84 @@
+{
+ "code": "CU-371",
+ "title": "Launch flags that matter",
+ "level": "300",
+ "questions": [
+  {
+   "q": "With no flags, on a supported NVIDIA card with a recent PyTorch, is dynamic VRAM on?",
+   "options": [
+    "Yes",
+    "No, you need --enable-dynamic-vram",
+    "Only with --highvram",
+    "Only on Windows"
+   ],
+   "answer": "Yes",
+   "why": "enables_dynamic_vram is true unless one of five flags says otherwise, and main.py then checks support."
+  },
+  {
+   "q": "What does --highvram do besides keeping models on the card?",
+   "options": [
+    "It turns dynamic VRAM off",
+    "It doubles your VRAM",
+    "It disables the node cache",
+    "It sets fp8"
+   ],
+   "answer": "It turns dynamic VRAM off",
+   "why": "It is one of the flags in enables_dynamic_vram's list."
+  },
+  {
+   "q": "You pass --lowvram with dynamic VRAM on. What happens?",
+   "options": [
+    "Nothing: its help says it does nothing then",
+    "The text encoder always moves to the CPU",
+    "ComfyUI refuses to start",
+    "Everything moves to the CPU"
+   ],
+   "answer": "Nothing: its help says it does nothing then",
+   "why": "That is in the flag's help text, in cli_args.py."
+  },
+  {
+   "q": "With 16 GB of system RAM and no cache flag, how much RAM does the cache try to keep free?",
+   "options": [
+    "2 GB",
+    "1.6 GB",
+    "10 GB",
+    "None, it is off"
+   ],
+   "answer": "2 GB",
+   "why": "10% is 1.6 GB, and main.py applies a minimum of 2 GB."
+  },
+  {
+   "q": "What happens if you pass --use-sage-attention and --use-flash-attention together?",
+   "options": [
+    "The parser refuses and exits",
+    "Sage wins silently",
+    "Flash wins silently",
+    "Both run, one after the other"
+   ],
+   "answer": "The parser refuses and exits",
+   "why": "They are in one mutually exclusive group, and we ran the parser to confirm."
+  },
+  {
+   "q": "--reserve-vram 4 is set. What is the minimum working room for a load?",
+   "options": [
+    "4.8 GB",
+    "0.8 GB",
+    "4 GB",
+    "1.19 GB"
+   ],
+   "answer": "4.8 GB",
+   "why": "minimum_inference_memory is 0.8 GB + the reserve."
+  },
+  {
+   "q": "Why not add many flags at once from a guide?",
+   "options": [
+    "You can't tell which one did what, and flags change between versions",
+    "It costs more electricity",
+    "ComfyUI allows only one flag",
+    "Flags reset after each job"
+   ],
+   "answer": "You can't tell which one did what, and flags change between versions",
+   "why": "Change one at a time, and check its effect in the startup lines."
+  }
+ ]
+}

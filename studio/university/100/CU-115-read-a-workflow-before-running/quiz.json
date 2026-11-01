@@ -1,0 +1,12 @@
+{
+ "code": "CU-115",
+ "title": "Reading a downloaded workflow before you run it",
+ "level": "100",
+ "questions": [
+  {"q": "Opening a workflow JSON in a text editor is:", "options": ["Safe in itself: it is data, and you are only reading", "Dangerous, because JSON can run code", "Only safe in ComfyUI", "Only safe on a CPU"], "answer": "Safe in itself: it is data, and you are only reading", "why": "JSON is data. The risks come from what it leads you to install, download or send."},
+  {"q": "A graph uses a node type your server doesn't have. What is the real risk?", "options": ["Installing the pack it needs runs that pack's code on your machine", "Queueing it runs code from the file", "The missing node will download itself", "There is none"], "answer": "Installing the pack it needs runs that pack's code on your machine", "why": "Queueing just gives missing_node_type. ComfyUI imports packs when it starts, so the install is the step that needs care."},
+  {"q": "A graph uses a partner API node with your prompt in it. What happens if you queue it with an account signed in?", "options": ["The prompt goes to an outside service, and it can spend credits", "Nothing leaves your machine", "It runs on your GPU", "It is refused by validation"], "answer": "The prompt goes to an outside service, and it can spend credits", "why": "That's the job of these nodes. ComfyUI's own help text calls them the paid API nodes."},
+  {"q": "You scanned the canvas and every node looks familiar. What can still be hidden?", "options": ["Nodes inside a subgraph, which shows as one box", "Nothing, the canvas shows every node", "Only the seed", "Only the file names"], "answer": "Nodes inside a subgraph, which shows as one box", "why": "definitions.subgraphs holds whole inner graphs. In the lab one third-party node appears only there."},
+  {"q": "A note in a workflow says to paste a command into your terminal to fix an error. What do you do?", "options": ["Read what the command does and find out where it came from, and don't paste it blind", "Paste it: notes are checked by ComfyUI", "Paste it: it only runs inside ComfyUI", "Ignore all notes in all workflows"], "answer": "Read what the command does and find out where it came from, and don't paste it blind", "why": "A note is plain text from the author. It runs nothing by itself, and you would be the one to run it."}
+ ]
+}

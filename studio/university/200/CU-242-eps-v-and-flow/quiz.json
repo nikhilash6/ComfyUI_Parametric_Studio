@@ -1,0 +1,73 @@
+{
+ "code": "CU-242",
+ "title": "eps, v-prediction and flow: how a model's output is read",
+ "level": "200",
+ "questions": [
+  {
+   "q": "What do samplers need from every model, whatever its prediction type?",
+   "options": [
+    "An estimate of the clean latent",
+    "The noise",
+    "The velocity",
+    "The text embedding"
+   ],
+   "answer": "An estimate of the clean latent",
+   "why": "calculate_denoised turns each kind of output into that, so samplers do not care which kind the model is."
+  },
+  {
+   "q": "How does a flow model mix noise with a latent?",
+   "options": [
+    "(1 − σ) · latent + σ · noise",
+    "σ · noise + latent",
+    "noise only",
+    "σ · latent + noise"
+   ],
+   "answer": "(1 − σ) · latent + σ · noise",
+   "why": "CONST.noise_scaling. Eps and v use latent + σ · noise."
+  },
+  {
+   "q": "A v model read as eps has what error pattern in the lab?",
+   "options": [
+    "Huge at high noise, tiny at low noise",
+    "Even at every step",
+    "Tiny at high noise, huge at low noise",
+    "Zero"
+   ],
+   "answer": "Huge at high noise, tiny at low noise",
+   "why": "20.119 at σ 14.6 and 0.001 at σ 0.03."
+  },
+  {
+   "q": "What does the zsnr switch do on ModelSamplingDiscrete?",
+   "options": [
+    "Rescales the table so the top has almost no signal",
+    "Changes the seed",
+    "Turns on v prediction",
+    "Removes the bottom of the table"
+   ],
+   "answer": "Rescales the table so the top has almost no signal",
+   "why": "sigma_max goes from 14.6 to about 4519."
+  },
+  {
+   "q": "Why can you not move the number 1.15 from ModelSamplingFlux to ModelSamplingSD3?",
+   "options": [
+    "Flux's number is the log of the same kind of shift",
+    "They use different seeds",
+    "SD3 ignores it",
+    "Flux has no shift"
+   ],
+   "answer": "Flux's number is the log of the same kind of shift",
+   "why": "flux_time_shift uses e^μ, so 1.15 acts like a shift of 3.158."
+  },
+  {
+   "q": "Does changing ModelSamplingDiscrete to v_prediction change how the network behaves?",
+   "options": [
+    "No, it only changes how its output is read",
+    "Yes, it retrains it",
+    "Yes, it changes its weights",
+    "It changes the VAE"
+   ],
+   "answer": "No, it only changes how its output is read",
+   "why": "It patches a new model_sampling object. The weights are not touched."
+  }
+ ]
+}

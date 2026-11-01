@@ -1,0 +1,13 @@
+{
+ "code": "CU-295",
+ "title": "Bisecting a broken graph: previews are your print statement",
+ "level": "200",
+ "questions": [
+  {"q": "In a chain of 16 nodes, how many previews does halving need at most?", "options": ["2", "4", "8", "15"], "answer": "4", "why": "Each check halves what's left. The lab gives 4."},
+  {"q": "Your probe at the middle looks right. What now?", "options": ["The fault is later, so check the middle of the second half", "The fault is earlier", "Change the seed", "Restart"], "answer": "The fault is later, so check the middle of the second half", "why": "Clean here means everything before it is fine."},
+  {"q": "Why fix the seed while hunting a fault?", "options": ["It uses less memory", "So each run is comparable", "Previews need it", "It clears the cache"], "answer": "So each run is comparable", "why": "With a random seed the picture differs on each run, which hides what your change did."},
+  {"q": "PreviewAny prints a 64 by 64 latent with one NaN in the middle. Will you see nan?", "options": ["Yes, always", "No: the middle is summarised as ...", "Only on a GPU", "It raises an error"], "answer": "No: the middle is summarised as ...", "why": "Torch shortens big tensors. The lab shows it."},
+  {"q": "What is the first bad node?", "options": ["The last node in the graph", "The one whose input looks right and whose output doesn't", "The slowest node", "The one with the most wires"], "answer": "The one whose input looks right and whose output doesn't", "why": "That's where the fault enters."},
+  {"q": "Why does wiring a preview to a node with no outputs make it run?", "options": ["A preview is an output node, so its branch is needed", "Previews reset the cache", "Previews change the seed", "It doesn't"], "answer": "A preview is an output node, so its branch is needed", "why": "The engine walks back from output nodes."}
+ ]
+}

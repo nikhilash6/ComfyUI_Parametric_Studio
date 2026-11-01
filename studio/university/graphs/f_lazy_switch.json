@@ -1,0 +1,70 @@
+{
+ "meta": {
+  "title": "A core node with lazy inputs",
+  "about": "The If/Else Switch only asks for the branch it will use. Flip switch and only the other side runs.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "The starting image.",
+   "2": "The on_false branch.",
+   "3": "The on_true branch.",
+   "4": "check_lazy_status names on_true or on_false.",
+   "5": "Pulls on the switch."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 64,
+    "height": 64,
+    "batch_size": 1,
+    "color": 3368652
+   }
+  },
+  "2": {
+   "class_type": "ImageBlur",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ],
+    "blur_radius": 3,
+    "sigma": 1.0
+   }
+  },
+  "3": {
+   "class_type": "ImageInvert",
+   "inputs": {
+    "image": [
+     "1",
+     0
+    ]
+   }
+  },
+  "4": {
+   "class_type": "ComfySwitchNode",
+   "inputs": {
+    "switch": true,
+    "on_false": [
+     "2",
+     0
+    ],
+    "on_true": [
+     "3",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "4",
+     0
+    ]
+   }
+  }
+ }
+}

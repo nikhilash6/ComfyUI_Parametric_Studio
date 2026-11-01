@@ -1,0 +1,73 @@
+{
+ "code": "CU-262",
+ "title": "Combine, Concat and Average",
+ "level": "200",
+ "questions": [
+  {
+   "q": "Which node runs the model once per prompt and blends the answers?",
+   "options": [
+    "ConditioningConcat",
+    "ConditioningAverage",
+    "CLIPTextEncode",
+    "ConditioningCombine"
+   ],
+   "answer": "ConditioningCombine",
+   "why": "It adds lists, and _calc_cond_batch runs each entry."
+  },
+  {
+   "q": "Two 77-token SD 1.5 prompts through Concat give what tensor?",
+   "options": [
+    "[1, 77, 768]",
+    "[2, 77, 768]",
+    "[1, 77, 1536]",
+    "[1, 154, 768]"
+   ],
+   "answer": "[1, 154, 768]",
+   "why": "torch.cat along dimension 1, the tokens."
+  },
+  {
+   "q": "Why can Average give odd results for two unrelated sentences?",
+   "options": [
+    "It drops the first prompt",
+    "It runs the model twice",
+    "It removes the pooled vector",
+    "Tokens are blended by position, whatever the words are"
+   ],
+   "answer": "Tokens are blended by position, whatever the words are",
+   "why": "t1 and t0 are added position by position."
+  },
+  {
+   "q": "With cfg 7 and one negative, how many predictions per step does Combine with two prompts cost?",
+   "options": [
+    "Three",
+    "One",
+    "Two",
+    "Four"
+   ],
+   "answer": "Three",
+   "why": "Positive A, positive B and the negative."
+  },
+  {
+   "q": "What happens to `from` tokens beyond the length of `to` in Average?",
+   "options": [
+    "They are cut",
+    "They are averaged in anyway",
+    "They raise an error",
+    "They become a second entry"
+   ],
+   "answer": "They are cut",
+   "why": "t0 = cond_from[:, :t1.shape[1]]."
+  },
+  {
+   "q": "If the model were perfectly linear, Combine and Average at 0.5 would",
+   "options": [
+    "Never agree",
+    "Differ by the number of tokens",
+    "Give the same answer",
+    "Crash"
+   ],
+   "answer": "Give the same answer",
+   "why": "Mean of answers equals answer of mean only when the model is linear. The lab's nonlinear model shows them differ."
+  }
+ ]
+}

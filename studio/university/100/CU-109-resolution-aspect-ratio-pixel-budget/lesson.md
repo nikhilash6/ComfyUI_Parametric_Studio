@@ -12,6 +12,10 @@ So the useful unit is the pixel budget, the product width × height. One megapix
 
 **Size from a ratio.** For a ratio r = W / H and a budget P, the sizes that satisfy W × H = P and W / H = r are W = √(P × r) and H = √(P / r). Then the sizes must be rounded to a multiple m, and the rounding rule matters. Rounding to the nearest multiple can overshoot the budget. Rounding down never does, but it wastes some pixels. The multiple m is 8 at the very least because of the VAE, 64 if you want to land on SDXL's list, and 32 in at least one model-specific helper.
 
+Try the formula, with its rounding.
+
+{{play:pixbudget}}
+
 **What grows with the pixel count.** Write N for the number of latent positions, N = (H / 8) × (W / 8). A latent grid costs in proportion to N. A self-attention layer that lets every position look at every other one compares N × N pairs. Storing that whole matrix would take N² numbers per head per layer, so a doubled side means four times the pixels and sixteen times the pairs. Memory-efficient kernels change the memory side of this. FlashAttention (Dao et al. 2022) computes the same exact attention but needs memory that grows linearly with N, while the number of comparisons still grows as N². The VAE decoder grows with the pixel count too.
 
 ## In ComfyUI
@@ -20,7 +24,20 @@ So the useful unit is the pixel budget, the product width × height. One megapix
 
 The "Scale Image to Total Pixels" node (`ImageScaleToTotalPixels`) is the formula above. It takes `megapixels` (default 1.0, counted as 1024 × 1024), scales both sides by √(budget / pixels), and rounds each to the nearest multiple of `resolution_steps`. A helper for one model family, `calculate_dimensions` in `comfy/ldm/hidream_o1/utils.py`, uses the same square root and then rounds down to a multiple of 32, so its result never exceeds the budget.
 
+This graph runs the node with no model. A 1920 by 1080 input at one megapixel and steps of 64 comes out at 1344 by 768, one of SDXL's sizes.
+
+{{graph:a_pixel_budget}}
+
 ComfyUI picks its attention implementation when it starts, from what is installed and from flags such as `--use-pytorch-cross-attention` and `--use-split-cross-attention`. Its VAE class carries a memory estimate for decoding that is linear in the number of latent positions, and when a decode runs out of memory it retries in tiles.
+
+## What goes wrong
+
+- **You asked for 1333 by 750 and got 1328 by 744.** The empty latent rounds down, and the server doesn't check the step. Pick multiples of 8.
+- **Running out of memory at a size that "should" fit.** Doubling a side quadruples the pixels and the VAE decode estimate, and it multiplies full attention pairs by sixteen. Try a smaller size first, or `VAEDecodeTiled` for the decode.
+- **Rounded over budget.** Rounding to the nearest multiple can go over, as 1.0156 in the table shows. Usually harmless, but know that the budget isn't a limit here.
+- **A size far from the training sizes.** SD 1.x's card lists 512 by 512, and SDXL's list is around 1024 by 1024. Nothing stops you, and we didn't test the quality of off-list sizes.
+- **Treating 1 megapixel as a million.** In ComfyUI's accounting it is 1024 × 1024 = 1,048,576 pixels.
+- **A wide picture through a square size.** A size node with a fixed width and height changes the shape. To keep the shape, use the budget formula.
 
 ## Lab
 

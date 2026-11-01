@@ -1,0 +1,71 @@
+{
+ "code": "CU-435",
+ "title": "Writing a node that expands into a subgraph",
+ "level": "400",
+ "prereq": [
+  "CU-430",
+  "CU-222"
+ ],
+ "char": "graph",
+ "hook": "A node can answer with new nodes rather than a result. That is how a graph with no cycles gets loops. Here is one you can write, and how it fails.",
+ "track": "custom-nodes",
+ "order": 22,
+ "kit": true,
+ "graphs": [
+  "f_core_loop"
+ ],
+ "code_refs": [
+  "comfy_execution/graph_utils.py:GraphBuilder",
+  "comfy_execution/graph_utils.py:add_graph_prefix",
+  "comfy_execution/graph.py:add_ephemeral_node",
+  "execution.py:pending_subgraph_results",
+  "comfy_api/latest/_io.py:enable_expand",
+  "comfy_api/latest/_io.py:class NodeOutput",
+  "comfy_extras/nodes_loop.py:StartLoop",
+  "comfy_extras/nodes_loop.py:EndLoop"
+ ],
+ "verified": [
+  {
+   "claim": "A test node with times=3 added nodes 2.0.0.1, 2.0.0.2, 2.0.0.3, and a picture of mean 0.1255 came out at 0.8745.",
+   "how": "run here",
+   "ref": "V1 and V3 test nodes through PromptExecutor on a CPU"
+  },
+  {
+   "claim": "A V3 node without enable_expand fails with: Node ExpNoClone is not expandable, but expand included in NodeOutput.",
+   "how": "run here",
+   "ref": "comfy_api/latest/_io.py:EXECUTE_NORMALIZED"
+  },
+  {
+   "claim": "Expanding into an unknown class fails during the run with KeyError 'NoSuchNode'. Validation doesn't see those nodes.",
+   "how": "run here",
+   "ref": "execution.py:execute"
+  },
+  {
+   "claim": "A second queue of the expanded graph ran nothing new.",
+   "how": "run here",
+   "ref": "same run, one executor with the classic cache"
+  },
+  {
+   "claim": "Core's Start Loop ran its body 3 times. We ran it in one process with a stub for the server object it reports progress to, and passed validate_prompt's own annotated prompt.",
+   "how": "run here",
+   "ref": "graph f_core_loop"
+  },
+  {
+   "claim": "Node ids must be unique across the graph and the same between runs, and GraphBuilder is the recommended way.",
+   "how": "docs",
+   "ref": "docs.comfy.org custom-nodes backend expansion, fetched 2026-11-01"
+  },
+  {
+   "claim": "With a tensor passed as a value, changing times from 3 to 4 re-ran every inner node: 3 inverts, then 4 more.",
+   "how": "run here",
+   "ref": "test node through PromptExecutor with the classic cache, CPU"
+  }
+ ],
+ "unchecked": [
+  "We didn't run f_core_loop on a real server for this lesson. Our no-server checker validates it but can't run it, because Start Loop calls the server to report progress.",
+  "We didn't test raw_link inside expansion, though the docs describe it as the way to keep inner caching."
+ ],
+ "second_read": {
+  "errors_fixed": 2
+ }
+}

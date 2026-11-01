@@ -1,3 +1,27 @@
-RESULT memory_bytes = 1536
-RESULT flops = 12288
-RESULT output_shape = (2, 16)
+a tensor's bytes = elements x bytes each: (2, 3, 8, 8) fp32 = 1536 bytes
+  SD latent, 64x64                 0.06 MB
+  IMAGE 1024x1024                 12.00 MB
+  16 channel latent, 128x128       0.50 MB
+
+the peak is not the sum, and not the biggest tensor. Four tensors, in MB: {'a': 300, 'b': 500, 'c': 200, 'd': 100}
+  each freed after the next one is made: peak 800 MB, alive ['a', 'b']
+  nothing freed: peak 1100 MB, alive ['a', 'b', 'c', 'd']
+  sum of all = 1100, biggest alone = 500
+
+allocated, reserved and what nvidia-smi shows: a toy caching allocator
+  after freeing: allocated 1000  reserved 6000  peak allocated 6000
+  after empty_cache: allocated 1000  reserved 1000  peak allocated 6000
+
+work in a matmul. y = x W for M rows, K inputs and N outputs is 2 M N K operations, and doubling the side changes M
+  512 px, 4096 tokens           838,860,800
+  1024 px, 16384 tokens       3,355,443,200
+
+where the time went, example numbers
+  load models   40.0 s   36.4%
+  text encode    2.0 s    1.8%
+  sampling      60.0 s   54.5%
+  VAE decode     8.0 s    7.3%
+  text encode 10 times faster: 108.2 s.  sampling 2 times faster: 80.0 s
+
+why one timing lies: the first run includes loading. Same example, median of five runs
+  runs [66.0, 1.5, 1.5, 1.5, 1.5]  mean 14.4 s  median 1.5 s

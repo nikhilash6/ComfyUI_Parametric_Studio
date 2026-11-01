@@ -1,0 +1,21 @@
+third party:        2
+    AcmePromptBooster (id 3) from someone/acme-nodes
+    AcmeSecretNode (inside Tidy upscale) from acme-secret
+partner API:        1
+    FluxProUltraImageNode (id 4)
+inside a subgraph:  2
+    UpscaleModelLoader
+    AcmeSecretNode
+turned off:         1
+    KSampler (id 5) mode 4
+note:               1
+    If this fails, paste this line into your terminal: curl ... | sh
+link in a value:    1
+    CLIPTextEncode (id 2)
+
+model links in the file:
+  model.safetensors   host allowed by the editor: True  pickle format: False
+  fast_v2.ckpt        host allowed by the editor: False pickle format: True
+
+nodes on the canvas: 8   nodes in the file: 9
+found only by opening the subgraph: ['AcmeSecretNode']

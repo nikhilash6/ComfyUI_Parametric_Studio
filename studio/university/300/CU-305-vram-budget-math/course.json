@@ -1,14 +1,67 @@
 {
+ "code": "CU-305",
  "title": "VRAM budget math: weights, activations, caches",
  "level": "300",
- "char": "bits",
- "hook": "Predicting whether it fits before you press Queue.",
- "code": "CU-305",
  "prereq": [
   "CU-210"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "bits",
+ "hook": "Three different things want room on your card. Each has its own formula, and only one of them is the size of the file.",
  "track": "performance",
- "order": 10
+ "order": 10,
+ "graphs": [
+  "sdxl_txt2img",
+  "sd15_tiled_vae"
+ ],
+ "code_refs": [
+  "comfy/model_base.py:BaseModel.memory_required",
+  "comfy/sampler_helpers.py:estimate_memory",
+  "comfy/model_management.py:load_models_gpu",
+  "comfy/model_management.py:minimum_inference_memory",
+  "comfy/model_management.py:EXTRA_RESERVED_VRAM",
+  "comfy/model_management.py:intermediate_device",
+  "comfy/supported_models.py:memory_usage_factor"
+ ],
+ "verified": [
+  {
+   "claim": "The working memory estimate is area × dtype size × 0.01 × memory_usage_factor MB, with area = batch × the latent's spatial sizes and channels left out.",
+   "how": "source",
+   "ref": "comfy/model_base.py:BaseModel.memory_required"
+  },
+  {
+   "claim": "estimate_memory passes twice the batch, for the conditional and unconditional passes.",
+   "how": "source",
+   "ref": "comfy/sampler_helpers.py:estimate_memory"
+  },
+  {
+   "claim": "load_models_gpu asks for total model size × 1.1 + max(inference memory, memory_required + reserved).",
+   "how": "source",
+   "ref": "comfy/model_management.py:load_models_gpu"
+  },
+  {
+   "claim": "memory_usage_factor is 1.0 for SD15, 0.8 for SDXL and 1.6 for SD3.",
+   "how": "source",
+   "ref": "comfy/supported_models.py"
+  },
+  {
+   "claim": "Finished results between nodes live on the CPU unless --gpu-only.",
+   "how": "source",
+   "ref": "comfy/model_management.py:intermediate_device"
+  },
+  {
+   "claim": "The U-Net sizes, 860M and 2.6B parameters, are in Table 1 of the SDXL paper.",
+   "how": "docs",
+   "ref": "arXiv 2307.01952, PDF read 2026-11-01"
+  },
+  {
+   "claim": "Both graphs pass validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "The estimate is ComfyUI's own and its source carries the comment that it needs tweaking. We did not compare it with a measured peak on a real card.",
+  "Many models override the estimate or use other factors. We read only the base method and the factors named here."
+ ],
+ "kit": true
 }

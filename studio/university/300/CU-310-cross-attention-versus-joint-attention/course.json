@@ -1,14 +1,69 @@
 {
+ "code": "CU-310",
  "title": "Cross-attention versus joint attention",
  "level": "300",
- "char": "attn",
- "hook": "Discover how ComfyUI's attention mechanisms differ by exploring the mathematical distinction between conditioning on external prompts and self-attending within ",
- "code": "CU-310",
  "prereq": [
   "CU-301"
  ],
- "status": "draft",
- "code_refs": [],
+ "char": "attn",
+ "hook": "How the picture reads the prompt in a U-Net and in a transformer. In one the text never changes. In the other the text is updated too, and image tokens see each other in the same step.",
+ "code_refs": [
+  "comfy/ldm/modules/attention.py:CrossAttention",
+  "comfy/ldm/modules/attention.py:BasicTransformerBlock",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:_block_mixing",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:JointBlock",
+  "comfy/ldm/modules/diffusionmodules/mmdit.py:MMDiT",
+  "comfy/ldm/flux/layers.py:DoubleStreamBlock",
+  "comfy/ldm/flux/layers.py:SingleStreamBlock",
+  "comfy/ldm/flux/model.py:Flux"
+ ],
  "track": "conditioning",
- "order": 20
+ "order": 20,
+ "kit": true,
+ "graphs": [
+  "sd15_txt2img",
+  "sd35_flow"
+ ],
+ "verified": [
+  {
+   "claim": "CrossAttention takes q from x and k and v from context, and returns only x's update.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:CrossAttention"
+  },
+  {
+   "claim": "BasicTransformerBlock runs attn1 then attn2, and attn1 uses context None, so it is self-attention.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/attention.py:BasicTransformerBlock"
+  },
+  {
+   "claim": "_block_mixing and DoubleStreamBlock concatenate text and image q, k, v, attend once, then split.",
+   "how": "source",
+   "ref": "comfy/ldm/modules/diffusionmodules/mmdit.py and comfy/ldm/flux/layers.py"
+  },
+  {
+   "claim": "Each stream has its own q, k, v projections.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/layers.py:DoubleStreamBlock"
+  },
+  {
+   "claim": "Flux joins the streams for its single blocks, and in MMDiT a pre_only last context block drops the text after that step.",
+   "how": "source",
+   "ref": "comfy/ldm/flux/layers.py, comfy/ldm/modules/diffusionmodules/mmdit.py"
+  },
+  {
+   "claim": "The shapes, the unchanged text and the pair counts.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The paper's abstract describes separate weights and a bidirectional flow between image and text tokens.",
+   "how": "docs",
+   "ref": "arXiv API, fetched 2026-11-01"
+  }
+ ],
+ "unchecked": [
+  "The draft said joint attention is necessary for text in pictures and cross-attention is weaker. We removed both. The paper reports better text and typography for its whole model, which isn't a test of attention alone.",
+  "The pair counts compare one block only, at one size. A real U-Net has attention at several resolutions, and we didn't add them up.",
+  "No render compares the two, because a model can't be switched between them."
+ ]
 }

@@ -2,13 +2,49 @@
  "title": "Evaluating video: a flicker metric",
  "level": "400",
  "char": "frame",
- "hook": "Learn to quantify visual stability by calculating the temporal variance of pixel intensities to detect flicker in generated video sequences.",
+ "hook": "Two simple flicker scores, tested on clips where we know the answer. Both are fooled by a pan, and one step fixes that.",
  "code": "CU-411",
  "prereq": [
-  "CU-404"
+  "CU-404",
+  "CU-315"
  ],
- "status": "draft",
- "code_refs": [],
+ "code_refs": [
+  "comfy_extras/nodes_video.py:CreateVideo",
+  "comfy_extras/nodes_video.py:GetVideoComponents"
+ ],
  "track": "video",
- "order": 60
+ "order": 60,
+ "graphs": [
+  "nm_video"
+ ],
+ "kit": true,
+ "verified": [
+  {
+   "claim": "Our studio's flicker_score is the mean absolute second difference on 128 x 128 luma from 0 to 255, and returns 0.0 below 3 frames.",
+   "how": "source",
+   "ref": "studio/vset/qc.py:flicker_score"
+  },
+  {
+   "claim": "We ran that formula over the whole of each web copy with ffmpeg and PIL, giving the table in this lesson.",
+   "how": "run here",
+   "ref": "studio/vset/qc.py:flicker_score"
+  },
+  {
+   "claim": "The recorded scores for the two virtual-set shots, 3.2 and 2.0, are in the studio's data.",
+   "how": "run here",
+   "ref": "studio/web/vset_example.js:EXAMPLES"
+  },
+  {
+   "claim": "nm_video validates and runs on a CPU.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "Our table runs on small compressed web copies, over whole clips. The recorded 3.2 and 2.0 ran on the original renders over a middle section. So they differ, and we cannot say by how much from each cause.",
+  "FLICKER_MAX of 6.0 is labelled a starting guess in qc.py. Nothing here calibrates it against people's judgement.",
+  "The aligned score uses a single whole-pixel sideways shift per pair, on synthetic clips. A real clip has many motions in one frame and needs real flow, which we did not run.",
+  "These scores do not predict how people rate flicker. Published perceptual metrics exist, and we did not compare against them.",
+  "The first version of this lesson cited three papers by number and title. We could not confirm them, and removed them."
+ ]
 }

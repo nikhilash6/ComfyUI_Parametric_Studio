@@ -1,32 +1,21 @@
-RESULT 12B_fp32 = 6.624e+10
-RESULT 12B_bf16 = 3.312e+10
-RESULT 12B_fp8 = 1.656e+10
-RESULT 12B_4bit = 8.28e+09
-RESULT 4B_fp32 = 2.208e+10
-RESULT 4B_bf16 = 1.104e+10
-RESULT 4B_fp8 = 5.52e+09
-RESULT 4B_4bit = 2.76e+09
+weights: parameters x bytes per parameter (parameter counts from Table 1 of the SDXL paper)
+  SD 1.x U-Net, 860M   fp32  3.20 GB  fp16  1.60 GB  fp8  0.80 GB
+  SDXL U-Net, 2.6B     fp32  9.69 GB  fp16  4.84 GB  fp8  2.42 GB
 
---- Fit Analysis ---
+working memory estimate, fp16, CFG on (estimate_memory doubles the batch)
+  SD 1.5  512 px  latent 64x64  factor 1.0:    163.8 MB
+  SD 1.5  768 px  latent 96x96  factor 1.0:    368.6 MB
+  SDXL   1024 px  latent 128x128  factor 0.8:    524.3 MB
+  SD3    1024 px  latent 128x128  factor 1.6:   1048.6 MB
 
-24GB GPU (available: 20.00 GB after reserve):
-  12B @ fp32: 61.69 GB -> DOES NOT FIT
-  12B @ bf16: 30.85 GB -> DOES NOT FIT
-  12B @ fp8: 15.42 GB -> FITS
-  12B @ 4bit: 7.71 GB -> FITS
-  4B @ fp32: 20.56 GB -> DOES NOT FIT
-  4B @ bf16: 10.28 GB -> FITS
-  4B @ fp8: 5.14 GB -> FITS
-  4B @ 4bit: 2.57 GB -> FITS
+double the side: x4.  double the batch: x2.  channels make no difference to this estimate.
 
-96GB GPU (available: 92.00 GB after reserve):
-  12B @ fp32: 61.69 GB -> FITS
-  12B @ bf16: 30.85 GB -> FITS
-  12B @ fp8: 15.42 GB -> FITS
-  12B @ 4bit: 7.71 GB -> FITS
-  4B @ fp32: 20.56 GB -> FITS
-  4B @ bf16: 10.28 GB -> FITS
-  4B @ fp8: 5.14 GB -> FITS
-  4B @ 4bit: 2.57 GB -> FITS
+room asked for before loading, on a 12 GB card with nothing else loaded
+  SD 1.5 fp16, 512 px   weights  1.60 GB  asks for  2.95 GB  left   9.05 GB
+  SDXL fp16, 1024 px    weights  4.84 GB  asks for  6.52 GB  left   5.48 GB
+  SDXL fp8, 1024 px     weights  2.42 GB  asks for  3.85 GB  left   8.15 GB
 
-All assertions passed!
+what a finished result costs in system RAM (node outputs live on intermediate_device, the CPU, unless --gpu-only)
+  latent 128x128, 4 channels, fp32         0.25 MB
+  IMAGE 1024x1024, 3 channels, fp32       12.00 MB
+  IMAGE batch, 81 frames 1280x720        854.30 MB

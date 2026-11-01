@@ -1,123 +1,106 @@
 # CU-310 - Cross-attention versus joint attention
 
-> Draft. A local model wrote this lesson and it has not been checked line by line against its sources yet. The lab ran and its output is real; treat the explanation with care.
+**Objective.** Say who attends to whom in a U-Net block and in a transformer block, and what that changes for prompts, cost and patches. Taught by Madame Attention.
 
-## Why this matters
+## The idea
 
-Welcome, students. You have survived CU-301, where we learned that attention is not magic; it is a weighted average of values, determined by the compatibility of queries and keys. But in CU-301, we treated all tokens as equals. In the real world of generative AI, tokens are not equals. They are distinct entities with distinct roles.
+The picture has to read the prompt somehow. There are two main designs in ComfyUI's models.
 
-The central architectural question of modern diffusion transformers is: *How do we let the image "see" the text?*
+**Cross-attention.** Image tokens ask, and text tokens answer. Only the image tokens change. The text is the same at the end of the block as at the start. SD 1.5 and SDXL do this.
 
-There are two dominant answers. The first is **Cross-Attention**, the classic mechanism of Stable Diffusion 1.5 and 2. Here, the image tokens ask questions, but they only look at the text tokens for answers. The image and text remain separate streams that meet only at the attention layer. The second is **Joint Attention** (or Self-Attention over a concatenated sequence), the mechanism of SD3, Flux, and MMDiT. Here, image and text tokens are merged into a single, unified context. They all look at each other.
+**Joint attention.** Image and text tokens go into one sequence. Everyone asks and everyone answers. Both change. SD3 and Flux do this.
 
-This distinction is not merely academic. It dictates memory usage, training stability, and the fidelity of text rendering. If you do not understand who is attending to whom, you cannot debug why your prompt is being ignored, or why your model is hallucinating. Today, we dissect the machinery.
+Set the temperature and watch one cell of a picture read the prompt. That's a row of cross-attention. Joint attention adds more rows to it, as the lab shows.
 
-## The intuition
+{{play:attention}}
 
-Imagine a library.
+## The sums
 
-In **Cross-Attention**, the readers (image tokens) are in the main hall. The books (text tokens) are in a separate archive. The readers cannot walk into the archive. Instead, they send a librarian (the Query) to the archive. The librarian looks at the spines of the books (Keys) and pulls out the relevant pages (Values). The readers never see the books directly; they only receive the information the librarian brings back. The readers do not talk to each other in this specific step, nor do they talk to the books. They only talk to the librarian.
+Both use the attention sum from CU-301. Only the inputs differ.
 
-In **Joint Attention**, the readers and the books are in the same room. Every reader can look at every other reader and every book. Every book can look at every reader. The information flows bidirectionally and globally. A reader can be influenced by another reader’s interpretation of a book, and a book’s representation can be updated by how readers are reacting to it.
+```
+cross:  Q from image,        K and V from text         output: image tokens
+joint:  Q, K, V from both,   joined along tokens       output: both, split apart again
+```
 
-Cross-Attention is a **decoupled** system. It strictly separates the conditioning signal (text) from the generated signal (image). This is efficient and stable, but it limits the depth of interaction. Joint Attention is a **unified** system. It allows for deep, iterative refinement where text and image co-evolve. This is more powerful for complex tasks like typography, but it is computationally heavier because the sequence length grows.
-
-## Under the hood (the mechanism; math in plain text, define every symbol)
-
-Let us define the symbols precisely.
-
-Let $Q$ be the Query matrix, $K$ be the Key matrix, and $V$ be the Value matrix.
-Let $d$ be the dimensionality of the embeddings.
-Let $L_q$ be the length of the query sequence.
-Let $L_k$ be the length of the key/value sequence.
-
-### Cross-Attention
-
-In cross-attention, the queries come from one stream (e.g., image), and the keys and values come from another (e.g., text).
-
-1.  **Scores**: We compute the dot product of $Q$ and $K^T$, scaled by $\sqrt{d}$.
-    $$S_{cross} = \frac{Q K^T}{\sqrt{d}}$$
-    Here, $Q$ is shape $[B, L_q, d]$ and $K$ is shape $[B, L_k, d]$. The result $S_{cross}$ is shape $[B, L_q, L_k]$. Each row represents one image token looking at all text tokens.
-
-2.  **Weights**: We apply softmax over the last dimension (the text tokens).
-    $$W_{cross} = \text{softmax}(S_{cross}, \text{dim}=-1)$$
-    This ensures that for each image token, the attention weights over the text tokens sum to 1.
-
-3.  **Output**: We multiply the weights by the values.
-    $$O_{cross} = W_{cross} V$$
-    The output $O_{cross}$ is shape $[B, L_q, d]$. Crucially, the output length is $L_q$. The image tokens are updated, but the text tokens are not touched in this operation.
-
-### Joint Attention
-
-In joint attention, we concatenate the sequences. Let $X_{img}$ be the image tokens and $X_{txt}$ be the text tokens.
-
-1.  **Concatenation**:
-    $$X_{joint} = [X_{img}, X_{txt}]$$
-    The new sequence length is $L_{joint} = L_q + L_k$.
-
-2.  **Projections**: We project $X_{joint}$ into $Q$, $K$, and $V$. Note that $Q$, $K$, and $V$ are all derived from the same combined sequence.
-    $$Q_{joint} = X_{joint} W_Q, \quad K_{joint} = X_{joint} W_K, \quad V_{joint} = X_{joint} W_V$$
-    All are shape $[B, L_{joint}, d]$.
-
-3.  **Scores**:
-    $$S_{joint} = \frac{Q_{joint} K_{joint}^T}{\sqrt{d}}$$
-    The result is shape $[B, L_{joint}, L_{joint}]$. This is a square matrix. Every token (image or text) attends to every other token (image or text).
-
-4.  **Weights and Output**:
-    $$W_{joint} = \text{softmax}(S_{joint}, \text{dim}=-1)$$
-    $$O_{joint} = W_{joint} V_{joint}$$
-    The output is shape $[B, L_{joint}, d]]. To get the updated image tokens, we slice the first $L_q$ rows. To get the updated text tokens, we slice the last $L_k$ rows.
-
-The key difference: In cross-attention, the text representation is static during the image update. In joint attention, the text representation is dynamic and is updated simultaneously with the image.
+For 4 image tokens and 3 text tokens, the cross score table is 4 by 3. The joint table is 7 by 7.
 
 ## In ComfyUI
 
-ComfyUI supports both paradigms, but they are implemented in different modules.
+**Cross.** `CrossAttention` in `comfy/ldm/modules/attention.py` takes `q` from `x`, and `k` and `v` from `context`. The same class does self-attention when `context` is None. `BasicTransformerBlock` uses it twice in a row: `attn1` as self-attention, then `attn2` reading the text. That self-attention is needed, because cross-attention alone never lets image tokens see each other.
 
-For **Cross-Attention**, look at `comfy/ldm/modules/attention.py`. The class `CrossAttention` is explicitly defined as a "Module for cross-attention layers between query and context." This is the standard block used in UNet-based models like SD 1.5. The `BasicTransformerBlock` in the same file combines self-attention, cross-attention, and feed-forward layers, adhering to the classic architecture.
+{{graph:sd15_txt2img}}
 
-For **Joint Attention**, look at `comfy/ldm/modules/diffusionmodules/mmdit.py`. This file contains the `MMDiT` class, which is the "Main class for Multi-Modal Diffusion Transformer (SD3/Flux style) models." The `SelfAttention` module here is not a simple self-attention; it operates on the joint sequence of image and text tokens. The `DismantledBlock` and `JointBlock` classes manage the flow of these unified tokens.
+**Joint.** `_block_mixing` in `mmdit.py` shows the design plainly:
 
-In `comfy/ldm/kandinsky5/model.py`, we see a hybrid approach where `CrossAttention` inherits from `SelfAttention`, allowing for flexible configuration, but the core distinction remains: cross-attention separates the streams, while joint attention merges them.
+```python
+qkv = tuple(... torch.cat((context_qkv[t], x_qkv[t]), dim=1) for t in range(3))
+attn = optimized_attention(qkv[0], qkv[1], qkv[2], ...)
+context_attn, x_attn = attn[:, :context_len], attn[:, context_len:]
+```
+
+Each side keeps its own projections, then they meet for one attention, then they split. `DoubleStreamBlock` in Flux does the same. After its double blocks, Flux joins the two streams for good and runs `SingleStreamBlock`s on the one sequence. In `MMDiT`, the last text block can be `pre_only`, which means the text is used and then dropped.
+
+{{graph:sd35_flow}}
+
+Esser et al. (2024) describe their MMDiT design as using separate weights for the two kinds of token, with a bidirectional flow of information between them.
+
+## Why you might care
+
+- **The text gets rewritten in joint models.** In a U-Net, the text rows are constant across the whole run of blocks. In Flux and SD3 they change at every double block, so a token's meaning can shift as the picture forms.
+- **Text length costs more in joint models.** Every extra token, padding included unless it's masked out, joins the one sequence. The lab's pair counts show how little this really adds at this size.
+- **Patches differ.** Nodes written for the U-Net's `attn1` and `attn2` don't fit a transformer. CU-322 shows PAG hitting this. Flux has its own hooks, with names like `double_block`.
+- **The two designs aren't a ranking.** A model is trained as a whole, and you can't switch one for the other. Don't read "joint" as "better".
+
+## What goes wrong
+
+- **Calling MMDiT self-attention "image self-attention".** In `_block_mixing` the sequence holds text and image. Check the input shape if you're writing a patch.
+- **A U-Net attention node on Flux.** It may do nothing, without an error. Try the same seed with and without it.
+- **"Attention isn't scaled in my port."** Both use the same scaled sum, so a bug there hits both. Dividing by the square root of the width keeps scores in a sane range.
+- **Assuming cross-attention costs little.** The cross step is small, but the U-Net's self-attention is not. See the counts.
+- **Expecting a prompt to act at one fixed place.** Text rows change through a joint model, so a heat map from one block doesn't describe them all.
 
 ## Lab
 
-We will run a small CPU-only experiment to visualize the shape differences and the independence of the outputs.
+Small versions with random weights. Same inputs for both.
 
-The lab defines:
-*   `batch_size = 1`
-*   `seq_len_q = 4` (Image tokens)
-*   `seq_len_k = 3` (Text tokens)
-*   `dim = 8`
-
-It generates random tensors for $Q$, $K$, and $V$. It computes cross-attention where $Q$ is image and $K/V$ are text. It then computes joint attention by concatenating $Q$ and $K$ into a single sequence for all three roles.
-
-Here are the results:
-
-```
-RESULT cross_attention_output_shape = torch.Size([1, 4, 8])
-RESULT joint_attention_output_shape = torch.Size([1, 7, 8])
-RESULT cross_attention_first_token = 1.50523
-RESULT joint_attention_first_token = -0.681057
+```text
+4 image tokens and 3 text tokens
+cross-attention:  image out [1, 4, 8]   text out [1, 3, 8]   text changed: False
+joint attention:  image out [1, 4, 8]   text out [1, 3, 8]   text changed: True
 ```
 
-**What this proves:**
+Both give the same shapes, but in cross the text passes through untouched. Here's one row of each attention table. Every row sums to 1, and the joint row spreads across 7 tokens, including the image's.
 
-1.  `cross_attention_output_shape = torch.Size([1, 4, 8])`: The output length is $L_q$ (4). The image tokens are updated, but the text tokens are not part of the output stream. This confirms the decoupled nature of cross-attention.
-2.  `joint_attention_output_shape = torch.Size([1, 7, 8])`: The output length is $L_q + L_k$ (4 + 3 = 7). The output contains both image and text tokens. This confirms the unified nature of joint attention.
-3.  `cross_attention_first_token = 1.50523`: This is the first value of the first image token after attending to text.
-4.  `joint_attention_first_token = -0.681057`: This is the first value of the first image token after attending to the joint sequence. The values are different because in joint attention, the first image token also attends to other image tokens, whereas in cross-attention, it only attends to text tokens.
+```text
+cross, image token 0 over the 3 text tokens: [0.595, 0.139, 0.266]
+joint, image token 0 over 3 text + 4 image:   [0.235, 0.055, 0.105, 0.093, 0.098, 0.304, 0.11]
+```
 
-## Common mistakes
+And the test of who sees whom:
 
-1.  **Assuming Cross-Attention is "weaker"**: It is not weaker; it is more efficient. For simple text-to-image, cross-attention is often sufficient and faster. Joint attention is necessary for tasks requiring deep interaction, like rendering text within the image.
-2.  **Confusing Self-Attention with Joint Attention**: In MMDiT, "Self-Attention" is applied to the joint sequence. It is not self-attention on just the image. Always check the input shape.
-3.  **Ignoring the Scaling Factor**: Forgetting to divide by $\sqrt{d}$ in the dot product leads to vanishing gradients. Both cross and joint attention require this scaling.
-4.  **Misinterpreting the Output Slice**: In joint attention, if you forget to slice the output to extract only the image tokens, you will pass text tokens into the next layer, corrupting the image generation.
+```text
+change image token 3 only. Does image token 0's output move?
+cross: False   joint: True
+```
 
-## Go deeper
+Finally the count of query-key pairs, for one block with 64 by 64 image tokens. Most of the cost in either design is images looking at images.
 
-For the theoretical foundation of the joint attention architecture used in SD3 and Flux, read:
+```text
+SD 1.5 style: self + cross, 77 text tokens     17.09 million
+Flux style: joint, 256 text tokens             18.94 million
+Flux style: joint, 512 text tokens             21.23 million
+joint, text left out, for scale                16.78 million
+```
 
-*   **arXiv:2403.03206**: "Scaling Rectified Flow Transformers for High-Resolution Image Synthesis". This paper introduces the MMDiT architecture, which uses separate weights for the two modalities but enables a bidirectional flow of information between image and text tokens via joint attention. It demonstrates that this architecture follows predictable scaling trends and improves text comprehension and typography.
+Those are only pairs in one block at one size. A real U-Net works at several sizes, and its smaller levels have far fewer tokens.
 
+## Sources
+
+- [Vaswani et al. 2017. Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+- [Rombach et al. 2021. High-Resolution Image Synthesis with Latent Diffusion Models](https://arxiv.org/abs/2112.10752)
+- [Esser et al. 2024. Scaling Rectified Flow Transformers for High-Resolution Image Synthesis](https://arxiv.org/abs/2403.03206)
+- [ComfyUI v0.43.0, comfy/ldm/modules/attention.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/attention.py)
+- [ComfyUI v0.43.0, comfy/ldm/modules/diffusionmodules/mmdit.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/modules/diffusionmodules/mmdit.py)
+- [ComfyUI v0.43.0, comfy/ldm/flux/layers.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/layers.py)
+- [ComfyUI v0.43.0, comfy/ldm/flux/model.py](https://github.com/Comfy-Org/ComfyUI/blob/v0.43.0/comfy/ldm/flux/model.py)

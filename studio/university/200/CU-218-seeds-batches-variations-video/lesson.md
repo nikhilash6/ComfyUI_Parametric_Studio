@@ -28,6 +28,16 @@ For two vectors of equal length its length is the same as theirs at every t.
 
 **No variation node.** A search of `comfy/`, `comfy_extras/` and `nodes.py` finds no node that interpolates noise. The only slerp is `bislerp`, one of the latent resize methods in `comfy/utils.py`. A variation is not a built-in feature.
 
+## Try it
+
+Keep the seed. Change the shape. See how much of the old noise is still in the same place.
+
+{{play:seedlayout}}
+
+The seed in a real graph is one input on one sampler node. In this Wan graph, find `seed` on the `KSampler`. Nothing else in the graph holds a seed, and the frame count in `Wan22ImageToVideoLatent` above it decides how that noise is laid out.
+
+{{graph:wf_wan22_t2v}}
+
 ## Lab
 
 The lab reproduces `prepare_noise` on small and Wan-sized latents. First the draw, and a surprise about the seed:
@@ -67,6 +77,16 @@ angle between the two noises 89.9 degrees.   t      lerp: std  corr with a      
 ```
 
 The two methods stay equally close to a, but a linear blend has shrunk to a standard deviation of 0.708 at its middle, and the spherical one has not.
+
+## What goes wrong
+
+- **Same seed, slightly longer clip, a totally different video.** Expected. Only 1/16 of the noise stays in place on a 16-channel latent. To change the length and keep the shot, you need another method, such as a keyframe guide.
+- **A comparison by seed misleads you.** Same seed at a different size or length is different noise. Keep both fixed when you compare settings.
+- **All four items in a batch look identical.** `LatentBatchSeedBehavior` is on `fixed`, or you repeated one latent. Use `random` to get four different draws.
+- **You can't reproduce a batch item alone.** Use `LatentFromBatch`, which keeps the index. Note the lab's warning about unusual latent shapes.
+- **Same seed gives a different result with an ancestral or SDE sampler on another machine.** Those samplers add noise per step from a generator on the latent's device, so the device matters.
+- **A blended noise looks soft or washed out.** Linear blending shrinks it to 0.708 of the size at the middle. Use slerp, or rescale. Core has no node for this.
+- **Big seeds repeat.** On this build, seeds 2^32 apart gave the same noise. Don't expect more variety from larger numbers.
 
 ## What is contested
 

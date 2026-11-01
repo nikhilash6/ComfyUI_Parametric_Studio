@@ -1,62 +1,38 @@
-import torch
-import math
-import random
-import json
-import itertools
-import collections
-
-# Set seed for reproducibility as required by the lab rules
-torch.manual_seed(0)
-
-# Concept 1: WaveNet/Autoregressive nature relies on sequential dependency.
-# Simulate a simple AR(1) process where current sample depends on previous.
-# x_t = a * x_{t-1} + b
-a = 0.5
-b = 0.1
-prev_val = 0.0
-ar_samples = []
-
-# Generate 10 steps of the autoregressive process
-for i in range(10):
-    current_val = a * prev_val + b
-    ar_samples.append(current_val)
-    prev_val = current_val
-
-# Truth 1: In an AR process with positive coefficient < 1, the sequence converges.
-# The steady state is b / (1 - a) = 0.1 / 0.5 = 0.2
-steady_state = b / (1.0 - a)
-
-# The last value should be closer to the steady state than the first value
-first_val = ar_samples[0]
-last_val = ar_samples[-1]
-
-# Assert that the sequence is converging towards the steady state
-assert abs(last_val - steady_state) < abs(first_val - steady_state), "AR process should converge to steady state"
-
-# Concept 2: Diffusion models operate on noise schedules (sigma).
-# Simulate a simple forward diffusion step adding Gaussian noise.
-original_signal = torch.tensor([1.0, 2.0, 3.0], dtype=torch.float32)
-noise = torch.randn(3, dtype=torch.float32) * 0.1  # Small noise
-sigma = 0.5
-noisy_signal = original_signal + sigma * noise
-
-# Truth 2: Adding noise increases the variance of the signal.
-# The noisy signal should have a larger deviation from the original than zero.
-original_norm = torch.norm(original_signal).item()
-noisy_norm = torch.norm(noisy_signal).item()
-
-# Assert that the noisy signal is different from the original (noise was added)
-assert noisy_norm != original_norm, "Noisy signal should differ from original"
-
-# Print results in the required format
-RESULT_ar_first = f"{first_val:.6g}"
-RESULT_ar_last = f"{last_val:.6g}"
-RESULT_steady_state = f"{steady_state:.6g}"
-RESULT_original_norm = f"{original_norm:.6g}"
-RESULT_noisy_norm = f"{noisy_norm:.6g}"
-
-print(f"RESULT ar_first = {RESULT_ar_first}")
-print(f"RESULT ar_last = {RESULT_ar_last}")
-print(f"RESULT steady_state = {RESULT_steady_state}")
-print(f"RESULT original_norm = {RESULT_original_norm}")
-print(f"RESULT noisy_norm = {RESULT_noisy_norm}")
+# CU-511 lab: how three families of audio model spend their model calls. Numbers are from the papers and from ComfyUI v0.43.0 source named beside each. CPU, seeded.
+import math, torch
+torch.manual_seed(0); torch.set_num_threads(1)
+# 1. Autoregression: one call per step, in order. A dilated causal stack sees further at the same depth. Measured by autograd.
+def wavenet_rf(dilations):
+    x = torch.zeros(1, 1, 2049, requires_grad=True); y = x
+    for d in dilations: y = torch.nn.functional.conv1d(y, torch.ones(1, 1, 2), dilation=d) + 1
+    y[0, 0, -1].backward(); return int((x.grad != 0).sum().item())
+dil = [2 ** i for i in range(10)]; print("dilations 1, 2, 4 ... 512, kernel 2:", wavenet_rf(dil), "samples seen, against", wavenet_rf([1] * 10), "with no dilation at the same 10 layers")
+assert wavenet_rf(dil) == 1024 and wavenet_rf([1] * 10) == 11
+# 2. Model calls for 30 seconds of sound.
+def table(seconds):
+    rows = []
+    rows.append(("WaveNet, one call per sample at 16 kHz", 16000 * seconds, "sequential"))
+    rows.append(("MusicGen, 50 frames/s x 4 codebooks", 50 * 4 * seconds, "sequential"))
+    rows.append(("Music 3 AR stage, main model, 25 frames/s", 25 * seconds, "sequential"))
+    rows.append(("Music 3 DiT, 30 steps, CFG on", 30 * 2, "each call covers the song, in windows"))
+    rows.append(("Stable Audio style diffusion, 30 steps, CFG on", 30 * 2, "each call covers the clip"))
+    return rows
+print("\nmodel                                            calls for 30 s   how")
+for n, c, h in table(30): print(f"{n:48s} {c:<16,d} {h}")
+for n, c, h in table(120)[:3]: pass
+print("\nat 120 s the sequential counts multiply by 4; the diffusion step count does not change, each call just gets longer")
+assert table(120)[2][1] == 4 * table(30)[2][1] and table(120)[4][1] == table(30)[4][1]
+# 3. Sequential generation means a sample can't be made before the one it depends on. Noise-to-data flow updates every position together.
+x = torch.tensor([1.0, -2.0, 3.0, 0.5]); e = torch.randn(4)
+print("\nflow matching on 4 latent values, x_sigma = (1 - sigma) x + sigma noise:")
+for s in (1.0, 0.5, 0.0):
+    print(f"sigma {s:<4}: " + " ".join(f"{v:+.3f}" for v in ((1 - s) * x + s * e).tolist()))
+assert torch.equal((1 - 0.0) * x + 0.0 * e, x)
+# 4. Euler with the perfect model reaches x in one step for this straight path. Real models don't, so they take many.
+s = torch.linspace(1, 0, 11); z = e.clone(); v = e - x
+for a, b in zip(s, s[1:]): z = z + (b - a) * v
+print("Euler on the straight path with a perfect velocity, 10 steps, error", f"{(z - x).abs().max().item():.1e}")
+assert (z - x).abs().max() < 1e-5
+# 5. Finite scalar quantization, as in ACE-Step's tokenizer idea: round each number to a few levels. No codebook lookup.
+def fsq(z, levels): half = (levels - 1) / 2; return torch.round(torch.tanh(z) * half) / half
+print("\nFSQ with 5 levels:", [round(v, 2) for v in fsq(torch.tensor([-2.0, -0.3, 0.1, 0.9]), 5).tolist()], "a token, but ACE-Step still generates by a diffusion transformer, not by predicting tokens one by one")

@@ -1,0 +1,99 @@
+{
+ "meta": {
+  "title": "Core nodes that resize without telling you",
+  "about": "Two images of different sizes go into ImageBatch, and two latents into LatentAdd. Neither complains: the second input is rescaled to fit the first.",
+  "runs": "cpu",
+  "needs": [],
+  "packs": [],
+  "notes": {
+   "1": "64 by 64.",
+   "2": "128 by 128.",
+   "3": "The second image is resized to 64 by 64.",
+   "4": "Shows the batch.",
+   "5": "64 by 64 pixels, so an 8 by 8 latent.",
+   "6": "128 by 128 pixels, so a 16 by 16 latent.",
+   "7": "The second latent is resized to the first.",
+   "8": "Prints the result as text."
+  }
+ },
+ "graph": {
+  "1": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 64,
+    "height": 64,
+    "batch_size": 1,
+    "color": 3368652
+   }
+  },
+  "2": {
+   "class_type": "EmptyImage",
+   "inputs": {
+    "width": 128,
+    "height": 128,
+    "batch_size": 1,
+    "color": 13395507
+   }
+  },
+  "3": {
+   "class_type": "ImageBatch",
+   "inputs": {
+    "image1": [
+     "1",
+     0
+    ],
+    "image2": [
+     "2",
+     0
+    ]
+   }
+  },
+  "4": {
+   "class_type": "PreviewImage",
+   "inputs": {
+    "images": [
+     "3",
+     0
+    ]
+   }
+  },
+  "5": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 64,
+    "height": 64,
+    "batch_size": 1
+   }
+  },
+  "6": {
+   "class_type": "EmptyLatentImage",
+   "inputs": {
+    "width": 128,
+    "height": 128,
+    "batch_size": 1
+   }
+  },
+  "7": {
+   "class_type": "LatentAdd",
+   "inputs": {
+    "samples1": [
+     "5",
+     0
+    ],
+    "samples2": [
+     "6",
+     0
+    ]
+   }
+  },
+  "8": {
+   "class_type": "PreviewAny",
+   "inputs": {
+    "source": [
+     "7",
+     0
+    ]
+   }
+  }
+ }
+}

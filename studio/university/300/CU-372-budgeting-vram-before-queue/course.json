@@ -1,0 +1,54 @@
+{
+ "code": "CU-372",
+ "title": "Budgeting VRAM before you press Queue",
+ "level": "300",
+ "prereq": [
+  "CU-305"
+ ],
+ "char": "bits",
+ "hook": "Read a file's parameter count from its header without loading it, add up the parts, and know before you queue whether a graph will fit.",
+ "track": "performance",
+ "order": 12,
+ "graphs": [
+  "b_unet_fp8",
+  "sd15_tiled_vae"
+ ],
+ "code_refs": [
+  "comfy/utils.py:load_torch_file",
+  "comfy/model_management.py:load_models_gpu",
+  "comfy/model_base.py:BaseModel.memory_required",
+  "comfy/sd.py:memory_used_decode"
+ ],
+ "verified": [
+  {
+   "claim": "The safetensors layout is an 8-byte little-endian length, a JSON header, and raw data, so a header can be read without the data.",
+   "how": "docs",
+   "ref": "safetensors README, Format section"
+  },
+  {
+   "claim": "The lab builds such a file in memory and counts parameters from the header.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "The budget formula is the one in load_models_gpu.",
+   "how": "source",
+   "ref": "comfy/model_management.py:load_models_gpu"
+  },
+  {
+   "claim": "A text encoder does not need to stay on the card while the sampler runs: models are unloaded when room is needed.",
+   "how": "source",
+   "ref": "comfy/model_management.py:free_memory"
+  },
+  {
+   "claim": "Both graphs pass validate_prompt.",
+   "how": "test",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "Every size in the worksheet is an example, not a measurement of any model.",
+  "Your own peak depends on model code and card. This is a planning estimate, and only a run tells you for sure. We make no claim about how close it comes for any graph."
+ ],
+ "kit": true
+}

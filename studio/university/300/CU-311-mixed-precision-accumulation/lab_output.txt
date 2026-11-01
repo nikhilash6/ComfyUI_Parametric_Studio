@@ -1,7 +1,27 @@
-RESULT fp16_sum = 1
-RESULT fp32_sum = 1.0001
-RESULT fp32_accumulated = 0.1
-RESULT fp16_accumulated = 0.100037
-RESULT fp16_error = 3.66211e-05
-RESULT fp32_error = 2.83122e-08
-RESULT grad_accum_diff = 0.121216
+format   mantissa bits   spacing just above 1 (eps)   smallest normal   largest
+fp16     10              9.766e-04                    6.104e-05         6.550e+04
+bf16     7               7.812e-03                    1.175e-38         3.390e+38
+fp32     23              1.192e-07                    1.175e-38         3.403e+38
+
+1.0 + 0.0001 in fp16 = 1.000000    in fp32 = 1.000100
+
+add 0.0001 again and again, rounding after each add. The true total is count x 0.0001
+format   count     result     stopped moving at
+fp16     1000      0.1058     never
+fp16     20000     0.2500     add number 2181
+bf16     1000      0.0312     add number 273
+bf16     20000     0.0312     add number 273
+fp32     1000      0.1000     never
+fp32     20000     2.0002     never
+
+the same loss inside one matmul: a dot product of 4096 terms, summed in the format named
+true -0.16062   fp16 terms summed in fp32 -0.16061   fp16 terms summed in fp16 -0.15454
+error: fp32 sum 0.00000   fp16 sum 0.00608
+
+a toy gradient sum: 64 small batches on one weight tensor
+relative error of the summed gradient: fp16 1.88e-03   fp32 2.30e-07
+
+gradients small enough to vanish: the reason GradScaler exists
+  1e-05 stored as fp16: 1.001e-05   scaled by 65536 first, then back: 9.999e-06
+  1e-07 stored as fp16: 1.192e-07   scaled by 65536 first, then back: 1.000e-07
+  1e-08 stored as fp16: 0.000e+00   scaled by 65536 first, then back: 9.997e-09

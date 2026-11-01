@@ -1,0 +1,13 @@
+{
+ "code": "CU-433",
+ "title": "When a node re-runs: fingerprints, the NaN trick, not_idempotent",
+ "level": "400",
+ "questions": [
+  {"q": "IS_CHANGED returns True on every call. What happens on the second queue, with nothing else changed?", "options": ["The node runs", "The node comes from the cache", "The queue fails", "The node runs twice"], "answer": "The node comes from the cache", "why": "It's a value in the key, not an answer. The same value gives the same key."},
+  {"q": "Which of these makes a node run on every queue?", "options": ["return math.nan", "return float(\"NaN\")", "return False", "return None"], "answer": "return float(\"NaN\")", "why": "A new NaN never equals the stored one. math.nan is one shared object, and a real run showed 1 execution in 3 queues."},
+  {"q": "What does a fingerprint see for an input fed by a wire?", "options": ["The upstream result", "The wire as a list", "None", "It is not called at all"], "answer": "None", "why": "IsChangedCache calls get_input_data with no execution list, so linked values are marked missing."},
+  {"q": "Two identical copies of a not_idempotent node sit in a graph. You queue twice, unchanged. How many executions in total?", "options": ["1", "2", "3", "4"], "answer": "2", "why": "The id joins the key, so each copy has its own result. On the second queue both are cached."},
+  {"q": "An input has max=10, and your validate_inputs takes that input as an argument. A value of 100 arrives. What does the engine do?", "options": ["value_bigger_than_max", "Passes it to your function and skips its own range check", "Clamps it to 10", "Ignores your function"], "answer": "Passes it to your function and skips its own range check", "why": "The range check runs only for inputs not named in the validator. So your validator must check it."},
+  {"q": "Your validate_inputs ends with no return statement. What happens?", "options": ["It passes", "custom_validation_failed", "The node is skipped", "It raises TypeError"], "answer": "custom_validation_failed", "why": "Anything except True counts as failure, and that includes None."}
+ ]
+}

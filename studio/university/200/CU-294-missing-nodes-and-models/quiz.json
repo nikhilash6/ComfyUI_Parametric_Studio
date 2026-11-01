@@ -1,0 +1,13 @@
+{
+ "code": "CU-294",
+ "title": "Missing nodes and missing models, and how to fix them safely",
+ "level": "200",
+ "questions": [
+  {"q": "Value not in list: ckpt_name: 'x.safetensors' not in []. What does the empty list tell you?", "options": ["The file is broken", "That folder has no models the loader can see", "The node isn't installed", "The server is out of memory"], "answer": "That folder has no models the loader can see", "why": "The list is what the menu holds right now, and it is empty."},
+  {"q": "A checkpoint file is 4 KB, and the loader says header too large. What is the likely cause?", "options": ["A saved web page, not a model", "An old torch", "An out of memory error", "The wrong sampler"], "answer": "A saved web page, not a model", "why": "We made the same error with a small HTML file. Its first bytes get read as a length."},
+  {"q": "Which fix carries the most risk?", "options": ["Picking another file in the menu", "Installing a pack to get a missing node", "Downloading a file again", "Moving a file between folders"], "answer": "Installing a pack to get a missing node", "why": "It runs someone's code with your rights, and may change shared libraries."},
+  {"q": "You have two missing node classes in a graph. How many are reported by a queue?", "options": ["One, and it stops there", "Both", "None", "Only ones with a pack"], "answer": "One, and it stops there", "why": "validate_prompt returns at the first class it can't find."},
+  {"q": "ERROR: Could not detect model type. What should you suspect?", "options": ["The file is the wrong kind for this loader", "The seed", "A missing pack", "The output folder is full"], "answer": "The file is the wrong kind for this loader", "why": "It opened fine, and isn't recognised as a checkpoint. A LoRA or bare model in the checkpoints folder does this."},
+  {"q": "Why prefer .safetensors over .ckpt from a stranger?", "options": ["It is always smaller", "A .ckpt can hold pickled Python, which can run code if loaded carelessly", "It renders faster", ".ckpt doesn't work in ComfyUI"], "answer": "A .ckpt can hold pickled Python, which can run code if loaded carelessly", "why": "The safetensors docs call it a format for storing tensors safely, as opposed to pickle. ComfyUI's own loader uses weights_only=True, and other tools may not."}
+ ]
+}

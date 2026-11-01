@@ -14,8 +14,46 @@
   "comfy/cli_args.py:--bf16-unet",
   "comfy/cli_args.py:--fp8_e4m3fn-unet",
   "comfy/cli_args.py:--fp16-vae",
-  "comfy/ops.py:manual_cast"
+  "comfy/ops.py:manual_cast",
+  "nodes.py:UNETLoader.load_unet",
+  "comfy/model_management.py:should_use_fp16"
  ],
  "track": "noise-latent",
- "order": 50
+ "order": 50,
+ "kit": true,
+ "graphs": [
+  "b_unet_fp8"
+ ],
+ "verified": [
+  {
+   "claim": "The format limits come from torch.finfo.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "--fp8_e4m3fn-unet's help text says Store, and --fp16-vae's says might cause black images.",
+   "how": "source",
+   "ref": "comfy/cli_args.py"
+  },
+  {
+   "claim": "UNETLoader's weight_dtype menu has those four values.",
+   "how": "source",
+   "ref": "nodes.py:UNETLoader"
+  },
+  {
+   "claim": "fp16 overflow to inf, then NaN on normalising, was shown in torch here.",
+   "how": "run here",
+   "ref": "lab.py"
+  },
+  {
+   "claim": "b_unet_fp8 passes validate_prompt with its file menus skipped.",
+   "how": "run here",
+   "ref": "scripts/verify_university_graphs.py"
+  }
+ ],
+ "unchecked": [
+  "We did not render with fp8 weights for this lesson. Whether it is visible on a given model is an empirical question, as the lesson says.",
+  "The fp8 rounding in the lab is a hand-written function, from the format's definition. Torch has no compute type for it here.",
+  "Whether a LoRA looks weak on an fp8 model is a thing to test. We have not measured it, and the line in What goes wrong is reasoning from experiment 1."
+ ]
 }

@@ -1,0 +1,34 @@
+{
+ "code": "CU-438",
+ "title": "Testing your node without a GPU",
+ "level": "400",
+ "prereq": ["CU-430"],
+ "char": "graph",
+ "hook": "Your node's bugs mostly don't need a card to show up. Three levels of test, from calling the function to running the real engine in one process.",
+ "track": "custom-nodes",
+ "order": 34,
+ "kit": true,
+ "graphs": ["nm_first"],
+ "code_refs": [
+  "execution.py:validate_prompt",
+  "execution.py:PromptExecutor",
+  "execution.py:CacheType",
+  "comfy/cli_args.py:--cpu",
+  "comfy/cli_args.py:--quick-test-for-ci",
+  "comfy/cli_args.py:--disable-all-custom-nodes",
+  "comfy_api/latest/_io.py:GET_SCHEMA",
+  "tests/execution/test_execution.py:test_lazy_input"
+ ],
+ "verified": [
+  {"claim": "A V3 execute can be called directly with no engine, and returns NodeOutput. cls.hidden is None there.", "how": "run here", "ref": "direct call of a test node's classmethod"},
+  {"claim": "GET_SCHEMA raises ValueError for duplicate ids, and Exception for a missing execute.", "how": "run here", "ref": "comfy_api/latest/_io.py:GET_SCHEMA"},
+  {"claim": "The in-process harness here loads core nodes in about 8 seconds and runs a graph with no GPU or server.", "how": "run here", "ref": "our test machine, one run; scripts/verify_university_graphs.py uses the same approach"},
+  {"claim": "Failures from running: bad return gives TypeError, wrong argument name gives TypeError, too few outputs gives IndexError.", "how": "run here", "ref": "test nodes through PromptExecutor"},
+  {"claim": "ComfyUI's own suite has testing nodes and execution tests.", "how": "source", "ref": "tests/execution/test_execution.py and tests/execution/testing_nodes"}
+ ],
+ "unchecked": [
+  "The harness calls internal functions, such as validate_prompt and PromptExecutor, which may change between versions. It worked on v0.43.0.",
+  "One timing on our test machine. Yours may differ.",
+  "We didn't run ComfyUI's own test suite for this lesson. We read it."
+ ]
+}

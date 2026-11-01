@@ -1,0 +1,19 @@
+per element, in 32-bit floats:
+  point with colour: 6
+  Gaussian, SH degree 0: 14 (centre 3, scale 3, rotation 4, opacity 1, colour 3)
+  Gaussian, SH degree 1: 23 (centre 3, scale 3, rotation 4, opacity 1, colour 12)
+  Gaussian, SH degree 3: 59 (centre 3, scale 3, rotation 4, opacity 1, colour 48)
+  mesh vertex with colour: 6, plus 3 integers per triangle, about 2 triangles per vertex on a closed mesh
+  100,000 Gaussians, degree 0, in a .ply: 6.5 MiB
+1,000,000 Gaussians, degree 3, in a .ply: 236.5 MiB
+
+blob size   occupied voxels   Otsu level   surface voxels   holes on a line test (rays that miss the surface, of 200)
+0.01        6,113             0.335        729              165
+0.03        24,816            1.081        5,964            56
+0.08        43,724            5.881        14,627           0
+small blobs on sparse points leave holes; bigger blobs close them and thicken the wall
+
+three blobs on one ray, opacity 0.5 each: weights [0.5, 0.25, 0.125] background gets 0.125
+a flat disc tilted  0 degrees: footprint on screen 1.000
+a flat disc tilted 45 degrees: footprint on screen 0.708
+a flat disc tilted 90 degrees: footprint on screen 0.050

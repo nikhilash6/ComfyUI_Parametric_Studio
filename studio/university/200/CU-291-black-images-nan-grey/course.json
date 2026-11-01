@@ -1,0 +1,44 @@
+{
+ "code": "CU-291",
+ "title": "Black images, NaN and grey mush",
+ "level": "200",
+ "prereq": ["CU-201", "CU-210"],
+ "char": "bits",
+ "hook": "One bad number can turn a whole picture black, and nothing tells you. How NaN gets in, why it spreads, and the flags that really exist.",
+ "track": "debugging",
+ "order": 35,
+ "kit": true,
+ "graphs": ["f_txt2img_probe", "sd15_tiled_vae"],
+ "code_refs": [
+  "nodes.py:SaveImage.save_images",
+  "comfy/model_management.py:vae_dtype",
+  "comfy/model_management.py:should_use_fp16",
+  "comfy/model_management.py:should_use_bf16",
+  "comfy/model_management.py:FORCE_FP32",
+  "comfy/sd.py:working_dtypes",
+  "comfy/cli_args.py:--force-fp32",
+  "comfy/cli_args.py:--fp16-vae",
+  "comfy/cli_args.py:--fp32-vae",
+  "comfy/cli_args.py:--bf16-vae",
+  "comfy/cli_args.py:--cpu-vae",
+  "comfy/cli_args.py:--force-upcast-attention",
+  "comfy/samplers.py:KSampler.set_steps",
+  "comfy/latent_formats.py:SD15",
+  "comfy/latent_formats.py:SDXL",
+  "comfy_extras/nodes_preview_any.py:PreviewAny"
+ ],
+ "verified": [
+  {"claim": "SaveImage turned a NaN image into pixels of 0, 0, 0, with the warning: invalid value encountered in cast. Values of 5 and -5 became 255 and 0.", "how": "run here", "ref": "nodes.py:SaveImage.save_images on a CPU, read back from the PNG"},
+  {"claim": "No check for NaN in core's sampling code, nodes.py or comfy_extras' sampling nodes stops a run.", "how": "source", "ref": "a search for isnan and nan_to_num in comfy/*.py, comfy/k_diffusion and nodes.py"},
+  {"claim": "--fp16-vae, --bf16-vae, --fp32-vae, --cpu-vae, --force-fp32 and --force-upcast-attention exist, and the help for two of them mentions black images.", "how": "source", "ref": "comfy/cli_args.py"},
+  {"claim": "A VAE's dtype comes from vae_dtype: a flag first, then the first dtype in working_dtypes that the card suits, then fp32. The default list is bf16, then fp32.", "how": "source", "ref": "comfy/model_management.py:vae_dtype and comfy/sd.py"},
+  {"claim": "--force-fp32 makes should_use_fp16 and should_use_bf16 return False.", "how": "source", "ref": "comfy/model_management.py"},
+  {"claim": "The SDXL VAE makes NaNs in fp16 because internal activation values are too big, according to its fp16-fix model card.", "how": "docs", "ref": "huggingface.co madebyollin sdxl-vae-fp16-fix, fetched 2026-11-01"},
+  {"claim": "The lcm render on SD 1.5: edge measure 6.51 against euler's 20.17, one seed.", "how": "test", "ref": "studio/sampling_lab/renders.json"}
+ ],
+ "unchecked": [
+  "We didn't reproduce a black image from a real VAE in fp16. The source and the model card say it happens, and the lab shows the arithmetic only.",
+  "We didn't render a wrong-VAE or low-denoise picture for this lesson. What they look like is labelled in the prose as expectation, from the numbers.",
+  "We don't know of a complete list of what causes NaN in sampling. This covers what we could check."
+ ]
+}

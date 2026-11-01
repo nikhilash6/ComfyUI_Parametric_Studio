@@ -1,0 +1,62 @@
+{
+ "code": "CU-333",
+ "title": "Wan 2.2 5B, node by node, and how it differs from the 14B pair",
+ "level": "300",
+ "questions": [
+  {
+   "q": "Why does the 14B route have four times the tokens of 5B at the same picture size?",
+   "options": [
+    "Its VAE compresses 8x in space where 5B's compresses 16x, and both use the same 2 x 2 patch",
+    "It has two models",
+    "It has more layers",
+    "It has 16 channels, not 48"
+   ],
+   "answer": "Its VAE compresses 8x in space where 5B's compresses 16x, and both use the same 2 x 2 patch",
+   "why": "Each side of the latent grid doubles, so positions multiply by 4. Layers and channels don't change the token count."
+  },
+  {
+   "q": "How does 5B do image to video with the same model as text to video?",
+   "options": [
+    "Wan22ImageToVideoLatent encodes the start image into the first latent frames and masks them, and each frame gets its own timestep",
+    "It loads a second image model",
+    "It repeats the image on every frame",
+    "It can't: 5B is text only"
+   ],
+   "answer": "Wan22ImageToVideoLatent encodes the start image into the first latent frames and masks them, and each frame gets its own timestep",
+   "why": "The node writes the encoded image and a noise_mask, and WAN22.process_timestep turns the mask into per-frame timesteps."
+  },
+  {
+   "q": "What does boundary 0.875 mean in Wan's 14B config?",
+   "options": [
+    "Steps at high noise use the high-noise model, and it hands over to the low-noise model past that point",
+    "87.5% of the steps are skipped",
+    "CFG falls by 12.5%",
+    "The VAE switches at that point"
+   ],
+   "answer": "Steps at high noise use the high-noise model, and it hands over to the low-noise model past that point",
+   "why": "The config names a low noise and a high noise checkpoint, and the sampler picks one per step by that boundary. 5B has no boundary."
+  },
+  {
+   "q": "You set batch_size 4 on Wan22ImageToVideoLatent with no start image. How many videos come out?",
+   "options": [
+    "1, since that branch makes a latent with a batch of 1",
+    "4",
+    "4, sharing one seed",
+    "An error"
+   ],
+   "answer": "1, since that branch makes a latent with a batch of 1",
+   "why": "The latent is created with first dimension 1, and batch_size is used only when start_image is given."
+  },
+  {
+   "q": "Our graph has shift 8 and 20 steps. What does Wan's 5B config say?",
+   "options": [
+    "Shift 5 and 50 steps",
+    "Shift 12 and 40 steps",
+    "The same as our graph",
+    "It has no shift"
+   ],
+   "answer": "Shift 5 and 50 steps",
+   "why": "wan_ti2v_5B.py sets sample_shift 5.0 and sample_steps 50. 12 and 40 belong to the 14B config."
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+{
+ "code": "CU-116",
+ "title": "Your own picture: the input folder, LoadImage and its mask",
+ "level": "100",
+ "questions": [
+  {"q": "You load a JPEG of 800 by 600. What is the shape of the MASK output?", "options": ["[1, 64, 64], all zeros", "[1, 600, 800], all zeros", "[1, 600, 800], all ones", "There is no mask output"], "answer": "[1, 64, 64], all zeros", "why": "With no alpha channel LoadImage returns a 64 by 64 mask of zeros, whatever the picture's size. A real run confirmed it."},
+  {"q": "In a PNG with transparency, what does a mask value of 1 mean?", "options": ["That pixel is fully transparent in the file", "That pixel is fully opaque in the file", "That pixel is white", "That pixel failed to load"], "answer": "That pixel is fully transparent in the file", "why": "LoadImage computes 1 minus alpha."},
+  {"q": "You save over your picture with a new one under the same name, and queue again. Does LoadImage re-read it?", "options": ["Yes: its change check hashes the file's bytes", "No: only the name is in the cache key", "Only after a restart", "Only if the seed changed"], "answer": "Yes: its change check hashes the file's bytes", "why": "IS_CHANGED returns a SHA-256 of the file. A checkpoint loader has no such hook (CU-102)."},
+  {"q": "Why does a 3024 by 4032 phone photo take so long in an img2img graph built for 512 by 512?", "options": ["LoadImage keeps every pixel, so the latent is far larger than the model expects", "Phone photos use a special format", "The VAE refuses it and retries forever", "LoadImage shrinks it, but slowly"], "answer": "LoadImage keeps every pixel, so the latent is far larger than the model expects", "why": "Nothing resizes for you. The lab gives a latent of [1, 4, 504, 378], with 46.5 times the pixels of 512 by 512. Scale it first (CU-109)."}
+ ]
+}

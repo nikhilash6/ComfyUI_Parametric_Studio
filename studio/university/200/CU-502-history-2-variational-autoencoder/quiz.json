@@ -59,15 +59,15 @@
    "why": "The best output has expected squared error 0.75, against 1.50 for a sharp image picked at random. Its largest jump between neighbouring pixels is 0.50, where either real image has 1.00."
   },
   {
-   "q": "Which paper developed stochastic backpropagation for deep generative models at about the same time as Kingma and Welling, and when was it posted?",
+   "q": "You shift q away from the true posterior. What happens to log p(x), the bound and the gap?",
    "options": [
-    "Rezende, Mohamed and Wierstra, 16 January 2014",
-    "Goodfellow et al., 10 June 2014",
-    "Ho, Jain and Abbeel, 19 June 2020",
-    "Rombach et al., 20 December 2021"
+    "log p(x) stays, the bound falls and the gap grows by the same amount",
+    "All three fall together",
+    "log p(x) falls and the gap stays",
+    "The bound rises because q is more spread out"
    ],
-   "answer": "Rezende, Mohamed and Wierstra, 16 January 2014",
-   "why": "Kingma and Welling call it independent work, and Rezende et al. write that the approaches were developed simultaneously. The other dates belong to the GAN, DDPM and latent diffusion papers."
+   "answer": "log p(x) stays, the bound falls and the gap grows by the same amount",
+   "why": "log p(x) doesn't depend on q. The identity splits it into the bound plus the KL to the posterior, so what one loses the other gains."
   }
  ]
 }

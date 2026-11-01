@@ -13,6 +13,16 @@ A text prompt is one input. Every other control enters somewhere else, and where
 | ControlNet | residuals computed from a hint image | the U-Net's skip connections and middle block | `strength`, `start_percent`, `end_percent` |
 | IP-Adapter | image tokens | extra cross-attention beside the text's | λ |
 
+Here's the img2img entry and the ControlNet entry as graphs you can open.
+
+{{graph:sd15_img2img}}
+
+{{graph:sd15_controlnet}}
+
+CU-270 goes further into the window. Try it here first: this lab counts the steps a window covers.
+
+{{play:range}}
+
 ## The maths
 
 **img2img.** The sampler starts from x = L + σ0 n, where L is the encoded image, n is noise, and σ0 is a noise level read off the schedule (the convention of CU-202). If L has unit variance, the correlation between the start and the clean latent is 1/√(1 + σ0²). So `denoise` is not a fraction of the noise. It chooses σ0.
@@ -85,6 +95,14 @@ appended tokens, attn_bias                  2.4e-07                  0.489
 ```
 
 In the decoupled form λ is a clean dial: zero removes the image and the effect is linear. Appended tokens multiplied by zero are still tokens, and they take attention weight, so strength 0 does not remove the image (difference 0.34). The `attn_bias` type fixes that, because log(0) is -inf, but the effect is not linear in the strength. A zero token is not an absent one.
+
+## What goes wrong
+
+- **`denoise` near 1 and the picture is forgotten.** At 0.8 only a correlation of 0.2 is left. Lower it to keep more of your picture.
+- **A ControlNet does nothing on img2img.** The window is on the model's scale, and low denoise can slide all your steps out of it. CU-270 shows it with numbers.
+- **A hint that doesn't match the ControlNet.** A depth map through a Canny model runs without complaint, because both are plain images. Check the pair.
+- **Looking for IP-Adapter in core.** It isn't there. `StyleModelApply` and `unCLIPConditioning` are core's image-prompt routes, and they need their own model types.
+- **Strength 0 on `StyleModelApply` in multiply mode.** The tokens stay, so it isn't the same as no image. The lab's last table shows it. Bypass the node instead.
 
 ## What is contested
 

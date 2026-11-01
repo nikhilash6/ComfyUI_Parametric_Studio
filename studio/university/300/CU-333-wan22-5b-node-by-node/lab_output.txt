@@ -1,0 +1,18 @@
+model             VAE            latent at 832x480x81       values       tokens
+TI2V 5B           4x16x16, 48ch  (48, 21, 30, 52)           1,572,480    8,190
+T2V A14B          4x8x8, 16ch    (16, 21, 60, 104)          2,096,640    32,760
+the 14B route has 4.00 times the tokens and 16 times the attention pairs at the same picture size
+values per pixel of the picture: 5B 64:1, 14B 48:1 for long clips
+
+transformer in Wan's configs:  TI2V 5B dim 3072, 30 layers, 24 heads   T2V A14B dim 5120, 40 layers, 40 heads, two of them
+
+shift changes where a plain even grid of 20 steps spends its time (a plain even grid: real samplers may space it differently)
+shift  5.0: first sigmas 1.000 0.990 0.978, steps above 0.875:  9 of 20, steps below 0.5:  3
+shift  8.0: first sigmas 1.000 0.993 0.986, steps above 0.875: 11 of 20, steps below 0.5:  2
+shift 12.0: first sigmas 1.000 0.996 0.991, steps above 0.875: 13 of 20, steps below 0.5:  1
+
+14B with its own numbers on the plain grid: boundary 0.875, 26 steps on the high-noise model, 14 on the low-noise model
+
+Wan22ImageToVideoLatent batch_size 4: no start image -> (1, 48, 21, 30, 52)  with a start image -> (4, 48, 21, 30, 52)
+decode estimate at 832x480: 6.0 GiB in bfloat16, any length
+decode estimate at 1280x704: 13.4 GiB in bfloat16, any length

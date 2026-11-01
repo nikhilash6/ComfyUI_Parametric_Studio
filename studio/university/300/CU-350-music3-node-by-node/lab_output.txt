@@ -1,0 +1,23 @@
+longest allowed: 9000 / 25 = 360 s
+seconds   AR frames   8-code groups   latent [B, 128, L]   samples per channel   duration at 44100 Hz
+30        750         6,000           [1, 128, 2583  ]      1,322,496             29.989 s
+60        1500        12,000          [1, 128, 5167  ]      2,645,504             59.989 s
+120       3000        24,000          [1, 128, 10335 ]      5,291,520             119.989 s
+360       9000        72,000          [1, 128, 31007 ]      15,875,584            359.991 s
+500       9000        72,000          [1, 128, 31007 ]      15,875,584            359.991 s
+latent frames a second: 86.132, against 44100 / 512 = 86.133
+
+DiT window 689 latent frames (8.0 s), hop 344
+   5 s: 1 DiT passes per sampling step, with CFG on twice that
+  30 s: 7 DiT passes per sampling step, with CFG on twice that
+  60 s: 15 DiT passes per sampling step, with CFG on twice that
+ 120 s: 30 DiT passes per sampling step, with CFG on twice that
+
+DAV decode: [1, 128, L] -> [2, 64, L], one 64-channel stream per stereo channel. Values per second 11025 for 88200 samples: 8 to 1
+
+caption in : '## Global Metadata\n\n- **Genre**: lo-fi\n- <|BPM 72|>'
+caption out: 'Global Metadata\nGenre: lo-fi\nBPM is 72'
+lyrics in  : '[Verse] Rain on the glass ^ I stay [CHORUS]\nHold on'
+lyrics out : '[start]\n[verse]\nRain on the glass\nI stay\n[chorus]\nHold on'
+
+The AR stage stops at 21 s and you typed 30 s by hand: 775 latent frames, 9.0 s, are decoded with a zero condition

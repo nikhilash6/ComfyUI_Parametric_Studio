@@ -1,0 +1,62 @@
+{
+ "code": "CU-250",
+ "title": "CFG overshoot, measured on real renders",
+ "level": "200",
+ "questions": [
+  {
+   "q": "In our cfg 7 against cfg 14 renders, what happened to the edge figure?",
+   "options": [
+    "It doubled",
+    "It fell, from 13.92 to 12.34",
+    "It stayed exactly the same",
+    "It rose to 30.99"
+   ],
+   "answer": "It fell, from 13.92 to 12.34",
+   "why": "The stored figures are 13.92 and 12.34. 30.99 is the difference from the cfg 7 picture."
+  },
+  {
+   "q": "Why can raising cfg change the composition, not only the contrast?",
+   "options": [
+    "The sum applies from the first step, when the broad layout is decided",
+    "The seed changes with cfg",
+    "The VAE re-draws the layout",
+    "Cfg changes the resolution"
+   ],
+   "answer": "The sum applies from the first step, when the broad layout is decided",
+   "why": "The early high-noise steps get the stronger push too, so the path differs from there on."
+  },
+  {
+   "q": "Your picture is fried at cfg 12. What should you try first?",
+   "options": [
+    "Lower cfg, keeping the seed fixed",
+    "Add more steps",
+    "Change the seed and keep cfg",
+    "Add more negative words"
+   ],
+   "answer": "Lower cfg, keeping the seed fixed",
+   "why": "Steps don't change the sum, and a new seed hides what cfg did. Lowering cfg removes the push itself."
+  },
+  {
+   "q": "In the lab, what happens to the number of calls between cfg 2 and cfg 20?",
+   "options": [
+    "It stays at 40",
+    "It doubles every step of cfg",
+    "It falls",
+    "It grows with cfg"
+   ],
+   "answer": "It stays at 40",
+   "why": "Cfg above 1 costs two predictions per step, whatever its size."
+  },
+  {
+   "q": "How much should you trust the wipe in this lesson as a general rule?",
+   "options": [
+    "It holds for every model",
+    "It is one seed on one model: an example of the kinds of change, not a law",
+    "It holds for every seed on SDXL",
+    "It proves cfg 7 is best"
+   ],
+   "answer": "It is one seed on one model: an example of the kinds of change, not a law",
+   "why": "One render pair can't support a general claim."
+  }
+ ]
+}

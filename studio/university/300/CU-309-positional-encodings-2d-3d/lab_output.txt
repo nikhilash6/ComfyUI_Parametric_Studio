@@ -1,4 +1,18 @@
-RESULT enc_2d_shape = torch.Size([1, 4, 4, 4])
-RESULT enc_2d_first = [0.0, 1.0, 0.0, 1.0]
-RESULT enc_3d_shape = torch.Size([1, 2, 4, 4, 6])
-RESULT enc_3d_first = [0.0, 1.0, 0.0, 1.0, 0.0, 1.0]
+shuffle tokens then attend, against attend then shuffle: max difference 1.9e-06
+
+2D table for an 8x8 grid, width 16: (64, 16), values in [-0.990, 1.000]
+first 4 values for row 0, column 0: [0.0, 0.0, 0.0, 0.0]  every position different: True
+frequency  wavelength in positions
+0          6.3
+1          62.8
+2          628.3
+3          6283.2
+
+similarity of column 0 to column k, same row: [(0, 1.0), (1, 0.979), (2, 0.929), (4, 0.864), (8, 0.829), (16, 0.748), (31, 0.782)]
+
+position grid scaled by 1/2 for a double-size image: token 2 of 32 equals token 1 of 16: True
+
+RoPE on 3 axes, widths [16, 56, 56]: offset (0, 2, 3) near the corner 8.964835, far beyond any training grid 8.964835
+head width 128: axes for time, height, width = [44, 42, 42], sum 128
+head width 96: axes for time, height, width = [32, 32, 32], sum 96
+latent 21x90x160, patch 1x2x2: 75,600 tokens
