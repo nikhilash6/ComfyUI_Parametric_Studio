@@ -426,6 +426,8 @@ def _run_template(run, st, spec, ctx):
         try: body = e.read().decode()[:300]
         except Exception: pass
         raise StepError(f"ComfyUI rejected the graph: {body or _detail(e)}") from None
+    from studio.apps import dropped_outputs
+    if dropped_outputs(r): raise StepError(dropped_outputs(r)[:500])
     _keep_graph(run, st, lambda: g); jid = r["prompt_id"]; S.JOBS[jid] = {"goal": "template:" + spec["template"], "prompt": _fill(spec.get("prompt_note", spec["template"]), ctx["values"]), "started": time.time(), "options": {}}
     return _wait_job(run, st, jid)
 def _cpu(run, st, spec, ctx):

@@ -70,7 +70,9 @@ def edits_run(tid: str, b: Run):
     import urllib.request
     try: r = urllib.request.urlopen(urllib.request.Request(A.COMFY + "/prompt", json.dumps({"prompt": g, "client_id": "studio-edits"}).encode(), {"Content-Type": "application/json"}), timeout=30)
     except Exception as e: raise HTTPException(502, f"ComfyUI refused the graph: {str(e)[:120]}") from None
-    return {"job": json.loads(r.read())["prompt_id"]}
+    res = json.loads(r.read()); bad = A.dropped_outputs(res)
+    if bad: raise HTTPException(502, bad[:500])
+    return {"job": res["prompt_id"]}
 @router.post("/api/edits/{tid}/fetch-models")
 def edits_fetch(tid: str, b: dict):
     t, p = _find(tid)

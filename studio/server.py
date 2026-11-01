@@ -130,6 +130,8 @@ def _generate(b):
     except OSError: raise HTTPException(503, f"ComfyUI is not reachable at {COMFY}") from None
     except ValueError: raise HTTPException(502, "ComfyUI sent back something that is not JSON") from None
     if not isinstance(res, dict) or not res.get("prompt_id"): raise HTTPException(502, "ComfyUI did not return a job")
+    from studio.apps import dropped_outputs
+    if dropped_outputs(res): raise HTTPException(502, dropped_outputs(res)[:500])
     jid = res["prompt_id"]; JOBS[jid] = {"goal": goal, "prompt": vals["prompt"], "seed": vals["seed"], "options": opts, "started": time.time(), "graph_hash": hashlib.sha256(json.dumps(g, sort_keys=True).encode()).hexdigest()[:12]}
     return {"job": jid, "seed": vals["seed"], "options": opts, "graph_hash": JOBS[jid]["graph_hash"]}
 

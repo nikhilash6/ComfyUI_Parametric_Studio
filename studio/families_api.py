@@ -326,7 +326,9 @@ def _work(rec, f, path, values):
             for k in ("seed", "noise_seed"):
                 if isinstance(n["inputs"].get(k), int) and not any(kk.endswith("|" + k) for kk in values): n["inputs"][k] = seed
         rec.update(graph=g, seed=seed)
-        try: pid = _post(f"http://127.0.0.1:{port}/prompt", {"prompt": g, "client_id": "studio-family"}, 60)["prompt_id"]
+        try:
+            res = _post(f"http://127.0.0.1:{port}/prompt", {"prompt": g, "client_id": "studio-family"}, 60); pid = res["prompt_id"]; bad = A.dropped_outputs(res)
+            if bad: rec.update(status="error", error=bad[:500], prompt_id=pid); return
         except urllib.error.HTTPError as e:
             body = json.loads(e.read() or b"{}"); ne = body.get("node_errors") or {}; rec.update(status="error", error=("ComfyUI rejected the graph: " + (body.get("error") or {}).get("message", "") + " " + "; ".join(f"{k}: " + ", ".join(x.get("message", "") + " " + str((x.get("extra_info") or {}).get("input_name", "")) for x in v.get("errors", [])) for k, v in list(ne.items())[:3]))[:500]); return
         rec.update(status="queued", prompt_id=pid, step="Waiting for the GPU")

@@ -127,6 +127,15 @@ def describe(aid, path, oi):
     hints = model_hints(ui)
     return {"id": aid, "title": _title(aid), "inputs": inputs, "outputs": len(ld.get("outputs", [])) or sum(1 for n in g.values() if oi.get(n["class_type"], {}).get("output_node")), "nodes": len(g), "runnable": ok and not missing, "ready": ok, "problems": probs[:4], "missing_models": missing[:8],
             "downloads": [{"name": n, **hints[n]} for n in missing if n in hints][:8], "unknown_nodes": unknown, "models": models, "hints": {n: hints[n] for n in models if n in hints}}
+def dropped_outputs(res):
+    """ComfyUI answers 200 and runs what is left when one branch of a graph fails validation, so a save node can vanish and the job still "succeeds". -> what was dropped, or ''."""
+    ne = res.get("node_errors") if isinstance(res, dict) else None
+    if not ne: return ""
+    parts = []
+    for nid, n in list(ne.items())[:4]:
+        errs = (n.get("errors") or [{}]) if isinstance(n, dict) else [{}]
+        parts.append(f"{(n.get('class_type') if isinstance(n, dict) else None) or nid}: " + "; ".join(str(e.get("details") or e.get("message") or "invalid") for e in errs[:2]))
+    return "ComfyUI dropped part of this graph, so its output would be missing: " + " | ".join(parts)
 def build_graph(path, values, oi):
     ui = json.load(open(path)); ex = {}; g, probs = ui_to_api(ui, oi, ex); g, _rep = resolve(g, oi)
     if probs: raise ValueError("this app uses features the converter cannot run yet: " + probs[0])
@@ -242,4 +251,6 @@ def apps_run(aid: str, b: Run):
     except ValueError as e: raise HTTPException(400, str(e)) from None
     try: r = urllib.request.urlopen(urllib.request.Request(COMFY + "/prompt", json.dumps({"prompt": g, "client_id": "studio-apps", **({"extra_data": {"api_key_comfy_org": os.environ["COMFY_API_KEY"]}} if not open_edition() and os.environ.get("COMFY_API_KEY") else {})}).encode(), {"Content-Type": "application/json"}), timeout=30)
     except Exception as e: raise HTTPException(502, f"ComfyUI refused the graph: {str(e)[:120]}") from None
-    return {"job": json.loads(r.read())["prompt_id"]}
+    res = json.loads(r.read()); bad = dropped_outputs(res)
+    if bad: raise HTTPException(502, bad[:500])
+    return {"job": res["prompt_id"]}
