@@ -465,7 +465,6 @@
 "maker": "Neuphonic",
 "kind": "codec",
 "reference": "none",
-"blocked": "Its encoder reads facebook/w2v-bert-2.0, and only that model's config is on this machine, so speech can't be encoded for a round trip.",
 "job": "Squeezes speech to 0.8 kbps and rebuilds it at 24 kHz. A codec for speech models, not a voice.",
 "licence": {
 "name": "Apache-2.0",
@@ -483,7 +482,6 @@
 "maker": "Third Intelligence",
 "kind": "codec",
 "reference": "none",
-"blocked": "Its encoder reads facebook/w2v-bert-2.0 too, and only that model's config is on this machine. Decoding needs codes it can't make yet.",
 "job": "A speech codec whose frames flex with timing. Decodes at 44.1 kHz.",
 "licence": {
 "name": "Apache-2.0",
@@ -631,6 +629,7 @@
 "maker": "inclusionAI, repack by Comfy-Org",
 "kind": "design",
 "reference": "optional",
+"blocked": "This file is Comfy-Org's repack in core ComfyUI's layout. This ComfyUI has no node that reads it, and the pack on this machine wants the original layout, so loading stops at missing tensors.",
 "job": "Designs a voice from a description, or follows a clip. Does native podcasts for two speakers. Writes 44.1 kHz.",
 "licence": {
 "name": "MIT",
@@ -880,15 +879,33 @@
 "maker": "Zyphra",
 "kind": "speech",
 "reference": "optional",
-"job": "Emotion and pitch controls.",
+"job": "Emotion and pitch controls, with a neutral voice when no clip is given. Needs descript/dac_44khz beside it.",
 "licence": {
 "name": "Apache-2.0",
 "commercial": true
 },
 "card": "https://huggingface.co/Zyphra/Zonos-v0.1-transformer",
-"blocked": "The code is here and its transformer is on disk. Its decoder, descript/dac_44khz (about 300 MB), is not on this machine.",
+"note": "Its unconditioned voice. No clip.",
 "files": [
 "TTS/zonos/Zonos-v0.1-transformer/model.safetensors"
+]
+},
+{
+"id": "zonos_clip",
+"label": "Zonos v0.1, from a clip",
+"maker": "Zyphra",
+"kind": "reference",
+"reference": "required",
+"job": "The same model with its speaker embedding, following a clip you give it.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/Zyphra/Zonos-v0.1-transformer",
+"note": "A Kokoro built-in voice, af_heart, rendered by us as the reference, since this model has no voice of its own. No real person was copied.",
+"files": [
+"TTS/zonos/Zonos-v0.1-transformer/model.safetensors",
+"TTS/zonos/Zonos-v0.1-speaker-embedding/ResNet293_SimAM_ASP_base.pt"
 ]
 },
 {
@@ -897,13 +914,14 @@
 "maker": "Maya Research",
 "kind": "design",
 "reference": "none",
-"job": "Voice from a description, with emotion tags.",
+"job": "Voice from a description, with emotion tags. Needs hubertsiuzdak/snac_24khz beside it.",
 "licence": {
 "name": "Apache-2.0",
 "commercial": true
 },
 "card": "https://huggingface.co/maya-research/maya1",
-"blocked": "Weights are here. Its audio decoder, hubertsiuzdak/snac_24khz (about 80 MB), is not on this machine.",
+"voice_default": "Realistic male voice in the 30s age with american accent. Normal pitch, warm timbre, conversational pacing.",
+"note": "Designed from: a man in his 30s, American accent, warm timbre, conversational pacing.",
 "files": [
 "maya1-TTS/maya1/model-00001-of-00002.safetensors",
 "maya1-TTS/maya1/model-00002-of-00002.safetensors"
@@ -992,7 +1010,7 @@
 "commercial": true
 },
 "card": "https://huggingface.co/GitMylo/bark-voice-cloning",
-"blocked": "They read the output of facebook/hubert-base-ls960, which is not on this machine. Suno's original text.pt for the coarse.pt and fine.pt files is also missing; the Transformers build of Bark rendered fine without them.",
+"blocked": "No runner yet for these. HuBERT is now available, but they only make sense from a clip through Suno's original pipeline, whose text.pt is missing. The Transformers build of Bark rendered fine without them.",
 "files": [
 "TTS/GitMylo__bark-voice-cloning/quantifier_V1_hubert_base_ls960_23.pth",
 "TTS/Hobis__bark-voice-cloning-polish-HuBERT-quantizer/polish-HuBERT-quantizer_8_epoch.pth",

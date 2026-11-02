@@ -81,7 +81,7 @@ def test_empty_text_and_blocked_models_are_refused(client, monkeypatch, tmp_path
     _stub(monkeypatch, tmp_path)
     assert client.post("/api/voices/run", json={"model": "kokoro", "text": "  "}).status_code == 400
     assert client.post("/api/voices/run", json={"model": "nosuch", "text": "x"}).status_code == 404
-    b = client.post("/api/voices/run", json={"model": "maya1", "text": "x"}); assert b.status_code == 409 and "snac" in b.json()["detail"]
+    b = client.post("/api/voices/run", json={"model": "glm_tts", "text": "x"}); assert b.status_code == 409 and "shard" in b.json()["detail"]
 
 
 def test_the_runner_itself_refuses_a_clip_without_a_consent_word():
@@ -91,7 +91,7 @@ def test_the_runner_itself_refuses_a_clip_without_a_consent_word():
 def test_rendered_needs_a_real_proof_and_the_page_says_nobody_listened(monkeypatch):
     monkeypatch.setattr(V, "proof", lambda: {"renders": {"kokoro": {"audio": "voices/kokoro.m4a"}}})
     by = {m["id"]: m for m in V.listing()}; assert by["kokoro"]["state"] == "rendered" and by["bark"]["state"] != "rendered"
-    assert by["maya1"]["state"] == "blocked"; js = (WEB / "voices.js").read_text(encoding="utf-8"); assert "Nobody has listened" in js and V.PAGE["title"][2].endswith("No person has listened yet.")
+    assert by["glm_tts"]["state"] == "blocked"; js = (WEB / "voices.js").read_text(encoding="utf-8"); assert "Nobody has listened" in js and V.PAGE["title"][2].endswith("No person has listened yet.")
 
 
 def test_every_audio_file_on_the_page_is_there():

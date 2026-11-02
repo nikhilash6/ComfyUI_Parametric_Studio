@@ -153,7 +153,15 @@ def vibevoice(a):
     from vvembed.modular.modeling_vibevoice_inference import VibeVoiceForConditionalGenerationInference as VV
     from vvembed.processor.vibevoice_processor import VibeVoiceProcessor
     d = m("TTS", "VibeVoice", "VibeVoice-Large" if a.model.endswith("large") else "VibeVoice-1.5B")
-    model = VV.from_pretrained(d, torch_dtype=torch.bfloat16, device_map=device(), attn_implementation="sdpa").eval(); model.set_ddpm_inference_steps(num_steps=10)
+    # Built by hand: transformers' meta-device loading breaks the scheduler this model makes in its constructor.
+    from safetensors.torch import load_file
+    from vvembed.modular.configuration_vibevoice import VibeVoiceConfig
+    cfg = VibeVoiceConfig.from_pretrained(d); cfg._attn_implementation = "sdpa"; model = VV(cfg); sd = {}
+    for f in sorted(os.listdir(d)):
+        if f.endswith(".safetensors"): sd.update(load_file(os.path.join(d, f)))
+    gone = model.load_state_dict(sd, strict=False).missing_keys; del sd
+    if "lm_head.weight" in gone: model.lm_head.weight = model.model.language_model.get_input_embeddings().weight      # the 1.5B checkpoint ties it
+    model = model.to(device(), torch.bfloat16).eval(); model.set_ddpm_inference_steps(num_steps=10)
     proc = VibeVoiceProcessor.from_pretrained(d)
     ref, _ = librosa.load(need_ref(a), sr=24000, mono=True)
     inp = proc(["Speaker 1: " + a.text], voice_samples=[[ref]], return_tensors="pt", return_attention_mask=True)
@@ -256,7 +264,7 @@ def omnivoice(a):
 
 @engine("luxtts")
 def luxtts(a):
-    code("LuxTTS")
+    code("LinaCodec"); code("LuxTTS")
     from zipvoice.luxvoice import LuxTTS
     d = view("LuxTTS", {n: m("_by_repo", "YatharthS__LuxTTS", n) for n in ("model.pt", "vocoder/vocos.bin", "text_encoder.onnx", "fm_decoder.onnx", "text_encoder_int8.onnx", "fm_decoder_int8.onnx")})
     t = LuxTTS(d, device=device()); enc = t.encode_prompt(need_ref(a), rms=0.01)
@@ -272,13 +280,20 @@ def _torchao():
         mod = sys.modules["torchao.dtypes.nf4tensor"]; mod.NF4Tensor = type("NF4Tensor", (), {}); mod.linear_nf4 = mod.to_nf4 = lambda *x, **k: None
 
 
+def _w2v():
+    from transformers import AutoFeatureExtractor, Wav2Vec2BertModel
+    w = _extra("w2v-bert-2.0")
+    _local(Wav2Vec2BertModel, "facebook/w2v-bert-2.0", w); _local(AutoFeatureExtractor, "facebook/w2v-bert-2.0", w)
+
+
 @engine("neucodec")
 def neucodec(a):
     import librosa, torch
-    _torchao()
+    from safetensors.torch import load_file
+    _torchao(); _w2v()
     from neucodec import NeuCodec
-    y, _ = librosa.load(a.audio, sr=16000, mono=True)
-    c = NeuCodec.from_pretrained(view("neucodec", {"pytorch_model.bin": m("TTS", "neucodec", "model.safetensors")}) if False else m("TTS", "neucodec")).eval().to(device())
+    y, _ = librosa.load(a.audio, sr=16000, mono=True); c = NeuCodec(24_000, 480); st = load_file(m("TTS", "neucodec", "model.safetensors"))
+    c.load_state_dict({k: v for k, v in st.items() if "fc_post_s" not in k and "SemanticDecoder" not in k}, strict=False); c = c.eval().to(device())
     with torch.no_grad(): out = c.decode_code(c.encode_code(torch.from_numpy(y)[None, None].to(device())))
     return out.squeeze().cpu().numpy(), 24000
 
@@ -286,7 +301,7 @@ def neucodec(a):
 @engine("rubato")
 def rubato(a):
     import librosa, torch
-    _torchao(); code("RubatoCodec")
+    _torchao(); _w2v(); code("RubatoCodec")
     from rubatocodec import RubatoCodec
     c = RubatoCodec.from_checkpoint(m("TTS", "rubato-codec", "model.safetensors"), device=device()); y, sr = librosa.load(a.audio, sr=None, mono=True)
     with torch.no_grad(): return c.decode(c.encode(torch.from_numpy(y), sr=sr)).squeeze().cpu().numpy(), 44100
@@ -323,6 +338,8 @@ def audiosr(a):
 @engine("step_editx")
 def step_editx(a):
     code("Step-Audio-EditX")
+    from omegaconf import OmegaConf
+    stock = OmegaConf.to_container; OmegaConf.to_container = lambda c, **k: c if isinstance(c, dict) else stock(c, **k)      # its vendored funasr passes a plain dict
     from tokenizer import StepAudioTokenizer
     from tts import StepAudioTTS
     root = m("TTS", "step_audio_editx")
@@ -346,11 +363,66 @@ def ming3(a):
 
 @engine("humaneness_vc")
 def humaneness(a):
-    import subprocess
-    d = m("_libraries", "audio-models", "Humaneness-Voice-Converter")
-    _pkg_resources(); subprocess.run([sys.executable, os.path.join(d, "infer.py"), "--model-dir", d, "--source", a.audio, "--target", need_ref(a), "--output", a.out], check=True)
-    import soundfile as sf
+    import runpy, soundfile as sf
+    d = m("_libraries", "audio-models", "Humaneness-Voice-Converter"); _pkg_resources(); rd, wr = sf.read, sf.write
+    sf.read = lambda f, *x, **k: rd(str(f), *x, **k); sf.write = lambda f, *x, **k: wr(str(f), *x, **k)      # the script passes Path objects, which this soundfile refuses
+    argv, sys.argv = sys.argv, ["infer.py", "--model-dir", d, "--source", a.audio, "--target", need_ref(a), "--output", a.out]
+    try: runpy.run_path(os.path.join(d, "infer.py"), run_name="__main__")
+    finally: sys.argv = argv; sf.read, sf.write = rd, wr
     return sf.read(a.out, dtype="float32")
+
+
+def _extra(name):
+    """A small companion model kept beside the runner's code, not in the models folder."""
+    p = os.path.join(os.environ.get("STUDIO_VOICE_WEIGHTS") or os.path.join(CODE, "weights"), name)
+    if not os.path.isdir(p): raise SystemExit(f"this model also needs {name}, which is not in STUDIO_VOICE_WEIGHTS")
+    return p
+
+
+def _local(cls, repo, path):
+    """Make one class load a named hub repo from a local folder."""
+    stock = cls.from_pretrained.__func__
+    cls.from_pretrained = classmethod(lambda c, name=None, *x, **k: stock(c, path if name == repo else name, *x, **k))
+
+
+@engine("zonos", "zonos_clip")
+def zonos(a):
+    import espeakng_loader, torch
+    from phonemizer.backend.espeak.wrapper import EspeakWrapper
+    EspeakWrapper.set_library(espeakng_loader.get_library_path()); EspeakWrapper.set_data_path(espeakng_loader.get_data_path())
+    code("Zonos")
+    import zonos.autoencoder as AE
+    from transformers import DacModel
+    _local(DacModel, "descript/dac_44khz", _extra("dac_44khz"))
+    from zonos.conditioning import make_cond_dict
+    from zonos.model import Zonos
+    d = m("TTS", "zonos", "Zonos-v0.1-transformer"); t = Zonos.from_local(os.path.join(d, "config.json"), os.path.join(d, "model.safetensors"), device=device()); spk = None
+    if a.reference:
+        import torchaudio, zonos.speaker_cloning as SC
+        sd = m("TTS", "zonos", "Zonos-v0.1-speaker-embedding"); SC.hf_hub_download = lambda repo_id, filename, **k: os.path.join(sd, filename)
+        t.spk_clone_model = SC.SpeakerEmbeddingLDA(device=device()); wav, sr = torchaudio.load(a.reference); spk = t.make_speaker_embedding(wav, sr).to(device())
+    codes = t.generate(t.prepare_conditioning(make_cond_dict(text=a.text, speaker=spk, language="en-us", device=device())), disable_torch_compile=True)
+    return t.autoencoder.decode(codes)[0].squeeze().float().cpu().numpy(), t.autoencoder.sampling_rate
+
+
+@engine("maya1")
+def maya1(a):
+    import numpy as np, torch
+    from snac import SNAC
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    d = m("maya1-TTS", "maya1"); tok = AutoTokenizer.from_pretrained(d); model = AutoModelForCausalLM.from_pretrained(d, dtype=torch.bfloat16, device_map=device()).eval()
+    who = a.voice or "Realistic male voice in the 30s age with american accent. Normal pitch, warm timbre, conversational pacing."
+    prompt = tok.apply_chat_template([{"role": "user", "content": f'<description="{who}"> {a.text}'}], tokenize=False, add_generation_prompt=True)
+    ids = tok(prompt, return_tensors="pt", add_special_tokens=False).to(device())
+    with torch.no_grad(): out = model.generate(**ids, max_new_tokens=2000, min_new_tokens=28, do_sample=True, temperature=0.4, top_p=0.9, repetition_penalty=1.1, eos_token_id=128258)
+    new = [t for t in out[0, ids["input_ids"].shape[1]:].tolist() if 128266 <= t <= 156937]; new = new[: len(new) // 7 * 7]
+    if not new: raise SystemExit("maya1 wrote no audio tokens")
+    l1, l2, l3 = [], [], []
+    for i in range(0, len(new), 7):
+        f = [(x - 128266) % 4096 for x in new[i:i + 7]]; l1.append(f[0]); l2 += [f[1], f[4]]; l3 += [f[2], f[3], f[5], f[6]]
+    sn = SNAC.from_pretrained(_extra("snac_24khz")).eval().to(device())
+    with torch.no_grad(): au = sn.decoder(sn.quantizer.from_codes([torch.tensor(x, device=device())[None] for x in (l1, l2, l3)]))
+    return au[0, 0].float().cpu().numpy(), 24000
 
 
 def _load16k(p):
