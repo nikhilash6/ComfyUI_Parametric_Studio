@@ -1,12 +1,21 @@
 """Run LLM-written or user-written Python in a separate, resource-limited process and get back only data. See sandbox_runner.py for what is blocked.
 Limits: wall-clock timeout (process group killed), CPU seconds, address space, open files, file size, no core dumps, empty environment, throw-away working directory."""
-import os, sys, json, time, signal, tempfile, subprocess, resource
+import os, sys, json, time, signal, tempfile, subprocess
+try: import resource                      # POSIX only. Without it the sandbox is off, and the rest of the pack still loads (Windows).
+except ImportError: resource = None
 
 RUNNER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sandbox_runner.py")
 MARK = "@@PSN_RESULT@@"
+UNAVAILABLE = ("The Python sandbox is not in this build. The Comfy Registry package leaves out sandbox_runner.py, because the Registry's standards prohibit exec, "
+               "and it needs a POSIX system. Install from the git repository on Linux or macOS to use it.")
+
+def available():
+    """True when scripts can run: the runner file shipped (it is left out of the Comfy Registry archive) and the OS has resource limits."""
+    return resource is not None and os.path.isfile(RUNNER)
 
 def run(code, inputs=None, timeout=10.0, mem_mb=512, allow=None, max_stdout=2_000_000):
     """-> {"ok": bool, "result": ..., "stdout": str, "error": str, "secs": float, "timed_out": bool}"""
+    if not available(): return {"ok": False, "result": None, "stdout": "", "error": UNAVAILABLE, "secs": 0.0, "timed_out": False}
     timeout = max(0.5, min(float(timeout), 120.0)); mem = int(max(64, min(int(mem_mb), 4096))) * 1024 * 1024
     payload = json.dumps({"code": code, "inputs": inputs, "allow": list(allow) if allow else None})
     def limits():

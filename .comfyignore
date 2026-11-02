@@ -1,4 +1,16 @@
-# Left out of the Comfy Registry archive. Everything else ships.
+# Left out of the Comfy Registry archive (comfy node publish / comfy node pack; .gitignore syntax).
+# The archive is the node pack that ComfyUI-Manager unzips into custom_nodes. The full studio installs from a git checkout (INSTALL.md).
+# Publish from a git checkout: outside one, comfy-cli zips every file on disk (0.1.0 shipped .ruff_cache that way).
 tests/
 .github/
 uv.lock
+.ruff_cache/
+# ComfyUI-Manager runs install.py after unzipping a pack; this one is the standalone studio installer (venv, ComfyUI clone, pip, downloads).
+install.py
+# Build and maintenance scripts, not loaded by ComfyUI.
+scripts/
+# The studio's web pages and media (about 200 MB) and the docs images. No node reads them.
+studio/web/
+docs/
+# Runs user Python through exec in a child process. The Registry standards prohibit exec, so the PSN Sandboxed Script node is left out of this archive.
+psn/sandbox_runner.py

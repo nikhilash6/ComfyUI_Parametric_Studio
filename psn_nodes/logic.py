@@ -62,3 +62,5 @@ class PSN_AttemptPlanner:
 
 NODE_CLASS_MAPPINGS = {"PSN_Expression": PSN_Expression, "PSN_SandboxScript": PSN_SandboxScript, "PSN_Branch": PSN_Branch, "PSN_QualityGate": PSN_QualityGate, "PSN_AttemptPlanner": PSN_AttemptPlanner}
 NODE_DISPLAY_NAME_MAPPINGS = {"PSN_Expression": "PSN Expression (safe)", "PSN_SandboxScript": "PSN Sandboxed Script", "PSN_Branch": "PSN Branch (if/else)", "PSN_QualityGate": "PSN Quality Gate", "PSN_AttemptPlanner": "PSN Attempt Planner"}
+if not _sbx.available():   # the Comfy Registry archive leaves out psn/sandbox_runner.py (the Registry prohibits exec), and Windows has no resource limits
+    NODE_CLASS_MAPPINGS.pop("PSN_SandboxScript"); NODE_DISPLAY_NAME_MAPPINGS.pop("PSN_SandboxScript")

@@ -307,7 +307,31 @@ def parse_args(argv=None):
     return p.parse_args(argv)
 
 
+COMFYUI_NOTE = ("Parametric Studio's nodes are installed; ComfyUI loads them on its next start. Nothing else was changed.\n"
+                "install.py is the standalone studio installer (it creates a venv, clones ComfyUI and downloads models), so it does nothing when ComfyUI-Manager or comfy-cli runs it.\n"
+                "For the full studio, see INSTALL.md: https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/blob/main/INSTALL.md")
+
+
+def started_by_comfyui(argv, env=None, repo=REPO):
+    """True when ComfyUI-Manager or comfy-cli runs this file after installing the node pack.
+    They run `python install.py` with no options, from custom_nodes/<pack>, with COMFYUI_PATH set (ComfyUI-Manager's get_script_env).
+    The installer would then ask "Proceed?" on the ComfyUI server's terminal and wait there, so it must not start."""
+    if argv:
+        return False
+    if repo.parent.name == "custom_nodes":
+        return True
+    comfy = (os.environ if env is None else env).get("COMFYUI_PATH")
+    nodes = Path(comfy) / "custom_nodes" if comfy else None
+    try:
+        return bool(nodes) and nodes.is_dir() and any(entry.resolve() == repo for entry in nodes.iterdir())
+    except OSError:
+        return False
+
+
 def main(argv=None):
+    if started_by_comfyui(sys.argv[1:] if argv is None else argv):
+        print(COMFYUI_NOTE)
+        return EXIT_OK
     args = parse_args(argv)
     goal_manifest = load_json(REPO / "studio" / "models_manifest.json")
     if args.list:
