@@ -59,7 +59,7 @@ class ExternalTrainer:
         wrap = os.environ.get("STUDIO_TRAIN_WRAP", "").split()
         wrap = [w.replace("{key}", job["base"]).replace("{peak}", str(base.get("peak_gib") or 24)) for w in wrap]
         out = open(log, "ab")
-        p = subprocess.Popen(wrap + self.command(job, base), cwd=self.cwd(), env=self.env(job), stdout=out, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True)
+        p = subprocess.Popen(wrap + self.command(job, base), cwd=getattr(self, "_cwd", None) or self.cwd(), env=self.env(job), stdout=out, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True)
         out.close()
         job["proc"] = {"pid": p.pid, "ticks": proc_start_ticks(p.pid), "log": str(log)}
         job["pid"] = p.pid

@@ -46,6 +46,8 @@ DEFAULTS = {"steps": 300, "rank": 8, "batch": 1, "learning_rate": 0.0005, "seed"
 MIN_PICTURES, FEW_PICTURES, MAX_PICTURES = 2, 10, 500
 MAX_PICTURE_BYTES = 50 * 2**20
 IMAGE_EXT = (".png", ".jpg", ".jpeg", ".webp")
+AUDIO_EXT = (".flac", ".wav", ".mp3", ".ogg")
+AUDIO_MAGIC = (b"fLaC", b"RIFF", b"ID3", b"OggS", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2")
 FLOAT_DTYPES = {"F16", "BF16", "F32", "F64"}
 ACTIVE = ("preparing", "queued", "running", "cancelling")
 INPUT_SUB = "parametric_train"     # under ComfyUI's input folder: LoadImageTextDataSetFromFolder cannot read anywhere else
@@ -136,6 +138,53 @@ def _gpu_used_gib():
     return None
 
 
+def _gpu_by_pid() -> dict:
+    """{pid: GiB} on the card, from nvidia-smi. Empty when it cannot say."""
+    try:
+        out = subprocess.run(["nvidia-smi", "--query-compute-apps=pid,used_memory", "--format=csv,noheader,nounits"], capture_output=True, text=True, timeout=5).stdout
+    except (OSError, subprocess.SubprocessError): return {}
+    rows = {}
+    for line in out.splitlines():
+        try: pid, mem = [x.strip() for x in line.split(",")[:2]]; rows[int(pid)] = rows.get(int(pid), 0) + int(mem) / 1024
+        except ValueError: pass
+    return rows
+
+
+def _own_pids(job: dict) -> set[int]:
+    """The processes that are this run: a trainer and its children, or the ComfyUI serving this studio, found by its port."""
+    root = (job.get("proc") or {}).get("pid")
+    table = {}
+    try:
+        for d in os.listdir("/proc"):
+            if d.isdigit():
+                try:
+                    table[int(d)] = (int(open(f"/proc/{d}/stat").read().rsplit(")", 1)[1].split()[1]), open(f"/proc/{d}/cmdline", "rb").read().split(b"\0"))
+                except (OSError, ValueError, IndexError): pass
+    except OSError: return set()
+    if not root:
+        port = urllib.parse.urlparse(_comfy_url()).port
+        args = str(port).encode()
+        for pid, (_, cmd) in table.items():
+            if b"--port" in cmd[:-1] and cmd[cmd.index(b"--port") + 1] == args: return {pid}
+        return set()
+    own, grew = {root}, True
+    while grew:
+        grew = False
+        for pid, (ppid, _) in table.items():
+            if ppid in own and pid not in own: own.add(pid); grew = True
+    return own
+
+
+def _note_peak(job: dict) -> None:
+    """Keeps two peaks: the whole card, others included, and this run's own processes."""
+    used = _gpu_used_gib()
+    if used is not None: job["peak_vram_gib"] = max(job.get("peak_vram_gib") or 0, used)
+    apps = _gpu_by_pid()
+    if apps:
+        own = sum(apps.get(p, 0) for p in _own_pids(job))
+        if own: job["peak_own_gib"] = round(max(job.get("peak_own_gib") or 0, own), 2)
+
+
 def _comfy_folder(name: str) -> list[str]:
     try: return [p for p in (_comfy("/internal/folder_paths", timeout=5).get(name) or []) if isinstance(p, str)]
     except Exception: return []
@@ -197,7 +246,14 @@ def _add_picture(ds: Path, meta: dict, name: str, data: bytes) -> str | None:
     if len(data) > MAX_PICTURE_BYTES: return f"{name}: over 50 MB"
     fn = _safe_name(name)
     stem, ext = os.path.splitext(fn)
-    if ext not in IMAGE_EXT: return f"{name}: png, jpg or webp only"
+    if ext in AUDIO_EXT:
+        if not data.startswith(AUDIO_MAGIC): return f"{name}: not an audio file this can read"
+        n, target = 1, fn
+        while target in meta["items"]: target = f"{stem}_{n}{ext}"; n += 1
+        (_images_dir(ds) / target).write_bytes(data)
+        meta["items"][target] = {"width": 0, "height": 0, "sha256": hashlib.sha256(data).hexdigest(), "flat": False, "audio": True}
+        return None
+    if ext not in IMAGE_EXT: return f"{name}: png, jpg or webp only (flac, wav, mp3 or ogg for an audio base)"
     tmp = _images_dir(ds) / f".in_{uuid.uuid4().hex[:8]}{ext}"
     tmp.write_bytes(data)
     try:
@@ -239,12 +295,12 @@ def report(ds: Path, trigger: str = "", size: int | None = None) -> dict:
         if flagged(file): add("block", "word_list", "The file name has a word outside this studio's safe-for-work list. Remove this picture or rename the file.")
         if cap and trigger and not re.search(rf"(?<!\w){re.escape(trigger)}(?!\w)", cap, re.I): add("warn", "no_trigger", "The trigger word is not in this caption.")
         if len(cap.split()) > 65: add("warn", "long_caption", f"{len(cap.split())} words. The text encoder cuts off near 75 tokens, so the end may be ignored.")
-        if size and min(it["width"], it["height"]) < size: add("warn", "small", f"{it['width']} x {it['height']} is smaller than {size}, so it will be scaled up and soft.")
+        if size and not it.get("audio") and min(it["width"], it["height"]) < size: add("warn", "small", f"{it['width']} x {it['height']} is smaller than {size}, so it will be scaled up and soft.")
         if it.get("flat"): add("warn", "flat", "Almost one flat colour. It may be a failed render.")
         if it["sha256"] in seen: add("warn", "duplicate", f"The same file as {seen[it['sha256']]}.")
         else: seen[it["sha256"]] = file
         blocks += sum(p["level"] == "block" for p in problems); warns += sum(p["level"] == "warn" for p in problems)
-        rows.append({"file": file, "caption": cap, "width": it["width"], "height": it["height"], "problems": problems, "thumb": f"/api/train/datasets/{meta['id']}/thumb/{urllib.parse.quote(file)}"})
+        rows.append({"file": file, "audio": bool(it.get("audio")), "listen": f"/api/train/datasets/{meta['id']}/audio/{urllib.parse.quote(file)}" if it.get("audio") else None, "caption": cap, "width": it["width"], "height": it["height"], "problems": problems, "thumb": f"/api/train/datasets/{meta['id']}/thumb/{urllib.parse.quote(file)}"})
     set_problems = []
     if len(rows) < MIN_PICTURES: set_problems.append({"level": "block", "code": "too_few", "text": f"Add at least {MIN_PICTURES} pictures."})
     elif len(rows) < FEW_PICTURES: set_problems.append({"level": "warn", "code": "few", "text": f"{len(rows)} pictures will train, but a LoRA from so few tends to copy them."})
@@ -332,9 +388,9 @@ def _import_folder(ds_id: str, folder: str) -> dict:
     picked, n = [], 0
     for f in sorted(src.iterdir()):
         if n >= MAX_PICTURES * 2: break
-        if f.is_file() and not f.is_symlink() and f.suffix.lower() in IMAGE_EXT + (".txt",) and f.stat().st_size <= MAX_PICTURE_BYTES:
+        if f.is_file() and not f.is_symlink() and f.suffix.lower() in IMAGE_EXT + AUDIO_EXT + (".txt",) and f.stat().st_size <= MAX_PICTURE_BYTES:
             picked.append((f.name, f.read_bytes())); n += 1
-    if not any(not p[0].lower().endswith(".txt") for p in picked): raise HTTPException(400, "No png, jpg or webp pictures directly inside that folder.")
+    if not any(not p[0].lower().endswith(".txt") for p in picked): raise HTTPException(400, "No png, jpg or webp pictures directly inside that folder (or flac, wav, mp3 or ogg for an audio base).")
     return _store_uploads(ds, ds_id, picked)
 
 
@@ -344,6 +400,13 @@ def thumb(ds_id: str, file: str):
     p = ds / "thumbs" / (_safe_name(file) + ".jpg")
     if not p.exists(): raise HTTPException(404, "no such picture")
     return FileResponse(p, media_type="image/jpeg")
+
+
+@router.get("/datasets/{ds_id}/audio/{file}")
+def listen(ds_id: str, file: str):
+    ds = _ds_dir(ds_id)
+    if not _meta(ds)["items"].get(_safe_name(file), {}).get("audio"): raise HTTPException(404, "no such clip")
+    return FileResponse(_images_dir(ds) / _safe_name(file))
 
 
 @router.post("/datasets/{ds_id}/captions")
@@ -516,7 +579,7 @@ def base_status(object_info: dict | None) -> list[dict]:
         no_run = not why and not proved and not proving
         status = "blocked" if why else "not_run" if no_run else "proven"
         if no_run: why = "No training run on record for this base, so the studio will not offer it yet."
-        peaks = [r["peak_vram_gib"] for r in proved if r.get("peak_vram_gib")]
+        peaks = [r["peak_own_gib"] for r in proved if r.get("peak_own_gib")]
         info = TRAINERS.get(trainer_id, {})
         rows.append({"id": base_id, "label": b["label"], "family": b.get("family") or b["arch"], "file": b["file"], "arch": b["arch"], "media": b.get("media", "image"), "sizes": b["sizes"], "lr": b.get("lr"), "trainer": trainer_id, "trainer_label": info.get("label") or trainer_id, "trainer_note": info.get("note"), "trainer_site": info.get("site"), "licence": b.get("licence"),
                      "status": status, "trainable": why is None, "can_try": no_run, "why_not": why, "missing": missing, "install": info.get("install") if missing and trainer_id != "comfy" else None,
@@ -556,7 +619,7 @@ def estimate(base: str, size, rank, batch, steps, gpu: str | None = None) -> dic
     if not close: return {"measured": False, "note": f"No run on this card at {size} px, batch {batch}. The first run measures it."}
     exact = [r for r in close if r.get("rank") == rank]
     r = (exact or close)[-1]
-    return {"measured": True, "exact": bool(exact), "s_per_step": r["s_per_step"], "train_seconds": round(r["s_per_step"] * steps), "setup_seconds": r.get("setup_seconds"), "peak_vram_gib": r.get("peak_vram_gib"), "from": {"steps": r["steps"], "rank": r["rank"], "date": r.get("date"), "gpu": r.get("gpu")},
+    return {"measured": True, "exact": bool(exact), "s_per_step": r["s_per_step"], "train_seconds": round(r["s_per_step"] * steps), "setup_seconds": r.get("setup_seconds"), "peak_vram_gib": r.get("peak_vram_gib"), "peak_own_gib": r.get("peak_own_gib"), "from": {"steps": r["steps"], "rank": r["rank"], "date": r.get("date"), "gpu": r.get("gpu")},
             "note": "Measured on this card at these settings." if exact else f"Measured on this card at rank {r['rank']}, not rank {rank}, so treat it as a close guide."}
 
 
@@ -707,6 +770,10 @@ def prepare(ds: Path, folder: Path, size: int) -> int:
     meta = _meta(ds)
     folder.mkdir(parents=True, exist_ok=True)
     for i, file in enumerate(sorted(meta["items"]), 1):
+        if meta["items"][file].get("audio"):
+            shutil.copyfile(_images_dir(ds) / file, folder / f"{i:05d}{os.path.splitext(file)[1]}")
+            (folder / f"{i:05d}.txt").write_text(_caption(ds, file), encoding="utf-8")
+            continue
         with Image.open(_images_dir(ds) / file) as im:
             ImageOps.fit(ImageOps.exif_transpose(im).convert("RGB"), (size, size), Image.LANCZOS).save(folder / f"{i:05d}.png")
         (folder / f"{i:05d}.txt").write_text(_caption(ds, file), encoding="utf-8")
@@ -747,6 +814,9 @@ def _start(b: dict) -> dict:
     settings = settings_from(b, base)
     ds = _ds_dir(str(b.get("dataset") or ""))
     rep = report(ds, trigger, settings["size"])
+    audio = [it for it in _meta(ds)["items"].values() if it.get("audio")]
+    if base.get("media") == "audio" and len(audio) != len(rep["items"]): raise HTTPException(400, "This base trains on audio clips, and this set holds pictures. Use a set of flac, wav, mp3 or ogg clips with captions.")
+    if base.get("media") != "audio" and audio: raise HTTPException(400, "This base trains on pictures, and this set holds audio clips.")
     if not rep["ready"]: raise HTTPException(400, f"The picture set has {rep['blocks']} problem(s) to fix first. See the caption check.")
     with _lock:
         running = _active()
@@ -852,8 +922,7 @@ def _tick(job_id: str) -> dict:
         job["position"] = 0
         job["last_seen"] = time.time()
         _follow_logs(job)
-        used = _gpu_used_gib()
-        if used is not None: job["peak_vram_gib"] = max(job["peak_vram_gib"] or 0, used)
+        _note_peak(job)
     elif pending:
         if job["state"] != "cancelling": job["state"] = "queued"
         job["position"] = pending[0] + 1
@@ -953,7 +1022,7 @@ def _record_measurement(job: dict) -> None:
     s, speed = job["settings"], job.get("speed_from_log")
     if not speed: return
     setup = round(job["first_step_at"] - job["running_at"], 1) if job.get("first_step_at") and job.get("running_at") else None
-    row = {"base": job["base"], "size": s["size"], "rank": s["rank"], "batch": s["batch"], "steps": s["steps"], "s_per_step": round(speed, 4), "setup_seconds": setup, "peak_vram_gib": job.get("peak_vram_gib"), "gpu": job.get("gpu"), "date": datetime.date.today().isoformat(), "run": job["id"], "trainer": job.get("trainer", "comfy")}
+    row = {"base": job["base"], "size": s["size"], "rank": s["rank"], "batch": s["batch"], "steps": s["steps"], "s_per_step": round(speed, 4), "setup_seconds": setup, "peak_vram_gib": job.get("peak_vram_gib"), "peak_own_gib": job.get("peak_own_gib"), "gpu": job.get("gpu"), "date": datetime.date.today().isoformat(), "run": job["id"], "trainer": job.get("trainer", "comfy")}
     p = data_root() / "measured.jsonl"
     p.parent.mkdir(parents=True, exist_ok=True)
     with _lock, open(p, "a") as f: f.write(json.dumps(row) + "\n")
@@ -1235,11 +1304,10 @@ def _tick_external(job: dict) -> dict:
     trainer = _trainer_of(BASES[job["base"]])
     alive = trainer.follow(job)
     if alive:
-        used = _gpu_used_gib()
         if job["curve"]:
             if job["state"] != "cancelling": job["state"] = "running"
             job["running_at"] = job["running_at"] or job["curve"][0][2]
-            if used is not None: job["peak_vram_gib"] = max(job["peak_vram_gib"] or 0, used)
+            _note_peak(job)
         job["last_seen"] = time.time()
         _commit(job)
         return job
@@ -1283,6 +1351,15 @@ def _file_external(job: dict, src: Path) -> dict:
     return {"name": f"{LORA_SUB}/{target.name}", "path": str(target), "bytes": target.stat().st_size, "sha256": digest.hexdigest(), "tensors": len(keys), "total_steps": total}
 
 
+def audio_difference(a_bytes: bytes, b_bytes: bytes) -> float:
+    """Mean absolute difference between two clips, over the length they share, on a 0 to 1 scale. Needs soundfile; without it the page says the clips could not be compared."""
+    import io
+    import soundfile
+    a, _ = soundfile.read(io.BytesIO(a_bytes), always_2d=True); b, _ = soundfile.read(io.BytesIO(b_bytes), always_2d=True)
+    n = min(len(a), len(b))
+    return round(float(abs(a[:n] - b[:n]).mean()), 5)
+
+
 def _ab_from_samples(job: dict) -> dict:
     """For a base ComfyUI cannot render here: the trainer's own first sample (before any training) against its last, same seed and prompt."""
     samples = job.get("samples") or []
@@ -1290,9 +1367,9 @@ def _ab_from_samples(job: dict) -> dict:
     first, last = samples[0], samples[-1]
     run = Path(job["run_dir"])
     a, b = (run / first["rel"]).read_bytes(), (run / last["rel"]).read_bytes()
-    try: diff = pixel_difference(a, b)
-    except (ValueError, OSError): diff = None
-    job["ab"] = {"state": "done", "source": "trainer samples", "prompt": job.get("sample_prompt"), "seed": None, "strength": 1.0, "base": first, "lora": last, "pixel_diff": diff, "unbound_keys": None, "error": None}
+    try: diff = audio_difference(a, b) if first["rel"].lower().endswith(AUDIO_EXT) else pixel_difference(a, b)
+    except (ValueError, OSError, RuntimeError, UnidentifiedImageError): diff = None
+    job["ab"] = {"state": "done", "source": "trainer samples", "audio": first["rel"].lower().endswith(AUDIO_EXT), "prompt": job.get("sample_prompt"), "seed": None, "strength": 1.0, "base": first, "lora": last, "pixel_diff": diff, "unbound_keys": None, "error": None}
     _save_job(job)
     return view_job(job)
 

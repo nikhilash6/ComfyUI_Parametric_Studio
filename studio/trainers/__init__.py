@@ -3,8 +3,9 @@ from __future__ import annotations
 
 from studio.trainers.base import ExternalTrainer
 from studio.trainers.aitoolkit import AiToolkit
+from studio.trainers.simpletuner import SimpleTuner
 
-_ALL = {"ai-toolkit": AiToolkit()}
+_ALL = {"ai-toolkit": AiToolkit(), "simpletuner": SimpleTuner()}
 
 
 def get(name: str) -> ExternalTrainer:

@@ -301,3 +301,38 @@ def test_showcase_uses_the_runs_samples_and_licence(ext):
     show._card_path(j["id"]).write_text(json.dumps({"licence": "Apache-2.0"}))
     raw, name, notes = show.bundle_bytes(j["id"], False)
     assert len(raw) > 100 and not notes
+
+
+# ---------- audio bases ----------
+
+def _flac():
+    return b"fLaC" + b"\0" * 64
+
+
+def test_audio_clips_go_in_a_set_and_are_not_pictures(env):
+    fake, c, tmp = env
+    r = c.post("/api/train/datasets", json={"name": "Clips"}).json()
+    up = c.post(f"/api/train/datasets/{r['id']}/upload", files=[("files", ("a.flac", _flac(), "audio/flac")), ("files", ("a.txt", b"qz, kalimba", "text/plain")), ("files", ("b.mp3", b"not audio", "audio/mpeg"))]).json()
+    assert any("b.mp3" in x for x in up["skipped"])
+    row = next(i for i in up["items"] if i["file"] == "a.flac")
+    assert row["audio"] and row["caption"] == "qz, kalimba" and c.get(row["listen"]).content == _flac()
+    pic = c.post("/api/train/jobs", json={**GOOD, "dataset": r["id"]})
+    assert pic.status_code == 400 and "audio clips" in pic.text
+
+
+def test_an_audio_base_refuses_pictures(ext, monkeypatch):
+    fake, c, tmp = ext
+    monkeypatch.setitem(train.BASES, "test-ext", {**BASE, "media": "audio"})
+    r = go(c)
+    assert r.status_code == 400 and "audio clips" in r.text
+
+
+def test_simpletuner_parses_its_progress_and_says_what_is_missing(env, monkeypatch):
+    from studio.trainers import simpletuner
+    p = simpletuner.parse_progress("Epoch 1/1 Steps:  10%|#| 5/50 [00:05<00:45, 1.0it/s, lr=5e-05, step_loss=0.123]\r")
+    assert p == [[5, 50, 0.123]]
+    monkeypatch.delenv("STUDIO_TRAINER_SIMPLETUNER_PYTHON", raising=False)
+    fake, c, tmp = env
+    r = rows(c)["minimax-music3"]
+    assert r["status"] == "blocked" and any("SimpleTuner installed" in m for m in r["missing"]) and any("MiniMax-Music3" in m for m in r["missing"])
+    assert r["media"] == "audio" and any("git clone" in x for x in r["install"])
