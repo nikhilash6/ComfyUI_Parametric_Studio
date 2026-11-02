@@ -131,6 +131,43 @@
      "peak_vram_gib": 28.2
     }
    ]
+  },
+  "wan_animate2": {
+   "label": "Rendered here, looked at frame by frame",
+   "weak": [
+    "3.4 s (81 frames) in this graph.",
+    "It is hungry: 41 GB at the peak.",
+    "It makes its own plain background, and the face reads younger than the picture.",
+    "Hair swings out oddly on fast turns."
+   ],
+   "samples": [
+    {
+     "title": "An invented woman follows an invented woman's clip",
+     "prompt": "Both people were made here. The driving clip was made with Wan 2.2.",
+     "seed": 7,
+     "alt": "A woman with a silver bob in a dark blue suit waves and gestures.",
+     "checked": "2026-11-01",
+     "src": "motion/wan_animate2_0.mp4",
+     "poster": "motion/wan_animate2_0.webp",
+     "kind": "video",
+     "ar": "544 / 832",
+     "seconds": 151.3,
+     "peak_vram_gib": 40.9
+    },
+    {
+     "title": "She follows Kimodo's dance on a 3D character",
+     "prompt": "Words to a rig, the rig filmed, the film driving a person. All invented.",
+     "seed": 7,
+     "alt": "A woman with a silver bob in a dark blue suit dances with bent knees and swinging arms.",
+     "checked": "2026-11-01",
+     "src": "motion/wan_animate2_1.mp4",
+     "poster": "motion/wan_animate2_1.webp",
+     "kind": "video",
+     "ar": "544 / 832",
+     "seconds": 127.5,
+     "peak_vram_gib": 40.5
+    }
+   ]
   }
  },
  "hero": {
