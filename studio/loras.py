@@ -304,6 +304,20 @@ def search(items: List[Dict[str, Any]], q: str = '', family: Optional[str] = Non
     
     return results[:limit]
 
+def _trained_items() -> List[Dict[str, Any]]:
+    """Finished runs from the Train page whose file is still there, read from Train's own records."""
+    try:
+        from studio import train
+        rows = train.trained()["loras"]
+    except Exception:
+        return []
+    out = []
+    for r in rows:
+        base = train.BASES.get(r["base"]) or {}
+        out.append({"name": r["lora_name"], "file": os.path.basename(r["lora_name"]), "family": base.get("family") or r["base"], "kind": "trained here", "size_mb": round(r["bytes"] / 2**20, 2), "trained": r["job"], "trigger": r["trigger"], "base": r["base"], "proof": "trained here", "label": r["name"]})
+    return out
+
+
 @router.get("/api/loras")
 def get_loras(
     q: str = Query(""),
@@ -323,6 +337,11 @@ def get_loras(
     on_disk = _cache["data"]
     all_items = [{**i, "recipe": known[i["name"]]["id"], "proof": known[i["name"]]["proof"]["level"], "licence": known[i["name"]]["licence"]} for i in on_disk if i["name"] in known]
     
+    # LoRAs this studio trained are known from their run records, so they are listed with their own base and run. They count as neither curated nor unknown.
+    made = _trained_items()
+    made_names = {i["name"] for i in made}
+    all_items = made + [i for i in all_items if i["name"] not in made_names]
+
     # Calculate families and kinds counts from ALL items (unfiltered)
     families = {}
     kinds = {}
@@ -339,5 +358,5 @@ def get_loras(
         "items": filtered,
         "families": families,
         "kinds": kinds,
-        "other_files": len(on_disk) - len(all_items),
+        "other_files": len([i for i in on_disk if i["name"] not in {x["name"] for x in all_items}]),
     }

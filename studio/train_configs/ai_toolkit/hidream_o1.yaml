@@ -1,0 +1,48 @@
+# Parametric Studio's own job for HiDream-O1 on ai-toolkit: pixel-space and one file, no separate text encoder or VAE.
+job: extension
+config:
+  name: "{{name}}"
+  process:
+    - type: sd_trainer
+      training_folder: "{{run_dir}}"
+      device: cuda:0
+      trigger_word: "{{trigger}}"
+      network: {type: lora, linear: {{rank}}, linear_alpha: {{rank}}}
+      save: {dtype: bf16, save_every: {{save_every}}, max_step_saves_to_keep: 2}
+      datasets:
+        - folder_path: "{{dataset}}"
+          caption_ext: txt
+          caption_dropout_rate: 0.05
+          resolution: [{{size}}]
+          cache_latents_to_disk: true
+      train:
+        batch_size: {{batch}}
+        steps: {{steps}}
+        gradient_accumulation: 1
+        train_unet: true
+        train_text_encoder: false
+        gradient_checkpointing: true
+        noise_scheduler: flowmatch
+        timestep_type: shift
+        optimizer: adamw8bit
+        lr: {{lr}}
+        dtype: bf16
+        cache_text_embeddings: true
+        seed: {{seed}}
+      model:
+        name_or_path: "{{dit}}"
+        arch: hidream_o1
+        quantize: false
+        low_vram: false
+      sample:
+        sampler: flowmatch
+        sample_every: {{sample_every}}
+        width: {{size}}
+        height: {{size}}
+        prompts: ["{{prompt}}"]
+        neg: ""
+        seed: 42
+        walk_seed: false
+        guidance_scale: {{guidance}}
+        sample_steps: {{sample_steps}}
+meta: {name: "{{name}}", version: "1.0"}

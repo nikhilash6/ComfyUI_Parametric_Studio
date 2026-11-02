@@ -1,0 +1,62 @@
+# Parametric Studio's own job for MiniMax H3 on ai-toolkit: the int8 base with its image training adapter. Stills train the look; set num_frames to 17n+5 for clips.
+job: extension
+config:
+  name: "{{name}}"
+  process:
+    - type: sd_trainer
+      training_folder: "{{run_dir}}"
+      device: cuda:0
+      trigger_word: "{{trigger}}"
+      network:
+        type: lora
+        linear: {{rank}}
+        linear_alpha: {{rank}}
+        network_kwargs: {ignore_if_contains: [adaln_proj]}
+      save: {dtype: bf16, save_every: {{save_every}}, max_step_saves_to_keep: 2}
+      datasets:
+        - folder_path: "{{dataset}}"
+          caption_ext: txt
+          caption_dropout_rate: 0.05
+          resolution: [{{size}}]
+          num_frames: {{num_frames}}
+          fps: 24
+          do_audio: false
+          cache_latents_to_disk: true
+      train:
+        batch_size: {{batch}}
+        steps: {{steps}}
+        gradient_accumulation: 1
+        train_unet: true
+        train_text_encoder: false
+        gradient_checkpointing: true
+        noise_scheduler: flowmatch
+        timestep_type: shift
+        optimizer: adamw8bit
+        lr: {{lr}}
+        dtype: bf16
+        cache_text_embeddings: true
+        seed: {{seed}}
+      model:
+        name_or_path: "Comfy-Org/MiniMax-H3"
+        arch: minimax_h3
+        quantize: true
+        qtype: convrot8
+        quantize_te: true
+        qtype_te: nvfp4
+        low_vram: false
+        assistant_lora_path: "{{adapter}}"
+        model_kwargs: {partition: fl2va_pruned, dit_fl2va_pruned_path: "{{dit}}", text_encoder_path: "{{te}}", video_vae_path: "{{vae}}", audio_vae_path: "{{audio_vae}}"}
+      sample:
+        sampler: flowmatch
+        sample_every: {{sample_every}}
+        width: {{size}}
+        height: {{size}}
+        num_frames: 5
+        fps: 24
+        prompts: ["{{prompt}}"]
+        neg: ""
+        seed: 42
+        walk_seed: false
+        guidance_scale: {{guidance}}
+        sample_steps: {{sample_steps}}
+meta: {name: "{{name}}", version: "1.0"}

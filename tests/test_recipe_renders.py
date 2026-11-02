@@ -104,7 +104,7 @@ def test_the_lettering_goal_fills_its_graph():
     assert "$" not in json.dumps(g) and g["7"]["inputs"]["seed"] == 7 and g["6"]["inputs"]["width"] == 832 and 'OPEN' in g["4"]["inputs"]["text"]
 
 # ---------- the 3D section
-MAX_GLB_MB = 8.5
+MAX_GLB_MB = 3.5
 def test_a_3d_render_links_a_small_real_file():
     for rid, r in of("3d").items():
         d = r.get("download")

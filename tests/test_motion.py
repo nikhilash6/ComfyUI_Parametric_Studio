@@ -139,8 +139,8 @@ def test_every_family_route_fills_nodes_its_template_really_has():
         g = json.load(open(T / (r["template"] + ".json")))
         for slot in r["slots"].values():
             n, w = slot.split("|"); assert n in g and w in g[n]["inputs"], (r["id"], slot)
-        if r.get("seed_slot"):
-            n, w = r["seed_slot"].split("|"); assert n in g and w in g[n]["inputs"]
+        for slot in [*([r["seed_slot"]] if r.get("seed_slot") else []), *r.get("size_slots", [])]:
+            n, w = slot.split("|"); assert n in g and w in g[n]["inputs"], (r["id"], slot)
         assert r["template"] in idx and idx[r["template"]]["family"] == r["family"]
 
 
@@ -150,3 +150,7 @@ def test_no_template_ships_a_sample_person_or_a_box_path():
         if r["via"] != "family": continue
         s = (T / (r["template"] + ".json")).read_text()
         for bad in ("/mnt/", "/home/", "girl", "doll", "asian_model"): assert bad not in s, (r["id"], bad)
+
+
+def test_a_clip_keeps_its_shape():
+    assert M.fit_size(512, 768) == (544, 832) and M.fit_size(1280, 720) == (832, 480) and M.fit_size(704, 704) == (832, 832)

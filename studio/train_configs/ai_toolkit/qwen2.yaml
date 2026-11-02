@@ -1,0 +1,51 @@
+# Parametric Studio's own job for Qwen-Image 2.1 on ai-toolkit: ComfyUI's training node cannot batch this model's text masks. Weights come from the run's link folder; quantized on load.
+job: extension
+config:
+  name: "{{name}}"
+  process:
+    - type: sd_trainer
+      training_folder: "{{run_dir}}"
+      device: cuda:0
+      trigger_word: "{{trigger}}"
+      network: {type: lora, linear: {{rank}}, linear_alpha: {{rank}}}
+      save: {dtype: bf16, save_every: {{save_every}}, max_step_saves_to_keep: 2}
+      datasets:
+        - folder_path: "{{dataset}}"
+          caption_ext: txt
+          caption_dropout_rate: 0.05
+          resolution: [{{size}}]
+          cache_latents_to_disk: true
+      train:
+        batch_size: {{batch}}
+        steps: {{steps}}
+        gradient_accumulation: 1
+        train_unet: true
+        train_text_encoder: false
+        gradient_checkpointing: true
+        noise_scheduler: flowmatch
+        timestep_type: weighted
+        optimizer: adamw8bit
+        lr: {{lr}}
+        dtype: bf16
+        cache_text_embeddings: true
+        seed: {{seed}}
+      model:
+        name_or_path: "Comfy-Org/Qwen-Image-2.1"
+        arch: qwen_image_2
+        quantize: true
+        qtype: convrot8
+        quantize_te: true
+        qtype_te: convrot8
+        low_vram: false
+      sample:
+        sampler: flowmatch
+        sample_every: {{sample_every}}
+        width: {{size}}
+        height: {{size}}
+        prompts: ["{{prompt}}"]
+        neg: ""
+        seed: 42
+        walk_seed: false
+        guidance_scale: {{guidance}}
+        sample_steps: {{sample_steps}}
+meta: {name: "{{name}}", version: "1.0"}

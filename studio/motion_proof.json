@@ -108,6 +108,29 @@
      "peak_vram_gib": 14.6
     }
    ]
+  },
+  "scail2": {
+   "label": "Rendered here, looked at frame by frame",
+   "weak": [
+    "3.4 s at 24 frames a second in this graph: longer clips need its next segments, not run here.",
+    "The face drifts a little from the picture, most of all when the head turns.",
+    "The driving clip's own small artefacts can carry over."
+   ],
+   "samples": [
+    {
+     "title": "An invented man takes over an invented woman's clip",
+     "prompt": "Both people were made here. The driving clip was made with Wan 2.2.",
+     "seed": 7,
+     "alt": "A bearded man in a long coat waves with one hand and gestures with both.",
+     "checked": "2026-11-01",
+     "src": "motion/scail2_0.mp4",
+     "poster": "motion/scail2_0.webp",
+     "kind": "video",
+     "ar": "544 / 832",
+     "seconds": 112.6,
+     "peak_vram_gib": 28.2
+    }
+   ]
   }
  },
  "hero": {

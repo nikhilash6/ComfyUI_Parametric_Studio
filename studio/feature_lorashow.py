@@ -45,7 +45,7 @@ def _ab(j: dict) -> dict:
 
 def _facts(j: dict) -> dict:
     T = _T(); v = T.view_job(j); s = j["settings"]; lo = j["lora"]; base = T.BASES.get(j.get("base")) or {}
-    return {"steps": lo.get("total_steps"), "rank": s.get("rank"), "size": s.get("size"), "batch": s.get("batch"), "learning_rate": s.get("learning_rate"), "seed": s.get("seed"), "s_per_step": v.get("s_per_step"), "elapsed_s": v.get("elapsed_s"), "last_loss": round(v["last_loss"], 4) if v.get("last_loss") is not None else None, "peak_vram_gib": j.get("peak_vram_gib"), "gpu": _T()._card(j.get("gpu")) if j.get("gpu") else None, "pictures": j.get("pictures") or j.get("dataset_pictures"), "tensors": lo.get("tensors"), "bytes": lo.get("bytes"), "sha256": lo.get("sha256"), "file": os.path.basename(lo.get("name") or ""), "base_id": j.get("base"), "base": base.get("label"), "arch": base.get("arch"), "base_file": j.get("base_file"), "base_licence": BASE_LICENCE.get(j.get("base")), "finished": datetime.date.fromtimestamp(j["ended"]).isoformat() if j.get("ended") else None, "rights": (j.get("rights") or {}).get("text") if (j.get("rights") or {}).get("confirmed") else None}
+    return {"steps": lo.get("total_steps"), "rank": s.get("rank"), "size": s.get("size"), "batch": s.get("batch"), "learning_rate": s.get("learning_rate"), "seed": s.get("seed"), "s_per_step": v.get("s_per_step"), "elapsed_s": v.get("elapsed_s"), "last_loss": round(v["last_loss"], 4) if v.get("last_loss") is not None else None, "peak_vram_gib": j.get("peak_vram_gib"), "gpu": _T()._card(j.get("gpu")) if j.get("gpu") else None, "pictures": j.get("pictures") or j.get("dataset_pictures"), "tensors": lo.get("tensors"), "bytes": lo.get("bytes"), "sha256": lo.get("sha256"), "file": os.path.basename(lo.get("name") or ""), "base_id": j.get("base"), "base": base.get("label"), "arch": base.get("arch"), "base_file": j.get("base_file"), "base_licence": base.get("licence") or BASE_LICENCE.get(j.get("base")), "trainer": (T.TRAINERS.get(j.get("trainer", "comfy")) or {}).get("label"), "finished": datetime.date.fromtimestamp(j["ended"]).isoformat() if j.get("ended") else None, "rights": (j.get("rights") or {}).get("text") if (j.get("rights") or {}).get("confirmed") else None}
 
 
 def card(job_id: str) -> dict:
@@ -72,8 +72,11 @@ def _clean_png(data: bytes) -> bytes:
     b = io.BytesIO(); Image.open(io.BytesIO(data)).convert("RGB").save(b, "PNG"); return b.getvalue()
 
 
-def _view(ref: dict) -> bytes:
+def _view(ref: dict, job_id: str | None = None) -> bytes:
     import urllib.parse
+    if ref.get("rel"):                          # an external trainer's own sample: it lives in the run's folder, not in ComfyUI
+        j = _T()._load_job(job_id)
+        return (Path(j["run_dir"]) / ref["rel"]).read_bytes()
     return _T()._comfy("/view?" + urllib.parse.urlencode({k: ref[k] for k in ("filename", "subfolder", "type")}), raw=True, timeout=60)
 
 
@@ -85,7 +88,7 @@ def bundle_bytes(job_id: str, weights: bool) -> tuple:
         a = c["ab"]
         if a["state"] == "done":
             for ref, name in ((a.get("base"), "ab/without_lora.png"), (a.get("lora"), "ab/with_lora.png")):
-                try: z.writestr(name, _clean_png(_view(ref)))
+                try: z.writestr(name, _clean_png(_view(ref, job_id)))
                 except Exception: notes.append(f"{name} could not be fetched from ComfyUI, so it is not in this bundle.")
             graph = (j.get("ab") or {}).get("graph")
             if graph: z.writestr("ab/graph.json", json.dumps(_scrub_graph(graph), indent=1))
@@ -138,7 +141,7 @@ def set_card(job_id: str, b: dict):
 def image(job_id: str, which: str):
     a = _ab(_job(job_id)); ref = {"without": a.get("base"), "with": a.get("lora")}.get(which)
     if not ref: raise HTTPException(404, "no such picture")
-    try: return Response(_view(ref), media_type="image/png")
+    try: return Response(_clean_png(_view(ref, job_id)), media_type="image/png")
     except Exception: raise HTTPException(503, "ComfyUI could not give this picture back.") from None
 
 

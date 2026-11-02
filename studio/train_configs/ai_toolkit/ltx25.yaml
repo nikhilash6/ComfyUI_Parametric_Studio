@@ -1,0 +1,56 @@
+# Parametric Studio's own job for LTX-2.5 on ai-toolkit. Stills train the look; set num_frames to 8n+1 for clips. Files come from the run's own link folder (MODELS_PATH).
+job: extension
+config:
+  name: "{{name}}"
+  process:
+    - type: sd_trainer
+      training_folder: "{{run_dir}}"
+      device: cuda:0
+      trigger_word: "{{trigger}}"
+      network: {type: lora, linear: {{rank}}, linear_alpha: {{rank}}}
+      save: {dtype: bf16, save_every: {{save_every}}, max_step_saves_to_keep: 2}
+      datasets:
+        - folder_path: "{{dataset}}"
+          caption_ext: txt
+          caption_dropout_rate: 0.05
+          resolution: [{{size}}]
+          num_frames: {{num_frames}}
+          do_audio: false
+          cache_latents_to_disk: true
+      train:
+        batch_size: {{batch}}
+        steps: {{steps}}
+        gradient_accumulation: 1
+        train_unet: true
+        train_text_encoder: false
+        gradient_checkpointing: true
+        noise_scheduler: flowmatch
+        timestep_type: shift
+        optimizer: adamw8bit
+        lr: {{lr}}
+        dtype: bf16
+        cache_text_embeddings: true
+        seed: {{seed}}
+      model:
+        name_or_path: "Lightricks/LTX-2.5"
+        arch: ltx2.5
+        quantize: true
+        qtype: convrot8
+        quantize_te: true
+        qtype_te: convrot8
+        low_vram: false
+        model_kwargs: {dit_path: "{{dit}}", text_encoder_path: "{{te}}", video_vae_path: "{{vae}}", audio_vae_path: "{{audio_vae}}"}
+      sample:
+        sampler: flowmatch
+        sample_every: {{sample_every}}
+        width: {{size}}
+        height: {{size}}
+        num_frames: 1
+        fps: 24
+        prompts: ["{{prompt}}"]
+        neg: ""
+        seed: 42
+        walk_seed: false
+        guidance_scale: {{guidance}}
+        sample_steps: {{sample_steps}}
+meta: {name: "{{name}}", version: "1.0"}

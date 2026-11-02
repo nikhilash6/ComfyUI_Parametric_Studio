@@ -22,8 +22,8 @@ KIMODO_WEIGHTS = "_libraries/models-legacy-layout/motion/kimodo/"
 ROUTES = [
     {"id": "kimodo_soma", "group": "words", "label": "Kimodo SOMA", "model": "nvidia/Kimodo-SOMA-RP-v1.1", "via": "tool", "tool": "kimodo", "needs": ["text"], "licence": "NVIDIA Open Model License; its Llama 3 text encoder is under the Llama 3 Community License", "commercial": True, "peak_gb": 3.0, "person": False, "does": "Text to a 77-joint body motion, fitted to a World Kit rig from joint positions.", "model_files": [KIMODO_WEIGHTS + "Kimodo-SOMA-RP-v1.1/model.safetensors"]},
     {"id": "kimodo_dance", "group": "dance", "label": "Kimodo dance", "model": "nvidia/Kimodo-SOMA-RP-v1.1", "via": "tool", "tool": "kimodo", "needs": ["text"], "licence": "NVIDIA Open Model License; its Llama 3 text encoder is under the Llama 3 Community License", "commercial": True, "peak_gb": 3.0, "person": False, "does": "The same model asked for a dance. It does not hear music: the steps are not on the beat.", "model_files": [KIMODO_WEIGHTS + "Kimodo-SOMA-RP-v1.1/model.safetensors"]},
-    {"id": "wan_animate2", "group": "perform", "label": "Wan Animate 2", "model": "Comfy-Org/Wan-Animate-2 (distilled, int8)", "via": "family", "family": "Wan2.2-Animate", "template": "motion_wan_animate2", "needs": ["image", "video", "text"], "slots": {"image": "189|image", "video": "240|file", "text": "604|value"}, "seed_slot": "261:19|noise_seed", "default_text": "A person moving naturally, whole body in frame, the camera still.", "licence": "Apache-2.0", "commercial": True, "peak_gb": 26.0, "person": True, "does": "A person from one picture performs a driving clip, with no pose step.", "model_files": ["_complete_pipelines/Wan2.2-Animate/diffusion_models/wan_animate_2_distill_int8_convrot.safetensors"]},
-    {"id": "scail2", "group": "perform", "label": "SCAIL 2", "model": "Comfy-Org/SCAIL-2", "via": "family", "family": "Wan-SCAIL-2", "template": "motion_scail2", "needs": ["image", "video", "text"], "slots": {"image": "30|image", "video": "155|file", "text": "213:3|text"}, "seed_slot": "213:19|noise_seed", "default_text": "An adult in plain everyday clothes, fully clothed, moving naturally in a plain studio.", "licence": "MIT on Hugging Face, Apache-2.0 on GitHub", "commercial": True, "peak_gb": 28.0, "person": True, "does": "Character replacement in a driving clip, with segmentation by SAM 3.1.", "model_files": ["_complete_pipelines/Wan-SCAIL-2/diffusion_models/wan2.1_14B_SCAIL_2_nvfp4_mxpf8_mix.safetensors"]},
+    {"id": "wan_animate2", "group": "perform", "label": "Wan Animate 2", "model": "Comfy-Org/Wan-Animate-2 (distilled, int8)", "via": "family", "family": "Wan2.2-Animate", "template": "motion_wan_animate2", "needs": ["image", "video", "text"], "slots": {"image": "189|image", "video": "240|file", "text": "604|value"}, "seed_slot": "261:19|noise_seed", "size_slots": ["261:243|resize_type.width", "261:243|resize_type.height"], "default_text": "A person moving naturally, whole body in frame, the camera still.", "licence": "Apache-2.0", "commercial": True, "peak_gb": 26.0, "person": True, "does": "A person from one picture performs a driving clip, with no pose step.", "model_files": ["_complete_pipelines/Wan2.2-Animate/diffusion_models/wan_animate_2_distill_int8_convrot.safetensors"]},
+    {"id": "scail2", "group": "perform", "label": "SCAIL 2", "model": "Comfy-Org/SCAIL-2", "via": "family", "family": "Wan-SCAIL-2", "template": "motion_scail2", "needs": ["image", "video", "text"], "slots": {"image": "30|image", "video": "155|file", "text": "213:3|text"}, "seed_slot": "213:19|noise_seed", "size_slots": ["213:178|value", "213:179|value"], "default_text": "An adult in plain everyday clothes, fully clothed, moving naturally in a plain studio.", "licence": "MIT on Hugging Face, Apache-2.0 on GitHub", "commercial": True, "peak_gb": 28.0, "person": True, "does": "Character replacement in a driving clip, with segmentation by SAM 3.1.", "model_files": ["_complete_pipelines/Wan-SCAIL-2/diffusion_models/wan2.1_14B_SCAIL_2_nvfp4_mxpf8_mix.safetensors"]},
     {"id": "liveportrait", "group": "portrait", "label": "LivePortrait", "model": "KwaiVGI/LivePortrait", "via": "family", "family": "LivePortrait", "template": "motion_liveportrait", "needs": ["image", "video"], "slots": {"image": "src|image", "video": "drive|file"}, "licence": "LivePortrait is MIT. Its face finder here is InsightFace buffalo_l, whose weights are for non-commercial use", "commercial": "conditional", "peak_gb": 4.0, "person": True, "does": "A still face follows the expressions and head turns of a driving clip. Face only: the body stays put.", "model_files": ["liveportrait/safetensors/appearance_feature_extractor.safetensors"]},
     {"id": "latentsync", "group": "lipsync", "label": "LatentSync 1.6", "model": "ByteDance/LatentSync-1.6", "via": "runner", "runner": "latentsync_run.py", "needs": ["video", "audio"], "licence": "Code Apache-2.0, weights OpenRAIL++. Its face finder is InsightFace buffalo_l, whose weights are for non-commercial use", "commercial": "conditional", "peak_gb": 16.0, "person": True, "does": "Redraws the mouth of an existing clip to a speech track, 25 frames a second.", "model_files": ["video_cont/latentsync/latentsync_unet.pt"]},
     {"id": "infinitetalk", "group": "lipsync", "label": "InfiniteTalk", "model": "MeiGen-AI/InfiniteTalk on Wan 2.1 I2V", "via": "family", "family": "Wan2.1", "template": "motion_infinitetalk", "needs": ["image", "audio", "text"], "slots": {"image": "img|image", "audio": "aud|audio", "text": "t|text"}, "seed_slot": "seed|noise_seed", "default_text": "An adult speaking calmly to the camera, fully clothed, head and shoulders, plain background.", "licence": "Apache-2.0", "commercial": True, "peak_gb": 30.0, "person": True, "does": "One picture and a speech track: a new clip of that person talking, with head and shoulders moving.", "model_files": ["_complete_pipelines/Wan2.1/diffusion_models/wan2.1_i2v_480p_14B_fp8_scaled.safetensors", "_complete_pipelines/Wan2.1/diffusion_models/Wan2_1-InfiniteTalk-Single_fp8_e4m3fn_scaled_KJ.safetensors"]},
@@ -33,6 +33,9 @@ ROUTES = [
 #: Models looked at and not offered as routes, and why. The page and the final report say the same.
 NOT_OFFERED = [
     {"model": "Kimodo SMPL-X", "why": "NVIDIA R&D licence: non-production, no works for sale or distribution. The weights' config is also missing here."},
+    {"model": "Kimodo G1 and Kimodo SEED", "why": "G1 gives a Unitree robot's joints, with no rig here to show them on. SEED is the same kind of body as SOMA and has not been compared with it."},
+    {"model": "TMR", "why": "It compares text with motion; it makes nothing to look at."},
+    {"model": "AnimateDiff, Wan 2.1 Fun InP", "why": "General clip makers, not motion transfer: they are on the Families page."},
     {"model": "HY-Motion 1.0", "why": "Withdrawn: it gave broken poses at the model's own guidance. Its licence also excludes the EU, UK and South Korea."},
     {"model": "Motius-GEM-SMPL", "why": "Non-commercial twice over (its source and the SMPL-X body model)."},
     {"model": "Sonic", "why": "CC BY-NC-SA, whatever its mirror says, and its detector and frame files are missing here."},
@@ -114,6 +117,17 @@ def _run_runner(r, inputs, b, work, out):
     return tools._made(Path(out), tools.call(args, Path(work) / "run.log", 3600), r["label"], Path(work) / "run.log")
 
 
+def fit_size(width, height, longest=832, step=32):
+    """A size this model can take that keeps a clip's shape, so nobody's head or feet get cropped off."""
+    k = longest / max(width, height)
+    return max(step, round(width * k / step) * step), max(step, round(height * k / step) * step)
+
+
+def _clip_size(path):
+    o = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", str(path)], capture_output=True, text=True, timeout=60).stdout.strip().split(",")
+    return int(o[0]), int(o[1])
+
+
 def _run_family(r, inputs, b):
     from psn import instances as I
     from studio import families_api as F
@@ -123,6 +137,7 @@ def _run_family(r, inputs, b):
         if k == "text": values[slot] = " ".join(str(b.get("text") or r.get("default_text") or "").split()); continue
         name = "motion_" + uuid.uuid4().hex[:10] + Path(inputs[k]).suffix.lower(); shutil.copy2(inputs[k], d / name); values[slot] = name
     if b.get("seed") and r.get("seed_slot"): values[r["seed_slot"]] = int(b["seed"])
+    if r.get("size_slots") and inputs.get("video"): values.update(zip(r["size_slots"], fit_size(*_clip_size(inputs["video"]), longest=r.get("longest", 832))))
     body = {"values": values, "permission": b.get("permission") is True}
     job = F.template_run(F._slug(r["family"]), r["template"], body)["job"]; res = jobs.wait(f"{F._slug(r['family'])}/{job}")
     if res.get("status") != "done": raise RuntimeError(res.get("error") or f"{r['label']} ended {res.get('status')}")

@@ -299,7 +299,9 @@
     "213:183",
     0
    ],
-   "expression": "(b - c) * (a - 1)"
+   "expression": "(b - c) * (a - 1)",
+   "values.b": 81,
+   "values.c": 5
   }
  },
  "213:191": {

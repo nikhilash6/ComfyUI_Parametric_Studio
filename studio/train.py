@@ -1,15 +1,14 @@
 """The Train page: pictures in, a trained LoRA out, and every number on the page read from the run itself.
 
-The path is ComfyUI's own training nodes: LoadImageTextDataSetFromFolder -> MakeTrainingDataset -> TrainLoraNode -> SaveLoRA, with
-PreviewAny turning the loss_map into text in /history, so the finished curve is the node's per-step list. While it runs, the curve comes
-from the "Training LoRA" progress line in ComfyUI's /internal/logs/raw (sampled by tqdm, so not every step). Nothing here estimates,
-smooths or fills a gap: a number that was not measured is sent as null and the page says so.
+Two kinds of trainer. ComfyUI's own training nodes: LoadImageTextDataSetFromFolder -> MakeTrainingDataset -> TrainLoraNode -> SaveLoRA, with PreviewAny turning the loss_map into text in /history, so the finished curve is the
+node's per-step list; while it runs, the curve comes from the "Training LoRA" line in /internal/logs/raw (sampled by tqdm). And external trainers (studio/trainers), each a process followed through its own log and folder.
+Nothing here estimates, smooths or fills a gap: a number that was not measured is sent as null and the page says so.
 
-What TrainLoraNode really supports: nodes_train.py has no list of architectures. It adds adapters to every module with a weight_function
-and needs model_sampling, so anything ComfyUI loads as a MODEL may run. A base is offered here only when its file is on disk, its
-safetensors header shows float tensors (no quantized weights) and a real run is on record in train_measured.json or this box's own runs.
-Mid-run checkpoints do not exist in the node: Cancel or a crash loses the steps of that run. Continue starts from a finished LoRA,
-through the node's existing_lora input; the optimizer state is not saved, so it is a new run on top of old weights, not a resume.
+Every base is in studio/train_bases.py. TrainLoraNode has no list of architectures: it adds adapters to every module with a weight_function and needs model_sampling, so anything ComfyUI loads as a MODEL may run.
+A base is proven when its files are here, its header passes (no quantized weights unless the entry says so) and a real run is on record in train_measured.json or this box's own runs. Everything present with no run is
+"not run" and needs the first-run tick; anything absent is blocked and names exactly what is missing.
+Mid-run checkpoints do not exist in ComfyUI's node: Cancel or a crash loses the steps of that run. Continue starts from a finished LoRA, through the node's existing_lora input; the optimizer state is not saved, so it is a
+new run on top of old weights, not a resume. External trainers keep their checkpoints, so those runs can resume.
 """
 from __future__ import annotations
 
@@ -39,10 +38,7 @@ from studio import sfw
 
 router = APIRouter(prefix="/api/train")
 
-BASES = {
-    "sdxl-base-1.0": {"label": "Stable Diffusion XL base 1.0", "file": "sd_xl_base_1.0.safetensors", "arch": "SDXL", "sizes": [768, 1024], "needs": ("conditioner.embedders.1.", "model.diffusion_model.")},
-    "sd-1.5": {"label": "Stable Diffusion 1.5", "file": "v1-5-pruned-emaonly.safetensors", "arch": "SD 1.5", "sizes": [512], "needs": ("cond_stage_model.", "model.diffusion_model.")},
-}
+from studio.train_bases import BASES, TRAINERS
 RANKS = (4, 8, 16, 32)
 BATCHES = (1, 2, 4)
 LIMITS = {"steps": (1, 5000), "learning_rate": (1e-6, 1e-2), "seed": (0, 2**53)}
@@ -409,23 +405,33 @@ def read_header(path) -> dict:
         return json.loads(f.read(n))
 
 
-def header_verdict(header: dict, needs) -> str | None:
+def header_verdict(header: dict, needs, quantized_ok: bool = False) -> str | None:
     """None when the file is what its entry claims and unquantized. The dtype of each tensor is in the file, so this is read, not assumed."""
     keys = [k for k in header if k != "__metadata__"]
     for prefix in needs:
         if not any(k.startswith(prefix) for k in keys): return f"its tensors do not match this architecture (no {prefix}*)"
-    weights = [k for k in keys if k.startswith("model.diffusion_model.")]
+    if quantized_ok: return None
+    weights = [k for k in keys if k.startswith("model.diffusion_model.")] or keys
     dtypes = {header[k].get("dtype") for k in weights}
     if not dtypes <= FLOAT_DTYPES: return f"its weights are not plain floats ({', '.join(sorted(str(d) for d in dtypes - FLOAT_DTYPES))})"
     if any("comfy_quant" in k or "scale_weight" in k for k in keys): return "it is quantized"
     return None
 
 
-def _find_checkpoint(file: str) -> str | None:
-    for root in _comfy_folder("checkpoints") or [os.path.join(paths.models_root(True), "checkpoints")]:
-        p = os.path.join(root, file)
-        if os.path.isfile(p): return p
+_FOLDERS = {"ckpt": ("checkpoints",), "unet": ("diffusion_models", "unet"), "clip": ("text_encoders", "clip"), "vae": ("vae",)}
+_WORDS = {"ckpt": "Checkpoint", "unet": "Model", "clip": "Text encoder", "vae": "VAE"}
+
+
+def _find_in_folders(name: str, folder_names) -> str | None:
+    for folder in folder_names:
+        for root in _comfy_folder(folder) or ([os.path.join(paths.models_root(True), folder)] if folder == folder_names[0] else []):
+            p = os.path.join(root, name)
+            if os.path.isfile(p): return p
     return None
+
+
+def _find_checkpoint(file: str) -> str | None:
+    return _find_in_folders(file, ("checkpoints",))
 
 
 def measurements() -> list[dict]:
@@ -441,24 +447,80 @@ def measurements() -> list[dict]:
     return out
 
 
+def _combo(info: dict, node: str, name: str) -> list:
+    spec = (((info.get(node) or {}).get("input") or {}).get("required") or {}).get(name) or [[]]
+    if spec and spec[0] == "COMBO": return (spec[1] or {}).get("options", []) or []
+    return spec[0] if isinstance(spec[0], list) else []
+
+
+def _match(name: str, options: list) -> str | None:
+    """The option ComfyUI lists for a file: its own name, or the same file name inside a sub-folder of the models folder."""
+    if name in options: return name
+    tail = [o for o in options if str(o).replace("\\", "/").rsplit("/", 1)[-1] == name]
+    return sorted(tail, key=len)[0] if tail else None
+
+
+def resolve_load(load: dict, info: dict) -> tuple[dict, list[str]]:
+    """The base's load entry with each file as this ComfyUI names it, and a plain list of what is not there."""
+    out, missing = dict(load), []
+    combos = {"ckpt": _combo(info, "CheckpointLoaderSimple", "ckpt_name"), "unet": _combo(info, "UNETLoader", "unet_name"), "clip": _combo(info, "CLIPLoader", "clip_name"), "vae": _combo(info, "VAELoader", "vae_name")}
+    for kind in ("ckpt", "unet", "vae"):
+        if not load.get(kind): continue
+        hit = _match(load[kind], combos[kind])
+        if hit: out[kind] = hit
+        else: missing.append(f"{_WORDS[kind]} {load[kind]} is not installed (ComfyUI's {_FOLDERS[kind][0]} folder).")
+    if load.get("clip"):
+        files = []
+        for f in load["clip"]:
+            hit = _match(f, combos["clip"])
+            if not hit: missing.append(f"{_WORDS['clip']} {f} is not installed (ComfyUI's {_FOLDERS['clip'][0]} folder).")
+            files.append(hit or f)
+        out["clip"] = files
+    return out, missing
+
+
+def _base_load(b: dict) -> dict:
+    return b.get("load") or {"ckpt": b["file"]}
+
+
+def _comfy_verdict(b: dict, info: dict | None) -> tuple[str | None, list[str]]:
+    """Why ComfyUI cannot train this base right now, and the missing pieces, read from ComfyUI's own lists and the file's header."""
+    if info is None: return "ComfyUI is not reachable, so nothing can be checked.", ["ComfyUI, running at the address the studio is set to."]
+    load = _base_load(b)
+    resolved, missing = resolve_load(load, info)
+    if missing: return " ".join(missing), missing
+    kind = "ckpt" if load.get("ckpt") else "unet"
+    path = _find_in_folders(resolved[kind], _FOLDERS[kind])
+    if not path: return f"ComfyUI lists {b['file']}, but the studio cannot read it to check it.", [f"Read access to {b['file']}."]
+    try: verdict = header_verdict(read_header(path), b.get("needs") or (), bool(b.get("quantized")))
+    except (OSError, ValueError, struct.error) as e: verdict = f"its header cannot be read ({type(e).__name__})"
+    if verdict: return f"{b['file']} cannot be used: {verdict}.", [f"An unquantized copy of {b['file']}."]
+    return None, []
+
+
+def _trainer_of(b: dict):
+    from studio import trainers
+    return trainers.get(b.get("trainer") or "comfy")
+
+
 def base_status(object_info: dict | None) -> list[dict]:
+    """One row for every base. status: proven (a real run is on record and everything is here), not_run (everything is here, no run yet) or blocked (missing lists exactly what)."""
     rows = []
-    options = checkpoint_options(object_info) if object_info else None
     runs = measurements()
     for base_id, b in BASES.items():
-        why = None
-        if options is None: why = "ComfyUI is not reachable, so nothing can be checked."
-        elif b["file"] not in options: why = f"{b['file']} is not installed."
-        path = _find_checkpoint(b["file"]) if not why else None
-        if not why and not path: why = f"ComfyUI lists {b['file']}, but the studio cannot read it to check it."
-        if path:
-            try: verdict = header_verdict(read_header(path), b["needs"])
-            except (OSError, ValueError, struct.error) as e: verdict = f"its header cannot be read ({type(e).__name__})"
-            if verdict: why = f"{b['file']} cannot be used: {verdict}."
+        trainer_id = b.get("trainer") or "comfy"
+        why, missing = _trainer_of(b).check(b, object_info) if trainer_id != "comfy" else _comfy_verdict(b, object_info)
+        if b.get("known_failure"): why, missing = b["known_failure"], [b["known_failure"]]
         proved = [r for r in runs if r.get("base") == base_id and r.get("steps")]
-        proving = not proved and os.environ.get("STUDIO_TRAIN_PROVE") == base_id     # the one way a base gets its first run; set by hand, and the page says so
-        if not why and not proved and not proving: why = "No training run on record for this base, so the studio will not offer it yet."
-        rows.append({"id": base_id, "label": b["label"], "file": b["file"], "arch": b["arch"], "sizes": b["sizes"], "trainable": why is None, "why_not": why, "proof": _proof_line(proved[-1]) if proved else "Not proved yet: STUDIO_TRAIN_PROVE is set, so this run is the test." if proving else None})
+        proving = not proved and os.environ.get("STUDIO_TRAIN_PROVE") == base_id     # the one way a base gets its first run without the page's tick; set by hand, and the page says so
+        no_run = not why and not proved and not proving
+        status = "blocked" if why else "not_run" if no_run else "proven"
+        if no_run: why = "No training run on record for this base, so the studio will not offer it yet."
+        peaks = [r["peak_vram_gib"] for r in proved if r.get("peak_vram_gib")]
+        info = TRAINERS.get(trainer_id, {})
+        rows.append({"id": base_id, "label": b["label"], "family": b.get("family") or b["arch"], "file": b["file"], "arch": b["arch"], "media": b.get("media", "image"), "sizes": b["sizes"], "lr": b.get("lr"), "trainer": trainer_id, "trainer_label": info.get("label") or trainer_id, "trainer_note": info.get("note"), "trainer_site": info.get("site"), "licence": b.get("licence"),
+                     "status": status, "trainable": why is None, "can_try": no_run, "why_not": why, "missing": missing, "install": info.get("install") if missing and trainer_id != "comfy" else None,
+                     "peak_gib": max(peaks) if peaks else b.get("peak_gib"), "peak_kind": "measured" if peaks else "expected", "proof": _proof_line(proved[-1]) if proved else "Not proved yet: STUDIO_TRAIN_PROVE is set, so this run is the test." if proving else None, "ab_effect": proved[-1].get("ab_effect") if proved else None})
     return rows
 
 
@@ -472,9 +534,7 @@ def _proof_line(r: dict) -> str:
 
 
 def checkpoint_options(info: dict) -> list:
-    spec = (((info.get("CheckpointLoaderSimple") or {}).get("input") or {}).get("required") or {}).get("ckpt_name") or [[]]
-    if spec and spec[0] == "COMBO": return (spec[1] or {}).get("options", [])
-    return spec[0] if isinstance(spec[0], list) else []
+    return _combo(info, "CheckpointLoaderSimple", "ckpt_name")
 
 
 def _gpu_name() -> str | None:
@@ -502,30 +562,78 @@ def estimate(base: str, size, rank, batch, steps, gpu: str | None = None) -> dic
 
 # ---------- the graphs ----------
 
-def training_graph(ckpt: str, folder: str, steps: int, rank: int, batch: int, learning_rate: float, seed: int, prefix: str, existing_lora: str = "[None]") -> dict:
+_CLIP_LOADER = {1: "CLIPLoader", 2: "DualCLIPLoader", 3: "TripleCLIPLoader", 4: "QuadrupleCLIPLoader"}
+
+
+def _loader_nodes(load) -> tuple[dict, list, list, list]:
+    """The loader nodes for one base, and the links for its model, clip and vae. A string is a checkpoint name, so old callers keep working."""
+    if isinstance(load, str): load = {"ckpt": load}
+    nodes, model, clip, vae = {}, None, None, None
+    if load.get("ckpt"):
+        nodes["1"] = {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": load["ckpt"]}}
+        model, clip, vae = ["1", 0], ["1", 1], ["1", 2]
+    else:
+        nodes["1"] = {"class_type": "UNETLoader", "inputs": {"unet_name": load["unet"], "weight_dtype": load.get("dtype", "default")}}
+        model = ["1", 0]
+    if load.get("clip"):
+        files = load["clip"]
+        inputs = {"clip_name": files[0]} if len(files) == 1 else {f"clip_name{i + 1}": f for i, f in enumerate(files)}
+        if len(files) == 1: inputs |= {"type": load["clip_type"], "device": "default"}
+        elif len(files) == 2: inputs |= {"type": load["clip_type"], "device": "default"}
+        nodes["21"] = {"class_type": _CLIP_LOADER[len(files)], "inputs": inputs}
+        clip = ["21", 0]
+    if load.get("vae"):
+        nodes["22"] = {"class_type": "VAELoader", "inputs": {"vae_name": load["vae"]}}
+        vae = ["22", 0]
+    return nodes, model, clip, vae
+
+
+def training_graph(ckpt, folder: str, steps: int, rank: int, batch: int, learning_rate: float, seed: int, prefix: str, existing_lora: str = "[None]", train_inputs: dict | None = None) -> dict:
+    """ckpt is a checkpoint name or a base's load entry."""
+    nodes, model, clip, vae = _loader_nodes(ckpt)
     return {
-        "1": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": ckpt}},
+        **nodes,
         "2": {"class_type": "LoadImageTextDataSetFromFolder", "inputs": {"folder": folder}},
-        "3": {"class_type": "MakeTrainingDataset", "inputs": {"images": ["2", 0], "texts": ["2", 1], "vae": ["1", 2], "clip": ["1", 1]}},
-        "4": {"class_type": "TrainLoraNode", "inputs": {"model": ["1", 0], "latents": ["3", 0], "positive": ["3", 1], "batch_size": batch, "grad_accumulation_steps": 1, "steps": steps, "learning_rate": learning_rate, "rank": rank, "optimizer": "AdamW", "loss_function": "MSE", "seed": seed, "training_dtype": "bf16", "lora_dtype": "bf16", "quantized_backward": False, "algorithm": "LoRA", "gradient_checkpointing": True, "checkpoint_depth": 1, "offloading": False, "existing_lora": existing_lora, "bucket_mode": False, "bypass_mode": False}},
+        "3": {"class_type": "MakeTrainingDataset", "inputs": {"images": ["2", 0], "texts": ["2", 1], "vae": vae, "clip": clip}},
+        "4": {"class_type": "TrainLoraNode", "inputs": {"model": model, "latents": ["3", 0], "positive": ["3", 1], "batch_size": batch, "grad_accumulation_steps": 1, "steps": steps, "learning_rate": learning_rate, "rank": rank, "optimizer": "AdamW", "loss_function": "MSE", "seed": seed, "training_dtype": "bf16", "lora_dtype": "bf16", "quantized_backward": False, "algorithm": "LoRA", "gradient_checkpointing": True, "checkpoint_depth": 1, "offloading": False, "existing_lora": existing_lora, "bucket_mode": False, "bypass_mode": False, **(train_inputs or {})}},
         "5": {"class_type": "SaveLoRA", "inputs": {"lora": ["4", 0], "prefix": prefix, "steps": ["4", 2]}},
         "6": {"class_type": "PreviewAny", "inputs": {"source": ["4", 1]}},
     }
 
 
-def ab_graph(ckpt: str, lora_name: str, prompt: str, negative: str, width: int, height: int, seed: int, strength: float, prefix: str, steps: int = 25, cfg: float = 7.0) -> dict:
-    """The same seed through the same sampler, once on the base and once with the LoRA."""
-    sampler = lambda model: {"model": model, "seed": seed, "steps": steps, "cfg": cfg, "sampler_name": "euler", "scheduler": "normal", "positive": ["3", 0], "negative": ["4", 0], "latent_image": ["5", 0], "denoise": 1.0}
+SAMPLE_DEFAULT = {"latent": "EmptyLatentImage", "steps": 25, "cfg": 7.0, "sampler": "euler", "scheduler": "normal", "shift": None, "shift_node": None}
+
+
+def _latent_node(sample: dict, width: int, height: int, vae) -> dict:
+    if sample["latent"] == "Wan22ImageToVideoLatent": return {"class_type": sample["latent"], "inputs": {"vae": vae, "width": width, "height": height, "length": 1, "batch_size": 1}}
+    return {"class_type": sample["latent"], "inputs": {"width": width, "height": height, "batch_size": 1}}
+
+
+def ab_graph(ckpt, lora_name: str, prompt: str, negative: str, width: int, height: int, seed: int, strength: float, prefix: str, steps: int | None = None, cfg: float | None = None, sample: dict | None = None) -> dict:
+    """The same seed through the same sampler, once on the base and once with the LoRA. sample holds the base's own sampler settings."""
+    sample = {**SAMPLE_DEFAULT, **(sample or {})}
+    sample["steps"] = steps if steps is not None else sample["steps"]
+    sample["cfg"] = cfg if cfg is not None else sample["cfg"]
+    nodes, model, clip, vae = _loader_nodes(ckpt)
+    shifted = dict(model=model)
+    extra = {}
+    if sample.get("shift_node"):
+        extra["23"] = {"class_type": sample["shift_node"], "inputs": {"model": model, "shift": sample["shift"]}}
+        shifted["model"] = ["23", 0]
+    for i, (cls, inputs) in enumerate(sample.get("wrap") or ()):
+        extra[str(24 + i)] = {"class_type": cls, "inputs": {"model": shifted["model"], **inputs}}
+        shifted["model"] = [str(24 + i), 0]
+    sampler = lambda m: {"model": m, "seed": seed, "steps": sample["steps"], "cfg": sample["cfg"], "sampler_name": sample["sampler"], "scheduler": sample["scheduler"], "positive": ["3", 0], "negative": ["4", 0], "latent_image": ["5", 0], "denoise": 1.0}
     return {
-        "1": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": ckpt}},
-        "2": {"class_type": "LoraLoaderModelOnly", "inputs": {"model": ["1", 0], "lora_name": lora_name, "strength_model": strength}},
-        "3": {"class_type": "CLIPTextEncode", "inputs": {"text": prompt, "clip": ["1", 1]}},
-        "4": {"class_type": "CLIPTextEncode", "inputs": {"text": negative, "clip": ["1", 1]}},
-        "5": {"class_type": "EmptyLatentImage", "inputs": {"width": width, "height": height, "batch_size": 1}},
-        "6": {"class_type": "KSampler", "inputs": sampler(["1", 0])},
+        **nodes, **extra,
+        "2": {"class_type": "LoraLoaderModelOnly", "inputs": {"model": shifted["model"], "lora_name": lora_name, "strength_model": strength}},
+        "3": {"class_type": "CLIPTextEncode", "inputs": {"text": prompt, "clip": clip}},
+        "4": {"class_type": "CLIPTextEncode", "inputs": {"text": negative, "clip": clip}},
+        "5": _latent_node(sample, width, height, vae),
+        "6": {"class_type": "KSampler", "inputs": sampler(shifted["model"])},
         "7": {"class_type": "KSampler", "inputs": sampler(["2", 0])},
-        "8": {"class_type": "VAEDecode", "inputs": {"samples": ["6", 0], "vae": ["1", 2]}},
-        "9": {"class_type": "VAEDecode", "inputs": {"samples": ["7", 0], "vae": ["1", 2]}},
+        "8": {"class_type": "VAEDecode", "inputs": {"samples": ["6", 0], "vae": vae}},
+        "9": {"class_type": "VAEDecode", "inputs": {"samples": ["7", 0], "vae": vae}},
         "10": {"class_type": "SaveImage", "inputs": {"images": ["8", 0], "filename_prefix": prefix + "/base"}},
         "11": {"class_type": "SaveImage", "inputs": {"images": ["9", 0], "filename_prefix": prefix + "/lora"}},
     }
@@ -582,7 +690,7 @@ def _whole(value, name: str, low: int, high: int) -> int:
 
 
 def settings_from(b: dict, base: dict) -> dict:
-    s = {**DEFAULTS, **{k: b[k] for k in ("steps", "rank", "batch", "learning_rate", "seed") if b.get(k) is not None}}
+    s = {**DEFAULTS, **({"learning_rate": base["lr"]} if base.get("lr") else {}), **{k: b[k] for k in ("steps", "rank", "batch", "learning_rate", "seed") if b.get(k) is not None}}
     s["size"] = b.get("size", base["sizes"][-1])
     if s["size"] not in base["sizes"]: raise HTTPException(400, f"Size must be one of {base['sizes']} for this base.")
     if s["rank"] not in RANKS: raise HTTPException(400, f"Rank must be one of {list(RANKS)}.")
@@ -646,19 +754,22 @@ def _start(b: dict) -> dict:
         try: info = _comfy("/object_info", timeout=30)
         except Exception: raise HTTPException(503, "ComfyUI is not reachable.") from None
         status = next(r for r in base_status(info) if r["id"] == base_id)
-        if not status["trainable"]: raise HTTPException(400, status["why_not"])
+        if not status["trainable"] and not (status["can_try"] and b.get("first_run") is True): raise HTTPException(400, status["why_not"] + (" Tick the first-run box to try it anyway." if status["can_try"] else ""))
         existing = "[None]"
         parent = None
         if b.get("continue_from"):
             parent = _load_job(str(b["continue_from"]))
             if parent.get("state") != "done" or parent.get("base") != base_id or not os.path.isfile((parent.get("lora") or {}).get("path", "")): raise HTTPException(400, "Continue needs a finished LoRA of this same base.")
             existing = parent["lora"]["name"]
+        trainer_id = base.get("trainer") or "comfy"
+        if trainer_id != "comfy": return _start_external(b, name, trigger, base_id, base, settings, ds, rep, info, status)
         job_id = uuid.uuid4().hex[:12]
         in_dir = Path(paths.comfy_input(True))
         if not in_dir.is_dir(): raise HTTPException(503, "The studio cannot find ComfyUI's input folder on this machine, which training needs. Set STUDIO_COMFY_INPUT.")
         folder_rel = f"{INPUT_SUB}/{job_id}"
         pictures = prepare(ds, in_dir / folder_rel, settings["size"])
-        graph = training_graph(base["file"], folder_rel, settings["steps"], settings["rank"], settings["batch"], settings["learning_rate"], settings["seed"], f"{OUTPUT_SUB}/{job_id}/lora", existing)
+        resolved = resolve_load(_base_load(base), info)[0]
+        graph = training_graph(resolved, folder_rel, settings["steps"], settings["rank"], settings["batch"], settings["learning_rate"], settings["seed"], f"{OUTPUT_SUB}/{job_id}/lora", existing, base.get("train_inputs"))
         try:
             info = _comfy("/object_info/LoadImageTextDataSetFromFolder", timeout=15) | {k: v for k, v in info.items() if k != "LoadImageTextDataSetFromFolder"}    # the folder list changed a moment ago
             problems = validate_graph(graph, info)
@@ -667,7 +778,7 @@ def _start(b: dict) -> dict:
         except Exception:
             shutil.rmtree(in_dir / folder_rel, ignore_errors=True)
             raise
-        job = {"id": job_id, "kind": "train", "name": name, "trigger": trigger, "base": base_id, "base_file": base["file"], "settings": settings, "dataset": rep["id"], "dataset_name": rep["name"], "pictures": pictures, "continue_from": parent["id"] if parent else None, "prior_steps": (parent["lora"].get("total_steps") or 0) if parent else 0,
+        job = {"id": job_id, "kind": "train", "trainer": "comfy", "first_run": status["status"] == "not_run", "load": resolved, "name": name, "trigger": trigger, "base": base_id, "base_file": base["file"], "settings": settings, "dataset": rep["id"], "dataset_name": rep["name"], "pictures": pictures, "continue_from": parent["id"] if parent else None, "prior_steps": (parent["lora"].get("total_steps") or 0) if parent else 0,
                "rights": {"confirmed": True, "at": time.time(), "text": "Owns or has rights to the pictures; no real person's likeness trained without consent."},
                "prompt_id": prompt_id, "graph": graph, "state": "queued", "created": time.time(), "submitted_iso": datetime.datetime.now().isoformat(), "running_at": None, "ended": None, "position": None, "last_seen": time.time(),
                "curve": [], "curve_source": None, "peak_vram_gib": None, "vram_before_gib": _gpu_used_gib(), "loss_nan": False, "lora": None, "error": None, "ab": None, "gpu": _gpu_name()}
@@ -719,6 +830,7 @@ def _tick(job_id: str) -> dict:
     """One look at ComfyUI. Everything the page shows is decided here, from what ComfyUI answered."""
     job = _load_job(job_id)
     if job["state"] not in ACTIVE: return job
+    if job.get("trainer", "comfy") != "comfy": return _tick_external(job)
     try:
         hist = _history_entry(job["prompt_id"])
         if hist is None or not _ended(hist):
@@ -818,7 +930,7 @@ def _collect_lora(job: dict) -> dict:
     if not any("lora_up" in k for k in keys): raise FileNotFoundError(f"{src.name} has no LoRA weights in it.")
     total = int(re.search(r"_(\d+)_steps_", src.name).group(1))
     slug = re.sub(r"[^a-z0-9]+", "-", job["name"].lower()).strip("-") or "lora"
-    fname = f"{slug}_{BASES[job['base']]['arch'].lower().replace(' ', '').replace('.', '')}_{total}_steps_{job['id']}.safetensors"
+    fname = _lora_file_name(job, slug, total)
     target_dir = _loras_dir() / LORA_SUB
     target_dir.mkdir(parents=True, exist_ok=True)
     target = target_dir / fname
@@ -832,12 +944,16 @@ def _collect_lora(job: dict) -> dict:
     return {"name": f"{LORA_SUB}/{fname}", "path": str(target), "bytes": target.stat().st_size, "sha256": digest.hexdigest(), "tensors": len(keys), "total_steps": total}
 
 
+def _lora_file_name(job: dict, slug: str, total: int) -> str:
+    return f"{slug}_{BASES[job['base']]['arch'].lower().replace(' ', '').replace('.', '')}_{total}_steps_{job['id']}.safetensors"
+
+
 def _record_measurement(job: dict) -> None:
     """A run becomes a figure the page may quote only if its speed was seen in the log."""
     s, speed = job["settings"], job.get("speed_from_log")
     if not speed: return
     setup = round(job["first_step_at"] - job["running_at"], 1) if job.get("first_step_at") and job.get("running_at") else None
-    row = {"base": job["base"], "size": s["size"], "rank": s["rank"], "batch": s["batch"], "steps": s["steps"], "s_per_step": round(speed, 4), "setup_seconds": setup, "peak_vram_gib": job.get("peak_vram_gib"), "gpu": job.get("gpu"), "date": datetime.date.today().isoformat(), "run": job["id"]}
+    row = {"base": job["base"], "size": s["size"], "rank": s["rank"], "batch": s["batch"], "steps": s["steps"], "s_per_step": round(speed, 4), "setup_seconds": setup, "peak_vram_gib": job.get("peak_vram_gib"), "gpu": job.get("gpu"), "date": datetime.date.today().isoformat(), "run": job["id"], "trainer": job.get("trainer", "comfy")}
     p = data_root() / "measured.jsonl"
     p.parent.mkdir(parents=True, exist_ok=True)
     with _lock, open(p, "a") as f: f.write(json.dumps(row) + "\n")
@@ -888,7 +1004,13 @@ def view_job(job: dict) -> dict:
     step = curve[-1][0] if curve else 0
     finite = [c[1] for c in curve if c[1] == c[1] and abs(c[1]) != float("inf")]
     speed = (job.get("speed_from_log") if job["state"] == "done" else measured_speed(curve)) or None
-    v = {k: x for k, x in job.items() if k not in ("graph", "curve")}
+    v = {k: x for k, x in job.items() if k not in ("graph", "curve", "proc")}
+    b = BASES.get(job.get("base")) or {}
+    v["trainer"] = job.get("trainer", "comfy")
+    v["trainer_label"] = (TRAINERS.get(v["trainer"]) or {}).get("label") or v["trainer"]
+    v["base_label"] = b.get("label") or job.get("base")
+    v["licence"] = b.get("licence")
+    v["can_resume"] = bool(job.get("trainer", "comfy") != "comfy" and job["state"] in ("cancelled", "lost", "error") and job.get("checkpoints"))
     if v.get("ab"): v["ab"] = {k: x for k, x in v["ab"].items() if k != "graph"}
     v["curve"] = [[c[0], c[1] if c[1] == c[1] and abs(c[1]) != float("inf") else None] for c in _thin(curve)]
     v["curve_points"] = len(curve)
@@ -929,6 +1051,11 @@ def cancel(job_id: str):
     if job["state"] not in ACTIVE: return view_job(job)
     job["state"] = "cancelling"
     _save_job(job)
+    if job.get("trainer", "comfy") != "comfy":
+        _trainer_of(BASES[job["base"]]).stop(job)
+        _save_job(job)
+        _ensure_monitor(job_id)
+        return view_job(job)
     try:
         _comfy("/queue", {"delete": [job["prompt_id"]]})
         if any(len(e) > 1 and e[1] == job["prompt_id"] for e in _comfy("/queue", timeout=5).get("queue_running", [])): _comfy("/interrupt", {"prompt_id": job["prompt_id"]})    # only this job: someone else's render keeps going
@@ -952,9 +1079,12 @@ def _start_ab(job_id: str, b: dict) -> dict:
     strength = b.get("strength", 1.0)
     if isinstance(strength, bool) or not isinstance(strength, (int, float)) or not 0 < strength <= 2: raise HTTPException(400, "Strength must be above 0 and at most 2.")
     size = job["settings"]["size"]
-    graph = ab_graph(job["base_file"], job["lora"]["name"], prompt, "", size, size, seed, float(strength), f"{OUTPUT_SUB}_ab/{job_id}_{uuid.uuid4().hex[:6]}")
+    base = BASES.get(job["base"]) or {}
+    if not base.get("load") and base.get("ab_from_samples"): return _ab_from_samples(job)
     try: info = _comfy("/object_info", timeout=30)
     except Exception: raise HTTPException(503, "ComfyUI is not reachable.") from None
+    load = job.get("load") or resolve_load(_base_load(base), info)[0] if base else job["base_file"]
+    graph = ab_graph(load if base else job["base_file"], job["lora"]["name"], prompt, "", size, size, seed, float(strength), f"{OUTPUT_SUB}_ab/{job_id}_{uuid.uuid4().hex[:6]}", sample=base.get("sample"))
     problems = validate_graph(graph, info)
     if problems: raise HTTPException(400, "The test graph does not fit this ComfyUI: " + "; ".join(problems[:4]))
     job["ab"] = {"prompt_id": _prompt(graph), "state": "queued", "prompt": prompt, "seed": seed, "strength": float(strength), "base": None, "lora": None, "pixel_diff": None, "unbound_keys": None, "error": None, "submitted_iso": datetime.datetime.now().isoformat(), "graph": graph}
@@ -1020,7 +1150,7 @@ def trained():
         lo = j.get("lora") or {}
         if j.get("state") == "done" and lo.get("path") and os.path.isfile(lo["path"]):
             v = view_job(j)
-            rows.append({"job": j["id"], "name": j["name"], "trigger": j["trigger"], "base": j["base"], "base_label": BASES[j["base"]]["label"], "lora_name": lo["name"], "bytes": lo["bytes"], "sha256": lo["sha256"], "total_steps": lo["total_steps"], "last_loss": v["last_loss"], "ended": j["ended"], "ab": {k: x for k, x in (j.get("ab") or {}).items() if k != "graph"} or None})
+            rows.append({"job": j["id"], "name": j["name"], "trigger": j["trigger"], "base": j["base"], "base_label": (BASES.get(j["base"]) or {}).get("label", j["base"]), "trainer": j.get("trainer", "comfy"), "lora_name": lo["name"], "bytes": lo["bytes"], "sha256": lo["sha256"], "total_steps": lo["total_steps"], "last_loss": v["last_loss"], "ended": j["ended"], "ab": {k: x for k, x in (j.get("ab") or {}).items() if k != "graph"} or None})
     return {"loras": rows}
 
 
@@ -1028,7 +1158,7 @@ def trained():
 def info():
     try: object_info = _comfy("/object_info", timeout=20)
     except Exception: object_info = None
-    out = {"comfy": object_info is not None, "comfy_url": _comfy_url(), "bases": base_status(object_info), "ranks": list(RANKS), "batches": list(BATCHES), "limits": LIMITS, "defaults": DEFAULTS, "queue": None, "gpu": None, "active": None}
+    out = {"comfy": object_info is not None, "comfy_url": _comfy_url(), "trainers": trainers_view(), "bases": base_status(object_info), "ranks": list(RANKS), "batches": list(BATCHES), "limits": LIMITS, "defaults": DEFAULTS, "queue": None, "gpu": None, "active": None}
     if object_info is not None:
         try:
             q = _comfy("/queue", timeout=5)
@@ -1057,7 +1187,137 @@ async def preview_graph(req: Request):
     if b.get("base") not in BASES: raise HTTPException(400, "Pick a base from the list.")
     base = BASES[b["base"]]
     s = settings_from(b, base)
-    graph = training_graph(base["file"], "(made when you press Train)", s["steps"], s["rank"], s["batch"], s["learning_rate"], s["seed"], f"{OUTPUT_SUB}/(job)/lora")
+    if (base.get("trainer") or "comfy") != "comfy": return {"graph": None, "checked": False, "problems": [], "config": _trainer_of(base).preview(base, s)}
+    graph = training_graph(_base_load(base), "(made when you press Train)", s["steps"], s["rank"], s["batch"], s["learning_rate"], s["seed"], f"{OUTPUT_SUB}/(job)/lora")
     try: object_info = await run_in_threadpool(_comfy, "/object_info", None, 20)
     except Exception: return {"graph": graph, "checked": False, "problems": []}
     return {"graph": graph, "checked": True, "problems": [p for p in validate_graph(graph, object_info) if "folder =" not in p]}
+
+
+# ---------- external trainers: a process on this machine, followed through its own log ----------
+
+def trainers_view() -> list[dict]:
+    """Each trainer the page can drive and whether it is here, for the page's install box."""
+    from studio import trainers
+    return trainers.view_all(TRAINERS)
+
+
+def _gpu_free_gib():
+    try:
+        out = subprocess.run(["nvidia-smi", "--query-gpu=memory.free", "--format=csv,noheader,nounits"], capture_output=True, text=True, timeout=5)
+        if out.returncode == 0 and out.stdout.strip(): return round(float(out.stdout.split()[0]) / 1024, 1)
+    except (OSError, ValueError, subprocess.SubprocessError): pass
+    return None
+
+
+def _start_external(b, name, trigger, base_id, base, settings, ds, rep, info, status) -> dict:
+    trainer = _trainer_of(base)
+    free, want = _gpu_free_gib(), base.get("peak_gib")
+    if free is not None and want and not os.environ.get("STUDIO_TRAIN_WRAP") and free < want + 4 and status["peak_kind"] == "expected" and b.get("first_run") is not True:
+        raise HTTPException(409, f"This base is expected to need about {want} GB and the card has {free} GB free. Close what is using the card, or wait.")
+    job_id = uuid.uuid4().hex[:12]
+    run_dir = data_root() / "runs" / job_id
+    pictures = prepare(ds, run_dir / "dataset", settings["size"])
+    job = {"id": job_id, "kind": "train", "trainer": base["trainer"], "first_run": status["status"] == "not_run", "name": name, "trigger": trigger, "base": base_id, "base_file": base["file"], "settings": settings, "dataset": rep["id"], "dataset_name": rep["name"], "pictures": pictures, "continue_from": None, "prior_steps": 0,
+           "rights": {"confirmed": True, "at": time.time(), "text": "Owns or has rights to the pictures; no real person's likeness trained without consent."},
+           "state": "queued", "created": time.time(), "submitted_iso": datetime.datetime.now().isoformat(), "running_at": None, "ended": None, "position": None, "last_seen": time.time(),
+           "curve": [], "curve_source": None, "peak_vram_gib": None, "vram_before_gib": _gpu_used_gib(), "loss_nan": False, "lora": None, "error": None, "ab": None, "gpu": _gpu_name(), "samples": [], "checkpoints": [], "run_dir": str(run_dir), "sample_prompt": str(b.get("sample_prompt") or f"{trigger}, a lighthouse on a rocky shore")}
+    try: trainer.start(job, base, info)
+    except FileNotFoundError as e:
+        shutil.rmtree(run_dir, ignore_errors=True)
+        raise HTTPException(400, str(e)) from None
+    _save_job(job)
+    _ensure_monitor(job_id)
+    return view_job(job)
+
+
+def _tick_external(job: dict) -> dict:
+    trainer = _trainer_of(BASES[job["base"]])
+    alive = trainer.follow(job)
+    if alive:
+        used = _gpu_used_gib()
+        if job["curve"]:
+            if job["state"] != "cancelling": job["state"] = "running"
+            job["running_at"] = job["running_at"] or job["curve"][0][2]
+            if used is not None: job["peak_vram_gib"] = max(job["peak_vram_gib"] or 0, used)
+        job["last_seen"] = time.time()
+        _commit(job)
+        return job
+    job["speed_from_log"] = measured_speed(job["curve"])
+    job["first_step_at"] = job["curve"][0][2] if job["curve"] else None
+    if job["state"] == "cancelling":
+        job["state"], job["ended"] = "cancelled", time.time()
+    else:
+        found = trainer.result(job)
+        if not found:
+            job["state"], job["ended"] = "error", time.time()
+            job["error"] = trainer.last_error(job) or "The trainer stopped without saving a LoRA."
+        elif not job["curve"]:
+            job["state"], job["ended"] = "error", time.time()
+            job["error"] = "The trainer finished, but its log had no loss value. Treating it as failed."
+        else:
+            job["lora"] = _file_external(job, found)
+            job["state"], job["ended"] = "done", time.time()
+            _record_measurement(job)
+            _forget_lora_cache()
+    _save_job(job)
+    return job
+
+
+def _file_external(job: dict, src: Path) -> dict:
+    """The trainer's final file, copied to the folder ComfyUI lists for LoRAs under a name that says what it is."""
+    header = read_header(src)
+    keys = [k for k in header if k != "__metadata__"]
+    if not any(("lora_up" in k or "lora_B" in k or "lora.up" in k) for k in keys): raise HTTPException(500, f"{src.name} has no LoRA weights in it.")
+    slug = re.sub(r"[^a-z0-9]+", "-", job["name"].lower()).strip("-") or "lora"
+    total = job["curve"][-1][0] if job["curve"] else job["settings"]["steps"]
+    target_dir = _loras_dir() / LORA_SUB
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target = target_dir / _lora_file_name(job, slug, total)
+    tmp = target.with_name(target.name + ".part")
+    shutil.copyfile(src, tmp)
+    os.replace(tmp, target)
+    digest = hashlib.sha256()
+    with open(target, "rb") as f:
+        for chunk in iter(lambda: f.read(2**20), b""): digest.update(chunk)
+    return {"name": f"{LORA_SUB}/{target.name}", "path": str(target), "bytes": target.stat().st_size, "sha256": digest.hexdigest(), "tensors": len(keys), "total_steps": total}
+
+
+def _ab_from_samples(job: dict) -> dict:
+    """For a base ComfyUI cannot render here: the trainer's own first sample (before any training) against its last, same seed and prompt."""
+    samples = job.get("samples") or []
+    if len(samples) < 2: raise HTTPException(400, "This trainer wrote fewer than two samples, so there is nothing to compare.")
+    first, last = samples[0], samples[-1]
+    run = Path(job["run_dir"])
+    a, b = (run / first["rel"]).read_bytes(), (run / last["rel"]).read_bytes()
+    try: diff = pixel_difference(a, b)
+    except (ValueError, OSError): diff = None
+    job["ab"] = {"state": "done", "source": "trainer samples", "prompt": job.get("sample_prompt"), "seed": None, "strength": 1.0, "base": first, "lora": last, "pixel_diff": diff, "unbound_keys": None, "error": None}
+    _save_job(job)
+    return view_job(job)
+
+
+@router.get("/jobs/{job_id}/sample/{name}")
+def sample_file(job_id: str, name: str):
+    job = _load_job(job_id)
+    hit = next((x for x in job.get("samples") or [] if x["name"] == name), None)
+    if not hit: raise HTTPException(404, "no such sample")
+    p = Path(job["run_dir"]) / hit["rel"]
+    if not p.is_file(): raise HTTPException(404, "no such sample")
+    return FileResponse(p)
+
+
+@router.post("/jobs/{job_id}/resume")
+def resume(job_id: str):
+    """An external trainer picks up from its last saved checkpoint, with its optimizer state where the trainer keeps it. ComfyUI's node has no checkpoints, so its runs cannot do this."""
+    job = _load_job(job_id)
+    if job.get("trainer", "comfy") == "comfy": raise HTTPException(400, "ComfyUI's training node saves only at the end, so this run cannot resume. Use Continue from a finished LoRA instead.")
+    if job["state"] not in ("cancelled", "lost", "error"): raise HTTPException(400, "Only a stopped run can resume.")
+    if not job.get("checkpoints"): raise HTTPException(400, "This run stopped before its first save, so there is nothing to resume from. Start it again.")
+    running = _active()
+    if running: raise HTTPException(409, f"{running['name']} is training. One training job at a time: it holds the GPU.")
+    _trainer_of(BASES[job["base"]]).resume(job)
+    job.update(state="queued", ended=None, error=None)
+    _save_job(job)
+    _ensure_monitor(job_id)
+    return view_job(job)
