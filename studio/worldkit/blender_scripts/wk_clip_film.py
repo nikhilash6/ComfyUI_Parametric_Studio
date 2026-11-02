@@ -62,7 +62,7 @@ def run(p):
     bpy.context.view_layer.update()
     mesh = next(o for o in objs if o.type == "MESH")
     tall = max((mesh.matrix_world @ Vector(c)).z for c in mesh.bound_box)
-    angle = math.radians(30 if p.get("view") == "three_quarter" else 0)
+    angle = math.radians({"three_quarter": 30, "side": 90}.get(p.get("view"), 0))
     dist = max(2.6, tall * 1.95)
     os.makedirs(p["out_dir"], exist_ok=True)
     frames = list(range(f0, f1 + 1, int(p.get("every", 1))))

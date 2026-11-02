@@ -26,6 +26,8 @@ ALIASES = {"LTX-2.5": ["ltx 2.5", "ltx"], "Flux.3-Klein": ["flux3-klein", "flux3
 # Families whose weights are not laid out the way ComfyUI's loaders expect. Each file is shown to the instance under a loader-friendly name through a symlink view (instance/models/<type>/<name>).
 # loader: "core" = ComfyUI's own loaders read it (verified by a CPU load test); "core+psn" = needs one of our loader nodes (psn_nodes/loaders.py); "needs-pack" = no loader exists here yet (files are linked, not claimed loadable).
 WRAPS = {
+ "Wan2.1": {"loader": "core", "files": [("audio_encoders", "wav2vec2-chinese-base_fp16.safetensors", "_by_repo/Kijai__wav2vec2_safetensors/wav2vec2-chinese-base_fp16.safetensors")],
+            "note": "InfiniteTalk's speech encoder, kept with its source repo; the InfiniteTalk patch itself is model_patches/wan2.1_infinitetalk_single_fp16_from_kj.safetensors (Kijai's scaled fp8 file times its scales, which ComfyUI's own loader can read)"},
  "LivePortrait": {"loader": "pack", "files": [*[("liveportrait", n + ".safetensors", f"liveportrait/safetensors/{n}.safetensors") for n in ("appearance_feature_extractor", "motion_extractor", "warping_module", "spade_generator", "stitching_retargeting_module")], ("liveportrait", "landmark.onnx", "liveportrait/liveportrait/landmark.onnx"),
                    ("insightface/models/buffalo_l", "det_10g.onnx", "face/insightface/models/buffalo_l/det_10g.onnx"), ("insightface/models/buffalo_l", "2d106det.onnx", "face/insightface/models/buffalo_l/2d106det.onnx")],
                    "note": "the original .pth weights as safetensors, the names ComfyUI-LivePortraitKJ reads, so it never downloads; its InsightFace face finder is the only one that runs on this MediaPipe"},

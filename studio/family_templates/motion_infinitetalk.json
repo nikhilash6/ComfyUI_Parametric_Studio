@@ -46,7 +46,7 @@
  "patch": {
   "class_type": "ModelPatchLoader",
   "inputs": {
-   "name": "Wan2_1-InfiniteTalk-Single_fp8_e4m3fn_scaled_KJ.safetensors"
+   "name": "wan2.1_infinitetalk_single_fp16_from_kj.safetensors"
   }
  },
  "enc": {

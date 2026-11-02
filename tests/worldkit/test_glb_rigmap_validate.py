@@ -89,3 +89,14 @@ def test_approve_needs_a_finished_valid_build(tmp_path):
     bad, _ = _asset(lib, tmp_path, "prop", {"loaded": True, "height_m": 40, "dims_m": [40, 1, 1]})
     with pytest.raises(L.AssetError, match="0.02-30"):
         lib.approve(bad["id"])
+
+
+def test_a_long_clavicle_from_the_centre_line_is_not_the_upper_arm():
+    """SkinTokens can give a clavicle as long as the upper arm, starting on the spine: the arm starts at its far end."""
+    b = [x for x in bones() if not x["name"].startswith(("l_", "r_")) or x["name"].endswith(("upleg", "_leg", "_foot", "toe"))]
+    for side, k in (("l", 1), ("r", -1)):
+        b += [{"name": f"{side}_clav", "parent": "chest", "head": [0.01 * k, 0, 1.40], "tail": [0.22 * k, 0, 1.44]},
+              {"name": f"{side}_up", "parent": f"{side}_clav", "head": [0.22 * k, 0, 1.44], "tail": [0.30 * k, 0, 1.20]},
+              {"name": f"{side}_fore", "parent": f"{side}_up", "head": [0.30 * k, 0, 1.20], "tail": [0.42 * k, 0, 0.98]},
+              {"name": f"{side}_hand2", "parent": f"{side}_fore", "head": [0.42 * k, 0, 0.98], "tail": [0.45 * k, 0, 0.90]}]
+    s = rigmap.slots(b); assert (s["l_upperarm"], s["l_forearm"], s["l_hand"]) == ("l_up", "l_fore", "l_hand2") and s["r_upperarm"] == "r_up"

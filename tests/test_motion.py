@@ -154,3 +154,11 @@ def test_no_template_ships_a_sample_person_or_a_box_path():
 
 def test_a_clip_keeps_its_shape():
     assert M.fit_size(512, 768) == (544, 832) and M.fit_size(1280, 720) == (832, 480) and M.fit_size(704, 704) == (832, 832)
+
+
+def test_a_capture_keeps_its_motion_file_beside_the_film(tmp_path, monkeypatch):
+    monkeypatch.setattr(M.paths, "output_dir", lambda *a: str(tmp_path))
+    raw = tmp_path / "raw.mp4"; raw.write_bytes(b"v"); bvh = tmp_path / "cap.bvh"; bvh.write_text("HIERARCHY")
+    r = M.route("sam3d_capture")
+    out = M.execute(r, {"permission": True}, {}, tmp_path, family=lambda *a: (raw, [bvh]), mark=lambda s, d: Path(d).write_bytes(b"m"))
+    assert out.with_suffix(".bvh").read_text() == "HIERARCHY"

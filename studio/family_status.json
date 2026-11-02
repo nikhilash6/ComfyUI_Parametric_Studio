@@ -9733,19 +9733,35 @@
 "slug": "wan-scail-2",
 "kind": "video",
 "era": 2026,
-"licence": null,
+"licence": "MIT on Hugging Face, Apache-2.0 on GitHub",
 "crew": "wan-2-1",
 "repos": [],
 "what": "Upload 1 reference character image and 1 driving video. Generate an animated video of the character matching the driving video's motion. Ideal for character animation, in-video character replacement, and motion transfer projects.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
-"nodes": 2007,
-"psn": 578,
-"tested": "06:45:37",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "motion_scail2",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 96.4,
+"peak_gib": 28.2,
+"kind": "video",
+"note": "motion_scail2 rendered through the Motion route on this box's own Wan-SCAIL-2 family server 2026-11-02 (96 s); the peak is from the same graph on a private ComfyUI (28.2 GB)"
 },
 "media": [
+{
+"id": "fam_wan-scail-2_0",
+"prompt": "An invented man takes over an invented woman's clip",
+"seconds": 112.6,
+"peak_vram_gib": 28.2,
+"tpl": "motion_scail2",
+"own": true,
+"kind": "video",
+"src": "motion/scail2_0.mp4",
+"poster": "motion/scail2_0.webp",
+"model": "wan2.1_14B_SCAIL_2_nvfp4_mxpf8_mix.safetensors",
+"seed": 7
+},
 {
 "id": "lib_wan-scail-2",
 "kind": "image",

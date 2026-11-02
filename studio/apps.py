@@ -186,7 +186,8 @@ def fill_dynamic(graph, oi):
     """V3 dynamic combos (SaveVideo.format, SaveImageAdvanced.format, ...) are widgets the template converter does not carry: set the first option and its nested inputs to their defaults, under both the dotted name the server reads and the plain name API graphs use. Drops ImageCompare (a viewer). -> number of inputs set."""
     fixed = 0
     for nid in [k for k, n in graph.items() if n["class_type"] == "ImageCompare"]: del graph[nid]
-    def one(ins, name, spec, prefix):
+    def one(ins, name, spec, prefix, top=()):
+        """top: the node's own input names. A nested choice is also set under its bare name only when the node takes that name (SaveVideo's codec): a V3 node given a name it does not take fails (ResizeImageMaskNode and width)."""
         nonlocal fixed
         opts = (spec[1] or {}).get("options") or []; keys = [o["key"] for o in opts]; key = prefix + name
         cur = ins.get(key, ins.get(name)) if not prefix else ins.get(key)
@@ -197,17 +198,28 @@ def fill_dynamic(graph, oi):
         sel = next((o for o in opts if o["key"] == cur), {}); nested = {**((sel.get("inputs") or {}).get("required") or {}), **((sel.get("inputs") or {}).get("optional") or {})}
         for nn, ns in nested.items():
             if ns[0] == "COMFY_DYNAMICCOMBO_V3":
-                one(ins, nn, ns, key + ".")
-                if (key + "." + nn) in ins: ins.setdefault(nn, ins[key + "." + nn])
+                one(ins, nn, ns, key + ".", top)
+                if (key + "." + nn) in ins and nn in top: ins.setdefault(nn, ins[key + "." + nn])
             else:
                 o2 = (ns[1] or {}) if len(ns) > 1 else {}; dv = o2.get("default", (ns[0][0] if isinstance(ns[0], list) and ns[0] else (o2.get("options") or [None])[0]))
-                ins.setdefault(key + "." + nn, dv); ins.setdefault(nn, ins[key + "." + nn])
+                ins.setdefault(key + "." + nn, dv)
+                if nn in top: ins.setdefault(nn, ins[key + "." + nn])
     for n in graph.values():
-        info = oi.get(n["class_type"], {}).get("input", {})
+        info = oi.get(n["class_type"], {}).get("input", {}); top = {k for grp in ("required", "optional") for k in (info.get(grp) or {})}
         for grp in ("required", "optional"):
             for name, spec in (info.get(grp) or {}).items():
-                if spec and spec[0] == "COMFY_DYNAMICCOMBO_V3" and (grp == "required" or name in n["inputs"]): one(n["inputs"], name, spec, "")
+                if spec and spec[0] == "COMFY_DYNAMICCOMBO_V3" and (grp == "required" or name in n["inputs"]): one(n["inputs"], name, spec, "", top)
+        for k in [k for k in n["inputs"] if k not in top and "." not in k and not isinstance(n["inputs"][k], list) and _nested_only(info, k)]: del n["inputs"][k]
     return fixed
+def _nested_only(info, name):
+    """True when a name is only ever a dynamic combo's nested input: left bare by an earlier fill, it breaks a V3 node."""
+    def walk(spec):
+        for o in ((spec[1] or {}).get("options") or []) if len(spec) > 1 else []:
+            for grp in ("required", "optional"):
+                for nn, ns in ((o.get("inputs") or {}).get(grp) or {}).items():
+                    if nn == name or (ns and ns[0] == "COMFY_DYNAMICCOMBO_V3" and walk(ns)): return True
+        return False
+    return any(spec and spec[0] == "COMFY_DYNAMICCOMBO_V3" and walk(spec) for grp in ("required", "optional") for spec in (info.get(grp) or {}).values())
 REGISTRY = "https://raw.githubusercontent.com/ltdrdata/ComfyUI-Manager/main/extension-node-map.json"
 def model_hints(ui):
     """{file name: {url, directory}} from the `properties.models` ComfyUI templates attach to their nodes."""

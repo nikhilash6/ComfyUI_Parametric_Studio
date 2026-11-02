@@ -60,9 +60,17 @@ def slots(bones: list[dict]) -> dict[str, str]:
     def after(ch: list[str], anc: str) -> list[str]:
         return ch[ch.index(anc) + 1:]
 
+    def inward(n: str) -> bool:
+        """A bone that starts on the centre line and runs sideways more than down is a clavicle, however long the rigger made it."""
+        c = kids[n]
+        if len(c) != 1:
+            return False
+        a, b = by[n]["head"], by[c[0]]["head"]
+        return abs(a[0] - cx) < 0.05 * h and abs(b[0] - a[0]) > abs(b[2] - a[2])
+
     def limb(seg: list[str], what: str) -> list[str]:
         seg = list(seg)
-        while len(seg) > 3 and seglen(seg[0]) < 0.6 * seglen(seg[1]):     # a clavicle / pelvis side bone
+        while len(seg) > 3 and (seglen(seg[0]) < 0.6 * seglen(seg[1]) or inward(seg[0])):     # a clavicle / pelvis side bone
             seg.pop(0)
         if len(seg) < 3:
             raise RigMapError(f"the {what} has fewer than three bones")

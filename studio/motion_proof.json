@@ -168,6 +168,70 @@
      "peak_vram_gib": 40.5
     }
    ]
+  },
+  "infinitetalk": {
+   "label": "Rendered here through its family server, sync measured",
+   "weak": [
+    "3.2 s per run (81 frames): longer speech needs its next segments, not run here.",
+    "The mouth leads the voice by about 80 ms.",
+    "Kijai's fp8 patch had to be turned into fp16 for ComfyUI's own loader: 5 GB more on disk."
+   ],
+   "samples": [
+    {
+     "title": "An invented man speaks a made-up line",
+     "prompt": "One picture made here and Kokoro-82M's built-in voice am_michael. Time is the whole call, loading included; the peak is from the same graph on a private ComfyUI.",
+     "seed": 7,
+     "alt": "A bearded man in a scarf speaks to the camera.",
+     "checked": "2026-11-02",
+     "numbers": {
+      "best_lag_ms": -80,
+      "corr_at_best": 0.57
+     },
+     "sound": true,
+     "src": "motion/infinitetalk_0.mp4",
+     "poster": "motion/infinitetalk_0.webp",
+     "kind": "video",
+     "ar": "600 / 600",
+     "seconds": 78.7,
+     "peak_vram_gib": 33.0
+    }
+   ]
+  },
+  "sam3d_capture": {
+   "label": "Rendered here, put on a rig, looked at frame by frame",
+   "weak": [
+    "One camera: depth is a guess, so a hand reaching toward the camera can come out short or long.",
+    "The whole clip is levelled and turned to face forward from its average pose, so a deliberate lean is lost.",
+    "Feet stay flat on the rig, and fingers are not carried over."
+   ],
+   "samples": [
+    {
+     "title": "Captured from a clip, played on Tomas",
+     "prompt": "The clip was an invented woman made with Wan 2.2. SAM 3D Body read her pose; the motion file went onto a World Kit character.",
+     "seed": null,
+     "alt": "A bearded man in a long coat waves at head height and then gestures with both hands, on a marked floor.",
+     "checked": "2026-11-02",
+     "src": "motion/sam3d_capture_0.mp4",
+     "poster": "motion/sam3d_capture_0.webp",
+     "kind": "video",
+     "ar": "540 / 720",
+     "seconds": 42.7,
+     "peak_vram_gib": 4.0
+    },
+    {
+     "title": "What it read, through its family server",
+     "prompt": "The pose drawn over the clip it came from.",
+     "seed": null,
+     "alt": "A bearded man in a coat waves, with a coloured stick figure over his body.",
+     "checked": "2026-11-02",
+     "src": "motion/sam3d_capture_1.mp4",
+     "poster": "motion/sam3d_capture_1.webp",
+     "kind": "video",
+     "ar": "512 / 768",
+     "seconds": 27.4,
+     "peak_vram_gib": 4.0
+    }
+   ]
   }
  },
  "hero": {

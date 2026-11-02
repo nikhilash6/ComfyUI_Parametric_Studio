@@ -166,6 +166,13 @@ def retarget(motion, target, work: Path, *, run=None) -> Path:
     """A BVH onto a rigged character -> an FBX of the clip on that rig (CPU, Blender, no render). Kimodo's SOMA BVH is fitted from joint positions (wk_fit_motion.py); any other goes through the retarget tool."""
     require("retarget")
     work = Path(work); work.mkdir(parents=True, exist_ok=True); out = work / "clip.fbx"; log = work / "retarget.log"; home = C.tool_home("retarget")
+    from studio.worldkit import mhr_bvh
+    try:
+        mhr = mhr_bvh.is_mhr(Path(motion).read_text(errors="replace"))
+    except OSError:
+        mhr = False
+    if mhr:                                    # SAM 3D Body's numbered joints, renamed to the SOMA names the fit reads
+        motion = mhr_bvh.rename(motion, work / "motion_soma.bvh")
     if _src_map(motion) != "detect":
         pfile = work / "fit.json"
         pfile.write_text(json.dumps({"motion": str(motion), "rig": str(target), "out": str(out)}), encoding="utf-8")

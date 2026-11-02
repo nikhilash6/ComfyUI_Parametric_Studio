@@ -105,7 +105,21 @@ def ui_to_api(ui, oi, exposed=None):
             def boundary(slot):
                 name = S["inputs"][slot]["name"] if slot < len(S.get("inputs", [])) else None
                 if name in ext: return link_src(ext[name])
-                return Const(subvals[name]) if name in subvals else None
+                if name in subvals: return Const(subvals[name])
+                return held(slot)
+            def held(slot):
+                """An input nobody wired and nobody promoted a value for: the value an inner widget on that input keeps (SCAIL's length feeds a widget and a math node; the math node has no widget of its own)."""
+                inner = {x["id"]: x for x in S.get("nodes", [])}
+                for (o, os_, t, ts) in _norm_links(S.get("links")).values():
+                    x = inner.get(t)
+                    if o != -10 or os_ != slot or x is None or x["type"] not in oi: continue
+                    ins = x.get("inputs") or []; iname = ins[ts]["name"] if ts < len(ins) else None
+                    if iname not in {w for w, _ in _widget_names(oi[x["type"]])}: continue
+                    got = {}; wv = x.get("widgets_values") or []
+                    if isinstance(wv, dict): got = dict(wv)
+                    else: _assign_widgets(oi[x["type"]], wv, got)
+                    if iname in got: return Const(got[iname])
+                return None
             inner_L = _norm_links(S.get("links")); outs_src = {}
             if exposed is not None and prefix == "":
                 inner_nodes = {x["id"]: x for x in S.get("nodes", [])}
