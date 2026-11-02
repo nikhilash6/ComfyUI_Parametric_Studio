@@ -230,27 +230,6 @@
    "height": 640,
    "clip_seconds": 5.2
   },
-  "lora_b7c1e9ecd2": {
-   "kind": "video",
-   "family": "lora",
-   "model": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
-   "seed": 9338,
-   "seeds": null,
-   "seconds": 333.6,
-   "peak_vram_gib": 33.4,
-   "peak_scope": "recipe",
-   "card_peak_vram_gib": 63.3,
-   "rendered": "2026-11-01",
-   "run": "cc8012de4950",
-   "prompt": "integrated_multimodal_description: [Shot 1] An old potter in a flour-dusted apron sits at a wooden workbench shaping wet clay with rough hands, weathered skin, deep wrinkles, coarse linen texture and visible clay grain. Medium close-up, static camera.\noverall_soundscape: wet clay squelch, wheel hum, a clock ticking.\nnon_diegetic_music: N/A",
-   "lora": "minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors, DetailSlider-V1.safetensors",
-   "file": "recipe_renders/lora_b7c1e9ecd2.mp4",
-   "poster": "recipe_renders/lora_b7c1e9ecd2.poster.webp",
-   "full_seconds": 5.2,
-   "width": 640,
-   "height": 358,
-   "clip_seconds": 5.2
-  },
   "lora_e9b21abb90": {
    "kind": "video",
    "family": "lora",

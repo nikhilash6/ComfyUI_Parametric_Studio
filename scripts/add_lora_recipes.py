@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent; DATA = ROOT / "studio" / "lora_recipes.json"
 #: Left out on purpose. FaceID and ID LoRAs copy a real face from a photo, and INFL8 is a body-inflation effect: neither belongs in a safe-for-work, no-likeness list.
-SKIP = re.compile(r"faceid|infl8|-id-lora", re.I)
+SKIP = re.compile(r"faceid|infl8|-id-lora|detailslider-v1|fiona-crapple|clipproj-celeb", re.I)  # the last three name real people or read as if they do: held for the founder
 FAMILIES = (("flux2", r"flux2|flux\.2|flux_2"), ("flux1", r"flux1|uso-flux|removal_timestep"), ("qwen", r"qwen"), ("wan22", r"wan2\.2|chronoedit"), ("wan21", r"wan21|wan2\.1|wan_alpha|lightx2v_"), ("ltx", r"ltx"), ("z-image", r"z_image|z-image"), ("anima", r"anima"), ("krea2", r"krea"), ("moss", r"moss"), ("flux1", r"hunyuanworld"), ("fibo", r"fibo"))
 PURPOSES = (("style", "Style", r"style|illustration|pixel|brush|uso-|alpha"), ("speed", "Speed & few steps", r"lightning|turbo|lightx2v|causvid|distill|chronoedit"), ("control", "Control & guidance", r"control|depth|canny|union|layout|ingredients"), ("camera", "Camera & shot", r"dolly|360|transition|panodit"), ("edit", "Editing & removal", r"edit|relight|removal|inpaint|action|squish"))
 

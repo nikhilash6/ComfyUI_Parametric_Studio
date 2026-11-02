@@ -137,7 +137,7 @@ def generate(family, models=None, root=None, ps_nodes=None, ports=None):
     info = {"family": family, "slug": s, "port": port, "est_vram_gb": vram_estimate_gb(family, models), "model_types": {t: len(v) for t, v in md.items()}, "packs": linked, "packs_not_installed": absent, "args": args,
             "launch": LAUNCH, "unit": f"comfy-family@{s}.service", "loader": (spec or {}).get("loader", "core"), "wrapped": wrapped, "wrap_missing": missing_w, "note": (spec or {}).get("note", "")}
     apply_theme(d)
-    _write(os.path.join(d, "instance.json"), json.dumps(info, indent=1)); _write(os.path.join(d, "instance.env"), f"PS_PORT={port}\nARGS={' '.join(args)}\n"); return info
+    _write(os.path.join(d, "instance.json"), json.dumps(info, indent=1)); _write(os.path.join(d, "instance.env"), f"PS_PORT={port}\nARGS={' '.join(args)}\n" + (f"PYTHONPATH={cn}\n" if any(p in PACK_LINK_AS for p in wanted) else "")); return info
 
 UNIT = """[Unit]
 Description=ComfyUI instance for model family %i (on demand; started by psn.instances, never enabled)

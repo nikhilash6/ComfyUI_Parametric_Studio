@@ -64,7 +64,7 @@ do from a prompt alone.
 ## Known pitfalls / failure modes
 - H3 (cinematic, ugc only): ONE add-on per render. Turbo v4 and a bypass LoRA share the model's one bypass slot, so a pick
   renders on the verified add-on path instead: nvfp4 Ref2VA + the bypass LoRA at 20 steps, no turbo (~3 min, ~48 GiB planning
-  figure). The picker says so under the row, marks each LoRA "tested" (handheld_h3_100, fpv_headbob_h3_50, DetailSlider-V1) or
+  figure). The picker says so under the row, marks each LoRA "tested" (handheld_h3_100, fpv_headbob_h3_50) or
   "untested here", caps handheld at 1.0, and hides the LoRAs that need their own graph (v2v, keyframe, orbit, remover, distills).
   Two picks are refused; stacking needs a rank-concat file (`lora_retest/rankcat.py`, not wired).
 - A second bypass LoRA on the same model is refused (it would silently replace the first).
