@@ -33,7 +33,7 @@
     "2",
     0
    ],
-   "text": "${prompt}"
+   "text": "a lighthouse on a rocky headland at sunset, waves crashing below, seagulls circling, gentle camera push in, the sound of surf and gulls"
   }
  },
  "6": {
@@ -43,7 +43,7 @@
     "2",
     0
    ],
-   "text": "${negative}"
+   "text": "blurry, distorted, low quality"
   }
  },
  "7": {
@@ -57,22 +57,22 @@
     "6",
     0
    ],
-   "frame_rate": "${fps}"
+   "frame_rate": 24
   }
  },
  "8": {
   "class_type": "EmptyLTXVLatentVideo",
   "inputs": {
-   "width": "${width}",
-   "height": "${height}",
-   "length": "${frames}",
+   "width": 768,
+   "height": 512,
+   "length": 97,
    "batch_size": 1
   }
  },
  "9": {
   "class_type": "LoadImage",
   "inputs": {
-   "image": "${image}"
+   "image": "still.png"
   }
  },
  "10": {
@@ -107,7 +107,7 @@
  "12": {
   "class_type": "LTXFloatToInt",
   "inputs": {
-   "a": "${fps}"
+   "a": 24
   }
  },
  "13": {
@@ -117,7 +117,7 @@
     "4",
     0
    ],
-   "frames_number": "${frames}",
+   "frames_number": 97,
    "frame_rate": [
     "12",
     0
@@ -159,7 +159,7 @@
  "16": {
   "class_type": "RandomNoise",
   "inputs": {
-   "noise_seed": "${seed}"
+   "noise_seed": 42
   }
  },
  "17": {
@@ -245,7 +245,7 @@
     "21",
     0
    ],
-   "fps": "${fps}",
+   "fps": 24,
    "audio": [
     "22",
     0

@@ -42,12 +42,22 @@ WORKFLOWS.update({
     "music_roti_features_api.json": ("Music: audio features as numbers (pack: RyanOnTheInside)", "music", _music("music_roti_features_api.json", source="NAME_FROM_POST_/api/upload", fps=15)),
     "music_roti_visualizer_api.json": ("Music: audio-reactive visual (pack: RyanOnTheInside)", "music", _music("music_roti_visualizer_api.json", source="NAME_FROM_POST_/api/upload", start=0, end=30, method="bar")),
 })
-WORKFLOW_PAGE = {"worldkit": "World Kit", "virtualset": "Virtual Set", "music": "Music"}
+#: The Edit page's one-click tools (studio/feature_oneclick.py): one photo or clip in, a finished set out.
+ONECLICK_RUN, ONECLICK_POLL = "/api/oneclick/{}/run", "/api/oneclick/jobs/ID"
+def _oneclick(tool, **body): return {"method": "POST", "path": ONECLICK_RUN.format(tool), "body": body, "poll": ONECLICK_POLL}
+WORKFLOWS.update({
+    "oneclick_angles_api.json": ("Edit: four camera angles from one still (Qwen-Image-Edit-2511, Multiple-Angles LoRA)", "edit", _oneclick("angles", image="NAME_FROM_POST_/api/upload", options={"set": "coverage"})),
+    "oneclick_relight_api.json": ("Edit: relight a photo (Qwen-Image-Edit-2509, Relight LoRA)", "edit", _oneclick("relight", image="NAME_FROM_POST_/api/upload", options={"light": "golden hour"})),
+    "oneclick_effect_api.json": ("Edit: inflate, marble or gold on a photo (Qwen-Image-Edit-2511, INFL8 LoRA)", "edit", _oneclick("effects", image="NAME_FROM_POST_/api/upload", options={"effect": "inflate", "output": "still"})),
+    "oneclick_effect_clip_api.json": ("Edit: a photo effect, then an LTX-2.5 clip from the photo to the effect", "edit", _oneclick("effects", image="NAME_FROM_POST_/api/upload", options={"effect": "inflate", "output": "still + clip"})),
+    "oneclick_matte_api.json": ("Edit: alpha matte of a clip and a new Z-Image set behind it (LTX-2.5 Alpha-Gen)", "edit", _oneclick("matte", video="NAME_FROM_POST_/api/upload", text={"background": "a sunlit seaside boardwalk"})),
+})
+WORKFLOW_PAGE = {"worldkit": "World Kit", "virtualset": "Virtual Set", "music": "Music", "edit": "Edit"}
 
 
 def workflow_files():
-    """The graph templates World Kit, Virtual Set and the Music page read."""
-    return sorted(p.name for p in WF.glob("*.json") if p.name.startswith(("worldkit_", "vset_", "music_")))
+    """The graph templates World Kit, Virtual Set, the Music page and the Edit page's one-click tools read."""
+    return sorted(p.name for p in WF.glob("*.json") if p.name.startswith(("worldkit_", "vset_", "music_", "oneclick_")))
 
 
 def _goal_rows():

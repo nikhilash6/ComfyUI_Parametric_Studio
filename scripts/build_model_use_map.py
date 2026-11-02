@@ -244,12 +244,24 @@ def plans_landed(workbench, models_root, have, names=LATER_PLANS):
     return [r for r in load_plans(workbench, names) if r.get("sha") not in have and on_disk(models_root, r)[0]]
 
 
+def link_uses(models_root, uses, roots=("_complete_pipelines", "controlnet", "checkpoints", "diffusion_models", "text_encoders", "loras", "vae")):
+    """{real path: uses} for files a graph names through a link: the link's name is what the graph says, the file it points at is what gets proven."""
+    out = {}
+    for r in roots:
+        for dp, dn, fs in os.walk(os.path.join(models_root, r)):
+            for f in fs:
+                p = os.path.join(dp, f)
+                if os.path.islink(p) and f in uses: out.setdefault(os.path.realpath(p), []).extend(uses[f])
+    return out
+
+
 def build(repo_root, models_root, workbench, yaml_path, all_json, template_dir=None, cards=None, plans=PLANS, arrivals=(), viewed=None):
     status = json.load(open(Path(repo_root) / "studio" / "family_status.json"))["families"]
     from studio.names import model_key
     uses = index_uses(repo_root, template_dir); by_key = {}
     for n, w in uses.items(): by_key.setdefault(model_key(n), []).extend(w)
     folders = comfy_folders(yaml_path); proofs = proof_index(all_json, status); rows = []; needs = need_paths(repo_root); viewed = viewed or {}
+    linked = link_uses(models_root, uses)
     try: proofs3d = json.load(open(Path(repo_root) / "studio" / "model3d_proof.json"))
     except (OSError, ValueError): proofs3d = {}
     planned = load_plans(workbench, plans); planned += plans_landed(workbench, models_root, {r.get("sha") for r in planned}); known = {os.path.normpath(os.path.join(models_root, r["rel"])) for r in planned}
@@ -259,6 +271,7 @@ def build(repo_root, models_root, workbench, yaml_path, all_json, template_dir=N
     for r in planned:
         ok, path = on_disk(models_root, r); name = os.path.basename(r["rel"]); used = [] if GENERIC.match(name) else list(uses.get(name) or by_key.get(model_key(name)) or [])
         used += [w for pth, w in needs.items() if r["rel"].endswith(pth) and w not in used]
+        used += [w for w in linked.get(os.path.realpath(path), []) if w not in used]
         for pre, label in RUNNERS:
             if pre in r["rel"] and label not in used: used.append(label)
         typ = reach(r["rel"], folders)

@@ -1250,6 +1250,21 @@
 "model": "fibo2_edit_turbo_int8_convrot.safetensors",
 "seed": 1398774073,
 "peak_vram_gib": 25.9
+},
+{
+"id": "fam_fibo-2-0_3",
+"prompt": "Fibo 2.0 dev with the turbo LoRA",
+"seconds": 40.7,
+"tpl": "fibo2_dev_turbo_lora_t2i",
+"own": true,
+"kind": "image",
+"src": "families/fibo-2-0_3.webp",
+"poster": "families/fibo-2-0_3.webp",
+"w": 640,
+"h": 640,
+"model": "fibo2_dev_int8_convrot.safetensors",
+"seed": 1326036098,
+"peak_vram_gib": 17.4
 }
 ],
 "templates": [
@@ -1537,6 +1552,36 @@
 "h": 640,
 "model": "flux1-schnell.safetensors",
 "seed": 1230218750
+},
+{
+"id": "fam_flux-1_3",
+"prompt": "Flux.1 Inpaint",
+"seconds": 40.6,
+"tpl": "flux_fill_inpaint_example",
+"own": true,
+"kind": "image",
+"src": "families/flux-1_3.webp",
+"poster": "families/flux-1_3.webp",
+"w": 640,
+"h": 366,
+"model": "flux1-fill-dev.safetensors",
+"seed": 845048950,
+"peak_vram_gib": 34.2
+},
+{
+"id": "fam_flux-1_4",
+"prompt": "Flux.1 Outpaint",
+"seconds": 40.8,
+"tpl": "flux_fill_outpaint_example",
+"own": true,
+"kind": "image",
+"src": "families/flux-1_4.webp",
+"poster": "families/flux-1_4.webp",
+"w": 640,
+"h": 349,
+"model": "flux1-fill-dev.safetensors",
+"seed": 219174185,
+"peak_vram_gib": 37.2
 }
 ],
 "templates": [
@@ -2703,6 +2748,21 @@
 "h": 640,
 "model": "flux3_image_klein_bf16.safetensors",
 "seed": 662101089
+},
+{
+"id": "fam_flux-3-klein_5",
+"prompt": "Flux.3 Klein SD nvfp4",
+"seconds": 30.4,
+"tpl": "flux3_klein_sd_nvfp4_t2i",
+"own": true,
+"kind": "image",
+"src": "families/flux-3-klein_5.webp",
+"poster": "families/flux-3-klein_5.webp",
+"w": 640,
+"h": 640,
+"model": "flux3_image_klein_sd_nvfp4.safetensors",
+"seed": 1278403381,
+"peak_vram_gib": 13.4
 }
 ],
 "templates": [
@@ -2910,6 +2970,45 @@
 "kind": "video",
 "src": "families/frame-interpolation_2.mp4",
 "poster": "families/frame-interpolation_2.webp"
+},
+{
+"id": "fam_frame-interpolation_3",
+"prompt": "Frame interpolation: rife_v4.25",
+"seconds": 50.8,
+"tpl": "frame_interp_rife_v4_25",
+"own": true,
+"kind": "video",
+"src": "families/frame-interpolation_3.mp4",
+"poster": "families/frame-interpolation_3.webp",
+"model": "rife_v4.25.safetensors",
+"seed": 1574446013,
+"peak_vram_gib": 1.2
+},
+{
+"id": "fam_frame-interpolation_4",
+"prompt": "Frame interpolation: rife_v4.25_heavy",
+"seconds": 50.7,
+"tpl": "frame_interp_rife_v4_25_heavy",
+"own": true,
+"kind": "video",
+"src": "families/frame-interpolation_4.mp4",
+"poster": "families/frame-interpolation_4.webp",
+"model": "rife_v4.25_heavy.safetensors",
+"seed": 1791339716,
+"peak_vram_gib": 1.2
+},
+{
+"id": "fam_frame-interpolation_5",
+"prompt": "Frame interpolation: rife_v4.25_lite",
+"seconds": 35.4,
+"tpl": "frame_interp_rife_v4_25_lite",
+"own": true,
+"kind": "video",
+"src": "families/frame-interpolation_5.mp4",
+"poster": "families/frame-interpolation_5.webp",
+"model": "rife_v4.25_lite.safetensors",
+"seed": 1181436497,
+"peak_vram_gib": 0.8
 }
 ],
 "templates": [
@@ -4572,6 +4671,32 @@
 "kind": "video",
 "src": "families/ltx-2-5_2.mp4",
 "poster": "families/ltx-2-5_2.webp"
+},
+{
+"id": "fam_ltx-2-5_3",
+"prompt": "the camera pushes in slowly, rain falls, the sound of rain",
+"seconds": 55.8,
+"tpl": "ltx25_core_i2v",
+"own": true,
+"kind": "video",
+"src": "families/ltx-2-5_3.mp4",
+"poster": "families/ltx-2-5_3.webp",
+"model": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+"seed": 454905153,
+"peak_vram_gib": 36.8
+},
+{
+"id": "fam_ltx-2-5_4",
+"prompt": "a lighthouse on a rocky headland at sunset, waves below, the sound of surf",
+"seconds": 35.3,
+"tpl": "ltx25_core_t2v",
+"own": true,
+"kind": "video",
+"src": "families/ltx-2-5_4.mp4",
+"poster": "families/ltx-2-5_4.webp",
+"model": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+"seed": 254052656,
+"peak_vram_gib": 35.9
 }
 ],
 "templates": [
@@ -5470,6 +5595,21 @@
 "h": 640,
 "model": "lumina_2_model_bf16.safetensors",
 "seed": 653991452
+},
+{
+"id": "fam_lumina-2_4",
+"prompt": "Lumina 2, plain Gemma 2 2B",
+"seconds": 35.4,
+"tpl": "lumina2_gemma2_fp16_t2i",
+"own": true,
+"kind": "image",
+"src": "families/lumina-2_4.webp",
+"poster": "families/lumina-2_4.webp",
+"w": 640,
+"h": 640,
+"model": "lumina_2_model_bf16.safetensors",
+"seed": 1383721100,
+"peak_vram_gib": 12.3
 }
 ],
 "templates": [
@@ -7432,6 +7572,21 @@
 "model": "qwen_image_edit_2509_int8_convrot.safetensors",
 "seed": 1328435610,
 "peak_vram_gib": 26.0
+},
+{
+"id": "fam_qwen-image-2-1_19",
+"prompt": "Qwen 2.1 turbo, nvfp4 encoder",
+"seconds": 25.2,
+"tpl": "qwen21_turbo_nvfp4te_t2i",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_19.webp",
+"poster": "families/qwen-image-2-1_19.webp",
+"w": 640,
+"h": 640,
+"model": "qwen_image_2.1_turbo_bf16.safetensors",
+"seed": 1647410878,
+"peak_vram_gib": 17.0
 }
 ],
 "templates": [
@@ -8573,6 +8728,66 @@
 "model": "v1-5-pruned-emaonly.safetensors",
 "seed": 1993394632,
 "peak_vram_gib": 0.5
+},
+{
+"id": "fam_sd15_5",
+"prompt": "SD 1.5 with fofr's CLIP-L copy",
+"seconds": 15.1,
+"tpl": "sd15_clip_fofr_t2i",
+"own": true,
+"kind": "image",
+"src": "families/sd15_5.webp",
+"poster": "families/sd15_5.webp",
+"w": 512,
+"h": 512,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 1349951162,
+"peak_vram_gib": 0.5
+},
+{
+"id": "fam_sd15_6",
+"prompt": "SD 1.5 with the SD 1.1 text encoder",
+"seconds": 20.2,
+"tpl": "sd15_clip_sd11_t2i",
+"own": true,
+"kind": "image",
+"src": "families/sd15_6.webp",
+"poster": "families/sd15_6.webp",
+"w": 512,
+"h": 512,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 270993026,
+"peak_vram_gib": 3.0
+},
+{
+"id": "fam_sd15_7",
+"prompt": "SD 1.5 with the SD 1.4 text encoder",
+"seconds": 15.1,
+"tpl": "sd15_clip_sd14_t2i",
+"own": true,
+"kind": "image",
+"src": "families/sd15_7.webp",
+"poster": "families/sd15_7.webp",
+"w": 512,
+"h": 512,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 1170076394,
+"peak_vram_gib": 0.5
+},
+{
+"id": "fam_sd15_8",
+"prompt": "SD 1.5 diffusers UNet",
+"seconds": 15.1,
+"tpl": "sd15_diffusers_unet_t2i",
+"own": true,
+"kind": "image",
+"src": "families/sd15_8.webp",
+"poster": "families/sd15_8.webp",
+"w": 512,
+"h": 512,
+"model": "sd15_diffusers_unet_fp16.safetensors",
+"seed": 1371561927,
+"peak_vram_gib": 0.5
 }
 ],
 "templates": []
@@ -8626,17 +8841,19 @@
 "model": "SD3.5 Medium"
 },
 {
-"id": "lib_sd3-sd3-5",
+"id": "fam_sd3-sd3-5_2",
+"prompt": "SD3 medium text to picture",
+"seconds": 30.4,
+"tpl": "sd3_medium_t2i",
+"own": true,
 "kind": "image",
-"src": "families/lib_sd3-sd3-5.webp",
-"poster": "families/lib_sd3-sd3-5.webp",
-"w": 560,
-"h": 560,
-"prompt": "SD3.5 Large Blur: sample from ComfyUI's template library",
-"tpl": "sd3.5_large_blur",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"src": "families/sd3-sd3-5_2.webp",
+"poster": "families/sd3-sd3-5_2.webp",
+"w": 640,
+"h": 640,
+"model": "sd3_medium.safetensors",
+"seed": 11965092,
+"peak_vram_gib": 9.2
 }
 ],
 "templates": [
@@ -8873,6 +9090,36 @@
 "model": "sd_xl_base_1.0_unet_fp16.safetensors",
 "seed": 1222671418,
 "peak_vram_gib": 8.9
+},
+{
+"id": "fam_sdxl_7",
+"prompt": "SDXL pose control: Xinsir OpenPose twins",
+"seconds": 30.3,
+"tpl": "sdxl_controlnet_openpose_twins",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_7.webp",
+"poster": "families/sdxl_7.webp",
+"w": 438,
+"h": 640,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 914557893,
+"peak_vram_gib": 9.7
+},
+{
+"id": "fam_sdxl_8",
+"prompt": "SDXL with the fp16-fix VAE",
+"seconds": 30.4,
+"tpl": "sdxl_vae_fp16_fix_t2i",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_8.webp",
+"poster": "families/sdxl_8.webp",
+"w": 640,
+"h": 640,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 2047517777,
+"peak_vram_gib": 7.3
 }
 ],
 "templates": [
@@ -9925,6 +10172,19 @@
 "kind": "video",
 "src": "families/wan2-1_1.mp4",
 "poster": "families/wan2-1_1.webp"
+},
+{
+"id": "fam_wan2-1_2",
+"prompt": "Causal Forcing: Image to Video",
+"seconds": 61.0,
+"tpl": "video_causal_forcing_i2v",
+"own": true,
+"kind": "video",
+"src": "families/wan2-1_2.mp4",
+"poster": "families/wan2-1_2.webp",
+"model": "causal_forcing-framewise.safetensors",
+"seed": 1368782868,
+"peak_vram_gib": 16.1
 }
 ],
 "templates": [
