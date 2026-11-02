@@ -66,10 +66,14 @@ Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Win
 **Already run ComfyUI?** You only need the studio, and a link so ComfyUI loads its `PSN_` nodes:
 
 ```bash
-git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git && cd ComfyUI_Parametric_Studio && uv sync
+git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git && cd ComfyUI_Parametric_Studio
+python3 -m venv .venv && . .venv/bin/activate
+pip install fastapi "uvicorn[standard]" python-multipart pydantic numpy pillow brotli apscheduler "huggingface_hub[hf_xet]"
 ln -s "$PWD" /path/to/ComfyUI/custom_nodes/comfyui_parametric_studio    # then restart ComfyUI
-COMFYUI_URL=http://127.0.0.1:8188 uv run python -m studio.server         # open http://127.0.0.1:8310
+COMFYUI_URL=http://127.0.0.1:8188 python -m studio.server               # open http://127.0.0.1:8310
 ```
+
+With uv instead: `uv sync`, then `COMFYUI_URL=http://127.0.0.1:8188 uv run python -m studio.server`. On Ubuntu, get uv with `sudo apt install pipx && pipx install uv`; a plain `pip install uv` fails there.
 
 Each app's page lists the model files it is missing and any node your ComfyUI doesn't have. The Shot Board needs MiniMax H3 for reshoot, orbit and recast, LTX-2.5 with four Lightricks IC-LoRAs for the VFX, and the ComfyUI-LTXVideo and KJNodes packs. The files, sizes and hashes for each goal are in [`studio/models_manifest.json`](studio/models_manifest.json) (goals `reshoot`, `orbit360`, `recast`, `vfx_ltx`), and the licences are in [MODELS.md](MODELS.md). Folder settings are in [INSTALL.md](INSTALL.md#using-a-comfyui-you-already-have).
 
@@ -84,6 +88,8 @@ python3 install.py               # or --goals anime for the smallest download, -
 ```
 
 It needs a GPU driver already installed, and about 10 GB of disk plus the models: 25 GB is enough for the default goal. Then run the launcher it prints and open http://127.0.0.1:8310.
+
+Full install on a clean Ubuntu 24.04 box: about 29 min to the studio page (PyTorch is ~3 GB), first image about 30 s once the models are in. Model download time depends on your Hugging Face speed.
 
 **For the Shot Board:** `python3 install.py --goals reshoot,orbit360,recast,vfx_ltx --include-gated`. LTX-2.5 and its IC-LoRAs are gated: accept each licence on Hugging Face and set `HF_TOKEN` first. On our box, the dry run of that command plans 99.9 GB of models and about 110 GB of disk, and adds the ComfyUI-LTXVideo and KJNodes packs. It has not been run end to end on a clean machine.
 

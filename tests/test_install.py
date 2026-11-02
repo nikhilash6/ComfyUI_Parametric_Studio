@@ -147,3 +147,34 @@ def test_the_last_thing_the_installer_says_is_the_studio(tmp_path, monkeypatch, 
 def test_the_launcher_needs_no_compiler_and_lets_you_opt_back_in():
     sh = install.launcher_text("Linux", "/x", "/r", []); bat = install.launcher_text("Windows", "/x", "/r", [])
     assert 'TORCH_DISABLE_NATIVE_JIT="${TORCH_DISABLE_NATIVE_JIT:-1}"' in sh and sh.index("TORCH_DISABLE_NATIVE_JIT") < sh.index("main.py") and "if not defined TORCH_DISABLE_NATIVE_JIT" in bat
+
+def test_studio_packages_match_pyproject_and_the_install_docs():
+    """A clean install found brotli, apscheduler and huggingface_hub missing from the pip lines: all three lists must agree."""
+    import re, tomllib
+    deps = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["dependencies"]
+    assert install.STUDIO_PACKAGES == deps
+    line = next(l for l in (ROOT / "INSTALL.md").read_text().splitlines() if l.startswith("pip install fastapi"))
+    assert [w.strip('"') for w in line.split()[2:]] == deps
+    assert "python -m venv" not in (ROOT / "INSTALL.md").read_text()  # Ubuntu has no `python`, only python3
+
+def test_each_install_step_says_what_it_is(manifests):
+    _, pm, ch = manifests; r = install.plan(NVIDIA_12, pm, ["image"])
+    labels = [install.step_label(c) for c in install.build_commands(r, pm, ch, "stable", "/x", "cuda")]
+    torch = next(l for l in labels if "PyTorch" in l)
+    assert "3 GB" in torch and "minutes" in torch
+    assert "Cloning ComfyUI" in labels and "Installing the studio's Python packages" in labels
+    assert any(l.startswith("Downloading model ") for l in labels) and not any(l.startswith("/") for l in labels)
+
+def test_download_progress_shows_size_speed_and_time_left():
+    assert install.progress_line("a.safetensors", 1.0e9) == "  a.safetensors: 1.00 GB"
+    slow = install.progress_line("a.safetensors", 0.08e9, 7.22, rate=150e3)
+    assert "of 7.22 GB" in slow and "0.1 MB/s" in slow and "h left" in slow
+    assert "min left" in install.progress_line("a", 1e9, 2.0, rate=50e6)
+
+def test_a_verified_file_drops_the_leftover_part(tmp_path):
+    dest = tmp_path / "m.safetensors"; dest.write_bytes(b"hello"); part = tmp_path / "m.safetensors.part"; part.write_bytes(b"he")
+    assert install.download_file("http://x", dest, hashlib.sha256(b"hello").hexdigest(), opener=lambda req: pytest.fail("no download")) and not part.exists()
+
+def test_ctrl_c_says_how_to_carry_on():
+    src = (ROOT / "install.py").read_text()
+    assert "except KeyboardInterrupt" in src and "run the same command again" in src.split("except KeyboardInterrupt", 1)[1]

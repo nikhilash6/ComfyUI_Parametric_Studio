@@ -85,7 +85,7 @@ Add `--dry-run` to any of these to see the plan first. Windows and macOS have no
 
 ## Extended edition
 
-The open edition, which is the contest entry, uses local open-weights models only. The Extended edition adds ComfyUI's partner workflows as forms and Connect your Printify. Those need your own accounts and can spend your credits. Build it with `python scripts/assemble_extended.py`, then start the studio with `PSN_EDITION=extended`.
+The open edition, which is the contest entry, uses local open-weights models only. The Extended edition adds ComfyUI's partner workflows as forms and Connect your Printify. Those need your own accounts and can spend your credits. Build it with `python3 scripts/assemble_extended.py`, then start the studio with `PSN_EDITION=extended`.
 
 ## How `install.py` works
 
@@ -118,8 +118,8 @@ Bigger downloads are your choice, and `--goals all --include-gated` can reach 15
 ## Using a ComfyUI you already have
 
 ```bash
-python -m venv .venv && . .venv/bin/activate
-pip install fastapi uvicorn python-multipart pydantic numpy pillow
+python3 -m venv .venv && . .venv/bin/activate
+pip install fastapi "uvicorn[standard]" python-multipart pydantic numpy pillow brotli apscheduler "huggingface_hub[hf_xet]"
 ln -s "$PWD" /path/to/ComfyUI/custom_nodes/comfyui_parametric_studio   # for the PSN nodes; restart ComfyUI
 COMFYUI_URL=http://127.0.0.1:8188 \
 STUDIO_MODELS_ROOT=/path/to/ComfyUI/models \
@@ -128,7 +128,7 @@ STUDIO_COMFY_INPUT=/path/to/ComfyUI/input \
 python -m studio.server
 ```
 
-The `pip install` line is what the studio's imports require, but it was not run in an empty environment for this release. File names in the graphs are matched to what your ComfyUI has installed, so your folder layout can differ; close matches only.
+The `pip install` line is the same list as `pyproject.toml`'s dependencies, so `uv sync` installs the same packages if you use uv. It was run in an empty venv on a clean Ubuntu 24.04 container, and the studio started from it. File names in the graphs are matched to what your ComfyUI has installed, so your folder layout can differ; close matches only.
 
 The custom nodes run inside ComfyUI's own Python and use what is already there (torch, numpy, Pillow). The `PSN_` metadata encryption node also needs `cryptography`.
 

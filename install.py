@@ -29,7 +29,8 @@ EXIT_OK, EXIT_CANCELLED, EXIT_NOTHING, EXIT_FAILED = 0, 2, 3, 4
 NETWORK_TRIES, NETWORK_WAIT_S = 3, 30
 # Measured on Linux with NVIDIA: venv with CUDA PyTorch 6.9 GB, pip's cache 2.1 GB, this clone and ComfyUI 0.3 GB. Models are on top of this.
 SOFTWARE_GB = 10.0
-STUDIO_PACKAGES = ["fastapi", "uvicorn", "python-multipart", "pydantic", "numpy", "pillow", "apscheduler"]
+# The studio's own packages: the same list as pyproject.toml's dependencies (a test keeps the two, and INSTALL.md, in step).
+STUDIO_PACKAGES = ["fastapi", "uvicorn[standard]", "python-multipart", "pydantic", "numpy", "pillow", "brotli", "apscheduler", "huggingface_hub[hf_xet]"]
 
 # Peak VRAM in GiB per goal: the highest figure from the studio's showcase renders on one 96 GB NVIDIA card,
 # at small sizes and short lengths. Treat them as estimates on any other card.
@@ -133,7 +134,7 @@ def build_commands(plan_result, plan_manifest, channels, channel, base_dir, back
     if models:
         for f in files:
             url = f"https://huggingface.co/{f['repo']}/resolve/main/{urllib.parse.quote(f['path'])}"
-            cmds.append(["download", url, str(comfy_dir / "models" / f["dest"]), f["sha256"]])
+            cmds.append(["download", url, str(comfy_dir / "models" / f["dest"]), f["sha256"], f.get("size_gb")])
     return cmds
 
 
@@ -148,21 +149,41 @@ def _sha256(path):
     return h.hexdigest()
 
 
-def download_file(url, dest_path, sha256_expected, opener=None, sleep=time.sleep):
+def progress_line(name, done, size_gb=None, rate=None):
+    """One progress line: bytes so far, of how many, and the speed with a rough time left, so a slow link is visible as slow."""
+    line = f"  {name}: {done / 1e9:.2f}" + (f" of {size_gb:.2f} GB" if size_gb else " GB")
+    if rate:
+        line += f", {rate / 1e6:.1f} MB/s"
+        if size_gb and size_gb * 1e9 > done:
+            left = (size_gb * 1e9 - done) / rate
+            line += f", about {left / 60:.0f} min left" if left < 5400 else f", about {left / 3600:.1f} h left"
+    return line
+
+
+def download_file(url, dest_path, sha256_expected, size_gb=None, opener=None, sleep=time.sleep, clock=time.monotonic):
     """Carry on from any .part file, ride out dropped and stalled connections, verify SHA-256, keep nothing that fails the check. A run that stops for any other reason keeps its bytes for the next run."""
     dest_path = Path(dest_path)
     dest_path.parent.mkdir(parents=True, exist_ok=True)
+    partial = dest_path.with_name(dest_path.name + ".part")
     if dest_path.exists():
         if _sha256(dest_path) == sha256_expected:
             print(f"  already present: {dest_path.name}")
+            partial.unlink(missing_ok=True)  # a leftover from a stopped run is no longer needed
             return True
         dest_path.unlink()
-    partial = dest_path.with_name(dest_path.name + ".part")
-    seen = {"bytes": 0}
+    seen = {"bytes": 0, "start_bytes": None, "start": clock(), "shown": 0.0}
 
     def progress(n, reset=False):
         seen["bytes"] = n if reset else seen["bytes"] + n
-        print(f"\r  {dest_path.name}: {seen['bytes'] / 2**30:.2f} GB", end="", flush=True)
+        if seen["start_bytes"] is None or reset:
+            seen["start_bytes"], seen["start"] = seen["bytes"], clock()
+        now = clock()
+        if now - seen["shown"] < 1.0:
+            return
+        seen["shown"] = now
+        took = now - seen["start"]
+        rate = (seen["bytes"] - seen["start_bytes"]) / took if took >= 3 else None
+        print("\r" + progress_line(dest_path.name, seen["bytes"], size_gb, rate) + "   ", end="", flush=True)
 
     def waiting(fail, tries, seconds, why):
         print(f"\n  connection trouble ({why}); trying again in {seconds} s (try {fail} of {tries})", flush=True)
@@ -200,6 +221,30 @@ def already_cloned(dest):
         return subprocess.run(["git", "-C", str(dest), "rev-parse", "HEAD"], capture_output=True).returncode == 0
     except OSError:
         return False
+
+
+def step_label(cmd):
+    """What a step is, in words, so a long quiet step says what it is doing and roughly how long it takes."""
+    if cmd[0] == "download":
+        return f"Downloading model {Path(cmd[2]).name}"
+    if cmd[0] == "link":
+        return "Linking the studio's custom nodes into ComfyUI"
+    if cmd[1:3] == ["-m", "venv"]:
+        return "Creating the Python environment"
+    if cmd[:2] == ["git", "clone"]:
+        return f"Cloning {cmd[-2].rstrip('/').rsplit('/', 1)[-1].removesuffix('.git')}"
+    if "pip" in cmd and "install" in cmd:
+        rest = cmd[cmd.index("install") + 1:]
+        if "torch" in rest:
+            return "Downloading PyTorch: about 3 GB with CUDA, often 10 to 20 minutes. pip shows its progress below"
+        if "--upgrade" in rest and "pip" in rest:
+            return "Updating pip"
+        if "-r" in rest:
+            req = Path(rest[rest.index("-r") + 1])
+            return f"Installing {req.parent.name}'s Python packages"
+        if rest == STUDIO_PACKAGES:
+            return "Installing the studio's Python packages"
+    return " ".join(map(str, cmd[:4]))
 
 
 def run_step(cmd, tries=NETWORK_TRIES, sleep=time.sleep):
@@ -387,9 +432,9 @@ def main(argv=None):
 
     base_dir.mkdir(parents=True, exist_ok=True)
     for cmd in cmds:
-        print(">", cmd[0] if cmd[0] in ("download", "link") else " ".join(map(str, cmd[:4])), "...", flush=True)
+        print(">", step_label(cmd), "...", flush=True)
         if cmd[0] == "download":
-            if not download_file(cmd[1], cmd[2], cmd[3]):
+            if not download_file(cmd[1], cmd[2], cmd[3], *cmd[4:]):
                 return EXIT_FAILED
         elif cmd[0] == "link":
             link_nodes(cmd[1], cmd[2])
@@ -404,4 +449,8 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        print("\nStopped. Finished steps and partly downloaded files are kept: run the same command again to carry on.")
+        sys.exit(EXIT_CANCELLED)
