@@ -276,6 +276,15 @@ def build(repo_root, models_root, workbench, yaml_path, all_json, template_dir=N
     return rows
 
 
+def voice_proof(rows):
+    """Speech models run in their own process, so no graph names them. The Voices page's recorded proof moves their rows, here as well as by hand, so a rebuild keeps them."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("record_voice_renders", ROOT / "scripts" / "record_voice_renders.py"); mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+    try: good, low = mod.proofs()
+    except (OSError, ValueError): return rows
+    mod.apply(rows, good, low); return rows
+
+
 def write_tsv(rows, out):
     with open(out, "w", newline="") as f:
         w = csv.DictWriter(f, COLUMNS, delimiter="\t", lineterminator="\n"); w.writeheader(); w.writerows(rows)
@@ -287,7 +296,7 @@ def main(argv=None):
         import comfyui_workflow_templates_json as t; td = os.path.join(os.path.dirname(t.__file__), "templates")
     except ImportError: td = None
     rows = build(ROOT, a.models, os.path.join(a.models, "_workbench"), a.yaml, json.load(open(a.all_json)), td, a.cards, arrivals=[(l.split("\t")[0], int(l.split("\t")[1])) for l in open(a.arrivals)] if a.arrivals else (), viewed=load_viewed(a.viewed))
-    write_tsv(rows, a.out)
+    rows = voice_proof(rows); write_tsv(rows, a.out)
     from importlib.util import module_from_spec, spec_from_file_location
     spec = spec_from_file_location("build_future_numbers", ROOT / "scripts" / "build_future_numbers.py"); fn = module_from_spec(spec); spec.loader.exec_module(fn); fn.write(a.out)      # the Future page's totals follow the map
     n = {}

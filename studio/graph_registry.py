@@ -76,6 +76,18 @@ def _tryon_rows():
     return [{"key": "tryon:" + m["id"], "kind": m["via"], "section": "tryon", "id": m["id"], "label": f"Try-on: {m['label']}", "sub": m["note"], "licence": m["licence"], "graph_url": None, "open": "design/fashion", "call": {"method": "POST", "path": "/api/tryon/run", "body": {"method": m["id"], "person": "NAME_FROM_POST_/api/upload", "garment": "NAME_FROM_POST_/api/upload", "category": "tops"}, "poll": "/api/tryon/jobs/ID"}} for m in T.METHODS if m["via"] == "runner"]
 
 
+def _voice_rows():
+    """The speech models the Voices page runs: each one a runner in its own process, with its licence and proof. Listed whether or not this machine has the weights; the row says."""
+    from studio import feature_voices as V
+    rows = []
+    for m in V.listing():
+        if m["kind"] not in ("speech", "design", "reference", "convert") or m.get("blocked"): continue
+        body = {"model": m["id"], "text": "The yellow kettle sang at dawn."}
+        if m["reference"] == "required": body.update(reference="NAME_FROM_POST_/api/upload", reference_text="WHAT_THE_CLIP_SAYS", consent="own")
+        rows.append({"key": "voice:" + m["id"], "kind": "runner", "section": "voices", "id": m["id"], "label": "Voice: " + m["label"], "sub": m["job"], "licence": m.get("licence"), "proof": m["proof"], "ready": m["state"] in ("rendered", "ready"), "graph_url": None, "open": "voices", "runs_as": RUNS["runner"], "call": {"method": "POST", "path": "/api/voices/run", "body": body, "poll": "/api/voices/jobs/ID"}})
+    return rows
+
+
 def _motion_rows():
     """Every route on the Motion page. One that runs a family template points at that graph; a tool or a program has none, and says so. Whatever it runs, the call goes through the same checks."""
     from studio import feature_motion as Mo
@@ -93,7 +105,7 @@ def _workflow_rows():
 
 
 def all_rows():
-    rows = [*_goal_rows(), *_model_rows(), *_tryon_rows(), *_motion_rows(), *_workflow_rows(), *_family_rows(), *_recipe_rows()]
+    rows = [*_goal_rows(), *_model_rows(), *_tryon_rows(), *_motion_rows(), *_voice_rows(), *_workflow_rows(), *_family_rows(), *_recipe_rows()]
     for r in rows: r.setdefault("runs_as", RUNS[r["kind"]])
     return rows
 

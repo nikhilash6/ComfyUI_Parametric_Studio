@@ -1,0 +1,1042 @@
+{
+"about": "One entry per speech model the studio knows about. Facts come from each model's card or code, read on 2026-11-01. Proof comes from voice_proof.json, written by scripts/build_voices_page.py from real renders.",
+"models": [
+{
+"id": "kokoro",
+"label": "Kokoro 82M",
+"short": "Kokoro",
+"maker": "hexgrad",
+"kind": "speech",
+"reference": "none",
+"job": "A tiny model with 54 built-in voices in eight languages. Runs fine on a CPU.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/hexgrad/Kokoro-82M",
+"voice_default": "af_heart",
+"voices": [
+"af_heart",
+"af_bella",
+"af_nicole",
+"am_adam",
+"am_michael",
+"bf_emma",
+"bm_george"
+],
+"note": "af_heart, built in.",
+"tag": "kokoro_af_heart",
+"files": [
+"_by_repo/1038lab__KokoroTTS/kokoro-v1_0.pth",
+"_by_repo/1038lab__KokoroTTS/voices/af_heart.pt"
+]
+},
+{
+"id": "kokoro_onnx",
+"label": "Kokoro 82M (ONNX fp16)",
+"short": "Kokoro ONNX",
+"maker": "speaches-ai, from hexgrad",
+"kind": "speech",
+"reference": "none",
+"job": "The same Kokoro as a half-precision ONNX file, for machines without PyTorch.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/speaches-ai/Kokoro-82M-v1.0-ONNX-fp16",
+"voice_default": "af_heart",
+"note": "af_heart, built in.",
+"files": [
+"_by_repo/speaches-ai__Kokoro-82M-v1.0-ONNX-fp16/model.onnx"
+]
+},
+{
+"id": "chatterbox",
+"label": "Chatterbox",
+"maker": "Resemble AI",
+"kind": "speech",
+"reference": "optional",
+"job": "Has a built-in default voice and an exaggeration control. Every clip it makes carries Resemble's inaudible watermark.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/ResembleAI/chatterbox",
+"note": "Chatterbox's built-in default voice (conds.pt).",
+"files": [
+"TTS/chatterbox/English/s3gen.pt",
+"TTS/chatterbox/English/t3_cfg.pt",
+"TTS/chatterbox/English/ve.pt",
+"TTS/chatterbox/English/conds.pt"
+]
+},
+{
+"id": "qwen3_custom_17",
+"label": "Qwen3-TTS 1.7B CustomVoice",
+"short": "Qwen3 1.7B",
+"maker": "Qwen",
+"kind": "speech",
+"reference": "none",
+"job": "Nine premium timbres with a style instruction. The card recommends each speaker's native language.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+"voice_default": "Ryan",
+"voices": [
+"Ryan",
+"Vivian",
+"Aiden"
+],
+"note": "Ryan, built in.",
+"files": [
+"qwen3_tts/model.safetensors",
+"qwen3_tts/speech_tokenizer/model.safetensors"
+]
+},
+{
+"id": "qwen3_custom_06",
+"label": "Qwen3-TTS 0.6B CustomVoice",
+"short": "Qwen3 0.6B",
+"maker": "Qwen",
+"kind": "speech",
+"reference": "none",
+"job": "The small build of the same built-in voices.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice",
+"voice_default": "Ryan",
+"voices": [
+"Ryan",
+"Vivian",
+"Aiden"
+],
+"note": "Ryan, built in.",
+"files": [
+"TTS/qwen3_tts/Qwen3-TTS-12Hz-0.6B-CustomVoice/model.safetensors",
+"qwen3_tts/speech_tokenizer/model.safetensors"
+]
+},
+{
+"id": "qwen3_design_17",
+"label": "Qwen3-TTS 1.7B VoiceDesign",
+"short": "Qwen3 design",
+"maker": "Qwen",
+"kind": "design",
+"reference": "none",
+"job": "Invents a voice from a sentence describing it. No clip needed.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
+"voice_default": "A warm, calm adult narrator with a steady pace.",
+"note": "Designed from: a warm, calm adult narrator with a steady pace.",
+"files": [
+"TTS/qwen3_tts/Qwen3-TTS-12Hz-1.7B-VoiceDesign/model.safetensors",
+"qwen3_tts/speech_tokenizer/model.safetensors"
+]
+},
+{
+"id": "qwen3_base_17",
+"label": "Qwen3-TTS 1.7B Base",
+"maker": "Qwen",
+"kind": "reference",
+"reference": "required",
+"job": "Speaks in the voice of a clip you give it, with its transcript.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+"note": "A Kokoro built-in voice, af_heart, rendered by us as the reference, since this model has no voice of its own. No real person was copied.",
+"files": [
+"TTS/qwen3_tts/Qwen3-TTS-12Hz-1.7B-Base/model.safetensors",
+"qwen3_tts/speech_tokenizer/model.safetensors"
+]
+},
+{
+"id": "qwen3_base_06",
+"label": "Qwen3-TTS 0.6B Base",
+"maker": "Qwen",
+"kind": "reference",
+"reference": "required",
+"job": "The small build of the same clip-driven model.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base",
+"note": "A Kokoro built-in voice, af_heart, rendered by us as the reference, since this model has no voice of its own. No real person was copied.",
+"files": [
+"TTS/qwen3_tts/Qwen3-TTS-12Hz-0.6B-Base/model.safetensors",
+"qwen3_tts/speech_tokenizer/model.safetensors"
+]
+},
+{
+"id": "voxcpm2",
+"label": "VoxCPM2",
+"maker": "OpenBMB",
+"kind": "design",
+"reference": "optional",
+"job": "Designs a voice from a description in brackets before the text, or follows a clip. Writes 48 kHz.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/openbmb/VoxCPM2",
+"voice_default": "A calm adult narrator with a warm, steady voice",
+"note": "Designed from: a calm adult narrator with a warm, steady voice.",
+"files": [
+"TTS/voxcpm2/model.safetensors",
+"TTS/voxcpm2/audiovae.pth"
+]
+},
+{
+"id": "firered_instruct",
+"label": "FireRedTTS3 Instruct",
+"short": "FireRed design",
+"maker": "FireRed team",
+"kind": "design",
+"reference": "none",
+"job": "Designs a voice from a free-form instruction and writes a plan of it first. Also edits existing speech.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/FireRedTeam/FireRedTTS3",
+"voice_default": "A calm adult narrator with a warm, steady voice and an even pace.",
+"note": "Designed from: a calm adult narrator with a warm, steady voice and an even pace.",
+"files": [
+"tts/FireRedTTS3/fireredtts3_instruct/model.safetensors",
+"tts/FireRedTTS3/redae/model.safetensors",
+"tts/FireRedTTS3/campp/campplus_voxceleb.bin"
+]
+},
+{
+"id": "firered_base",
+"label": "FireRedTTS3 Base",
+"maker": "FireRed team",
+"kind": "reference",
+"reference": "required",
+"job": "Speaks across 24 languages in the voice of a clip you give it.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/FireRedTeam/FireRedTTS3",
+"note": "A Kokoro built-in voice, af_heart, rendered by us as the reference, since this model has no voice of its own. No real person was copied.",
+"files": [
+"tts/FireRedTTS3/fireredtts3_base/model.safetensors",
+"tts/FireRedTTS3/redae/model.safetensors",
+"tts/FireRedTTS3/campp/campplus_voxceleb.bin"
+]
+},
+{
+"id": "vibevoice_large",
+"label": "VibeVoice Large",
+"short": "VibeVoice L",
+"maker": "Microsoft Research, repack by aoi-ot",
+"kind": "reference",
+"reference": "required",
+"job": "Long-form dialogue for up to four speakers from reference clips.",
+"licence": {
+"name": "MIT",
+"note": "Microsoft's card limits it to research use and advises against commercial or real-world use without further testing"
+},
+"card": "https://huggingface.co/microsoft/VibeVoice-1.5B",
+"note": "A Kokoro built-in voice, af_heart, rendered by us as the reference, since this model has no voice of its own. No real person was copied.",
+"files": [
+"TTS/VibeVoice/VibeVoice-Large/model-00001-of-00010.safetensors",
+"TTS/VibeVoice/VibeVoice-Large/model-00002-of-00010.safetensors",
+"TTS/VibeVoice/VibeVoice-Large/model-00003-of-00010.safetensors",
+"TTS/VibeVoice/VibeVoice-Large/model-00004-of-00010.safetensors",
+"TTS/VibeVoice/VibeVoice-Large/model-00005-of-00010.safetensors",
+"TTS/VibeVoice/VibeVoice-Large/model-00006-of-00010.safetensors",
+"TTS/VibeVoice/VibeVoice-Large/model-00007-of-00010.safetensors",
+"TTS/VibeVoice/VibeVoice-Large/model-00008-of-00010.safetensors",
+"TTS/VibeVoice/VibeVoice-Large/model-00009-of-00010.safetensors",
+"TTS/VibeVoice/VibeVoice-Large/model-00010-of-00010.safetensors"
+]
+},
+{
+"id": "vibevoice_15b",
+"label": "VibeVoice 1.5B",
+"short": "VibeVoice 1.5B",
+"maker": "Microsoft Research",
+"kind": "reference",
+"reference": "required",
+"job": "The smaller VibeVoice with the same reference-clip interface.",
+"licence": {
+"name": "MIT",
+"note": "Microsoft's card limits it to research use and advises against commercial or real-world use without further testing"
+},
+"card": "https://huggingface.co/microsoft/VibeVoice-1.5B",
+"note": "A Kokoro built-in voice, af_heart, rendered by us as the reference, since this model has no voice of its own. No real person was copied.",
+"files": [
+"TTS/VibeVoice/VibeVoice-1.5B/model-00001-of-00003.safetensors",
+"TTS/VibeVoice/VibeVoice-1.5B/model-00002-of-00003.safetensors",
+"TTS/VibeVoice/VibeVoice-1.5B/model-00003-of-00003.safetensors"
+]
+},
+{
+"id": "f5tts",
+"label": "F5-TTS v1",
+"maker": "SWivid",
+"kind": "reference",
+"reference": "required",
+"job": "Flow-matching speech in the voice of a short clip. Light and quick.",
+"licence": {
+"name": "CC BY-NC 4.0",
+"commercial": false
+},
+"card": "https://huggingface.co/SWivid/F5-TTS",
+"note": "A Kokoro built-in voice, af_heart, rendered by us as the reference, since this model has no voice of its own. No real person was copied.",
+"files": [
+"TTS/F5-TTS/F5TTS_v1_Base/model_1250000.safetensors",
+"TTS/F5-TTS/vocos/pytorch_model.bin"
+]
+},
+{
+"id": "bark",
+"label": "Bark",
+"maker": "Suno",
+"kind": "speech",
+"reference": "none",
+"job": "Generative speech with built-in speaker presets. It can drift from the script, and adds non-speech sounds.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/suno/bark",
+"voice_default": "v2/en_speaker_6",
+"voices": [
+"v2/en_speaker_6",
+"v2/en_speaker_0",
+"v2/en_speaker_9"
+],
+"note": "v2/en_speaker_6, a built-in preset.",
+"files": [
+"TTS/bark/pytorch_model.bin"
+]
+},
+{
+"id": "omnivoice",
+"label": "OmniVoice",
+"maker": "k2-fsa",
+"kind": "design",
+"reference": "optional",
+"job": "Zero-shot speech in over 600 languages, from a clip or a short list of voice attributes.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/k2-fsa/OmniVoice",
+"voice_default": "male, moderate pitch, american accent",
+"note": "Designed from attributes: male, moderate pitch, American accent.",
+"files": [
+"_by_repo/k2-fsa__OmniVoice/model.safetensors",
+"_by_repo/bosonai__higgs-audio-v2-tokenizer/model.safetensors"
+]
+},
+{
+"id": "phonon_31m",
+"label": "Phonon 31M",
+"maker": "Gradium",
+"kind": "speech",
+"reference": "none",
+"job": "A very small English model that reads with a default voice latent.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/gradium/phonon-31m-en",
+"note": "Its default voice file, shipped with the model.",
+"files": [
+"TTS/phonon/phonon-31m-en/model.safetensors",
+"TTS/phonon/phonon-mimi/model.safetensors"
+]
+},
+{
+"id": "phonon_40m",
+"label": "Phonon 40M Multilingual",
+"maker": "Gradium",
+"kind": "speech",
+"reference": "none",
+"job": "The multilingual Phonon.",
+"licence": {
+"name": "CC BY-NC 4.0",
+"commercial": false
+},
+"card": "https://huggingface.co/gradium/phonon-40m-multilingual",
+"note": "Its default voice file, shipped with the model.",
+"files": [
+"TTS/phonon/phonon-40m-multilingual/model.safetensors",
+"TTS/phonon/phonon-mimi/model.safetensors"
+]
+},
+{
+"id": "supertonic3",
+"label": "Supertonic 3",
+"maker": "Supertone",
+"kind": "speech",
+"reference": "none",
+"blocked": "Three of its four ONNX modules are here. text_encoder.onnx is not, so it can't start.",
+"job": "On-device ONNX speech with ten built-in voice styles.",
+"licence": {
+"name": "BigScience OpenRAIL-M",
+"note": "Commercial use is allowed under use-based restrictions, which must be passed on"
+},
+"card": "https://huggingface.co/Supertone/supertonic-3",
+"voice_default": "F1",
+"voices": [
+"F1",
+"F2",
+"M1",
+"M2"
+],
+"note": "F1, a built-in style.",
+"files": [
+"TTS/supertonic-3/onnx/vector_estimator.onnx",
+"TTS/supertonic-3/onnx/vocoder.onnx",
+"TTS/supertonic-3/onnx/duration_predictor.onnx"
+]
+},
+{
+"id": "paradee",
+"label": "Paradee 8M",
+"maker": "Sahil Mahendrakar",
+"kind": "speech",
+"reference": "none",
+"job": "Kokoro distilled to 8 million parameters, with Kokoro's af_heart as its one voice. 35 MB.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/sahilmahendrakar/Paradee-8M-v1.1",
+"note": "Its one built-in voice.",
+"files": [
+"TTS/paradee-8m-v1.1/onnx/paradee.onnx"
+]
+},
+{
+"id": "luxtts",
+"label": "LuxTTS",
+"maker": "YatharthS",
+"kind": "reference",
+"reference": "required",
+"job": "A small clip-driven model that writes 48 kHz in a few flow steps.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/YatharthS/LuxTTS",
+"note": "A Kokoro built-in voice, af_heart, rendered by us as the reference, since this model has no voice of its own. No real person was copied.",
+"files": [
+"_by_repo/YatharthS__LuxTTS/model.pt",
+"_by_repo/YatharthS__LuxTTS/vocoder/vocos.bin"
+]
+},
+{
+"id": "humaneness_vc",
+"label": "Humaneness Voice Converter",
+"maker": "LAION",
+"kind": "convert",
+"reference": "required",
+"job": "Says a source recording in another voice. Audio in, audio out. Its card asks for a consenting target.",
+"licence": {
+"name": "CC BY 4.0",
+"commercial": true,
+"note": "The card calls it research voice conversion and asks for a consenting target speaker"
+},
+"card": "https://huggingface.co/laion/Humaneness-Voice-Converter",
+"note": "Source and target are both Kokoro built-in voices, rendered by us.",
+"files": [
+"_libraries/audio-models/Humaneness-Voice-Converter/model.safetensors",
+"_libraries/audio-models/Humaneness-Voice-Converter/conditioning/ears-medium/medium/model.safetensors"
+]
+},
+{
+"id": "neucodec",
+"label": "NeuCodec",
+"maker": "Neuphonic",
+"kind": "codec",
+"reference": "none",
+"blocked": "Its encoder reads facebook/w2v-bert-2.0, and only that model's config is on this machine, so speech can't be encoded for a round trip.",
+"job": "Squeezes speech to 0.8 kbps and rebuilds it at 24 kHz. A codec for speech models, not a voice.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/neuphonic/neucodec",
+"note": "The Kokoro reading, encoded and decoded.",
+"files": [
+"TTS/neucodec/model.safetensors"
+]
+},
+{
+"id": "rubato",
+"label": "RubatoCodec",
+"maker": "Third Intelligence",
+"kind": "codec",
+"reference": "none",
+"blocked": "Its encoder reads facebook/w2v-bert-2.0 too, and only that model's config is on this machine. Decoding needs codes it can't make yet.",
+"job": "A speech codec whose frames flex with timing. Decodes at 44.1 kHz.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/third-intelligence/RubatoCodec",
+"note": "The Kokoro reading, encoded and decoded.",
+"files": [
+"TTS/rubato-codec/model.safetensors"
+]
+},
+{
+"id": "clear_se48",
+"label": "MossFormer2 SE 48K",
+"maker": "Alibaba ClearerVoice",
+"kind": "clean",
+"reference": "none",
+"job": "Removes noise from speech at 48 kHz.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/alibabasglab/MossFormer2_SE_48K",
+"note": "The Kokoro reading with pink noise added at 5 dB, by us.",
+"input": "input_noisy",
+"files": [
+"speech_enhancement/ClearerVoice-Studio/clearvoice/checkpoints/MossFormer2_SE_48K/last_best_checkpoint.pt"
+]
+},
+{
+"id": "clear_se16",
+"label": "MossFormerGAN SE 16K",
+"maker": "Alibaba ClearerVoice",
+"kind": "clean",
+"reference": "none",
+"job": "Removes noise from speech at 16 kHz.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/alibabasglab/MossFormerGAN_SE_16K",
+"note": "The Kokoro reading with pink noise added at 5 dB, by us.",
+"input": "input_noisy16",
+"files": [
+"speech_enhancement/ClearerVoice-Studio/clearvoice/checkpoints/MossFormerGAN_SE_16K/last_best_checkpoint.pt"
+]
+},
+{
+"id": "clear_sr48",
+"label": "MossFormer2 SR 48K",
+"maker": "Alibaba ClearerVoice",
+"kind": "clean",
+"reference": "none",
+"job": "Rebuilds high frequencies in band-limited speech.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/alibabasglab/MossFormer2_SR_48K",
+"note": "The Kokoro reading cut to 8 kHz sampling, by us.",
+"input": "input_8k",
+"files": [
+"speech_enhancement/ClearerVoice-Studio/clearvoice/checkpoints/MossFormer2_SR_48K/last_best_checkpoint_g.pt",
+"speech_enhancement/ClearerVoice-Studio/clearvoice/checkpoints/MossFormer2_SR_48K/last_best_checkpoint_m.pt"
+]
+},
+{
+"id": "audiosr_speech",
+"label": "AudioSR speech",
+"maker": "Haohe Liu, repack by drbaph",
+"kind": "clean",
+"reference": "none",
+"job": "Diffusion super-resolution to 48 kHz for speech.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/drbaph/AudioSR",
+"note": "The Kokoro reading cut to 8 kHz sampling, by us.",
+"input": "input_8k",
+"files": [
+"AudioSR/audiosr_speech_fp32.safetensors"
+]
+},
+{
+"id": "voxlock",
+"label": "VoxLock",
+"maker": "Arbaz Siddiqui",
+"kind": "clean",
+"reference": "none",
+"job": "Keeps the main caller's voice and drops the voices around them. Runs on a CPU.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/arbazsiddiqui/voxlock",
+"note": "Two Kokoro voices mixed by us; af_heart is the one to keep.",
+"input": "input_two_voices",
+"files": [
+"speech_enhancement/voxlock/onnx/enroll.onnx",
+"speech_enhancement/voxlock/onnx/chunk_int8.onnx",
+"speech_enhancement/voxlock/onnx/chunk_int8_full.onnx"
+]
+},
+{
+"id": "voxlock_fp16",
+"label": "VoxLock fp16",
+"maker": "Arbaz Siddiqui",
+"kind": "clean",
+"reference": "none",
+"job": "The same model at half precision.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/arbazsiddiqui/voxlock",
+"note": "Two Kokoro voices mixed by us; af_heart is the one to keep.",
+"input": "input_two_voices",
+"files": [
+"speech_enhancement/voxlock/onnx/chunk_fp16.onnx"
+]
+},
+{
+"id": "voxlock_fp32",
+"label": "VoxLock fp32",
+"maker": "Arbaz Siddiqui",
+"kind": "clean",
+"reference": "none",
+"job": "The benchmarked full-precision build.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/arbazsiddiqui/voxlock",
+"note": "Two Kokoro voices mixed by us; af_heart is the one to keep.",
+"input": "input_two_voices",
+"files": [
+"speech_enhancement/voxlock/onnx/chunk.onnx"
+]
+},
+{
+"id": "ming3_tiny",
+"label": "Ming 3.0 TTS Tiny 9B",
+"short": "Ming Tiny",
+"maker": "inclusionAI, repack by Comfy-Org",
+"kind": "design",
+"reference": "optional",
+"job": "Designs a voice from a description, or follows a clip. Does native podcasts for two speakers. Writes 44.1 kHz.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/Comfy-Org/Ming-3.0-TTS",
+"voice_default": "A calm adult narrator with a warm, steady voice.",
+"note": "Designed from: a calm adult narrator with a warm, steady voice.",
+"files": [
+"TTS/ming3/ming3_tts_tiny_int8_convrot.safetensors"
+]
+},
+{
+"id": "step_editx",
+"label": "Step-Audio-EditX",
+"maker": "StepFun",
+"kind": "reference",
+"reference": "required",
+"job": "Edits speech by emotion, style or pace and follows a clip.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/stepfun-ai/Step-Audio-EditX",
+"note": "A Kokoro built-in voice, af_heart, rendered by us as the reference, since this model has no voice of its own. No real person was copied.",
+"files": [
+"TTS/step_audio_editx/Step-Audio-EditX/model-00001.safetensors",
+"TTS/step_audio_editx/Step-Audio-EditX/CosyVoice-300M-25Hz/flow.pt",
+"TTS/step_audio_editx/Step-Audio-EditX/CosyVoice-300M-25Hz/hift.pt",
+"TTS/step_audio_editx/Step-Audio-EditX/CosyVoice-300M-25Hz/campplus.onnx",
+"TTS/step_audio_editx/Step-Audio-EditX/CosyVoice-300M-25Hz/speech_tokenizer_v1.onnx"
+]
+},
+{
+"id": "whisper_ct2_distil",
+"label": "faster-distil-whisper large-v3",
+"maker": "Systran, from distil-whisper",
+"kind": "listen",
+"reference": "none",
+"job": "The English transcriber that also does this page's word checks.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/Systran/faster-distil-whisper-large-v3",
+"files": [
+"_by_repo/Systran__faster-distil-whisper-large-v3/model.bin"
+]
+},
+{
+"id": "whisper_ct2_large3",
+"label": "faster-whisper large-v3",
+"maker": "Systran, from OpenAI",
+"kind": "listen",
+"reference": "none",
+"job": "The full multilingual Whisper.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/Systran/faster-whisper-large-v3",
+"files": [
+"_complete_pipelines/LongCat-Avatar-15/audio_encoders/model.bin"
+]
+},
+{
+"id": "whisper_ct2_tiny",
+"label": "faster-whisper tiny",
+"maker": "Systran, from OpenAI",
+"kind": "listen",
+"reference": "none",
+"job": "The smallest Whisper, in CTranslate2 form.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/Systran/faster-whisper-tiny",
+"files": [
+"_by_repo/Systran__faster-whisper-tiny/model.bin"
+]
+},
+{
+"id": "whisper_pt_tiny",
+"label": "Whisper tiny (OpenAI format)",
+"maker": "OpenAI",
+"kind": "listen",
+"reference": "none",
+"job": "The tiny.pt some lip-sync tools ship.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://github.com/openai/whisper",
+"files": [
+"video_cont/latentsync/whisper/tiny.pt"
+]
+},
+{
+"id": "whisper_hf_tiny",
+"label": "Whisper tiny (safetensors)",
+"maker": "OpenAI",
+"kind": "listen",
+"reference": "none",
+"job": "The same tiny model in Transformers format.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/openai/whisper-tiny",
+"files": [
+"musetalk/whisper-tiny/model.safetensors"
+]
+},
+{
+"id": "parakeet_v3",
+"label": "Parakeet TDT 0.6B v3",
+"maker": "NVIDIA",
+"kind": "listen",
+"reference": "none",
+"job": "A fast multilingual transducer.",
+"licence": {
+"name": "CC BY 4.0",
+"commercial": true
+},
+"card": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3",
+"files": [
+"_libraries/llm-models/asr/parakeet-tdt-0.6b-v3/model.safetensors"
+]
+},
+{
+"id": "parakeet_ultra",
+"label": "Parakeet Ultra",
+"maker": "Moondream",
+"kind": "listen",
+"reference": "none",
+"job": "A post-trained Parakeet TDT v3 with the same architecture.",
+"licence": {
+"name": "CC BY 4.0",
+"commercial": true
+},
+"card": "https://huggingface.co/moondream/parakeet-ultra",
+"files": [
+"_libraries/audio-models/parakeet-ultra/model.safetensors"
+]
+},
+{
+"id": "parakeet_nemo",
+"label": "Parakeet TDT 0.6B v2 (NeMo)",
+"maker": "NVIDIA",
+"kind": "listen",
+"reference": "none",
+"blocked": "The file is here, but NeMo 3.0 in this stack won't import against the installed lhotse and lightning. It needs its own environment.",
+"job": "The English Parakeet in its NeMo package.",
+"licence": {
+"name": "CC BY 4.0",
+"commercial": true
+},
+"card": "https://huggingface.co/nvidia/parakeet-tdt-0.6b-v2",
+"files": [
+"soulx_singer/preprocessors/parakeet-tdt-0.6b-v2/parakeet-tdt-0.6b-v2.nemo"
+]
+},
+{
+"id": "nemotron",
+"label": "Nemotron Speech Streaming",
+"maker": "NVIDIA",
+"kind": "listen",
+"reference": "none",
+"job": "A streaming English transducer.",
+"licence": {
+"name": "NVIDIA Open Model License",
+"note": "Read the licence before commercial use"
+},
+"card": "https://huggingface.co/nvidia/nemotron-speech-streaming-en-0.6b",
+"files": [
+"_libraries/llm-models/asr/nemotron-speech-streaming-en-0.6b/model.safetensors"
+]
+},
+{
+"id": "granite_speech",
+"label": "Granite Speech 5.0 TurboCTC",
+"maker": "IBM",
+"kind": "listen",
+"reference": "none",
+"job": "A CTC transcriber, native in Transformers.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc",
+"files": [
+"transformers/granite-speech-5.0-470m-turboctc/model.safetensors"
+]
+},
+{
+"id": "qwen3_asr",
+"label": "Qwen3-ASR 1.7B",
+"maker": "Qwen",
+"kind": "listen",
+"reference": "none",
+"job": "Transcribes and tags the language.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf",
+"files": [
+"TTS/qwen3_tts/asr/Qwen3-ASR-1.7B-hf/model.safetensors"
+]
+},
+{
+"id": "paraformer_step",
+"label": "Paraformer (Step-Audio tokenizer)",
+"maker": "FunASR, StepFun",
+"kind": "listen",
+"reference": "none",
+"job": "The Chinese-Cantonese-English transcriber Step-Audio ships.",
+"licence": {
+"name": "Check the licence",
+"note": "The upstream FunASR model licence was not stated on this copy"
+},
+"card": "https://huggingface.co/stepfun-ai/Step-Audio-Tokenizer",
+"files": [
+"TTS/step_audio_editx/FunASR-Paraformer/model.pb"
+]
+},
+{
+"id": "paraformer_soulx",
+"label": "SeACo Paraformer (SoulX)",
+"maker": "FunASR, Soul-AILab",
+"kind": "listen",
+"reference": "none",
+"job": "The Chinese transcriber SoulX-Singer uses. It was given a Kokoro reading in Chinese.",
+"listen_lang": "zh",
+"licence": {
+"name": "Check the licence",
+"note": "The upstream FunASR model licence was not stated on this copy"
+},
+"card": "https://huggingface.co/Soul-AILab/SoulX-Singer-Preprocess",
+"files": [
+"soulx_singer/preprocessors/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/model.pt"
+]
+},
+{
+"id": "zonos",
+"label": "Zonos v0.1",
+"maker": "Zyphra",
+"kind": "speech",
+"reference": "optional",
+"job": "Emotion and pitch controls.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/Zyphra/Zonos-v0.1-transformer",
+"blocked": "The code is here and its transformer is on disk. Its decoder, descript/dac_44khz (about 300 MB), is not on this machine.",
+"files": [
+"TTS/zonos/Zonos-v0.1-transformer/model.safetensors"
+]
+},
+{
+"id": "maya1",
+"label": "Maya1",
+"maker": "Maya Research",
+"kind": "design",
+"reference": "none",
+"job": "Voice from a description, with emotion tags.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/maya-research/maya1",
+"blocked": "Weights are here. Its audio decoder, hubertsiuzdak/snac_24khz (about 80 MB), is not on this machine.",
+"files": [
+"maya1-TTS/maya1/model-00001-of-00002.safetensors",
+"maya1-TTS/maya1/model-00002-of-00002.safetensors"
+]
+},
+{
+"id": "indextts2",
+"label": "IndexTTS-2",
+"maker": "IndexTeam",
+"kind": "reference",
+"reference": "required",
+"job": "Clip-driven speech with emotion and duration control.",
+"licence": {
+"name": "Bilibili IndexTTS licence",
+"note": "Read the licence before commercial use"
+},
+"card": "https://huggingface.co/IndexTeam/IndexTTS-2",
+"blocked": "Only its text model (qwen0.6bemo4-merge) and small feature files are here. The GPT, S2Mel and BigVGAN checkpoints it speaks with are not on this machine.",
+"files": [
+"_libraries/models-legacy-layout/indextts-2.5/qwen0.6bemo4-merge/model.safetensors"
+]
+},
+{
+"id": "xtts2",
+"label": "XTTS v2",
+"maker": "Coqui",
+"kind": "reference",
+"reference": "required",
+"job": "Clip-driven multilingual speech with built-in studio speakers.",
+"licence": {
+"name": "Coqui Public Model License",
+"commercial": false
+},
+"card": "https://huggingface.co/coqui/XTTS-v2",
+"blocked": "Its main checkpoint, model.pth, is not on this machine. Only the DVAE, mel stats and speaker list landed.",
+"files": [
+"TTS/xtts/XTTS-v2/dvae.pth"
+]
+},
+{
+"id": "glm_tts",
+"label": "GLM-TTS",
+"maker": "Zhipu AI",
+"kind": "reference",
+"reference": "required",
+"job": "Clip-driven speech with an RL-tuned model.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/zai-org/GLM-TTS",
+"blocked": "The first shard of its language model, model-00001-of-00002.safetensors, is not on this machine, so it can't load.",
+"files": [
+"TTS/glm_tts/llm/model-00002-of-00002.safetensors",
+"TTS/glm_tts/flow/flow.pt",
+"TTS/glm_tts/vocos2d/generator_jit.ckpt",
+"TTS/glm_tts/speech_tokenizer/model.safetensors"
+]
+},
+{
+"id": "vibevoice_asr",
+"label": "VibeVoice-ASR",
+"maker": "Microsoft Research",
+"kind": "listen",
+"reference": "none",
+"job": "Long-form transcription with speakers and times.",
+"licence": {
+"name": "MIT",
+"note": "Microsoft's card limits it to research use"
+},
+"card": "https://huggingface.co/microsoft/VibeVoice-ASR",
+"blocked": "Only shard 8 of 8 is on this machine.",
+"files": [
+"_libraries/llm-models/asr/VibeVoice-ASR/model-00008-of-00008.safetensors"
+]
+},
+{
+"id": "bark_cloning",
+"label": "Bark voice-cloning quantizers",
+"maker": "gitmylo and others",
+"kind": "convert",
+"reference": "required",
+"job": "Six small HuBERT quantizers that turn a clip into Bark's semantic tokens.",
+"licence": {
+"name": "MIT",
+"commercial": true
+},
+"card": "https://huggingface.co/GitMylo/bark-voice-cloning",
+"blocked": "They read the output of facebook/hubert-base-ls960, which is not on this machine. Suno's original text.pt for the coarse.pt and fine.pt files is also missing; the Transformers build of Bark rendered fine without them.",
+"files": [
+"TTS/GitMylo__bark-voice-cloning/quantifier_V1_hubert_base_ls960_23.pth",
+"TTS/Hobis__bark-voice-cloning-polish-HuBERT-quantizer/polish-HuBERT-quantizer_8_epoch.pth",
+"tts/bark-voice-cloning-japanese-HuBERT-quantizer/japanese-HuBERT-quantizer_24_epoch.pth",
+"TTS/CountFloyd__bark-voice-cloning-german-HuBERT-quantizer/german-HuBERT-quantizer_14_epoch.pth",
+"TTS/turkish-HuBERT-quantizer/turkish_model_epoch_14.pth",
+"audio/MadVoyager__bark-voice-cloning-portuguese-HuBERT-quantizer/portuguese-HuBERT-quantizer_24_epoch.pth",
+"TTS/suno__bark/coarse.pt",
+"TTS/suno__bark/fine.pt"
+]
+},
+{
+"id": "av_tse",
+"label": "AV MossFormer2 target speaker",
+"maker": "Alibaba",
+"kind": "clean",
+"reference": "none",
+"job": "Picks one speaker from a mix, using video of their face.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/alibabasglab/AV_MossFormer2_TSE_16K",
+"blocked": "It needs video of a real face to work from, so a synthetic-voice sample can't prove it.",
+"files": [
+"speech_enhancement/ClearerVoice-Studio/clearvoice/checkpoints/AV_MossFormer2_TSE_16K/last_best_checkpoint.pt"
+]
+},
+{
+"id": "megatts3",
+"label": "MegaTTS3",
+"maker": "ByteDance",
+"kind": "reference",
+"reference": "required",
+"job": "Clip-driven speech with accent control.",
+"licence": {
+"name": "Apache-2.0",
+"commercial": true
+},
+"card": "https://huggingface.co/ByteDance/MegaTTS3",
+"blocked": "ByteDance held back the WaveVAE encoder for security reasons, so a new clip can't be encoded. It only runs from pre-extracted voices, and the ones in the repo are recordings of people, which this page won't copy.",
+"files": [
+"TTS/megatts3/diffusion_transformer/model_only_last.ckpt"
+]
+}
+]
+}
