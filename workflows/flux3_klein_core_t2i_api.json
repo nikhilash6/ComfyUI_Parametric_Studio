@@ -2,14 +2,14 @@
  "1": {
   "class_type": "UNETLoader",
   "inputs": {
-   "unet_name": "flux3-klein/flux3_image_klein_bf16.safetensors",
+   "unet_name": "flux3_image_klein_bf16.safetensors",
    "weight_dtype": "default"
   }
  },
  "2": {
   "class_type": "CLIPLoader",
   "inputs": {
-   "clip_name": "qwen/qwen3vl_4b_bf16.safetensors",
+   "clip_name": "qwen3vl_4b_bf16.safetensors",
    "type": "flux3",
    "device": "default"
   }
@@ -17,7 +17,7 @@
  "3": {
   "class_type": "VAELoader",
   "inputs": {
-   "vae_name": "flux2/flux2-vae.safetensors"
+   "vae_name": "flux2-vae.safetensors"
   }
  },
  "4": {

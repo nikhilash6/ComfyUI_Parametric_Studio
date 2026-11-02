@@ -13,14 +13,14 @@
   "1": {
    "class_type": "UNETLoader",
    "inputs": {
-    "unet_name": "ltx 2.5/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+    "unet_name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
     "weight_dtype": "default"
    }
   },
   "2": {
    "class_type": "CLIPLoader",
    "inputs": {
-    "clip_name": "gemma/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+    "clip_name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
     "type": "ltxv",
     "device": "default"
    }
@@ -28,13 +28,13 @@
   "3": {
    "class_type": "VAELoader",
    "inputs": {
-    "vae_name": "ltx/ltx-2.5-video-vae-conv-bf16.safetensors"
+    "vae_name": "ltx-2.5-video-vae-conv-bf16.safetensors"
    }
   },
   "4": {
    "class_type": "VAELoader",
    "inputs": {
-    "vae_name": "ltx/ltx-2.5-audio-vae-bf16.safetensors"
+    "vae_name": "ltx-2.5-audio-vae-bf16.safetensors"
    }
   },
   "5": {

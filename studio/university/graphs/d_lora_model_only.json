@@ -28,7 +28,7 @@
      "1",
      0
     ],
-    "lora_name": "your_lora.safetensors",
+    "lora_name": "parametric_trained/qzlino-sd-1-5_sd15_300_steps_79151548790e.safetensors",
     "strength_model": 0.8
    }
   },
@@ -39,7 +39,7 @@
      "2",
      0
     ],
-    "lora_name": "your_other_lora.safetensors",
+    "lora_name": "parametric_trained/qzlino-sd-1-5_sd15_60_steps_245acc80f0ec.safetensors",
     "strength_model": 0.5
    }
   },

@@ -17,19 +17,19 @@
   "1": {
    "class_type": "CheckpointLoaderSimple",
    "inputs": {
-    "ckpt_name": "model_a.safetensors"
+    "ckpt_name": "DreamShaper_8_pruned.safetensors"
    }
   },
   "2": {
    "class_type": "CheckpointLoaderSimple",
    "inputs": {
-    "ckpt_name": "model_base.safetensors"
+    "ckpt_name": "v1-5-pruned-emaonly.safetensors"
    }
   },
   "3": {
    "class_type": "CheckpointLoaderSimple",
    "inputs": {
-    "ckpt_name": "model_b.safetensors"
+    "ckpt_name": "sd-v1-5-inpainting.ckpt"
    }
   },
   "4": {

@@ -31,6 +31,11 @@
    "clip_name": "t5-base.safetensors",
    "type": "stable_audio",
    "device": "default"
+  },
+  "_meta": {
+   "needs": [
+    "weights t5-base.safetensors (Stable Audio Open's T5 encoder): not on this machine"
+   ]
   }
  },
  "11": {

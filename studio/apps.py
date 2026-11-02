@@ -172,6 +172,7 @@ def build_graph(path, values, oi):
         nid, w = key.split("|", 1); tg = _targets(ex, nid, w, g)
         if not tg: raise ValueError(f"unknown input {key}")
         for an, inp in tg: g[an]["inputs"][inp] = val
+    for nid in [k for k, n in g.items() if n.get("class_type") == "ImageCompare"]: del g[nid]      # a before/after viewer: its compare_view widget lives only in the browser, so the server refuses it
     for n in g.values():      # these widgets are dynamic in the UI format, so the converter cannot see them; every save node needs them
         if n.get("class_type") == "SaveVideo": n["inputs"].setdefault("format", "auto"); n["inputs"].setdefault("codec", "auto")
         elif n.get("class_type") == "SaveAudioAdvanced": n["inputs"].setdefault("format", "flac")

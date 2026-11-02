@@ -139,7 +139,7 @@
    "errors": []
   },
   "sd15_controlnet": {
-   "sha": "dc10c0c144434bb9",
+   "sha": "8a8f437382b3eaec",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -147,7 +147,7 @@
    "errors": []
   },
   "sd15_controlnet_depth": {
-   "sha": "6157f50500463c0d",
+   "sha": "708fd3704dbc5afc",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -203,7 +203,7 @@
    "errors": []
   },
   "sd15_lora": {
-   "sha": "8a646368e4942772",
+   "sha": "89e83b754398dd32",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -211,7 +211,7 @@
    "errors": []
   },
   "sd15_merge": {
-   "sha": "fa6339109c816760",
+   "sha": "8f0772bbd77ce4c6",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -283,7 +283,7 @@
    "errors": []
   },
   "sd15_upscale": {
-   "sha": "9d29c8e35afb2f31",
+   "sha": "b2f1c85ec0946e69",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -291,7 +291,7 @@
    "errors": []
   },
   "sd35_flow": {
-   "sha": "00e04b6807ee8ccb",
+   "sha": "2dddc23909b9ed00",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -323,7 +323,7 @@
    "errors": []
   },
   "wf_ltx25_t2v": {
-   "sha": "1be09f9c4c88b5de",
+   "sha": "b44644a84aeb3a61",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -407,7 +407,7 @@
    "ran_seconds": 0.01
   },
   "d_depth_moge": {
-   "sha": "40171f77e6d2888d",
+   "sha": "355c7c68d595d7fc",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -415,7 +415,7 @@
    "errors": []
   },
   "d_inpaint_cond": {
-   "sha": "a81afd12e6d7fe7c",
+   "sha": "a4f2889a554816d2",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -423,7 +423,7 @@
    "errors": []
   },
   "d_lcm": {
-   "sha": "34f2c0e781b465ab",
+   "sha": "859b664b105f35e0",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -431,7 +431,7 @@
    "errors": []
   },
   "d_lora_compare": {
-   "sha": "6f6709d03d98fa21",
+   "sha": "2d7696c264fd636b",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -439,7 +439,7 @@
    "errors": []
   },
   "d_lora_model_only": {
-   "sha": "84c1f65d573827b0",
+   "sha": "f9f5439388f03579",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -447,7 +447,7 @@
    "errors": []
   },
   "d_merge_add_difference": {
-   "sha": "8d448c4d9ac3b339",
+   "sha": "67031c96656e22ac",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -455,7 +455,7 @@
    "errors": []
   },
   "d_outpaint": {
-   "sha": "5ad492dba272614e",
+   "sha": "41f526eeed5b2ae7",
    "runs": "model",
    "unknown": [],
    "validate": "ok",
@@ -515,7 +515,7 @@
    "errors": []
   },
   "b_unet_fp8": {
-   "sha": "9c541b6b03e0ae47",
+   "sha": "95558425bb02acf1",
    "runs": "model",
    "unknown": [],
    "validate": "ok",

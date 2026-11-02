@@ -100,7 +100,7 @@
   "8": {
    "class_type": "UpscaleModelLoader",
    "inputs": {
-    "model_name": "your_upscaler.safetensors"
+    "model_name": "esrgan/RealESRGAN_x4plus.safetensors"
    }
   },
   "9": {

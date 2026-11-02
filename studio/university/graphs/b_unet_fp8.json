@@ -10,29 +10,30 @@
   "notes": {
    "1": "weight_dtype fp8_e4m3fn stores the weights in fp8. Set it to default to compare.",
    "2": "The text encoder is a separate choice from the model's precision.",
-   "4": "Prompts as usual."
+   "4": "Prompts as usual.",
+   "7": "Z-Image Turbo, the model filled in here: 8 steps at cfg 1. Another model wants its own numbers."
   }
  },
  "graph": {
   "1": {
    "class_type": "UNETLoader",
    "inputs": {
-    "unet_name": "model.safetensors",
+    "unet_name": "z_image_turbo_bf16.safetensors",
     "weight_dtype": "fp8_e4m3fn"
    }
   },
   "2": {
    "class_type": "CLIPLoader",
    "inputs": {
-    "clip_name": "clip_l.safetensors",
-    "type": "stable_diffusion",
+    "clip_name": "qwen_3_4b.safetensors",
+    "type": "lumina2",
     "device": "default"
    }
   },
   "3": {
    "class_type": "VAELoader",
    "inputs": {
-    "vae_name": "vae.safetensors"
+    "vae_name": "ae.safetensors"
    }
   },
   "4": {
@@ -71,10 +72,10 @@
      0
     ],
     "seed": 424242,
-    "steps": 20,
-    "cfg": 7.0,
-    "sampler_name": "euler",
-    "scheduler": "karras",
+    "steps": 8,
+    "cfg": 1.0,
+    "sampler_name": "res_multistep",
+    "scheduler": "simple",
     "positive": [
      "4",
      0

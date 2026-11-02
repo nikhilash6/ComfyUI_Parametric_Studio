@@ -105,7 +105,10 @@
     }
    ],
    "source": "family_window generic",
-   "note": "An earlier render with this graph passed (2026-10-30)."
+   "note": "An earlier render with this graph passed (2026-10-30).",
+   "needs": [
+    "weights cosmos_predict2_14B_t2i.safetensors: not on this machine"
+   ]
   },
   {
    "family": "Mochi",
@@ -139,7 +142,10 @@
     }
    ],
    "source": "family_window generic",
-   "note": "An earlier render with this graph passed (2026-10-30)."
+   "note": "An earlier render with this graph passed (2026-10-30).",
+   "needs": [
+    "weights mochi_preview_bf16.safetensors: not on this machine"
+   ]
   },
   {
    "family": "PixArt-Sigma",
@@ -2240,7 +2246,11 @@
      "dir": "vae"
     }
    ],
-   "source": "motion page"
+   "source": "motion page",
+   "needs": [
+    "weights wan2.2_dancer_14b_global_fp8_scaled.safetensors: not on this machine",
+    "weights wan2.2_dancer_14b_local_fp8_scaled.safetensors: not on this machine"
+   ]
   },
   {
    "family": "Wan2.1",
@@ -2342,22 +2352,22 @@
    ],
    "models": [
     {
-     "name": "ltx 2.5/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+     "name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
      "dir": "diffusion_models",
      "gb": 1.0
     },
     {
-     "name": "gemma/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+     "name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
      "dir": "text_encoders",
      "gb": 1.0
     },
     {
-     "name": "ltx/ltx-2.5-video-vae-conv-bf16.safetensors",
+     "name": "ltx-2.5-video-vae-conv-bf16.safetensors",
      "dir": "vae",
      "gb": 1.0
     },
     {
-     "name": "ltx/ltx-2.5-audio-vae-bf16.safetensors",
+     "name": "ltx-2.5-audio-vae-bf16.safetensors",
      "dir": "vae",
      "gb": 1.0
     }
@@ -2378,22 +2388,22 @@
    ],
    "models": [
     {
-     "name": "ltx 2.5/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+     "name": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
      "dir": "diffusion_models",
      "gb": 1.0
     },
     {
-     "name": "gemma/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+     "name": "gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
      "dir": "text_encoders",
      "gb": 1.0
     },
     {
-     "name": "ltx/ltx-2.5-video-vae-conv-bf16.safetensors",
+     "name": "ltx-2.5-video-vae-conv-bf16.safetensors",
      "dir": "vae",
      "gb": 1.0
     },
     {
-     "name": "ltx/ltx-2.5-audio-vae-bf16.safetensors",
+     "name": "ltx-2.5-audio-vae-bf16.safetensors",
      "dir": "vae",
      "gb": 1.0
     }

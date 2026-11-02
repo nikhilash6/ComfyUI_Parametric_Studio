@@ -9,7 +9,7 @@
  "2": {
   "class_type": "CLIPLoader",
   "inputs": {
-   "clip_name": "qwen/qwen_3_06b_base.safetensors",
+   "clip_name": "qwen_3_06b_base.safetensors",
    "type": "stable_diffusion",
    "device": "default"
   }
@@ -17,7 +17,7 @@
  "3": {
   "class_type": "VAELoader",
   "inputs": {
-   "vae_name": "qwen/qwen_image_vae.safetensors"
+   "vae_name": "qwen_image_vae.safetensors"
   }
  },
  "4": {

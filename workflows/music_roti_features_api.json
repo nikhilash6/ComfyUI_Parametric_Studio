@@ -17,6 +17,11 @@
    "frame_count": 0,
    "width": 64,
    "height": 64
+  },
+  "_meta": {
+   "needs": [
+    "pack ryanontheinside/ComfyUI_RyanOnTheInside: not loaded on the main ComfyUI (127.0.0.1:8200); the Music page answers 409 with how to add it"
+   ]
   }
  },
  "20": {

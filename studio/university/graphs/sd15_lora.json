@@ -59,7 +59,7 @@
      "1",
      1
     ],
-    "lora_name": "your_lora.safetensors",
+    "lora_name": "parametric_trained/qzlino-sd-1-5_sd15_300_steps_79151548790e.safetensors",
     "strength_model": 0.8,
     "strength_clip": 0.8
    }

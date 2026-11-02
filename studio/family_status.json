@@ -138,6 +138,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/ace_step_1.5_ComfyUI_files/resolve/main/split_files/text_encoders/qwen_4b_ace15.safetensors"
 }
+],
+"needs": [
+"weights acestep_v1.5_xl_sft_bf16.safetensors: not on this machine"
 ]
 },
 {
@@ -192,6 +195,10 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/Comfy-Org/ace_step_1.5_ComfyUI_files/resolve/main/checkpoints/ace_step_1.5_turbo_aio.safetensors"
 }
+],
+"needs": [
+"weights ace_step_1.5_turbo_aio.safetensors: not on this machine",
+"superseded here: use audio_ace_step_1_5_split (the same model as split files, on disk)"
 ]
 },
 {
@@ -281,6 +288,9 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/Comfy-Org/ACE-Step_ComfyUI_repackaged/resolve/main/all_in_one/ace_step_v1_3.5b.safetensors?download=true"
 }
+],
+"needs": [
+"weights ace_step_v1_3.5b.safetensors: not on this machine"
 ]
 },
 {
@@ -300,6 +310,9 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/Comfy-Org/ACE-Step_ComfyUI_repackaged/resolve/main/all_in_one/ace_step_v1_3.5b.safetensors?download=true"
 }
+],
+"needs": [
+"weights ace_step_v1_3.5b.safetensors: not on this machine"
 ]
 },
 {
@@ -319,6 +332,9 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/Comfy-Org/ACE-Step_ComfyUI_repackaged/resolve/main/all_in_one/ace_step_v1_3.5b.safetensors?download=true"
 }
+],
+"needs": [
+"weights ace_step_v1_3.5b.safetensors: not on this machine"
 ]
 }
 ]
@@ -1556,6 +1572,9 @@
 "dir": "loras",
 "url": "https://huggingface.co/Comfy-Org/USO_1.0_Repackaged/resolve/main/split_files/loras/uso-flux1-dit-lora-v1.safetensors"
 }
+],
+"needs": [
+"weights flux1-dev-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -1590,6 +1609,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/FLUX.1-Krea-dev_ComfyUI/resolve/main/split_files/diffusion_models/flux1-krea-dev_fp8_scaled.safetensors"
 }
+],
+"needs": [
+"weights flux1-krea-dev_fp8_scaled.safetensors: not on this machine"
 ]
 },
 {
@@ -1624,6 +1646,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors"
 }
+],
+"needs": [
+"weights flux1-canny-dev.safetensors: not on this machine"
 ]
 },
 {
@@ -1673,6 +1698,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors"
 }
+],
+"needs": [
+"weights flux1-dev-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -1707,6 +1735,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors"
 }
+],
+"needs": [
+"weights flux1-dev.safetensors: not on this machine"
 ]
 },
 {
@@ -1741,6 +1772,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors"
 }
+],
+"needs": [
+"weights flux1-dev.safetensors: not on this machine"
 ]
 },
 {
@@ -1853,6 +1887,9 @@
 "dir": "clip_vision",
 "url": "https://huggingface.co/Comfy-Org/sigclip_vision_384/resolve/main/sigclip_vision_patch14_384.safetensors?download=true"
 }
+],
+"needs": [
+"weights flux1-dev.safetensors: not on this machine"
 ]
 },
 {
@@ -1872,6 +1909,9 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/Comfy-Org/flux1-schnell/resolve/main/flux1-schnell-fp8.safetensors?download=true"
 }
+],
+"needs": [
+"weights flux1-schnell-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -2252,6 +2292,10 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/diffusion_models/flux2_dev_fp8mixed.safetensors"
 }
+],
+"needs": [
+"weights flux2_dev_fp8mixed.safetensors: not on this machine",
+"weights mistral_3_small_flux2_bf16.safetensors: not on this machine"
 ]
 },
 {
@@ -2287,6 +2331,10 @@
 "dir": "loras",
 "url": "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/loras/Flux2TurboComfyv2.safetensors"
 }
+],
+"needs": [
+"weights flux2_dev_fp8mixed.safetensors: not on this machine",
+"weights mistral_3_small_flux2_fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -2316,6 +2364,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors"
 }
+],
+"needs": [
+"weights flux-2-klein-9b-kv-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -2403,6 +2454,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/black-forest-labs/FLUX.2-small-decoder/resolve/main/full_encoder_small_decoder.safetensors"
 }
+],
+"needs": [
+"weights flux-2-klein-base-9b-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -2500,6 +2554,10 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/diffusion_models/flux2_dev_fp8mixed.safetensors"
 }
+],
+"needs": [
+"weights flux2_dev_fp8mixed.safetensors: not on this machine",
+"weights mistral_3_small_flux2_bf16.safetensors: not on this machine"
 ]
 },
 {
@@ -2529,6 +2587,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/black-forest-labs/FLUX.2-small-decoder/resolve/main/full_encoder_small_decoder.safetensors"
 }
+],
+"needs": [
+"weights flux-2-klein-base-9b-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -2676,6 +2737,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy/resolve/main/text_encoders/qwen3.5_9b_flux3_prompt_upsampler_w4a8.safetensors"
 }
+],
+"needs": [
+"weights qwen3.5_9b_flux3_prompt_upsampler_w4a8.safetensors: not on this machine"
 ]
 },
 {
@@ -2709,6 +2773,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy/resolve/main/vae/flux2-vae.safetensors"
 }
+],
+"needs": [
+"weights qwen3.5_9b_flux3_prompt_upsampler_w4a8.safetensors: not on this machine"
 ]
 },
 {
@@ -2742,6 +2809,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy/resolve/main/diffusion_models/flux3-image-klein-base-int8-convrot.safetensors"
 }
+],
+"needs": [
+"weights qwen3.5_9b_flux3_prompt_upsampler_w4a8.safetensors: not on this machine"
 ]
 },
 {
@@ -2775,6 +2845,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy/resolve/main/vae/flux2-vae.safetensors"
 }
+],
+"needs": [
+"weights qwen3.5_9b_flux3_prompt_upsampler_w4a8.safetensors: not on this machine"
 ]
 }
 ]
@@ -3072,6 +3145,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/HiDream-I1_ComfyUI/resolve/main/split_files/diffusion_models/hidream_i1_dev_fp8.safetensors"
 }
+],
+"needs": [
+"weights hidream_i1_dev_fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -3116,6 +3192,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/HiDream-I1_ComfyUI/resolve/main/split_files/diffusion_models/hidream_i1_fast_fp8.safetensors?download=true"
 }
+],
+"needs": [
+"weights hidream_i1_fast_fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -3160,6 +3239,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/HiDream-I1_ComfyUI/resolve/main/split_files/diffusion_models/hidream_i1_full_fp8.safetensors?download=true"
 }
+],
+"needs": [
+"weights hidream_i1_full_fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -3479,6 +3561,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/Comfy-Org/HunyuanVideo_repackaged/resolve/main/split_files/vae/hunyuan_video_vae_bf16.safetensors?download=true"
 }
+],
+"needs": [
+"weights hunyuan_video_t2v_720p_bf16.safetensors: not on this machine"
 ]
 },
 {
@@ -3528,6 +3613,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/HunyuanVideo_1.5_repackaged/resolve/main/split_files/diffusion_models/hunyuanvideo1.5_720p_i2v_fp16.safetensors"
 }
+],
+"needs": [
+"weights hunyuanvideo1.5_720p_i2v_fp16.safetensors: not on this machine"
 ]
 },
 {
@@ -3572,6 +3660,9 @@
 "dir": "latent_upscale_models",
 "url": "https://huggingface.co/Comfy-Org/HunyuanVideo_1.5_repackaged/resolve/main/split_files/latent_upscale_models/hunyuanvideo15_latent_upsampler_1080p.safetensors"
 }
+],
+"needs": [
+"weights hunyuanvideo1.5_720p_t2v_fp16.safetensors: not on this machine"
 ]
 }
 ]
@@ -4506,6 +4597,10 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/Lightricks/LTX-Video/resolve/main/ltx-video-2b-v0.9.5.safetensors"
 }
+],
+"needs": [
+"weights ltx-video-2b-v0.9.5.safetensors: not on this machine",
+"superseded here: use an LTX-2.5 template"
 ]
 },
 {
@@ -4530,6 +4625,10 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/Lightricks/LTX-Video/resolve/main/ltx-video-2b-v0.9.safetensors?download=true"
 }
+],
+"needs": [
+"weights ltx-video-2b-v0.9.safetensors: not on this machine",
+"superseded here: use an LTX-2.5 template"
 ]
 },
 {
@@ -4563,6 +4662,9 @@
 "dir": "loras",
 "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors"
 }
+],
+"needs": [
+"weights ltx-2.3-22b-distilled-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -4593,6 +4695,9 @@
 "dir": "loras",
 "url": "https://huggingface.co/valiantcat/LTX-2.3-Transition-LORA/resolve/main/ltx2.3-transition.safetensors"
 }
+],
+"needs": [
+"weights ltx-2.3-22b-distilled-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -4617,6 +4722,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
 }
+],
+"needs": [
+"weights ltx-2.3-22b-distilled-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -4656,6 +4764,10 @@
 "dir": "loras",
 "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors"
 }
+],
+"needs": [
+"weights gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors: not on this machine",
+"weights ltx-2.3-22b-dev-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -4696,6 +4808,10 @@
 "dir": "loras",
 "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors"
 }
+],
+"needs": [
+"weights gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors: not on this machine",
+"weights ltx-2.3-22b-dev-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -4735,6 +4851,10 @@
 "dir": "geometry_estimation",
 "url": "https://huggingface.co/Comfy-Org/MoGe/resolve/main/geometry_estimation/moge_2_vitl_normal_fp16.safetensors"
 }
+],
+"needs": [
+"weights gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors: not on this machine",
+"weights ltx-2.3-22b-distilled-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -4775,6 +4895,9 @@
 "dir": "loras",
 "url": "https://huggingface.co/Comfy-Org/ltx-2.3/resolve/main/split_files/loras/ltx-2.3-id-lora-talkvid-3k.safetensors"
 }
+],
+"needs": [
+"weights ltx-2.3-22b-dev-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -4814,6 +4937,10 @@
 "dir": "loras",
 "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors"
 }
+],
+"needs": [
+"weights gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors: not on this machine",
+"weights ltx-2.3-22b-dev-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -4854,6 +4981,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/gemma-4/resolve/main/text_encoders/gemma4_e2b_it_int8_convrot.safetensors"
 }
+],
+"needs": [
+"weights gemma4_e2b_it_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -4899,6 +5029,9 @@
 "dir": "latent_upscale_models",
 "url": "https://huggingface.co/Lightricks/LTX-2.5/resolve/main/latent_upscale_models/ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
 }
+],
+"needs": [
+"weights gemma4_e2b_it_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -4944,6 +5077,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/gemma-4/resolve/main/text_encoders/gemma4_e2b_it_int8_convrot.safetensors"
 }
+],
+"needs": [
+"weights gemma4_e2b_it_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -4988,6 +5124,11 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-19b-distilled.safetensors"
 }
+],
+"needs": [
+"weights ltx-2-19b-dev-fp8.safetensors: not on this machine",
+"weights ltx-2-19b-distilled-lora-384.safetensors: not on this machine",
+"superseded here: use video_ltx2_3_ic_lora (union control IC-LoRA, on disk)"
 ]
 },
 {
@@ -5042,6 +5183,11 @@
 "dir": "vae",
 "url": "https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-mse-840000-ema-pruned.safetensors"
 }
+],
+"needs": [
+"weights ltx-2-19b-dev-fp8.safetensors: not on this machine",
+"weights ltx-2-19b-distilled-lora-384.safetensors: not on this machine",
+"superseded here: use video_ltx2_3_ic_lora (union control IC-LoRA, on disk)"
 ]
 },
 {
@@ -5081,6 +5227,11 @@
 "dir": "latent_upscale_models",
 "url": "https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-spatial-upscaler-x2-1.0.safetensors"
 }
+],
+"needs": [
+"weights ltx-2-19b-dev-fp8.safetensors: not on this machine",
+"weights ltx-2-19b-distilled-lora-384.safetensors: not on this machine",
+"superseded here: use LTX-2.5: video_ltx2_5_i2v or ltx25_core_i2v"
 ]
 },
 {
@@ -5115,6 +5266,10 @@
 "dir": "latent_upscale_models",
 "url": "https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-spatial-upscaler-x2-1.0.safetensors"
 }
+],
+"needs": [
+"weights ltx-2-19b-distilled.safetensors: not on this machine",
+"superseded here: use LTX-2.5: video_ltx2_5_i2v or ltx25_core_i2v"
 ]
 },
 {
@@ -5192,6 +5347,11 @@
 "dir": "loras",
 "url": "https://huggingface.co/Lightricks/LTX-2-19b-LoRA-Camera-Control-Dolly-Left/resolve/main/ltx-2-19b-lora-camera-control-dolly-left.safetensors"
 }
+],
+"needs": [
+"weights ltx-2-19b-dev-fp8.safetensors: not on this machine",
+"weights ltx-2-19b-distilled-lora-384.safetensors: not on this machine",
+"superseded here: use LTX-2.5: video_ltx2_5_t2v or ltx25_core_t2v"
 ]
 },
 {
@@ -5226,6 +5386,10 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
 }
+],
+"needs": [
+"weights ltx-2-19b-distilled.safetensors: not on this machine",
+"superseded here: use LTX-2.5: video_ltx2_5_t2v or ltx25_core_t2v"
 ]
 }
 ]
@@ -5327,6 +5491,9 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/duongve/NetaYume-Lumina-Image-2.0/resolve/main/NetaYumev35_pretrained_all_in_one.safetensors"
 }
+],
+"needs": [
+"weights NetaYumev35_pretrained_all_in_one.safetensors: not on this machine"
 ]
 }
 ]
@@ -5518,6 +5685,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/Comfy-Org/Ming-Image/resolve/main/vae/ming_image_vae_bf16.safetensors"
 }
+],
+"needs": [
+"weights qwen3.8_27b_w4a8.safetensors: not on this machine"
 ]
 }
 ]
@@ -5790,6 +5960,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
 }
+],
+"needs": [
+"weights fasth3_omniref_8step_pruned_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -5824,6 +5997,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
 }
+],
+"needs": [
+"weights fastvideo_fasth3_8step_v2_pruned_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -5858,6 +6034,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
 }
+],
+"needs": [
+"weights fastvideo_fasth3_8step_v2_pruned_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -6243,6 +6422,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/Comfy-Org/MOSS-Image/resolve/main/vae/flux2-vae_small.safetensors"
 }
+],
+"needs": [
+"weights moss_image_base_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -6272,6 +6454,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/Comfy-Org/MOSS-Image/resolve/main/vae/flux2-vae_small.safetensors"
 }
+],
+"needs": [
+"weights moss_image_base_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -6733,6 +6918,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/Pixal3D/resolve/main/diffusion_models/pixal3d_multiview_int8_convrot.safetensors"
 }
+],
+"needs": [
+"weights pixal3d_multiview_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -7518,6 +7706,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors"
 }
+],
+"needs": [
+"weights qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -7586,6 +7777,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors"
 }
+],
+"needs": [
+"weights qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -7944,6 +8138,9 @@
 "dir": "vae",
 "url": "https://huggingface.co/Comfy-Org/Qwen-Image-Layered_ComfyUI/resolve/main/split_files/vae/qwen_image_layered_vae.safetensors"
 }
+],
+"needs": [
+"weights qwen_image_layered_control_bf16.safetensors: not on this machine"
 ]
 },
 {
@@ -8465,6 +8662,9 @@
 "dir": "checkpoints",
 "url": "https://huggingface.co/Comfy-Org/stable-diffusion-3.5-fp8/resolve/main/sd3.5_large_fp8_scaled.safetensors?download=true"
 }
+],
+"needs": [
+"weights sd3.5_large_controlnet_blur.safetensors: not on this machine"
 ]
 },
 {
@@ -8489,6 +8689,9 @@
 "dir": "controlnet",
 "url": "https://huggingface.co/Comfy-Org/stable-diffusion-3.5-controlnets_ComfyUI_repackaged/resolve/main/split_files/controlnet/sd3.5_large_controlnet_canny.safetensors"
 }
+],
+"needs": [
+"weights sd3.5_large_controlnet_canny.safetensors: not on this machine"
 ]
 },
 {
@@ -8523,6 +8726,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/lotus/resolve/main/lotus-depth-d-v1-1.safetensors"
 }
+],
+"needs": [
+"weights sd3.5_large_controlnet_depth.safetensors: not on this machine"
 ]
 },
 {
@@ -8929,6 +9135,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/SeedVR2/resolve/main/diffusion_models/seedvr2_7b_int8_convrot.safetensors"
 }
+],
+"needs": [
+"weights seedvr2_7b_int8_convrot.safetensors: not on this machine"
 ]
 }
 ]
@@ -9477,6 +9686,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/Qwen3.5/resolve/main/text_encoders/qwen3.5_4b_bf16.safetensors"
 }
+],
+"needs": [
+"weights qwen3.5_4b_bf16.safetensors: not on this machine"
 ]
 },
 {
@@ -9736,6 +9948,9 @@
 "dir": "loras",
 "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/chronoedit_distill_lora.safetensors"
 }
+],
+"needs": [
+"weights chrono_edit_14B_fp16.safetensors: not on this machine"
 ]
 },
 {
@@ -9939,6 +10154,9 @@
 "dir": "clip_vision",
 "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
 }
+],
+"needs": [
+"weights wan2.1_fun_camera_v1.1_14B_bf16.safetensors: not on this machine"
 ]
 },
 {
@@ -9973,6 +10191,9 @@
 "dir": "clip_vision",
 "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
 }
+],
+"needs": [
+"weights Wan2_1-I2V-ATI-14B_fp8_e4m3fn.safetensors: not on this machine"
 ]
 },
 {
@@ -10022,6 +10243,9 @@
 "dir": "loras",
 "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_CausVid_14B_T2V_lora_rank32.safetensors"
 }
+],
+"needs": [
+"weights wan2.1_vace_14B_fp16.safetensors: not on this machine"
 ]
 },
 {
@@ -10071,6 +10295,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_vace_14B_fp16.safetensors"
 }
+],
+"needs": [
+"weights wan2.1_vace_14B_fp16.safetensors: not on this machine"
 ]
 },
 {
@@ -10120,6 +10347,9 @@
 "dir": "loras",
 "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_CausVid_14B_T2V_lora_rank32.safetensors"
 }
+],
+"needs": [
+"weights wan2.1_vace_14B_fp16.safetensors: not on this machine"
 ]
 },
 {
@@ -10154,6 +10384,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_vace_14B_fp16.safetensors"
 }
+],
+"needs": [
+"weights wan2.1_vace_14B_fp16.safetensors: not on this machine"
 ]
 },
 {
@@ -10193,6 +10426,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/diffusion_models/wan2.1_vace_14B_fp16.safetensors"
 }
+],
+"needs": [
+"weights wan2.1_vace_14B_fp16.safetensors: not on this machine"
 ]
 },
 {
@@ -10242,6 +10478,9 @@
 "dir": "loras",
 "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan21_CausVid_14B_T2V_lora_rank32.safetensors"
 }
+],
+"needs": [
+"weights wan2.1_vace_14B_fp16.safetensors: not on this machine"
 ]
 },
 {
@@ -10282,6 +10521,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/WanMove/Wan21-WanMove_fp8_scaled_e4m3fn_KJ.safetensors"
 }
+],
+"needs": [
+"weights Wan21-WanMove_fp8_scaled_e4m3fn_KJ.safetensors: not on this machine"
 ]
 },
 {
@@ -10316,6 +10558,9 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors?download=true"
 }
+],
+"needs": [
+"weights wan2.1_flf2v_720p_14B_fp16.safetensors: not on this machine"
 ]
 },
 {
@@ -10735,6 +10980,10 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_fun_inpaint_low_noise_14B_fp8_scaled.safetensors"
 }
+],
+"needs": [
+"weights wan2.2_fun_inpaint_high_noise_14B_fp8_scaled.safetensors: not on this machine",
+"weights wan2.2_fun_inpaint_low_noise_14B_fp8_scaled.safetensors: not on this machine"
 ]
 },
 {
@@ -10818,6 +11067,9 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_s2v_14B_fp8_scaled.safetensors"
 }
+],
+"needs": [
+"weights wan2.2_s2v_14B_fp8_scaled.safetensors: not on this machine"
 ]
 },
 {
@@ -11157,6 +11409,10 @@
 "dir": "vae",
 "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors"
 }
+],
+"needs": [
+"weights wan2.2_dancer_14b_global_fp8_scaled.safetensors: not on this machine",
+"weights wan2.2_dancer_14b_local_fp8_scaled.safetensors: not on this machine"
 ]
 }
 ]

@@ -57,7 +57,7 @@
   "6": {
    "class_type": "ControlNetLoader",
    "inputs": {
-    "control_net_name": "control_v11f1p_sd15_depth.safetensors"
+    "control_net_name": "control_v11f1p_sd15_depth_fp16.safetensors"
    }
   },
   "7": {

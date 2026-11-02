@@ -2,6 +2,20 @@
 resolve_names() rewrites each combo value that is not installed to an installed file of the same model. A file whose name is merely close is another model (4B or 9B, high or low noise, clip_vision_g or _h), so it is reported as missing, never guessed. Works on API-format graphs with object_info."""
 import difflib, functools, re
 SUBSTITUTE = {"minimax_h3_video_vae_int8_convrot.safetensors": "minimax_h3_video_vae_fp16.safetensors", "minimax_music3_text_encoder_pruned_int8_convrot.safetensors": "minimax_music3_text_encoder_pruned_bf16.safetensors", "minimax_music3_text_encoder_pruned_bf16.safetensors": "minimax_music3_text_encoder_pruned_int8_convrot.safetensors"}
+#: Files ComfyUI's own templates name that this machine keeps as another build or a newer release, from the worker map graph_missing_fixes.tsv (2026-11-02): Qwen-Image 2512, Qwen-Image-Edit 2511,
+#: HiDream E1.1, the Boogu hotfix and the Wan-Animate distill are newer models on purpose; the rest are other builds the same-model rule cannot tell apart by name. Kept apart from SUBSTITUTE, which is only ever
+#: the same model by that rule. Used only when the named file is not installed and this one is.
+UPGRADE = {
+    "flux3-image-klein-base-int8-convrot.safetensors": "flux3-image-klein-base-bf16.safetensors", "gemma_3_12B_it_fp4_mixed.safetensors": "gemma_3_12B_it_fp8_scaled.safetensors",
+    "qwen3.5_9b_w4a8_gptq.safetensors": "qwen3.5_9b_int8_convrot.safetensors", "qwen_3_4b_fp8_mixed.safetensors": "qwen_3_4b.safetensors",
+    "wan2.1_14B_SCAIL_2_fp16.safetensors": "wan2.1_14B_SCAIL_2_nvfp4_mxpf8_mix.safetensors", "wan2.1_14B_SCAIL_2_int8_convrot.safetensors": "wan2.1_14B_SCAIL_2_nvfp4_mxpf8_mix.safetensors",
+    "wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors": "Wan2_2-T2V-A14B-HIGH_fp8_e4m3fn_scaled_KJ.safetensors", "wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors": "Wan2_2-T2V-A14B-LOW_fp8_e4m3fn_scaled_KJ.safetensors",
+    "flux1-dev-fp8.safetensors": "flux1-dev.safetensors", "flux1-schnell-fp8.safetensors": "flux1-schnell.safetensors",
+    "mistral_3_small_flux2_bf16.safetensors": "mistral_3_small_flux2_fp8.safetensors", "wan2.1_flf2v_720p_14B_fp16.safetensors": "wan2.1/wan2.1_flf2v_720p_14B_fp8_e4m3fn.safetensors",
+    "wan2.2_s2v_14B_fp8_scaled.safetensors": "wan2.2_s2v_14B_bf16.safetensors", "qwen_image_fp8_e4m3fn.safetensors": "qwen_image_2512_fp8_e4m3fn.safetensors",
+    "qwen_image_edit_fp8_e4m3fn.safetensors": "qwen-image/qwen_image_edit_2511_fp8mixed.safetensors", "hidream_e1_full_bf16.safetensors": "hidream_e1_1_bf16.safetensors",
+    "boogu_image_edit_fp8_scaled.safetensors": "boogu_image_edit_turbo_hotfix_1k_20260708_int8_convrot.safetensors", "boogu_image_edit_int8_convrot.safetensors": "boogu_image_edit_turbo_hotfix_1k_20260708_int8_convrot.safetensors",
+    "boogu_image_turbo_fp8_scaled.safetensors": "boogu_image_turbo_hotfix_int8_convrot.safetensors", "wan_animate_2_int8_convrot.safetensors": "wan_animate_2_distill_int8_convrot.safetensors"}
 MODEL_FILE = re.compile(r"\.(safetensors|sft|ckpt|pt|pth|gguf|bin|onnx|pkl)$")
 QUANTIZED = {"int8", "convrot", "nvfp4", "awq"}                                                                  # the file needs ops of its own: not every loader reads these
 PRECISION = QUANTIZED | {"fp8", "fp16", "fp32", "bf16", "scaled", "e4m3fn", "e5m2", "fp8mixed", "pruned", "ema", "emaonly"}
@@ -45,7 +59,8 @@ def resolve_names(graph, oi, threshold=0.0):
             opts = spec[0] if isinstance(spec[0], list) else (spec[1].get("options") if len(spec) > 1 and isinstance(spec[1], dict) else None)
             if opts is None or v in opts: continue                                   # an empty list means nothing is installed for this loader: still missing
             if not MODEL_FILE.search(v): continue
-            if SUBSTITUTE.get(v) in opts: n["inputs"][k] = SUBSTITUTE[v]; report.append({"node": nid, "input": k, "was": v, "now": SUBSTITUTE[v], "score": 1.0}); continue
+            sub = SUBSTITUTE.get(v) or UPGRADE.get(v)
+            if sub in opts: n["inputs"][k] = sub; report.append({"node": nid, "input": k, "was": v, "now": sub, "score": 1.0}); continue
             ratio = lambda o: difflib.SequenceMatcher(None, norm(v), norm(o)).ratio()
             fit = [o for o in opts if isinstance(o, str) and same_model(v, o) and swap_ok(n["class_type"], v, o, n["inputs"].get("weight_dtype")) and ratio(o) >= threshold]
             if fit: best = _closest(v, fit); n["inputs"][k] = best; report.append({"node": nid, "input": k, "was": v, "now": best, "score": round(ratio(best), 2)})
@@ -56,5 +71,6 @@ def have(files, name, folder=None):
     b = name.split("/")[-1]
     if b in files: return b
     if SUBSTITUTE.get(b) in files: return SUBSTITUTE[b]
+    if UPGRADE.get(b) in files: return UPGRADE[b]
     fit = [x for x in files if same_model(b, x) and swap_ok(DIR_LOADER.get(folder), b, x)]
     return _closest(b, fit) if fit else None

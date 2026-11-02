@@ -16,7 +16,7 @@
   "1": {
    "class_type": "CheckpointLoaderSimple",
    "inputs": {
-    "ckpt_name": "sd3.5_medium.safetensors"
+    "ckpt_name": "sd3/sd3.5_medium.safetensors"
    }
   },
   "2": {

@@ -22,7 +22,7 @@
   "2": {
    "class_type": "CheckpointLoaderSimple",
    "inputs": {
-    "ckpt_name": "another_sd15_model.safetensors"
+    "ckpt_name": "DreamShaper_8_pruned.safetensors"
    }
   },
   "3": {

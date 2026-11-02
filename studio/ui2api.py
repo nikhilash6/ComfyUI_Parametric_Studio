@@ -3,7 +3,8 @@ Sub-graphs are inlined recursively (their promoted values travel in the instance
 muted nodes dropped. Anything it cannot resolve is returned in `problems`, never silently mangled. ui_to_api(ui, oi) -> (graph, problems)."""
 import ast
 SKIP = {"Reroute", "MarkdownNote", "Note", "PrimitiveNode"}
-WIDGET_TYPES = ("INT", "FLOAT", "STRING", "BOOLEAN", "COMBO", "COLOR", "LOAD_3D")      # COLOR and LOAD_3D store a value in widgets_values like any other widget (RenderSplat.background, Save3DAdvanced.viewport_state)
+WIDGET_TYPES = ("INT", "FLOAT", "STRING", "BOOLEAN", "COMBO", "COLOR", "LOAD_3D", "BOUNDING_BOXES", "BOUNDING_BOX", "COLORS")      # COLOR and LOAD_3D store a value in widgets_values like any other widget (RenderSplat.background, Save3DAdvanced.viewport_state); so do the box editors (CreateBoundingBoxes.editor_state, ImageCropV2.crop_region) and colour lists (BuildJsonPromptIdeogram.color_palette)
+def _is_widget(t, opts): return isinstance(t, list) or t in WIDGET_TYPES or bool(opts.get("widgetType"))      # a union input such as "FLOAT,INT" names the widget it shows (LTXVEmptyLatentAudio.frame_rate)
 class Const:
     def __init__(self, v): self.v = v
 def _widget_names(info):
@@ -12,7 +13,7 @@ def _widget_names(info):
         for name, spec in (info.get("input", {}).get(group) or {}).items():
             t = spec[0]; opts = spec[1] if len(spec) > 1 and isinstance(spec[1], dict) else {}
             if opts.get("forceInput"): continue
-            if isinstance(t, list) or t in WIDGET_TYPES: names.append((name, bool(opts.get("control_after_generate"))))
+            if _is_widget(t, opts): names.append((name, bool(opts.get("control_after_generate"))))
     return names
 DYNAMIC = "COMFY_DYNAMICCOMBO_V3"
 def _assign_widgets(info, wv, inputs):
@@ -28,7 +29,7 @@ def _assign_widgets(info, wv, inputs):
                     val = wv[i]; i += 1; inputs.setdefault(key, val)
                     for o in opts.get("options") or []:
                         if o.get("key") == val: take(o.get("inputs") or {}, key + ".")
-                elif isinstance(t, list) or t in WIDGET_TYPES:
+                elif _is_widget(t, opts):
                     inputs.setdefault(key, wv[i]); i += 1
                     if opts.get("control_after_generate"): i += 1
     take(info.get("input", {}))

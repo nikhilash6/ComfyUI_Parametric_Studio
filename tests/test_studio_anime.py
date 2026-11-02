@@ -18,6 +18,6 @@ def test_plain_prompt_untouched_and_empty_prompt():
 def test_anime_goal_values():
     v, o = values_for("anime", {"prompt": "DSLR photo of a knight", "options": {"style": "mecha", "mode": "fast"}})
     assert v["prompt"].startswith("masterpiece, best quality, safe, ") and "dslr" not in v["prompt"].lower()
-    assert (v["steps"], v["cfg"], v["unet"]) == (10, 1.0, "anima/anima-turbo-v1.1.safetensors") and o["style"] == "mecha"
+    assert (v["steps"], v["cfg"], v["unet"]) == (10, 1.0, "anima-turbo-v1.1.safetensors") and o["style"] == "mecha"
     v2, _ = values_for("anime", {"prompt": "a knight", "options": {"mode": "quality"}}); assert (v2["steps"], v2["cfg"]) == (30, 3.0) and "worst quality" in v2["negative"]
     assert "anime" in GOALS and GOALS["anime"]["family"] == "Anima"
