@@ -9901,10 +9901,33 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image 2512",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "qwen_image_2512_t2i",
+"size": [
+1024,
+1024
+],
+"peak_gib": 24,
+"prompt": "A small fishing harbour at dawn with wooden boats and gulls, soft mist. No text, no people.",
+"loras": [
+[
+"Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors",
+1.0
+]
+],
+"set": {
+"8": {
+"steps": 4,
+"cfg": 1.0
+}
+}
+}
 },
 {
 "id": "lora_aeff0532c1",
@@ -10037,10 +10060,33 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image 2512",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "qwen_image_2512_t2i",
+"size": [
+1024,
+1024
+],
+"peak_gib": 24,
+"prompt": "A bowl of lemons on a blue tiled table in morning light. No text, no people.",
+"loras": [
+[
+"Qwen-Image-Lightning-8steps-V1.0.safetensors",
+1.0
+]
+],
+"set": {
+"8": {
+"steps": 8,
+"cfg": 1.0
+}
+}
+}
 },
 {
 "id": "lora_3ee68cbb69",
@@ -10060,10 +10106,33 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"licence": "Apache-2.0",
+"licence_class": "open",
+"size": [
+832,
+480
+],
+"peak_gib": 8,
+"model": "Wan 2.1 T2V 1.3B",
+"template": "wan21_t2v_1p3b",
+"prompt": "A small wooden boat drifts on a calm lake at sunrise, mist over the water, gentle ripples. No text.",
+"set": {
+"8": {
+"steps": 6,
+"cfg": 1.0
+}
+},
+"loras": [
+[
+"Wan21_CausVid_bidirect2_T2V_1_3B_lora_rank32.safetensors",
+1.0
+]
+]
+}
 },
 {
 "id": "lora_e7dc62fca7",
@@ -10083,10 +10152,33 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image 2512",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "qwen_image_2512_t2i",
+"size": [
+1024,
+1024
+],
+"peak_gib": 24,
+"prompt": "A snowy mountain cabin at dusk with one lit window. No text, no people.",
+"loras": [
+[
+"Wuli-Qwen-Image-2512-Turbo-LoRA-2steps-V1.0-bf16.safetensors",
+1.0
+]
+],
+"set": {
+"8": {
+"steps": 2,
+"cfg": 1.0
+}
+}
+}
 },
 {
 "id": "lora_435024ade2",
@@ -10193,10 +10285,33 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image 2512",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "qwen_image_2512_t2i",
+"size": [
+1024,
+1024
+],
+"peak_gib": 24,
+"prompt": "An illustration of a fox curled up asleep under a tree in autumn, soft washes of colour. No text.",
+"loras": [
+[
+"illustration-1.0-qwen-image.safetensors",
+1.0
+]
+],
+"set": {
+"8": {
+"steps": 20,
+"cfg": 2.5
+}
+}
+}
 },
 {
 "id": "lora_f51f354b69",
@@ -10551,10 +10666,33 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image 2512",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "qwen_image_2512_t2i",
+"size": [
+1024,
+1024
+],
+"peak_gib": 24,
+"prompt": "An equirectangular 360 degree panorama of a quiet forest clearing at noon, seamless. No text, no people.",
+"loras": [
+[
+"qwen-360-diffusion-2512-int8-bf16-v2.safetensors",
+1.0
+]
+],
+"set": {
+"8": {
+"steps": 20,
+"cfg": 2.5
+}
+}
+}
 },
 {
 "id": "lora_0d207abaad",
@@ -10755,10 +10893,33 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image 2512",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "qwen_image_2512_t2i",
+"size": [
+1024,
+1024
+],
+"peak_gib": 24,
+"prompt": "A red bicycle leaning against a white wall in a sunny lane. No text, no people.",
+"loras": [
+[
+"Qwen-Image-Lightning-4steps-V1.0.safetensors",
+1.0
+]
+],
+"set": {
+"8": {
+"steps": 4,
+"cfg": 1.0
+}
+}
+}
 },
 {
 "id": "lora_fc200a2bf3",
@@ -10778,10 +10939,33 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"licence": "Apache-2.0",
+"licence_class": "open",
+"size": [
+832,
+480
+],
+"peak_gib": 24,
+"model": "Wan 2.1 T2V 14B",
+"template": "wan21_t2v_14b",
+"prompt": "A small wooden boat drifts on a calm lake at sunrise, mist over the water, gentle ripples. No text.",
+"set": {
+"8": {
+"steps": 6,
+"cfg": 1.0
+}
+},
+"loras": [
+[
+"Wan21_CausVid_14B_T2V_lora_rank32.safetensors",
+1.0
+]
+]
+}
 },
 {
 "id": "lora_8c20f25860",
@@ -10801,10 +10985,35 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"licence": "Apache-2.0",
+"licence_class": "open",
+"size": [
+832,
+480
+],
+"peak_gib": 24,
+"model": "Wan 2.1 I2V 480p 14B",
+"template": "wan21_i2v_14b",
+"edit": true,
+"source": "A small wooden boat on a calm lake at sunrise",
+"prompt": "The boat drifts slowly, ripples spread across the water, mist moves. No text.",
+"set": {
+"8": {
+"steps": 6,
+"cfg": 1.0
+}
+},
+"loras": [
+[
+"lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors",
+1.0
+]
+]
+}
 },
 {
 "id": "lora_1d06d120ee",
@@ -10824,10 +11033,33 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"licence": "Apache-2.0",
+"licence_class": "open",
+"size": [
+832,
+480
+],
+"peak_gib": 24,
+"model": "Wan 2.1 T2V 14B",
+"template": "wan21_t2v_14b",
+"prompt": "A small wooden boat drifts on a calm lake at sunrise, mist over the water, gentle ripples. No text.",
+"set": {
+"8": {
+"steps": 6,
+"cfg": 1.0
+}
+},
+"loras": [
+[
+"lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors",
+1.0
+]
+]
+}
 },
 {
 "id": "lora_5bcdb85229",

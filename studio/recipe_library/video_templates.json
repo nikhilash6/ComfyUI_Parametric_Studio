@@ -67,7 +67,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 149027,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} looks into the camera and opens with a surprising one-line hook about {benefit}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} looks into the camera and opens with a surprising one-line hook about {benefit}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -82,7 +82,7 @@
 "label": "Demo",
 "peak_gib": 46,
 "seed": 149027,
-"prompt": "integrated_multimodal_description: [Shot 1] {product} shown in use, close detail. Slow orbit around the product. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} shown in use, close detail. Slow orbit around the product. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -97,7 +97,7 @@
 "label": "Cta",
 "peak_gib": 46,
 "seed": 149027,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} holds up {product} and gives the call to action: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds up {product} and gives the call to action: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -139,7 +139,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "product",
@@ -193,7 +193,7 @@
 "label": "Problem",
 "peak_gib": 46,
 "seed": 880867,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} complains to camera about {problem}, frustrated. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} complains to camera about {problem}, frustrated. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -207,8 +207,8 @@
 "goal": "h3_video",
 "label": "Discovery",
 "peak_gib": 46,
-"seed": 242581,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} unboxes {product} and reacts with surprise. Medium shot, gentle push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 880867,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} unboxes {product} and reacts with surprise. Medium shot, gentle push in. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -223,7 +223,7 @@
 "label": "Demo",
 "peak_gib": 46,
 "seed": 180063,
-"prompt": "integrated_multimodal_description: [Shot 1] {product} in use, the key detail visible. Macro slide across the product. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} in use, the key detail visible. Macro slide across the product. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -237,8 +237,8 @@
 "goal": "h3_video",
 "label": "Proof",
 "peak_gib": 46,
-"seed": 895273,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains to camera how {benefit} changed their day, convinced. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 880867,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains to camera how {benefit} changed their day, convinced. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -252,8 +252,8 @@
 "goal": "h3_video",
 "label": "Cta",
 "peak_gib": 46,
-"seed": 73322,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} smiles and gives the call to action: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 880867,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} smiles and gives the call to action: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -335,7 +335,7 @@
 "label": "Reveal",
 "peak_gib": 46,
 "seed": 623411,
-"prompt": "integrated_multimodal_description: [Shot 1] {product} revealed in dramatic light. Slow push in, shallow depth of field. The product is plain and unlabelled: bare brushed steel from top to bottom, with a smooth blank surface and nothing printed or engraved on it. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} revealed in dramatic light. Slow push in, shallow depth of field. The product is plain and unlabelled: bare brushed steel from top to bottom, with a smooth blank surface and nothing printed or engraved on it. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "1:1",
 "quality": "high",
@@ -350,7 +350,7 @@
 "label": "Detail",
 "peak_gib": 46,
 "seed": 381658,
-"prompt": "integrated_multimodal_description: [Shot 1] a close detail of {product} that shows {benefit}. Macro slide. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] a close detail of {product} that shows {benefit}. Macro slide. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "1:1",
 "quality": "high",
@@ -391,7 +391,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "product",
@@ -429,7 +429,7 @@
 "label": "Arrival",
 "peak_gib": 46,
 "seed": 411883,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a sealed package with {product}, excited. Medium shot, handheld. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a sealed package with {product}, excited. Medium shot, handheld. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -443,8 +443,8 @@
 "goal": "h3_video",
 "label": "Open",
 "peak_gib": 46,
-"seed": 435421,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} opens the box and lifts out {product}. Close-up on the hands, slight handheld. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 411883,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} opens the box and lifts out {product}. Close-up on the hands, slight handheld. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -458,8 +458,8 @@
 "goal": "h3_video",
 "label": "Reaction",
 "peak_gib": 46,
-"seed": 548407,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {product} with a short honest first impression. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 411883,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {product} with a short honest first impression. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -473,8 +473,8 @@
 "goal": "h3_video",
 "label": "Verdict",
 "peak_gib": 46,
-"seed": 185281,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie, push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 411883,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie, push in. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -517,7 +517,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "problem",
@@ -560,7 +560,7 @@
 "label": "Before",
 "peak_gib": 46,
 "seed": 477574,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} struggles with {problem}, exasperated. Medium shot, static. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} struggles with {problem}, exasperated. Medium shot, static. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -574,8 +574,8 @@
 "goal": "h3_video",
 "label": "Fix",
 "peak_gib": 46,
-"seed": 179440,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} uses {product} to solve it. Close-up on the action, slow push. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 477574,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} uses {product} to solve it. Close-up on the action, slow push. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -589,8 +589,8 @@
 "goal": "h3_video",
 "label": "After",
 "peak_gib": 46,
-"seed": 798650,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} shows off {result} and says one proud line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 477574,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shows off {result} and says one proud line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -676,7 +676,7 @@
 "label": "Intro",
 "peak_gib": 46,
 "seed": 844849,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces themself and their situation: {story}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces themself and their situation: {story}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up, locked-off. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -691,7 +691,7 @@
 "label": "Turn",
 "peak_gib": 46,
 "seed": 844849,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains how {product} helped: {benefit}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up, very slow push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains how {product} helped: {benefit}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up, very slow push in. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -706,7 +706,7 @@
 "label": "Close",
 "peak_gib": 46,
 "seed": 844849,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} recommends it warmly in one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} recommends it warmly in one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -748,7 +748,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "app",
@@ -792,7 +792,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 593402,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the viewer a question the {app} answers. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the viewer a question the {app} answers. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -806,8 +806,8 @@
 "goal": "h3_video",
 "label": "Feature",
 "peak_gib": 46,
-"seed": 633548,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} uses a phone and smiles as {feature} works. Over-the-shoulder, slow push toward the phone. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 593402,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} uses a phone and smiles as {feature} works. Over-the-shoulder, slow push toward the phone. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -821,8 +821,8 @@
 "goal": "h3_video",
 "label": "Cta",
 "peak_gib": 46,
-"seed": 13542,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the call to action: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 593402,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the call to action: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -864,7 +864,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "offer",
@@ -902,7 +902,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 559719,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly that the sale is on: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Fast push in, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly that the sale is on: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Fast push in, handheld. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -916,8 +916,8 @@
 "goal": "h3_video",
 "label": "Cta",
 "peak_gib": 46,
-"seed": 185585,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} points down and tells viewers where to get it. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 559719,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} points down and tells viewers where to get it. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1002,7 +1002,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} opens with a bold hook about {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} opens with a bold hook about {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1017,7 +1017,7 @@
 "label": "Point 1",
 "peak_gib": 46,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the first point from: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the first point from: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, locked-off. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1032,7 +1032,7 @@
 "label": "Point 2",
 "peak_gib": 46,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the second point from: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the second point from: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1047,7 +1047,7 @@
 "label": "Point 3",
 "peak_gib": 46,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the third point from: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the third point from: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, locked-off. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1062,7 +1062,7 @@
 "label": "Wrap",
 "peak_gib": 46,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} wraps up and asks viewers to follow: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} wraps up and asks viewers to follow: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1106,7 +1106,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "story",
@@ -1144,7 +1144,7 @@
 "label": "Morning",
 "peak_gib": 46,
 "seed": 101453,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} wakes up and stretches by the window, {story}. Wide shot, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} wakes up and stretches by the window, {story}. Wide shot, slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1158,8 +1158,8 @@
 "goal": "h3_video",
 "label": "Coffee",
 "peak_gib": 46,
-"seed": 785371,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} makes coffee in the kitchen. Close-up, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 101453,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} makes coffee in the kitchen. Close-up, handheld. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1173,8 +1173,8 @@
 "goal": "h3_video",
 "label": "Work",
 "peak_gib": 46,
-"seed": 340497,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} works focused at a desk in {place}. Medium shot, slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 101453,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} works focused at a desk in {place}. Medium shot, slow side slide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1188,8 +1188,8 @@
 "goal": "h3_video",
 "label": "Outside",
 "peak_gib": 46,
-"seed": 258823,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} walks outside through {place}. Tracking shot alongside. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 101453,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} walks outside through {place}. Tracking shot alongside. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1203,8 +1203,8 @@
 "goal": "h3_video",
 "label": "Evening",
 "peak_gib": 46,
-"seed": 456804,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} cooks dinner, relaxed. Medium shot, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 101453,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} cooks dinner, relaxed. Medium shot, handheld. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1218,8 +1218,8 @@
 "goal": "h3_video",
 "label": "Night",
 "peak_gib": 46,
-"seed": 15026,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says one reflective line about the day. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, warm light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 101453,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one reflective line about the day. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, warm light, locked-off. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1264,7 +1264,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "story",
@@ -1298,7 +1298,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 332922,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} teases the story: {story}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} teases the story: {story}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1312,8 +1312,8 @@
 "goal": "h3_video",
 "label": "Build",
 "peak_gib": 46,
-"seed": 457996,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} tells what happened, animated. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 332922,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tells what happened, animated. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1327,8 +1327,8 @@
 "goal": "h3_video",
 "label": "Punchline",
 "peak_gib": 46,
-"seed": 641446,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} delivers the twist and how it ended. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 332922,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} delivers the twist and how it ended. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1370,7 +1370,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "topic",
@@ -1409,7 +1409,7 @@
 "label": "Intro",
 "peak_gib": 46,
 "seed": 509985,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says what they will show: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says what they will show: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1423,8 +1423,8 @@
 "goal": "h3_video",
 "label": "Step 1",
 "peak_gib": 46,
-"seed": 115095,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} does the first step from: {steps}. Close-up on the hands. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 509985,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does the first step from: {steps}. Close-up on the hands. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1438,8 +1438,8 @@
 "goal": "h3_video",
 "label": "Step 2",
 "peak_gib": 46,
-"seed": 43165,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} does the second step from: {steps}. Close-up on the hands. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 509985,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does the second step from: {steps}. Close-up on the hands. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1453,8 +1453,8 @@
 "goal": "h3_video",
 "label": "Step 3",
 "peak_gib": 46,
-"seed": 361067,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} does the third step from: {steps}. Close-up on the hands. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 509985,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does the third step from: {steps}. Close-up on the hands. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1468,8 +1468,8 @@
 "goal": "h3_video",
 "label": "Result",
 "peak_gib": 46,
-"seed": 845864,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} shows the result and says one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 509985,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shows the result and says one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1513,7 +1513,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "recipe",
@@ -1552,7 +1552,7 @@
 "label": "Intro",
 "peak_gib": 46,
 "seed": 650632,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {recipe} with excitement. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot in a kitchen. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {recipe} with excitement. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot in a kitchen. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1567,7 +1567,7 @@
 "label": "Ingredients",
 "peak_gib": 46,
 "seed": 311454,
-"prompt": "integrated_multimodal_description: [Shot 1] the ingredients for {recipe} laid out on a counter. Top-down slow slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the ingredients for {recipe} laid out on a counter. Top-down slow slide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1581,8 +1581,8 @@
 "goal": "h3_video",
 "label": "Cook 1",
 "peak_gib": 46,
-"seed": 225716,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} cooks the first step from: {steps}. Close-up over the pan. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 650632,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} cooks the first step from: {steps}. Close-up over the pan. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1596,8 +1596,8 @@
 "goal": "h3_video",
 "label": "Cook 2",
 "peak_gib": 46,
-"seed": 20930,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} cooks the next step from: {steps}. Close-up over the pan. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 650632,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} cooks the next step from: {steps}. Close-up over the pan. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1612,7 +1612,7 @@
 "label": "Plate",
 "peak_gib": 46,
 "seed": 273281,
-"prompt": "integrated_multimodal_description: [Shot 1] the finished {recipe} plated, steam rising. Slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the finished {recipe} plated, steam rising. Slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1626,8 +1626,8 @@
 "goal": "h3_video",
 "label": "Bite",
 "peak_gib": 46,
-"seed": 855127,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} tastes it and reacts. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 650632,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tastes it and reacts. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1672,7 +1672,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "quote",
@@ -1710,7 +1710,7 @@
 "label": "Open",
 "peak_gib": 46,
 "seed": 667014,
-"prompt": "integrated_multimodal_description: [Shot 1] a quiet sunrise over {place}. Slow drone push forward. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] a quiet sunrise over {place}. Slow drone push forward. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1724,8 +1724,8 @@
 "goal": "h3_video",
 "label": "Quote",
 "peak_gib": 46,
-"seed": 85392,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says the quote with calm conviction: {quote}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, golden light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 667014,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says the quote with calm conviction: {quote}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, golden light, locked-off. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1739,8 +1739,8 @@
 "goal": "h3_video",
 "label": "Close",
 "peak_gib": 46,
-"seed": 127450,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} walks forward into the light, determined. Tracking shot from behind. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 667014,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} walks forward into the light, determined. Tracking shot from behind. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1782,7 +1782,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "who2",
@@ -1821,7 +1821,7 @@
 "label": "Question",
 "peak_gib": 46,
 "seed": 676279,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a sharp question about {topic} into a podcast microphone. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a sharp question about {topic} into a podcast microphone. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, locked-off. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -1836,7 +1836,7 @@
 "label": "Answer",
 "peak_gib": 46,
 "seed": 328353,
-"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers with a strong opinion into a podcast microphone. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers with a strong opinion into a podcast microphone. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, locked-off. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -1850,8 +1850,8 @@
 "goal": "h3_video",
 "label": "Reaction",
 "peak_gib": 46,
-"seed": 852203,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} laughs and reacts in one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Two-shot, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 676279,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} laughs and reacts in one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Two-shot, slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -1893,7 +1893,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "who2",
@@ -1937,7 +1937,7 @@
 "label": "Ask",
 "peak_gib": 46,
 "seed": 115555,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a microphone out and asks about {topic} in {place}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} holds a microphone out and asks about {topic} in {place}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium shot. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1952,7 +1952,7 @@
 "label": "Answer",
 "peak_gib": 46,
 "seed": 278005,
-"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers the question honestly, then grins. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers the question honestly, then grins. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1966,8 +1966,8 @@
 "goal": "h3_video",
 "label": "Follow",
 "peak_gib": 46,
-"seed": 232991,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a quick follow-up. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 115555,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a quick follow-up. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium shot. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -1982,7 +1982,7 @@
 "label": "Final",
 "peak_gib": 46,
 "seed": 409609,
-"prompt": "integrated_multimodal_description: [Shot 1] {who2} gives a funny final answer. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} gives a funny final answer. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2025,7 +2025,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "name",
@@ -2068,7 +2068,7 @@
 "label": "Welcome",
 "peak_gib": 46,
 "seed": 566681,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} welcomes viewers to {name}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot at the entrance, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} welcomes viewers to {name}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot at the entrance, slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2083,7 +2083,7 @@
 "label": "Place",
 "peak_gib": 46,
 "seed": 585999,
-"prompt": "integrated_multimodal_description: [Shot 1] the inside of {place}, warm and inviting. Slow gimbal walk-through. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the inside of {place}, warm and inviting. Slow gimbal walk-through. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2097,8 +2097,8 @@
 "goal": "h3_video",
 "label": "Craft",
 "peak_gib": 46,
-"seed": 53893,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} works with care behind the counter. Close-up, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 566681,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} works with care behind the counter. Close-up, handheld. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2112,8 +2112,8 @@
 "goal": "h3_video",
 "label": "Offer",
 "peak_gib": 46,
-"seed": 86067,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} invites people in: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 566681,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} invites people in: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2156,7 +2156,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "place",
@@ -2194,7 +2194,7 @@
 "label": "Exterior",
 "peak_gib": 46,
 "seed": 209860,
-"prompt": "integrated_multimodal_description: [Shot 1] the exterior of {place} on a sunny day. Slow drone push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the exterior of {place} on a sunny day. Slow drone push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2208,8 +2208,8 @@
 "goal": "h3_video",
 "label": "Intro",
 "peak_gib": 46,
-"seed": 880114,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} stands at the door and introduces {place}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 209860,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} stands at the door and introduces {place}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2224,7 +2224,7 @@
 "label": "Living",
 "peak_gib": 46,
 "seed": 757848,
-"prompt": "integrated_multimodal_description: [Shot 1] the bright living room of {place}. Slow gimbal glide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the bright living room of {place}. Slow gimbal glide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2239,7 +2239,7 @@
 "label": "Kitchen",
 "peak_gib": 46,
 "seed": 648462,
-"prompt": "integrated_multimodal_description: [Shot 1] the kitchen of {place}. Slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the kitchen of {place}. Slow side slide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2254,7 +2254,7 @@
 "label": "View",
 "peak_gib": 46,
 "seed": 265997,
-"prompt": "integrated_multimodal_description: [Shot 1] the view from the best window of {place}. Slow push toward the window. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the view from the best window of {place}. Slow push toward the window. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2268,8 +2268,8 @@
 "goal": "h3_video",
 "label": "Pitch",
 "peak_gib": 46,
-"seed": 562043,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the price and how to book a viewing: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 209860,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the price and how to book a viewing: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2314,7 +2314,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "place",
@@ -2347,7 +2347,7 @@
 "label": "Arrive",
 "peak_gib": 46,
 "seed": 798282,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} arrives in {place} with a backpack, looking around. Wide shot, slow push. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} arrives in {place} with a backpack, looking around. Wide shot, slow push. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2362,7 +2362,7 @@
 "label": "Streets",
 "peak_gib": 46,
 "seed": 88540,
-"prompt": "integrated_multimodal_description: [Shot 1] the streets of {place} alive with people. Handheld tracking. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the streets of {place} alive with people. Handheld tracking. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2376,8 +2376,8 @@
 "goal": "h3_video",
 "label": "Food",
 "peak_gib": 46,
-"seed": 806038,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} tastes local food in {place} and smiles. Close-up, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 798282,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tastes local food in {place} and smiles. Close-up, handheld. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2392,7 +2392,7 @@
 "label": "View",
 "peak_gib": 46,
 "seed": 693280,
-"prompt": "integrated_multimodal_description: [Shot 1] a breathtaking view over {place}. Slow drone pull back. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] a breathtaking view over {place}. Slow drone pull back. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2406,8 +2406,8 @@
 "goal": "h3_video",
 "label": "Moment",
 "peak_gib": 46,
-"seed": 405763,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says one line about why {place} is special. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, golden hour. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 798282,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one line about why {place} is special. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, golden hour. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2451,7 +2451,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "event",
@@ -2484,7 +2484,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 282495,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} teases {event} with excitement. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld, fast push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} teases {event} with excitement. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld, fast push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2499,7 +2499,7 @@
 "label": "Vibe",
 "peak_gib": 46,
 "seed": 711657,
-"prompt": "integrated_multimodal_description: [Shot 1] the venue for {event} lit up, crowd energy. Sweeping crane move. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the venue for {event} lit up, crowd energy. Sweeping crane move. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2513,8 +2513,8 @@
 "goal": "h3_video",
 "label": "Cta",
 "peak_gib": 46,
-"seed": 745091,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the date and tells viewers to come: {event}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 282495,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the date and tells viewers to come: {event}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2556,7 +2556,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "topic",
@@ -2589,7 +2589,7 @@
 "label": "Mistake",
 "peak_gib": 46,
 "seed": 270775,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} names the common mistake in {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot in a gym. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} names the common mistake in {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot in a gym. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2603,8 +2603,8 @@
 "goal": "h3_video",
 "label": "Form",
 "peak_gib": 46,
-"seed": 553057,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} demonstrates the correct form for {topic}. Full-body side angle, slow orbit. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 270775,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} demonstrates the correct form for {topic}. Full-body side angle, slow orbit. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2618,8 +2618,8 @@
 "goal": "h3_video",
 "label": "Push",
 "peak_gib": 46,
-"seed": 774059,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} encourages the viewer in one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 270775,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} encourages the viewer in one line. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2661,7 +2661,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "topic",
@@ -2694,7 +2694,7 @@
 "label": "Intro",
 "peak_gib": 46,
 "seed": 743658,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says they're getting ready for {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld mirror framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says they're getting ready for {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld mirror framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2708,8 +2708,8 @@
 "goal": "h3_video",
 "label": "Step 1",
 "peak_gib": 46,
-"seed": 60796,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} applies skincare, relaxed. Close-up, mirror framing. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 743658,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} applies skincare, relaxed. Close-up, mirror framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2723,8 +2723,8 @@
 "goal": "h3_video",
 "label": "Step 2",
 "peak_gib": 46,
-"seed": 635894,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} does their hair. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 743658,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does their hair. Medium close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2738,8 +2738,8 @@
 "goal": "h3_video",
 "label": "Chat",
 "peak_gib": 46,
-"seed": 121504,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} chats about the plans while finishing up. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Mirror framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 743658,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} chats about the plans while finishing up. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Mirror framing, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2753,8 +2753,8 @@
 "goal": "h3_video",
 "label": "Reveal",
 "peak_gib": 46,
-"seed": 716547,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} steps back and shows the finished look, confident. Full body, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 743658,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} steps back and shows the finished look, confident. Full body, slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2798,7 +2798,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "topic",
@@ -2838,7 +2838,7 @@
 "label": "Question",
 "peak_gib": 46,
 "seed": 606946,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the question behind {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks the question behind {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, locked-off. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2853,7 +2853,7 @@
 "label": "Visual 1",
 "peak_gib": 46,
 "seed": 859156,
-"prompt": "integrated_multimodal_description: [Shot 1] a clear visual of the first idea from: {points}. Slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] a clear visual of the first idea from: {points}. Slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2867,8 +2867,8 @@
 "goal": "h3_video",
 "label": "Explain",
 "peak_gib": 46,
-"seed": 795614,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the answer simply using: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 606946,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the answer simply using: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2883,7 +2883,7 @@
 "label": "Visual 2",
 "peak_gib": 46,
 "seed": 449512,
-"prompt": "integrated_multimodal_description: [Shot 1] a clear visual of the second idea from: {points}. Slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] a clear visual of the second idea from: {points}. Slow side slide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2897,8 +2897,8 @@
 "goal": "h3_video",
 "label": "Takeaway",
 "peak_gib": 46,
-"seed": 516747,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the one-line takeaway. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 606946,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the one-line takeaway. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2942,7 +2942,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -2981,7 +2981,7 @@
 "label": "Headline",
 "peak_gib": 46,
 "seed": 458982,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reads the headline about {topic} like a news anchor. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reads the headline about {topic} like a news anchor. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot at a news desk. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2996,7 +2996,7 @@
 "label": "Detail",
 "peak_gib": 46,
 "seed": 172656,
-"prompt": "integrated_multimodal_description: [Shot 1] footage that illustrates {topic}. Slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] footage that illustrates {topic}. Slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3010,8 +3010,8 @@
 "goal": "h3_video",
 "label": "Facts",
 "peak_gib": 46,
-"seed": 108858,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the key facts: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 458982,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives the key facts: {points}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot at a news desk. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3025,8 +3025,8 @@
 "goal": "h3_video",
 "label": "Signoff",
 "peak_gib": 46,
-"seed": 301804,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} signs off. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slow pull back. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 458982,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} signs off. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slow pull back. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3069,7 +3069,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "name",
@@ -3108,7 +3108,7 @@
 "label": "Founder",
 "peak_gib": 46,
 "seed": 432771,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {name} warmly. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot in a bright office. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} introduces {name} warmly. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot in a bright office. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3123,7 +3123,7 @@
 "label": "Team",
 "peak_gib": 46,
 "seed": 540629,
-"prompt": "integrated_multimodal_description: [Shot 1] a team working together in a bright office. Slow gimbal glide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] a team working together in a bright office. Slow gimbal glide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3137,8 +3137,8 @@
 "goal": "h3_video",
 "label": "Mission",
 "peak_gib": 46,
-"seed": 774751,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the mission: {story}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 432771,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} explains the mission: {story}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -3180,7 +3180,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "name",
@@ -3223,7 +3223,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 207572,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} announces that {name} is hiring {role}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} announces that {name} is hiring {role}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3238,7 +3238,7 @@
 "label": "Vibe",
 "peak_gib": 46,
 "seed": 815842,
-"prompt": "integrated_multimodal_description: [Shot 1] the workplace of {name}, people collaborating. Slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] the workplace of {name}, people collaborating. Slow side slide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3252,8 +3252,8 @@
 "goal": "h3_video",
 "label": "Apply",
 "peak_gib": 46,
-"seed": 222632,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says how to apply: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 207572,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says how to apply: {offer}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3295,7 +3295,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "for_who",
@@ -3333,7 +3333,7 @@
 "label": "Greet",
 "peak_gib": 46,
 "seed": 799038,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} wishes {for_who} a happy birthday, beaming. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} wishes {for_who} a happy birthday, beaming. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, party lights. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3347,8 +3347,8 @@
 "goal": "h3_video",
 "label": "Message",
 "peak_gib": 46,
-"seed": 381640,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says the personal message: {message}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 799038,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says the personal message: {message}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, slight push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3389,7 +3389,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "for_who",
@@ -3422,7 +3422,7 @@
 "label": "Thanks",
 "peak_gib": 46,
 "seed": 412894,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks {for_who} sincerely. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks {for_who} sincerely. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3436,8 +3436,8 @@
 "goal": "h3_video",
 "label": "Promise",
 "peak_gib": 46,
-"seed": 734088,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} promises what comes next, smiling. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 412894,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} promises what comes next, smiling. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, slow push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3478,7 +3478,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "song",
@@ -3521,7 +3521,7 @@
 "label": "Mood",
 "peak_gib": 46,
 "seed": 435788,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} stands alone under neon light, looking up. Slow push in, moody. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} stands alone under neon light, looking up. Slow push in, moody. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3536,7 +3536,7 @@
 "label": "Detail",
 "peak_gib": 46,
 "seed": 181242,
-"prompt": "integrated_multimodal_description: [Shot 1] a vinyl record spinning in low light. Macro slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] a vinyl record spinning in low light. Macro slide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3550,8 +3550,8 @@
 "goal": "h3_video",
 "label": "Announce",
 "peak_gib": 46,
-"seed": 248304,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says the song {song} is out {date}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, neon light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"seed": 435788,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says the song {song} is out {date}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, neon light. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3593,7 +3593,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "topic",
@@ -3621,7 +3621,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 612739,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a bold question about {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a bold question about {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie, push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3674,7 +3674,7 @@
 "label": "Hero",
 "peak_gib": 46,
 "seed": 391318,
-"prompt": "integrated_multimodal_description: [Shot 1] {product} turning in dramatic light. Slow orbit. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} turning in dramatic light. Slow orbit. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3704,7 +3704,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "product",
@@ -3732,7 +3732,7 @@
 "label": "Open",
 "peak_gib": 46,
 "seed": 644534,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} opens a box with {product} and gasps. Close-up, handheld. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} opens a box with {product} and gasps. Close-up, handheld. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3762,7 +3762,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "place",
@@ -3790,7 +3790,7 @@
 "label": "Walk",
 "peak_gib": 46,
 "seed": 175834,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} walks into {place} and looks around smiling. Tracking from behind. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} walks into {place} and looks around smiling. Tracking from behind. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3820,7 +3820,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "look",
@@ -3853,7 +3853,7 @@
 "label": "Before",
 "peak_gib": 46,
 "seed": 285299,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} shrugs in the before outfit of {look}. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shrugs in the before outfit of {look}. Medium shot. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3867,8 +3867,8 @@
 "goal": "h3_video",
 "label": "After",
 "peak_gib": 46,
-"seed": 425765,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} strikes a pose in the after outfit of {look}. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 285299,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} strikes a pose in the after outfit of {look}. Medium shot, push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3909,7 +3909,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -3937,7 +3937,7 @@
 "label": "Tip",
 "peak_gib": 46,
 "seed": 661127,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} shares one quick tip: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} shares one quick tip: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -3967,7 +3967,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "product",
@@ -3995,7 +3995,7 @@
 "label": "Bite",
 "peak_gib": 46,
 "seed": 614245,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} takes a first bite of {product} and reacts. Close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} takes a first bite of {product} and reacts. Close-up. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4025,7 +4025,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -4053,7 +4053,7 @@
 "label": "Dance",
 "peak_gib": 46,
 "seed": 121394,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} dances {topic} with energy. Full body, steady. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} dances {topic} with energy. Full body, steady. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4083,7 +4083,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "topic",
@@ -4111,7 +4111,7 @@
 "label": "Line",
 "peak_gib": 46,
 "seed": 735990,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says a motivational line about {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, golden light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says a motivational line about {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, golden light. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4141,7 +4141,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "look",
@@ -4169,7 +4169,7 @@
 "label": "Spin",
 "peak_gib": 46,
 "seed": 582443,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} does a slow spin showing {look}. Full body, mirror angle. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does a slow spin showing {look}. Full body, mirror angle. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4199,7 +4199,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "topic",
@@ -4227,7 +4227,7 @@
 "label": "Cta",
 "peak_gib": 46,
 "seed": 446572,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks viewers to follow for {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks viewers to follow for {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld selfie. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4280,7 +4280,7 @@
 "label": "View",
 "peak_gib": 46,
 "seed": 681759,
-"prompt": "integrated_multimodal_description: [Shot 1] {place}. Slow drone push forward. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {place}. Slow drone push forward. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4338,7 +4338,7 @@
 "label": "Before",
 "peak_gib": 46,
 "seed": 424447,
-"prompt": "integrated_multimodal_description: [Shot 1] {place} before cleaning. Static wide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {place} before cleaning. Static wide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4353,7 +4353,7 @@
 "label": "After",
 "peak_gib": 46,
 "seed": 799273,
-"prompt": "integrated_multimodal_description: [Shot 1] {place} after cleaning, tidy. Static wide. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {place} after cleaning, tidy. Static wide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4394,7 +4394,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "topic",
@@ -4422,7 +4422,7 @@
 "label": "Pet",
 "peak_gib": 46,
 "seed": 95033,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} laughs as {topic} jumps into their lap. Medium shot, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} laughs as {topic} jumps into their lap. Medium shot, handheld. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4452,7 +4452,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "product",
@@ -4480,7 +4480,7 @@
 "label": "Make",
 "peak_gib": 46,
 "seed": 368161,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} makes {product} in quick steps. Top-down close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} makes {product} in quick steps. Top-down close-up. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4510,7 +4510,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "topic",
@@ -4538,7 +4538,7 @@
 "label": "Rep",
 "peak_gib": 46,
 "seed": 110639,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} demonstrates {topic}. Full body side angle. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} demonstrates {topic}. Full body side angle. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4568,7 +4568,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -4596,7 +4596,7 @@
 "label": "News",
 "peak_gib": 46,
 "seed": 733576,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot, push in. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4626,7 +4626,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "product",
@@ -4654,7 +4654,7 @@
 "label": "Verdict",
 "peak_gib": 46,
 "seed": 330566,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, product in hand. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, product in hand. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4684,7 +4684,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "place",
@@ -4712,7 +4712,7 @@
 "label": "Reveal",
 "peak_gib": 46,
 "seed": 893041,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} turns around to reveal {place} behind them. Medium shot, slow pull back. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} turns around to reveal {place} behind them. Medium shot, slow pull back. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4742,7 +4742,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "look",
@@ -4770,7 +4770,7 @@
 "label": "Apply",
 "peak_gib": 46,
 "seed": 579739,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} applies {look} in one smooth move. Tight close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} applies {look} in one smooth move. Tight close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4800,7 +4800,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "topic",
@@ -4828,7 +4828,7 @@
 "label": "Skit",
 "peak_gib": 46,
 "seed": 412277,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out a funny moment: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out a funny moment: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4858,7 +4858,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "topic",
@@ -4886,7 +4886,7 @@
 "label": "Wish",
 "peak_gib": 46,
 "seed": 131513,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says {topic} warmly. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says {topic} warmly. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium close-up, party lights. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4916,7 +4916,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "product",
@@ -4944,7 +4944,7 @@
 "label": "Quote",
 "peak_gib": 46,
 "seed": 327074,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says one honest line about {product}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says one honest line about {product}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Seated medium close-up. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4997,7 +4997,7 @@
 "label": "Sting",
 "peak_gib": 46,
 "seed": 193752,
-"prompt": "integrated_multimodal_description: [Shot 1] an abstract swirl of coffee and steam for {product}. Macro, slow. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] an abstract swirl of coffee and steam for {product}. Macro, slow. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5050,7 +5050,7 @@
 "label": "Asmr",
 "peak_gib": 46,
 "seed": 189203,
-"prompt": "integrated_multimodal_description: [Shot 1] {product} breaking apart in close-up. Macro, static. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} breaking apart in close-up. Macro, static. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural ambient sound of the place.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5080,7 +5080,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -5108,7 +5108,7 @@
 "label": "Ask",
 "peak_gib": 46,
 "seed": 33070,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a passer-by: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a passer-by: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld medium shot. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5161,7 +5161,7 @@
 "label": "Reveal",
 "peak_gib": 46,
 "seed": 873791,
-"prompt": "integrated_multimodal_description: [Shot 1] {product} revealed under spotlights. Slow orbit. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {product} revealed under spotlights. Slow orbit. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5191,7 +5191,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "place",
@@ -5219,7 +5219,7 @@
 "label": "Work",
 "peak_gib": 46,
 "seed": 387658,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} works happily in {place}. Slow side slide. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} works happily in {place}. Slow side slide. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5249,7 +5249,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "place",
@@ -5277,7 +5277,7 @@
 "label": "Sunset",
 "peak_gib": 46,
 "seed": 375629,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} walks along {place} at sunset. Tracking, golden hour. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} walks along {place} at sunset. Tracking, golden hour. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5307,7 +5307,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "topic",
@@ -5335,7 +5335,7 @@
 "label": "Thanks",
 "peak_gib": 46,
 "seed": 507634,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks everyone for {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, warm light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks everyone for {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, warm light. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5365,7 +5365,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "topic",
@@ -5398,7 +5398,7 @@
 "label": "Expect",
 "peak_gib": 46,
 "seed": 900290,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} a glamorous version of {topic}. Cinematic, slow motion. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} a glamorous version of {topic}. Cinematic, slow motion. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5412,8 +5412,8 @@
 "goal": "h3_video",
 "label": "Reality",
 "peak_gib": 46,
-"seed": 161460,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} the chaotic real version of {topic}. Handheld, messy. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 900290,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} the chaotic real version of {topic}. Handheld, messy. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5454,7 +5454,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "topic",
@@ -5482,7 +5482,7 @@
 "label": "Line",
 "peak_gib": 46,
 "seed": 894070,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says deadpan: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Static close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says deadpan: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Static close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5512,7 +5512,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "topic",
@@ -5540,7 +5540,7 @@
 "label": "Pov",
 "peak_gib": 46,
 "seed": 346975,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out {topic} with growing regret. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out {topic} with growing regret. Medium close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5570,7 +5570,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -5598,7 +5598,7 @@
 "label": "Take",
 "peak_gib": 46,
 "seed": 739891,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} does a huge double take at {topic}. Medium shot, quick push. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} does a huge double take at {topic}. Medium shot, quick push. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5628,7 +5628,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -5656,7 +5656,7 @@
 "label": "When",
 "peak_gib": 46,
 "seed": 381284,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {topic} with silent fury. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {topic} with silent fury. Close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5686,7 +5686,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "product",
@@ -5714,7 +5714,7 @@
 "label": "Ad",
 "peak_gib": 46,
 "seed": 693506,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} sells {product} with full infomercial energy. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Bright TV-style. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} sells {product} with full infomercial energy. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Bright TV-style. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5744,7 +5744,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "topic",
@@ -5772,7 +5772,7 @@
 "label": "Fail",
 "peak_gib": 46,
 "seed": 771386,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} attempts {topic} and fails in slow motion. Slow motion, medium. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} attempts {topic} and fails in slow motion. Slow motion, medium. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5802,7 +5802,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "topic",
@@ -5830,7 +5830,7 @@
 "label": "Read",
 "peak_gib": 46,
 "seed": 411412,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reads {topic} like Shakespeare. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Low angle, spotlight. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reads {topic} like Shakespeare. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Low angle, spotlight. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5860,7 +5860,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -5888,7 +5888,7 @@
 "label": "Reveal",
 "peak_gib": 46,
 "seed": 452652,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} confesses with an evil smile: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Low angle, dramatic. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} confesses with an evil smile: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Low angle, dramatic. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5918,7 +5918,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -5951,7 +5951,7 @@
 "label": "Say",
 "peak_gib": 46,
 "seed": 685260,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says confidently: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says confidently: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Medium shot. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5965,8 +5965,8 @@
 "goal": "h3_video",
 "label": "Chaos",
 "peak_gib": 46,
-"seed": 503002,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} everything goes wrong after {topic}. Handheld, chaos. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 685260,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} everything goes wrong after {topic}. Handheld, chaos. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6007,7 +6007,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "topic",
@@ -6035,7 +6035,7 @@
 "label": "Wave",
 "peak_gib": 46,
 "seed": 869656,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} waves back happily, then realises {topic}. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} waves back happily, then realises {topic}. Medium shot. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6065,7 +6065,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "topic",
@@ -6093,7 +6093,7 @@
 "label": "Over",
 "peak_gib": 46,
 "seed": 612011,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} over-reacts wildly to {topic}. Push in fast. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} over-reacts wildly to {topic}. Push in fast. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6123,7 +6123,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -6151,7 +6151,7 @@
 "label": "Gag",
 "peak_gib": 46,
 "seed": 27639,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} loses a silent battle with {topic}. Wide, static. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} loses a silent battle with {topic}. Wide, static. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6181,7 +6181,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "topic",
@@ -6209,7 +6209,7 @@
 "label": "Ask",
 "peak_gib": 46,
 "seed": 796413,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks seriously: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld mic framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} asks seriously: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Handheld mic framing. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6239,7 +6239,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "topic",
@@ -6272,7 +6272,7 @@
 "label": "Setup",
 "peak_gib": 46,
 "seed": 654498,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} tiptoes tensely toward a noise. Dark, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} tiptoes tensely toward a noise. Dark, handheld. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6286,8 +6286,8 @@
 "goal": "h3_video",
 "label": "Twist",
 "peak_gib": 46,
-"seed": 193524,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} discovers {topic}. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"seed": 654498,
+"prompt": "integrated_multimodal_description: [Shot 1] {who} discovers {topic}. Close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6328,7 +6328,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -6356,7 +6356,7 @@
 "label": "Take",
 "peak_gib": 46,
 "seed": 786232,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} insists, eating a slice: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, smug. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} insists, eating a slice: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, smug. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6386,7 +6386,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "topic",
@@ -6414,7 +6414,7 @@
 "label": "Pour",
 "peak_gib": 46,
 "seed": 677674,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} pours milk first, then cereal, staring at camera: {topic}. Top-down then close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} pours milk first, then cereal, staring at camera: {topic}. Top-down then close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6444,7 +6444,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
 "key": "product",
@@ -6472,7 +6472,7 @@
 "label": "Pour",
 "peak_gib": 46,
 "seed": 306279,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} puts {product} and smiles. Close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} puts {product} and smiles. Close-up. The product is plain and unlabelled, with a smooth blank surface. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6502,7 +6502,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "look",
@@ -6530,7 +6530,7 @@
 "label": "Strut",
 "peak_gib": 46,
 "seed": 771109,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} struts proudly in {look}. Full body, low angle. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} struts proudly in {look}. Full body, low angle. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6560,7 +6560,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
 "key": "topic",
@@ -6588,7 +6588,7 @@
 "label": "Fold",
 "peak_gib": 46,
 "seed": 495078,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} folds laundry by {topic}, satisfied. Top-down. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} folds laundry by {topic}, satisfied. Top-down. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6618,7 +6618,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "topic",
@@ -6646,7 +6646,7 @@
 "label": "Brag",
 "peak_gib": 46,
 "seed": 577064,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} brags: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Desk, medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} brags: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Desk, medium close-up. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6676,7 +6676,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
 "key": "topic",
@@ -6704,7 +6704,7 @@
 "label": "Hog",
 "peak_gib": 46,
 "seed": 147762,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} sits on a gym bench {topic}, ignoring the queue. Wide, gym. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} sits on a gym bench {topic}, ignoring the queue. Wide, gym. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6734,7 +6734,7 @@
 {
 "key": "who",
 "label": "Who is in it",
-"default": "A fictional adult presenter in a plain mustard sweater"
+"default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
 "key": "topic",
@@ -6762,7 +6762,7 @@
 "label": "Say",
 "peak_gib": 46,
 "seed": 283554,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says proudly: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, book in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} says proudly: {topic}. They speak directly to the camera. The frame is clean, with nothing written on it and no captions. Close-up, book in hand. Every sign, screen and shop front is plain and blank, with nothing written on it, and nobody wears gloves; hands are bare and natural. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",

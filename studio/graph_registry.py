@@ -24,9 +24,30 @@ WORKFLOWS = {
 }
 
 
+#: Music page graphs. Those named "pack" need RyanOnTheInside's node pack: the call answers 409 with how to install it when ComfyUI doesn't have it.
+MUSIC_RUN, JOBS_POLL = "/api/music/run", "/api/jobs/ID"
+def _music(graph, **body): return {"method": "POST", "path": MUSIC_RUN, "body": {"graph": graph, **body}, "poll": JOBS_POLL}
+_SONG = {"style": "warm adult contemporary ballad, felt piano, soft female vocal", "lyrics": "[Verse]\nYellow paint on the old front door", "seconds": 60, "bpm": 72, "key": "G major", "seed": 7701}
+WORKFLOWS.update({
+    "music_ace15_turbo_api.json": ("Music: ACE-Step 1.5 Turbo", "music", _music("music_ace15_turbo_api.json", **_SONG)),
+    "music_ace15_xl_turbo_api.json": ("Music: ACE-Step 1.5 XL Turbo", "music", _music("music_ace15_xl_turbo_api.json", **_SONG)),
+    "music_ace15_xl_base_api.json": ("Music: ACE-Step 1.5 XL Base", "music", _music("music_ace15_xl_base_api.json", **_SONG)),
+    "music_yue2_int8_api.json": ("Music: YuE2 3B (int8)", "music", _music("music_yue2_int8_api.json", **_SONG)),
+    "music_yue2_bf16_api.json": ("Music: YuE2 3B (bf16)", "music", _music("music_yue2_bf16_api.json", **_SONG)),
+    "music_yue2_cover_api.json": ("Music: YuE2 cover of an uploaded song", "music", _music("music_yue2_cover_api.json", source="NAME_FROM_POST_/api/upload", **_SONG)),
+    "music_stable_open_api.json": ("Music: Stable Audio Open 1.0", "music", _music("music_stable_open_api.json", style="warm instrumental ballad, felt piano", seconds=47, seed=7701)),
+    "music_roti_ace_cover_api.json": ("Music: ACE-Step cover (pack: RyanOnTheInside)", "music", _music("music_roti_ace_cover_api.json", source="NAME_FROM_POST_/api/upload", **_SONG)),
+    "music_roti_ace_edit_api.json": ("Music: ACE-Step extend and repaint (pack: RyanOnTheInside)", "music", _music("music_roti_ace_edit_api.json", source="NAME_FROM_POST_/api/upload", extend=15, repaint_start=30, repaint_end=40, **_SONG)),
+    "music_roti_ace_extract_api.json": ("Music: ACE-Step stem extract (pack: RyanOnTheInside)", "music", _music("music_roti_ace_extract_api.json", source="NAME_FROM_POST_/api/upload", track="vocals", **_SONG)),
+    "music_roti_features_api.json": ("Music: audio features as numbers (pack: RyanOnTheInside)", "music", _music("music_roti_features_api.json", source="NAME_FROM_POST_/api/upload", fps=15)),
+    "music_roti_visualizer_api.json": ("Music: audio-reactive visual (pack: RyanOnTheInside)", "music", _music("music_roti_visualizer_api.json", source="NAME_FROM_POST_/api/upload", start=0, end=30, method="bar")),
+})
+WORKFLOW_PAGE = {"worldkit": "World Kit", "virtualset": "Virtual Set", "music": "Music"}
+
+
 def workflow_files():
-    """The graph templates World Kit and Virtual Set read."""
-    return sorted(p.name for p in WF.glob("*.json") if p.name.startswith(("worldkit_", "vset_")))
+    """The graph templates World Kit, Virtual Set and the Music page read."""
+    return sorted(p.name for p in WF.glob("*.json") if p.name.startswith(("worldkit_", "vset_", "music_")))
 
 
 def _goal_rows():
@@ -101,7 +122,7 @@ def _motion_rows():
 
 
 def _workflow_rows():
-    return [{"key": "workflow:" + n, "kind": "workflow", "id": n, "label": WORKFLOWS[n][0], "sub": "World Kit" if WORKFLOWS[n][1] == "worldkit" else "Virtual Set", "graph_url": "/api/workflow-graphs/" + n, "open": WORKFLOWS[n][1], "call": WORKFLOWS[n][2]} for n in workflow_files() if n in WORKFLOWS]
+    return [{"key": "workflow:" + n, "kind": "workflow", "id": n, "label": WORKFLOWS[n][0], "sub": WORKFLOW_PAGE[WORKFLOWS[n][1]], "graph_url": "/api/workflow-graphs/" + n, "open": WORKFLOWS[n][1], "call": WORKFLOWS[n][2]} for n in workflow_files() if n in WORKFLOWS]
 
 
 def all_rows():

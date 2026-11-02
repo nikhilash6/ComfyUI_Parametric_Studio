@@ -62,6 +62,7 @@ ROUTE_WORDS = {   # what a person calls each studio specialist's subject. Longes
     "recipes": ("recipe", "recipes", "process guide", "processes"),
     "designers": ("designer", "designers", "design page", "design pack"),
     "university": ("university", "lesson", "lessons", "course", "quiz"),
+    "music-song-models": ("music page", "music model", "music models", "ace-step", "yue2", "music 3", "audio-reactive", "audio reactive", "ryanontheinside", "paper boats", "tangoflux", "magenta", "mulacover", "songgeneration", "extract guider"),
 }
 GENERIC_FAMILY_WORDS = {"models", "model", "video", "image", "older", "version", "not", "stated", "voice", "song", "music", "mesh", "edit", "dev", "fill", "separation", "audio", "faces", "identity", "portrait", "animation", "depth", "normals", "pose", "upscale", "restore", "segmentation", "matting", "captioning", "tagging", "foley"}
 
@@ -349,6 +350,9 @@ def route(question, members):
             for word in re.split(r"[\s-]+", family_lower):      # 'Trellis' finds the 3D specialist; a word every family shares finds nobody
                 if len(word) >= 3 and word not in GENERIC_FAMILY_WORDS and word in words:
                     score += 4
+            for phrase in ROUTE_WORDS.get(m["id"], ()):      # what people call a family's subject when its name doesn't say it
+                if (phrase in q_lower) if " " in phrase or "-" in phrase else (phrase in words):
+                    score = max(score, 3 + len(phrase.split()))
         elif m["tier"] == "studio":
             if m["name"].lower() in q_lower:
                 score += 5

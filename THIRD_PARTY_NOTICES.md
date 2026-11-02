@@ -29,6 +29,14 @@ The official styles in `studio/music3_styles.json` are substantial portions of M
 
 We take the upstream licence to cover the caption-rewriter folder: the GitHub repository has no LICENSE file of its own and its README badge links to the Hugging Face licence. That reading is our inference, not stated text.
 
+### RyanOnTheInside
+
+[ComfyUI_RyanOnTheInside](https://github.com/ryanontheinside/ComfyUI_RyanOnTheInside), MIT, Copyright (c) 2024 RyanOnTheInside, is not bundled, and no line of it is copied here. The Music page credits it. Some of its audio, video and feature numbers were made by running the real pack on a separate ComfyUI: `studio/web/music/reactive.mp4`, `*.features.json`, and takes marked with his name. The graphs `workflows/music_roti_*.json` call his nodes by name and need the pack installed.
+
+### Music page audio
+
+`studio/web/music/` holds renders of one original brief written for the page. No samples, no real artist, no existing lyric. Each model's licence applies to its own files: the MiniMax-Music3 Community License needs "MiniMax-Music3" shown prominently in a commercial product; YuE2 is CC BY-NC 4.0, so its demo renders are non-commercial; Stable Audio Open is under the Stability AI Community License; ACE-Step 1.5 is MIT. No model weights are shipped.
+
 ### RES4LYF
 
 RES4LYF is not bundled. The RES4LYF page credits it, with our own notes and short quotes. Its LICENSE adds a commercial-service restriction in front of the AGPL-3.0 text.

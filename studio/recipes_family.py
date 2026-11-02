@@ -11,7 +11,7 @@ def build_graph(spec, values=None, image="check.png", seed=None):
     g = json.load(open(DIR / f"{spec['template']}.json")); values = values or {}
     unet = next(k for k, n in g.items() if n["class_type"] == "UNETLoader"); sampler = next(k for k, n in g.items() if n["class_type"] in ("KSampler", "SamplerCustom"))
     pos = g[sampler]["inputs"]["positive"][0]
-    while "conditioning" in g[pos]["inputs"]: pos = g[pos]["inputs"]["conditioning"][0]
+    while "conditioning" in g[pos]["inputs"] or g[pos]["class_type"] == "WanImageToVideo": pos = g[pos]["inputs"]["conditioning" if "conditioning" in g[pos]["inputs"] else "positive"][0]
     g[pos]["inputs"]["text" if "text" in g[pos]["inputs"] else "prompt"] = R._fill(spec["prompt"], values)
     g[sampler]["inputs"]["seed" if "seed" in g[sampler]["inputs"] else "noise_seed"] = int(spec["seed"] if seed is None else seed)
     for k, n in g.items():
