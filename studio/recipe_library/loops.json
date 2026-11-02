@@ -461,7 +461,7 @@
 {
 "key": "scene",
 "label": "The picture",
-"default": "a glowing neon sign on a brick wall at night above a wet street, saturated pink and blue light"
+"default": "a glowing pink and blue neon tube shaped like a simple wave line on a brick wall at night above a wet street"
 }
 ],
 "models": [
@@ -508,7 +508,7 @@
 "seed": 593335,
 "image": "@still",
 "last_image": "@still",
-"prompt": "the neon tubes flicker once and settle, the glow on the wet street pulses in one steady cycle and returns to the same brightness. A soft electric buzz and a distant city hum. Keep the sign, the wall, the framing and the colours the same",
+"prompt": "the neon tubes flicker once and settle, the glow on the wet street pulses in one steady cycle and returns to the same brightness. A soft electric buzz and a distant city hum. Keep the neon tube, the wall, the framing and the colours the same",
 "options": {
 "camera": "locked",
 "aspect": "9:16",

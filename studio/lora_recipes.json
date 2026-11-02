@@ -305,7 +305,8 @@
 },
 "keyframes": {
 "still": "An adult woman in a grey t-shirt and jeans stands at one side of a bright living room.",
-"end": "An adult woman in a grey t-shirt and jeans stands by the window of a bright living room, facing the camera and smiling."
+"end": "An adult woman in a grey t-shirt and jeans stands by the window of a bright living room, facing the camera and smiling.",
+"end_edit": "Show the same woman a few steps later, standing by the window of the same living room, facing the camera and smiling. Keep her face, hair and clothes exactly the same."
 }
 },
 {
@@ -6113,7 +6114,7 @@ null
 "follow with the author phrases: continuous surreal transformation, environment constantly morphs..."
 ],
 "avoid": [],
-"scene": "animatediff_style, continuous surreal transformation, the entire environment constantly morphs, warps and reshapes, seamless structural transformations, fluid evolving forms, one continuous nonstop transformation, dreamlike continuous motion",
+"scene": "animatediff_style, continuous surreal transformation, a garden of giant flowers and seashells constantly morphs, warps and reshapes into floating islands and coral, seamless structural transformations, fluid evolving forms, one continuous nonstop transformation, dreamlike continuous motion, no people",
 "expected_effect": "constantly morphing, warping environment in one continuous transformation",
 "failure_signs": [
 "n",

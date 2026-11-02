@@ -31,6 +31,8 @@ def build_graph(spec, values=None, image="check.png", seed=None):
 def _run_family_lora(run, st, spec, ctx):
     S = R._srv(); image = R._input_name(run, ctx, spec["image"], "image") if spec.get("image") else "check.png"; seed = int(spec["seed"]) + ctx["seed_add"]; st["seed"] = seed
     g = build_graph(spec, ctx["values"], image, seed)
+    from studio import apps as A, recipe_check as C
+    g, _ = C.resolve_names(g, A.object_info())                                  # a model kept in a subfolder on this machine
     try: r = S.comfy("/prompt", {"prompt": g, "client_id": S.CLIENT_ID})
     except Exception as e: raise R.StepError(f"ComfyUI rejected the graph: {str(e)[:300]}") from None
     R._keep_graph(run, st, lambda: g); jid = r["prompt_id"]; S.JOBS[jid] = {"goal": "template:" + spec["template"], "prompt": spec["template"], "started": time.time(), "options": {}}
@@ -52,7 +54,8 @@ def h3_reference_graph(spec, values=None, pictures=(), video=None, seed=None):
     g["lora"] = {"class_type": spec.get("loader") or "LoraLoaderBypassModelOnly", "inputs": {"model": ["unet", 0], "lora_name": spec["lora"], "strength_model": float(spec.get("strength", 1))}}
     g["guider"] = {**g["guider"], "inputs": {"model": ["lora", 0], "conditioning": ["free_te", 0]}}; g["sched"] = {**g["sched"], "inputs": {"model": ["lora", 0], "scheduler": spec.get("scheduler") or "simple", "steps": int(spec.get("steps") or 20), "denoise": 1.0}}
     g["ksel"] = {**g["ksel"], "inputs": {"sampler_name": spec.get("sampler") or "euler"}}; g["noise"] = {**g["noise"], "inputs": {"noise_seed": int(spec["seed"] if seed is None else seed)}}
-    g["mk"] = {"class_type": "CreateVideo", "inputs": {"images": ["dec", 0], "fps": 24.0, **({"audio": audio} if audio else {})}}; g["save"] = {"class_type": "SaveVideo", "inputs": {"video": ["mk", 0], "filename_prefix": "h3_reference/h3_reference", "format": "auto", "codec": "auto"}}
+    if not audio: g["adec"] = {"class_type": "VAEDecodeAudio", "inputs": {"samples": ["samp", 0], "vae": ["avae", 0]}}; audio = ["adec", 0]   # the clip's own sound, from the same latent
+    g["mk"] = {"class_type": "CreateVideo", "inputs": {"images": ["dec", 0], "fps": 24.0, "audio": audio}}; g["save"] = {"class_type": "SaveVideo", "inputs": {"video": ["mk", 0], "filename_prefix": "h3_reference/h3_reference", "format": "auto", "codec": "auto"}}
     return g
 def _run_h3_reference(run, st, spec, ctx):
     S = R._srv(); seed = int(spec["seed"]) + ctx["seed_add"]; st["seed"] = seed

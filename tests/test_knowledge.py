@@ -56,7 +56,8 @@ def test_lesson_evidence_points_at_the_matching_line():
 
 def test_recipe_rows_tell_a_stored_render_from_a_port():
     rows = {r["id"]: r for r in K.recipe("loop", limit=100)["rows"]}
-    assert rows["loop_breathing"]["rendered"] is True and rows["loop_breathing"]["seconds"] > 0 and rows["loop_hair_sway"]["rendered"] is False
+    unrendered = [r for r in rows.values() if not r["rendered"]]
+    assert rows["loop_breathing"]["rendered"] is True and rows["loop_breathing"]["seconds"] > 0 and all(not r.get("seconds") for r in unrendered)
     assert line_holds(rows["loop_breathing"]["evidence"], "loop_breathing")
 
 

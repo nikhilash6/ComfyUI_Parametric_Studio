@@ -73,13 +73,14 @@ def bvh_preview(bvh, out_mp4, *, size=512, fps=24):
     names, parents, offsets, chans, data, ft = parse_bvh(Path(bvh).read_text()); P = bvh_positions(names, parents, offsets, chans, data)
     step = max(1, round(1 / (ft * fps))); P = P[::step]; up = int(np.argmax(np.ptp(P[0], axis=0))); side = [a for a in range(3) if a != up]
     a = np.radians(30); X = P[..., side[0]] * np.cos(a) + P[..., side[1]] * np.sin(a); Y = P[..., up]
-    lo, hi = np.array([X.min(), Y.min()]), np.array([X.max(), Y.max()]); span = float(max(hi - lo)) * 1.15 or 1.0; mid = (lo + hi) / 2
+    drawn = [j for j in range(len(names)) if parents[j] >= 0 and not any(c.endswith("position") for c in chans[j])] + [p for p in parents if p >= 0]
+    lo, hi = np.array([X[:, drawn].min(), Y[:, drawn].min()]), np.array([X[:, drawn].max(), Y[:, drawn].max()]); span = float(max(hi - lo)) * 1.15 or 1.0; mid = (lo + hi) / 2
     with tempfile.TemporaryDirectory() as d:
         for f in range(len(P)):
             im = Image.new("RGB", (size, size), (20, 22, 24)); dr = ImageDraw.Draw(im); pt = lambda j: ((X[f, j] - mid[0]) / span * size + size / 2, size / 2 - (Y[f, j] - mid[1]) / span * size)
-            ground = size / 2 - (Y.min() - mid[1]) / span * size; dr.line([(0, ground), (size, ground)], fill=(70, 74, 78), width=2)
+            ground = size / 2 - (lo[1] - mid[1]) / span * size; dr.line([(0, ground), (size, ground)], fill=(70, 74, 78), width=2)
             for j, p in enumerate(parents):
-                if p >= 0: dr.line([pt(p), pt(j)], fill=(245, 200, 60), width=4)
+                if p >= 0 and not any(c.endswith("position") for c in chans[j]): dr.line([pt(p), pt(j)], fill=(245, 200, 60), width=4)   # a joint that carries its own position is not a bone from its parent
             im.save(f"{d}/{f:05d}.png")
         subprocess.run(["ffmpeg", "-y", "-nostdin", "-loglevel", "error", "-framerate", str(fps), "-i", f"{d}/%05d.png", "-c:v", "libx264", "-pix_fmt", "yuv420p", str(out_mp4)], check=True)
     return {"joints": len([n for n in names if not n.endswith("_end")]), "frames": len(data)}

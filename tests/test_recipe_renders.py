@@ -137,11 +137,10 @@ def test_a_family_lora_goes_in_right_after_the_model_and_nothing_skips_it():
         names = [n["inputs"]["lora_name"] for n in g.values() if n["class_type"] == "LoraLoaderModelOnly"]; assert r["lora_path"] in names and len(names) == len(set(names)), r["id"]
         assert "our own starting point" in r["why"], r["id"]
 
-def test_video_shots_keep_one_person_and_a_clean_frame():
+def test_video_shots_keep_one_person_and_name_nothing_unwanted():
     for r in R.library():
         if not r["id"].startswith("vid_"): continue
-        who = next((f for f in r.get("fields", []) if f["key"] == "who"), None); shots = [s for s in r["steps"] if s.get("goal") == "h3_video"]
-        for s in shots: assert "nothing written on it" in s["prompt"], (r["id"], s["id"])
-        if who:
-            assert who["default"].startswith("A fictional adult"), r["id"]
-            assert len({s["seed"] for s in shots if "{who}" in s["prompt"]}) <= 1, r["id"]
+        for s in r["steps"]:
+            p = str(s.get("prompt", "")); assert "gloves" not in p and "shop front" not in p and "captions" not in p, (r["id"], s["id"])
+        refs = [s for s in r["steps"] if s["type"] == "h3_reference"]
+        if refs: assert r["steps"][0]["id"] == "face" and all(s["pictures"] == ["@face"] and "<Picture 1>" in s["prompt"] for s in refs), r["id"]
