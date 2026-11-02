@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException
 router = APIRouter(); WF = Path(__file__).resolve().parent.parent / "workflows"
 RUNS = {"goal": "ComfyUI graph", "recipe": "ComfyUI graphs in a chain", "family": "ComfyUI graph on its family's own server", "runner": "A small program in its own process, not a ComfyUI graph", "tool": "A third-party tool in its own environment, not a ComfyUI graph", "workflow": "ComfyUI graph that World Kit or Virtual Set fills in and sends"}
 MODEL_BODY = {"mesh_from_image": {"image": "NAME_FROM_POST_/api/upload"}, "relief_from_image": {"image": "NAME_FROM_POST_/api/upload"}, "splat_from_image": {"image": "NAME_FROM_POST_/api/upload"}, "rigged_from_image": {"image": "NAME_FROM_POST_/api/upload"}, "mesh_from_text": {"prompt": "a wooden chair", "seed": 7}, "motion": {"prompt": "a person walks forward, then waves", "seed": 7}, "rig": {"mesh": "PATH_FROM_GET_/api/models3d"}}
-ASSETS, SHOTS = "/api/worldkit/assets", "/api/vset/shots"
+ASSETS, SHOTS, GAMES = "/api/worldkit/assets", "/api/vset/shots", "/api/gamebuilder/games"
 def _shot(mode, **settings):
     return {"shot": {"mode": mode, "mode_settings": settings, "set": {"place": "PLACE_ASSET_ID"}, "format": {"aspect": "16:9", "seconds": 5}, "prompt": "a slow walk along the street at dusk"}, "render": True}
 #: The graph templates behind World Kit and Virtual Set: label, where it opens, and the call that sends it. A new file here without a row fails a test.
@@ -21,6 +21,7 @@ WORKFLOWS = {
     "vset_keyframe_edit_api.json": ("Virtual Set: edit a keyframe (Qwen-Image 2.1)", "virtualset", {"method": "POST", "path": SHOTS, "body": _shot("C", keyframes="qwen"), "poll": SHOTS + "/ID"}),
     "vset_ltx25_layout_api.json": ("Virtual Set: LTX-2.5 layout to render", "virtualset", {"method": "POST", "path": SHOTS, "body": _shot("A", engine="ltx", keyframes="qwen"), "poll": SHOTS + "/ID"}),
     "vset_wan22_funcontrol_api.json": ("Virtual Set: Wan 2.2 Fun Control", "virtualset", {"method": "POST", "path": SHOTS, "body": _shot("A", engine="wan", control="depth"), "poll": SHOTS + "/ID"}),
+    "gamebuilder_ace15_music_api.json": ("Game Builder: a game's music (ACE-Step 1.5 Turbo)", "gamebuilder", {"method": "POST", "path": GAMES, "body": {"prompts": ["a platformer in a mushroom forest"], "size": "small"}, "poll": GAMES + "/ID"}),
 }
 
 
@@ -52,12 +53,12 @@ WORKFLOWS.update({
     "oneclick_effect_clip_api.json": ("Edit: a photo effect, then an LTX-2.5 clip from the photo to the effect", "edit", _oneclick("effects", image="NAME_FROM_POST_/api/upload", options={"effect": "inflate", "output": "still + clip"})),
     "oneclick_matte_api.json": ("Edit: alpha matte of a clip and a new Z-Image set behind it (LTX-2.5 Alpha-Gen)", "edit", _oneclick("matte", video="NAME_FROM_POST_/api/upload", text={"background": "a sunlit seaside boardwalk"})),
 })
-WORKFLOW_PAGE = {"worldkit": "World Kit", "virtualset": "Virtual Set", "music": "Music", "edit": "Edit"}
+WORKFLOW_PAGE = {"worldkit": "World Kit", "virtualset": "Virtual Set", "music": "Music", "edit": "Edit", "gamebuilder": "Game Builder"}
 
 
 def workflow_files():
-    """The graph templates World Kit, Virtual Set, the Music page and the Edit page's one-click tools read."""
-    return sorted(p.name for p in WF.glob("*.json") if p.name.startswith(("worldkit_", "vset_", "music_", "oneclick_")))
+    """The graph templates World Kit, Virtual Set, the Music page, the Edit page's one-click tools and the Game Builder read."""
+    return sorted(p.name for p in WF.glob("*.json") if p.name.startswith(("worldkit_", "vset_", "music_", "oneclick_", "gamebuilder_")))
 
 
 def _goal_rows():
@@ -107,6 +108,12 @@ def _tryon_rows():
     return [{"key": "tryon:" + m["id"], "kind": m["via"], "section": "tryon", "id": m["id"], "label": f"Try-on: {m['label']}", "sub": m["note"], "licence": m["licence"], "graph_url": None, "open": "design/fashion", "call": {"method": "POST", "path": "/api/tryon/run", "body": {"method": m["id"], "person": "NAME_FROM_POST_/api/upload", "garment": "NAME_FROM_POST_/api/upload", "category": "tops"}, "poll": "/api/tryon/jobs/ID"}} for m in T.METHODS if m["via"] == "runner"]
 
 
+def _game_rows():
+    """The Game Builder runs one whole pipeline, not one graph, so each genre kit is a row with the real call that builds a game with it."""
+    from studio.gamebuilder.spec import KITS
+    return [{"key": "gamebuilder:" + k, "kind": "runner", "section": "gamebuilder", "id": k, "label": f"Game Builder: {v['label']}", "sub": v["pitch"], "licence": "AGPL-3.0 for the kit; each asset keeps its model's licence", "graph_url": None, "open": "gamebuilder", "call": {"method": "POST", "path": GAMES, "body": {"prompts": ["what the game is"], "kit": k, "size": "small"}, "poll": GAMES + "/ID"}} for k, v in KITS.items()]
+
+
 def _voice_rows():
     """The speech models the Voices page runs: each one a runner in its own process, with its licence and proof. Listed whether or not this machine has the weights; the row says."""
     from studio import feature_voices as V
@@ -136,7 +143,7 @@ def _workflow_rows():
 
 
 def all_rows():
-    rows = [*_goal_rows(), *_model_rows(), *_tryon_rows(), *_motion_rows(), *_voice_rows(), *_workflow_rows(), *_family_rows(), *_recipe_rows()]
+    rows = [*_goal_rows(), *_model_rows(), *_tryon_rows(), *_motion_rows(), *_voice_rows(), *_game_rows(), *_workflow_rows(), *_family_rows(), *_recipe_rows()]
     for r in rows: r.setdefault("runs_as", RUNS[r["kind"]])
     return rows
 

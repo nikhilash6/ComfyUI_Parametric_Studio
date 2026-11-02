@@ -1,0 +1,1 @@
+"""The Game Builder: a few prompts in, a playable 3D game out. Prompts pick one of five genre kits written by hand in GDScript and fill a validated JSON spec; models make what the kit shows and plays; Godot checks and exports it. A model never writes code that goes unchecked. See pipeline.py for the stages."""
