@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { clock, elapsed, totalSeconds, isStopped, stateWord, readLive, perforations, nodeName, scrubTime, miniGraph } from './shotboard_film.js';
+import { clock, elapsed, totalSeconds, isStopped, stateWord, readLive, perforations, nodeName, scrubTime, miniGraph, boardEstimate, RENDER_SECONDS } from './shotboard_film.js';
 
 assert.strictEqual(clock(0), '0:00'); assert.strictEqual(clock(187), '3:07'); assert.strictEqual(clock(3725), '1:02:05'); assert.strictEqual(clock(undefined), '0:00'); assert.strictEqual(clock(-4), '0:00');
 
@@ -38,4 +38,10 @@ assert.strictEqual(g.nodes.length, 4); assert.strictEqual(g.width, 3); assert.st
 assert.strictEqual(g.nodes.find((n) => n.id === 'd').x, 2);
 assert.strictEqual(miniGraph({ a: { class_type: 'A', inputs: { x: ['b', 0] } }, b: { class_type: 'B', inputs: { x: ['a', 0] } } }).nodes.length, 2, 'a loop does not hang');
 assert.deepStrictEqual(miniGraph(null).nodes, []);
+// The estimate adds measured times only; a VFX job is keyed by its size, and a job with no measurement is counted, not guessed
+const T = (id, goal = 'x') => ({ id, goal });
+assert.deepStrictEqual(boardEstimate([T('reshoot'), T('recast')], { quality: 'standard' }), { seconds: RENDER_SECONDS.reshoot + RENDER_SECONDS.recast, unknown: 0 });
+assert.deepStrictEqual(boardEstimate([T('water', 'vfx_ltx')], { quality: 'standard' }), { seconds: RENDER_SECONDS['water:standard'], unknown: 0 });
+assert.strictEqual(boardEstimate([T('water', 'vfx_ltx')], { quality: 'nope' }).unknown, 1);
+assert.deepStrictEqual(boardEstimate([], {}), { seconds: 0, unknown: 0 });
 console.log('shotboard film ok');

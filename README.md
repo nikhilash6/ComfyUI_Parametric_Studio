@@ -27,7 +27,7 @@ Built for the Open Source Higgsfield contest. Entered in **Open Weights Only** a
 |---|---|
 | **What's new** | One clip becomes a whole shoot in one queue: reshoot, frozen-time orbit, recast, then four LTX-2.5 effects, and every result keeps its exact graph and seed. Code: the queue in [`studio/web/shotboard.js`](studio/web/shotboard.js), job states in [`shotboard_logic.js`](studio/web/shotboard_logic.js), the board in [`shotboard_view.js`](studio/web/shotboard_view.js), the contact-video export in [`studio/shot_board.py`](studio/shot_board.py). Tests: [`tests/test_shot_board.py`](tests/test_shot_board.py) |
 | **Open Weights Only** | [`tests/test_open_edition_no_paid_apis.py`](tests/test_open_edition_no_paid_apis.py) checks every graph in [`workflows/`](workflows) and [`studio/family_templates/`](studio/family_templates) against the 322 partner node ids in ComfyUI 0.43.0 ([`tests/partner_node_ids.txt`](tests/partner_node_ids.txt)), and keeps paid API hosts and SDKs out of `psn/` and `psn_nodes/`. The open edition hides partner apps: [`tests/test_publication.py`](tests/test_publication.py) |
-| **LTX is the core** | [`workflows/ltx25_vfx_api.json`](workflows/ltx25_vfx_api.json): 30 nodes, LTX-2.5 with one of four Lightricks IC-LoRAs, picked per effect in `VFX_EFFECTS` in [`studio/goals.py`](studio/goals.py): water, clean plate, day to night, matte |
+| **LTX is the core** | [`workflows/ltx25_vfx_api.json`](workflows/ltx25_vfx_api.json): 30 nodes, LTX-2.5 with one of four Lightricks IC-LoRAs, picked per effect in `VFX_EFFECTS` in [`studio/goals.py`](studio/goals.py): water, clean plate, day to night, matte. A transition between two clips runs the LTX-2.3 transition LoRA on LTX-2.5 ([`workflows/ltx25_transition_api.json`](workflows/ltx25_transition_api.json)), rendered: [`studio/web/showcase/transition_proof.json`](studio/web/showcase/transition_proof.json) |
 | **Demo** | [1:49 screen recording of one real run](docs/media/shotboard_demo.mp4): waits sped up and labelled, captions, no sound |
 | **Try it** | [Read-only demo](https://parametricparadigm.github.io/ComfyUI_Parametric_Studio/): the real UI and real renders, it generates nothing |
 | **Install** | [Three lines if you already run ComfyUI](#install), or one installer command |
@@ -41,6 +41,13 @@ Bring one clip and queue the lot: reshoot it with a new camera, orbit around the
 **The four LTX-2.5 effects on one clip**, from the same run (source, water, clean plate, day to night, matte). All four use [`workflows/ltx25_vfx_api.json`](workflows/ltx25_vfx_api.json) with a different IC-LoRA:
 
 ![Source clip, then LTX-2.5 water, clean plate, day to night and matte](docs/media/shotboard_ltx_vfx.webp)
+
+| | |
+|---|---|
+| ![Flood: the LTX-2.5 water effect wiped over the source clip](docs/media/shotboard_flood.gif) | ![Night: the LTX-2.5 day to night effect wiped over the source clip](docs/media/shotboard_night.gif) |
+| ![Clean plate: the person painted out by LTX-2.5, wiped over the source clip](docs/media/shotboard_clean_plate.gif) | ![Cutout: the LTX-2.5 matte used as alpha over a checkerboard, wiped over the source clip](docs/media/shotboard_cutout.gif) |
+
+<sub>Our own renders of one invented clip: the source is itself an LTX-2.5 render of a made-up person, not real footage. Each GIF wipes the effect (left of the line) over the source (right). Flood, night, clean plate and the cutout made from the matte, with their settings, seeds and render times in [`studio/web/showcase/vfx_same_clip.json`](studio/web/showcase/vfx_same_clip.json).</sub>
 
 **Peak VRAM** for the same goals rendered on their own on our 96 GB card: reshoot 49.3 GiB, VFX water 47.3 GiB, VFX clean plate 44.8 GiB, recast 36.3 GiB (recorded in [`studio/web/showcase/showcase.json`](studio/web/showcase/showcase.json)). These are peaks on a card with room to spare, not minimums. No smaller card has been tried.
 
@@ -92,6 +99,8 @@ It needs a GPU driver already installed, and about 10 GB of disk plus the models
 Full install on a clean Ubuntu 24.04 box: about 29 min to the studio page (PyTorch is ~3 GB), first image about 30 s once the models are in. Model download time depends on your Hugging Face speed.
 
 **For the Shot Board:** `python3 install.py --goals reshoot,orbit360,recast,vfx_ltx --include-gated`. LTX-2.5 and its IC-LoRAs are gated: accept each licence on Hugging Face and set `HF_TOKEN` first. On our box, the dry run of that command plans 99.9 GB of models and about 110 GB of disk, and adds the ComfyUI-LTXVideo and KJNodes packs. It has not been run end to end on a clean machine.
+
+Measured: about 38.5 GiB per effect job; about 20 GiB peak with `--vram-headroom` (24 GB cards likely, not yet run on one); 16 GB not supported yet.
 
 Full details, including Windows, Mac and what has and hasn't been tested on each, are in **[INSTALL.md](INSTALL.md)**. Models and their licences are in **[MODELS.md](MODELS.md)**; they are not in this repo, and some have their own terms and regional limits. MiniMax H3's licence excludes the US, EU, UK and South Korea, and that reaches its outputs too, so read it before you install those goals.
 

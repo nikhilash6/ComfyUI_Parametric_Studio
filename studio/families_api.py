@@ -12,7 +12,7 @@ from studio.ui2api import ui_to_api
 ROOT = Path(__file__).resolve().parent; STATUS = ROOT / "family_status.json"; WEB = ROOT / "web"; EXTRA = ROOT / "family_templates"
 REAP_MIN = float(os.environ.get("STUDIO_FAMILY_REAP_MIN", "15")); RUN_TIMEOUT = int(os.environ.get("STUDIO_FAMILY_RUN_TIMEOUT", "1800")); DISK_SPARE_GB = 25
 EXT = (".safetensors", ".ckpt", ".pt", ".pth", ".bin", ".gguf", ".sft", ".onnx", ".pkl")
-GOAL_FAMILY = {"image": "Flux.2", "video": "Wan2.2", "animate": "Wan2.2", "reshoot_wan": "Wan2.2", "anime": "Anima", "flux3": "Flux.3-Klein", "video_ltx": "LTX-2.5", "animate_ltx": "LTX-2.5", "vfx_ltx": "LTX-2.5", "music": "Mini-Max-Music3", "h3_video": "MiniMax-H3", "h3_animate": "MiniMax-H3", "recast": "MiniMax-H3", "reshoot": "MiniMax-H3", "orbit360": "MiniMax-H3", "director": "MiniMax-H3", "director_keyframes": "MiniMax-H3"}
+GOAL_FAMILY = {"image": "Flux.2", "video": "Wan2.2", "animate": "Wan2.2", "reshoot_wan": "Wan2.2", "anime": "Anima", "flux3": "Flux.3-Klein", "video_ltx": "LTX-2.5", "animate_ltx": "LTX-2.5", "vfx_ltx": "LTX-2.5", "ltx_transition": "LTX-2.5", "music": "Mini-Max-Music3", "h3_video": "MiniMax-H3", "h3_animate": "MiniMax-H3", "recast": "MiniMax-H3", "reshoot": "MiniMax-H3", "orbit360": "MiniMax-H3", "director": "MiniMax-H3", "director_keyframes": "MiniMax-H3"}
 LEVEL = {"render": "Rendered here", "validated": "Template checks out", "nodes": "Server starts, no render yet", "started": "Server starts, no render yet", "untested": "Not tested yet"}
 router = APIRouter(); _st = {"m": 0.0, "d": {"families": {}}}; _scan = {"t": 0.0, "d": {}}; _names = {"t": 0.0, "d": {}}; _dirs = {"root": None, "t": 0.0, "d": {}}; JOBS: dict = {}; _reaper = {"on": False}; _dl = {"state": None}
 

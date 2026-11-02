@@ -1,0 +1,57 @@
+{
+ "about": "Before/after wipe GIFs of the Shot Board's four LTX-2.5 effects on one source clip, about 3 s at 12 fps, for the README. Made from studio/web/showcase/vfx_same_clip.json.",
+ "gifs": [
+  {
+   "file": "docs/media/shotboard_flood.gif",
+   "effect": "VFX: water",
+   "before": "the same source clip",
+   "layout": "wipe: the effect left of the moving white line, the source right of it",
+   "bytes": 2631974,
+   "size": [
+    480,
+    272
+   ],
+   "seconds": 3.0,
+   "fps": 12
+  },
+  {
+   "file": "docs/media/shotboard_night.gif",
+   "effect": "VFX: day to night",
+   "before": "the same source clip",
+   "layout": "wipe: the effect left of the moving white line, the source right of it",
+   "bytes": 2739619,
+   "size": [
+    480,
+    272
+   ],
+   "seconds": 3.0,
+   "fps": 12
+  },
+  {
+   "file": "docs/media/shotboard_clean_plate.gif",
+   "effect": "VFX: clean plate",
+   "before": "the same source clip",
+   "layout": "wipe: the effect left of the moving white line, the source right of it",
+   "bytes": 2729313,
+   "size": [
+    480,
+    272
+   ],
+   "seconds": 3.0,
+   "fps": 12
+  },
+  {
+   "file": "docs/media/shotboard_cutout.gif",
+   "effect": "VFX: matte, as a cutout",
+   "before": "the same source clip",
+   "layout": "wipe: the effect left of the moving white line, the source right of it",
+   "bytes": 1475652,
+   "size": [
+    480,
+    272
+   ],
+   "seconds": 3.0,
+   "fps": 12
+  }
+ ]
+}

@@ -79,18 +79,36 @@ def test_recast_without_a_probe_trusts_the_options(monkeypatch):
 def test_vfx_ltx_is_ltx_core_with_an_ic_lora_guided_by_the_clip():
     g, v, _ = filled("vfx_ltx", {"video": "clip.mp4", "scene": "a temple in a jungle", "prompt": "a flash flood", "options": {"effect": "water"}})
     assert "ltx-2.5" in by_class(g, "UNETLoader")[0]["inputs"]["unet_name"]
-    assert "water-simulation" in by_class(g, "LTXICLoRALoaderModelOnly")[0]["inputs"]["lora_name"] and by_class(g, "LTXICLoRALoaderModelOnly")[0]["inputs"]["strength_model"] == 1.45
+    assert "water-simulation" in by_class(g, "LTXICLoRALoaderModelOnly")[0]["inputs"]["lora_name"] and by_class(g, "LTXICLoRALoaderModelOnly")[0]["inputs"]["strength_model"] == 1.0
     assert by_class(g, "LTXAddVideoICLoRAGuide")[0]["inputs"]["image"][0] == "scale"
     assert "ADD WATER a flash flood." in v["prompt"] and "a temple in a jungle" in v["prompt"] and (v["frames"] - 1) % 8 == 0
     assert by_class(g, "ComfySwitchNode")[0]["inputs"]["switch"] is True and by_class(g, "CreateVideo")[0]["inputs"]["audio"] == ["sound", 0]
 
-def test_vfx_defaults_are_the_rendered_flood_recipe():
-    d = GOALS["vfx_ltx"]["defaults"]; assert (d["effect"], d["intensity"], d["seconds"]) == ("water", "max", 5)
+def test_vfx_defaults_pick_the_strength_the_same_clip_renders_chose():
+    d = GOALS["vfx_ltx"]["defaults"]; assert (d["effect"], d["intensity"], d["seconds"]) == ("water", "auto", 5)
+    assert values_for("vfx_ltx", {"video": "c.mp4", "options": {"effect": "water"}})[0]["strength"] == 1.0
+    assert values_for("vfx_ltx", {"video": "c.mp4", "options": {"effect": "day_to_night"}})[0]["strength"] == 1.3
+    assert values_for("vfx_ltx", {"video": "c.mp4", "options": {"effect": "clean_plate"}})[0]["strength"] == 1.0
 
 def test_vfx_intensity_moves_water_and_night_only():
     assert values_for("vfx_ltx", {"video": "c.mp4", "options": {"effect": "water", "intensity": "max"}})[0]["strength"] == 1.45
     assert values_for("vfx_ltx", {"video": "c.mp4", "options": {"effect": "day_to_night", "intensity": "natural"}})[0]["strength"] == 1.0
     assert values_for("vfx_ltx", {"video": "c.mp4", "options": {"effect": "clean_plate", "intensity": "max"}})[0]["strength"] == 1.0
+
+@pytest.mark.parametrize("quality,size", [("draft", (768, 448)), ("standard", (960, 544)), ("high", (1280, 704))])
+def test_vfx_size_follows_the_quality_and_stays_32_aligned(quality, size):
+    g, v, o = filled("vfx_ltx", {"video": "clip.mp4", "options": {"effect": "day_to_night", "quality": quality}})
+    assert (v["width"], v["height"]) == size and o["quality"] == quality and by_class(g, "EmptyLTXVLatentVideo")[0]["inputs"]["width"] == size[0]
+    for sizes in Go.VFX_SIZES.values():
+        for w, h in sizes.values(): assert w % 32 == 0 and h % 32 == 0
+
+def test_vfx_quality_defaults_to_the_proven_size_and_ignores_unknown_values():
+    assert GOALS["vfx_ltx"]["defaults"]["quality"] == "standard" and Go.VFX_SIZES["standard"] is Go.LTX_SIZES
+    v, o = values_for("vfx_ltx", {"video": "c.mp4", "options": {"effect": "water", "quality": "4k"}}); assert o["quality"] == "standard" and (v["width"], v["height"]) == (960, 544)
+
+def test_the_water_prompt_keeps_the_person_and_the_set():
+    v = values_for("vfx_ltx", {"video": "c.mp4", "prompt": "a river", "options": {"effect": "water"}})[0]
+    assert "ADD WATER a river." in v["prompt"] and "Subject identity, clothing, framing" in v["prompt"] and "only water-related elements differ" in v["prompt"]
 
 def test_a_matte_keeps_the_source_audio_and_the_rest_steer_their_sound():
     assert values_for("vfx_ltx", {"video": "c.mp4", "options": {"effect": "matte"}})[0]["new_sound"] is False
@@ -134,3 +152,25 @@ def test_director_keyframes_needs_two_frames_and_wires_the_last_one():
     g, v, _ = filled("director_keyframes", {"prompt": "the door opens", "last_image": "b.png"}, "a.png")
     i2v = by_class(g, "MiniMaxH3ImageToVideo")[0]["inputs"]; assert i2v["first_frame"] and i2v["last_frame"]
     assert sorted(n["inputs"]["image"] for n in by_class(g, "LoadImage")) == ["a.png", "b.png"]
+
+
+def test_the_ready_to_run_vfx_graphs_match_what_the_studio_sends():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("export_vfx", os.path.join(os.path.dirname(WF), "scripts", "export_vfx_workflows.py")); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    assert "transition" in m.EFFECTS
+    for effect in m.EFFECTS:
+        p = os.path.join(WF, "vfx", f"ltx25_vfx_{effect}.json"); g = json.load(open(p))
+        assert g == json.loads(json.dumps(m.graph_for(effect))), f"{p} is stale: run scripts/export_vfx_workflows.py"
+        assert not placeholders(g) and (g.get("src") or g["srcA"])["inputs"]["file"] == "input_video.mp4"
+        assert all("/" not in n["inputs"][k] for n in g.values() for k in m.MODEL_INPUTS if isinstance(n["inputs"].get(k), str))
+
+
+def test_a_transition_needs_the_second_clip_and_names_the_trigger():
+    with pytest.raises(HTTPException) as e: values_for("ltx_transition", {"video": "a.mp4"})
+    assert e.value.status_code == 400 and "second clip" in e.value.detail
+    with pytest.raises(HTTPException): values_for("ltx_transition", {"video": "a.mp4", "video_b": "../b.mp4"})
+    g, v, _ = filled("ltx_transition", {"video": "a.mp4", "video_b": "b.mp4", "prompt": "the sun sets"})
+    assert v["prompt"] == "the sun sets. zhuanchang" and v["lora"] == Go.TRANSITION_LORA and (v["frames"] - 1) % 8 == 0
+    guides = sorted(n["inputs"]["frame_idx"] for n in by_class(g, "LTXVAddGuide")); assert guides == [-1, 0]
+    assert g["lastA"]["inputs"]["batch_index"] == -1 and g["firstB"]["inputs"]["batch_index"] == 0 and g["srcB"]["inputs"]["file"] == "b.mp4"
+    assert "ltx-2.5" in by_class(g, "UNETLoader")[0]["inputs"]["unet_name"]

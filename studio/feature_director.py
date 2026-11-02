@@ -7,15 +7,15 @@ from studio import sfw
 
 router = APIRouter(prefix="/api/director")
 PAGE = {"tab": "director", "label": "Live Director", "title": ["Live Director", "Say the shoot. Watch the board fill.", "Talk or type to Comfy Prime and the Shot Board builds as you go. Nothing renders until you press the button yourself."], "module": "director.js", "export": "LiveDirector", "css": "director.css"}
-TRANSFORMS = {"reshoot": "Reshoot", "orbit": "Orbit 360", "recast": "Recast", "water": "VFX: water", "plate": "VFX: clean plate", "night": "VFX: day to night", "matte": "VFX: matte"}
+TRANSFORMS = {"reshoot": "Reshoot", "orbit": "Orbit 360", "recast": "Recast", "water": "VFX: water", "plate": "VFX: clean plate", "night": "VFX: day to night", "transition": "Transition", "matte": "VFX: matte"}
 CAMERAS = ["orbit_right", "orbit_left", "dolly_in", "dolly_out", "crane_up", "crane_down", "pan_left", "pan_right", "tilt_up", "tracking", "handheld"]
 MAX_TEXT = 800; MAX_SCENE = 400
 OFFLINE = "Comfy Prime's language model is not running, so plain keyword rules are building your board. They know the job and camera names, not your meaning."
 SYSTEM = """You are Comfy Prime, helping someone plan a Shot Board by voice. Reply with ONE JSON object: {"say": str under 30 words, "ops": [...]}.
 Allowed ops: {"op":"add","job": one of %s}  {"op":"remove","job": same list}  {"op":"camera","camera": one of %s}  {"op":"scene","text": str}  {"op":"clear"}
-Jobs: reshoot is a new camera move on the same scene; orbit is a frozen-time turn; recast swaps in a character; water, night (day to night), plate (paint people out) and matte are VFX. "scene" describes the clip for the VFX jobs.
+Jobs: reshoot is a new camera move on the same scene; orbit is a frozen-time turn; recast swaps in a character; water, night (day to night), plate (paint people out) and matte are VFX; transition bridges the clip into a second clip the person adds. "scene" describes the clip for the VFX jobs.
 You cannot start a render, so never say one has started. Use only what the person asked for."""
-KEYWORDS = [(r"\b(day to night|day-to-night|night ?time|at night|make it night|night)\b", "night"), (r"\b(water|flood|rain ?water)\b", "water"), (r"\b(clean plate|remove (the )?(people|person)|paint (them|people|everyone) out|empty (the )?(street|scene))\b", "plate"), (r"\b(matte|mask|cut ?out)\b", "matte"), (r"\b(recast|swap (the )?(actor|character|lead)|my character)\b", "recast"), (r"\b(orbit|frozen time|bullet time|360)\b", "orbit"), (r"\b(reshoot|new angle|another angle|different angle|camera move)\b", "reshoot")]
+KEYWORDS = [(r"\b(transition|bridge (the|two) (clips|shots))\b", "transition"), (r"\b(day to night|day-to-night|night ?time|at night|make it night|night)\b", "night"), (r"\b(water|flood|rain ?water)\b", "water"), (r"\b(clean plate|remove (the )?(people|person)|paint (them|people|everyone) out|empty (the )?(street|scene))\b", "plate"), (r"\b(matte|mask|cut ?out)\b", "matte"), (r"\b(recast|swap (the )?(actor|character|lead)|my character)\b", "recast"), (r"\b(orbit|frozen time|bullet time|360)\b", "orbit"), (r"\b(reshoot|new angle|another angle|different angle|camera move)\b", "reshoot")]
 CAMERA_WORDS = [(r"\bdolly (in|forward)|push in\b", "dolly_in"), (r"\bdolly (out|back)|pull (out|back)\b", "dolly_out"), (r"\bcrane up\b", "crane_up"), (r"\bcrane down\b", "crane_down"), (r"\bpan (to the )?left\b", "pan_left"), (r"\bpan (to the )?right\b", "pan_right"), (r"\btilt up\b", "tilt_up"), (r"\btracking\b", "tracking"), (r"\bhand ?held\b", "handheld"), (r"\borbit (to the )?left\b", "orbit_left"), (r"\borbit (to the )?right\b", "orbit_right")]
 NEGATE = re.compile(r"\b(no|not|without|remove|drop|skip|don'?t)\b[^,.;]*$")
 

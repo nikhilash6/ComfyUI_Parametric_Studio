@@ -61,12 +61,16 @@ H3_VIDEO_SIZES = {"16:9": (1344, 768), "9:16": (768, 1344), "1:1": (1024, 1024)}
 H3_DRAFT_SIZES = {"16:9": (832, 480), "9:16": (480, 832), "1:1": (640, 640)}              # H3 takes multiples of 32; a reference clip costs about 40 s a step at the full size, so this is the quick look
 VFX_EFFECTS = {  # lora file, strength, prompt, negative, new sound? Prompts: each IC-LoRA card's dual-panel convention, as in the owner's l2_iclora batch, with the sound steered so the AV track is not left to chance.
  "clean_plate": ("ltx-2.5-22b-ic-lora-clean-plate-1.0.safetensors", 1.0, "An empty clean plate of the exact same location: {scene}, identical background, environment, structures and lighting as the source video, with no people, no humans, no figures, and no body parts such as arms, hands or legs anywhere in the frame. Static photorealistic footage, natural light, high detail. Quiet natural ambient sound of the empty place, no music, no speech.", "people, person, man, woman, human, figure, body parts, arms, hands, legs, crowd", True),
- "water": ("ltx-2.5-22b-ic-lora-water-simulation-0.9.safetensors", 1.3, "Reference shows {scene}. Edited shows the same scene with water added. ADD WATER {effect} Sound of rushing, splashing water, no music, no speech.", NEG_VIDEO, True),
+ "water": ("ltx-2.5-22b-ic-lora-water-simulation-0.9.safetensors", 1.3, "Reference shows {scene}. Edited shows the same scene with water added. ADD WATER {effect} Subject identity, clothing, framing, camera movement and background geometry are identical to the reference; only water-related elements differ. Sound of rushing, splashing water, no music, no speech.", NEG_VIDEO, True),
  "day_to_night": ("ltx-2.5-22b-ic-lora-day-to-night-0.9.safetensors", 1.2, "A realistic nighttime scene of {scene}. Photorealistic moonlight, deep natural shadows, the sky is dark, practical lamps glow. Only the lighting changes from day to night; identical composition, framing, camera movement and motion. Quiet night ambience, no music, no speech.", "daytime, bright sunlight, blue sky, overexposed, worst quality, inconsistent motion", True),
  "matte": ("ltx-2.5-22b-ic-lora-alpha-gen-0.9.safetensors", 1.0, "", "", False),     # a matte is a pass for compositing: it keeps the source audio, if any
 }
-VFX_INTENSITY = {"natural": 1.0, "strong": 1.3, "max": 1.45}   # Water-Simulation card: 1.0-1.05 natural, 1.25-1.45 max drama, 1.5 and over warps faces. Night takes the same scale; clean plate and matte stay at their proven strength.
+VFX_SIZES = {"draft": {"16:9": (768, 448), "9:16": (448, 768), "1:1": (576, 576)}, "standard": LTX_SIZES, "high": {"16:9": (1280, 704), "9:16": (704, 1280), "1:1": (960, 960)}}   # draft sits near the 768x448 the IC-LoRAs were trained at; high is 720p. Single stage, so 32-aligned is enough
+VFX_INTENSITY = {"auto": None, "natural": 1.0, "strong": 1.3, "max": 1.45}   # Water-Simulation card: 1.0-1.05 natural, 1.25-1.45 max drama, 1.5 and over warps faces. Night takes the same scale; clean plate and matte stay at their proven strength.
+VFX_AUTO = {"water": "natural", "day_to_night": "strong"}   # from same-clip renders (studio/web/showcase/vfx_same_clip.json): strong water turned dark trousers red, natural kept them; natural night stayed dusk-bright, strong read as night and kept the clothes
 VFX_DEFAULT_SCENE = "the scene"; VFX_DEFAULT_WATER = "a rising flood of clear water that surges across the ground and splashes around everything it touches."
+TRANSITION_LORA = "ltx2.3-transition.safetensors"   # an LTX-2.3 style-transition LoRA, run on LTX-2.5 (rendered here: studio/web/showcase/transition_proof.json); trigger word zhuanchang, per ComfyUI's template_ltx2_3_style_transition
+TRANSITION_DEFAULT = "One continuous shot: the first scene flows smoothly into the second, the camera keeps moving and the light changes gradually."
 def h3_ref_frames(want_seconds, have_seconds=None):
     """H3 lengths are 17k+5 at 24 fps, snapped up (5 s -> 124, the proven length), then down to what the clip really has."""
     k = math.ceil((round(want_seconds * 24) - 5) / 17)
@@ -105,10 +109,17 @@ def flagship_values(goal, req, image_name, o, seed):
             if not image_name or not last: raise HTTPException(400, "add a first frame and a last frame")
             v.update(image=image_name, last_image=last)
         return v
+    if goal == "ltx_transition":      # the last frame of clip A and the first frame of clip B guide a bridge; the graph joins A, bridge and B into one clip
+        video, info, aspect = clip_shape(req, LTX_SIZES); second = str(req.get("video_b") or "").strip()
+        if not second: raise HTTPException(400, "add the second clip, the shot to transition into")
+        if os.path.basename(second) != second or not re.search(r"\.(mp4|webm|mov|mkv)$", second, re.I): raise HTTPException(400, "the second clip must be an uploaded mp4, webm, mov or mkv")
+        w, h = LTX_SIZES[aspect if o["aspect"] == "auto" else o["aspect"]]
+        words = text.rstrip(".") + "." if text else TRANSITION_DEFAULT
+        return {"video": video, "video_b": second, "width": w, "height": h, "frames": frames_ltx(o["seconds"]), "seed": seed, "lora": TRANSITION_LORA, "strength": 1.0, "prompt": f"{words} zhuanchang", "negative": NEG_VIDEO}
     if goal == "orbit360":      # one frozen frame of the clip; the size, length and prompt are fixed by the LoRA's recipe, in the template
         video, info, _ = clip_shape(req, H3_VIDEO_SIZES); total = int((info["duration"] if info else 2.0) * 24)
         return {"video": video, "frame_index": {"start": 0, "middle": total // 2, "end": max(0, total - 2)}[o["moment"]], "seed": seed, "prompt": "Frozen-time 360 orbit"}
-    sizes = LTX_SIZES if goal == "vfx_ltx" else WAN_SIZES["480p"] if goal == "reshoot_wan" else H3_VIDEO_SIZES
+    sizes = VFX_SIZES[o["quality"]] if goal == "vfx_ltx" else WAN_SIZES["480p"] if goal == "reshoot_wan" else H3_VIDEO_SIZES
     video, info, aspect = clip_shape(req, sizes); have = info["duration"] if info else None
     if have is not None and have < (0.5 if goal == "vfx_ltx" else 22 / 24): raise HTTPException(400, "the source clip is too short")
     if goal in ("recast", "reshoot") and o["quality"] == "draft": sizes = H3_DRAFT_SIZES
@@ -130,7 +141,7 @@ def flagship_values(goal, req, image_name, o, seed):
         if o["effect"] == "matte": prompt = " "      # Alpha-Gen is prompt-free (owner's 4e arm); a blank keeps the server's check happy
         elif o["effect"] == "water": prompt = tpl.format(scene=scene, effect=(text.rstrip(".") + "." if text else VFX_DEFAULT_WATER))
         else: prompt = tpl.format(scene=scene) + (" " + text if text else "")
-        if o["effect"] in ("water", "day_to_night"): strength = VFX_INTENSITY[o["intensity"]]
+        if o["effect"] in ("water", "day_to_night"): strength = VFX_INTENSITY[o["intensity"] if o["intensity"] != "auto" else VFX_AUTO[o["effect"]]]
         v.update(lora=lora, strength=strength, prompt=prompt, negative=neg, new_sound=new_sound)
     return v
 PRODUCT_SET = {"black glass": "on a black glass surface with soft reflections", "wet obsidian": "above wet obsidian with frozen water splashes", "white sweep": "on a seamless white studio sweep", "gold silk": "on folds of gold silk", "emerald moss": "on a bed of emerald moss in morning mist"}
@@ -150,14 +161,15 @@ GOALS = {
  "h3_animate": G("Animate H3", "MiniMax H3: image to video with sound", "h3_i2v_api.json", "MiniMax H3", "video", "MiniMax H3 community licence", "community", {"aspect": list(H3_ASPECTS), "quality": list(H3_QUALITY), "seconds": [2, 3, 4, 5, 6, 8], "speed": ["quality", "fast"]}, {"aspect": "16:9", "quality": "standard", "seconds": 4, "speed": "fast"}, needs_image=True),
  "music": G("Music", "MiniMax Music 3: full songs with vocals", "music3_api.json", "MiniMax Music 3", "audio", "MiniMax-Music3 community licence", "community", {"seconds": MUSIC_SECONDS}, {"seconds": 60}),
  "recast": G("Recast", "Swap the character in any video: MiniMax H3 keeps the performance, you pick who plays it", "h3_recast_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {"aspect": ASPECTS_AUTO, "quality": ["draft", "high"], "seconds": [3, 4, 5]}, {"aspect": "auto", "quality": "high", "seconds": 5}, needs_image=True, needs_video=True, prompt_optional=True, fields={"target": "Who to replace, by look and position (default: the main person)"}, image_label="Character", video_label="Source video"),
- "vfx_ltx": G("VFX", "LTX-2.5 VFX on a clip: paint people out, flood the scene, turn day to night, pull a matte", "ltx25_vfx_api.json", "LTX-2.5", "video", LTX_LICENCE, "community", {"effect": list(VFX_EFFECTS), "intensity": list(VFX_INTENSITY), "aspect": ASPECTS_AUTO, "seconds": [2, 3, 4, 5]}, {"effect": "water", "intensity": "max", "aspect": "auto", "seconds": 5}, needs_video=True, prompt_optional=True, gated=True, fields={"scene": "What the clip shows, in plain words (the place, for a clean plate)"}, video_label="Source video"),
+ "vfx_ltx": G("VFX", "LTX-2.5 VFX on a clip: paint people out, flood the scene, turn day to night, pull a matte", "ltx25_vfx_api.json", "LTX-2.5", "video", LTX_LICENCE, "community", {"effect": list(VFX_EFFECTS), "intensity": list(VFX_INTENSITY), "quality": list(VFX_SIZES), "aspect": ASPECTS_AUTO, "seconds": [2, 3, 4, 5]}, {"effect": "water", "intensity": "auto", "quality": "standard", "aspect": "auto", "seconds": 5}, needs_video=True, prompt_optional=True, gated=True, fields={"scene": "What the clip shows, in plain words (the place, for a clean plate)"}, video_label="Source video"),
+ "ltx_transition": G("Transition", "LTX-2.5 bridges two clips: the end of one flows into the start of the next, joined into one take", "ltx25_transition_api.json", "LTX-2.5", "video", LTX_LICENCE, "community", {"aspect": ASPECTS_AUTO, "seconds": [1, 2, 3]}, {"aspect": "auto", "seconds": 2}, needs_video=True, prompt_optional=True, gated=True, video_label="First clip (the second comes from the Shot Board)"),
  "reshoot": G("Reshoot", "A new take of your clip with a new camera move: MiniMax H3 starts from its first frame and regenerates the action", "h3_reshoot_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {"camera": list(RESHOOT_CAMERA), "aspect": ASPECTS_AUTO, "quality": ["draft", "high"], "seconds": [3, 4, 5]}, {"camera": "orbit_right", "aspect": "auto", "quality": "high", "seconds": 5}, needs_video=True, prompt_optional=True, video_label="Source video"),
  "orbit360": G("Frozen orbit", "Freeze one moment of a clip and orbit the camera 360 degrees around it (MiniMax H3)", "h3_orbit360_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {"moment": ["start", "middle", "end"]}, {"moment": "middle"}, needs_video=True, prompt_optional=True, video_label="Source video"),
  "reshoot_wan": G("Reshoot (Wan camera)", "A new take with a real camera path from a clip's first frame, Wan 2.2 Fun Camera; the action is regenerated", "wan_camera_api.json", "Wan 2.2 Fun Camera 14B", "video", "Apache-2.0", "open", {"camera": list(WAN_CAMERA_POSES), "aspect": ASPECTS_AUTO, "seconds": [3, 5]}, {"camera": "zoom_in", "aspect": "auto", "seconds": 5}, needs_video=True, prompt_optional=True, negative=WAN_NEG, video_label="Source video"),
  "director": G("Director", "Direct your shot: camera move, lens, lighting and mood on MiniMax H3", "h3_t2v_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {**DIRECTOR_OPTIONS, "aspect": list(H3_ASPECTS), "quality": list(H3_QUALITY), "seconds": [2, 3, 4, 5, 6, 8], "speed": ["quality", "fast"]}, {**DIRECTOR_DEFAULTS, "aspect": "16:9", "quality": "high", "seconds": 5, "speed": "fast"}),
  "director_keyframes": G("Director: first + last frame", "Direct a shot between two frames you choose on MiniMax H3", "h3_fl2v_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {**DIRECTOR_OPTIONS, "aspect": list(H3_ASPECTS), "quality": list(H3_QUALITY), "seconds": [2, 3, 4, 5, 6, 8], "speed": ["quality", "fast"]}, {**DIRECTOR_DEFAULTS, "camera": "locked", "aspect": "16:9", "quality": "high", "seconds": 5, "speed": "fast"}, needs_image=True, needs_last_image=True, image_label="First frame"),
 }
-FLAGSHIP = ("recast", "vfx_ltx", "reshoot", "orbit360", "reshoot_wan", "director", "director_keyframes")
+FLAGSHIP = ("recast", "vfx_ltx", "ltx_transition", "reshoot", "orbit360", "reshoot_wan", "director", "director_keyframes")
 def values_for(goal, req, image_name=None):
     g = GOALS[goal]; o = {**g["defaults"], **{k: v for k, v in (req.get("options") or {}).items() if k in g["options"] and v in g["options"][k]}}
     seed = req.get("seed"); seed = random.randint(0, 2**31 - 1) if seed in (None, "") else int(seed)
