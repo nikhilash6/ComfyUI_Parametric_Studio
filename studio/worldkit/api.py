@@ -20,8 +20,8 @@ FILE_TYPES = {"asset.glb": "model/gltf-binary", "preview.mp4": "video/mp4", "thu
 _SESSION = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 #: Informational only: licences are recorded per asset, never a gate.
 LICENCE_NOTES = {
-    "character": "Sheet: Krea 2 Turbo (Krea 2 Community License). Picture check: InsightFace buffalo_l (its weights are for non-commercial research) and NudeNet (AGPL-3.0). Mesh: TRELLIS.2 (MIT), its image encoder DINOv3 (DINOv3 License), BiRefNet cut-out. SkinTokens: MIT; Kimodo: NVIDIA Open Model License (its text encoder: Llama 3 Community Licence); retarget tools GPL (tools only)",
-    "prop": "by mesh model: SAM 3D Objects, SAM License; TRELLIS.2, TripoSR, Shap-E, MIT; Hunyuan3D, Tencent community licence. A text prop's picture comes from FLUX.2 Klein 4B (Apache-2.0)",
+    "character": "Sheet: Krea 2 Turbo (Krea 2 Community License: commercial use, outputs included, only for companies under US$1,000,000 yearly revenue). Picture check: InsightFace buffalo_l (its weights are for non-commercial research) and NudeNet (AGPL-3.0). Mesh: TRELLIS.2 (MIT), its image encoder DINOv3 (DINOv3 License), BiRefNet cut-out. SkinTokens: MIT; Kimodo: NVIDIA Open Model License (its text encoder: Llama 3 Community Licence); retarget tools GPL (tools only)",
+    "prop": "by mesh model: SAM 3D Objects, SAM License; TRELLIS.2, TripoSR, Shap-E, MIT; Hunyuan3D, Tencent community licence (not for use in the EU, UK or South Korea). A text prop's picture comes from FLUX.2 Klein 4B (Apache-2.0)",
     "place": "procedural (Blender scripts in this repo); textures procedural, or from FLUX.2 Klein 4B (Apache-2.0)",
     "look": "Blender's bundled studio-light HDRIs (their licence not checked)",
 }

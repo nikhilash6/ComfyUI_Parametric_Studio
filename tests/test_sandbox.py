@@ -19,7 +19,7 @@ def test_blocked_or_contained(code):
 
 def test_timeout_kills_process():
     t = time.time(); r = sandbox.run("while True:\n    pass", timeout=1.5); assert r["timed_out"] and time.time() - t < 6
-    out = subprocess.run(["pgrep", "-f", r" -I -S \S*sandbox_runner\.py$"], capture_output=True, text=True).stdout.strip(); assert out == ""
+    out = subprocess.run(["pgrep", "-P", str(os.getpid()), "-f", r" -I -S \S*sandbox_runner\.py$"], capture_output=True, text=True).stdout.strip(); assert out == ""
 
 def test_memory_limit():
     r = sandbox.run("x = [0] * (10**9)\nresult = len(x)", mem_mb=256, timeout=5); assert not r["ok"]

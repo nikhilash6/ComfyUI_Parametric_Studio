@@ -5,7 +5,7 @@
 "slug": "ace-step-1-5",
 "kind": "audio",
 "era": 2026,
-"licence": "MIT",
+"licence": "MIT (ACE-Step's repository); the ComfyUI repackage is tagged Apache-2.0",
 "crew": "music-song-models",
 "repos": [
 "ACE-Step/Ace-Step1.5",
@@ -343,7 +343,7 @@
 "slug": "allegro",
 "kind": "video",
 "era": 2024,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "cogvideox-mochi-cosmos-svd-animatediff-older-video",
 "repos": [
 "rhymes-ai/Allegro-TI2V"
@@ -364,7 +364,7 @@
 "slug": "anima",
 "kind": "image",
 "era": 2026,
-"licence": "Own licence, non-commercial",
+"licence": "CircleStone Labs Non-Commercial License v1.2. Outputs may be used for any purpose",
 "crew": "anima",
 "repos": [
 "circlestone-labs/Anima"
@@ -718,7 +718,7 @@
 "slug": "boogu",
 "kind": "image",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0 (ComfyUI repackage)",
 "crew": "master",
 "repos": [
 "Comfy-Org/Boogu-Image"
@@ -868,7 +868,7 @@
 "slug": "cogvideox",
 "kind": "video",
 "era": 2024,
-"licence": "Own licence",
+"licence": "CogVideoX License: free for research; commercial use needs registration, and more than 1 million visits a month needs a further licence",
 "crew": "cogvideox-mochi-cosmos-svd-animatediff-older-video",
 "repos": [
 "zai-org/CogVideoX-5b"
@@ -905,7 +905,7 @@
 "slug": "colorization",
 "kind": "utility",
 "era": null,
-"licence": null,
+"licence": "No model repository is recorded for this family",
 "crew": "upscale-restore-models",
 "repos": [],
 "what": null,
@@ -924,7 +924,7 @@
 "slug": "cosmos",
 "kind": "video",
 "era": 2025,
-"licence": null,
+"licence": "NVIDIA Open Model License: commercial use allowed",
 "crew": "cogvideox-mochi-cosmos-svd-animatediff-older-video",
 "repos": [
 "Comfy-Org/Cosmos_Predict2_repackaged",
@@ -999,7 +999,7 @@
 "slug": "dwpose",
 "kind": "utility",
 "era": 2023,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "depth-normals-pose",
 "repos": [
 "yzd-v/DWPose"
@@ -1052,7 +1052,7 @@
 "slug": "ernie-image",
 "kind": "image",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0 (ComfyUI repackage)",
 "crew": "master",
 "repos": [
 "Comfy-Org/ERNIE-Image"
@@ -1170,7 +1170,7 @@
 "slug": "face",
 "kind": "utility",
 "era": null,
-"licence": null,
+"licence": "No model repository is recorded for this family",
 "crew": "faces-identity-portrait-animation",
 "repos": [],
 "what": null,
@@ -1189,7 +1189,7 @@
 "slug": "fibo-2-0",
 "kind": "image",
 "era": 2026,
-"licence": "CC-BY-NC-4.0, non-commercial",
+"licence": "CC-BY-NC-4.0, non-commercial (Bria FIBO licence; text gated)",
 "crew": "master",
 "repos": [
 "Comfy-Org/Fibo-2.0",
@@ -1350,7 +1350,7 @@
 "slug": "fitdit",
 "kind": "utility",
 "era": 2024,
-"licence": "CC-BY-NC-SA-4.0, non-commercial",
+"licence": "CC BY-NC-SA 4.0",
 "crew": "depth-normals-pose",
 "repos": [
 "BoyuanJiang/FitDiT"
@@ -1371,7 +1371,7 @@
 "slug": "flashvsr-v1-1",
 "kind": "utility",
 "era": 2025,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "upscale-restore-models",
 "repos": [
 "JunhaoZhuang/FlashVSR-v1.1"
@@ -1408,7 +1408,7 @@
 "slug": "flux-kontext",
 "kind": "image",
 "era": 2025,
-"licence": "Own licence, non-commercial",
+"licence": "FLUX.1 [dev] Non-Commercial License (text gated)",
 "crew": "flux-1-dev-schnell-kontext-fill",
 "repos": [
 "black-forest-labs/FLUX.1-Kontext-dev"
@@ -1492,7 +1492,7 @@
 "slug": "flux-1",
 "kind": "image",
 "era": 2024,
-"licence": "Dev: own licence. Schnell: Apache-2.0",
+"licence": "Schnell: Apache-2.0. Dev and Redux: FLUX.1 [dev] Non-Commercial License (text gated)",
 "crew": "flux-1-dev-schnell-kontext-fill",
 "repos": [
 "black-forest-labs/FLUX.1-dev",
@@ -2072,7 +2072,7 @@
 "slug": "flux-2",
 "kind": "image",
 "era": 2025,
-"licence": "Klein 4B: Apache-2.0. Dev: own licence",
+"licence": "Klein 4B and Klein Base 4B: Apache-2.0. Klein 9B and Dev: FLUX Non-Commercial License (text gated)",
 "crew": "flux-2-klein",
 "repos": [
 "black-forest-labs/FLUX.2-dev",
@@ -2661,7 +2661,7 @@
 "slug": "flux-3-klein",
 "kind": "image",
 "era": 2026,
-"licence": "FLUX Kommunity licence, gated",
+"licence": "FLUX Kommunity License (text gated): outputs may be used commercially only by companies under US$5,000,000 gross annual revenue",
 "crew": "flux-2-klein",
 "repos": [
 "black-forest-labs/flux-3-image-klein-comfy"
@@ -2916,7 +2916,7 @@
 "slug": "frame-interpolation",
 "kind": "utility",
 "era": null,
-"licence": null,
+"licence": "MIT and Apache-2.0 (ComfyUI repackage)",
 "crew": "upscale-restore-models",
 "repos": [
 "Comfy-Org/Frame-Interpolation"
@@ -3036,7 +3036,7 @@
 "slug": "greyscale-to-rgba",
 "kind": "utility",
 "era": null,
-"licence": null,
+"licence": "No model repository is recorded for this family",
 "crew": "upscale-restore-models",
 "repos": [],
 "what": null,
@@ -3397,7 +3397,7 @@
 "slug": "hunyuan3d-2-1",
 "kind": "3d",
 "era": 2025,
-"licence": "Own licence",
+"licence": "Tencent Hunyuan Community License: it does not apply in the EU, the UK or South Korea; over 1 million monthly users needs a licence from Tencent",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "tencent/Hunyuan3D-2"
@@ -3517,7 +3517,7 @@
 "slug": "hunyuandit-1-2",
 "kind": "image",
 "era": 2024,
-"licence": null,
+"licence": "Tencent Hunyuan Community License. HunyuanImage 2.1, also in this family, does not apply in the EU, the UK or South Korea",
 "crew": "kandinsky-omnigen-ovis-hunyuanimage",
 "repos": [
 "Tencent-Hunyuan/HunyuanDiT-v1.2-Diffusers"
@@ -3597,7 +3597,7 @@
 "slug": "hunyuanvideo",
 "kind": "video",
 "era": 2024,
-"licence": "Own licence",
+"licence": "Tencent Hunyuan Community License: it does not apply in the EU, the UK or South Korea",
 "crew": "hunyuanvideo-framepack",
 "repos": [
 "tencent/HunyuanVideo",
@@ -3770,7 +3770,7 @@
 "slug": "hunyuanworld",
 "kind": "3d",
 "era": 2025,
-"licence": null,
+"licence": "Tencent Hunyuan Community License: it does not apply in the EU, the UK or South Korea; over 1 million monthly users needs a licence from Tencent",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "tencent/HunyuanWorld-1"
@@ -3791,7 +3791,7 @@
 "slug": "hy-motion",
 "kind": "3d",
 "era": 2025,
-"licence": null,
+"licence": "Tencent Hunyuan Community License: it does not apply in the EU, the UK or South Korea; over 1 million monthly users needs a licence from Tencent",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "tencent/HY-Motion-1.0"
@@ -3812,7 +3812,7 @@
 "slug": "ideogram4",
 "kind": "image",
 "era": 2026,
-"licence": null,
+"licence": "Ideogram 4 Non-Commercial licence (ComfyUI repackage of ideogram-ai/ideogram-4-fp8; text gated)",
 "crew": "master",
 "repos": [
 "Comfy-Org/Ideogram-4"
@@ -3915,7 +3915,7 @@
 "slug": "instantcharacter",
 "kind": "utility",
 "era": 2025,
-"licence": null,
+"licence": "No licence is stated on its model card",
 "crew": "faces-identity-portrait-animation",
 "repos": [
 "tencent/InstantCharacter"
@@ -3936,7 +3936,7 @@
 "slug": "instantmesh",
 "kind": "3d",
 "era": 2024,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "TencentARC/InstantMesh"
@@ -3957,7 +3957,7 @@
 "slug": "ip-adapter",
 "kind": "utility",
 "era": 2023,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "controlnet",
 "repos": [
 "h94/IP-Adapter"
@@ -3978,7 +3978,7 @@
 "slug": "iris-3b",
 "kind": "utility",
 "era": null,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "master",
 "repos": [
 "speridlabs/iris-3b"
@@ -3999,7 +3999,7 @@
 "slug": "joyai-video-edit",
 "kind": "video",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "prism-longcat-void-joyai-video",
 "repos": [
 "jdopensource/JoyAI-Video-Edit"
@@ -4252,7 +4252,7 @@
 "slug": "kolors",
 "kind": "image",
 "era": 2024,
-"licence": null,
+"licence": "Kolors model licence (the card is tagged Apache-2.0): over 100 million monthly users, or a cloud platform, needs a licence",
 "crew": "master",
 "repos": [
 "Kwai-Kolors/Kolors"
@@ -4273,7 +4273,7 @@
 "slug": "krea2",
 "kind": "image",
 "era": 2026,
-"licence": "Own licence",
+"licence": "Krea 2 Community License: commercial use of the model or its outputs only for companies under US$1,000,000 total annual revenue; content filtering required",
 "crew": "krea-2",
 "repos": [
 "Comfy-Org/Krea-2"
@@ -4429,7 +4429,7 @@
 "slug": "ldm3d-4c",
 "kind": "image",
 "era": 2023,
-"licence": null,
+"licence": "CreativeML OpenRAIL-M",
 "crew": "depth-normals-pose",
 "repos": [
 "Intel/ldm3d-4c"
@@ -4489,7 +4489,7 @@
 "slug": "longcat-image",
 "kind": "image",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "prism-longcat-void-joyai-video",
 "repos": [
 "Comfy-Org/LongCat-Image",
@@ -4616,7 +4616,7 @@
 "slug": "ltx-2-5",
 "kind": "video",
 "era": 2026,
-"licence": "LTX-2.x community licence, gated",
+"licence": "LTX-2.x Community License (gated download): entities with US$10,000,000 or more annual revenue need a paid licence",
 "crew": "ltx-video-ltx-2",
 "repos": [
 "Lightricks/LTX-2.5"
@@ -5523,7 +5523,7 @@
 "slug": "lumina-2",
 "kind": "image",
 "era": 2025,
-"licence": "Apache-2.0",
+"licence": "Lumina Image 2: Apache-2.0; its Gemma 2 encoder is under the Gemma Terms of Use. The NewBie template adds jina-clip-v2 (CC BY-NC 4.0) and Gemma 3",
 "crew": "z-image-lumina2",
 "repos": [
 "Comfy-Org/Lumina-Image-2"
@@ -5642,7 +5642,7 @@
 "slug": "matrix-3d",
 "kind": "3d",
 "era": 2025,
-"licence": null,
+"licence": "MIT (gated download)",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "Skywork/Matrix-3D"
@@ -5693,7 +5693,7 @@
 "slug": "matrix-game-2",
 "kind": "video",
 "era": 2025,
-"licence": null,
+"licence": "MIT",
 "crew": "master",
 "repos": [
 "Skywork/Matrix-Game-2.0"
@@ -5714,7 +5714,7 @@
 "slug": "midi-3d",
 "kind": "3d",
 "era": 2025,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "VAST-AI/MIDI-3D"
@@ -5735,7 +5735,7 @@
 "slug": "ming-image",
 "kind": "image",
 "era": 2026,
-"licence": null,
+"licence": "MIT (ComfyUI repackage)",
 "crew": "master",
 "repos": [
 "Comfy-Org/Ming-Image"
@@ -5836,7 +5836,7 @@
 "slug": "mini-max-music3",
 "kind": "audio",
 "era": 2026,
-"licence": "MiniMax community licence",
+"licence": "MiniMax-Music3 Community License (the ComfyUI repackage is tagged Apache-2.0; the studio follows MiniMax's own text): commercial products must show \"MiniMax-Music3\", and over US$20,000,000 yearly revenue needs MiniMax's written authorization",
 "crew": "music-song-models",
 "repos": [
 "Comfy-Org/MiniMax-Music-3"
@@ -5925,7 +5925,7 @@
 "slug": "minimax-h3",
 "kind": "video",
 "era": 2026,
-"licence": "MiniMax H3 community licence",
+"licence": "MiniMax H3 Community License: it excludes the US, the EU, the UK and South Korea, outputs included; commercial products must show \"MiniMax H3\", and over US$20,000,000 yearly revenue needs MiniMax's written authorization",
 "crew": "minimax-h3",
 "repos": [
 "MiniMaxAI/MiniMax-H3",
@@ -6489,7 +6489,7 @@
 "slug": "moss-image",
 "kind": "image",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0 (ComfyUI repackage)",
 "crew": "master",
 "repos": [
 "Comfy-Org/MOSS-Image"
@@ -6734,7 +6734,7 @@
 "slug": "mova",
 "kind": "video",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "master",
 "repos": [
 "OpenMOSS-Team/MOVA-360p"
@@ -6757,7 +6757,7 @@
 "slug": "omnigen-2",
 "kind": "image",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "kandinsky-omnigen-ovis-hunyuanimage",
 "repos": [
 "Comfy-Org/OmniGen-2"
@@ -6883,7 +6883,7 @@
 "slug": "ovis-image",
 "kind": "image",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "kandinsky-omnigen-ovis-hunyuanimage",
 "repos": [
 "Comfy-Org/Ovis-Image"
@@ -6966,7 +6966,7 @@
 "slug": "partcrafter",
 "kind": "3d",
 "era": 2025,
-"licence": null,
+"licence": "MIT",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "wgsxm/PartCrafter"
@@ -6990,7 +6990,7 @@
 "slug": "pixal3d",
 "kind": "3d",
 "era": 2026,
-"licence": null,
+"licence": "MIT (ComfyUI repackage)",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "Comfy-Org/Pixal3D"
@@ -7119,7 +7119,7 @@
 "slug": "pixart-sigma",
 "kind": "image",
 "era": 2024,
-"licence": null,
+"licence": "CreativeML OpenRAIL++-M",
 "crew": "master",
 "repos": [
 "PixArt-alpha/PixArt-Sigma-XL-2-1024-MS"
@@ -7187,7 +7187,7 @@
 "slug": "pixeldit",
 "kind": "image",
 "era": 2026,
-"licence": null,
+"licence": "NVIDIA Source Code License: non-commercial, research or evaluation only",
 "crew": "master",
 "repos": [
 "Comfy-Org/PixelDiT"
@@ -7264,7 +7264,7 @@
 "slug": "prism-alpha",
 "kind": "video",
 "era": 2026,
-"licence": null,
+"licence": "No model repository is recorded for this family",
 "crew": "prism-longcat-void-joyai-video",
 "repos": [],
 "what": "A pipeline featuring separate video and audio diffusion transformers (DiTs) and a dual-tower bridge, supporting mixed-precision text encoding.",
@@ -7283,7 +7283,7 @@
 "slug": "qwen-image-2-1",
 "kind": "image",
 "era": 2026,
-"licence": "Qwen-Image: Apache-2.0. 2.1: own licence",
+"licence": "Qwen-Image, its Edit models and 2512: Apache-2.0. Qwen-Image 2.1: Qwen Research License, research or evaluation only",
 "crew": "qwen-image-qwen-image-edit",
 "repos": [
 "Qwen/Qwen-Image",
@@ -8456,7 +8456,7 @@
 "slug": "rife",
 "kind": "utility",
 "era": null,
-"licence": null,
+"licence": "MIT and Apache-2.0 (ComfyUI repackage)",
 "crew": "upscale-restore-models",
 "repos": [
 "Comfy-Org/Frame-Interpolation"
@@ -8510,7 +8510,7 @@
 "slug": "sam-3d-objects",
 "kind": "3d",
 "era": 2025,
-"licence": null,
+"licence": "SAM License: commercial use allowed, with use rules",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "facebook/sam-3d-objects"
@@ -8545,7 +8545,7 @@
 "slug": "sam3",
 "kind": "utility",
 "era": 2025,
-"licence": null,
+"licence": "SAM License: commercial use allowed, with use rules",
 "crew": "sam-segmentation-matting",
 "repos": [
 "facebook/sam3",
@@ -8618,7 +8618,7 @@
 "slug": "sana-video",
 "kind": "video",
 "era": 2025,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "cogvideox-mochi-cosmos-svd-animatediff-older-video",
 "repos": [
 "Efficient-Large-Model/SANA-Video_2.0_5B_720p"
@@ -8796,7 +8796,7 @@
 "slug": "sd3-sd3-5",
 "kind": "image",
 "era": 2024,
-"licence": "Own licence",
+"licence": "Stability AI Community License (text gated): free commercial use only under US$1,000,000 annual revenue",
 "crew": "sd3-sd3-5",
 "repos": [
 "stabilityai/stable-diffusion-3.5-large",
@@ -8973,7 +8973,7 @@
 "slug": "sdxl",
 "kind": "image",
 "era": 2023,
-"licence": "OpenRAIL++",
+"licence": "Base and refiner: CreativeML OpenRAIL++-M. SDXL Turbo: Stability AI Community License, US$1,000,000 revenue cap",
 "crew": "sdxl",
 "repos": [
 "stabilityai/stable-diffusion-xl-base-1.0",
@@ -9263,7 +9263,7 @@
 "slug": "seedvr2",
 "kind": "utility",
 "era": 2025,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "upscale-restore-models",
 "repos": [
 "Comfy-Org/SeedVR2"
@@ -9393,7 +9393,7 @@
 "slug": "sefi-image-2b-turbo",
 "kind": "image",
 "era": null,
-"licence": null,
+"licence": "CC BY-NC 4.0",
 "crew": "master",
 "repos": [
 "SeFi-Image/SeFi-Image-2B-turbo"
@@ -9414,7 +9414,7 @@
 "slug": "shap-e",
 "kind": "3d",
 "era": 2023,
-"licence": null,
+"licence": "MIT",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "openai/shap-e"
@@ -9456,7 +9456,7 @@
 "slug": "stable-cascade",
 "kind": "image",
 "era": 2024,
-"licence": null,
+"licence": "Stability AI Non-Commercial Research Community License",
 "crew": "master",
 "repos": [
 "stabilityai/stable-cascade"
@@ -9523,7 +9523,7 @@
 "slug": "stable-fast-3d",
 "kind": "3d",
 "era": 2024,
-"licence": null,
+"licence": "Stability AI Community License (text gated): free commercial use only under US$1,000,000 annual revenue",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "stabilityai/stable-fast-3d"
@@ -9544,7 +9544,7 @@
 "slug": "svd",
 "kind": "video",
 "era": 2023,
-"licence": "Own licence",
+"licence": "Stable Video Diffusion 1.1 Community License (Stability AI Community License): free commercial use only under US$1,000,000 annual revenue",
 "crew": "cogvideox-mochi-cosmos-svd-animatediff-older-video",
 "repos": [
 "stabilityai/stable-video-diffusion-img2vid-xt"
@@ -9608,7 +9608,7 @@
 "slug": "trellis-2-4b",
 "kind": "3d",
 "era": 2025,
-"licence": "MIT",
+"licence": "MIT. Its image encoder DINOv3 is under the DINOv3 License (commercial use allowed); BiRefNet is MIT",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "microsoft/TRELLIS.2-4B"
@@ -9743,7 +9743,7 @@
 "slug": "turbowan2-2-i2v",
 "kind": "video",
 "era": 2025,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "wan-2-2",
 "repos": [],
 "what": "A quantized/distilled variant for faster inference.",
@@ -9766,7 +9766,7 @@
 "slug": "unirig",
 "kind": "3d",
 "era": 2025,
-"licence": null,
+"licence": "MIT",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "VAST-AI/UniRig"
@@ -9787,7 +9787,7 @@
 "slug": "upscale-models",
 "kind": "utility",
 "era": null,
-"licence": null,
+"licence": "Real-ESRGAN: BSD-3-Clause; BiRefNet: MIT",
 "crew": "upscale-restore-models",
 "repos": [
 "ai-forever/Real-ESRGAN"
@@ -9882,7 +9882,7 @@
 "slug": "vlm",
 "kind": "llm",
 "era": 2025,
-"licence": "Varies by model",
+"licence": "Varies by model: Florence-2 MIT; Qwen3, Qwen3.5, Qwen3-VL and Gemma 4 Apache-2.0",
 "crew": "vlm-captioning-tagging",
 "repos": [
 "microsoft/Florence-2-large"
@@ -9980,7 +9980,7 @@
 "slug": "wan-scail-2",
 "kind": "video",
 "era": 2026,
-"licence": "MIT on Hugging Face, Apache-2.0 on GitHub",
+"licence": "MIT (ComfyUI repackage); the lightx2v distill LoRA is Apache-2.0",
 "crew": "wan-2-1",
 "repos": [],
 "what": "Upload 1 reference character image and 1 driving video. Generate an animated video of the character matching the driving video's motion. Ideal for character animation, in-video character replacement, and motion transfer projects.",
@@ -10127,7 +10127,7 @@
 "slug": "wan2-1",
 "kind": "video",
 "era": 2025,
-"licence": "Apache-2.0",
+"licence": "Apache-2.0; InfiniteTalk Apache-2.0, its wav2vec2 encoder MIT",
 "crew": "wan-2-1",
 "repos": [
 "Wan-AI/Wan2.1-T2V-14B",
@@ -11612,7 +11612,7 @@
 "slug": "wan2-2-dancer",
 "kind": "video",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0 (ComfyUI repackage)",
 "crew": "wan-2-2",
 "repos": [],
 "what": "Generate minute-scale coherent dance videos from music using a hierarchical Wan Dancer framework. Input a music file and reference image to produce high-resolution dance videos with global structure and temporal continuity.",
@@ -11697,7 +11697,7 @@
 "slug": "yue2",
 "kind": "audio",
 "era": 2026,
-"licence": null,
+"licence": "CC BY-NC 4.0",
 "crew": "music-song-models",
 "repos": [
 "Comfy-Org/YuE2"
@@ -12208,7 +12208,7 @@
 "slug": "sam-3d-body",
 "kind": "3d",
 "era": 2026,
-"licence": null,
+"licence": "SAM License: commercial use allowed, with use rules",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "Comfy-Org/sam-3d-body"
@@ -12280,7 +12280,7 @@
 "slug": "triposplat",
 "kind": "3d",
 "era": 2026,
-"licence": null,
+"licence": "MIT",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "VAST-AI/TripoSplat"
@@ -12360,7 +12360,7 @@
 "slug": "moge",
 "kind": "3d",
 "era": 2026,
-"licence": null,
+"licence": "MIT",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "Comfy-Org/MoGe",
@@ -12436,7 +12436,7 @@
 "slug": "lotus",
 "kind": "utility",
 "era": 2026,
-"licence": null,
+"licence": "Apache-2.0",
 "crew": "master",
 "repos": [
 "Comfy-Org/lotus"
@@ -12493,7 +12493,7 @@
 "slug": "sdpose",
 "kind": "utility",
 "era": 2026,
-"licence": null,
+"licence": "MIT (ComfyUI repackage)",
 "crew": "master",
 "repos": [
 "Comfy-Org/SDPose"
@@ -12546,7 +12546,7 @@
 "slug": "anigen",
 "kind": "3d",
 "era": 2026,
-"licence": null,
+"licence": "MIT",
 "crew": "3d-trellis-hunyuan3d-sam3d-mesh",
 "repos": [
 "VAST-AI/AniGen"
@@ -12586,7 +12586,7 @@
 "slug": "animatediff",
 "kind": "video",
 "era": 2023,
-"licence": "Apache-2.0 (the motion modules' own card and the checkpoint's licence also apply)",
+"licence": "AnimateDiff motion modules: Apache-2.0; AnimateDiff-Lightning: CreativeML OpenRAIL-M. The checkpoint's own licence also applies",
 "crew": "master",
 "repos": [
 "guoyww/animatediff",
@@ -12742,7 +12742,7 @@
 "slug": "ic-light",
 "kind": "image",
 "era": 2024,
-"licence": "Apache-2.0 on the code's repo; the weights' own card names none",
+"licence": "Code: Apache-2.0. The weights' own card names no licence",
 "crew": "master",
 "repos": [
 "lllyasviel/ic-light"
@@ -12781,7 +12781,7 @@
 "slug": "ccsr",
 "kind": "image",
 "era": 2024,
-"licence": "Unverified: no licence source read yet",
+"licence": "Apache-2.0 (the code repository and the weights' repackage)",
 "crew": "master",
 "repos": [],
 "what": "Picture upscaling through kijai's CCSR nodes.",
@@ -12818,7 +12818,7 @@
 "slug": "liveportrait",
 "kind": "video",
 "era": 2024,
-"licence": "MIT (its InsightFace face finder is non-commercial)",
+"licence": "MIT; its InsightFace face finder (buffalo_l) is for non-commercial research only",
 "crew": "master",
 "repos": [
 "KwaiVGI/LivePortrait"

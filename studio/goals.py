@@ -5,6 +5,7 @@ import json, math, os, random, re, subprocess
 from fastapi import HTTPException
 from psn import paths
 from studio.anime import STYLES, strict_prompt
+from studio import licences
 WF = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "workflows")
 NEG_VIDEO = "worst quality, inconsistent motion, blurry, jittery, distorted, watermark, text"
 WAN_NEG = "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走"
@@ -169,6 +170,9 @@ GOALS = {
  "director": G("Director", "Direct your shot: camera move, lens, lighting and mood on MiniMax H3", "h3_t2v_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {**DIRECTOR_OPTIONS, "aspect": list(H3_ASPECTS), "quality": list(H3_QUALITY), "seconds": [2, 3, 4, 5, 6, 8], "speed": ["quality", "fast"]}, {**DIRECTOR_DEFAULTS, "aspect": "16:9", "quality": "high", "seconds": 5, "speed": "fast"}),
  "director_keyframes": G("Director: first + last frame", "Direct a shot between two frames you choose on MiniMax H3", "h3_fl2v_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {**DIRECTOR_OPTIONS, "aspect": list(H3_ASPECTS), "quality": list(H3_QUALITY), "seconds": [2, 3, 4, 5, 6, 8], "speed": ["quality", "fast"]}, {**DIRECTOR_DEFAULTS, "camera": "locked", "aspect": "16:9", "quality": "high", "seconds": 5, "speed": "fast"}, needs_image=True, needs_last_image=True, image_label="First frame"),
 }
+for _g in GOALS.values():      # what a person must know before picking it (studio/licences.py): shown on the tile and beside the Generate button
+    _lic = licences.for_goal(_g["family"]) or {"licence": _g["license"], "url": "", "limits": [licences.UNVERIFIED], "badge": licences.UNVERIFIED}
+    _g.update(license_limits=_lic["limits"], license_badge=_lic["badge"], license_url=_lic["url"], license_terms=_lic["licence"])
 FLAGSHIP = ("recast", "vfx_ltx", "ltx_transition", "reshoot", "orbit360", "reshoot_wan", "director", "director_keyframes")
 def values_for(goal, req, image_name=None):
     g = GOALS[goal]; o = {**g["defaults"], **{k: v for k, v in (req.get("options") or {}).items() if k in g["options"] and v in g["options"][k]}}

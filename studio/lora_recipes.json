@@ -4087,7 +4087,7 @@ null
 "path": "minimax_h3/civitai_wide/progressive_acceleration_slider_v1.0.safetensors",
 "family": "h3",
 "title": "Progressive Acceleration MMH3 Slider: Smoothly accelerates the speed of any action or moti",
-"summary": "Rank-1 weight slider that progressively accelerates the speed of any action or motion over the clip (Ip Man chain punch example); negative weights reverse the effect.",
+"summary": "Rank-1 weight slider that progressively accelerates the speed of any action or motion over the clip (Wing Chun chain punch example); negative weights reverse the effect.",
 "purpose": "detail",
 "purpose_label": "Detail, realism & sliders",
 "rating": "sfw",

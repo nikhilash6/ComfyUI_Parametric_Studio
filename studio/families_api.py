@@ -7,7 +7,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 from psn import instances as I
 from studio import apps as A
-from studio import likeness
+from studio import licences, likeness
 from studio.ui2api import ui_to_api
 ROOT = Path(__file__).resolve().parent; STATUS = ROOT / "family_status.json"; WEB = ROOT / "web"; EXTRA = ROOT / "family_templates"
 REAP_MIN = float(os.environ.get("STUDIO_FAMILY_REAP_MIN", "15")); RUN_TIMEOUT = int(os.environ.get("STUDIO_FAMILY_RUN_TIMEOUT", "1800")); DISK_SPARE_GB = 25
@@ -157,10 +157,14 @@ def _crew(cid):
             if m.get("id") == cid: return {"id": cid, "name": m.get("name"), "tier": m.get("tier"), "files": m.get("files") or []}
     except Exception: pass
     return {"id": cid, "name": None, "tier": None, "files": []}
+def _licence(f, meta):
+    """Licence, limits and link from studio/licences.py (read from each model's page); the status file's own line only when the family is not listed there."""
+    e = licences.for_family(f) or {"licence": meta.get("licence"), "url": "", "limits": [] if meta.get("licence") else [licences.UNVERIFIED], "badge": "" if meta.get("licence") else licences.UNVERIFIED}
+    return {"licence": e["licence"], "licence_url": e["url"], "licence_limits": e["limits"], "licence_badge": e["badge"]}
 def _row(f, files, sc, crew_names):
     dirs = instance_dirs(); meta, info = _meta(f), _info(f); port = (info or {}).get("port"); up = bool(port and I.is_up(port)); st, lb = _state(meta, files, info, f in dirs); tl = meta.get("templates", []); ready = [t for t in tl if tpl_state(t, files)["ready"]]; media = meta.get("media") or []; show = [x for x in sc.get(f, []) if x.get("kind") != "audio"] + [x for x in sc.get(f, []) if x.get("kind") == "audio"]
     t = meta.get("test") or {}
-    return {"family": f, "slug": _slug(f, dirs), "on_disk": f in dirs, "kind": meta.get("kind"), "era": meta.get("era"), "licence": meta.get("licence"), "crew": {"id": meta.get("crew"), "name": crew_names.get(meta.get("crew"))}, "port": port, "generated": bool(info), "status": "up" if up else "down", "up": up, "est_vram_gb": (info or {}).get("est_vram_gb"), "nodes": t.get("nodes"), "psn_nodes": t.get("psn"),
+    return {"family": f, "slug": _slug(f, dirs), "on_disk": f in dirs, "kind": meta.get("kind"), "era": meta.get("era"), **_licence(f, meta), "crew": {"id": meta.get("crew"), "name": crew_names.get(meta.get("crew"))}, "port": port, "generated": bool(info), "status": "up" if up else "down", "up": up, "est_vram_gb": (info or {}).get("est_vram_gb"), "nodes": t.get("nodes"), "psn_nodes": t.get("psn"),
             "models": {"files": len(files), "gb": round(sum(files.values()) / 1e9, 1), "ready": bool(files)}, "level": meta.get("level"), "state": st, "state_label": lb, "note": t.get("note"), "render_secs": t.get("secs"), "peak_gib": t.get("peak_gib"), "tested_template": t.get("tpl"), "templates": len(tl), "templates_ready": len(ready), "media": _merge(media, show)[:1], "media_count": len(_merge(media, show)), "media_library": bool(_merge(media, show)) and bool(_merge(media, show)[0].get("library")), "repos": meta.get("repos", []), "what": meta.get("what")}
 @router.get("/api/families")
 def families_list():
