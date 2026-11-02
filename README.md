@@ -4,10 +4,12 @@
 
 ### One clip in, a whole shoot out, on your own GPU.
 
-**[▶ Try the read-only demo](https://parametricparadigm.github.io/ComfyUI_Parametric_Studio/)** &nbsp;·&nbsp; **[🎬 Watch the earlier 2-minute video](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_demo.mp4)** &nbsp;·&nbsp; **[⚡ Install](#install)** &nbsp;·&nbsp; **[✅ What's proven](#whats-proven)**
-<!-- shot board demo link -->
+**[▶ Watch the Shot Board demo (1:49)](docs/media/shotboard_demo.mp4)** &nbsp;·&nbsp; **[Try the read-only demo](https://parametricparadigm.github.io/ComfyUI_Parametric_Studio/)** &nbsp;·&nbsp; **[⚡ Install](#install)** &nbsp;·&nbsp; **[For the judges](#for-the-judges)** &nbsp;·&nbsp; **[✅ What's proven](#whats-proven)**
+<!-- shot board demo link: for GitHub's inline player, drop docs/media/shotboard_demo.mp4 (4.3 MB) into a comment box on github.com and paste the user-attachments URL on its own line here -->
 
-![Shot Board: one source clip, reshot, orbited, recast and run through four LTX-2.5 effects](docs/img/shotboard.jpg)
+[![One source clip on the Shot Board: reshoot, orbit 360, recast, then LTX-2.5 water, clean plate, day to night and a matte](docs/media/shotboard_preview.webp)](docs/media/shotboard_demo.mp4)
+
+<sub>One real Shot Board run: the source clip and its seven results, from the contact video the board exported, scaled down. Click for the 1:49 screen recording of that run (waits sped up and labelled, captions, no sound).</sub>
 
 </div>
 
@@ -15,7 +17,34 @@ Bring one clip and queue the shoot: a new camera, a frozen orbit, a recast lead,
 
 - **Real graphs.** What you see in Pro is what ComfyUI runs, not a diagram of it.
 - **Audited nodes.** We read all 544 custom nodes and published the result: 158 do real work, 364 are honest utilities or payload builders that load no model, and 22 don't work yet, [listed by name](docs/NODES.md#node-reference). We removed or renamed the ones that faked results.
-- **Open weights only.** No partner nodes or closed APIs in the open edition, enforced by a test. Models keep their own licences, and some limit where or how you can use them. MiniMax H3's community licence excludes the US, EU, UK and South Korea: [read MODELS.md](MODELS.md) before you install those goals.
+- **Open weights only.** No partner nodes or closed APIs in the open edition, enforced by tests. Models keep their own licences, and some limit where or how you can use them. MiniMax H3's community licence excludes the US, EU, UK and South Korea: [read MODELS.md](MODELS.md) before you install those goals.
+
+## For the judges
+
+Built for the Open Source Higgsfield contest. Entered in **Open Weights Only** and **VFX Workflow Built with LTX**. Best Overall considers every entry.
+
+| | |
+|---|---|
+| **What's new** | One clip becomes a whole shoot in one queue: reshoot, frozen-time orbit, recast, then four LTX-2.5 effects, and every result keeps its exact graph and seed. Code: the queue in [`studio/web/shotboard.js`](studio/web/shotboard.js), job states in [`shotboard_logic.js`](studio/web/shotboard_logic.js), the board in [`shotboard_view.js`](studio/web/shotboard_view.js), the contact-video export in [`studio/shot_board.py`](studio/shot_board.py). Tests: [`tests/test_shot_board.py`](tests/test_shot_board.py) |
+| **Open Weights Only** | [`tests/test_open_edition_no_paid_apis.py`](tests/test_open_edition_no_paid_apis.py) checks every graph in [`workflows/`](workflows) and [`studio/family_templates/`](studio/family_templates) against the 322 partner node ids in ComfyUI 0.43.0 ([`tests/partner_node_ids.txt`](tests/partner_node_ids.txt)), and keeps paid API hosts and SDKs out of `psn/` and `psn_nodes/`. The open edition hides partner apps: [`tests/test_publication.py`](tests/test_publication.py) |
+| **LTX is the core** | [`workflows/ltx25_vfx_api.json`](workflows/ltx25_vfx_api.json): 30 nodes, LTX-2.5 with one of four Lightricks IC-LoRAs, picked per effect in `VFX_EFFECTS` in [`studio/goals.py`](studio/goals.py): water, clean plate, day to night, matte |
+| **Demo** | [1:49 screen recording of one real run](docs/media/shotboard_demo.mp4): waits sped up and labelled, captions, no sound |
+| **Try it** | [Read-only demo](https://parametricparadigm.github.io/ComfyUI_Parametric_Studio/): the real UI and real renders, it generates nothing |
+| **Install** | [Three lines if you already run ComfyUI](#install), or one installer command |
+| **Hardware** | Tested only on one Linux box with a 96 GB card. See [Shot Board](#shot-board-one-clip-in-a-whole-shoot-out) for the peak VRAM we recorded |
+| **What's run and what isn't** | [What's proven](#whats-proven) |
+
+## Shot Board: one clip in, a whole shoot out
+
+Bring one clip and queue the lot: reshoot it with a new camera, orbit around the subject, recast the lead from a single picture, then run LTX-2.5 VFX for water, a clean plate, day to night and a matte. Jobs run one at a time on your GPU. The queue survives a reload, but the tab does need to stay open. Every result keeps its exact graph and seed. Export the grid as one captioned contact video. Seven jobs on one clip took about 13 minutes on our 96 GB card. A clean plate can leave a small smear when the subject fills the frame, and the page says so.
+
+**The four LTX-2.5 effects on one clip**, from the same run (source, water, clean plate, day to night, matte). All four use [`workflows/ltx25_vfx_api.json`](workflows/ltx25_vfx_api.json) with a different IC-LoRA:
+
+![Source clip, then LTX-2.5 water, clean plate, day to night and matte](docs/media/shotboard_ltx_vfx.webp)
+
+**Peak VRAM** for the same goals rendered on their own on our 96 GB card: reshoot 49.3 GiB, VFX water 47.3 GiB, VFX clean plate 44.8 GiB, recast 36.3 GiB (recorded in [`studio/web/showcase/showcase.json`](studio/web/showcase/showcase.json)). These are peaks on a card with room to spare, not minimums. No smaller card has been tried.
+
+![Shot Board: one source clip, reshot, orbited, recast and run through four LTX-2.5 effects](docs/img/shotboard.jpg)
 
 ## What's proven
 
@@ -32,17 +61,41 @@ Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Win
 | RES4LYF page | A credit page. The pack is not shipped; run separately, of 154 nodes checked 92 rendered, 14 ran and 44 errored | The other nodes in the pack |
 | Families | 95 wired, 60 with a render on record | The other 35 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
 
-<div align="center">
+## Install
 
-![The Create page: a draggable 3D wall of real renders](docs/img/hero.webp)
+**Already run ComfyUI?** You only need the studio, and a link so ComfyUI loads its `PSN_` nodes:
 
-<sub>That wall is video from this studio's own renders, curved around you in three.js. Drag it. Click any shot to see how it was made.</sub>
+```bash
+git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git && cd ComfyUI_Parametric_Studio && uv sync
+ln -s "$PWD" /path/to/ComfyUI/custom_nodes/comfyui_parametric_studio    # then restart ComfyUI
+COMFYUI_URL=http://127.0.0.1:8188 uv run python -m studio.server         # open http://127.0.0.1:8310
+```
 
-</div>
+Each app's page lists the model files it is missing and any node your ComfyUI doesn't have. The Shot Board needs MiniMax H3 for reshoot, orbit and recast, LTX-2.5 with four Lightricks IC-LoRAs for the VFX, and the ComfyUI-LTXVideo and KJNodes packs. The files, sizes and hashes for each goal are in [`studio/models_manifest.json`](studio/models_manifest.json) (goals `reshoot`, `orbit360`, `recast`, `vfx_ltx`), and the licences are in [MODELS.md](MODELS.md). Folder settings are in [INSTALL.md](INSTALL.md#using-a-comfyui-you-already-have).
+
+**Starting from nothing?** One command, sized to your machine. See what it would do first:
+
+```bash
+sudo apt update && sudo apt install -y git ffmpeg python3-venv   # Ubuntu or Debian; other systems are in INSTALL.md
+git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
+cd ComfyUI_Parametric_Studio
+python3 install.py --dry-run     # shows what fits this box and the disk it needs, changes nothing
+python3 install.py               # or --goals anime for the smallest download, --channel nightly, --goals image,video
+```
+
+It needs a GPU driver already installed, and about 10 GB of disk plus the models: 25 GB is enough for the default goal. Then run the launcher it prints and open http://127.0.0.1:8310.
+
+**For the Shot Board:** `python3 install.py --goals reshoot,orbit360,recast,vfx_ltx --include-gated`. LTX-2.5 and its IC-LoRAs are gated: accept each licence on Hugging Face and set `HF_TOKEN` first. On our box, the dry run of that command plans 99.9 GB of models and about 110 GB of disk, and adds the ComfyUI-LTXVideo and KJNodes packs. It has not been run end to end on a clean machine.
+
+Full details, including Windows, Mac and what has and hasn't been tested on each, are in **[INSTALL.md](INSTALL.md)**. Models and their licences are in **[MODELS.md](MODELS.md)**; they are not in this repo, and some have their own terms and regional limits. MiniMax H3's licence excludes the US, EU, UK and South Korea, and that reaches its outputs too, so read it before you install those goals.
 
 ---
 
-## Why this exists
+## Also in the box
+
+The Shot Board is the contest entry. The rest of the studio comes with it.
+
+### Why this exists
 
 Closed AI video apps give you a prompt box and hide everything else. ComfyUI gives you everything, and a blank canvas. **Parametric Studio is both at once:** a form anyone can use, and one click from the exact ComfyUI graph that made the result. It runs on your machine, it reads your machine, and it teaches you how it all works while you use it.
 
@@ -55,7 +108,7 @@ Closed AI video apps give you a prompt box and hide everything else. ComfyUI giv
 | **Help** | A docs page | **A crew of characters that answer from cited notes, out loud** |
 | **Can you fork it?** | No | **Yes: AGPL-3.0** |
 
-## The apps
+### The apps
 
 Named after what you want to do, not which node to wire.
 
@@ -73,17 +126,23 @@ Plus Image, Image HQ, Anime, Video, Animate, Video + Sound and Music as direct g
 
 <table><tr>
 <td><a href="studio/web/showcase/v_h3_dragon.mp4"><img src="studio/web/showcase/v_h3_dragon.webp" alt="MiniMax H3: dragon" width="280"></a><br><sub><b>MiniMax H3</b>: dragon, with sound</sub></td>
-<td><a href="studio/web/showcase/v_ltx_shatter.mp4"><img src="studio/web/showcase/v_ltx_shatter.webp" alt="LTX-2.5: shatter" width="280"></a><br><sub><b>LTX-2.5</b>: shards into butterflies</sub></td>
+<td><a href="studio/web/showcase/vfx_flood.mp4"><img src="studio/web/showcase/vfx_flood.webp" alt="LTX-2.5 VFX: flood the street" width="280"></a><br><sub><b>LTX-2.5 VFX</b>: flood the street</sub></td>
 <td><a href="studio/web/showcase/recast_chef.mp4"><img src="studio/web/showcase/recast_chef.webp" alt="Recast" width="280"></a><br><sub><b>Recast</b>: same scene, new character</sub></td>
 </tr><tr>
 <td><img src="studio/web/showcase/s_mecha.webp" alt="Anima: mecha" width="280"><br><sub><b>Anima</b>: mecha in the rain</sub></td>
 <td><img src="studio/web/showcase/s_foundry.webp" alt="FLUX.2 Klein: foundry" width="280"><br><sub><b>FLUX.2 Klein</b>: 10 seconds on one GPU</sub></td>
-<td><a href="studio/web/showcase/v_ltx_ink.mp4"><img src="studio/web/showcase/v_ltx_ink.webp" alt="LTX-2.5: ink" width="280"></a><br><sub><b>LTX-2.5</b>: gold and emerald ink</sub></td>
+<td><a href="studio/web/showcase/vfx_clean_plate.mp4"><img src="studio/web/showcase/vfx_clean_plate.webp" alt="LTX-2.5 VFX: clean plate" width="280"></a><br><sub><b>LTX-2.5 VFX</b>: the violinist painted out, no mask</sub></td>
 </tr></table>
 
 <sub>Every image above is a real, unedited, AI-generated output from this repo's workflows. Prompt, time and peak VRAM are on each tile in the app.</sub>
 
-## What's inside
+<div align="center">
+
+![The Create page: a draggable 3D wall of real renders](docs/img/hero.webp)
+
+<sub>That wall is video from this studio's own renders, curved around you in three.js. Drag it. Click any shot to see how it was made.</sub>
+
+</div>
 
 ### See inside every shot
 Open **Pro** and the exact ComfyUI graph appears in 3D, with data flowing along its wires. Click a node for a plain-language explanation. During a render it lights up node by node. The same graph runs when you press Generate, and you can copy it into ComfyUI.
@@ -115,9 +174,6 @@ Short runs prove the plumbing, and the page says so. In our proofs the LoRA usua
 The word check covers captions, file names, the LoRA name, the trigger and the test prompt. **Pictures are not checked: there is no image classifier yet**, so training needs a tick that you own or have rights to the pictures and that no real person's likeness is trained without consent. This is not a safety guarantee. ComfyUI's node saves only at the end, so a cancel or crash loses that run; Continue adds steps to a finished LoRA without the optimizer's state. External trainers save as they go, show their own samples and can resume from their last save.
 
 **Installing ai-toolkit (for FLUX.1 dev, Qwen-Image 2.1, HiDream-O1, LTX-2.5 and MiniMax H3):** nothing is installed for you. Clone https://github.com/ostris/ai-toolkit, make a Python 3.12 venv, install a CUDA build of torch and then `requirements.txt`, and set `STUDIO_TRAINER_AI_TOOLKIT_DIR` and `STUDIO_TRAINER_AI_TOOLKIT_PYTHON`. The page shows these steps on any base that needs it. We write the job file from our own templates in `studio/train_configs` and give the trainer a folder of links, so it never writes into your model folders. It may fetch tokenizer and config files from Hugging Face. `STUDIO_TRAIN_WRAP` puts a command in front of the trainer, for a machine that shares its GPU through a queue. `STUDIO_TRAIN_PROVE=<base id>` lets one base have its first run without the page's tick.
-
-### Shot Board: one clip in, a whole shoot out
-Bring one clip and queue the lot: reshoot it with a new camera, orbit around the subject, recast the lead from a single picture, then run LTX-2.5 VFX for water, a clean plate, day to night and a matte. Jobs run one at a time on your GPU. The queue survives a reload, but the tab does need to stay open. Every result keeps its exact graph and seed. Export the grid as one captioned contact video. Seven jobs on one clip took about 13 minutes on our 96 GB card. A clean plate can leave a small smear when the subject fills the frame, and the page says so.
 
 ### World Kit and Virtual Set
 **World Kit** keeps one library of `.glb` places, props and characters with real scale and colliders, and exports a Godot pack. The place maker, looks, library and export ran here on the CPU with Blender, and the prop maker ran from a mesh. Describe an invented person and the character maker makes a sheet, checks it, and builds a rigged body with motions: it ran here on real models. The figure wears the sheet's clothes, hair and colour; its back and sides are the model's guess. Word checks and a picture check run on every character; the page says what they cannot catch. Other steps that need a model are written and tested with fakes, but have not run on a real model.
@@ -167,34 +223,6 @@ Audited by reading the code: 158 do real work on images, latents, audio or files
 | **Graph Proof** | Saves a hash and the settings next to every output |
 
 More in [docs/NODES.md](docs/NODES.md).
-
-## Built for the Open Source Higgsfield contest
-
-Entered in **Open Weights Only** and **VFX Workflow Built with LTX**. Best Overall considers every entry.
-
-## Install
-
-**One command, sized to your machine.** See what it would do first:
-
-```bash
-sudo apt update && sudo apt install -y git ffmpeg python3-venv   # Ubuntu or Debian; other systems are in INSTALL.md
-git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
-cd ComfyUI_Parametric_Studio
-python3 install.py --dry-run     # shows what fits this box and the disk it needs, changes nothing
-python3 install.py               # or --goals anime for the smallest download, --channel nightly, --goals image,video
-```
-
-It needs a GPU driver already installed, and about 10 GB of disk plus the models: 25 GB is enough for the default goal. Then run the launcher it prints and open http://127.0.0.1:8310.
-
-**Already run ComfyUI?** You only need the studio:
-
-```bash
-uv sync
-COMFYUI_URL=http://127.0.0.1:8188 uv run python -m studio.server
-# open http://localhost:8310
-```
-
-Full details, including Windows, Mac and what has and hasn't been tested on each, are in **[INSTALL.md](INSTALL.md)**. Models and their licences are in **[MODELS.md](MODELS.md)**; they are not in this repo, and some have their own terms and regional limits. MiniMax H3's licence excludes the US, EU, UK and South Korea, and that reaches its outputs too, so read it before you install those goals.
 
 ## How it fits together
 

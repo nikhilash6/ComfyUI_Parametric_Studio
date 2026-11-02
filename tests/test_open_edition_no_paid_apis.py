@@ -12,3 +12,13 @@ def test_no_paid_api_hosts_or_sdks_in_source():
                 t = open(os.path.join(dp, f), errors="replace").read(); p = os.path.relpath(os.path.join(dp, f), ROOT)
                 hits += [f"{p}: host {h}" for h in PAID if h in t.lower()]; hits += [f"{p}: import {m.group(1)}" for m in PAID_IMPORTS.finditer(t)]
     assert not hits, hits
+
+def test_no_studio_graph_uses_a_partner_node():
+    import glob, json
+    ids = {l.strip() for l in open(os.path.join(ROOT, "tests", "partner_node_ids.txt")) if l.strip() and not l.startswith("#")}; assert len(ids) > 300
+    graphs = glob.glob(os.path.join(ROOT, "workflows", "*.json")) + glob.glob(os.path.join(ROOT, "studio", "family_templates", "*.json")); assert len(graphs) > 30
+    hits = []
+    for f in graphs:
+        g = json.load(open(f)); nodes = g.values() if isinstance(g, dict) else []
+        hits += [f"{os.path.relpath(f, ROOT)}: {n.get('class_type')}" for n in nodes if isinstance(n, dict) and n.get("class_type") in ids]
+    assert not hits, hits
