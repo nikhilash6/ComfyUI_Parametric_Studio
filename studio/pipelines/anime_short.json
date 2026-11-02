@@ -73,9 +73,9 @@
    "label": "Motion 1",
    "model": "Wan 2.2 TI2V-5B",
    "peak_gib": 24,
-   "seed": 302,
+   "seed": 312,
    "does": "Animates the drawing without redrawing it.",
-   "prompt": "Mist drifts through the valley and waterfalls pour steadily behind the huge still machine. The camera slowly pushes in. Anime style, smooth hand-drawn motion.",
+   "prompt": "The huge machine stands completely still. Soft mist drifts slowly across the valley and clouds move across the sky. The camera slowly pushes in. Anime style, smooth hand-drawn motion.",
    "image": "@visual",
    "options": {
     "seconds": 5
@@ -116,9 +116,9 @@
    "label": "Motion 2",
    "model": "Wan 2.2 TI2V-5B",
    "peak_gib": 24,
-   "seed": 305,
+   "seed": 315,
    "does": "Animates the second drawing.",
-   "prompt": "The round amber eye slowly brightens and water drips from the iron brow while the flowers sway in the wind. The camera stays almost still. Anime style, smooth hand-drawn motion.",
+   "prompt": "The round amber eye slowly glows brighter. Long grass on the iron brow sways gently in the wind. The camera stays still. Anime style, smooth hand-drawn motion.",
    "image": "@visual2",
    "options": {
     "seconds": 5

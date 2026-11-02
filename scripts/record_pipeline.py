@@ -53,8 +53,8 @@ def record(run_dir, pid, review, web=WEB, data=DATA):
     if run["recipe"] != pid: raise SystemExit(f"that run belongs to {run['recipe']}, not {pid}")
     out = web / pid; tmp = web / f".{pid}.new"; shutil.rmtree(tmp, ignore_errors=True); tmp.mkdir(parents=True); (tmp / "graphs").mkdir(); licences = {m["name"]: m for m in rec["models"]}; stages = []
     for st in run["steps"]:
-        spec = specs.get(st["id"], {}); media = []; n = 0
-        for f in st.get("files") or []:
+        spec = specs.get(st["id"], {}); media = []; n = 0; pick = review.get("final_from") if st.get("final") else None
+        for f in sorted(st.get("files") or [], key=lambda f: 0 if pick and pick in f["filename"] else 1):
             p = _found(f, run_dir)
             if not p: continue
             n += 1; media.append(web_copy(p, tmp, st["id"] if n == 1 else f"{st['id']}_{n}", final=bool(st.get("final"))))
@@ -62,8 +62,13 @@ def record(run_dir, pid, review, web=WEB, data=DATA):
         if graph.is_file(): gname = f"graphs/{st['id']}.json"; (tmp / gname).write_text(json.dumps(scrub(json.loads(graph.read_text())), indent=0), encoding="utf-8")
         mine = (review.get("stages") or {}).get(st["id"]) or {}; m = licences.get(spec.get("model")) or {}
         stages.append(scrub({"id": st["id"], "label": st.get("label"), "type": st.get("type"), "does": spec.get("does", ""), "model": spec.get("model") or st.get("model") or "", "licence": m.get("licence", ""), "licence_class": m.get("licence_class", ""), "seed": st.get("seed"), "seconds": st.get("seconds"), "peak_gib": st.get("peak_gib"), "ran": st.get("status"), "status": mine.get("status") or ("ok" if st.get("status") == "done" else "failed"), "note": mine.get("note") or st.get("error") or "", "prompt": prompt_of(spec, st, run.get("values") or {}), "media": media, "graph": gname, "final": bool(st.get("final")), "build": st.get("build")}))
-    final = next((s for s in reversed(stages) if s["final"] and s["media"]), None)
-    proof = scrub({"id": pid, "status": review["status"], "verdict": review["verdict"], "run": run["run"], "rendered": time.strftime("%Y-%m-%d", time.localtime(run.get("finished") or time.time())), "seconds": round(sum(s["seconds"] or 0 for s in stages), 1), "wall_seconds": run.get("seconds"), "peak_vram_gib": run.get("peak_vram_gib"), "peak_note": "Peak is this run's own ComfyUI and tools, read from nvidia-smi every 2 seconds. The card was shared with other work.", "values": run.get("values"), "final": (final or {}).get("media", [None])[0], "stages": stages, "rejected": review.get("rejected") or []})
+    final = next((s for s in reversed(stages) if s["final"] and s["media"] and s["media"][0]["kind"] in ("video", "image")), None); final_media = (final or {}).get("media", [None])[0]
+    if review.get("final_compose"):                                    # stages whose own outputs are shown side by side as the result, put together here with ffmpeg; the verdict says so
+        clips = [tmp / m["src"] for s in stages if s["id"] in review["final_compose"] for m in s["media"][:1] if m["kind"] == "video"]
+        if clips:
+            dst = tmp / "final_compose.mp4"; ff(*sum((["-i", c] for c in clips), []), "-filter_complex", "".join(f"[{i}:v]scale=-2:480,setsar=1[v{i}];" for i in range(len(clips))) + "".join(f"[v{i}]" for i in range(len(clips))) + f"hstack=inputs={len(clips)},format=yuv420p", "-an", "-c:v", "libx264", "-crf", 23, "-movflags", "+faststart", dst)
+            poster = tmp / "final_compose.webp"; ff("-ss", 1, "-i", dst, "-frames:v", 1, "-c:v", "libwebp", "-quality", 84, poster); final_media = {"src": dst.name, "kind": "video", "poster": poster.name, "seconds": round(probe_seconds(dst), 1)}
+    proof = scrub({"id": pid, "status": review["status"], "verdict": review["verdict"], "run": run["run"], "rendered": time.strftime("%Y-%m-%d", time.localtime(run.get("finished") or time.time())), "seconds": round(sum(s["seconds"] or 0 for s in stages), 1), "wall_seconds": run.get("seconds"), "peak_vram_gib": run.get("peak_vram_gib"), "peak_note": "Peak is this run's own ComfyUI and tools, read from nvidia-smi every 2 seconds. The card was shared with other work. Time adds up each stage's own work, not the wait for the shared card.", "values": run.get("values"), "final": final_media, "stages": stages, "rejected": review.get("rejected") or []})
     (tmp / "proof.json").write_text(json.dumps(proof, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
     if out.exists(): shutil.rmtree(out)
     tmp.rename(out); return proof

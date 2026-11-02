@@ -183,8 +183,8 @@
      "engine": "h3",
      "control": "depth"
     },
-    "seed": 902,
-    "prompt": "A courier in a rust-orange work jacket walks down a quiet brick street toward the camera at golden hour."
+    "seed": 912,
+    "prompt": "A courier in a rust-orange work jacket walks down a quiet brick street toward the camera at golden hour. The shop signs are plain painted boards with no lettering."
    },
    "does": "Blender renders the blocked shot, and H3 follows its exact depth."
   },

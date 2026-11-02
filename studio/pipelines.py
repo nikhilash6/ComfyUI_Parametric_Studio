@@ -35,9 +35,10 @@ def problems():
         pr = proof(pid)
         if pr:
             if pr.get("status") not in ("passed", "partial", "failed"): bad.append(f"{pid}: proof has status {pr.get('status')}")
+            if pr.get("final") and not (WEB / pid / pr["final"]["src"]).is_file(): bad.append(f"{pid}: proof's final {pr['final']['src']} is not in the web folder")
             for st in pr.get("stages", []):
                 for m in st.get("media", []):
-                    if not (WEB / pid / m["src"]).is_file(): bad.append(f"{pid}: proof names {m['src']}, not in the web folder")
+                    if m.get("src") and not (WEB / pid / m["src"]).is_file(): bad.append(f"{pid}: proof names {m['src']}, not in the web folder")
     return bad
 
 # ---------- the two step types
