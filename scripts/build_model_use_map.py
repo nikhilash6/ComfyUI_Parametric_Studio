@@ -262,12 +262,14 @@ def build(repo_root, models_root, workbench, yaml_path, all_json, template_dir=N
         for pre, label in RUNNERS:
             if pre in r["rel"] and label not in used: used.append(label)
         typ = reach(r["rel"], folders)
-        names = [u.rsplit(" / ", 1)[-1] for u in used]; hit = next((t for t in names if t in proofs), "")
+        rejected = ""; names = [u.rsplit(" / ", 1)[-1] for u in used]; hit = next((t for t in names if t in proofs), "")
         proof = proofs[hit] if hit else tool_proof(r["rel"], used, proofs3d)
         if proof:
             key = hit or next((tid for lb, (tid, _) in TOOL_PROOF.items() if any(u.startswith(lb) for u in used)), "")
             proof += "; looked at: " + viewed[key] if key in viewed else "; not looked at yet"
+            if viewed.get(key, "").startswith("REJECTED"): rejected, proof = proof, ""                       # it finished, but looking at it showed it proves nothing
         st, nxt = decide(r, ok, bool(typ), used, proof)
+        if rejected and st == "graph": nxt = "run again: " + rejected
         if st in ("reachable", "unreachable"):
             nxt = next((w for pat, w in WHY_UNUSED if pat in r["rel"]), nxt)
         does, src = (fetch_card(r["repo"], cards) if cards and r["repo"] else ("", ""))
@@ -301,7 +303,7 @@ def main(argv=None):
     spec = spec_from_file_location("build_future_numbers", ROOT / "scripts" / "build_future_numbers.py"); fn = module_from_spec(spec); spec.loader.exec_module(fn); fn.write(a.out)      # the Future page's totals follow the map
     n = {}
     for r in rows: n[r["status"]] = n.get(r["status"], 0) + 1
-    print(len(rows), "files:", n, "rendered and looked at:", sum(r["status"] == "rendered" and "looked at:" in r["proof"] for r in rows))
+    print(len(rows), "files:", n, "rendered and looked at:", sum(r["status"] == "rendered" and "looked at:" in r["proof"] for r in rows), "of those weak:", sum(r["status"] == "rendered" and "looked at: WEAK" in r["proof"] for r in rows))
 
 
 if __name__ == "__main__":

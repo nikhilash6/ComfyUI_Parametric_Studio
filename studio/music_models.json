@@ -1,45 +1,672 @@
 {
 "about": "One entry per music model the studio knows about. Facts come from each model's card or code, read on 2026-11-01. Proof comes from music_proof.json, written by scripts/build_music_page.py from real renders.",
 "models": [
-{"id":"music3","label":"MiniMax Music 3","maker":"MiniMax","kind":"song","job":"Full songs with vocals from a three-part caption and lyrics.","does":"The strongest fit for the studio's style library: its caption format and its 1,056 style cards were written for it. It plans a song first, then renders it, so length is a ceiling and it may stop early. Runs in core ComfyUI.","licence":{"name":"MiniMax-Music3 Community License","short":"Community","use":"Commercial use must show \"MiniMax-Music3\" prominently in the product. Above USD 20M a year you need written permission from MiniMax. ComfyUI's repackaged files are tagged Apache-2.0 on their page; the studio follows MiniMax's own licence, shipped as studio/LICENSE-MiniMax-Music3.txt.","url":"https://github.com/MiniMax-AI/MiniMax-Music3","commercial":"conditional"},"links":[["MiniMax's repo","https://github.com/MiniMax-AI/MiniMax-Music3"],["ComfyUI's files","https://huggingface.co/Comfy-Org/MiniMax-Music-3"]],"runs":"core","graph":"music3_api.json","goal":"music","family":"mini-max-music3","template":"audio_minimax_music_3","need":["minimax_music3_dit_fp16.safetensors","minimax_music3_text_encoder_pruned_bf16.safetensors","minimax_music3_dav.safetensors"],"lyrics":true,"takes":"caption","can":["Song with lyrics","Instrumental","19 LoRAs on disk: turbo, genre and voice sliders","Style library"],"settings":{"Sampler":"euler, simple","Steps":"30","CFG":"1.7","Text":"cfg_scale 1.7, top_k 50","Length":"A ceiling, from 30 s"}},
-{"id":"ace15_xl_turbo","label":"ACE-Step 1.5 XL Turbo","maker":"ACE Studio and StepFun","kind":"song","job":"A 4B-parameter song model in eight steps.","does":"Takes style tags, lyrics, BPM and key as separate fields. Eight steps with no guidance, so it is very quick for its size. The model card warns of rough vocals and dropped lyrics when the song is too short for its words.","licence":{"name":"MIT (ACE-Step's own repository)","short":"MIT","use":"MIT on ACE-Step's repository. ComfyUI's repackaged files are tagged Apache-2.0. Both allow commercial use; check the outputs' rights yourself.","url":"https://huggingface.co/ACE-Step/Ace-Step1.5","commercial":"yes"},"links":[["ACE-Step 1.5","https://huggingface.co/ACE-Step/Ace-Step1.5"],["ComfyUI's files","https://huggingface.co/Comfy-Org/ace_step_1.5_ComfyUI_files"]],"runs":"core","graph":"music_ace15_xl_turbo_api.json","family":"ace-step-1-5","template":"audio_ace_step1_5_xl_turbo","need":["acestep_v1.5_xl_turbo_bf16.safetensors","qwen_0.6b_ace15.safetensors","qwen_4b_ace15.safetensors","ace_1.5_vae.safetensors"],"lyrics":true,"takes":"tags","can":["Song with lyrics","Cover, extend, repaint, extract with RyanOnTheInside's pack"],"settings":{"Sampler":"euler, simple","Steps":"8","CFG":"1","Shift":"3","Fields":"tags, lyrics, BPM, key, time signature, language"}},
-{"id":"ace15_xl_base","label":"ACE-Step 1.5 XL Base","maker":"ACE Studio and StepFun","kind":"song","job":"The undistilled 4B model: 50 steps with guidance.","does":"The same family as XL Turbo, without the shortcut. Much slower, with real guidance, and it is the one that can take the extract task, which separates one instrument out of a song.","licence":{"name":"MIT (ACE-Step's own repository)","short":"MIT","use":"MIT on ACE-Step's repository. ComfyUI's repackaged files are tagged Apache-2.0.","url":"https://huggingface.co/ACE-Step/Ace-Step1.5","commercial":"yes"},"links":[["ACE-Step 1.5","https://huggingface.co/ACE-Step/Ace-Step1.5"]],"runs":"core","graph":"music_ace15_xl_base_api.json","family":"ace-step-1-5","template":"audio_ace_step1_5_xl_base","need":["acestep_v1.5_xl_base_bf16.safetensors","qwen_0.6b_ace15.safetensors","qwen_4b_ace15.safetensors","ace_1.5_vae.safetensors"],"lyrics":true,"takes":"tags","can":["Song with lyrics","Stems, with RyanOnTheInside's extract guider"],"settings":{"Sampler":"euler, simple","Steps":"50","CFG":"6","Shift":"3"}},
-{"id":"ace15_turbo","label":"ACE-Step 1.5 Turbo","maker":"ACE Studio and StepFun","kind":"song","job":"The small 2B model. Songs on a modest card.","does":"The lightest full-song model here, and the one to try first on a small GPU. Cover and extend work through RyanOnTheInside's guiders.","licence":{"name":"MIT (ACE-Step's own repository)","short":"MIT","use":"MIT on ACE-Step's repository. ComfyUI's repackaged files are tagged Apache-2.0.","url":"https://huggingface.co/ACE-Step/Ace-Step1.5","commercial":"yes"},"links":[["ACE-Step 1.5","https://huggingface.co/ACE-Step/Ace-Step1.5"]],"runs":"core","graph":"music_ace15_turbo_api.json","family":"ace-step-1-5","template":"audio_ace_step_1_5_split","need":["acestep_v1.5_turbo.safetensors","qwen_0.6b_ace15.safetensors","qwen_1.7b_ace15.safetensors","ace_1.5_vae.safetensors"],"lyrics":true,"takes":"tags","can":["Song with lyrics","Cover and extend with RyanOnTheInside's guiders"],"settings":{"Sampler":"euler, simple","Steps":"8","CFG":"1","Shift":"3"}},
-{"id":"yue2_int8","label":"YuE2 3B (int8)","maker":"M-A-P","kind":"song","job":"Writes a melody plan as sheet music, then sings it.","does":"Two stages you can see: it writes ABC notation first, then renders audio from it. The int8 build needs the least memory of any song model here. Its card warns that instrumental-only requests can still gain vocals, and that some genres are weak.","licence":{"name":"CC BY-NC 4.0","short":"Non-commercial","use":"Non-commercial only, on both M-A-P's and ComfyUI's pages.","url":"https://huggingface.co/m-a-p/YuE2-3B","commercial":"no"},"links":[["YuE2 3B","https://huggingface.co/m-a-p/YuE2-3B"],["ComfyUI's files","https://huggingface.co/Comfy-Org/YuE2"]],"runs":"core","graph":"music_yue2_int8_api.json","family":"yue2","template":"audio_yue2_text2music","need":["yue2_3b_int8_convrot.safetensors"],"lyrics":true,"takes":"style","can":["Song with lyrics","Cover from reference audio, with SheetSage"],"settings":{"Sampler":"dpm_2, sgm_uniform","Steps":"32","CFG":"1","Planner":"temperature 0.7, top_p 0.9, top_k 30"}},
-{"id":"yue2_bf16","label":"YuE2 3B (bf16)","maker":"M-A-P","kind":"song","job":"The same YuE2, at full precision.","does":"The same model and graph as the int8 build, with the unquantized weights. Listed apart so the two can be compared on one brief.","licence":{"name":"CC BY-NC 4.0","short":"Non-commercial","use":"Non-commercial only.","url":"https://huggingface.co/m-a-p/YuE2-3B","commercial":"no"},"links":[["YuE2 3B","https://huggingface.co/m-a-p/YuE2-3B"]],"runs":"core","graph":"music_yue2_bf16_api.json","need":["yue2_3b_bf16.safetensors"],"lyrics":true,"takes":"style","can":["Song with lyrics"],"settings":{"Sampler":"dpm_2, sgm_uniform","Steps":"32","CFG":"1"}},
-{"id":"stable_open","label":"Stable Audio Open 1.0","maker":"Stability AI","kind":"instrumental","job":"Short instrumental clips and sounds, no words.","does":"Text to audio up to 47 seconds. It has no lyric input, so it renders the brief's instrumental version. It is here as the clip-and-texture tool, not a song model.","licence":{"name":"Stability AI Community License","short":"Community","use":"Free under the licence's revenue limit; read the terms before commercial use.","url":"https://huggingface.co/Comfy-Org/stable-audio-open-1.0","commercial":"conditional"},"links":[["ComfyUI's files","https://huggingface.co/Comfy-Org/stable-audio-open-1.0"]],"runs":"core","graph":"music_stable_open_api.json","need":["stable-audio-open-1.0.safetensors","t5-base.safetensors"],"lyrics":false,"takes":"prompt","can":["Instrumental clips up to 47 s"],"settings":{"Sampler":"dpmpp_3m_sde_gpu, exponential","Steps":"50","CFG":"4.98","Length":"47 s at most"}},
-{"id":"stable3","label":"Stable Audio 3","maker":"Stability AI","kind":"instrumental","job":"Newer Stable Audio: medium, small music, small sound effects.","does":"ComfyUI ships graphs for it. The checkpoints are on this machine, but the text encoder they need, t5gemma_b_b_ul2, is not: only its card and a checksum marker are.","licence":{"name":"Stability AI Community License","short":"Community","use":"Free under the licence's revenue limit; read the terms before commercial use.","url":"https://huggingface.co/Comfy-Org/stable-audio-3","commercial":"conditional"},"links":[["ComfyUI's files","https://huggingface.co/Comfy-Org/stable-audio-3"]],"runs":"core","need":["stable_audio_3_medium.safetensors","stable_audio_3_small_music.safetensors","t5gemma_b_b_ul2.safetensors"],"lyrics":false,"takes":"prompt","can":["Instrumental clips"],"settings":{"Sampler":"lcm, simple","Steps":"8 (medium, from ComfyUI's template)","CFG":"1"}},
-{"id":"diffsynth_music","label":"DiffSynth-Music","maker":"DiffSynth-Studio (ModelScope)","kind":"control","job":"ACE-Step 1.5 XL with extra control: beat, vocal, accompaniment, prosody.","does":"Keeps a vocal and writes the band around it, or the reverse, or follows a click track. Runs from the DiffSynth-Studio Python package, not a ComfyUI graph. The weights are 33 GB and were not run for this page.","licence":{"name":"Apache-2.0","short":"Apache-2.0","use":"Apache-2.0 on the model card.","url":"https://huggingface.co/DiffSynth-Studio/DiffSynth-Music","commercial":"yes"},"links":[["Model card","https://huggingface.co/DiffSynth-Studio/DiffSynth-Music"],["DiffSynth-Studio","https://github.com/modelscope/DiffSynth-Studio"]],"runs":"own tool","need":["DiffSynth-Studio__DiffSynth-Music/text_encoder/model.safetensors"],"lyrics":true,"takes":"tags","can":["Beat, vocal and accompaniment control","Prosody control","Style reference (experimental)"],"settings":{}},
-{"id":"mulacover","label":"MuLaCover","maker":"HeartMuLa","kind":"cover","job":"Cover songs and remixes, from reference music or MIDI.","does":"Transforms reference music using lyrics and a structured style line, or generates from melody and chord MIDI. It needs HeartCodec and a Qwen embedding beside it, and YourMT3 and ChordNet for reference audio.","licence":{"name":"CC BY-NC 4.0","short":"Non-commercial","use":"Non-commercial only.","url":"https://huggingface.co/HeartMuLa/MuLaCover","commercial":"no"},"links":[["Model card","https://huggingface.co/HeartMuLa/MuLaCover"],["Code","https://github.com/HeartMuLa/MuLaCover"]],"runs":"own tool","need":["HeartMuLa__MuLaCover/model-00001-of-00005.safetensors"],"lyrics":true,"takes":"fields","can":["Cover and remix","MIDI to song"],"settings":{}},
-{"id":"magenta_rt2","label":"Magenta RealTime 2","maker":"Google DeepMind","kind":"live","job":"Live music you steer as it plays, on the device.","does":"A streaming model: continuous audio, steered by text, audio examples and MIDI, with base (2.4B) and small (230M) sizes. It's a different kind of tool from a song model: no lyrics, and it never finishes a track.","licence":{"name":"Apache-2.0 code, CC BY 4.0 weights","short":"CC BY 4.0","use":"Attribution required. Google claims no rights in outputs; you answer for what you make.","url":"https://huggingface.co/google/magenta-realtime-2","commercial":"yes"},"links":[["Model card","https://huggingface.co/google/magenta-realtime-2"],["Code","https://github.com/magenta/magenta-realtime"]],"runs":"own tool","need":["google__magenta-realtime-2/checkpoints/mrt2_small.safetensors"],"lyrics":false,"takes":"prompt","can":["Live generation","Text, audio and MIDI control"],"settings":{}},
-{"id":"songgeneration","label":"SongGeneration v2","maker":"Tencent AI Lab (LeVo)","kind":"song","job":"Song generation, run through a community node pack.","does":"Tencent AI Lab's song model. The community pack that runs it points at the v2 large checkpoint on a personal Hugging Face page, lglg666, which states no licence and has an empty card. Tencent's own Hugging Face page couldn't be read when this was written, so the licence stays unknown here.","licence":{"name":"Unknown: the mirror states none","short":"Unknown","use":"Don't ship anything from this until the official licence is read.","url":"https://huggingface.co/lglg666/SongGeneration-v2-large","commercial":"unknown"},"links":[["The mirror","https://huggingface.co/lglg666/SongGeneration-v2-large"]],"runs":"pack","need":["lglg666__SongGeneration-v2-large/model.pt"],"lyrics":true,"takes":"tags","can":[],"settings":{}},
-{"id":"tangoflux","label":"TangoFlux","maker":"DeCLaRe Lab","kind":"sound","job":"Fast text to sound. Sound effects more than songs.","does":"Flow-matching text to audio. Its card describes audio generally rather than songs, so it's listed for textures and effects. No lyrics.","licence":{"name":"Non-commercial research use","short":"Non-commercial","use":"Research and non-commercial use only: the card names Stable Audio Open's licence, among others.","url":"https://huggingface.co/declare-lab/TangoFlux","commercial":"no"},"links":[["Model card","https://huggingface.co/declare-lab/TangoFlux"]],"runs":"pack","need":["declare-lab__TangoFlux/tangoflux.safetensors"],"lyrics":false,"takes":"prompt","can":["Sound clips"],"settings":{}},
-{"id":"musicgen_small","label":"MusicGen Small","maker":"Meta","kind":"instrumental","job":"The small, older instrumental generator.","does":"Short instrumental clips from text, through Hugging Face transformers or a community pack. Meant as a baseline: much older than everything above it.","licence":{"name":"CC BY-NC 4.0","short":"Non-commercial","use":"Non-commercial only.","url":"https://huggingface.co/facebook/musicgen-small","commercial":"no"},"links":[["Model card","https://huggingface.co/facebook/musicgen-small"]],"runs":"pack","need":["facebook__musicgen-small/model.safetensors"],"lyrics":false,"takes":"prompt","can":["Instrumental clips"],"settings":{}}
+{
+"id": "music3",
+"label": "MiniMax Music 3",
+"maker": "MiniMax",
+"kind": "song",
+"job": "Full songs with vocals from a three-part caption and lyrics.",
+"does": "The strongest fit for the studio's style library: its caption format and its 1,056 style cards were written for it. It plans a song first, then renders it, so length is a ceiling and it may stop early. Runs in core ComfyUI.",
+"licence": {
+"name": "MiniMax-Music3 Community License",
+"short": "Community",
+"use": "Commercial use must show \"MiniMax-Music3\" prominently in the product. Above USD 20M a year you need written permission from MiniMax. ComfyUI's repackaged files are tagged Apache-2.0 on their page; the studio follows MiniMax's own licence, shipped as studio/LICENSE-MiniMax-Music3.txt.",
+"url": "https://github.com/MiniMax-AI/MiniMax-Music3",
+"commercial": "conditional"
+},
+"links": [
+[
+"MiniMax's repo",
+"https://github.com/MiniMax-AI/MiniMax-Music3"
+],
+[
+"ComfyUI's files",
+"https://huggingface.co/Comfy-Org/MiniMax-Music-3"
+]
+],
+"runs": "core",
+"graph": "music3_api.json",
+"goal": "music",
+"family": "mini-max-music3",
+"template": "audio_minimax_music_3",
+"need": [
+"minimax_music3_dit_fp16.safetensors",
+"minimax_music3_text_encoder_pruned_bf16.safetensors",
+"minimax_music3_dav.safetensors"
+],
+"lyrics": true,
+"takes": "caption",
+"can": [
+"Song with lyrics",
+"Instrumental",
+"19 LoRAs on disk: turbo, genre and voice sliders",
+"Style library"
+],
+"settings": {
+"Sampler": "euler, simple",
+"Steps": "30",
+"CFG": "1.7",
+"Text": "cfg_scale 1.7, top_k 50",
+"Length": "A ceiling, from 30 s"
+}
+},
+{
+"id": "ace15_xl_turbo",
+"label": "ACE-Step 1.5 XL Turbo",
+"maker": "ACE Studio and StepFun",
+"kind": "song",
+"job": "A 4B-parameter song model in eight steps.",
+"does": "Takes style tags, lyrics, BPM and key as separate fields. Eight steps with no guidance, so it is very quick for its size. The model card warns of rough vocals and dropped lyrics when the song is too short for its words.",
+"licence": {
+"name": "MIT (ACE-Step's own repository)",
+"short": "MIT",
+"use": "MIT on ACE-Step's repository. ComfyUI's repackaged files are tagged Apache-2.0. Both allow commercial use; check the outputs' rights yourself.",
+"url": "https://huggingface.co/ACE-Step/Ace-Step1.5",
+"commercial": "yes"
+},
+"links": [
+[
+"ACE-Step 1.5",
+"https://huggingface.co/ACE-Step/Ace-Step1.5"
+],
+[
+"ComfyUI's files",
+"https://huggingface.co/Comfy-Org/ace_step_1.5_ComfyUI_files"
+]
+],
+"runs": "core",
+"graph": "music_ace15_xl_turbo_api.json",
+"family": "ace-step-1-5",
+"template": "audio_ace_step1_5_xl_turbo",
+"need": [
+"acestep_v1.5_xl_turbo_bf16.safetensors",
+"qwen_0.6b_ace15.safetensors",
+"qwen_4b_ace15.safetensors",
+"ace_1.5_vae.safetensors"
+],
+"lyrics": true,
+"takes": "tags",
+"can": [
+"Song with lyrics",
+"Cover, extend, repaint, extract with RyanOnTheInside's pack"
+],
+"settings": {
+"Sampler": "euler, simple",
+"Steps": "8",
+"CFG": "1",
+"Shift": "3",
+"Fields": "tags, lyrics, BPM, key, time signature, language"
+}
+},
+{
+"id": "ace15_xl_base",
+"label": "ACE-Step 1.5 XL Base",
+"maker": "ACE Studio and StepFun",
+"kind": "song",
+"job": "The undistilled 4B model: 50 steps with guidance.",
+"does": "The same family as XL Turbo, without the shortcut. Much slower, with real guidance, and it is the one that can take the extract task, which separates one instrument out of a song.",
+"licence": {
+"name": "MIT (ACE-Step's own repository)",
+"short": "MIT",
+"use": "MIT on ACE-Step's repository. ComfyUI's repackaged files are tagged Apache-2.0.",
+"url": "https://huggingface.co/ACE-Step/Ace-Step1.5",
+"commercial": "yes"
+},
+"links": [
+[
+"ACE-Step 1.5",
+"https://huggingface.co/ACE-Step/Ace-Step1.5"
+]
+],
+"runs": "core",
+"graph": "music_ace15_xl_base_api.json",
+"family": "ace-step-1-5",
+"template": "audio_ace_step1_5_xl_base",
+"need": [
+"acestep_v1.5_xl_base_bf16.safetensors",
+"qwen_0.6b_ace15.safetensors",
+"qwen_4b_ace15.safetensors",
+"ace_1.5_vae.safetensors"
+],
+"lyrics": true,
+"takes": "tags",
+"can": [
+"Song with lyrics",
+"Stems, with RyanOnTheInside's extract guider"
+],
+"settings": {
+"Sampler": "euler, simple",
+"Steps": "50",
+"CFG": "6",
+"Shift": "3"
+}
+},
+{
+"id": "ace15_turbo",
+"label": "ACE-Step 1.5 Turbo",
+"maker": "ACE Studio and StepFun",
+"kind": "song",
+"job": "The small 2B model. Songs on a modest card.",
+"does": "The lightest full-song model here, and the one to try first on a small GPU. Cover and extend work through RyanOnTheInside's guiders.",
+"licence": {
+"name": "MIT (ACE-Step's own repository)",
+"short": "MIT",
+"use": "MIT on ACE-Step's repository. ComfyUI's repackaged files are tagged Apache-2.0.",
+"url": "https://huggingface.co/ACE-Step/Ace-Step1.5",
+"commercial": "yes"
+},
+"links": [
+[
+"ACE-Step 1.5",
+"https://huggingface.co/ACE-Step/Ace-Step1.5"
+]
+],
+"runs": "core",
+"graph": "music_ace15_turbo_api.json",
+"family": "ace-step-1-5",
+"template": "audio_ace_step_1_5_split",
+"need": [
+"acestep_v1.5_turbo.safetensors",
+"qwen_0.6b_ace15.safetensors",
+"qwen_1.7b_ace15.safetensors",
+"ace_1.5_vae.safetensors"
+],
+"lyrics": true,
+"takes": "tags",
+"can": [
+"Song with lyrics",
+"Cover and extend with RyanOnTheInside's guiders"
+],
+"settings": {
+"Sampler": "euler, simple",
+"Steps": "8",
+"CFG": "1",
+"Shift": "3"
+}
+},
+{
+"id": "yue2_int8",
+"label": "YuE2 3B (int8)",
+"maker": "M-A-P",
+"kind": "song",
+"job": "Writes a melody plan as sheet music, then sings it.",
+"does": "Two stages you can see: it writes ABC notation first, then renders audio from it. The int8 build needs the least memory of any song model here. Its card warns that instrumental-only requests can still gain vocals, and that some genres are weak.",
+"licence": {
+"name": "CC BY-NC 4.0",
+"short": "Non-commercial",
+"use": "Non-commercial only, on both M-A-P's and ComfyUI's pages.",
+"url": "https://huggingface.co/m-a-p/YuE2-3B",
+"commercial": "no"
+},
+"links": [
+[
+"YuE2 3B",
+"https://huggingface.co/m-a-p/YuE2-3B"
+],
+[
+"ComfyUI's files",
+"https://huggingface.co/Comfy-Org/YuE2"
+]
+],
+"runs": "core",
+"graph": "music_yue2_int8_api.json",
+"family": "yue2",
+"template": "audio_yue2_text2music",
+"need": [
+"yue2_3b_int8_convrot.safetensors"
+],
+"lyrics": true,
+"takes": "style",
+"can": [
+"Song with lyrics",
+"Cover from reference audio, with SheetSage"
+],
+"settings": {
+"Sampler": "dpm_2, sgm_uniform",
+"Steps": "32",
+"CFG": "1",
+"Planner": "temperature 0.7, top_p 0.9, top_k 30"
+}
+},
+{
+"id": "yue2_bf16",
+"label": "YuE2 3B (bf16)",
+"maker": "M-A-P",
+"kind": "song",
+"job": "The same YuE2, at full precision.",
+"does": "The same model and graph as the int8 build, with the unquantized weights. Listed apart so the two can be compared on one brief.",
+"licence": {
+"name": "CC BY-NC 4.0",
+"short": "Non-commercial",
+"use": "Non-commercial only.",
+"url": "https://huggingface.co/m-a-p/YuE2-3B",
+"commercial": "no"
+},
+"links": [
+[
+"YuE2 3B",
+"https://huggingface.co/m-a-p/YuE2-3B"
+]
+],
+"runs": "core",
+"graph": "music_yue2_bf16_api.json",
+"need": [
+"yue2_3b_bf16.safetensors"
+],
+"lyrics": true,
+"takes": "style",
+"can": [
+"Song with lyrics"
+],
+"settings": {
+"Sampler": "dpm_2, sgm_uniform",
+"Steps": "32",
+"CFG": "1"
+}
+},
+{
+"id": "stable_open",
+"label": "Stable Audio Open 1.0",
+"maker": "Stability AI",
+"kind": "instrumental",
+"job": "Short instrumental clips and sounds, no words.",
+"does": "Text to audio up to 47 seconds. It has no lyric input, so it renders the brief's instrumental version. It is here as the clip-and-texture tool, not a song model.",
+"licence": {
+"name": "Stability AI Community License",
+"short": "Community",
+"use": "Free under the licence's revenue limit; read the terms before commercial use.",
+"url": "https://huggingface.co/Comfy-Org/stable-audio-open-1.0",
+"commercial": "conditional"
+},
+"links": [
+[
+"ComfyUI's files",
+"https://huggingface.co/Comfy-Org/stable-audio-open-1.0"
+]
+],
+"runs": "core",
+"graph": "music_stable_open_api.json",
+"need": [
+"stable-audio-open-1.0.safetensors",
+"t5-base.safetensors"
+],
+"lyrics": false,
+"takes": "prompt",
+"can": [
+"Instrumental clips up to 47 s"
+],
+"settings": {
+"Sampler": "dpmpp_3m_sde_gpu, exponential",
+"Steps": "50",
+"CFG": "4.98",
+"Length": "47 s at most"
+}
+},
+{
+"id": "stable3",
+"label": "Stable Audio 3",
+"maker": "Stability AI",
+"kind": "instrumental",
+"job": "Newer Stable Audio: medium, small music, small sound effects.",
+"does": "ComfyUI ships graphs for it. The checkpoints are on this machine, but the text encoder they need, t5gemma_b_b_ul2, is not: only its card and a checksum marker are.",
+"licence": {
+"name": "Stability AI Community License",
+"short": "Community",
+"use": "Free under the licence's revenue limit; read the terms before commercial use.",
+"url": "https://huggingface.co/Comfy-Org/stable-audio-3",
+"commercial": "conditional"
+},
+"links": [
+[
+"ComfyUI's files",
+"https://huggingface.co/Comfy-Org/stable-audio-3"
+]
+],
+"runs": "core",
+"need": [
+"stable_audio_3_medium.safetensors",
+"stable_audio_3_small_music.safetensors",
+"t5gemma_b_b_ul2.safetensors"
+],
+"lyrics": false,
+"takes": "prompt",
+"can": [
+"Instrumental clips"
+],
+"settings": {
+"Sampler": "lcm, simple",
+"Steps": "8 (medium, from ComfyUI's template)",
+"CFG": "1"
+},
+"why_not": "Its text encoder, t5gemma_b_b_ul2, isn't on the test machine."
+},
+{
+"id": "diffsynth_music",
+"label": "DiffSynth-Music",
+"maker": "DiffSynth-Studio (ModelScope)",
+"kind": "control",
+"job": "ACE-Step 1.5 XL with extra control: beat, vocal, accompaniment, prosody.",
+"does": "Keeps a vocal and writes the band around it, or the reverse, or follows a click track, according to its card. Runs from the DiffSynth-Studio Python package, not a ComfyUI graph, so there is no graph to open. Only plain generation was run here: none of the control modes were.",
+"licence": {
+"name": "Apache-2.0",
+"short": "Apache-2.0",
+"use": "Apache-2.0 on the model card.",
+"url": "https://huggingface.co/DiffSynth-Studio/DiffSynth-Music",
+"commercial": "yes"
+},
+"links": [
+[
+"Model card",
+"https://huggingface.co/DiffSynth-Studio/DiffSynth-Music"
+],
+[
+"DiffSynth-Studio",
+"https://github.com/modelscope/DiffSynth-Studio"
+]
+],
+"runs": "own tool",
+"need": [
+"DiffSynth-Studio__DiffSynth-Music/text_encoder/model.safetensors"
+],
+"lyrics": true,
+"takes": "tags",
+"can": [
+"Plain song generation (run here)",
+"Beat, vocal, accompaniment and prosody control (card only, not run)"
+],
+"settings": {
+"Steps": "50",
+"CFG": "4",
+"Tiled VAE": "on",
+"BPM": "72, passed as metadata",
+"Runs as": "A Python pipeline in its own environment"
+},
+"why_not": "It runs from the DiffSynth-Studio package rather than ComfyUI, and needs its text encoder and VAE files too."
+},
+{
+"id": "mulacover",
+"label": "MuLaCover",
+"maker": "HeartMuLa",
+"kind": "cover",
+"job": "Cover songs and remixes, from reference music or MIDI.",
+"does": "Transforms reference music using lyrics and a structured style line, or generates from melody and chord MIDI. It needs HeartCodec and a Qwen embedding beside it, and YourMT3 and ChordNet for reference audio.",
+"licence": {
+"name": "CC BY-NC 4.0",
+"short": "Non-commercial",
+"use": "Non-commercial only.",
+"url": "https://huggingface.co/HeartMuLa/MuLaCover",
+"commercial": "no"
+},
+"links": [
+[
+"Model card",
+"https://huggingface.co/HeartMuLa/MuLaCover"
+],
+[
+"Code",
+"https://github.com/HeartMuLa/MuLaCover"
+]
+],
+"runs": "own tool",
+"need": [
+"HeartMuLa__MuLaCover/model-00001-of-00005.safetensors"
+],
+"lyrics": true,
+"takes": "fields",
+"can": [
+"Cover and remix",
+"MIDI to song"
+],
+"settings": {},
+"why_not": "The weights are on the test machine, but MuLaCover's own code isn't installed, and it needs HeartCodec and a Qwen embedding beside it. YourMT3 and ChordNet too, for reference audio."
+},
+{
+"id": "magenta_rt2",
+"label": "Magenta RealTime 2",
+"maker": "Google DeepMind",
+"kind": "live",
+"job": "Live music you steer as it plays, on the device.",
+"does": "A streaming model: continuous audio, steered by text, audio examples and MIDI, with base (2.4B) and small (230M) sizes. It's a different kind of tool from a song model: no lyrics, and it never finishes a track.",
+"licence": {
+"name": "Apache-2.0 code, CC BY 4.0 weights",
+"short": "CC BY 4.0",
+"use": "Attribution required. Google claims no rights in outputs; you answer for what you make.",
+"url": "https://huggingface.co/google/magenta-realtime-2",
+"commercial": "yes"
+},
+"links": [
+[
+"Model card",
+"https://huggingface.co/google/magenta-realtime-2"
+],
+[
+"Code",
+"https://github.com/magenta/magenta-realtime"
+]
+],
+"runs": "own tool",
+"need": [
+"google__magenta-realtime-2/checkpoints/mrt2_small.safetensors"
+],
+"lyrics": false,
+"takes": "prompt",
+"can": [
+"Live generation",
+"Text, audio and MIDI control"
+],
+"settings": {},
+"why_not": "The weights are on the test machine, but Magenta's own code isn't installed. It streams live, so it also needs its own player rather than this page's brief."
+},
+{
+"id": "songgeneration",
+"label": "SongGeneration v2",
+"maker": "Tencent AI Lab (LeVo)",
+"kind": "song",
+"job": "Song generation, run through a community node pack.",
+"does": "Tencent AI Lab's song model. The community pack that runs it points at the v2 large checkpoint on a personal Hugging Face page, lglg666, which states no licence and has an empty card. Tencent's own Hugging Face page couldn't be read when this was written, so the licence stays unknown here.",
+"licence": {
+"name": "Unknown: the mirror states none",
+"short": "Unknown",
+"use": "Don't ship anything from this until the official licence is read.",
+"url": "https://huggingface.co/lglg666/SongGeneration-v2-large",
+"commercial": "unknown"
+},
+"links": [
+[
+"The mirror",
+"https://huggingface.co/lglg666/SongGeneration-v2-large"
+]
+],
+"runs": "pack",
+"need": [
+"lglg666__SongGeneration-v2-large/model.pt"
+],
+"lyrics": true,
+"takes": "tags",
+"can": [],
+"settings": {},
+"why_not": "Its checkpoint hadn't arrived on the test machine, and its licence is unknown, so nothing from it should ship yet."
+},
+{
+"id": "tangoflux",
+"label": "TangoFlux",
+"maker": "DeCLaRe Lab",
+"kind": "sound",
+"job": "Fast text to sound. Sound effects more than songs.",
+"does": "Flow-matching text to audio. Its card describes audio generally rather than songs, so it's listed for textures and effects. No lyrics.",
+"licence": {
+"name": "Non-commercial research use",
+"short": "Non-commercial",
+"use": "Research and non-commercial use only: the card names Stable Audio Open's licence, among others.",
+"url": "https://huggingface.co/declare-lab/TangoFlux",
+"commercial": "no"
+},
+"links": [
+[
+"Model card",
+"https://huggingface.co/declare-lab/TangoFlux"
+]
+],
+"runs": "pack",
+"need": [
+"declare-lab__TangoFlux/tangoflux.safetensors",
+"google__flan-t5-large/model.safetensors"
+],
+"lyrics": false,
+"takes": "prompt",
+"can": [
+"Sound clips"
+],
+"settings": {},
+"why_not": "The TangoFlux weights are on the test machine, but the text encoder it loads, google/flan-t5-large, is there only as settings and a tokenizer, with no weights."
+},
+{
+"id": "musicgen_small",
+"label": "MusicGen Small",
+"maker": "Meta",
+"kind": "instrumental",
+"job": "The small, older instrumental generator.",
+"does": "Short instrumental clips from text, through Hugging Face transformers or a community pack. Meant as a baseline: much older than everything above it.",
+"licence": {
+"name": "CC BY-NC 4.0",
+"short": "Non-commercial",
+"use": "Non-commercial only.",
+"url": "https://huggingface.co/facebook/musicgen-small",
+"commercial": "no"
+},
+"links": [
+[
+"Model card",
+"https://huggingface.co/facebook/musicgen-small"
+]
+],
+"runs": "pack",
+"need": [
+"facebook__musicgen-small/model.safetensors"
+],
+"lyrics": false,
+"takes": "prompt",
+"can": [
+"Instrumental clips"
+],
+"settings": {},
+"why_not": "Its weights hadn't arrived on the test machine."
+}
 ],
 "not_music": [
-{"name":"AuK","why":"Sounds like it might be. Its card says speech generation, voice cloning and speech editing."},
-{"name":"MOSS-SoundEffect","why":"Sound effects, by its name and folder. Not a song model, and not read further."},
-{"name":"Prism-Alpha audio_dit","why":"The audio half of a video model."},
-{"name":"MOVA audio diffusion","why":"The audio half of a video model."}
+{
+"name": "AuK",
+"why": "Sounds like it might be. Its card says speech generation, voice cloning and speech editing."
+},
+{
+"name": "MOSS-SoundEffect",
+"why": "Sound effects, by its name and folder. Not a song model, and not read further."
+},
+{
+"name": "Prism-Alpha audio_dit",
+"why": "The audio half of a video model."
+},
+{
+"name": "MOVA audio diffusion",
+"why": "The audio half of a video model."
+}
 ],
 "roti": {
-"author":"RyanOnTheInside","site":"https://ryanontheinside.com","github":"https://github.com/ryanontheinside","pack":"https://github.com/ryanontheinside/ComfyUI_RyanOnTheInside","youtube":"https://www.youtube.com/@RyanOnTheInside","civitai":"https://civitai.com/user/RyanOnTheInside",
-"install":"cd ComfyUI/custom_nodes\ngit clone https://github.com/ryanontheinside/ComfyUI_RyanOnTheInside.git\ncd ComfyUI_RyanOnTheInside\npip install -r requirements.txt",
-"packs":[
-{"name":"ComfyUI_RyanOnTheInside","licence":"MIT","use":"The one this page runs. Audio-reactive features, particles, flex image and mask nodes, and ACE-Step 1.5 guiders.","verdict":"Used","url":"https://github.com/ryanontheinside/ComfyUI_RyanOnTheInside"},
-{"name":"ComfyUI_ControlFreak","licence":"MIT","use":"Maps MIDI controllers and gamepads to any node setting. A browser extension for ComfyUI, with no generation of its own.","verdict":"Worth trying on your own","url":"https://github.com/ryanontheinside/ComfyUI_ControlFreak"},
-{"name":"ComfyUI_ProfilerX","licence":"MIT","use":"Times nodes and tracks memory and cache hits. Version 2 says it no longer patches ComfyUI's core; our scan still flags a startup script.","verdict":"Worth trying on your own","url":"https://github.com/ryanontheinside/ComfyUI_ProfilerX"},
-{"name":"ComfyUI-CalculatorX","licence":"MIT","use":"A calculator node, for expressions and simple schedules.","verdict":"Worth trying on your own","url":"https://github.com/ryanontheinside/ComfyUI-CalculatorX"},
-{"name":"ComfyUI_RealtimeNodes","licence":"No licence file found","use":"Value animation, MediaPipe vision and motion nodes for real-time graphs. Its pyproject points at a LICENSE file that isn't there, so nothing here copies from it.","verdict":"Not used","url":"https://github.com/ryanontheinside/ComfyUI_RealtimeNodes"},
-{"name":"ComfyUI_Doom","licence":"No licence file found","use":"Doom in ComfyUI, in its author's words, for posterity.","verdict":"Not used","url":"https://github.com/ryanontheinside/ComfyUI_Doom"},
-{"name":"ComfyUI-MineWorld","licence":"No licence file found","use":"Microsoft's MineWorld, marked work in progress.","verdict":"Not used","url":"https://github.com/ryanontheinside/ComfyUI-MineWorld"},
-{"name":"ComfyUI-DeepLiveCam","licence":"No licence file found","use":"Face swapping. Nothing to do with this page.","verdict":"Not used","url":"https://github.com/ryanontheinside/ComfyUI-DeepLiveCam"},
-{"name":"ComfyUI-Livepeer","licence":"No licence file found","use":"Sends work to Livepeer's paid remote service, marked work in progress. Not local, so not for this studio.","verdict":"Not used","url":"https://github.com/ryanontheinside/ComfyUI-Livepeer"},
-{"name":"ComfyUI_SuperResolution","licence":"No licence file found","use":"Marked deprecated by its author, and moved elsewhere.","verdict":"Not used","url":"https://github.com/ryanontheinside/ComfyUI_SuperResolution"},
-{"name":"ComfyUI_EfficientTAM","licence":"Apache-2.0","use":"A placeholder, marked work in progress, waiting on model weights.","verdict":"Not used","url":"https://github.com/ryanontheinside/ComfyUI_EfficientTAM"},
-{"name":"ComfyUI_YoloNasObjectDetection_Tensorrt","licence":"CC BY-NC-SA 4.0","use":"Object detection, marked experimental. Nothing to do with this page.","verdict":"Not used","url":"https://github.com/ryanontheinside/ComfyUI_YoloNasObjectDetection_Tensorrt"}
+"author": "RyanOnTheInside",
+"site": "https://ryanontheinside.com",
+"github": "https://github.com/ryanontheinside",
+"pack": "https://github.com/ryanontheinside/ComfyUI_RyanOnTheInside",
+"youtube": "https://www.youtube.com/@RyanOnTheInside",
+"civitai": "https://civitai.com/user/RyanOnTheInside",
+"install": "cd ComfyUI/custom_nodes\ngit clone https://github.com/ryanontheinside/ComfyUI_RyanOnTheInside.git\ncd ComfyUI_RyanOnTheInside\npip install -r requirements.txt",
+"packs": [
+{
+"name": "ComfyUI_RyanOnTheInside",
+"licence": "MIT",
+"use": "The one this page runs. Audio-reactive features, particles, flex image and mask nodes, and ACE-Step 1.5 guiders.",
+"verdict": "Used",
+"url": "https://github.com/ryanontheinside/ComfyUI_RyanOnTheInside"
+},
+{
+"name": "ComfyUI_ControlFreak",
+"licence": "MIT",
+"use": "Maps MIDI controllers and gamepads to any node setting. A browser extension for ComfyUI, with no generation of its own.",
+"verdict": "Worth trying on your own",
+"url": "https://github.com/ryanontheinside/ComfyUI_ControlFreak"
+},
+{
+"name": "ComfyUI_ProfilerX",
+"licence": "MIT",
+"use": "Times nodes and tracks memory and cache hits. Version 2 says it no longer patches ComfyUI's core; our scan still flags a startup script.",
+"verdict": "Worth trying on your own",
+"url": "https://github.com/ryanontheinside/ComfyUI_ProfilerX"
+},
+{
+"name": "ComfyUI-CalculatorX",
+"licence": "MIT",
+"use": "A calculator node, for expressions and simple schedules.",
+"verdict": "Worth trying on your own",
+"url": "https://github.com/ryanontheinside/ComfyUI-CalculatorX"
+},
+{
+"name": "ComfyUI_RealtimeNodes",
+"licence": "No licence file found",
+"use": "Value animation, MediaPipe vision and motion nodes for real-time graphs. Its pyproject points at a LICENSE file that isn't there, so nothing here copies from it.",
+"verdict": "Not used",
+"url": "https://github.com/ryanontheinside/ComfyUI_RealtimeNodes"
+},
+{
+"name": "ComfyUI_Doom",
+"licence": "No licence file found",
+"use": "Doom in ComfyUI, in its author's words, for posterity.",
+"verdict": "Not used",
+"url": "https://github.com/ryanontheinside/ComfyUI_Doom"
+},
+{
+"name": "ComfyUI-MineWorld",
+"licence": "No licence file found",
+"use": "Microsoft's MineWorld, marked work in progress.",
+"verdict": "Not used",
+"url": "https://github.com/ryanontheinside/ComfyUI-MineWorld"
+},
+{
+"name": "ComfyUI-DeepLiveCam",
+"licence": "No licence file found",
+"use": "Face swapping. Nothing to do with this page.",
+"verdict": "Not used",
+"url": "https://github.com/ryanontheinside/ComfyUI-DeepLiveCam"
+},
+{
+"name": "ComfyUI-Livepeer",
+"licence": "No licence file found",
+"use": "Sends work to Livepeer's paid remote service, marked work in progress. Not local, so not for this studio.",
+"verdict": "Not used",
+"url": "https://github.com/ryanontheinside/ComfyUI-Livepeer"
+},
+{
+"name": "ComfyUI_SuperResolution",
+"licence": "No licence file found",
+"use": "Marked deprecated by its author, and moved elsewhere.",
+"verdict": "Not used",
+"url": "https://github.com/ryanontheinside/ComfyUI_SuperResolution"
+},
+{
+"name": "ComfyUI_EfficientTAM",
+"licence": "Apache-2.0",
+"use": "A placeholder, marked work in progress, waiting on model weights.",
+"verdict": "Not used",
+"url": "https://github.com/ryanontheinside/ComfyUI_EfficientTAM"
+},
+{
+"name": "ComfyUI_YoloNasObjectDetection_Tensorrt",
+"licence": "CC BY-NC-SA 4.0",
+"use": "Object detection, marked experimental. Nothing to do with this page.",
+"verdict": "Not used",
+"url": "https://github.com/ryanontheinside/ComfyUI_YoloNasObjectDetection_Tensorrt"
+}
 ],
-"risks":[
+"risks": [
 "On load it deletes and rewrites its own folder inside ComfyUI's web/extensions, so it should not go straight into a shared install.",
 "nodes/acestep/patches.py replaces one ComfyUI helper, reshape_mask, for everyone in that process.",
 "Its Open-Unmix node runs torch.hub.load, which downloads and runs code and weights from GitHub the first time. That node wasn't run for this page.",

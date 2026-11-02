@@ -2281,6 +2281,125 @@
     }
    ],
    "source": "motion page"
+  },
+  {
+   "family": "SD15",
+   "name": "sd15_v15_pruned_t2i",
+   "title": "SD 1.5 original checkpoint",
+   "desc": "Text to picture on the original SD 1.5 pruned EMA checkpoint.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 4.0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "v1-5-pruned-emaonly.safetensors",
+     "dir": "checkpoints",
+     "gb": 3.97
+    }
+   ],
+   "source": "Studio template",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "sdxl_unet_fp16_t2i",
+   "title": "SDXL base, separate fp16 UNet",
+   "desc": "Text to picture with the fp16 UNet file and the encoders and VAE from the base checkpoint.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 11.7,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0_unet_fp16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 4.8
+    },
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 6.94
+    }
+   ],
+   "source": "Studio template",
+   "note": ""
+  },
+  {
+   "family": "LTX-2.5",
+   "name": "ltx25_core_t2v",
+   "title": "LTX 2.5 distilled, text to video",
+   "desc": "The studio's own LTX 2.5 graph with the conv VAE already on this box.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 4.0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "ltx 2.5/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 1.0
+    },
+    {
+     "name": "gemma/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+     "dir": "text_encoders",
+     "gb": 1.0
+    },
+    {
+     "name": "ltx/ltx-2.5-video-vae-conv-bf16.safetensors",
+     "dir": "vae",
+     "gb": 1.0
+    },
+    {
+     "name": "ltx/ltx-2.5-audio-vae-bf16.safetensors",
+     "dir": "vae",
+     "gb": 1.0
+    }
+   ],
+   "source": "workflows/ltx25_core_t2v_api.json",
+   "note": ""
+  },
+  {
+   "family": "LTX-2.5",
+   "name": "ltx25_core_i2v",
+   "title": "LTX 2.5 distilled, picture to video",
+   "desc": "The studio's own LTX 2.5 graph with the conv VAE already on this box.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 4.0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "ltx 2.5/ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 1.0
+    },
+    {
+     "name": "gemma/gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors",
+     "dir": "text_encoders",
+     "gb": 1.0
+    },
+    {
+     "name": "ltx/ltx-2.5-video-vae-conv-bf16.safetensors",
+     "dir": "vae",
+     "gb": 1.0
+    },
+    {
+     "name": "ltx/ltx-2.5-audio-vae-bf16.safetensors",
+     "dir": "vae",
+     "gb": 1.0
+    }
+   ],
+   "source": "workflows/ltx25_core_i2v_api.json",
+   "note": ""
   }
  ]
 }

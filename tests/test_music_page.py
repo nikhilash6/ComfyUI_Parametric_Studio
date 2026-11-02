@@ -161,6 +161,11 @@ def test_accessible_and_small_screen_rules_are_there():
     assert not re.search(r"https?://|@import", css)
 
 
+def test_every_unrendered_model_says_why():
+    for m in MODELS:
+        if m["id"] not in PROOF["renders"]: assert m.get("why_not"), m["id"]
+
+
 def test_weights_outside_the_library_are_not_claimed():
     # nothing on the page may read as rendered without a recorded render
     for m in MODELS:
@@ -205,3 +210,11 @@ def test_no_merge_leftovers_in_the_shell():
     for f in WEB.glob("*.js"):
         t = f.read_text(encoding="utf-8"); assert not re.search(r"^(<{7}|={7}|>{7})( |$)", t, re.M), f.name
     app = (WEB / "app.js").read_text(encoding="utf-8"); assert app.count('${t === "pipelines" && html') == 1
+
+
+@pytest.mark.skipif(not shutil.which("node"), reason="node not installed")
+def test_every_page_script_parses():
+    # One doubled declaration in any module the shell imports leaves the whole studio blank.
+    for f in WEB.glob("*.js"):
+        p = subprocess.run(["node", "--check", "--input-type=module"], input=f.read_text(encoding="utf-8"), capture_output=True, text=True, timeout=60)
+        assert p.returncode == 0, (f.name, p.stderr[-300:])

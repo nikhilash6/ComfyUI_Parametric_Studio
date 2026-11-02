@@ -10,7 +10,7 @@ KEEP = ("seconds", "lufs", "lra", "true_peak_db", "silent_pct", "last_second_db"
 CHANGE = [
     ("cover_ace", "ACE-Step cover", "ACE-Step 1.5 Turbo with his Cover guider, in a new style. It keeps the source's structure.", True),
     ("cover_yue2", "YuE2 cover", "ComfyUI's own YuE2 cover graph: SheetSage reads the melody, YuE2 re-sings it in a new style.", False),
-    ("edit_ace", "ACE-Step repaint and extend", "His Edit guider redoes 30 to 40 s and adds 15 s at the end. The rest of the source should stay put.", True),
+    ("edit_ace", "ACE-Step repaint and extend", "His Edit guider redoes 30 to 40 s and adds 15 s at the end. Against the source, the loudness shape correlated 0.95 and 0.91 outside the repainted stretch and 0.36 inside it, so the song's shape held. The waveform didn't match anywhere (about 0.08), so the rest is regenerated rather than kept. His post-processor, wired in here, handed back the source unchanged, so this take doesn't use it.", True),
     ("stem_vocals", "Vocals, extracted", "ACE-Step 1.5 XL Base with his Extract guider, asked for the vocals only. The model generates the stem, so it's a new performance of that part rather than a clean separation.", True),
     ("stem_drums", "Drums, extracted", "The same guider, asked for the drums only. Generated, not separated.", True),
     ("stem_bass", "Bass, extracted", "The same guider, asked for the bass only. Generated, not separated.", True),

@@ -175,29 +175,11 @@
   "class_type": "SaveAudioAdvanced",
   "inputs": {
    "audio": [
-    "17",
+    "15",
     0
    ],
    "filename_prefix": "music/music_roti_edit",
    "format": "flac"
-  }
- },
- "17": {
-  "class_type": "ACEStepAudioPostProcessor",
-  "inputs": {
-   "original_audio": [
-    "4",
-    0
-   ],
-   "processed_audio": [
-    "15",
-    0
-   ],
-   "guider": [
-    "8",
-    0
-   ],
-   "crossfade_duration": 0.1
   }
  }
 }

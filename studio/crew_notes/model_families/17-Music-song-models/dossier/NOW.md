@@ -22,11 +22,11 @@ YuE2 3B (bf16): 75.0 s long, -13.9 LUFS, true peak 0.2 dB, 143.6 BPM found, rend
 
 Stable Audio Open 1.0: 47.0 s long, -18.4 LUFS, true peak -5.1 dB, 76.0 BPM found, rendered in 10.2 s at 3.4 GiB peak on the test machine, one run, not a promise for others. No lyrics to check. Licence: Stability AI Community License. [run: studio/music_proof.json]
 
+DiffSynth-Music: 75.0 s long, -11.9 LUFS, true peak -0.6 dB, 143.6 BPM found, rendered in 6.0 s at 11.4 GiB peak on the test machine, one run, not a promise for others. Whisper matched 12 of 12 unique lyric lines. Licence: Apache-2.0. [run: studio/music_proof.json]
+
 ## Models with no render on the page
 
 Stable Audio 3 has no render on the page. It is listed for: Newer Stable Audio: medium, small music, small sound effects. Licence: Stability AI Community License. [code: studio/music_models.json]
-
-DiffSynth-Music has no render on the page. It is listed for: ACE-Step 1.5 XL with extra control: beat, vocal, accompaniment, prosody. Licence: Apache-2.0. [code: studio/music_models.json]
 
 MuLaCover has no render on the page. It is listed for: Cover songs and remixes, from reference music or MIDI. Licence: CC BY-NC 4.0. [code: studio/music_models.json]
 
@@ -42,9 +42,9 @@ MusicGen Small has no render on the page. It is listed for: The small, older ins
 
 ACE-Step cover: made a real take, 70.0 s, -11.9 LUFS. ACE-Step 1.5 Turbo with his Cover guider, in a new style. It keeps the source's structure. [run: studio/music_proof.json]
 
-YuE2 cover: This one failed when it was tried: rejected ComfyUI's own YuE2 cover graph: SheetSage reads the melody, YuE2 re-sings it in a new style. [run: studio/music_proof.json]
+YuE2 cover: made a real take, 69.5 s, -13.2 LUFS. ComfyUI's own YuE2 cover graph: SheetSage reads the melody, YuE2 re-sings it in a new style. [run: studio/music_proof.json]
 
-ACE-Step repaint and extend: made a real take, 85.0 s, -12.1 LUFS. His Edit guider redoes 30 to 40 s and adds 15 s at the end. The rest of the source should stay put. [run: studio/music_proof.json]
+ACE-Step repaint and extend: made a real take, 85.0 s, -12.1 LUFS. His Edit guider redoes 30 to 40 s and adds 15 s at the end. Against the source, the loudness shape correlated 0.95 and 0.91 outside the repainted stretch and 0.36 inside it, so the song's shape held. The waveform didn't match anywhere (about 0.08), so the rest is regenerated rather than kept. His post-processor, wired in here, handed back the source unchanged, so this take doesn't use it. [run: studio/music_proof.json]
 
 Vocals, extracted: made a real take, 70.0 s, -14.6 LUFS. ACE-Step 1.5 XL Base with his Extract guider, asked for the vocals only. The model generates the stem, so it's a new performance of that part rather than a clean separation. [run: studio/music_proof.json]
 
