@@ -24,8 +24,9 @@ TOOLS = [  # id, category, label, template, blurb
  ("capybara", "edit", "Edit by instruction (Capybara)", "video_capybara_v0_1_video_edit", "Another instruction-driven video editor."),
 ]
 PARTNER_TOOLS = {"bgremove"}      # its template runs a partner node; named here too, so it stays hidden when ComfyUI runs with --disable-api-nodes and /object_info cannot flag it
+EXTRA_GRAPHS = [os.path.join(os.path.dirname(os.path.abspath(__file__)), d) for d in ("family_templates", os.path.join("pipelines", "graphs"))]   # steps of a recipe or pipeline may use them; they are not listed as tools
 def _path(name):
-    for d in A._dirs():
+    for d in A._dirs() + EXTRA_GRAPHS:
         p = os.path.join(d, name + ".json")
         if os.path.exists(p): return p
 def _hidden(tid, path, oi):

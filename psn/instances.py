@@ -15,7 +15,9 @@ TYPES = ["checkpoints", "diffusion_models", "unet", "text_encoders", "clip", "cl
          "ipadapter", "configs", "model_patches", "latent_upscale_models", "frame_interpolation", "optical_flow", "detection", "geometry_estimation"]
 COMMON_PACKS = ["comfyui_parametric_studio", "kijai__ComfyUI-KJNodes"]
 REPO_LIB = paths.setting("PSN_REPO_LIB", default=paths.home("nodepack_library", "repos"))
-FAMILY_PACKS = {"AnimateDiff": ["Kosinkadink__ComfyUI-AnimateDiff-Evolved"], "PartCrafter": ["tungthedev__ComfyUI-TripoSG"], "LTX-2.5": ["Lightricks__ComfyUI-LTXVideo"], "Wan2.1": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2-Animate": ["kijai__ComfyUI-WanVideoWrapper"],
+#: Packs whose code imports its own folder name, so the link must carry that name.
+PACK_LINK_AS = {"kijai__ComfyUI-CCSR": "ComfyUI-CCSR"}
+FAMILY_PACKS = {"IC-Light": ["kijai__ComfyUI-IC-Light"], "CCSR": ["kijai__ComfyUI-CCSR"], "AnimateDiff": ["Kosinkadink__ComfyUI-AnimateDiff-Evolved"], "PartCrafter": ["tungthedev__ComfyUI-TripoSG"], "LTX-2.5": ["Lightricks__ComfyUI-LTXVideo"], "Wan2.1": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2-Animate": ["kijai__ComfyUI-WanVideoWrapper"],
                 "Wan2.2-Dancer": ["kijai__ComfyUI-WanVideoWrapper"], "TurboWan2.2-I2V": ["kijai__ComfyUI-WanVideoWrapper"], "Wan-SCAIL-2": ["kijai__ComfyUI-WanVideoWrapper"],
                 "MiniMax-H3": ["Larryvrh__ComfyUI-MiniMax-H3-Turbo", "TripleHeadedMonkey__ComfyUI-MiniMaxH3_LatentUpscaler", "T8mars__comfyui-minimax-h3-audio-T8", "vizart-vj__ComfyUI-MiniMax-H3-LongMedia", "YJX-Research__comfyui-controlfoley-official"],
                 "SeedVR2": ["bbaudio-2025__Comfyui-MMH3-UltimateUpscale"], "dwpose": ["kijai__ComfyUI-WanVideoWrapper"]}                                      # a pack is its directory name, owner__Repo: a bare repo name never resolves (MiniMax-H3 once got no packs that way)
@@ -112,7 +114,7 @@ def generate(family, models=None, root=None, ps_nodes=None, ports=None):
     for p in wanted:
         src = os.path.join(ps_nodes, p)
         if not os.path.exists(src): src = os.path.join(REPO_LIB, p)          # a family pack that is not installed in the main instance comes from the library of cloned repos (linked into this instance only)
-        if os.path.exists(src): os.symlink(os.path.realpath(src), os.path.join(cn, p)); linked.append(p)
+        if os.path.exists(src): os.symlink(os.path.realpath(src), os.path.join(cn, PACK_LINK_AS.get(p, p))); linked.append(p)
         else: absent.append(p)
     views, wrapped, missing_w = {}, [], []
     spec = WRAPS.get(family)

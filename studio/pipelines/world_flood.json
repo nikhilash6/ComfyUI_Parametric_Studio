@@ -1,0 +1,181 @@
+{
+ "id": "world_flood",
+ "order": 6,
+ "kicker": "A whole set",
+ "title": "A built place, shot, flooded, scored",
+ "pitch": "A brief in. A real-scale 3D street, a directed shot of it, a flood through it and a score over it.",
+ "why": "The set is real geometry, so the camera move is planned, not guessed. Qwen-Image 2.1 dresses the two end frames, H3 fills between them, LTX-2.5 adds the water and its sound, and Music 3 writes the score.",
+ "tags": [
+  "3d",
+  "video",
+  "vfx",
+  "music"
+ ],
+ "fields": [
+  {
+   "key": "brief",
+   "label": "The place",
+   "default": "a narrow downtown street at golden hour with old brick shopfronts",
+   "multiline": true
+  }
+ ],
+ "models": [
+  {
+   "name": "Blender",
+   "licence": "GPL, runs as a separate tool",
+   "licence_class": "open"
+  },
+  {
+   "name": "Qwen-Image 2.1",
+   "licence": "Qwen-Image 2.1's own licence",
+   "licence_class": "community",
+   "note": "Not Apache: read the 2.1 terms before commercial use."
+  },
+  {
+   "name": "MiniMax H3",
+   "licence": "MiniMax H3 Community License",
+   "licence_class": "community",
+   "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+  },
+  {
+   "name": "LTX-2.5",
+   "licence": "LTX-2.x community licence (gated download)",
+   "licence_class": "community",
+   "note": "Accept the terms first; read them before commercial use."
+  },
+  {
+   "name": "MiniMax Music 3",
+   "licence": "MiniMax-Music3 Community License",
+   "licence_class": "community",
+   "note": "Commercial use must show the name MiniMax-Music3."
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "The brief picks the kit (street, interior or beach), the time and the weather."
+ ],
+ "steps": [
+  {
+   "id": "place",
+   "type": "worldkit",
+   "label": "The set",
+   "model": "Blender",
+   "peak_gib": 30,
+   "asset": {
+    "type": "place",
+    "name": "Brick street",
+    "source": {
+     "brief": "{brief}"
+    },
+    "recipe": {
+     "seed": 701
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Plans the block from the brief and builds it in Blender at real scale, with textures made for it."
+  },
+  {
+   "id": "shot",
+   "type": "vset",
+   "label": "The shot",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "shot": {
+    "name": "Street push-in",
+    "set": {
+     "place": "@place",
+     "props": []
+    },
+    "cast": [],
+    "marks": [
+     [
+      0,
+      0
+     ]
+    ],
+    "camera": {
+     "preset": "push_in",
+     "params": {
+      "from_m": 14.0,
+      "to_m": 4.0,
+      "angle_deg": 90.0,
+      "height_m": 1.6,
+      "easing": "ease_in_out"
+     }
+    },
+    "format": {
+     "aspect": "16:9",
+     "seconds": 5
+    },
+    "look_from_place": true,
+    "mode": "C",
+    "mode_settings": {},
+    "seed": 702,
+    "prompt": "The camera moves slowly along the empty brick street at golden hour. Warm low light, long shadows, a little dust in the air."
+   },
+   "does": "Blender renders the camera path, Qwen-Image 2.1 dresses the first and last frames, and H3 fills between them."
+  },
+  {
+   "id": "flood",
+   "type": "goal",
+   "goal": "vfx_ltx",
+   "label": "The flood",
+   "model": "LTX-2.5",
+   "peak_gib": 46,
+   "seed": 703,
+   "does": "LTX-2.5 runs a flood through the same clip, keeping the street and the camera move.",
+   "video": "@shot",
+   "scene": "a narrow brick downtown street at golden hour",
+   "options": {
+    "effect": "water",
+    "intensity": "max",
+    "aspect": "auto",
+    "seconds": 5
+   }
+  },
+  {
+   "id": "join",
+   "type": "cpu",
+   "op": "join",
+   "label": "Dry, then flooded",
+   "model": "ffmpeg",
+   "does": "Runs the two clips one after the other.",
+   "clips": [
+    "@shot",
+    "@flood"
+   ]
+  },
+  {
+   "id": "score",
+   "type": "goal",
+   "goal": "music",
+   "label": "The score",
+   "model": "MiniMax Music 3",
+   "peak_gib": 23,
+   "seed": 704,
+   "does": "An original instrumental for the two clips.",
+   "prompt": "Global Metadata\nBasic Attributes: bpm is 70. key is D, and scale is minor. Dark orchestral.\nGlobal Emotional Progression: A held low note grows into rolling drums as the water arrives.\nApplication Scenarios & Imagery: An empty street, then a wall of water.\nSonics & Production Profile: Huge low end, wide strings.\nVocal Details\nVocal Gender & Timbre: No vocals. Purely instrumental.\nArrangement\nInstrument Lifecycle Description (Primary/Secondary Layering):\nPrimary: Low strings, timpani.\nSecondary: Brass swells.\nGroove & Foundation Progression: Slow steady pulse, drums enter halfway.\nEmbellishments, Textures & Spatial FX: Swells and rises into each new section.",
+   "lyrics": "[inst]",
+   "options": {
+    "seconds": 30
+   }
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "mux",
+   "label": "Marry picture and score",
+   "model": "ffmpeg",
+   "does": "Joins picture and score.",
+   "final": true,
+   "clip": "@join",
+   "audio": "@score"
+  }
+ ]
+}

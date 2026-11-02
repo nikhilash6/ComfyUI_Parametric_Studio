@@ -9,7 +9,7 @@ from studio import recipe_check as C, recipes as R, sfw
 
 ROOT = Path(__file__).resolve().parent.parent; WEB = ROOT / "studio" / "web"; FOLDER = WEB / "recipe_renders"; DATA = ROOT / "studio" / "recipe_renders.json"; JS = WEB / "recipes.js"
 ALSO_ADULT = re.compile(r"\b(bikini|swimwear|sensual|seductive|boudoir|cleavage|lingerie|schoolgirl|underage)\b", re.I)
-SMALL_KB = {"picture": 64, "video": 1100, "audio": 200}; TOTAL_MB = 150
+SMALL_KB = {"picture": 64, "video": 1100, "audio": 200, "3d": 1100}; TOTAL_MB = 150
 ROWS = json.loads(DATA.read_text(encoding="utf-8"))["renders"]
 def of(kind): return {i: r for i, r in ROWS.items() if r["kind"] == kind}
 
@@ -25,7 +25,7 @@ def client(monkeypatch):
 def test_every_kind_is_there_and_the_folder_stays_under_the_limit():
     assert of("picture") and of("video") and of("audio") and sum(p.stat().st_size for p in FOLDER.iterdir()) < TOTAL_MB * 1e6
 def test_each_mapped_file_exists_and_is_small():
-    ext = {"picture": "webp", "video": "mp4", "audio": "m4a"}
+    ext = {"picture": "webp", "video": "mp4", "audio": "m4a", "3d": "mp4"}
     for rid, r in ROWS.items():
         p = WEB / r["file"]; assert p.is_file(), rid; assert p.parent == FOLDER and p.name == f"{rid}.{ext[r['kind']]}", rid; assert 1024 < p.stat().st_size <= SMALL_KB[r["kind"]] * 1024, (rid, p.stat().st_size)
 def test_each_picture_and_poster_is_a_webp_about_512_on_its_long_side():
@@ -44,13 +44,14 @@ def test_clips_and_sounds_are_real_mp4_containers():
 def test_every_id_is_in_the_library():
     ids = {r["id"] for r in R.library()}; assert not set(ROWS) - ids
 def test_no_stray_files_either_way():
-    named = {Path(r[k]).name for r in ROWS.values() for k in ("file", "poster") if r.get(k)}; assert {p.name for p in FOLDER.iterdir()} == named
+    named = {Path(r[k]).name for r in ROWS.values() for k in ("file", "poster") if r.get(k)} | {Path(r["download"]["file"]).name for r in ROWS.values() if r.get("download")}; assert {p.name for p in FOLDER.iterdir()} == named
 def test_a_row_keeps_what_the_run_recorded():
     for rid, r in ROWS.items():
         assert r["seconds"] >= 0 and r["peak_scope"] in ("recipe", "card", "none") and r["card_peak_vram_gib"] >= r["peak_vram_gib"] and r["model"] and re.fullmatch(r"[0-9a-f]{12}", r["run"]) and re.fullmatch(r"\d{4}-\d\d-\d\d", r["rendered"]), rid
-        if r["kind"] != "audio": assert isinstance(r["seed"], int) and r["seconds"] > 0 and r["peak_vram_gib"] > 0 and r["model"].endswith(".safetensors") and r["prompt"].strip(), rid
+        if r["kind"] not in ("audio", "3d"): assert isinstance(r["seed"], int) and r["seconds"] > 0 and r["peak_vram_gib"] > 0 and r["model"].endswith(".safetensors") and r["prompt"].strip(), rid
+        if r["kind"] == "3d": assert r["seconds"] > 0 and r["model"] and r["prompt"].strip(), rid
 def test_a_clip_says_how_much_of_the_output_it_is_and_has_a_poster():
-    for rid, r in of("video").items(): assert 0 < r["clip_seconds"] <= r["full_seconds"] + 0.1 and r["clip_seconds"] <= 20.1 and (WEB / r["poster"]).is_file(), rid
+    for rid, r in {**of("video"), **of("3d")}.items(): assert 0 < r["clip_seconds"] <= r["full_seconds"] + 0.1 and r["clip_seconds"] <= 20.1 and (WEB / r["poster"]).is_file(), rid
 def test_a_sound_carries_its_shape():
     for rid, r in of("audio").items(): assert len(r["peaks"]) == 48 and max(r["peaks"]) == 1.0 and r["seed"] is None, rid
 def test_data_names_no_private_path_and_nothing_adult():
@@ -101,3 +102,37 @@ def test_the_lettering_goal_fills_its_graph():
     from studio.graph_template import fill
     vals, _ = values_for("krea2", {"prompt": 'the word "OPEN"', "seed": 7, "options": {"aspect": "2:3"}}); g = fill(json.load(open(os.path.join(WF, GOALS["krea2"]["template"]))), vals)
     assert "$" not in json.dumps(g) and g["7"]["inputs"]["seed"] == 7 and g["6"]["inputs"]["width"] == 832 and 'OPEN' in g["4"]["inputs"]["text"]
+
+# ---------- the 3D section
+MAX_GLB_MB = 8.5
+def test_a_3d_render_links_a_small_real_file():
+    for rid, r in of("3d").items():
+        d = r.get("download")
+        if not d: continue
+        p = WEB / d["file"]; assert p.is_file() and p.stat().st_size <= MAX_GLB_MB * 1e6, rid
+        if p.suffix == ".glb": assert p.read_bytes()[:4] == b"glTF", rid
+        if p.suffix == ".bvh": assert p.read_text()[:9] == "HIERARCHY", rid
+def test_every_3d_recipe_is_valid_and_runs_one_model_or_one_world_kit_build():
+    rows = [r for r in R.library() if r["kind"] == "3d"]; assert len(rows) >= 20 and R.validate({"recipes": rows}) == []
+    for r in rows: assert r["rating"] == "sfw" and sum(s["type"] != "goal" for s in r["steps"]) <= 2 and r["group"].startswith("3D: "), r["id"]
+def test_a_bvh_becomes_a_stick_figure_from_its_own_numbers():
+    from studio import recipes3d as T
+    bvh = "HIERARCHY ROOT H { OFFSET 0 0 0 CHANNELS 6 Xposition Yposition Zposition Zrotation Xrotation Yrotation JOINT A { OFFSET 0 10 0 CHANNELS 3 Zrotation Xrotation Yrotation End Site { OFFSET 0 10 0 } } } MOTION Frames: 2 Frame Time: 0.5 0 0 0 0 0 0 0 0 0 5 0 0 0 0 0 90 0 0"
+    names, parents, offsets, chans, data, ft = T.parse_bvh(bvh); P = T.bvh_positions(names, parents, offsets, chans, data)
+    assert names == ["H", "A", "A_end"] and parents == [-1, 0, 1] and ft == 0.5 and P[0, 2].tolist() == [0, 20, 0] and P[1, 0].tolist() == [5, 0, 0]
+    assert abs(P[1, 2, 0] - (5 - 10)) < 1e-6 and abs(P[1, 2, 1] - 10) < 1e-6                                                        # the joint's turn carries its child
+def test_a_glb_is_read_for_its_real_counts(tmp_path):
+    from studio import recipes3d as T
+    j = json.dumps({"meshes": [{}], "skins": [{"joints": [0, 1, 2]}], "textures": [{}, {}]}).encode(); p = tmp_path / "a.glb"; p.write_bytes(b"glTF" + struct.pack("<II", 2, 20 + len(j)) + struct.pack("<II", len(j), 0x4E4F534A) + j)
+    assert T.glb_facts(p) == {"meshes": 1, "skins": 1, "bones": 3, "animations": 0, "textures": 2}
+
+# ---------- a LoRA on its family's own graph
+FAMILY = [r for r in R.library() if any(s["type"] == "family_lora" for s in r["steps"])]
+def test_a_family_lora_goes_in_right_after_the_model_and_nothing_skips_it():
+    from studio import recipes_family as F
+    assert FAMILY
+    for r in FAMILY:
+        s = r["steps"][-1]; g = F.build_graph(s, R.field_defaults(r), "a.png", 5); unet = next(k for k, n in g.items() if n["class_type"] == "UNETLoader")
+        assert all(n["inputs"].get("model") != [unet, 0] or n["class_type"] == "LoraLoaderModelOnly" for n in g.values()), r["id"]
+        names = [n["inputs"]["lora_name"] for n in g.values() if n["class_type"] == "LoraLoaderModelOnly"]; assert r["lora_path"] in names and len(names) == len(set(names)), r["id"]
+        assert "our own starting point" in r["why"], r["id"]

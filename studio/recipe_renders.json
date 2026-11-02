@@ -1,6 +1,6 @@
 {
  "about": "Our own renders of library recipes, one passed run each. Pictures are resized and converted to WebP; clips and sounds are small web copies, clip_seconds long, of a full_seconds output. Figures come from that run's own record. peak_vram_gib is the recipe's own lane when peak_scope is recipe, the whole card when it is card.",
- "snapshot": "2026-11-01T15:04:28-05:00",
+ "snapshot": "2026-11-01T19:31:29-05:00",
  "renders": {
   "loop_breathing": {
    "kind": "video",
@@ -97,6 +97,30 @@
    "width": 354,
    "height": 640,
    "clip_seconds": 4.7
+  },
+  "loop_turntable": {
+   "kind": "video",
+   "family": "loop",
+   "model": "flux-2-klein-base-4b.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+   "seed": 355394,
+   "seeds": {
+    "still": 355394,
+    "clip": 89812
+   },
+   "seconds": 169.6,
+   "peak_vram_gib": 41.7,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 55.8,
+   "rendered": "2026-11-01",
+   "run": "7f8d8b2f74b3",
+   "prompt": "The still: a sleek perfume bottle on a plain light-grey turntable, soft studio light, a clean seamless backdrop. No text, no logos.\n\nFirst frame = last frame: the product turns slowly through one full rotation on the turntable and ends facing exactly the way it started, the camera and the light stay fixed. A very quiet studio room tone. Keep the product, the turntable, the backdrop, the framing and the light the same",
+   "lora": "minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
+   "file": "recipe_renders/loop_turntable.mp4",
+   "poster": "recipe_renders/loop_turntable.poster.webp",
+   "full_seconds": 7.5,
+   "width": 640,
+   "height": 640,
+   "clip_seconds": 7.5
   },
   "loop_water_ripples": {
    "kind": "video",
@@ -7337,6 +7361,108 @@
    "width": 350,
    "height": 512
   },
+  "r3d_relief_moge": {
+   "kind": "3d",
+   "family": "3d",
+   "model": "flux-2-klein-base-4b.safetensors, moge",
+   "seed": 7122,
+   "seeds": {
+    "pic": 7121,
+    "mesh": 7122
+   },
+   "seconds": 196.4,
+   "peak_vram_gib": 16.7,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 55.6,
+   "rendered": "2026-11-01",
+   "run": "6460ff276fc8",
+   "prompt": "The picture: A photograph of a bright sitting room with a sofa, a low table and a tall window, wide view, nobody in the room. No text, no logos.",
+   "file": "recipe_renders/r3d_relief_moge.mp4",
+   "poster": "recipe_renders/r3d_relief_moge.poster.webp",
+   "full_seconds": 3.0,
+   "width": 512,
+   "height": 512,
+   "clip_seconds": 3.0,
+   "facts": {
+    "meshes": 1,
+    "skins": 0,
+    "bones": 0,
+    "animations": 0,
+    "textures": 1
+   },
+   "download": {
+    "file": "recipe_renders/r3d_relief_moge.glb",
+    "label": "GLB",
+    "reduced": true
+   },
+   "full_mb": 44.8
+  },
+  "r3d_rig_anigen": {
+   "kind": "3d",
+   "family": "3d",
+   "model": "flux-2-klein-base-4b.safetensors, anigen",
+   "seed": 7142,
+   "seeds": {
+    "pic": 7141,
+    "mesh": 7142
+   },
+   "seconds": 257.0,
+   "peak_vram_gib": 16.8,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 51.9,
+   "rendered": "2026-11-01",
+   "run": "1bc2c189767f",
+   "prompt": "The picture: a friendly cartoon brown bear toy standing upright with its arms out, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+   "file": "recipe_renders/r3d_rig_anigen.mp4",
+   "poster": "recipe_renders/r3d_rig_anigen.poster.webp",
+   "full_seconds": 3.0,
+   "width": 512,
+   "height": 512,
+   "clip_seconds": 3.0,
+   "facts": {
+    "meshes": 1,
+    "skins": 1,
+    "bones": 17,
+    "animations": 0,
+    "textures": 1
+   },
+   "download": {
+    "file": "recipe_renders/r3d_rig_anigen.glb",
+    "label": "GLB",
+    "reduced": false
+   },
+   "full_mb": 1.4
+  },
+  "r3d_splat_triposplat": {
+   "kind": "3d",
+   "family": "3d",
+   "model": "flux-2-klein-base-4b.safetensors, triposplat",
+   "seed": 7132,
+   "seeds": {
+    "pic": 7131,
+    "mesh": 7132
+   },
+   "seconds": 84.4,
+   "peak_vram_gib": 16.8,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 41.5,
+   "rendered": "2026-11-01",
+   "run": "3d7fb1f7a9f3",
+   "prompt": "The picture: a blue ceramic mug with a white handle, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+   "file": "recipe_renders/r3d_splat_triposplat.mp4",
+   "poster": "recipe_renders/r3d_splat_triposplat.poster.webp",
+   "full_seconds": 3.0,
+   "width": 640,
+   "height": 640,
+   "clip_seconds": 3.0,
+   "facts": null,
+   "download": {
+    "file": "recipe_renders/r3d_splat_triposplat.spz",
+    "label": "Gaussian splat",
+    "reduced": false
+   },
+   "full_mb": 3.0
+  },
   "snd_amb_clock": {
    "kind": "audio",
    "family": "sound",
@@ -11581,6 +11707,81 @@
    "width": 354,
    "height": 640,
    "clip_seconds": 13.2
+  },
+  "tl_scene_ice_melts": {
+   "kind": "video",
+   "family": "timelapse",
+   "model": "flux-2-klein-base-4b.safetensors, flux-2-klein-4b.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+   "seed": 61492,
+   "seeds": {
+    "k0": 61492,
+    "c1": 161554,
+    "k1": 349346
+   },
+   "seconds": 267.2,
+   "peak_vram_gib": 41.7,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 72.8,
+   "rendered": "2026-11-01",
+   "run": "a99d660e1e98",
+   "prompt": "Ice: Live-action, macro time-lapse. a clear rectangular block of ice on a dark slate tile. No text, no logos.\n\nPuddle: the same slate tile with only a small sliver of ice left in a wide clear puddle of meltwater. Keep the camera angle, framing and the slate tile exactly the same; only the ice melts.\n\nIce to Puddle: the edges of the ice round off, droplets run down the sides and the block shrinks while meltwater spreads across the slate",
+   "lora": "minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
+   "file": "recipe_renders/tl_scene_ice_melts.mp4",
+   "poster": "recipe_renders/tl_scene_ice_melts.poster.webp",
+   "full_seconds": 8.0,
+   "width": 640,
+   "height": 640,
+   "clip_seconds": 8.0
+  },
+  "tl_scene_seed_to_sapling": {
+   "kind": "video",
+   "family": "timelapse",
+   "model": "flux-2-klein-base-4b.safetensors, flux-2-klein-4b.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+   "seed": 98016,
+   "seeds": {
+    "k0": 98016,
+    "c1": 762914,
+    "k1": 71990
+   },
+   "seconds": 211.7,
+   "peak_vram_gib": 41.4,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 73.9,
+   "rendered": "2026-11-01",
+   "run": "e05bab7cffe0",
+   "prompt": "Seed: Live-action, macro nature time-lapse. a single seed resting in dark damp soil. No text, no logos.\n\nSapling: the same spot with a young sapling, a thin green stem and two small leaves rising from the soil. Keep the camera angle, framing and the patch of soil exactly the same; only the seed grows.\n\nSeed to Sapling: the seed splits, a pale white root pushes down into the soil and a curled green shoot rises and unfolds its first two leaves while the light shifts from cool to warm",
+   "lora": "minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
+   "file": "recipe_renders/tl_scene_seed_to_sapling.mp4",
+   "poster": "recipe_renders/tl_scene_seed_to_sapling.poster.webp",
+   "full_seconds": 8.0,
+   "width": 354,
+   "height": 640,
+   "clip_seconds": 8.0
+  },
+  "tl_scene_storm_rolls_in": {
+   "kind": "video",
+   "family": "timelapse",
+   "model": "flux-2-klein-base-4b.safetensors, flux-2-klein-4b.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+   "seed": 62263,
+   "seeds": {
+    "k0": 62263,
+    "c1": 31605,
+    "k1": 832865
+   },
+   "seconds": 216.5,
+   "peak_vram_gib": 41.4,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 71.7,
+   "rendered": "2026-11-01",
+   "run": "7a6f25562cd6",
+   "prompt": "Clear: Live-action, time-lapse photography. a green meadow with a lone oak tree under a bright blue sky with small white clouds. No text, no logos.\n\nStorm: the same meadow under towering dark grey storm clouds, the grass bent by the wind, dramatic grey light. Keep the camera angle, framing, the meadow and the oak tree exactly where they are; only the sky, the light and the wind in the grass change.\n\nClear to Storm: white clouds gather and thicken into towering dark storm clouds that sweep across the sky while the light drops and the grass bends in the wind",
+   "lora": "minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
+   "file": "recipe_renders/tl_scene_storm_rolls_in.mp4",
+   "poster": "recipe_renders/tl_scene_storm_rolls_in.poster.webp",
+   "full_seconds": 8.0,
+   "width": 640,
+   "height": 354,
+   "clip_seconds": 8.0
   },
   "vid_before_after_15": {
    "kind": "video",

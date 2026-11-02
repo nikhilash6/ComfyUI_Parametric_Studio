@@ -1,0 +1,154 @@
+{
+ "id": "product_hero",
+ "order": 3,
+ "kicker": "Commercial",
+ "title": "A product photo, relit, moved, matted",
+ "pitch": "Describe a product. Get a studio photo, a relit hero, a camera move and a clean matte over a new backdrop.",
+ "why": "A real ad job is four jobs. FLUX.3 draws the photo, Qwen-Image 2.1 relights it without redrawing it, H3 moves the camera, BiRefNet pulls the matte on every frame, and Z-Image paints the set it lands in.",
+ "tags": [
+  "product",
+  "video",
+  "matte"
+ ],
+ "fields": [
+  {
+   "key": "product",
+   "label": "The product",
+   "default": "a faceted amber glass perfume bottle with a heavy brushed brass cap, no label, no text",
+   "multiline": true
+  }
+ ],
+ "models": [
+  {
+   "name": "FLUX.3 Klein",
+   "licence": "FLUX Kommunity licence (gated download)",
+   "licence_class": "community",
+   "note": "Accept the terms on Hugging Face first; read them before commercial use."
+  },
+  {
+   "name": "Qwen-Image 2.1",
+   "licence": "Qwen-Image 2.1's own licence",
+   "licence_class": "community",
+   "note": "Not Apache: read the 2.1 terms before commercial use."
+  },
+  {
+   "name": "MiniMax H3",
+   "licence": "MiniMax H3 Community License",
+   "licence_class": "community",
+   "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+  },
+  {
+   "name": "Z-Image Turbo",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "BiRefNet",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Invent the product. Named brands and real logos don't belong here.",
+  "A plain background makes the matte far cleaner."
+ ],
+ "steps": [
+  {
+   "id": "photo",
+   "type": "goal",
+   "goal": "flux3",
+   "label": "Studio photo",
+   "model": "FLUX.3 Klein",
+   "peak_gib": 24,
+   "seed": 401,
+   "does": "A clean plate of the product, on a background easy to remove.",
+   "prompt": "Commercial product photograph of {product}, centred on a plain pale grey seamless studio background, soft even light, sharp focus, the whole object in frame. No text, no logos.",
+   "options": {
+    "aspect": "16:9"
+   },
+   "swappable": true,
+   "accepts": "image"
+  },
+  {
+   "id": "relit",
+   "type": "template",
+   "template": "qwen21_edit",
+   "label": "Relit hero",
+   "model": "Qwen-Image 2.1",
+   "peak_gib": 34,
+   "seed": 402,
+   "seed_node": "8",
+   "seed_input": "seed",
+   "values": {
+    "7|image": "@photo"
+   },
+   "set": {
+    "5": {
+     "prompt": "Keep the object, its shape and framing exactly unchanged, keep the plain background. Relight it dramatically: a warm golden key light from the upper left, a thin emerald rim light from behind on the right, deep soft shadow, glowing light passing through the glass."
+    },
+    "8": {
+     "steps": 30
+    }
+   },
+   "does": "Same object, same framing, new lighting."
+  },
+  {
+   "id": "orbit",
+   "type": "goal",
+   "goal": "h3_animate",
+   "label": "Camera move",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "seed": 403,
+   "does": "A slow move around the relit bottle.",
+   "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Product advertising film. The bottle stands still while light moves slowly through the glass. The camera orbits the bottle slowly to the right with small amplitude, keeping it centred. The plain background stays plain. One continuous shot, no cuts.\n\noverall_soundscape: A low soft hum.\n\nnon_diegetic_music: N/A",
+   "image": "@relit",
+   "options": {
+    "aspect": "16:9",
+    "quality": "high",
+    "seconds": 5,
+    "speed": "fast"
+   }
+  },
+  {
+   "id": "backdrop",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "New set",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 404,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "An empty luxury set: wet black obsidian floor reflecting a soft gold and emerald glow, fine mist, gold dust in the air, dark background, wide shot, nothing else in frame. No text, no logos."
+    },
+    "57:13": {
+     "width": 1280,
+     "height": 720
+    }
+   },
+   "does": "The place the product lands in."
+  },
+  {
+   "id": "matte",
+   "type": "template",
+   "template": "pipeline_video_matte",
+   "label": "Matte and composite",
+   "model": "BiRefNet",
+   "peak_gib": 10,
+   "final": true,
+   "values": {
+    "v|file": "@orbit",
+    "bgimg|image": "@backdrop"
+   },
+   "does": "BiRefNet cuts the bottle on every frame and lays it over the new set. The matte itself is saved too."
+  }
+ ]
+}

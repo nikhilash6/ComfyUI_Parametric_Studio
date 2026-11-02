@@ -1,0 +1,247 @@
+{
+ "id": "room_century",
+ "order": 4,
+ "kicker": "Depth holds the world",
+ "title": "One room across a hundred years",
+ "pitch": "A room, its depth map, three eras painted over the same geometry, and one unbroken shot through them.",
+ "why": "Depth is the thread. Lotus reads the room's shape once, the ControlNet paints every era onto that same shape, and H3 moves between frames that already line up, so time passes and the walls stay put.",
+ "tags": [
+  "image",
+  "video",
+  "depth"
+ ],
+ "fields": [
+  {
+   "key": "room",
+   "label": "The room",
+   "default": "a curved room with three tall arched windows on the left wall, a stone fireplace on the right, one long table in the middle of the floor",
+   "multiline": true
+  }
+ ],
+ "models": [
+  {
+   "name": "Z-Image Turbo",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Lotus depth",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Z-Image Fun Union ControlNet",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "MiniMax H3",
+   "licence": "MiniMax H3 Community License",
+   "licence_class": "community",
+   "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+  },
+  {
+   "name": "ACE-Step 1.5",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Keep big simple shapes in the room: the depth map has to carry them."
+ ],
+ "steps": [
+  {
+   "id": "room",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "The room",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 501,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "Wide architectural photograph of {room}, empty, freshly built, bare plaster walls, soft white daylight. Same camera, same room geometry. No people, no text."
+    },
+    "57:13": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "does": "The room, once, before anything happens to it."
+  },
+  {
+   "id": "depth",
+   "type": "template",
+   "template": "image_lotus_depth_v1_1",
+   "label": "Its depth",
+   "model": "Lotus depth",
+   "peak_gib": 6,
+   "values": {
+    "12|image": "@room"
+   },
+   "does": "Reads the shape of the room into a depth map."
+  },
+  {
+   "id": "e1",
+   "type": "template",
+   "template": "image_z_image_turbo_fun_union_controlnet",
+   "label": "1925",
+   "model": "Z-Image Fun Union ControlNet",
+   "peak_gib": 25,
+   "seed": 511,
+   "seed_node": "70:44",
+   "seed_input": "seed",
+   "values": {
+    "58|image": "@depth"
+   },
+   "set": {
+    "70:45": {
+     "text": "Wide architectural photograph of {room}, in 1925: dark oak panelling, a green glass lamp on the table, heavy velvet curtains, warm firelight in the fireplace, late evening. Same camera, same room geometry. No people, no text."
+    },
+    "70:60": {
+     "strength": 1.5
+    }
+   },
+   "does": "Paints this era onto the same depth."
+  },
+  {
+   "id": "e2",
+   "type": "template",
+   "template": "image_z_image_turbo_fun_union_controlnet",
+   "label": "1975",
+   "model": "Z-Image Fun Union ControlNet",
+   "peak_gib": 25,
+   "seed": 512,
+   "seed_node": "70:44",
+   "seed_input": "seed",
+   "values": {
+    "58|image": "@depth"
+   },
+   "set": {
+    "70:45": {
+     "text": "Wide architectural photograph of {room}, in 1975: orange and brown wallpaper, a shag carpet, a long laminate table with a rotary telephone, afternoon sun through the arched windows, warm film colour. Same camera, same room geometry. No people, no text."
+    },
+    "70:60": {
+     "strength": 1.5
+    }
+   },
+   "does": "Paints this era onto the same depth."
+  },
+  {
+   "id": "e3",
+   "type": "template",
+   "template": "image_z_image_turbo_fun_union_controlnet",
+   "label": "2025 ruin",
+   "model": "Z-Image Fun Union ControlNet",
+   "peak_gib": 25,
+   "seed": 513,
+   "seed_node": "70:44",
+   "seed_input": "seed",
+   "values": {
+    "58|image": "@depth"
+   },
+   "set": {
+    "70:45": {
+     "text": "Wide architectural photograph of {room}, abandoned for decades: plaster falling away, ivy growing through the broken arched windows, a rotting table, moss on the floor, pale green daylight. Same camera, same room geometry. No people, no text."
+    },
+    "70:60": {
+     "strength": 1.5
+    }
+   },
+   "does": "Paints this era onto the same depth."
+  },
+  {
+   "id": "a",
+   "type": "goal",
+   "goal": "director_keyframes",
+   "label": "1925 to 1975",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "seed": 521,
+   "does": "H3 fills the time between two frames that already line up.",
+   "prompt": "Time passes in one locked shot: the panelling fades into wallpaper, the curtains vanish, the light swings from firelight to afternoon sun. The clock ticks faster and faster.",
+   "image": "@e1",
+   "last_image": "@e2",
+   "options": {
+    "camera": "locked",
+    "aspect": "16:9",
+    "quality": "high",
+    "seconds": 5,
+    "speed": "fast"
+   }
+  },
+  {
+   "id": "b",
+   "type": "goal",
+   "goal": "director_keyframes",
+   "label": "1975 to ruin",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "seed": 522,
+   "does": "And again, from the second era to the third.",
+   "prompt": "Time passes in one locked shot: the wallpaper peels and falls, ivy pours through the breaking windows, moss spreads across the floor. Wind grows and birds arrive.",
+   "image": "@e2",
+   "last_image": "@e3",
+   "options": {
+    "camera": "locked",
+    "aspect": "16:9",
+    "quality": "high",
+    "seconds": 5,
+    "speed": "fast"
+   }
+  },
+  {
+   "id": "join",
+   "type": "cpu",
+   "op": "join",
+   "label": "One shot",
+   "model": "ffmpeg",
+   "does": "Runs the two moves together.",
+   "clips": [
+    "@a",
+    "@b"
+   ]
+  },
+  {
+   "id": "score",
+   "type": "template",
+   "template": "audio_ace_step_1_5_split",
+   "label": "The score",
+   "model": "ACE-Step 1.5",
+   "peak_gib": 8,
+   "seed": 523,
+   "seed_node": "3",
+   "seed_input": "seed",
+   "set": {
+    "94": {
+     "tags": "Slow ticking clock pulse under solo piano and a rising string drone, melancholy, cinematic, no vocals",
+     "lyrics": "[inst]",
+     "bpm": 60,
+     "seed": 523
+    },
+    "98": {
+     "seconds": 12
+    }
+   },
+   "does": "An original instrumental that fits the shot."
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "mux",
+   "label": "Marry picture and score",
+   "model": "ffmpeg",
+   "does": "Joins picture and score.",
+   "final": true,
+   "clip": "@join",
+   "audio": "@score"
+  }
+ ]
+}

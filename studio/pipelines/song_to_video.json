@@ -1,0 +1,316 @@
+{
+ "id": "song_to_video",
+ "order": 1,
+ "kicker": "Music into pictures",
+ "title": "A song becomes its music video",
+ "pitch": "Lyrics in. A sung song, one invented character, four moving shots and a cut timed to the song's own beats out.",
+ "why": "The song decides everything after it. Music 3 writes the performance, Klein keeps one face through every keyframe, H3 moves each frame, and the cut lands where the beat tracker found the beats.",
+ "tags": [
+  "music",
+  "video",
+  "character"
+ ],
+ "fields": [
+  {
+   "key": "lyrics",
+   "label": "Lyrics, with [verse] and [chorus] on their own lines",
+   "multiline": true,
+   "default": "[intro]\n\n[verse]\nI keep the lamp when the harbour sleeps\nSalt on my hands and the promise it keeps\nNobody's sailing, nobody's near\nI turn the light so you know I'm here\n[chorus]\nBurn on, burn on, over the black water\nBurn on, burn on, till the morning comes\nEvery wave I count is a mile I've carried you\nBurn on, burn on, I will bring you home\n[outro]"
+  },
+  {
+   "key": "character",
+   "label": "Who it is about",
+   "default": "a woman in her forties with short silver hair and a weathered face, a long rust-orange oilskin coat over a dark green fisherman's sweater, heavy black boots",
+   "multiline": true
+  },
+  {
+   "key": "world",
+   "label": "Where it happens",
+   "default": "a tall black-and-white lighthouse on a storm-worn rock in a dark cold sea, the only light for miles",
+   "multiline": true
+  }
+ ],
+ "models": [
+  {
+   "name": "MiniMax Music 3",
+   "licence": "MiniMax-Music3 Community License",
+   "licence_class": "community",
+   "note": "Commercial use must show the name MiniMax-Music3."
+  },
+  {
+   "name": "FLUX.2 Klein 4B",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "MiniMax H3",
+   "licence": "MiniMax H3 Community License",
+   "licence_class": "community",
+   "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Keep clothes and colours you would know from far away: that is what holds from shot to shot.",
+  "Upload your own song on the first stage to skip it."
+ ],
+ "steps": [
+  {
+   "id": "song",
+   "type": "goal",
+   "goal": "music",
+   "label": "The song",
+   "model": "MiniMax Music 3",
+   "peak_gib": 23,
+   "seed": 201,
+   "does": "Writes the performance from the lyrics: the voice, the band and the beats every later stage is timed to.",
+   "prompt": "Global Metadata\nBasic Attributes: bpm is 84. key is A, and scale is minor. Cinematic folk rock.\nGlobal Emotional Progression: A lone voice and acoustic guitar open quietly, then drums and strings lift the chorus into something huge.\nApplication Scenarios & Imagery: {world}.\nSonics & Production Profile: Close, warm vocal, wide room, deep low end.\nVocal Details\nVocal Gender & Timbre: Singer A (Female), husky and steady.\nVocal Style: Intimate in the verse, open and strong in the chorus.\nHarmony/Backing Vocals: Soft stacked harmonies on the chorus.\nVocal FX: Light hall reverb.\nArrangement\nInstrument Lifecycle Description (Primary/Secondary Layering):\nPrimary: Acoustic guitar, low piano.\nSecondary: Strings and a slow-building drum kit.\nGroove & Foundation Progression: A clear 84 BPM pulse from the first bars, full drums on the chorus.\nEmbellishments, Textures & Spatial FX: Swells and rises into each new section.",
+   "lyrics": "{lyrics}",
+   "options": {
+    "seconds": 60
+   },
+   "swappable": true,
+   "accepts": "audio"
+  },
+  {
+   "id": "character",
+   "type": "goal",
+   "goal": "image",
+   "label": "The character",
+   "model": "FLUX.2 Klein 4B",
+   "peak_gib": 18,
+   "seed": 202,
+   "does": "One invented person, drawn once, used as the reference for every shot.",
+   "prompt": "Full body character design: {character}. Standing, facing the camera, the whole figure in frame, plain light grey studio background, soft even light. No text, no logos.",
+   "options": {
+    "aspect": "2:3",
+    "mode": "quality"
+   },
+   "swappable": true,
+   "accepts": "image"
+  },
+  {
+   "id": "key1",
+   "type": "template",
+   "template": "image_flux2_klein_image_edit_4b_distilled",
+   "label": "Keyframe 1",
+   "model": "FLUX.2 Klein 4B",
+   "peak_gib": 18,
+   "seed": 211,
+   "seed_node": "75:73",
+   "seed_input": "noise_seed",
+   "values": {
+    "76|image": "@character"
+   },
+   "swap": {
+    "flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+   },
+   "set": {
+    "75:74": {
+     "text": "The same woman as in the reference picture, same face, same hair, same clothing and colours. Extreme wide shot at night. A tall black-and-white lighthouse on a storm-worn rock, huge waves breaking, she is a small figure on the iron gallery at the top, one sweep of amber light across the sea. Film still, anamorphic, deep teal shadows, warm amber lamp light, 35mm grain. No text, no logos."
+    },
+    "75:66": {
+     "width": 1344,
+     "height": 768
+    },
+    "75:62": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "prompt_note": "The same woman as in the reference picture, same face, same hair, same clothing and colours. Extreme wide shot at night. A tall black-and-white lighthouse on a storm-worn rock, huge waves breaking, sh",
+   "does": "Draws this shot with the character as its reference, so she stays the same person."
+  },
+  {
+   "id": "shot1",
+   "type": "goal",
+   "goal": "h3_animate",
+   "label": "Shot 1",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "seed": 221,
+   "does": "Moves the keyframe.",
+   "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Cinematic, live-action. Waves break against the rock below the lighthouse and spray rises slowly while the amber beam sweeps across the sea. The camera cranes up smoothly from low to high. One continuous shot, no cuts.\n\noverall_soundscape: Heavy surf and wind.\n\nnon_diegetic_music: N/A",
+   "image": "@key1",
+   "options": {
+    "aspect": "16:9",
+    "quality": "high",
+    "seconds": 5,
+    "speed": "fast"
+   }
+  },
+  {
+   "id": "key2",
+   "type": "template",
+   "template": "image_flux2_klein_image_edit_4b_distilled",
+   "label": "Keyframe 2",
+   "model": "FLUX.2 Klein 4B",
+   "peak_gib": 18,
+   "seed": 212,
+   "seed_node": "75:73",
+   "seed_input": "noise_seed",
+   "values": {
+    "76|image": "@character"
+   },
+   "swap": {
+    "flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+   },
+   "set": {
+    "75:74": {
+     "text": "The same woman as in the reference picture, same face, same hair, same clothing and colours. Medium close-up inside the lamp room. She tends the great glass lens with a rag, amber light moving across her face, rain on the windows behind her. Film still, anamorphic, deep teal shadows, warm amber lamp light, 35mm grain. No text, no logos."
+    },
+    "75:66": {
+     "width": 1344,
+     "height": 768
+    },
+    "75:62": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "prompt_note": "The same woman as in the reference picture, same face, same hair, same clothing and colours. Medium close-up inside the lamp room. She tends the great glass lens with a rag, amber light moving across ",
+   "does": "Draws this shot with the character as its reference, so she stays the same person."
+  },
+  {
+   "id": "shot2",
+   "type": "goal",
+   "goal": "h3_animate",
+   "label": "Shot 2",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "seed": 222,
+   "does": "Moves the keyframe.",
+   "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Cinematic, live-action. The woman slowly wipes the great glass lens with a rag and looks out through the rainy window. Amber light slides over her face. The camera dollies in slowly. One continuous shot, no cuts.\n\noverall_soundscape: Rain on glass, a low mechanical hum.\n\nnon_diegetic_music: N/A",
+   "image": "@key2",
+   "options": {
+    "aspect": "16:9",
+    "quality": "high",
+    "seconds": 5,
+    "speed": "fast"
+   }
+  },
+  {
+   "id": "key3",
+   "type": "template",
+   "template": "image_flux2_klein_image_edit_4b_distilled",
+   "label": "Keyframe 3",
+   "model": "FLUX.2 Klein 4B",
+   "peak_gib": 18,
+   "seed": 213,
+   "seed_node": "75:73",
+   "seed_input": "noise_seed",
+   "values": {
+    "76|image": "@character"
+   },
+   "swap": {
+    "flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+   },
+   "set": {
+    "75:74": {
+     "text": "The same woman as in the reference picture, same face, same hair, same clothing and colours. Wide shot from behind. She climbs an iron spiral staircase inside the tower, a lantern in one hand, the stairs turning up into darkness above her. Film still, anamorphic, deep teal shadows, warm amber lamp light, 35mm grain. No text, no logos."
+    },
+    "75:66": {
+     "width": 1344,
+     "height": 768
+    },
+    "75:62": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "prompt_note": "The same woman as in the reference picture, same face, same hair, same clothing and colours. Wide shot from behind. She climbs an iron spiral staircase inside the tower, a lantern in one hand, the sta",
+   "does": "Draws this shot with the character as its reference, so she stays the same person."
+  },
+  {
+   "id": "shot3",
+   "type": "goal",
+   "goal": "h3_animate",
+   "label": "Shot 3",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "seed": 223,
+   "does": "Moves the keyframe.",
+   "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Cinematic, live-action. The woman climbs the iron spiral staircase with a lantern, its light swinging across the curved stone wall. The camera tracks up behind her at walking speed. One continuous shot, no cuts.\n\noverall_soundscape: Boots on iron steps, wind in the tower.\n\nnon_diegetic_music: N/A",
+   "image": "@key3",
+   "options": {
+    "aspect": "16:9",
+    "quality": "high",
+    "seconds": 5,
+    "speed": "fast"
+   }
+  },
+  {
+   "id": "key4",
+   "type": "template",
+   "template": "image_flux2_klein_image_edit_4b_distilled",
+   "label": "Keyframe 4",
+   "model": "FLUX.2 Klein 4B",
+   "peak_gib": 18,
+   "seed": 214,
+   "seed_node": "75:73",
+   "seed_input": "noise_seed",
+   "values": {
+    "76|image": "@character"
+   },
+   "swap": {
+    "flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+   },
+   "set": {
+    "75:74": {
+     "text": "The same woman as in the reference picture, same face, same hair, same clothing and colours. Wide shot at dawn. She stands on the iron gallery with her back to us, coat blowing, a small wooden boat far out on a calm pink sea, first sun on the horizon. Film still, anamorphic, deep teal shadows, warm amber lamp light, 35mm grain. No text, no logos."
+    },
+    "75:66": {
+     "width": 1344,
+     "height": 768
+    },
+    "75:62": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "prompt_note": "The same woman as in the reference picture, same face, same hair, same clothing and colours. Wide shot at dawn. She stands on the iron gallery with her back to us, coat blowing, a small wooden boat fa",
+   "does": "Draws this shot with the character as its reference, so she stays the same person."
+  },
+  {
+   "id": "shot4",
+   "type": "goal",
+   "goal": "h3_animate",
+   "label": "Shot 4",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "seed": 224,
+   "does": "Moves the keyframe.",
+   "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Cinematic, live-action. Her coat moves in the wind while the small boat comes slowly closer across the calm sea and the sun rises. The camera pushes in with small amplitude at slow speed. One continuous shot, no cuts.\n\noverall_soundscape: Soft wind, far gulls.\n\nnon_diegetic_music: N/A",
+   "image": "@key4",
+   "options": {
+    "aspect": "16:9",
+    "quality": "high",
+    "seconds": 5,
+    "speed": "fast"
+   }
+  },
+  {
+   "id": "cut",
+   "type": "cpu",
+   "op": "beat_cut",
+   "label": "Cut on the beat",
+   "model": "ffmpeg",
+   "does": "Finds the song's downbeats and places each cut on one.",
+   "final": true,
+   "clips": [
+    "@shot1",
+    "@shot2",
+    "@shot3",
+    "@shot4"
+   ],
+   "audio": "@song",
+   "args": {
+    "total_max": 24
+   }
+  }
+ ]
+}

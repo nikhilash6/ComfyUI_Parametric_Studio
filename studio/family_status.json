@@ -11926,6 +11926,92 @@
 }
 ],
 "templates": []
+},
+"Chroma": {
+"slug": "chroma",
+"kind": "image",
+"era": 2025,
+"licence": "Apache-2.0",
+"crew": "master",
+"repos": [
+"lodestones/Chroma1-HD",
+"Comfy-Org/Chroma1-HD_repackaged"
+],
+"what": "An 8.9B text-to-image model based on FLUX.1-schnell, under Apache-2.0.",
+"what_source": "card",
+"level": "render",
+"test": {
+"tpl": "chroma1_hd_t2i",
+"render": "ok",
+"tested": "2026-11-01",
+"secs": 56.1,
+"note": "chroma1_hd_t2i rendered on this box 2026-11-01 (seed 1956336289, model Chroma1-HD-fp8mixed.safetensors)",
+"peak_gib": 19.8
+},
+"media": [
+{
+"id": "fam_chroma_0",
+"prompt": "Chroma1-HD text to image",
+"seconds": 56.1,
+"tpl": "chroma1_hd_t2i",
+"own": true,
+"kind": "image",
+"src": "families/chroma_0.webp",
+"poster": "families/chroma_0.webp",
+"w": 640,
+"h": 640,
+"model": "Chroma1-HD-fp8mixed.safetensors",
+"seed": 1956336289,
+"peak_vram_gib": 19.8
+}
+],
+"templates": []
+},
+"FireRed-Image-Edit": {
+"slug": "firered-image-edit",
+"kind": "image",
+"era": 2026,
+"licence": "Apache-2.0",
+"crew": "master",
+"repos": [
+"FireRedTeam/FireRed-Image-Edit-1.1-ComfyUI"
+],
+"what": "An image editing model: words and up to three reference pictures in, an edited picture out.",
+"what_source": "card",
+"level": "nodes",
+"test": {},
+"media": [],
+"templates": []
+},
+"IC-Light": {
+"slug": "ic-light",
+"kind": "image",
+"era": 2024,
+"licence": "Apache-2.0 on the code's repo; the weights' own card names none",
+"crew": "master",
+"repos": [
+"lllyasviel/ic-light"
+],
+"what": "Relights a foreground cut-out on SD 1.5, following a light map and words.",
+"what_source": "notes",
+"level": "nodes",
+"test": {},
+"media": [],
+"templates": []
+},
+"CCSR": {
+"slug": "ccsr",
+"kind": "image",
+"era": 2024,
+"licence": "Unverified: no licence source read yet",
+"crew": "master",
+"repos": [],
+"what": "Picture upscaling through kijai's CCSR nodes.",
+"what_source": "notes",
+"level": "nodes",
+"test": {},
+"media": [],
+"templates": []
 }
 }
 }

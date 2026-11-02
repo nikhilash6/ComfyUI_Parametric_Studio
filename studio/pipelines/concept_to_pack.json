@@ -1,0 +1,206 @@
+{
+ "id": "concept_to_pack",
+ "order": 5,
+ "kicker": "Games",
+ "title": "Concept art to a game-ready pack",
+ "pitch": "Three drawings in. Three textured meshes at real scale, a turntable of each and a Godot pack out.",
+ "why": "Krea 2 sets the art direction, TRELLIS.2 turns each drawing into a textured mesh, and World Kit's Blender step does the dull part that makes a mesh usable: real size, pivot, collider, and a pack an engine can open.",
+ "tags": [
+  "3d",
+  "game"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "Krea 2",
+   "licence": "Krea 2 Community License",
+   "licence_class": "community",
+   "note": "Read the terms before commercial use."
+  },
+  {
+   "name": "TRELLIS.2",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "BiRefNet",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "Blender",
+   "licence": "GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Plain background, whole object, one object: that is what the mesh model reads best."
+ ],
+ "steps": [
+  {
+   "id": "a1",
+   "type": "goal",
+   "goal": "krea2",
+   "label": "Art: lantern",
+   "model": "Krea 2",
+   "peak_gib": 28,
+   "seed": 601,
+   "does": "The drawing the 3D model is built from.",
+   "prompt": "Stylised game prop concept art of an old brass ship's lantern with thick green glass and a ring handle, a single object, the whole object in view, centred, three-quarter view, hand-painted texture, plain light grey studio background, soft even light. No text, no logos.",
+   "options": {
+    "aspect": "1:1"
+   }
+  },
+  {
+   "id": "m1",
+   "type": "template",
+   "template": "trellis2_image_to_mesh",
+   "label": "Mesh: lantern",
+   "model": "TRELLIS.2",
+   "peak_gib": 19,
+   "seed": 611,
+   "seed_node": "12",
+   "seed_input": "seed",
+   "values": {
+    "122|image": "@a1"
+   },
+   "does": "Cuts the object out and builds a textured mesh from the one picture."
+  },
+  {
+   "id": "p1",
+   "type": "worldkit",
+   "label": "Asset: lantern",
+   "model": "Blender",
+   "peak_gib": 4,
+   "asset": {
+    "type": "prop",
+    "name": "Ship lantern",
+    "source": {
+     "mesh": "@m1"
+    },
+    "recipe": {
+     "size_m": 0.5
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Real-world size, pivot at the base, a box collider and a turntable."
+  },
+  {
+   "id": "a2",
+   "type": "goal",
+   "goal": "krea2",
+   "label": "Art: sea chest",
+   "model": "Krea 2",
+   "peak_gib": 28,
+   "seed": 602,
+   "does": "The drawing the 3D model is built from.",
+   "prompt": "Stylised game prop concept art of a barnacled wooden sea chest with heavy iron bands, a single object, the whole object in view, centred, three-quarter view, hand-painted texture, plain light grey studio background, soft even light. No text, no logos.",
+   "options": {
+    "aspect": "1:1"
+   }
+  },
+  {
+   "id": "m2",
+   "type": "template",
+   "template": "trellis2_image_to_mesh",
+   "label": "Mesh: sea chest",
+   "model": "TRELLIS.2",
+   "peak_gib": 19,
+   "seed": 612,
+   "seed_node": "12",
+   "seed_input": "seed",
+   "values": {
+    "122|image": "@a2"
+   },
+   "does": "Cuts the object out and builds a textured mesh from the one picture."
+  },
+  {
+   "id": "p2",
+   "type": "worldkit",
+   "label": "Asset: sea chest",
+   "model": "Blender",
+   "peak_gib": 4,
+   "asset": {
+    "type": "prop",
+    "name": "Sea chest",
+    "source": {
+     "mesh": "@m2"
+    },
+    "recipe": {
+     "size_m": 0.9
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Real-world size, pivot at the base, a box collider and a turntable."
+  },
+  {
+   "id": "a3",
+   "type": "goal",
+   "goal": "krea2",
+   "label": "Art: anchor",
+   "model": "Krea 2",
+   "peak_gib": 28,
+   "seed": 603,
+   "does": "The drawing the 3D model is built from.",
+   "prompt": "Stylised game prop concept art of a heavy rusted iron ship's anchor with a thick ring, a single object, the whole object in view, centred, three-quarter view, hand-painted texture, plain light grey studio background, soft even light. No text, no logos.",
+   "options": {
+    "aspect": "1:1"
+   }
+  },
+  {
+   "id": "m3",
+   "type": "template",
+   "template": "trellis2_image_to_mesh",
+   "label": "Mesh: anchor",
+   "model": "TRELLIS.2",
+   "peak_gib": 19,
+   "seed": 613,
+   "seed_node": "12",
+   "seed_input": "seed",
+   "values": {
+    "122|image": "@a3"
+   },
+   "does": "Cuts the object out and builds a textured mesh from the one picture."
+  },
+  {
+   "id": "p3",
+   "type": "worldkit",
+   "label": "Asset: anchor",
+   "model": "Blender",
+   "peak_gib": 4,
+   "asset": {
+    "type": "prop",
+    "name": "Rusted anchor",
+    "source": {
+     "mesh": "@m3"
+    },
+    "recipe": {
+     "size_m": 1.6
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Real-world size, pivot at the base, a box collider and a turntable."
+  },
+  {
+   "id": "pack",
+   "type": "worldkit_pack",
+   "label": "Godot pack",
+   "model": "Blender",
+   "final": true,
+   "assets": [
+    "@p1",
+    "@p2",
+    "@p3"
+   ],
+   "name": "sunken-ship-pack",
+   "peak_gib": 1,
+   "does": "The three glb files, a scene that places them, a manifest, zipped."
+  }
+ ]
+}

@@ -20,7 +20,7 @@
 },
 "confidence": "high",
 "class": "A",
-"mode": "ref2va",
+"mode": "h3_reference",
 "settings": {
 "steps": 4,
 "sampler": "euler",
@@ -72,7 +72,18 @@
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A portrait of an adult woman in a plain cream jumper, in a sunlit park, soft daylight."
+],
+"frames": 124,
+"size": [
+1024,
+576
+],
+"steps": 24,
+"sampler": "euler"
+}
 },
 {
 "id": "lora_4cb15a32ef",
@@ -276,8 +287,26 @@
 "minimax_h3_fl2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Needs a first and a last frame you choose."
+"run": {
+"goal": "director_keyframes",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 8,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 0.306,
+"options": {
+"aspect": "9:16",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+},
+"keyframes": {
+"still": "An adult woman in a grey t-shirt and jeans stands at one side of a bright living room.",
+"end": "An adult woman in a grey t-shirt and jeans stands by the window of a bright living room, facing the camera and smiling."
+}
 },
 {
 "id": "lora_47ea3e90fe",
@@ -297,7 +326,7 @@
 },
 "confidence": "medium",
 "class": "D",
-"mode": "ref2va",
+"mode": "h3_reference",
 "settings": {
 "steps": 8,
 "sampler": "euler",
@@ -347,7 +376,20 @@
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A portrait of an adult woman in a plain cream jumper, in a sunlit park, soft daylight."
+],
+"scene": "integrated_multimodal_description: [Shot 1] The woman from <Picture 1> walks slowly along the park path and smiles at the camera. Medium shot.\noverall_soundscape: birdsong and light wind.\nnon_diegetic_music: N/A",
+"frames": 73,
+"size": [
+416,
+736
+],
+"steps": 8,
+"sampler": "euler",
+"loader": "LoraLoaderModelOnly"
+}
 },
 {
 "id": "lora_12334b5144",
@@ -435,7 +477,7 @@
 },
 "confidence": "medium",
 "class": "C",
-"mode": "v2v",
+"mode": "h3_reference",
 "settings": {
 "steps": 8,
 "sampler": "euler",
@@ -487,7 +529,19 @@
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"ref_run": {
+"pictures": [
+"A soft watercolour painting of a harbour, translucent washes, warm muted palette, paper texture."
+],
+"clip": "An adult man in a plain grey coat walks along a quiet harbour wall, medium shot.",
+"frames": 73,
+"size": [
+672,
+384
+],
+"steps": 8,
+"sampler": "euler"
+}
 },
 {
 "id": "lora_f03e2c2153",
@@ -507,7 +561,7 @@
 },
 "confidence": "medium",
 "class": "C",
-"mode": "v2v",
+"mode": "h3_reference",
 "settings": {
 "steps": 8,
 "sampler": "euler",
@@ -559,7 +613,17 @@
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"ref_run": {
+"pictures": [],
+"clip": "An adult man in a plain dark coat stands on the porch of a small white house, resting his hands on the railing, then looks out at the street.",
+"frames": 73,
+"size": [
+672,
+384
+],
+"steps": 8,
+"sampler": "euler"
+}
 },
 {
 "id": "lora_fb797bb687",
@@ -579,7 +643,7 @@
 },
 "confidence": "high",
 "class": "D",
-"mode": "keyframes",
+"mode": "h3_reference",
 "settings": {
 "steps": 30,
 "sampler": "euler",
@@ -633,7 +697,19 @@
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A flat cel-coloured drawing of an adult man in a red hooded sweatshirt and dark trousers, full body, standing upright facing left, on an empty white ground."
+],
+"frames": 22,
+"size": [
+1024,
+576
+],
+"steps": 30,
+"sampler": "euler",
+"loader": "LoraLoaderModelOnly"
+}
 },
 {
 "id": "lora_5ac2e294af",
@@ -653,7 +729,7 @@
 },
 "confidence": "high",
 "class": "D",
-"mode": "keyframes",
+"mode": "h3_reference",
 "settings": {
 "steps": 30,
 "sampler": "euler",
@@ -707,7 +783,20 @@
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A flat cel-coloured drawing of an adult man in a red hooded sweatshirt and dark trousers, full body, standing upright facing left, on an empty white ground.",
+"A flat cel-coloured drawing of the same adult man in a red hooded sweatshirt and dark trousers, full body, landed with both arms overhead, on an empty white ground."
+],
+"frames": 22,
+"size": [
+1024,
+576
+],
+"steps": 30,
+"sampler": "euler",
+"loader": "LoraLoaderModelOnly"
+}
 },
 {
 "id": "lora_55b0029577",
@@ -727,7 +816,7 @@
 },
 "confidence": "high",
 "class": "D",
-"mode": "keyframes",
+"mode": "h3_reference",
 "settings": {
 "steps": 30,
 "sampler": "euler",
@@ -781,7 +870,19 @@
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A flat cel-coloured drawing of an adult man in a red hooded sweatshirt and dark trousers, full body, standing upright facing left, on an empty white ground."
+],
+"frames": 22,
+"size": [
+1024,
+576
+],
+"steps": 30,
+"sampler": "euler",
+"loader": "LoraLoaderModelOnly"
+}
 },
 {
 "id": "lora_b7c1e9ecd2",
@@ -1104,8 +1205,26 @@
 "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Needs a first and a last frame you choose."
+"run": {
+"goal": "director_keyframes",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 1.0,
+"steps": 20,
+"sampler": "res_multistep",
+"scheduler": "beta",
+"megapixels": 0.737,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+},
+"keyframes": {
+"still": "A movie still from a 1930s technicolor film: an adult woman in a green evening gown stands at the top of a grand staircase.",
+"end": "A movie still from a 1930s technicolor film: an adult woman in a green evening gown stands at the foot of a grand staircase."
+}
 },
 {
 "id": "lora_7149bee562",
@@ -2288,8 +2407,22 @@
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 1.0,
+"steps": 20,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_b80bd66933",
@@ -2358,8 +2491,22 @@
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 1.0,
+"steps": 20,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "1:1",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_d5302c5e6b",
@@ -2379,7 +2526,7 @@
 },
 "confidence": "high",
 "class": "A",
-"mode": "ref2va",
+"mode": "h3_reference",
 "settings": {
 "steps": 20,
 "sampler": "euler",
@@ -2428,7 +2575,19 @@
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A portrait of an adult woman in a plain cream jumper, in a sunlit park, soft daylight."
+],
+"frames": 73,
+"size": [
+768,
+768
+],
+"strength": 3.0,
+"steps": 20,
+"sampler": "euler"
+}
 },
 {
 "id": "lora_af6f31cda5",
@@ -2499,8 +2658,22 @@
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 0.8,
+"steps": 20,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "1:1",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_263f4d7b0d",
@@ -2653,8 +2826,22 @@
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 0.6,
+"steps": 20,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 0.922,
+"options": {
+"aspect": "9:16",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_1ba63a3a39",
@@ -2721,8 +2908,22 @@
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 0.7,
+"steps": 20,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "1:1",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_1c2d50f4bd",
@@ -2791,8 +2992,22 @@ null
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 1.0,
+"steps": 20,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "1:1",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_420dd0d6db",
@@ -2869,8 +3084,22 @@ null
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 1.0,
+"steps": 20,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 0.59,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_b5b152adf5",
@@ -2950,8 +3179,23 @@ null
 "must_not_use": [
 "latent-upscale workflows (reduce impact, add blur/noise, degrade audio)"
 ],
-"run": null,
-"why_not": "Its strength is not recorded."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 1.0,
+"steps": 20,
+"sampler": "res_multistep",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "1:1",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+},
+"run_note": "Its strength is not on its page; 1.0 is our own starting point."
 },
 {
 "id": "lora_b12b596ef6",
@@ -3114,8 +3358,22 @@ null
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 0.6,
+"steps": 28,
+"sampler": "res_multistep",
+"scheduler": "simple",
+"megapixels": 0.59,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_7f6493904a",
@@ -3185,8 +3443,22 @@ null
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 0.6,
+"steps": 28,
+"sampler": "res_multistep",
+"scheduler": "simple",
+"megapixels": 0.59,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_3fcd7a693c",
@@ -3256,8 +3528,22 @@ null
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 0.6,
+"steps": 28,
+"sampler": "res_multistep",
+"scheduler": "simple",
+"megapixels": 0.59,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_d94d6ecb88",
@@ -3277,7 +3563,7 @@ null
 },
 "confidence": "medium",
 "class": "C",
-"mode": "v2v",
+"mode": "h3_reference",
 "settings": {
 "steps": 20,
 "sampler": "euler",
@@ -3327,7 +3613,17 @@ null
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"ref_run": {
+"pictures": [],
+"clip": "A quiet town square with a fountain and a few pigeons, soft overcast light, static wide shot.",
+"frames": 73,
+"size": [
+1024,
+576
+],
+"steps": 20,
+"sampler": "euler"
+}
 },
 {
 "id": "lora_5fdd5a57db",
@@ -3395,8 +3691,22 @@ null
 "minimax_h3_ref2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 0.6,
+"steps": 20,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 0.922,
+"options": {
+"aspect": "9:16",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_ec7c9295a9",
@@ -3564,21 +3874,21 @@ null
 ],
 "run": {
 "goal": "h3_video",
-"base": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
 "steps": 20,
 "sampler": "er_sde",
-"scheduler": "beta57",
-"megapixels": 3.686,
+"scheduler": "beta",
+"megapixels": 1.032,
 "options": {
 "aspect": "16:9",
 "quality": "standard",
-"seconds": 2,
+"seconds": 5,
 "speed": "quality"
 }
 },
-"why_not": ""
+"run_note": "Its notes ask for the beta57 scheduler from a pack this studio does not install, so it runs on beta here, at about one megapixel rather than 2560x1440."
 },
 {
 "id": "lora_243d7bbcbd",
@@ -3655,21 +3965,21 @@ null
 ],
 "run": {
 "goal": "h3_video",
-"base": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
 "steps": 20,
 "sampler": "er_sde",
-"scheduler": "beta57",
-"megapixels": 3.686,
+"scheduler": "beta",
+"megapixels": 1.032,
 "options": {
 "aspect": "16:9",
 "quality": "standard",
-"seconds": 2,
+"seconds": 5,
 "speed": "quality"
 }
 },
-"why_not": ""
+"run_note": "Its notes ask for the beta57 scheduler from a pack this studio does not install, so it runs on beta here, at about one megapixel rather than 2560x1440."
 },
 {
 "id": "lora_5233f8a0ff",
@@ -3724,7 +4034,7 @@ null
 "adding scene description",
 "changing CFG/frame count (not recommended)"
 ],
-"scene": "",
+"scene": "A static still blurry pixelated picture crossfades into a clear sharp detailed picture of the same scene. No camera movement.",
 "expected_effect": "Last frame is visibly sharper with recovered detail vs the blurry input and vs a plain lanczos upscale; identity/composition preserved.",
 "failure_signs": [
 "last frame still blurry (crossfade incomplete)",
@@ -3743,8 +4053,23 @@ null
 "must_not_use": [
 "turbo stacked (the 1-frame Speed version uses a separate LoRA/node; this file is the 24-frame Quality one)"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_animate",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 20,
+"sampler": "er_sde",
+"scheduler": "beta",
+"megapixels": 1.0,
+"options": {
+"aspect": "1:1",
+"quality": "standard",
+"seconds": 2,
+"speed": "quality"
+}
+},
+"run_note": "Its notes ask for the beta57 scheduler from a pack this studio does not install, so it runs on beta here."
 },
 {
 "id": "lora_d353b2055b",
@@ -3764,7 +4089,7 @@ null
 },
 "confidence": "high",
 "class": "A",
-"mode": "ref2va",
+"mode": "h3_reference",
 "settings": {
 "steps": 20,
 "sampler": "euler",
@@ -3825,7 +4150,19 @@ null
 "turbo/distill stacked (prompt timestamps assume 124 frames at 24 fps and a full-quality run)"
 ],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A small blue ceramic vase on a plain pedestal, the whole object in view, plain grey background."
+],
+"scene": "ORB360_CW A smooth clockwise camera orbit around the frozen blue vase from <Picture 1>, the vase stays still and only the camera moves, plain grey background.",
+"frames": 124,
+"size": [
+1024,
+768
+],
+"steps": 20,
+"sampler": "euler"
+}
 },
 {
 "id": "lora_31ad8f1dc1",
@@ -4054,7 +4391,7 @@ null
 "avoid": [
 "negative prompt (CFG 1)"
 ],
-"scene": "integrated_multimodal_description: [Shot 1] A young woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
+"scene": "integrated_multimodal_description: [Shot 1] An adult woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
 "expected_effect": "Coherent 5 s clip with clean speech in 4 steps, comparable to turbo v4 and to the 20-step undistilled render of the same seed.",
 "failure_signs": [
 "motion smear or ghosting",
@@ -4075,8 +4412,22 @@ null
 "euler sampler (not its operating point)",
 "nvfp4 bake (large delta needs int8 bake)"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 4,
+"sampler": "lcm",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_b5e6231373",
@@ -4096,7 +4447,7 @@ null
 },
 "confidence": "medium",
 "class": "C",
-"mode": "v2v",
+"mode": "h3_reference",
 "settings": {
 "steps": 12,
 "sampler": "res_multistep",
@@ -4156,7 +4507,19 @@ null
 "nvfp4 base"
 ],
 "run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"ref_run": {
+"pictures": [
+"A full-body picture of an adult woman in a yellow rain jacket on a plain grey background."
+],
+"clip": "An adult man in a purple shirt walks across a quiet street, full body, medium wide shot.",
+"frames": 73,
+"size": [
+1024,
+576
+],
+"steps": 14,
+"sampler": "res_multistep"
+}
 },
 {
 "id": "lora_522be33f25",
@@ -4231,8 +4594,22 @@ null
 "pruned bases (nvfp4, pruned_int8, w6a8, 10Eros, Dasiwa, FastH3)",
 "LoraLoader bypass/bake nodes (needs T8 HyperFlow nodes)"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 1.0,
+"steps": 8,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_0876a5fcd9",
@@ -4364,7 +4741,7 @@ null
 "avoid": [
 "negative prompt (CFG 1)"
 ],
-"scene": "integrated_multimodal_description: [Shot 1] A young woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
+"scene": "integrated_multimodal_description: [Shot 1] An adult woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
 "expected_effect": "Coherent 5 s clip with clean speech at the stated low step count;",
 "failure_signs": [
 "blurry / smeared motion trails",
@@ -4384,8 +4761,22 @@ null
 "Ref2VA bases",
 "stacking another distill"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 4,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_41e3ae3096",
@@ -4442,7 +4833,7 @@ null
 "avoid": [
 "negative prompt (CFG 1)"
 ],
-"scene": "integrated_multimodal_description: [Shot 1] A young woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
+"scene": "integrated_multimodal_description: [Shot 1] An adult woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
 "expected_effect": "Coherent 5 s clip with clean speech at the stated low step count;",
 "failure_signs": [
 "blurry / smeared motion trails",
@@ -4462,8 +4853,22 @@ null
 "Ref2VA bases",
 "stacking another distill"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 4,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_277f2a8ef8",
@@ -4520,7 +4925,7 @@ null
 "avoid": [
 "negative prompt (CFG 1)"
 ],
-"scene": "",
+"scene": "integrated_multimodal_description: [Shot 1] An adult woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a white mug and looks out at the street. Medium shot, the frame stays on her.\noverall_soundscape: rain on glass, quiet cafe chatter.\nnon_diegetic_music: N/A",
 "expected_effect": "Coherent 5 s clip with clean speech at the stated low step count;",
 "failure_signs": [
 "blurry / smeared motion trails",
@@ -4539,8 +4944,22 @@ null
 "unpruned bases (this is the pruned derivative)",
 "stacking another distill"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 3,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_65551e8486",
@@ -4597,7 +5016,7 @@ null
 "avoid": [
 "negative prompt (CFG 1)"
 ],
-"scene": "",
+"scene": "integrated_multimodal_description: [Shot 1] An adult woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a white mug and looks out at the street. Medium shot, the frame stays on her.\noverall_soundscape: rain on glass, quiet cafe chatter.\nnon_diegetic_music: N/A",
 "expected_effect": "Coherent 5 s clip with clean speech at the stated low step count;",
 "failure_signs": [
 "blurry / smeared motion trails",
@@ -4617,8 +5036,22 @@ null
 "FL2VA bases",
 "stacking another distill"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 8,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_45cc65b2a9",
@@ -4675,7 +5108,7 @@ null
 "avoid": [
 "negative prompt (CFG 1)"
 ],
-"scene": "",
+"scene": "integrated_multimodal_description: [Shot 1] An adult woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a white mug and looks out at the street. Medium shot, the frame stays on her.\noverall_soundscape: rain on glass, quiet cafe chatter.\nnon_diegetic_music: N/A",
 "expected_effect": "Coherent 5 s clip with clean speech at the stated low step count;",
 "failure_signs": [
 "blurry / smeared motion trails",
@@ -4695,8 +5128,22 @@ null
 "FL2VA bases",
 "stacking another distill"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 8,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_71e11218bd",
@@ -4753,7 +5200,7 @@ null
 "avoid": [
 "negative prompt (CFG 1)"
 ],
-"scene": "integrated_multimodal_description: [Shot 1] A young woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
+"scene": "integrated_multimodal_description: [Shot 1] An adult woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
 "expected_effect": "Coherent 5 s clip with clean speech at the stated low step count;",
 "failure_signs": [
 "blurry / smeared motion trails",
@@ -4772,8 +5219,22 @@ null
 "must_not_use": [
 "stacking another distill"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 3,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_804a029d18",
@@ -4830,7 +5291,7 @@ null
 "avoid": [
 "negative prompt (CFG 1)"
 ],
-"scene": "integrated_multimodal_description: [Shot 1] A young woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
+"scene": "integrated_multimodal_description: [Shot 1] An adult woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
 "expected_effect": "Coherent 5 s clip with clean speech at the stated low step count;",
 "failure_signs": [
 "blurry / smeared motion trails",
@@ -4851,8 +5312,22 @@ null
 "DMAD stacked",
 "res_multistep sampler"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 1.0,
+"steps": 6,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_af55674ae5",
@@ -4909,7 +5384,7 @@ null
 "avoid": [
 "negative prompt (CFG 1)"
 ],
-"scene": "integrated_multimodal_description: [Shot 1] A young woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
+"scene": "integrated_multimodal_description: [Shot 1] An adult woman in a green knit sweater sits at a window table in a small cafe on a rainy afternoon, wraps both hands around a ceramic mug, looks up toward the camera and smiles. Medium close-up, slow push-in. A calm, warm female voice: <d>[English] I almost didn't come today, but I'm glad I did.</d>\noverall_soundscape: rain on the window, cups clinking, low cafe chatter.\nnon_diegetic_music: N/A",
 "expected_effect": "Coherent 5 s clip with clean speech at the stated low step count;",
 "failure_signs": [
 "blurry / smeared motion trails",
@@ -4929,8 +5404,22 @@ null
 "stacking DMAD or another turbo",
 "res_multistep sampler"
 ],
-"run": null,
-"why_not": "A special graph: video-to-video, keyframes, a speed LoRA or similar. Not an add-on."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderModelOnly",
+"strength": 1.0,
+"steps": 6,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_c87bc8ef16",
@@ -5076,8 +5565,26 @@ null
 "minimax_h3_fl2va_int8_convrot.safetensors"
 ],
 "must_not_use": [],
-"run": null,
-"why_not": "Needs a first and a last frame you choose."
+"run": {
+"goal": "director_keyframes",
+"base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 1.0,
+"steps": 28,
+"sampler": "res_multistep",
+"scheduler": "simple",
+"megapixels": 0.59,
+"options": {
+"aspect": "1:1",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+},
+"keyframes": {
+"still": "A full-body picture of an adult man in a plain blue jacket standing still in an empty sunlit plaza.",
+"same": true
+}
 },
 {
 "id": "lora_b58fd8bb9f",
@@ -5221,7 +5728,7 @@ null
 },
 "confidence": "medium",
 "class": "D",
-"mode": "ref2va",
+"mode": "h3_reference",
 "settings": {
 "fps": 24,
 "turbo": "none",
@@ -5315,7 +5822,18 @@ null
 "minimax_h3_ref2va_pruned_w6a8.safetensors (pruned adaln)"
 ],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A clean black line drawing on white of an adult woman with long hair in simple clothes sitting against a wall of ice."
+],
+"frames": 73,
+"size": [
+1024,
+576
+],
+"steps": 20,
+"sampler": "euler"
+}
 },
 {
 "id": "lora_41121f80b0",
@@ -5335,7 +5853,7 @@ null
 },
 "confidence": "low",
 "class": "A",
-"mode": "ref2va",
+"mode": "h3_reference",
 "settings": {
 "steps": 8,
 "sampler": "res_multistep",
@@ -5408,7 +5926,17 @@ null
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [],
+"frames": 124,
+"size": [
+960,
+544
+],
+"strength": 0.8,
+"steps": 20,
+"sampler": "res_multistep"
+}
 },
 {
 "id": "lora_1a48f8de80",
@@ -5428,7 +5956,7 @@ null
 },
 "confidence": "medium",
 "class": "A",
-"mode": "ref2va",
+"mode": "h3_reference",
 "settings": {
 "fps": 24,
 "turbo": "none",
@@ -5511,7 +6039,18 @@ null
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A painting on glass of a fisherman rowing a small boat across a misty lake at dawn."
+],
+"frames": 73,
+"size": [
+1024,
+576
+],
+"steps": 20,
+"sampler": "euler"
+}
 },
 {
 "id": "lora_685b1ebe84",
@@ -5531,7 +6070,7 @@ null
 },
 "confidence": "medium",
 "class": "A",
-"mode": "multi",
+"mode": "h3_reference",
 "settings": {
 "fps": 24,
 "turbo": "none",
@@ -5600,7 +6139,19 @@ null
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A closed red tulip bud in a garden, soft daylight.",
+"A white paper crane on a garden table, soft daylight."
+],
+"frames": 73,
+"size": [
+1024,
+576
+],
+"steps": 20,
+"sampler": "euler"
+}
 },
 {
 "id": "lora_8fc4a61060",
@@ -6042,7 +6593,7 @@ null
 },
 "confidence": "medium",
 "class": "A",
-"mode": "ref2va",
+"mode": "h3_reference",
 "settings": {
 "steps": 28,
 "sampler": "res_multistep",
@@ -6125,7 +6676,18 @@ null
 ],
 "must_not_use": [],
 "run": null,
-"why_not": "Needs reference pictures, a source video or audio: this studio's add-on graph takes text or one first frame."
+"ref_run": {
+"pictures": [
+"A small wooden toy robot standing on a plain table, plain background."
+],
+"frames": 22,
+"size": [
+512,
+512
+],
+"steps": 28,
+"sampler": "res_multistep"
+}
 },
 {
 "id": "lora_e45dca0fef",
@@ -6330,8 +6892,22 @@ null
 "minimax_h3_ref2va_pruned_int8_convrot.safetensors",
 "minimax_h3_fl2va_pruned_int8_convrot.safetensors"
 ],
-"run": null,
-"why_not": "Its notes name a Ref2VA base: this studio's add-on graph is FL2VA."
+"run": {
+"goal": "h3_video",
+"base": "MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors",
+"loader": "LoraLoaderBypassModelOnly",
+"strength": 0.7,
+"steps": 20,
+"sampler": "euler",
+"scheduler": "simple",
+"megapixels": 1.032,
+"options": {
+"aspect": "16:9",
+"quality": "standard",
+"seconds": 5,
+"speed": "quality"
+}
+}
 },
 {
 "id": "lora_08967439ec",
@@ -9278,10 +9854,34 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image Edit",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"edit": true,
+"source": "A photograph of an old brass telescope on a stand",
+"template": "qwen_image_edit_2511_core",
+"prompt": "Turn this into a small toy action figure standing on a plain shelf, no text.",
+"loras": [
+[
+"Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors",
+1.0
+],
+[
+"QWEN_EDIT_ACTION_V1.safetensors",
+1.0
+]
+],
+"set": {
+"17": {
+"steps": 4,
+"cfg": 1
+}
+}
+}
 },
 {
 "id": "lora_527ad619fd",
@@ -9324,10 +9924,25 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image Edit",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"edit": true,
+"source": "A photograph of a ceramic teapot on a wooden table",
+"template": "qwen_image_edit_2509_lightning",
+"prompt": "Keep the subject and framing unchanged. Turn the teapot bright blue.",
+"loras": [
+[
+"Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors",
+1.0
+]
+],
+"replace_lora": true
+}
 },
 {
 "id": "lora_ebf8631875",
@@ -9347,10 +9962,24 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image Edit",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"edit": true,
+"source": "A photograph of a bowl of lemons on a kitchen table in flat daylight",
+"template": "qwen_image_edit_2509_lightning",
+"prompt": "Relight the scene with warm low sunset light from the left, keep everything else unchanged.",
+"loras": [
+[
+"Qwen-Image-Edit-2509-Relight.safetensors",
+1.0
+]
+]
+}
 },
 {
 "id": "lora_f48dd1c1e4",
@@ -9370,10 +9999,25 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image Edit",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"edit": true,
+"source": "A photograph of a red bicycle against a brick wall",
+"template": "qwen_image_edit_2509_lightning",
+"prompt": "Keep the subject and framing unchanged. Make the wall white.",
+"loras": [
+[
+"Qwen-Image-Edit-Lightning-4steps-V1.0-bf16.safetensors",
+1.0
+]
+],
+"replace_lora": true
+}
 },
 {
 "id": "lora_d70addf52b",
@@ -9462,10 +10106,28 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Anima",
+"licence": "Non-commercial (circlestone-labs licence)",
+"licence_class": "non-commercial",
+"template": "anima_base_t2i",
+"prompt": "masterpiece, best quality, safe, a small red-roofed cottage beside a mountain lake, soft clouds, no people, no text.",
+"loras": [
+[
+"anima-turbo-lora-v0.2.safetensors",
+1.0
+]
+],
+"set": {
+"7": {
+"steps": 10,
+"cfg": 1.5
+}
+}
+}
 },
 {
 "id": "lora_270fe41487",
@@ -9554,10 +10216,22 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community",
+"template": "krea2_turbo_t2i",
+"prompt": "A dark ink brush painting of a lone pine on a cliff above the sea, heavy expressive strokes. No text, no people.",
+"loras": [
+[
+"krea2_darkbrush.safetensors",
+1.0
+]
+]
+}
 },
 {
 "id": "lora_4270d6fafd",
@@ -9577,10 +10251,22 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Krea 2",
+"licence": "Krea 2 Community License",
+"licence_class": "community",
+"template": "krea2_turbo_t2i",
+"prompt": "An old stone bridge over a quiet river in autumn, painterly. No text, no people.",
+"loras": [
+[
+"krea2_style_reference.safetensors",
+1.0
+]
+]
+}
 },
 {
 "id": "lora_85f1a250f4",
@@ -9830,10 +10516,22 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Z-Image Turbo",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "zimage_turbo_t2i",
+"prompt": "Pixel art style. A small lighthouse on a rocky island at sunset, seagulls in the sky. No text.",
+"loras": [
+[
+"pixel_art_style_z_image_turbo.safetensors",
+1.0
+]
+]
+}
 },
 {
 "id": "lora_e737360468",
@@ -10014,10 +10712,30 @@ null
 },
 "confidence": "low",
 "class": "C",
-"mode": "reference",
+"mode": "family",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"family_run": {
+"model": "Qwen-Image Edit",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"edit": true,
+"source": "A photograph of a wooden chair in an empty room",
+"template": "qwen_image_edit_2511_core",
+"prompt": "Keep the subject and framing unchanged. Paint the chair bright green.",
+"loras": [
+[
+"Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors",
+1.0
+]
+],
+"set": {
+"17": {
+"steps": 4,
+"cfg": 1
+}
+}
+}
 },
 {
 "id": "lora_e08f9b9f3c",

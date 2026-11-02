@@ -1,0 +1,218 @@
+{
+ "id": "character_to_set",
+ "order": 0,
+ "kicker": "The whole chain",
+ "title": "Words to an actor on a built set",
+ "pitch": "A description in. A character sheet, a textured mesh, a rig, motion, a real-scale set and a directed shot of the character in it out.",
+ "why": "This is the longest chain we can run today, and every join matters. The picture check clears the sheet, TRELLIS.2 builds the mesh, SkinTokens rigs it, Kimodo writes the motion from words, World Kit builds the street, and H3 follows the exact depth of the Blender shot.",
+ "tags": [
+  "3d",
+  "character",
+  "video"
+ ],
+ "fields": [
+  {
+   "key": "who",
+   "label": "Who it is",
+   "default": "a courier in his forties, broad shoulders, close-cropped grey hair, a rust-orange canvas work jacket, dark green trousers, heavy brown boots",
+   "multiline": true
+  }
+ ],
+ "models": [
+  {
+   "name": "Krea 2",
+   "licence": "Krea 2 Community License",
+   "licence_class": "community",
+   "note": "Read the terms before commercial use."
+  },
+  {
+   "name": "TRELLIS.2",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "SkinTokens",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "Kimodo",
+   "licence": "NVIDIA Open Model License",
+   "licence_class": "community",
+   "note": "Read the terms on the model card before commercial use."
+  },
+  {
+   "name": "Blender",
+   "licence": "GPL, runs as a separate tool",
+   "licence_class": "open"
+  },
+  {
+   "name": "MiniMax H3",
+   "licence": "MiniMax H3 Community License",
+   "licence_class": "community",
+   "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+  },
+  {
+   "name": "MiniMax Music 3",
+   "licence": "MiniMax-Music3 Community License",
+   "licence_class": "community",
+   "note": "Commercial use must show the name MiniMax-Music3."
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Words only: this chain has no photo input by design, and the sheet must pass the picture check.",
+  "Say the clothes and colours you would know from far away."
+ ],
+ "steps": [
+  {
+   "id": "sheet",
+   "type": "worldkit_sheet",
+   "label": "Character sheet",
+   "model": "Krea 2",
+   "peak_gib": 28,
+   "character": {
+    "name": "The courier",
+    "description": "{who}"
+   },
+   "does": "Draws the invented adult once, front on, and runs the picture check over it."
+  },
+  {
+   "id": "built",
+   "type": "worldkit",
+   "label": "Mesh, rig, motion",
+   "model": "TRELLIS.2",
+   "peak_gib": 30,
+   "asset": {
+    "type": "character",
+    "name": "The courier",
+    "source": {
+     "character_id": "@sheet"
+    },
+    "recipe": {
+     "mesh": "trellis2",
+     "remesh": false,
+     "height_m": 1.78,
+     "clips": [
+      {
+       "name": "walk",
+       "text": "a person walks forward at a relaxed pace"
+      },
+      {
+       "name": "wave",
+       "text": "a person stands and waves with the right hand"
+      }
+     ]
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "TRELLIS.2 builds the mesh from the sheet, SkinTokens rigs it, Kimodo writes each motion from words, and Blender assembles one file."
+  },
+  {
+   "id": "place",
+   "type": "worldkit",
+   "label": "The set",
+   "model": "Blender",
+   "peak_gib": 30,
+   "asset": {
+    "type": "place",
+    "name": "Courier street",
+    "source": {
+     "brief": "a quiet downtown street at golden hour with old brick shopfronts"
+    },
+    "recipe": {
+     "seed": 901
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "A real-scale street, built in Blender from a brief."
+  },
+  {
+   "id": "shot",
+   "type": "vset",
+   "label": "The shot",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "shot": {
+    "name": "The courier walks",
+    "set": {
+     "place": "@place",
+     "props": []
+    },
+    "cast": [
+     {
+      "asset": "@built",
+      "clip": "walk",
+      "marks": [
+       [
+        0,
+        3
+       ],
+       [
+        0,
+        -2
+       ]
+      ]
+     }
+    ],
+    "marks": [
+     [
+      0,
+      0
+     ]
+    ],
+    "camera": {
+     "preset": "push_in",
+     "params": {}
+    },
+    "format": {
+     "aspect": "16:9",
+     "seconds": 5
+    },
+    "look_from_place": true,
+    "mode": "A",
+    "mode_settings": {
+     "engine": "h3",
+     "control": "depth"
+    },
+    "seed": 902,
+    "prompt": "A courier in a rust-orange work jacket walks down a quiet brick street toward the camera at golden hour."
+   },
+   "does": "Blender renders the blocked shot, and H3 follows its exact depth."
+  },
+  {
+   "id": "score",
+   "type": "goal",
+   "goal": "music",
+   "label": "The score",
+   "model": "MiniMax Music 3",
+   "peak_gib": 23,
+   "seed": 903,
+   "does": "An original instrumental.",
+   "prompt": "Global Metadata\nBasic Attributes: bpm is 96. Warm cinematic indie.\nGlobal Emotional Progression: A steady walking pulse that opens as he comes closer.\nApplication Scenarios & Imagery: A courier on an empty street at golden hour.\nSonics & Production Profile: Warm, wide.\nVocal Details\nVocal Gender & Timbre: No vocals. Purely instrumental.\nArrangement\nInstrument Lifecycle Description (Primary/Secondary Layering):\nPrimary: Upright bass, brushed drums.\nSecondary: Muted trumpet.\nGroove & Foundation Progression: A walking 96 BPM.\nEmbellishments, Textures & Spatial FX: Swells and rises into each new section.",
+   "lyrics": "[inst]",
+   "options": {
+    "seconds": 30
+   }
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "mux",
+   "label": "Marry picture and score",
+   "model": "ffmpeg",
+   "does": "Joins picture and score.",
+   "final": true,
+   "clip": "@shot",
+   "audio": "@score"
+  }
+ ]
+}

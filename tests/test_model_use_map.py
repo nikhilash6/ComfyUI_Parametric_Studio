@@ -34,3 +34,20 @@ def test_card_text_skips_front_matter_and_markup():
 def test_graph_names_reads_nested_values(tmp_path):
     p = tmp_path / "g.json"; p.write_text(json.dumps({"1": {"inputs": {"unet_name": "3d/a.safetensors", "x": 3, "y": ["1", 0]}}}))
     assert M.graph_names(p) == {"a.safetensors"}
+
+
+def test_a_generic_file_name_does_not_borrow_another_models_graph():
+    assert M.GENERIC.match("diffusion_pytorch_model.safetensors") and M.GENERIC.match("model-00001-of-00003.safetensors") and M.GENERIC.match("denoiser.pt")
+    assert not M.GENERIC.match("flux1-dev.safetensors") and not M.GENERIC.match("model_a_v2.safetensors")
+
+
+def test_a_tool_run_proves_only_what_the_tool_loaded():
+    proofs = {"anigen": {"seconds": 191, "sheet": "s"}}
+    used = ["tool anigen, 3D page"]
+    assert M.tool_proof("x/ckpts/anigen/ss_flow_solo/ckpts/denoiser.pt", used, proofs)
+    assert not M.tool_proof("x/ckpts/anigen/ss_flow_duet/ckpts/denoiser.pt", used, proofs)
+
+
+def test_the_looked_at_ledger_skips_comments(tmp_path):
+    p = tmp_path / "l.tsv"; p.write_text("# note\nkrea2_t2i\ton brief\n")
+    assert M.load_viewed(str(p)) == {"krea2_t2i": "on brief"} and M.load_viewed(str(tmp_path / "none")) == {}

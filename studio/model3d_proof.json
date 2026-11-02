@@ -108,5 +108,15 @@
   "sheet": "families/sam3d-objects_turn.webp",
   "note": "Good overall shape with fur detail and a mesh plus a splat. The colour is uneven: pale on one side and brown on the other.",
   "when": "2026-11-01"
+ },
+ "unirig": {
+  "status": "ran",
+  "seconds": 129.2,
+  "peak_gib": 5.9,
+  "seed": 12345,
+  "input": "TripoSR's bear mesh, the same one as SkinTokens",
+  "sheet": "families/unirig_vs_skintokens.webp",
+  "note": "31 bones. A pose test moved 98912 of 226530 vertices and bent with less tearing than SkinTokens (36 bones, 52533 moved), with some stretch at the neck. One mesh only; UniRig on the left of the picture.",
+  "when": "2026-11-01"
  }
 }

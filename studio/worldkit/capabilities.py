@@ -43,7 +43,7 @@ NEEDS: dict[str, dict] = {
     "skintokens": {"label": "SkinTokens (rig)", "tool": "skintokens", "files": [
         ("_libraries/models-legacy-layout/3d/SkinTokens/experiments/articulation_xl_quantization_256_token_4/grpo_1400.ckpt", GB),
         ("_libraries/models-legacy-layout/3d/SkinTokens/experiments/skin_vae_2_10_32768/last.ckpt", 400_000_000)]},
-    "unirig": {"label": "UniRig (not wired: weights only, no runner here)", "files": [("_complete_pipelines/UniRig/checkpoints/skeleton.safetensors", GB), ("_complete_pipelines/UniRig/checkpoints/skin.safetensors", GB)], "tool": "unirig"},
+    "unirig": {"label": "UniRig (rig)", "files": [("_complete_pipelines/UniRig/checkpoints/skeleton_model.ckpt", GB), ("_complete_pipelines/UniRig/checkpoints/skin_model.ckpt", GB)], "tool": "unirig"},
     "autoremesher": {"label": "AutoRemesher (CPU tool, optional)", "tool": "autoremesher"},
     "kimodo": {"label": "Kimodo (text to motion)", "tool": "kimodo", "files": [("_libraries/models-legacy-layout/motion/kimodo/Kimodo-SOMA-RP-v1.1/model.safetensors", GB),
         ("_libraries/models-legacy-layout/motion/text-encoders/McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp/adapter_model.safetensors", 100_000_000), ("_libraries/models-legacy-layout/motion/text-encoders/McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-supervised/adapter_model.safetensors", 100_000_000),
@@ -91,13 +91,13 @@ def models_root() -> Path:
 def tool_home(tool: str) -> Path:
     """A tool's folder: STUDIO_TOOL_<NAME>, or under the home folder where the earlier studio's installers put it."""
     default = {"sam3d_objects": paths.home("tools", "sam3d-objects"), "skintokens": paths.home("tools", "skintokens"), "autoremesher": paths.home("tools", "autoremesher"),
-               "kimodo": paths.home("tools", "kimodo"), "retarget": paths.home("tools", "blender-retarget"), "unirig": paths.home("ai", "UniRig"), "picturecheck": paths.home("tools", "picturecheck"),
+               "kimodo": paths.home("tools", "kimodo"), "retarget": paths.home("tools", "blender-retarget"), "unirig": paths.home("tools", "unirig"), "picturecheck": paths.home("tools", "picturecheck"),
                "anigen": paths.home("tools", "anigen"), "triposr": os.path.join(paths.setting("PSN_REPO_LIB", default=paths.home("nodepack_library", "repos")), "MixLabPro__comfyui-mixlab-nodes", "nodes", "tsr")}[tool]
     return Path(os.path.expanduser(paths.setting(f"STUDIO_TOOL_{tool.upper()}", default=default)))
 
 
 TOOL_FILES = {"sam3d_objects": ("run_sam3d.sh", ".venv/bin/python"), "skintokens": ("run_skintokens.sh", ".venv/bin/python"), "autoremesher": ("run_autoremesher.sh", "build/autoremesher"),
-              "kimodo": ("run_kimodo.sh", ".venv/bin/kimodo_gen"), "retarget": ("retarget.py",), "unirig": ("pp_run.py", ".venv/bin/python"), "picturecheck": ("run_picturecheck.sh",), "triposr": ("system.py", "config.yaml"), "anigen": ("run_anigen.sh", ".venv/bin/python")}
+              "kimodo": ("run_kimodo.sh", ".venv/bin/kimodo_gen"), "retarget": ("retarget.py",), "unirig": ("run_unirig.py", ".venv/bin/python"), "picturecheck": ("run_picturecheck.sh",), "triposr": ("system.py", "config.yaml"), "anigen": ("run_anigen.sh", ".venv/bin/python")}
 #: Files in a tool's folder that name where it reads its weights from. A launcher that points at a folder that is gone will fail, whatever is on disk elsewhere.
 TOOL_ENV = {"sam3d_objects": ("env.sh",), "skintokens": ("run_skintokens.sh",), "kimodo": ("env.sh",)}
 _ENV_PATH = re.compile(r"""(?:^|[\s;])(?:export\s+)?(?:\w*(?:WEIGHTS|MOGE|DINOV2_REPO|CHECKPOINT_DIR|TEXT_ENCODERS_DIR)\w*|W)=["']?(/[^\s"';]+)""", re.M)

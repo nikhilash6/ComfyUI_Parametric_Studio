@@ -1,0 +1,1576 @@
+{
+"version": 1,
+"kind": "models3d",
+"note": "Written for this studio. Each recipe runs one 3D model or one World Kit build; chains of several families are on the Pipelines page.",
+"recipes": [
+{
+"id": "r3d_pic_trellis2",
+"kind": "3d",
+"group": "3D: Picture to mesh",
+"section": "3d",
+"rating": "sfw",
+"title": "Picture to mesh: TRELLIS.2",
+"pitch": "One picture of an object becomes a mesh with TRELLIS.2, at real size, with a turntable.",
+"why": "The object is cut out of the picture, TRELLIS.2 builds the mesh, and World Kit's Blender step sets the real size and the pivot.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "an old brass ship's lantern with green glass"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "BiRefNet",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "TRELLIS.2",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"One object on a plain background is what the mesh model reads best."
+],
+"steps": [
+{
+"id": "pic",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 7101,
+"prompt": "{object}, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "Mesh with TRELLIS.2",
+"model": "TRELLIS.2",
+"peak_gib": 19,
+"asset": {
+"type": "prop",
+"name": "Ship lantern",
+"source": {
+"image": "@pic"
+},
+"recipe": {
+"size_m": 0.5,
+"mesh_model": "trellis2"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_pic_hunyuan3d",
+"kind": "3d",
+"group": "3D: Picture to mesh",
+"section": "3d",
+"rating": "sfw",
+"title": "Picture to mesh: Hunyuan3D 2",
+"pitch": "One picture of an object becomes a mesh with Hunyuan3D 2, at real size, with a turntable.",
+"why": "The object is cut out of the picture, Hunyuan3D 2 builds the mesh, and World Kit's Blender step sets the real size and the pivot.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "a round ceramic teapot with a curved spout"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "BiRefNet",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "Hunyuan3D 2",
+"licence": "Tencent Hunyuan community licence",
+"licence_class": "community"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"One object on a plain background is what the mesh model reads best."
+],
+"steps": [
+{
+"id": "pic",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 7102,
+"prompt": "{object}, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "Mesh with Hunyuan3D 2",
+"model": "Hunyuan3D 2",
+"peak_gib": 6,
+"asset": {
+"type": "prop",
+"name": "Teapot",
+"source": {
+"image": "@pic"
+},
+"recipe": {
+"size_m": 0.3,
+"mesh_model": "hunyuan3d"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_pic_sam3d",
+"kind": "3d",
+"group": "3D: Picture to mesh",
+"section": "3d",
+"rating": "sfw",
+"title": "Picture to mesh: SAM 3D Objects",
+"pitch": "One picture of an object becomes a mesh with SAM 3D Objects, at real size, with a turntable.",
+"why": "The object is cut out of the picture, SAM 3D Objects builds the mesh, and World Kit's Blender step sets the real size and the pivot.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "a worn brown leather satchel with two buckles"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "BiRefNet",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "SAM 3D Objects",
+"licence": "SAM License",
+"licence_class": "community"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"One object on a plain background is what the mesh model reads best."
+],
+"steps": [
+{
+"id": "pic",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 7103,
+"prompt": "{object}, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "Mesh with SAM 3D Objects",
+"model": "SAM 3D Objects",
+"peak_gib": 22,
+"asset": {
+"type": "prop",
+"name": "Satchel",
+"source": {
+"image": "@pic"
+},
+"recipe": {
+"size_m": 0.4,
+"mesh_model": "sam3d_objects"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_pic_triposr",
+"kind": "3d",
+"group": "3D: Picture to mesh",
+"section": "3d",
+"rating": "sfw",
+"title": "Picture to mesh: TripoSR",
+"pitch": "One picture of an object becomes a mesh with TripoSR, at real size, with a turntable.",
+"why": "The object is cut out of the picture, TripoSR builds the mesh, and World Kit's Blender step sets the real size and the pivot.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "a small wooden treasure chest with iron bands"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "BiRefNet",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "TripoSR",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"One object on a plain background is what the mesh model reads best."
+],
+"steps": [
+{
+"id": "pic",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 7104,
+"prompt": "{object}, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "Mesh with TripoSR",
+"model": "TripoSR",
+"peak_gib": 4,
+"asset": {
+"type": "prop",
+"name": "Treasure chest",
+"source": {
+"image": "@pic"
+},
+"recipe": {
+"size_m": 0.6,
+"mesh_model": "triposr"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_pic_pixal3d",
+"kind": "3d",
+"group": "3D: Picture to mesh",
+"section": "3d",
+"rating": "sfw",
+"title": "Picture to mesh: Pixal3D",
+"pitch": "One picture of an object becomes a mesh with Pixal3D, at real size, with a turntable.",
+"why": "The object is cut out of the picture, Pixal3D builds the mesh, and World Kit's Blender step sets the real size and the pivot.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "a vintage red desk fan on a round base"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "BiRefNet",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "Pixal3D",
+"licence": "see the model page",
+"licence_class": "unverified"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [
+"One object on a plain background is what the mesh model reads best."
+],
+"steps": [
+{
+"id": "pic",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 7105,
+"prompt": "{object}, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "Mesh with Pixal3D",
+"model": "Pixal3D",
+"peak_gib": 20,
+"asset": {
+"type": "prop",
+"name": "Desk fan",
+"source": {
+"image": "@pic"
+},
+"recipe": {
+"size_m": 0.4,
+"mesh_model": "pixal3d"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_word_lamp",
+"kind": "3d",
+"group": "3D: Words to a prop",
+"section": "3d",
+"rating": "sfw",
+"title": "Words to a prop: desk lamp",
+"pitch": "Say what the object is. You get a game-ready prop at real size, with a turntable.",
+"why": "World Kit draws a picture from your words, cuts it out, builds the mesh with TRELLIS.2 and sets the size and pivot in Blender.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "a brass desk lamp with a green glass shade"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "BiRefNet",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "TRELLIS.2",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "Words to a prop",
+"model": "TRELLIS.2",
+"peak_gib": 19,
+"asset": {
+"type": "prop",
+"name": "Desk lamp",
+"source": {
+"prompt": "{object}"
+},
+"recipe": {
+"size_m": 0.45,
+"mesh_model": "trellis2"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_word_barrel",
+"kind": "3d",
+"group": "3D: Words to a prop",
+"section": "3d",
+"rating": "sfw",
+"title": "Words to a prop: oak barrel",
+"pitch": "Say what the object is. You get a game-ready prop at real size, with a turntable.",
+"why": "World Kit draws a picture from your words, cuts it out, builds the mesh with TRELLIS.2 and sets the size and pivot in Blender.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "an old oak barrel with iron hoops"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "BiRefNet",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "TRELLIS.2",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "Words to a prop",
+"model": "TRELLIS.2",
+"peak_gib": 19,
+"asset": {
+"type": "prop",
+"name": "Barrel",
+"source": {
+"prompt": "{object}"
+},
+"recipe": {
+"size_m": 0.9,
+"mesh_model": "trellis2"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_word_shap_e",
+"kind": "3d",
+"group": "3D: Words to a prop",
+"section": "3d",
+"rating": "sfw",
+"title": "Words straight to a rough mesh",
+"pitch": "Words go straight to a small rough mesh, with no picture step.",
+"why": "Shap-E makes a mesh from words alone. It is fast and rough, which suits blocking out a scene.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "a wooden chair"
+}
+],
+"models": [
+{
+"name": "Shap-E",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "Words to a mesh",
+"model": "Shap-E",
+"peak_gib": 5,
+"asset": {
+"type": "prop",
+"name": "Wooden chair",
+"source": {
+"prompt": "{object}"
+},
+"recipe": {
+"size_m": 0.9,
+"mesh_model": "shap_e"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_relief_moge",
+"kind": "3d",
+"group": "3D: Picture to mesh",
+"section": "3d",
+"rating": "sfw",
+"title": "Picture to a relief: MoGe 2",
+"pitch": "A room photo becomes a one-sided relief mesh for a set.",
+"why": "MoGe 2 reads depth from one picture. You only get the side the camera saw, so it suits backdrops, not whole objects.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "room",
+"label": "The room",
+"default": "a bright sitting room with a sofa, a low table and a tall window"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "MoGe 2",
+"licence": "see the model page",
+"licence_class": "unverified"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "pic",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 7121,
+"prompt": "A photograph of {room}, wide view, nobody in the room. No text, no logos.",
+"options": {
+"aspect": "3:2",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "mesh",
+"type": "model3d",
+"model": "moge",
+"label": "Relief with MoGe 2",
+"peak_gib": 2,
+"seed": 7122,
+"image": "@pic",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_splat_triposplat",
+"kind": "3d",
+"group": "3D: Picture to mesh",
+"section": "3d",
+"rating": "sfw",
+"title": "Picture to a Gaussian splat: TripoSplat",
+"pitch": "One picture becomes a Gaussian splat and a turntable clip, not a mesh.",
+"why": "TripoSplat builds a splat from a cut-out picture. It looks real from every side and it isn't an editable mesh.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "a blue ceramic mug with a white handle"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "TripoSplat",
+"licence": "see the model page",
+"licence_class": "unverified"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "pic",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 7131,
+"prompt": "{object}, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "mesh",
+"type": "model3d",
+"model": "triposplat",
+"label": "Splat with TripoSplat",
+"peak_gib": 6,
+"seed": 7132,
+"image": "@pic",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_rig_anigen",
+"kind": "3d",
+"group": "3D: Rig and motion",
+"section": "3d",
+"rating": "sfw",
+"title": "Picture to a rigged mesh: AniGen",
+"pitch": "One picture becomes a coloured mesh with a skeleton and skin weights.",
+"why": "AniGen builds the shape, the bones and the weights together. Check the rig in a pose before trusting it: hard poses can stretch.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "a friendly cartoon brown bear toy standing upright with its arms out"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "AniGen",
+"licence": "see the repo's licence file",
+"licence_class": "unverified"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "pic",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 7141,
+"prompt": "{object}, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "mesh",
+"type": "model3d",
+"model": "anigen",
+"label": "Rigged mesh with AniGen",
+"peak_gib": 11,
+"seed": 7142,
+"image": "@pic",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_rig_skintokens",
+"kind": "3d",
+"group": "3D: Rig and motion",
+"section": "3d",
+"rating": "sfw",
+"title": "Mesh to a rig: SkinTokens",
+"pitch": "A finished mesh gets a skeleton and skin weights, texture and scale kept.",
+"why": "TripoSR makes a quick mesh, then SkinTokens adds bones and weights. Check it in a pose before trusting it.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "object",
+"label": "The object",
+"default": "a simple toy robot standing upright with its arms out"
+}
+],
+"models": [
+{
+"name": "FLUX.2 Klein 4B",
+"licence": "Apache-2.0",
+"licence_class": "open"
+},
+{
+"name": "TripoSR",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "SkinTokens",
+"licence": "MIT",
+"licence_class": "open"
+},
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "pic",
+"type": "goal",
+"goal": "image",
+"label": "The picture",
+"peak_gib": 23,
+"seed": 7151,
+"prompt": "{object}, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light. No text, no logos, no people.",
+"options": {
+"aspect": "1:1",
+"mode": "quality"
+},
+"swappable": true,
+"accepts": "image"
+},
+{
+"id": "base",
+"type": "model3d",
+"model": "triposr",
+"label": "Quick mesh with TripoSR",
+"peak_gib": 4,
+"seed": 7152,
+"image": "@pic"
+},
+{
+"id": "mesh",
+"type": "model3d",
+"model": "skintokens",
+"label": "Rig with SkinTokens",
+"peak_gib": 5,
+"mesh": "@base",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_motion_walk_wave",
+"kind": "3d",
+"group": "3D: Rig and motion",
+"section": "3d",
+"rating": "sfw",
+"title": "Words to a motion: walk and wave",
+"pitch": "Describe a motion in words. You get a BVH file for a human skeleton.",
+"why": "Kimodo turns words into motion on a human skeleton. The clip is a stick figure drawn from the BVH's own numbers, with no mesh.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "action",
+"label": "The motion",
+"default": "a person walks forward, then waves with the right hand"
+}
+],
+"models": [
+{
+"name": "Kimodo",
+"licence": "NVIDIA Open Model License",
+"licence_class": "community"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "model3d",
+"model": "kimodo",
+"label": "Motion with Kimodo",
+"peak_gib": 17,
+"seed": 7161,
+"seconds": 5,
+"prompt": "{action}",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_motion_jump_bow",
+"kind": "3d",
+"group": "3D: Rig and motion",
+"section": "3d",
+"rating": "sfw",
+"title": "Words to a motion: jump and bow",
+"pitch": "Describe a motion in words. You get a BVH file for a human skeleton.",
+"why": "Kimodo turns words into motion on a human skeleton. The clip is a stick figure drawn from the BVH's own numbers, with no mesh.",
+"tags": [
+"3d"
+],
+"fields": [
+{
+"key": "action",
+"label": "The motion",
+"default": "a person jumps on the spot, lands, then takes a slow bow"
+}
+],
+"models": [
+{
+"name": "Kimodo",
+"licence": "NVIDIA Open Model License",
+"licence_class": "community"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "model3d",
+"model": "kimodo",
+"label": "Motion with Kimodo",
+"peak_gib": 17,
+"seed": 7162,
+"seconds": 5,
+"prompt": "{action}",
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_place_rainy_street",
+"kind": "3d",
+"group": "3D: World Kit places",
+"section": "3d",
+"rating": "sfw",
+"title": "Place: rainy downtown block",
+"pitch": "A short brief becomes a whole place you can walk a camera through.",
+"why": "World Kit builds this place in Blender from its own kit, on the CPU, with no image model.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "place",
+"name": "rainy downtown block",
+"source": {
+"brief": "a rainy downtown block at night"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_place_sunny_street",
+"kind": "3d",
+"group": "3D: World Kit places",
+"section": "3d",
+"rating": "sfw",
+"title": "Place: quiet street by day",
+"pitch": "A short brief becomes a whole place you can walk a camera through.",
+"why": "World Kit builds this place in Blender from its own kit, on the CPU, with no image model.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "place",
+"name": "quiet street by day",
+"source": {
+"brief": "a quiet main street on a clear day"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_place_cafe",
+"kind": "3d",
+"group": "3D: World Kit places",
+"section": "3d",
+"rating": "sfw",
+"title": "Place: warm cafe interior",
+"pitch": "A short brief becomes a whole place you can walk a camera through.",
+"why": "World Kit builds this place in Blender from its own kit, on the CPU, with no image model.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "place",
+"name": "warm cafe interior",
+"source": {
+"brief": "a cafe interior with warm lamps at night"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_place_room",
+"kind": "3d",
+"group": "3D: World Kit places",
+"section": "3d",
+"rating": "sfw",
+"title": "Place: bright room",
+"pitch": "A short brief becomes a whole place you can walk a camera through.",
+"why": "World Kit builds this place in Blender from its own kit, on the CPU, with no image model.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "place",
+"name": "bright room",
+"source": {
+"brief": "a bright interior room in daylight"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_place_beach",
+"kind": "3d",
+"group": "3D: World Kit places",
+"section": "3d",
+"rating": "sfw",
+"title": "Place: beach at golden hour",
+"pitch": "A short brief becomes a whole place you can walk a camera through.",
+"why": "World Kit builds this place in Blender from its own kit, on the CPU, with no image model.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "place",
+"name": "beach at golden hour",
+"source": {
+"brief": "a beach cafe at golden hour"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_look_day_clear",
+"kind": "3d",
+"group": "3D: World Kit looks",
+"section": "3d",
+"rating": "sfw",
+"title": "Look: Daylight, clear sky",
+"pitch": "A lighting look shown on a small test scene, ready to put on any place.",
+"why": "World Kit's looks are Blender light setups. This renders one around its test scene.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "look",
+"name": "Daylight, clear sky",
+"source": {
+"preset": "day_clear"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_look_golden_hour",
+"kind": "3d",
+"group": "3D: World Kit looks",
+"section": "3d",
+"rating": "sfw",
+"title": "Look: Golden hour",
+"pitch": "A lighting look shown on a small test scene, ready to put on any place.",
+"why": "World Kit's looks are Blender light setups. This renders one around its test scene.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "look",
+"name": "Golden hour",
+"source": {
+"preset": "golden_hour"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_look_overcast",
+"kind": "3d",
+"group": "3D: World Kit looks",
+"section": "3d",
+"rating": "sfw",
+"title": "Look: Overcast",
+"pitch": "A lighting look shown on a small test scene, ready to put on any place.",
+"why": "World Kit's looks are Blender light setups. This renders one around its test scene.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "look",
+"name": "Overcast",
+"source": {
+"preset": "overcast"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_look_rainy",
+"kind": "3d",
+"group": "3D: World Kit looks",
+"section": "3d",
+"rating": "sfw",
+"title": "Look: Rainy street",
+"pitch": "A lighting look shown on a small test scene, ready to put on any place.",
+"why": "World Kit's looks are Blender light setups. This renders one around its test scene.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "look",
+"name": "Rainy street",
+"source": {
+"preset": "rainy"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_look_night_city",
+"kind": "3d",
+"group": "3D: World Kit looks",
+"section": "3d",
+"rating": "sfw",
+"title": "Look: Night, city lights",
+"pitch": "A lighting look shown on a small test scene, ready to put on any place.",
+"why": "World Kit's looks are Blender light setups. This renders one around its test scene.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "look",
+"name": "Night, city lights",
+"source": {
+"preset": "night_city"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_look_interior_day",
+"kind": "3d",
+"group": "3D: World Kit looks",
+"section": "3d",
+"rating": "sfw",
+"title": "Look: Interior, daylight",
+"pitch": "A lighting look shown on a small test scene, ready to put on any place.",
+"why": "World Kit's looks are Blender light setups. This renders one around its test scene.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "look",
+"name": "Interior, daylight",
+"source": {
+"preset": "interior_day"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+},
+{
+"id": "r3d_look_interior_night",
+"kind": "3d",
+"group": "3D: World Kit looks",
+"section": "3d",
+"rating": "sfw",
+"title": "Look: Interior, warm lamps",
+"pitch": "A lighting look shown on a small test scene, ready to put on any place.",
+"why": "World Kit's looks are Blender light setups. This renders one around its test scene.",
+"tags": [
+"3d"
+],
+"fields": [],
+"models": [
+{
+"name": "Blender",
+"licence": "GPL, runs as a separate tool",
+"licence_class": "open"
+}
+],
+"tips": [],
+"steps": [
+{
+"id": "mesh",
+"type": "worldkit",
+"label": "World Kit build",
+"model": "Blender",
+"peak_gib": 4,
+"asset": {
+"type": "look",
+"name": "Interior, warm lamps",
+"source": {
+"preset": "interior_night"
+},
+"tags": [
+"recipe"
+]
+},
+"final": true
+}
+],
+"proof": {
+"level": "recipe",
+"note": "Never rendered through this recipe when it was written."
+}
+}
+]
+}

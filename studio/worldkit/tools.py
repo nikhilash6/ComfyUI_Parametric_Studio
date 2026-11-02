@@ -13,8 +13,8 @@ from studio.worldkit import capabilities as C
 from studio.worldkit import blender as B
 from studio.worldkit.steps import StepError
 
-PEAK_GB = {"anigen": 11.0, "sam3d_objects": 32.0, "skintokens": 6.0, "kimodo": 17.0, "kimodo_cpu_text": 3.0}
-TIMEOUT_S = {"anigen": 1500, "sam3d_objects": 1800, "skintokens": 900, "autoremesher": 1800, "kimodo": 2400, "retarget": 900}
+PEAK_GB = {"anigen": 11.0, "sam3d_objects": 32.0, "skintokens": 6.0, "unirig": 8.0, "kimodo": 17.0, "kimodo_cpu_text": 3.0}
+TIMEOUT_S = {"anigen": 1500, "sam3d_objects": 1800, "skintokens": 900, "unirig": 1500, "autoremesher": 1800, "kimodo": 2400, "retarget": 900}
 AR_LODS = (20000, 5000, 1500)
 
 
@@ -121,6 +121,15 @@ def skintokens(mesh, work: Path, *, run=None) -> Path:
     work = Path(work); work.mkdir(parents=True, exist_ok=True); out = work / "rigged.glb"; log = work / "skintokens.log"
     rc = (run or call)([C.tool_home("skintokens") / "run_skintokens.sh", "--input", mesh, "--output", out, "--use_transfer", "--use_postprocess"], log, TIMEOUT_S["skintokens"])
     return _made(out, rc, "SkinTokens", log)
+
+
+def unirig(mesh, work: Path, *, run=None) -> Path:
+    """A finished mesh -> a rigged GLB with its own skeleton and skin. The Blender steps run in the tool's own Blender route."""
+    require("unirig")
+    vram_gate("unirig")
+    home = C.tool_home("unirig"); work = Path(work); work.mkdir(parents=True, exist_ok=True); out = work / "rigged.glb"; log = work / "unirig.log"
+    rc = (run or call)([home / ".venv" / "bin" / "python", home / "run_unirig.py", "--input", mesh, "--output", out, "--work", work / "steps"], log, TIMEOUT_S["unirig"])
+    return _made(out, rc, "UniRig", log)
 
 
 def autoremesher(mesh, work: Path, *, run=None) -> Path:

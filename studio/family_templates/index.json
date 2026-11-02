@@ -1968,6 +1968,123 @@
     }
    ],
    "source": "studio"
+  },
+  {
+   "family": "Chroma",
+   "name": "chroma1_hd_t2i",
+   "title": "Chroma1-HD text to image",
+   "desc": "Chroma1-HD with the T5 encoder and the FLUX VAE, 40 steps, CFG 3, as its card recommends.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 19.3,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "Chroma1-HD-fp8mixed.safetensors",
+     "dir": "diffusion_models",
+     "gb": 8.56
+    },
+    {
+     "name": "t5xxl_fp16.safetensors",
+     "dir": "text_encoders",
+     "gb": 9.1
+    },
+    {
+     "name": "ae.safetensors",
+     "dir": "vae",
+     "gb": 0.31
+    }
+   ],
+   "source": "Studio template; lodestones/Chroma1-HD card",
+   "note": ""
+  },
+  {
+   "family": "FireRed-Image-Edit",
+   "name": "firered_image_edit_11",
+   "title": "FireRed Image Edit 1.1, 8 steps",
+   "desc": "Words and a picture in, an edited picture out, with the 8-step Lightning LoRA.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 46.6,
+   "tags": [
+    "Studio template",
+    "Edit"
+   ],
+   "models": [
+    {
+     "name": "FireRed-Image-Edit-1.1-transformer.safetensors",
+     "dir": "diffusion_models",
+     "gb": 38.05
+    },
+    {
+     "name": "qwen_2.5_vl_7b_fp8_scaled.safetensors",
+     "dir": "text_encoders",
+     "gb": 7.5
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.24
+    },
+    {
+     "name": "FireRed-Image-Edit-1.1-Lightning-8steps-v1.2.safetensors",
+     "dir": "loras",
+     "gb": 0.79
+    }
+   ],
+   "source": "FireRed's own ComfyUI workflow, made into API form",
+   "note": ""
+  },
+  {
+   "family": "IC-Light",
+   "name": "iclight_fc_relight",
+   "title": "IC-Light: relight a cut-out",
+   "desc": "A foreground picture, a light map and words in, the same subject relit on SD 1.5.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.6,
+   "tags": [
+    "Studio template",
+    "Relight"
+   ],
+   "models": [
+    {
+     "name": "iclight_sd15_fc_unet_ldm.safetensors",
+     "dir": "diffusion_models",
+     "gb": 1.6
+    },
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    }
+   ],
+   "source": "Studio template; kijai's IC-Light nodes, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "CCSR",
+   "name": "ccsr_upscale_x2",
+   "title": "CCSR: upscale a picture 2x",
+   "desc": "Content-consistent upscaling with tiles.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.2,
+   "tags": [
+    "Studio template",
+    "Upscale"
+   ],
+   "models": [
+    {
+     "name": "real-world_ccsr-fp16.safetensors",
+     "dir": "checkpoints",
+     "gb": 3.2
+    }
+   ],
+   "source": "Studio template; kijai's CCSR nodes, which passed Pack Lab",
+   "note": ""
   }
  ]
 }

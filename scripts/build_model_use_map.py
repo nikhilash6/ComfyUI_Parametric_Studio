@@ -13,6 +13,7 @@ COLUMNS = ["file", "gb", "repo", "path_in_repo", "on_disk", "disk_path", "functi
 RUNNERS = [("_complete_pipelines/SAM-3D-Objects/", "tool sam3d-objects, World Kit prop route (worldkit/tools.py sam3d_objects)"),
            ("3d/sam-3d-objects/", "tool sam3d-objects, World Kit prop route (worldkit/tools.py sam3d_objects)"),
            ("3d/SkinTokens/", "tool skintokens, World Kit rig step (worldkit/tools.py skintokens)"),
+           ("UniRig/checkpoints/", "tool unirig, the 3D page rig route (worldkit/tools.py unirig)"),
            ("motion/kimodo/", "tool kimodo, World Kit motion step (worldkit/tools.py kimodo)"),
            ("motion/text-encoders/", "tool kimodo text encoder, World Kit motion step (worldkit/tools.py kimodo)"),
            ("_complete_pipelines/TripoSR/", "runner triposr_image.py, 3D page and World Kit prop route"),
@@ -21,7 +22,9 @@ RUNNERS = [("_complete_pipelines/SAM-3D-Objects/", "tool sam3d-objects, World Ki
            ("3d/moge-vitl/", "tool sam3d-objects (reads MoGe for its depth), World Kit prop route"),
            ("AniGen/ckpts/dinov2/", "tool sam3d-objects (reads this DINOv2), World Kit prop route")]
 #: Why a file is still not used, written after trying it. A pattern on the path decides the row's next step.
-WHY_UNUSED = [("AniGen/ckpts/anigen/ss_flow_duet", "AniGen duet variant: the runner uses ss_flow_solo, this one is not run."), ("AniGen/ckpts/anigen/ss_flow_epic", "AniGen epic variant: the runner uses ss_flow_solo, this one is not run."), ("AniGen/ckpts/anigen/slat_flow_control", "AniGen control variant: the runner uses slat_flow_auto, this one is not run."),
+WHY_UNUSED = [("fiona-crapple", "HOLD: the name reads like a real singer (inference, no card read): not shown publicly until the founder has checked it"), ("ClipProj-celeb", "HOLD: named for celebrities: not shown publicly"),
+              ("/TTS/", "owned by feat/voice"), ("TTS/", "owned by feat/voice"), ("speech_enhancement/", "owned by feat/voice"), ("/motion/", "owned by feat/motion"), ("liveportrait/", "owned by feat/motion"),
+              ("AniGen/ckpts/anigen/ss_flow_duet", "AniGen duet variant: the runner uses ss_flow_solo, this one is not run."), ("AniGen/ckpts/anigen/ss_flow_epic", "AniGen epic variant: the runner uses ss_flow_solo, this one is not run."), ("AniGen/ckpts/anigen/slat_flow_control", "AniGen control variant: the runner uses slat_flow_auto, this one is not run."),
               ("Pixal3D/", "Pixal3D: the ComfyUI file pixal3d_int8_convrot is not on disk and the standalone tool lacks its shape and texture decoders. Needs a fetch."),
               ("TRELLIS-2-4B/", "TRELLIS.2 raw per-stage weights: ComfyUI uses its single file trellis_2_int8_convrot, which is proven. These are only for a standalone runner, none exists here."),
               ("microsoft/ckpts/", "TRELLIS v1 weights: no runner here."), ("TRELLIS-image-large/", "TRELLIS v1 weights: no runner here."),
@@ -106,6 +109,17 @@ def graph_names(path):
     return {os.path.basename(s) for s in _walk_strings(d) if len(s) < 400 and re.search(r"\.(safetensors|ckpt|pt|pth|bin|gguf|sft|onnx)$", s, re.I)}
 
 
+#: Weight files named the same in many repos. A graph or need naming one says nothing about this copy unless the whole path matches.
+GENERIC = re.compile(r"^(model|diffusion_pytorch_model|pytorch_model|denoiser|encoder_final|decoder_final|last|ema|skin|skeleton|weights|ckpt|checkpoint)([.-]|$)", re.I)
+
+
+def need_paths(repo_root):
+    """{path under the models folder: where it is used} for World Kit's needs, which name whole paths."""
+    src = (Path(repo_root) / "studio" / "worldkit" / "capabilities.py")
+    if not src.exists(): return {}
+    return {path: f"World Kit need {key}" for key, path in re.findall(r'"(\w+)": \{"label"[^\n]*?\("([^"]+\.(?:safetensors|ckpt|pt|pth|bin))"', src.read_text())} | {path: "World Kit capabilities" for path in re.findall(r'\("([^"]+\.(?:safetensors|ckpt|pt|pth|bin))", ', src.read_text()) if "/" in path}
+
+
 def index_uses(repo_root, template_dir=None):
     """{file name: [where it is used]} from the studio's graphs, family metadata, World Kit's needs and the shipped ComfyUI templates."""
     uses = {}
@@ -159,6 +173,32 @@ def proof_index(all_json, status):
     return out
 
 
+#: A tool run proves the files that tool loaded, not every file in its folder. {runner label's start: (id in model3d_proof.json, path parts of what it loaded)}
+TOOL_PROOF = {"tool sam3d-objects": ("sam3d_objects", ("ss_generator", "slat_generator", "slat_decoder_mesh", "slat_decoder_gs", "ss_decoder", "ss_encoder")),
+              "tool skintokens": ("skintokens", ("grpo_1400.ckpt", "skin_vae_2_10_32768/last.ckpt")),
+              "tool unirig": ("unirig", ("skeleton_model.ckpt", "skin_model.ckpt")),
+              "tool anigen": ("anigen", ("ss_flow_solo/", "slat_flow_auto/", "slat_dae/ckpts/decoder_final", "ss_dae/ckpts/decoder_final", "dinov2_vitl14_reg4", "dsine.pt")),
+              "runner triposr_image": ("triposr", ("TripoSR/model.ckpt",)),
+              "runner shap_e_text": ("shap_e", ("shap-e/",))}
+
+
+def tool_proof(rel, used, proofs3d):
+    """'proof text' when a tool whose run was recorded and looked at loaded this file."""
+    for label, (tid, parts) in TOOL_PROOF.items():
+        if any(u.startswith(label) for u in used) and any(x in rel for x in parts) and tid in proofs3d:
+            p = proofs3d[tid]; return f"tool run {tid} ({p.get('seconds')} s, {p.get('sheet') or 'no sheet'})"
+    return ""
+
+
+def load_viewed(path):
+    """{template or tool id: what looking at the result showed} from the ledger. A run with no line here has not been looked at."""
+    out = {}
+    if path and os.path.exists(path):
+        for ln in open(path, encoding="utf-8"):
+            if ln.strip() and not ln.startswith("#"): k, _, v = ln.rstrip("\n").partition("\t"); out[k] = v
+    return out
+
+
 def family_of(row, status_families):
     m = re.match(r"_complete_pipelines/([^/]+)/", row.get("rel", ""))
     if m: return m.group(1)
@@ -204,22 +244,29 @@ def plans_landed(workbench, models_root, have, names=LATER_PLANS):
     return [r for r in load_plans(workbench, names) if r.get("sha") not in have and on_disk(models_root, r)[0]]
 
 
-def build(repo_root, models_root, workbench, yaml_path, all_json, template_dir=None, cards=None, plans=PLANS, arrivals=()):
+def build(repo_root, models_root, workbench, yaml_path, all_json, template_dir=None, cards=None, plans=PLANS, arrivals=(), viewed=None):
     status = json.load(open(Path(repo_root) / "studio" / "family_status.json"))["families"]
     from studio.names import model_key
     uses = index_uses(repo_root, template_dir); by_key = {}
     for n, w in uses.items(): by_key.setdefault(model_key(n), []).extend(w)
-    folders = comfy_folders(yaml_path); proofs = proof_index(all_json, status); rows = []
+    folders = comfy_folders(yaml_path); proofs = proof_index(all_json, status); rows = []; needs = need_paths(repo_root); viewed = viewed or {}
+    try: proofs3d = json.load(open(Path(repo_root) / "studio" / "model3d_proof.json"))
+    except (OSError, ValueError): proofs3d = {}
     planned = load_plans(workbench, plans); planned += plans_landed(workbench, models_root, {r.get("sha") for r in planned}); known = {os.path.normpath(os.path.join(models_root, r["rel"])) for r in planned}
     for path, size in arrivals:                                  # landed with no plan row naming it: all that is known is the file
         if os.path.normpath(path) not in known and not path.endswith(".sha256-ok"):
             planned.append({"sha": "", "bytes": size, "function": "arrived, no plan row", "repo": "", "path": "", "rel": os.path.relpath(path, models_root) if path.startswith(str(models_root)) else path})
     for r in planned:
-        ok, path = on_disk(models_root, r); name = os.path.basename(r["rel"]); used = list(uses.get(name) or by_key.get(model_key(name)) or [])
+        ok, path = on_disk(models_root, r); name = os.path.basename(r["rel"]); used = [] if GENERIC.match(name) else list(uses.get(name) or by_key.get(model_key(name)) or [])
+        used += [w for pth, w in needs.items() if r["rel"].endswith(pth) and w not in used]
         for pre, label in RUNNERS:
             if pre in r["rel"] and label not in used: used.append(label)
         typ = reach(r["rel"], folders)
-        proof = next((proofs[t] for u in used for t in [u.rsplit(" / ", 1)[-1]] if t in proofs), "")
+        names = [u.rsplit(" / ", 1)[-1] for u in used]; hit = next((t for t in names if t in proofs), "")
+        proof = proofs[hit] if hit else tool_proof(r["rel"], used, proofs3d)
+        if proof:
+            key = hit or next((tid for lb, (tid, _) in TOOL_PROOF.items() if any(u.startswith(lb) for u in used)), "")
+            proof += "; looked at: " + viewed[key] if key in viewed else "; not looked at yet"
         st, nxt = decide(r, ok, bool(typ), used, proof)
         if st in ("reachable", "unreachable"):
             nxt = next((w for pat, w in WHY_UNUSED if pat in r["rel"]), nxt)
@@ -235,15 +282,17 @@ def write_tsv(rows, out):
 
 
 def main(argv=None):
-    a = argparse.ArgumentParser(); a.add_argument("--out", required=True); a.add_argument("--models", required=True); a.add_argument("--yaml", required=True); a.add_argument("--all-json", required=True); a.add_argument("--cards"); a.add_argument("--arrivals", help="TSV of path and size from scan_new_models.py"); a = a.parse_args(argv)
+    a = argparse.ArgumentParser(); a.add_argument("--out", required=True); a.add_argument("--models", required=True); a.add_argument("--yaml", required=True); a.add_argument("--all-json", required=True); a.add_argument("--cards"); a.add_argument("--arrivals", help="TSV of path and size from scan_new_models.py"); a.add_argument("--viewed", help="ledger: template or tool id, tab, what looking at the result showed"); a = a.parse_args(argv)
     try:
         import comfyui_workflow_templates_json as t; td = os.path.join(os.path.dirname(t.__file__), "templates")
     except ImportError: td = None
-    rows = build(ROOT, a.models, os.path.join(a.models, "_workbench"), a.yaml, json.load(open(a.all_json)), td, a.cards, arrivals=[(l.split("\t")[0], int(l.split("\t")[1])) for l in open(a.arrivals)] if a.arrivals else ())
+    rows = build(ROOT, a.models, os.path.join(a.models, "_workbench"), a.yaml, json.load(open(a.all_json)), td, a.cards, arrivals=[(l.split("\t")[0], int(l.split("\t")[1])) for l in open(a.arrivals)] if a.arrivals else (), viewed=load_viewed(a.viewed))
     write_tsv(rows, a.out)
+    from importlib.util import module_from_spec, spec_from_file_location
+    spec = spec_from_file_location("build_future_numbers", ROOT / "scripts" / "build_future_numbers.py"); fn = module_from_spec(spec); spec.loader.exec_module(fn); fn.write(a.out)      # the Future page's totals follow the map
     n = {}
     for r in rows: n[r["status"]] = n.get(r["status"], 0) + 1
-    print(len(rows), "files:", n)
+    print(len(rows), "files:", n, "rendered and looked at:", sum(r["status"] == "rendered" and "looked at:" in r["proof"] for r in rows))
 
 
 if __name__ == "__main__":

@@ -63,10 +63,27 @@ def _template_graph(spec, oi):
     if not path: return None
     vals = {k: ("check.png" if isinstance(v, str) and v.startswith("@") else v) for k, v in (spec.get("values") or {}).items()}
     return R.template_graph({**spec, "set": spec.get("set") or {}}, vals, oi, path)
+def _family_graph(spec):
+    from studio import recipes_family as F
+    return F.build_graph({**spec, "seed": 1}, {"prompt": "check"})
+def _h3ref_graph(spec):
+    from studio import recipes_family as F
+    return F.h3_reference_graph({**spec, "seed": 1}, {"scene": "check"}, ["check.png" for _ in spec.get("pictures") or []], "check.mp4" if spec.get("video") else None)
 def _step_key(s):
+    if s["type"] == "h3_reference": return ("h3_reference", s["lora"], s.get("sampler"), s.get("scheduler"))
+    if s["type"] == "family_lora": return ("family_lora", s["template"], json.dumps(s.get("loras")))
     if s["type"] == "goal": return ("goal", s["goal"], json.dumps(s.get("options") or {}, sort_keys=True), json.dumps(s.get("lora") or {}, sort_keys=True))
     if s["type"] == "template": return ("template", s["template"], json.dumps(s.get("swap") or {}, sort_keys=True))
-    return (s["type"], s.get("op"))
+    return (s["type"], s.get("op"), s.get("model"), ((s.get("asset") or {}).get("recipe") or {}).get("mesh_model"))
+def _world_problems(s):
+    """A World Kit asset or a 3D model has no graph to check here: what it needs on this machine is what its own page checks."""
+    from studio import model3d as M
+    from studio.worldkit import capabilities as C
+    if s["type"] == "model3d": need = [M.model(s["model"])["need"]]
+    else:
+        a = s.get("asset") or {}; pick = (a.get("recipe") or {}).get("mesh_model")
+        need = [pick] if pick else []
+    return [C.need(n)["message"] for n in need if C.need(n)["state"] != "ready"]
 def check_step(s, oi, files, values=None):
     """Problems of one step, cached on what shapes its graph: most recipes share a few."""
     key = (id(oi), id(files)) + _step_key(s)
@@ -76,8 +93,9 @@ def check_step(s, oi, files, values=None):
         if s["type"] == "cpu":
             import shutil
             if s.get("op") != "sound" and not shutil.which("ffmpeg"): probs.append("ffmpeg is not installed")
+        elif s["type"] in ("worldkit", "model3d"): probs += _world_problems(s)
         elif s["type"] != "plan":
-            g = _goal_graph(s, values or {}) if s["type"] == "goal" else _template_graph(s, oi)
+            g = _goal_graph(s, values or {}) if s["type"] == "goal" else _family_graph(s) if s["type"] == "family_lora" else _h3ref_graph(s) if s["type"] == "h3_reference" else _template_graph(s, oi)
             if g is None: probs.append(f"the ComfyUI template {s['template']} is not installed")
             else:
                 g, rep = resolve_names(g, oi); probs += [f"model {os.path.basename(str(r['was']))} is not installed" for r in rep if r["now"] is None]; probs += check_graph(g, oi, files)

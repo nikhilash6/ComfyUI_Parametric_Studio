@@ -16,6 +16,7 @@ MODELS = [
     {"id": "triposplat", "label": "TripoSplat", "job": "splat_from_image", "via": "family", "family": "TripoSplat", "template": "3d_triposplat_image_to_gaussian_splat", "need": "triposplat", "licence": "see the model page", "note": "A Gaussian splat and a turntable clip, not a mesh."},
     {"id": "moge", "label": "MoGe 2", "job": "relief_from_image", "via": "family", "family": "MoGe", "template": "3d_moge_perspective_to_mesh", "need": "moge", "licence": "see the model page", "note": "Only the side the camera sees: a relief for sets, not a whole object."},
     {"id": "shap_e", "label": "Shap-E", "job": "mesh_from_text", "via": "runner", "runner": "shap_e_text.py", "need": "shap_e", "peak_gb": 4.0, "licence": "MIT", "note": "Words to a small rough mesh, no picture step."},
+    {"id": "unirig", "label": "UniRig", "job": "rig", "via": "tool", "need": "unirig", "licence": "MIT", "note": "A mesh to a rigged GLB. On our test it bent more cleanly than SkinTokens."},
     {"id": "skintokens", "label": "SkinTokens", "job": "rig", "via": "tool", "need": "skintokens", "licence": "MIT", "note": "A mesh to a rigged GLB."},
     {"id": "anigen", "label": "AniGen", "job": "rigged_from_image", "via": "tool", "need": "anigen", "licence": "see the repo's licence file", "note": "A coloured mesh with a skeleton and skin, straight from a picture. Give it a cut-out."},
     {"id": "kimodo", "label": "Kimodo", "job": "motion", "via": "tool", "need": "kimodo", "licence": "NVIDIA Open Model License", "note": "Words to a BVH motion on a human skeleton."},
@@ -108,6 +109,7 @@ def execute(m, body, work, *, runner=None, family=None, tool=None):
     t = tool or T
     if m["id"] == "sam3d_objects": made = t.sam3d_objects(_cutout_or_refuse(body), work, seed=seed)
     elif m["id"] == "anigen": made = t.anigen(_input_picture(body.get("image") or ""), work, seed=seed)
+    elif m["id"] == "unirig": made = t.unirig(_input_mesh(body.get("mesh") or ""), work)
     elif m["id"] == "skintokens": made = t.skintokens(_input_mesh(body.get("mesh") or ""), work)
     elif m["id"] == "kimodo": made = t.kimodo(text, work, seconds=int(body.get("seconds") or 5), seed=seed)
     else: raise ValueError(f"{m['id']} has no way to run here")

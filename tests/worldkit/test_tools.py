@@ -110,6 +110,16 @@ def test_a_tool_past_its_timeout_is_killed_by_pid(tmp_path):
     assert kills == [777]
 
 
+def test_unirig_runs_its_own_venv_and_returns_the_rig(tmp_path, monkeypatch):
+    monkeypatch.setattr(tools, "require", lambda name: None); monkeypatch.setattr(tools, "vram_gate", lambda name: None)
+    monkeypatch.setenv("STUDIO_TOOL_UNIRIG", str(tmp_path / "ur"))
+    seen = []
+    def run(cmd, log, timeout):
+        seen.append([str(c) for c in cmd]); (tmp_path / "w" / "rigged.glb").write_bytes(b"glTF" + b"0" * 2000); return 0
+    out = tools.unirig(tmp_path / "m.glb", tmp_path / "w", run=run)
+    assert out.name == "rigged.glb" and seen[0][0].endswith("ur/.venv/bin/python") and seen[0][1].endswith("ur/run_unirig.py") and "--input" in seen[0]
+
+
 def test_skintokens_keeps_the_texture_and_uses_the_voxel_skin(tmp_path, ready):
     src = tmp_path / "m.glb"
     src.write_bytes(b"glb")

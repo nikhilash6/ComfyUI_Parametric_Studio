@@ -12,6 +12,8 @@ HERE = Path(__file__).resolve().parent; DATA = HERE / "recipes.json"; LIB_DIR = 
 FPS = 24; FF_TIMEOUT = 600
 class StepError(Exception): pass
 class Cancelled(Exception): pass
+#: Step types other modules add ({type: fn(run, st, spec, ctx) -> files}). studio/pipelines.py adds its World Kit and Virtual Set steps here.
+EXTRA_STEPS = {}
 
 def load():
     return json.load(open(DATA))
@@ -44,10 +46,29 @@ def lora_recipe(row):
     run = row.get("run"); note = row.get("licence_note"); lic = {"name": row["title"], "licence": row["licence"], "licence_class": row["licence_class"], **({"note": note} if note else {})}
     tips = [t for t in [_tuned(row), (row.get("settings") or {}).get("other"), f"Expect: {row['expected_effect']}" if row.get("expected_effect") else ""] if t] + list(row.get("rules") or []) + [f"Avoid: {a}" for a in row.get("avoid") or []]
     base = {"id": row["id"], "kind": "lora", "group": "LoRA: " + (row.get("purpose_label") or "other"), "rating": "sfw", "title": row["title"], "pitch": row["summary"] or row["title"], "why": f"A third-party LoRA with the settings its own notes ask for ({'MiniMax H3' if row['family'] == 'h3' else 'Wan 2.2'}). The weights are not part of this project.", "tags": ["lora", row["family"]], "models": [H3_MODEL if row["family"] == "h3" else {"name": "Wan 2.2 A14B", "licence": "Apache-2.0", "licence_class": "open"}, lic], "tips": tips[:9], "proof": row["proof"], "library": True, "lora_path": row["path"], "licence_class": row["licence_class"]}
+    fr = row.get("family_run")
+    if fr:
+        pics = [{"id": "pic", "type": "goal", "goal": "image", "label": "The picture to change", "peak_gib": 23, "seed": 8200 + sum(map(ord, row["id"])), "prompt": "{source}. No text, no logos.", "options": {"aspect": "1:1", "mode": "quality"}, "swappable": True, "accepts": "image"}] if fr.get("edit") else []
+        fields = ([{"key": "source", "label": "The picture to change", "default": fr["source"]}] if fr.get("edit") else []) + [{"key": "prompt", "label": "The prompt", "default": fr["prompt"], "multiline": True}]
+        step = {"id": "shot", "type": "family_lora", "label": row["title"], "peak_gib": fr.get("peak_gib", 24), "seed": sum(map(ord, row["id"])) * 7, "template": fr["template"], "prompt": "{prompt}", "loras": fr["loras"], "size": fr.get("size"), "set": fr.get("set") or {}, "replace_lora": fr.get("replace_lora"), "final": True, **({"image": "@pic"} if fr.get("edit") else {})}
+        return {**base, "why": "A third-party LoRA on its family's own graph. Its notes gave no one-click settings, so these are our own starting point. The weights are not part of this project.", "models": [{"name": fr["model"], "licence": fr["licence"], "licence_class": fr["licence_class"]}, lic], "fields": fields, "steps": pics + [step], "tips": fr.get("tips") or []}
+    rr = row.get("ref_run")
+    if rr:
+        kl = {"type": "goal", "goal": "image", "peak_gib": 23, "options": {"aspect": rr.get("aspect", "1:1"), "mode": "quality"}, "swappable": True, "accepts": "image"}; pre = []; fields = [{"key": "scene", "label": "The shot", "default": row.get("scene") or rr.get("scene") or "", "multiline": True}]; seed = sum(map(ord, row["id"])) * 7
+        for n, p in enumerate(rr.get("pictures") or []): fields.insert(n, {"key": f"pic{n}", "label": f"Picture {n + 1}", "default": p}); pre.append({**kl, "id": f"pic{n}", "label": f"Picture {n + 1}", "seed": seed + 1 + n, "prompt": f"{{pic{n}}} No text, no logos."})
+        if rr.get("clip"): fields.append({"key": "clip", "label": "The source clip", "default": rr["clip"], "multiline": True}); pre.append({"id": "src", "type": "goal", "goal": "h3_video", "label": "The source clip", "peak_gib": 48, "seed": seed + 5, "prompt": "integrated_multimodal_description: [Shot 1] {clip} One continuous shot, no cuts.\n\noverall_soundscape: Soft room tone.\n\nnon_diegetic_music: N/A", "options": {"aspect": "16:9", "quality": "standard", "seconds": 3, "speed": "fast"}, "swappable": True})
+        step = {"id": "shot", "type": "h3_reference", "label": row["title"], "peak_gib": 48, "seed": seed, "prompt": "{scene}", "lora": row["path"], "loader": rr.get("loader"), "strength": rr.get("strength", 1.0), "steps": rr.get("steps", 20), "sampler": rr.get("sampler"), "scheduler": rr.get("scheduler"), "size": rr.get("size"), "frames": rr.get("frames", 73), "pictures": [f"@pic{n}" for n in range(len(rr.get("pictures") or []))], **({"video": "@src"} if rr.get("clip") else {}), "final": True}
+        return {**base, "models": [H3_MODEL, lic] + ([{"name": "FLUX.2 Klein 4B", "licence": "Apache-2.0", "licence_class": "open"}] if rr.get("pictures") else []), "fields": fields, "steps": pre + [step]}
     if not run: return {**base, "fields": [], "steps": [], "reference": True, "why_not": row.get("why_not") or "", **({"waiting": row["waiting"]} if row.get("waiting") else {})}
     words = [w for w in ((row.get("trigger") or {}).get("words") or []) if w]; scene = row.get("scene") or ""; lead = " ".join(w for w in words if (row.get("trigger") or {}).get("mandatory") and w.lower() not in scene.lower())
     fields = [{"key": "scene", "label": "The shot", "default": scene, "multiline": True}, {"key": "strength", "label": "LoRA strength", "default": str(run["strength"])}]; shot = {"id": "shot", "type": "goal", "goal": run["goal"], "label": row["title"], "peak_gib": 48, "seed": sum(map(ord, row["id"])) * 7, "prompt": (lead + " " if lead else "") + "{scene}", "options": run["options"], "lora": {"id": row["id"], "strength": "{strength}"}, "final": True}
     steps = [shot]; models = base["models"]
+    if row.get("run_note"): base["tips"] = [row["run_note"]] + base["tips"][:8]
+    if run["goal"] == "director_keyframes":
+        k = row["keyframes"]; kl = {"goal": "image", "type": "goal", "peak_gib": 23, "options": {"aspect": run["options"]["aspect"], "mode": "quality"}}; fields.insert(0, {"key": "still", "label": "The first frame", "default": k["still"]})
+        steps = [{**kl, "id": "still", "label": "The first frame", "seed": shot["seed"] + 1, "prompt": "Film still. {still} No text, no logos.", "swappable": True, "accepts": "image"}]
+        if not k.get("same"): fields.insert(1, {"key": "end", "label": "The last frame", "default": k["end"]}); steps.append({**kl, "id": "end", "label": "The last frame", "seed": shot["seed"] + 2, "prompt": "Film still. {end} No text, no logos.", "swappable": True, "accepts": "image"})
+        steps.append({**shot, "image": "@still", "last_image": "@still" if k.get("same") else "@end"}); models = [{"name": "FLUX.2 Klein 4B", "licence": "Apache-2.0", "licence_class": "open"}] + models
     if run["goal"] == "h3_animate":
         still = re.sub(r"\s+", " ", re.sub(r"^.*?\[Shot 1\]\s*", "", scene.split("overall_soundscape")[0], flags=re.S)).strip(); fields.insert(0, {"key": "still", "label": "The first frame", "default": re.split(r"(?<=[.!?])\s", still)[0]})
         steps = [{"id": "still", "type": "goal", "goal": "image", "label": "The first frame", "peak_gib": 23, "seed": shot["seed"] + 1, "prompt": "Film still. {still} No text, no logos.", "options": {"aspect": run["options"]["aspect"], "mode": "quality"}, "swappable": True, "accepts": "image"}, {**shot, "image": "@still"}]; models = [{"name": "FLUX.2 Klein 4B", "licence": "Apache-2.0", "licence_class": "open"}] + models
@@ -458,7 +479,7 @@ def _run_template(run, st, spec, ctx):
         kind = "video" if k.endswith("|file") else "image" if k.endswith("|image") else None
         vals[k] = _input_name(run, ctx, v, kind) if isinstance(v, str) and v.startswith("@") else (_fill(v, ctx["values"]) if isinstance(v, str) else v)
     spec2 = {**spec, "set": {nid: {k: (_fill(v, ctx["values"]) if isinstance(v, str) else v) for k, v in kv.items()} for nid, kv in (spec.get("set") or {}).items()}}
-    if "seed_node" in spec and "seed" in spec: spec2["set"].setdefault(spec["seed_node"], {})[spec.get("seed_input", "seed")] = int(spec["seed"]) + ctx["seed_add"]
+    if "seed_node" in spec and "seed" in spec: spec2["set"].setdefault(spec["seed_node"], {})[spec.get("seed_input", "seed")] = st["seed"] = int(spec["seed"]) + ctx["seed_add"]
     oi = A.object_info()
     try: g = template_graph(spec2, vals, oi, path)
     except ValueError as e: raise StepError(str(e)) from None
@@ -509,7 +530,7 @@ def _execute(run, rec):
                 if kind != "cpu":
                     _vram_gate(run, st, float(spec.get("peak_gib") or 8)); st["started"] = time.time(); _save(run)
                     th = threading.Thread(target=_sampler, args=(box, stop), daemon=True); th.start()
-                    files = _run_goal(run, st, spec, ctx) if kind == "goal" else _run_template(run, st, spec, ctx)
+                    files = EXTRA_STEPS[kind](run, st, spec, ctx) if kind in EXTRA_STEPS else _run_goal(run, st, spec, ctx) if kind == "goal" else _run_template(run, st, spec, ctx)
                     for f in files: f["local"] = _localize(run, f)
                 else: files = _cpu(run, st, spec, ctx)
             finally:
@@ -555,7 +576,8 @@ def library_rows(limit=40):
 
 # ---------- what the page shows
 def find(rid):
-    return next((r for r in load()["recipes"] if r["id"] == rid), None) or next((r for r in library() if r["id"] == rid), None)
+    from studio import pipelines
+    return next((r for r in load()["recipes"] if r["id"] == rid), None) or next((r for r in library() if r["id"] == rid), None) or pipelines.get(rid)
 def _step_view(s, d):
     kind = s["type"]; m = d.get("measured", {}); key = s.get("goal") if kind == "goal" else s.get("template") if kind == "template" else None; me = m.get(key or "", {}); ops = d.get("cpu_ops", {})
     out = {"id": s["id"], "label": s.get("label", s["id"]), "type": kind, "goal": s.get("goal"), "template": s.get("template"), "op": s.get("op"), "model": s.get("model") or me.get("model") or ("ffmpeg, on the CPU" if kind == "cpu" else ""), "seconds": me.get("seconds"), "peak_gib": s.get("peak_gib") or me.get("peak_gib") or None, "swappable": bool(s.get("swappable")), "accepts": s.get("accepts"), "final": bool(s.get("final")), "what": s.get("what") or ops.get(s.get("op") or "", "")}
@@ -564,6 +586,7 @@ def view(rec, d=None):
     d = d or load(); steps = [_step_view(s, d) for s in rec["steps"]]; t = rec.get("tested") or None; exp_s = sum(int(s["seconds"] or 0) for s in steps); gpu = [s["peak_gib"] for s in steps if s["peak_gib"]]
     return {**{k: rec.get(k) for k in ("id", "title", "pitch", "why", "tags", "fields", "models", "licence_summary", "tips", "variations", "kind", "group", "proof", "library", "reference", "why_not", "waiting", "text_note")}, "steps": steps, "status": "tested" if t else "untested", "tested": t, "render": renders().get(rec["id"]), "expected": {"seconds": exp_s, "peak_gib": max(gpu) if gpu else 0, "basis": "sum of each step's measured time on this box, with a cold start per step" if exp_s else "not measured"}}
 def validate(d=None):
+    from studio import pipelines, recipes3d, recipes_family  # they add step types to the engine
     """Problems in recipes.json or the library. A test keeps them clean; the page never has to guess."""
     from studio.goals import GOALS
     from studio import loras
@@ -596,7 +619,7 @@ def validate(d=None):
                 if not s.get("peak_gib"): probs.append(f"{rid}/{sid}: no peak_gib for the VRAM gate")
             elif ty == "cpu":
                 if s.get("op") not in ("frame", "join", "beat_cut", "cut_between", "loop", "compare", "mux", "sound"): probs.append(f"{rid}/{sid}: unknown op {s.get('op')}")
-            elif ty != "plan": probs.append(f"{rid}/{sid}: unknown type {ty}")
+            elif ty != "plan" and ty not in EXTRA_STEPS: probs.append(f"{rid}/{sid}: unknown type {ty}")
             refs = [v for k, v in s.items() if k in ("image", "last_image", "video", "clip", "audio") and isinstance(v, str)] + list(s.get("clips") or []) + [v for v in (s.get("values") or {}).values() if isinstance(v, str) and v.startswith("@")]
             for x in refs:
                 if not str(x).startswith("@") or str(x)[1:] not in done: probs.append(f"{rid}/{sid}: reference {x} is not an earlier step")
