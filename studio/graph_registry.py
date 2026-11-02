@@ -76,12 +76,24 @@ def _tryon_rows():
     return [{"key": "tryon:" + m["id"], "kind": m["via"], "section": "tryon", "id": m["id"], "label": f"Try-on: {m['label']}", "sub": m["note"], "licence": m["licence"], "graph_url": None, "open": "design/fashion", "call": {"method": "POST", "path": "/api/tryon/run", "body": {"method": m["id"], "person": "NAME_FROM_POST_/api/upload", "garment": "NAME_FROM_POST_/api/upload", "category": "tops"}, "poll": "/api/tryon/jobs/ID"}} for m in T.METHODS if m["via"] == "runner"]
 
 
+def _motion_rows():
+    """Every route on the Motion page. One that runs a family template points at that graph; a tool or a program has none, and says so. Whatever it runs, the call goes through the same checks."""
+    from studio import feature_motion as Mo
+    rows = []
+    for m in Mo.listing():
+        graph = f"/api/family-graphs/{m['family_slug']}/{m['template']}" if m["via"] == "family" else None
+        s = (m["samples"] or [{}])[0]
+        body = {"route": m["id"], **{k: ("a person walks forward, then waves" if k == "text" else f"NAME_FROM_POST_/api/upload") for k in m["needs"]}, **({"permission": True} if m["person"] else {})}
+        rows.append({"key": "motion:" + m["id"], "kind": "family" if m["via"] == "family" else m["via"], "section": "motion", "id": m["id"], "label": f"Motion: {m['label']}", "sub": m["does"], "job": m["group"], "licence": m["licence"], "commercial": m["commercial"], "proof": {"status": m["proof"], "seconds": s.get("seconds"), "peak_vram_gib": s.get("peak_vram_gib")}, "ready": m["ready"], "why_not": m["why_not"], "art": s.get("poster"), "graph_url": graph, "open": "motion", "call": {"method": "POST", "path": "/api/motion/run", "body": body, "poll": "/api/motion/jobs/ID", "note": "A route that shows a person refuses a call without permission: true, whoever calls it."}})
+    return rows
+
+
 def _workflow_rows():
     return [{"key": "workflow:" + n, "kind": "workflow", "id": n, "label": WORKFLOWS[n][0], "sub": "World Kit" if WORKFLOWS[n][1] == "worldkit" else "Virtual Set", "graph_url": "/api/workflow-graphs/" + n, "open": WORKFLOWS[n][1], "call": WORKFLOWS[n][2]} for n in workflow_files() if n in WORKFLOWS]
 
 
 def all_rows():
-    rows = [*_goal_rows(), *_model_rows(), *_tryon_rows(), *_workflow_rows(), *_family_rows(), *_recipe_rows()]
+    rows = [*_goal_rows(), *_model_rows(), *_tryon_rows(), *_motion_rows(), *_workflow_rows(), *_family_rows(), *_recipe_rows()]
     for r in rows: r.setdefault("runs_as", RUNS[r["kind"]])
     return rows
 

@@ -2085,6 +2085,202 @@
    ],
    "source": "Studio template; kijai's CCSR nodes, which passed Pack Lab",
    "note": ""
+  },
+  {
+   "family": "LivePortrait",
+   "name": "motion_liveportrait",
+   "title": "LivePortrait: a still face follows a clip",
+   "desc": "A still face takes its expressions and head turns from a driving clip. Asks for confirmation that the person is invented or gave permission.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 0.6,
+   "tags": [
+    "Studio template",
+    "Motion"
+   ],
+   "models": [
+    {
+     "name": "appearance_feature_extractor.safetensors",
+     "dir": "liveportrait"
+    },
+    {
+     "name": "spade_generator.safetensors",
+     "dir": "liveportrait"
+    }
+   ],
+   "source": "motion page"
+  },
+  {
+   "family": "Wan2.2-Animate",
+   "name": "motion_wan_animate2",
+   "title": "Wan Animate 2: a person follows a clip",
+   "desc": "One picture of a person and one driving clip, 81 frames, no pose step. Asks for confirmation that the person is invented or gave permission.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 24.9,
+   "tags": [
+    "Studio template",
+    "Motion"
+   ],
+   "models": [
+    {
+     "name": "wan_animate_2_distill_int8_convrot.safetensors",
+     "dir": "diffusion_models"
+    },
+    {
+     "name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+     "dir": "text_encoders"
+    },
+    {
+     "name": "clip_vision_h.safetensors",
+     "dir": "clip_vision"
+    },
+    {
+     "name": "Wan2_1_VAE_bf16.safetensors",
+     "dir": "vae"
+    }
+   ],
+   "source": "motion page"
+  },
+  {
+   "family": "SAM-3D-Body",
+   "name": "motion_sam3d_capture",
+   "title": "SAM 3D Body: capture a clip's motion",
+   "desc": "Each frame of a clip gives a body pose; they are smoothed and written as a BVH. Asks for confirmation that the person is invented or gave permission.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 2.8,
+   "tags": [
+    "Studio template",
+    "Motion"
+   ],
+   "models": [
+    {
+     "name": "sam_3d_body_dinov3_bf16.safetensors",
+     "dir": "detection"
+    }
+   ],
+   "source": "motion page"
+  },
+  {
+   "family": "Wan-SCAIL-2",
+   "name": "motion_scail2",
+   "title": "SCAIL 2: replace a person in a clip",
+   "desc": "One picture of a person replaces the performer in a driving clip, tracked by SAM 3.1. Asks for confirmation that the person is invented or gave permission.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 23.0,
+   "tags": [
+    "Studio template",
+    "Motion"
+   ],
+   "models": [
+    {
+     "name": "wan2.1_14B_SCAIL_2_nvfp4_mxpf8_mix.safetensors",
+     "dir": "diffusion_models"
+    },
+    {
+     "name": "lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors",
+     "dir": "loras"
+    },
+    {
+     "name": "Wan2_1_VAE_bf16.safetensors",
+     "dir": "vae"
+    },
+    {
+     "name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+     "dir": "text_encoders"
+    },
+    {
+     "name": "clip_vision_h.safetensors",
+     "dir": "clip_vision"
+    },
+    {
+     "name": "wan2.1_SCAIL_2_DPO_lora_bf16.safetensors",
+     "dir": "loras"
+    }
+   ],
+   "source": "motion page"
+  },
+  {
+   "family": "Wan2.2-Dancer",
+   "name": "motion_wan_dancer",
+   "title": "Wan Dancer: a person dances to a track",
+   "desc": "One picture of a person and a music track. Asks for confirmation that the person is invented or gave permission.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 52.9,
+   "tags": [
+    "Studio template",
+    "Motion"
+   ],
+   "models": [
+    {
+     "name": "wan2.2_dancer_14b_global_fp8_scaled.safetensors",
+     "dir": "diffusion_models"
+    },
+    {
+     "name": "wan2.2_dancer_14b_local_fp8_scaled.safetensors",
+     "dir": "diffusion_models"
+    },
+    {
+     "name": "lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors",
+     "dir": "loras"
+    },
+    {
+     "name": "umt5_xxl_fp16.safetensors",
+     "dir": "text_encoders"
+    },
+    {
+     "name": "clip_vision_h.safetensors",
+     "dir": "clip_vision"
+    },
+    {
+     "name": "Wan2_1_VAE_bf16.safetensors",
+     "dir": "vae"
+    }
+   ],
+   "source": "motion page"
+  },
+  {
+   "family": "Wan2.1",
+   "name": "motion_infinitetalk",
+   "title": "InfiniteTalk: a picture speaks a track",
+   "desc": "One picture and a speech track. Asks for confirmation that the person is invented or gave permission.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 23.0,
+   "tags": [
+    "Studio template",
+    "Motion"
+   ],
+   "models": [
+    {
+     "name": "wan2.1_i2v_480p_14B_fp8_scaled.safetensors",
+     "dir": "diffusion_models"
+    },
+    {
+     "name": "Wan2_1-InfiniteTalk-Single_fp8_e4m3fn_scaled_KJ.safetensors",
+     "dir": "model_patches"
+    },
+    {
+     "name": "wav2vec2-chinese-base_fp16.safetensors",
+     "dir": "audio_encoders"
+    },
+    {
+     "name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+     "dir": "text_encoders"
+    },
+    {
+     "name": "Wan2_1_VAE_bf16.safetensors",
+     "dir": "vae"
+    },
+    {
+     "name": "lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors",
+     "dir": "loras"
+    }
+   ],
+   "source": "motion page"
   }
  ]
 }

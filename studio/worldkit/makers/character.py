@@ -47,8 +47,10 @@ def recipe(given: dict | None) -> tuple[dict, list[str]]:
         if not isinstance(c, dict) or not CLIP_NAME.match(str(c.get("name", ""))):
             bad.append("each clip has a name of lowercase letters (and _)")
             continue
-        if not str(c.get("text") or "").strip():
+        if not str(c.get("text") or "").strip() and not c.get("bvh"):
             bad.append(f"clip {c['name']}: describe the motion")
+        if c.get("bvh") and (not str(c["bvh"]).endswith(".bvh") or ".." in str(c["bvh"]) or str(c["bvh"]).startswith("/")):
+            bad.append(f"clip {c['name']}: a motion file is a .bvh in the output folder")
         names.append(c["name"])
     if len(set(names)) != len(names):
         bad.append("clip names must be different")
@@ -59,6 +61,10 @@ def _clip_steps(c: dict) -> list[S.Step]:
     name = c["name"]
 
     def motion(ctx):
+        if c.get("bvh"):                       # a motion captured or made earlier: only the fit is left to do
+            from psn import paths
+            from studio.worldkit.makers.prop import _under
+            return {"main": {"path": str(_under(paths.output_dir(True), c["bvh"], (".bvh",)))}}
         return {"main": {"path": str((ctx.get("kimodo") or tools.kimodo)(c["text"], ctx["work"] / f"motion_{name}", seconds=CLIP_SECONDS))}}
 
     def retarget(ctx):

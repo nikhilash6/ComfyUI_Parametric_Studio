@@ -9,6 +9,7 @@ import signal
 import subprocess
 from pathlib import Path
 
+from psn import paths
 from studio.worldkit import capabilities as C
 from studio.worldkit import blender as B
 from studio.worldkit.steps import StepError
@@ -143,14 +144,12 @@ def autoremesher(mesh, work: Path, *, run=None) -> Path:
 
 
 def kimodo(text: str, work: Path, *, seconds: int = 5, seed: int = 7, run=None, free=None) -> Path:
-    """A motion description -> a BVH. Short of room for the text encoder on the card, it runs on the CPU: slower, and about 3 GB on the card instead of 17."""
+    """A motion description -> a BVH. The text encoder runs on the CPU by default: about 2 GB on the card instead of 17 and 16 GB of RAM, measured here at 131 s for a 5 s clip. STUDIO_KIMODO_TEXT_DEVICE=cuda puts it back on the card when there is room for it."""
     require("kimodo")
-    extra = {}
-    if B.vram_problem(PEAK_GB["kimodo"], free=free):
-        vram_gate("kimodo_cpu_text", free=free)
-        extra["TEXT_ENCODER_DEVICE"] = "cpu"
+    device = paths.setting("STUDIO_KIMODO_TEXT_DEVICE", default="cpu")
+    vram_gate("kimodo" if device != "cpu" else "kimodo_cpu_text", free=free)
     work = Path(work); work.mkdir(parents=True, exist_ok=True); stem = work / "motion"; log = work / "kimodo.log"
-    rc = (run or call)([C.tool_home("kimodo") / "run_kimodo.sh", " ".join(str(text).split()), "--output", stem, "--duration", seconds, "--bvh", "--seed", seed], log, TIMEOUT_S["kimodo"], **({"env_extra": extra} if extra else {}))
+    rc = (run or call)([C.tool_home("kimodo") / "run_kimodo.sh", " ".join(str(text).split()), "--output", stem, "--duration", seconds, "--bvh", "--seed", seed], log, TIMEOUT_S["kimodo"], env_extra={"TEXT_ENCODER_DEVICE": device})
     return _made(stem.with_suffix(".bvh"), rc, "Kimodo", log)
 
 

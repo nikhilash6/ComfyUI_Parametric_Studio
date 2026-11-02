@@ -7,6 +7,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
 from psn import instances as I
 from studio import apps as A
+from studio import likeness
 from studio.ui2api import ui_to_api
 ROOT = Path(__file__).resolve().parent; STATUS = ROOT / "family_status.json"; WEB = ROOT / "web"; EXTRA = ROOT / "family_templates"
 REAP_MIN = float(os.environ.get("STUDIO_FAMILY_REAP_MIN", "15")); RUN_TIMEOUT = int(os.environ.get("STUDIO_FAMILY_RUN_TIMEOUT", "1800")); DISK_SPARE_GB = 25
@@ -306,7 +307,7 @@ def template_form(slug: str, tid: str):
     try: oi = _oi(info["port"]) if up else A.object_info()
     except Exception: raise HTTPException(503, "Could not read the node list. Start this family or the main ComfyUI first.") from None
     d = A.describe(tid, p, oi); s = tpl_state(t, files)
-    return {"id": tid, "title": t.get("title"), "desc": t.get("desc"), "media": t.get("media"), "inputs": d["inputs"], "problems": d["problems"], "unknown_nodes": d["unknown_nodes"], "nodes": d["nodes"], "outputs": d["outputs"], "ready": s["ready"] and d["ready"] and not (up and d["missing_models"]), "missing": s["missing"], "missing_gb": s["missing_gb"], "need_gb": s["need_gb"], "weights_gb": s["weights_gb"], "gb": t.get("gb"), "checked_on": "this family" if up else "the main ComfyUI"}
+    return {"id": tid, "title": t.get("title"), "desc": t.get("desc"), "media": t.get("media"), "likeness": tid in likeness.TEMPLATES, "inputs": d["inputs"], "problems": d["problems"], "unknown_nodes": d["unknown_nodes"], "nodes": d["nodes"], "outputs": d["outputs"], "ready": s["ready"] and d["ready"] and not (up and d["missing_models"]), "missing": s["missing"], "missing_gb": s["missing_gb"], "need_gb": s["need_gb"], "weights_gb": s["weights_gb"], "gb": t.get("gb"), "checked_on": "this family" if up else "the main ComfyUI"}
 def _jobs_file(slug): return os.path.join(I.INSTANCES, slug, "studio_jobs.jsonl")
 def _persist(rec):
     try:
@@ -366,7 +367,7 @@ def _work(rec, f, path, values):
         rec["finished"] = time.time(); _persist(rec)
 @router.post("/api/families/{slug}/templates/{tid}/run")
 def template_run(slug: str, tid: str, b: dict = None):
-    b = b or {}; f = _family(slug); t, p = _tpl(f, tid); s = tpl_state(t, scan().get(f, {})); jid = "fam-" + uuid.uuid4().hex[:12]; values = b.get("values") or {}
+    b = b or {}; likeness.template_guard(tid, b); f = _family(slug); t, p = _tpl(f, tid); s = tpl_state(t, scan().get(f, {})); jid = "fam-" + uuid.uuid4().hex[:12]; values = b.get("values") or {}
     if not s["ready"] and not b.get("anyway"): raise HTTPException(400, "This template needs files that are not in this family's folder: " + ", ".join(m["name"] for m in s["missing"][:4]))
     rec = {"job": jid, "slug": slug, "family": f, "template": tid, "title": t.get("title"), "status": "queued", "values": values, "prompt": _prompt_text(values) or t.get("title"), "need_gb": s["need_gb"], "started": time.time()}; JOBS[jid] = rec
     threading.Thread(target=_work, args=(rec, f, p, values), daemon=True, name=f"family-job-{jid}").start(); return {"job": jid, "need_gb": s["need_gb"]}

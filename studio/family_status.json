@@ -12012,6 +12012,43 @@
 "test": {},
 "media": [],
 "templates": []
+},
+"LivePortrait": {
+"slug": "liveportrait",
+"kind": "video",
+"era": 2024,
+"licence": "MIT (its InsightFace face finder is non-commercial)",
+"crew": "master",
+"repos": [
+"KwaiVGI/LivePortrait"
+],
+"what": "A still face takes its expressions and head turns from a driving clip of another face.",
+"what_source": "LivePortrait's model card",
+"level": "render",
+"media": [
+{
+"id": "fam_liveportrait_0",
+"prompt": "An invented man follows an invented woman's clip",
+"seconds": 79.6,
+"peak_vram_gib": 2.2,
+"tpl": "motion_liveportrait",
+"own": true,
+"kind": "video",
+"src": "motion/liveportrait_0.mp4",
+"poster": "motion/liveportrait_0.webp",
+"model": "KwaiVGI/LivePortrait"
+}
+],
+"templates": [],
+"test": {
+"tpl": "motion_liveportrait",
+"render": "ok",
+"tested": "2026-11-01",
+"secs": 79.6,
+"peak_gib": 2.2,
+"kind": "video",
+"note": "motion_liveportrait rendered on this box's own LivePortrait family server 2026-11-01"
+}
 }
 }
 }

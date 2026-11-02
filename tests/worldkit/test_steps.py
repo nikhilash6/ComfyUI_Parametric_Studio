@@ -128,3 +128,34 @@ def test_a_job_already_resubmitted_once_is_not_resubmitted_again():
     state["steps"][0].update(status="running", job_id="j7", attempts=2)          # already the resubmission
     state = S.run(state, _steps(), ctx={}, submit=st.submit, wait=st.wait, save=lambda s: None)
     assert state["state"] == "failed" and st.reqs == [] and "restarted" in state["error"]
+
+
+def _built(*rows, state="done"):
+    return {"state": state, "error": "", "steps": [{"name": n, "status": st, "note": note, "outputs": {"main": {"path": n}}, "error": ""} for n, st, note in rows]}
+
+
+LOST = ("motion_idle", "done", ""), ("retarget_idle", "done", ""), ("motion_wave", "failed", "optional: the build continues without it"), ("retarget_wave", "skipped", ""), ("assemble", "done", ""), ("preview", "done", "")
+
+
+def test_a_lost_motion_is_named_once_the_build_has_ended():
+    assert S.lost_motions(_built(*LOST)) == ["wave"]
+    assert S.lost_motions(_built(*LOST, state="building")) == [] and S.lost_motions(None) == []
+    assert S.lost_motions(_built(("motion_my_wave", "done", ""), ("retarget_my_wave", "failed", "optional: x"))) == ["my_wave"]
+
+
+def test_retrying_a_lost_motion_keeps_the_other_clips():
+    got = {r["name"]: r["status"] for r in S.retry_motion(_built(*LOST), "wave", "assemble")["steps"]}
+    assert got == {"motion_idle": "done", "retarget_idle": "done", "motion_wave": "pending", "retarget_wave": "pending", "assemble": "pending", "preview": "pending"}
+
+
+def test_the_motion_retry_verb_needs_a_lost_motion():
+    from studio.worldkit import api as A
+    meta = {"id": "a", "type": "character", "name": "x", "status": "approved", "build": _built(*LOST), "recipe": {}}
+    class Lib:
+        def get(self, aid): return meta
+        def update(self, aid, **k): meta.update(k); return meta
+    started = []
+    code, _ = A.action(Lib(), "a", "retry-motion", {"name": "idle"}, start=started.append, is_running=lambda a: False); assert code == 400 and not started
+    code, _ = A.action(Lib(), "a", "retry-motion", {"name": "wave"}, start=started.append, is_running=lambda a: True); assert code == 409 and not started
+    code, got = A.action(Lib(), "a", "retry-motion", {"name": "wave"}, start=started.append, is_running=lambda a: False)
+    assert code == 200 and started == ["a"] and meta["status"] == "draft" and {r["name"]: r["status"] for r in meta["build"]["steps"]}["motion_wave"] == "pending"

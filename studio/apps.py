@@ -5,7 +5,7 @@ import ast, glob, json, os, re, time, urllib.request
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from psn import paths
-from studio import sfw
+from studio import likeness, sfw
 from studio.ui2api import ui_to_api, promoted_widgets
 COMFY = os.environ.get("COMFYUI_URL", "http://127.0.0.1:8200").rstrip("/")
 def _dirs():
@@ -244,7 +244,9 @@ def fetch_models(aid, path, oi, confirm=False, downloader=None):
         (downloader or download)(h["url"], dest, sha256=sha if sha and len(sha) == 64 else None); done.append(dest)
     return done
 router = APIRouter()
-class Run(BaseModel): values: dict = {}
+class Run(BaseModel):
+    values: dict = {}
+    permission: bool = False
 @router.get("/api/apps")
 def apps_list():
     try: oi = object_info()
@@ -258,7 +260,7 @@ def apps_list():
 def apps_get(aid: str):
     p = find_apps().get(aid)
     if not p: raise HTTPException(404, "no such app")
-    return describe(aid, p, object_info())
+    return {**describe(aid, p, object_info()), "likeness": aid in likeness.TEMPLATES}
 @router.post("/api/apps/{aid}/fetch-models")
 def apps_fetch(aid: str, b: dict):
     p = find_apps().get(aid)
@@ -275,7 +277,7 @@ def apps_packs(aid: str):
 def apps_run(aid: str, b: Run):
     p = find_apps().get(aid)
     if not p: raise HTTPException(404, "no such app")
-    sfw.check(*b.values.values())
+    sfw.check(*b.values.values()); likeness.template_guard(aid, {"values": b.values, "permission": b.permission})
     try: g = build_graph(p, b.values, object_info())
     except ValueError as e: raise HTTPException(400, str(e)) from None
     try: r = urllib.request.urlopen(urllib.request.Request(COMFY + "/prompt", json.dumps({"prompt": g, "client_id": "studio-apps", **({"extra_data": {"api_key_comfy_org": os.environ["COMFY_API_KEY"]}} if not open_edition() and os.environ.get("COMFY_API_KEY") else {})}).encode(), {"Content-Type": "application/json"}), timeout=30)

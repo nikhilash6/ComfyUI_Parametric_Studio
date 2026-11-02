@@ -38,7 +38,7 @@ def summary(meta: dict, running: bool = False) -> dict:
     return {"id": meta["id"], "type": meta["type"], "name": meta["name"], "tags": meta.get("tags", []),
             "status": meta["status"], "build": build.get("state", "pending"), "error": build.get("error", ""),
             "progress": [sum(1 for r in steps_ if r["status"] in ("done", "skipped")), len(steps_)],
-            "failed_step": failed["name"] if failed else "", "files": sorted((meta.get("files") or {}).keys()),
+            "failed_step": failed["name"] if failed else "", "lost_motions": S.lost_motions(build) if meta["type"] == "character" else [], "files": sorted((meta.get("files") or {}).keys()),
             "scale_m": meta.get("scale_m"), "clips": [c.get("name") for c in meta.get("clips") or []],
             "rig_bones": (meta.get("rig") or {}).get("bones", 0), "licence_class": meta.get("licence_class"),
             "created": meta.get("created"), "updated": meta.get("updated"), "running": bool(running)}
@@ -241,11 +241,18 @@ def action(lib, aid: str, verb: str, payload, *, start, is_running, cancel=None,
     if meta is None:
         return _err(404, "no such asset")
     running = is_running(aid)
-    if verb in ("retry", "archive", "as-prop", "clips") and running:
+    if verb in ("retry", "retry-motion", "archive", "as-prop", "clips") and running:
         return _err(409, "this asset is building now; wait for it to finish")
     try:
         if verb == "retry":
             lib.update(aid, build=S.retry(meta["build"]))
+            start(aid)
+            return 200, {"asset": summary(lib.get(aid), True)}
+        if verb == "retry-motion":
+            name = str((payload or {}).get("name") or "")
+            if name not in S.lost_motions(meta.get("build")):
+                return _err(400, "that motion is not one this character lost")
+            lib.update(aid, build=S.retry_motion(meta["build"], name, character.BUILD_STEP), status="draft")
             start(aid)
             return 200, {"asset": summary(lib.get(aid), True)}
         if verb == "cancel":

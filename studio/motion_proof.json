@@ -1,0 +1,124 @@
+{
+ "routes": {
+  "kimodo_soma": {
+   "label": "Rendered here, looked at frame by frame",
+   "weak": [
+    "Trouser legs can web together at a long stride: cloth is skinned to the legs, not simulated.",
+    "Feet stay flat and only turn: no heel-to-toe.",
+    "It does what the words say only some of the time: seed 7 on these words walked and never waved, so it was rejected. Try two seeds.",
+    "Text encoding on the CPU takes about 16 GB of RAM."
+   ],
+   "samples": [
+    {
+     "title": "Words on Ines, an invented character",
+     "prompt": "a person walks forward, stops, and waves with the right hand",
+     "seed": 21,
+     "alt": "A woman with a silver bob in a dark blue suit walks forward and raises her right arm in a wave.",
+     "checked": "2026-11-01",
+     "numbers": {
+      "foot_slide_mean_cm_s": 3.12,
+      "foot_slide_p95_cm_s": 9.91,
+      "jitter_rms_m_s3": 146.4
+     },
+     "src": "motion/kimodo_soma_0.mp4",
+     "poster": "motion/kimodo_soma_0.webp",
+     "kind": "video",
+     "ar": "540 / 720",
+     "seconds": 83.3,
+     "peak_vram_gib": 2.1
+    }
+   ]
+  },
+  "kimodo_dance": {
+   "label": "Rendered here, looked at frame by frame",
+   "weak": [
+    "It does not hear music, so the steps are not on any beat.",
+    "Feet stay flat and only turn: no heel-to-toe.",
+    "The long coat stretches at the hips; cloth is skinned to the legs, not simulated.",
+    "Seed 21 on the same words came out twice as jittery and was rejected."
+   ],
+   "samples": [
+    {
+     "title": "A dance on Tomas, an invented character",
+     "prompt": "a person dances happily, stepping side to side and swinging their arms",
+     "seed": 7,
+     "alt": "A bearded man in a sand-coloured coat dances with bent knees, arms swinging out, on a marked floor.",
+     "checked": "2026-11-01",
+     "numbers": {
+      "foot_slide_mean_cm_s": 2.14,
+      "foot_slide_p95_cm_s": 5.85,
+      "jitter_rms_m_s3": 170.1
+     },
+     "src": "motion/kimodo_dance_0.mp4",
+     "poster": "motion/kimodo_dance_0.webp",
+     "kind": "video",
+     "ar": "540 / 720",
+     "seconds": 98.7,
+     "peak_vram_gib": 2.1
+    }
+   ]
+  },
+  "liveportrait": {
+   "label": "Rendered here, looked at frame by frame",
+   "weak": [
+    "Only the head moves: the shoulders and coat stay still, and a big head turn pulls the edge of the hair and scarf.",
+    "It copies expressions, it does not hear speech.",
+    "Its driving clip must show one clear face from the front."
+   ],
+   "samples": [
+    {
+     "title": "An invented man follows an invented woman's clip",
+     "prompt": "Both people were made here. The driving clip was made with Wan 2.2.",
+     "seed": null,
+     "alt": "A bearded man in a scarf turns his head, smiles and tilts as the driving clip does.",
+     "checked": "2026-11-01",
+     "src": "motion/liveportrait_0.mp4",
+     "poster": "motion/liveportrait_0.webp",
+     "kind": "video",
+     "ar": "600 / 600",
+     "seconds": 79.6,
+     "peak_vram_gib": 2.2
+    }
+   ]
+  },
+  "latentsync": {
+   "label": "Rendered here, looked at frame by frame, sync measured",
+   "weak": [
+    "The lower face comes out a little softer than the rest of the frame.",
+    "A thick beard blurs: we rejected a bearded test for that.",
+    "It redraws the mouth only: the head keeps whatever the clip was doing."
+   ],
+   "samples": [
+    {
+     "title": "An invented woman speaks a made-up line",
+     "prompt": "The clip was made with Wan 2.2 and the voice with Kokoro-82M's built-in voice bf_emma. Before lip-sync, mouth and voice matched at -0.02 at no lag; after, 0.35.",
+     "seed": 1247,
+     "alt": "A woman in a dark coat speaks to the camera, turning her head.",
+     "checked": "2026-11-01",
+     "numbers": {
+      "best_lag_ms": 40,
+      "corr_at_best": 0.43
+     },
+     "sound": true,
+     "src": "motion/latentsync_0.mp4",
+     "poster": "motion/latentsync_0.webp",
+     "kind": "video",
+     "ar": "600 / 600",
+     "seconds": 166.1,
+     "peak_vram_gib": 14.6
+    }
+   ]
+  }
+ },
+ "hero": {
+  "route": "kimodo_dance",
+  "prompt": "a person dances happily, stepping side to side and swinging their arms",
+  "note": "Kimodo, fitted to a World Kit character made here. Text encoder on the CPU, so it fits beside other work on the card.",
+  "alt": "A bearded man in a sand-coloured coat dances on a marked floor.",
+  "seconds_label": "99 s",
+  "peak_label": "2.1 GB",
+  "src": "motion/kimodo_dance_0.mp4",
+  "poster": "motion/kimodo_dance_0.webp",
+  "ar": "540 / 720"
+ }
+}

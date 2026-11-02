@@ -30,7 +30,7 @@ Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Win
 | Recipes | 2 of 10 flagships rendered. A library of 740 passes an offline format check, and 540 of its recipes show a result we rendered here (467 pictures, 22 clips, 48 sounds, 3 3D models), each from one run. The sounds were checked for level and length, not listened to. More renders are on the way | The other 8 flagships and the rest of the library |
 | Sampling Lab | 44 renders on SDXL, SD 1.5 and SD 3.5, and core sampler measurements | Pack entries are read from source, not run |
 | RES4LYF page | A credit page. The pack is not shipped; run separately, of 154 nodes checked 92 rendered, 14 ran and 44 errored | The other nodes in the pack |
-| Families | 94 wired, 56 with a render on record | The other 38 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
+| Families | 95 wired, 57 with a render on record | The other 38 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
 
 <div align="center">
 
@@ -50,7 +50,7 @@ Closed AI video apps give you a prompt box and hide everything else. ComfyUI giv
 |---|---|---|
 | **Cost per render** | Credits | **0 on your own GPU** |
 | **How a result was made** | Hidden | **The real graph, in 3D** |
-| **Which models** | The ones they sell you | **94 families wired, 56 with a render on record** |
+| **Which models** | The ones they sell you | **95 families wired, 57 with a render on record** |
 | **Your files and prompts** | On their servers | **Stay on your machine** |
 | **Help** | A docs page | **A crew of characters that answer from cited notes, out loud** |
 | **Can you fork it?** | No | **Yes: AGPL-3.0** |
@@ -96,7 +96,7 @@ Open **Pro** and the exact ComfyUI graph appears in 3D, with data flowing along 
 ![Comfy Prime and the crew](docs/img/crew.jpg)
 
 ### Model families, each with its own backend
-94 families are wired, and 56 have a render on record. They run from **Stable Diffusion 1.5, SDXL and SD3** through **FLUX, Wan, HunyuanVideo, Mochi, LTX and MiniMax H3**, plus 3D, audio and utility models. Each has its own isolated ComfyUI instance with its own custom nodes and model view, started on demand behind a VRAM check and stopped when idle. Each family shows its state: rendered, ready, or what to download. Most family weights are not on our box any more, so a family with no render on record is wired, not proven.
+95 families are wired, and 57 have a render on record. They run from **Stable Diffusion 1.5, SDXL and SD3** through **FLUX, Wan, HunyuanVideo, Mochi, LTX and MiniMax H3**, plus 3D, audio and utility models. Each has its own isolated ComfyUI instance with its own custom nodes and model view, started on demand behind a VRAM check and stopped when idle. Each family shows its state: rendered, ready, or what to download. Most family weights are not on our box any more, so a family with no render on record is wired, not proven.
 
 ![Model families](docs/img/families.jpg)
 
@@ -119,6 +119,9 @@ Bring one clip and queue the lot: reshoot it with a new camera, orbit around the
 **World Kit** keeps one library of `.glb` places, props and characters with real scale and colliders, and exports a Godot pack. The place maker, looks, library and export ran here on the CPU with Blender, and the prop maker ran from a mesh. Describe an invented person and the character maker makes a sheet, checks it, and builds a rigged body with motions: it ran here on real models. The figure wears the sheet's clothes, hair and colour; its back and sides are the model's guess. Word checks and a picture check run on every character; the page says what they cannot catch. Other steps that need a model are written and tested with fakes, but have not run on a real model.
 
 **Virtual Set** blocks a shot in a real-scale 3D place and steers a video model with what Blender renders. The passes ran on the CPU, and modes A, B, C and D have each rendered once on one street shot. Wan, a pose pass and Qwen keyframes have not run. World Kit and Virtual Set need extra downloads the installer does not fetch yet; the page says what is missing.
+
+### Motion: words in, a body moving
+Make a character move from words with Kimodo and put the clip on a rigged World Kit character, make a person follow a performance, animate a portrait, lip-sync a clip, capture motion from video into a rig. Each route shows only what rendered here, with its seed, time, peak VRAM, licence and faults. Anything that shows a person asks you to confirm they are invented or gave permission, runs word and picture checks, and marks the result as AI-generated. Those checks can't tell a real person from an invented one: that part is your word, and it stays with the file.
 
 ### Sampling Lab and the RES4LYF page
 **Sampling Lab** explains samplers and schedulers in plain words, with 44 real renders on SDXL, SD 1.5 and SD 3.5 and measurements of ComfyUI's core code. The atlas entries for third-party packs are read from their source, not run. The SD 3.5 renders were decoded with a preview VAE, so they are not final quality.

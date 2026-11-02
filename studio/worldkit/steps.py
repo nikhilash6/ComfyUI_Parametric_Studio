@@ -76,6 +76,22 @@ def retry(state: dict) -> dict:
     return {**state, "steps": steps, "state": "pending", "error": ""}
 
 
+def lost_motions(state: dict | None) -> list[str]:
+    """Clips whose optional motion or fit failed, so the finished character has none of them. Only once the build has ended."""
+    if not state or state.get("state") not in ("done", "failed"):
+        return []
+    return [r["name"].split("_", 1)[1] for r in state.get("steps") or [] if r["name"].startswith(("motion_", "retarget_")) and r["status"] == "failed"]
+
+
+def retry_motion(state: dict, name: str, then: str) -> dict:
+    """One lost clip again: its motion and fit, then everything from `then` on (the file has to be put together again). The other clips keep what they made."""
+    mine = (f"motion_{name}", f"retarget_{name}")
+    names = [r["name"] for r in state["steps"]]
+    i = names.index(then)
+    steps = [_pending(r) if r["name"] in mine or k >= i else r for k, r in enumerate(state["steps"])]
+    return {**state, "steps": steps, "state": "pending", "error": ""}
+
+
 def outputs(state: dict) -> dict:
     return {r["name"]: r["outputs"] for r in state.get("steps") or [] if r["status"] == "done"}
 

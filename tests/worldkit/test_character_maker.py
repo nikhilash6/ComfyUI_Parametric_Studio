@@ -152,3 +152,14 @@ def test_assemble_maps_the_rig_and_records_the_clips(tmp_path, monkeypatch):
     _, _, _, state = _build(tmp_path, monkeypatch, fb=FB(bones()[:12]))
     main = next(r for r in state["steps"] if r["name"] == "assemble")["outputs"]["main"]
     assert main["rig"]["slots"] == {} and "no humanoid map" in main["note"]
+
+
+def test_a_clip_can_be_a_motion_file_from_the_output_folder(tmp_path, monkeypatch):
+    from psn import paths
+    (tmp_path / "motion").mkdir(); f = tmp_path / "motion" / "cap.bvh"; f.write_text("HIERARCHY")
+    monkeypatch.setattr(paths, "output_dir", lambda *a: str(tmp_path))
+    r, bad = CH.recipe({"clips": [{"name": "caught", "bvh": "motion/cap.bvh"}]}); assert not bad
+    step = CH._clip_steps(r["clips"][0])[0]; assert step.local({"work": tmp_path})["main"]["path"] == str(f)
+    for b in ("../x.bvh", "/etc/x.bvh", "motion/cap.txt"):
+        assert CH.recipe({"clips": [{"name": "caught", "bvh": b}]})[1]
+    assert CH.recipe({"clips": [{"name": "caught"}]})[1]
