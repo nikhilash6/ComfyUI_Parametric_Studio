@@ -65,11 +65,13 @@ def test_the_counts_on_the_page_come_from_the_data():
 
 def test_every_outside_link_is_marked_and_points_at_the_author():
     assert 'target="_blank" rel="noopener noreferrer"' in PAGE
-    assert set(re.findall(r'https?://[^\s"`/]+/?[^\s"`]*', PAGE)) <= {
-        "https://github.com/ClownsharkBatwing/RES4LYF/",
-        "https://github.com/ClownsharkBatwing/UltraCascade",
-        "https://huggingface.co/ClownsharkBatwing/CSBW_Style",
-    }
+    links = set(re.findall(r'https?://[^\s"`/]+/?[^\s"`]*', PAGE))
+    assert {"https://github.com/ClownsharkBatwing/RES4LYF/", "https://github.com/ClownsharkBatwing/UltraCascade", "https://huggingface.co/ClownsharkBatwing/CSBW_Style"} <= links
+    assert all(re.match(r"https://(github\.com|huggingface\.co)/ClownsharkBatwing/[\w.-]+/?$", u) for u in links), links
+
+
+def test_the_authors_other_work_says_we_have_not_run_it():
+    assert "More from ClownsharkBatwing" in PAGE and "We haven't run any of these." in PAGE and "KIN_ASOF" in PAGE
 
 
 def test_the_page_says_the_pack_is_not_part_of_the_studio():

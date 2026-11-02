@@ -16,7 +16,7 @@ def gallery():
 
 
 def test_every_section_and_note_is_still_there():
-    for text in ("This pack doesn't ship with Parametric Studio", "Counted by reading the source at commit", '"The idea"', '"How it works"', '"Our renders with it"', '"Samplers"', '"Try the arithmetic"', '"What it can do"', "In the author's words", '"Every node"', '"More from the author"', '"Install it yourself"', '"Licence"', "A picture means the graph ran", "Our reading of the code at that commit", "A safety note", "doesn't match", "not legal advice"):
+    for text in ("This pack doesn't ship with Parametric Studio", "Counted by reading the source at commit", '"The idea"', '"How it works"', '"Our renders with it"', '"Samplers"', '"Try the arithmetic"', '"What it can do"', "In the author's words", '"Every node"', '"More from ClownsharkBatwing"', '"Install it yourself"', '"Licence"', "A picture means the graph ran", "Our reading of the code at that commit", "A safety note", "doesn't match", "not legal advice"):
         assert text in PAGE, text
     for name in ("CostLab", "BetaLab", "SamplerAtlas", "Gallery", "NodeList", "StageArt"):
         assert f"<${{{name}}}/>" in PAGE, name
