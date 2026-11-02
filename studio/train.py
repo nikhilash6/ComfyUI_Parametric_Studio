@@ -165,7 +165,7 @@ def _own_pids(job: dict) -> set[int]:
         port = urllib.parse.urlparse(_comfy_url()).port
         args = str(port).encode()
         for pid, (_, cmd) in table.items():
-            if b"--port" in cmd[:-1] and cmd[cmd.index(b"--port") + 1] == args: return {pid}
+            if b"--port" in cmd[:-1] and cmd[cmd.index(b"--port") + 1] == args and any(x.endswith(b"main.py") for x in cmd[:3]): return {pid}      # ComfyUI itself, not a wrapper that names the port
         return set()
     own, grew = {root}, True
     while grew:
@@ -583,7 +583,7 @@ def base_status(object_info: dict | None) -> list[dict]:
         info = TRAINERS.get(trainer_id, {})
         rows.append({"id": base_id, "label": b["label"], "family": b.get("family") or b["arch"], "file": b["file"], "arch": b["arch"], "media": b.get("media", "image"), "sizes": b["sizes"], "lr": b.get("lr"), "trainer": trainer_id, "trainer_label": info.get("label") or trainer_id, "trainer_note": info.get("note"), "trainer_site": info.get("site"), "licence": b.get("licence"),
                      "status": status, "trainable": why is None, "can_try": no_run, "why_not": why, "missing": missing, "install": info.get("install") if missing and trainer_id != "comfy" else None,
-                     "peak_gib": max(peaks) if peaks else b.get("peak_gib"), "peak_kind": "measured" if peaks else "expected", "proof": _proof_line(proved[-1]) if proved else "Not proved yet: STUDIO_TRAIN_PROVE is set, so this run is the test." if proving else None, "ab_effect": proved[-1].get("ab_effect") if proved else None})
+                     "peak_gib": max(peaks) if peaks else b.get("peak_gib"), "peak_kind": "measured" if peaks else "expected", "proof": _proof_line(proved[-1]) if proved else "Not proved yet: STUDIO_TRAIN_PROVE is set, so this run is the test." if proving else None, "ab_effect": proved[-1].get("ab_effect") if proved else None, "tried": b.get("tried")})
     return rows
 
 

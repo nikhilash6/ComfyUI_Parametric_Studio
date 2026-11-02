@@ -90,4 +90,22 @@ test("the example is the real run: all 300 values, and the means the page quotes
   assert.equal(EXAMPLE.loss.length, EXAMPLE.steps); assert.equal(EXAMPLE.steps, 300); assert.equal(EXAMPLE.pictures, 12);
   const t = lossTrend(EXAMPLE.loss.map((v, i) => [i + 1, v])); assert.equal(t.first.toFixed(4), "0.1626"); assert.equal(t.last.toFixed(4), "0.1849");
 });
+// bases: badges, order and the facts line
+{
+  const { baseBadge, orderBases, baseFacts } = await import("./train_logic.js");
+  const ok = { report: { ready: true, blocks: 0 }, base: { id: "x", trainable: true }, form: { name: "Brass", trigger: "brasslight", rights: true }, active: false };
+  const f = { name: "A", trigger: "b1", size: "1024", steps: "300", rank: "8", batch: "1", learning_rate: "0.0005", seed: "0", rights: true };
+  assert.equal(baseBadge({ status: "proven" }).text, "Proven");
+  assert.equal(baseBadge({ status: "not_run" }).kind, "notrun");
+  assert.equal(baseBadge({ status: "blocked" }).kind, "missing");
+  assert.deepEqual(orderBases([{ id: "a", status: "blocked" }, { id: "b", status: "not_run" }, { id: "c", status: "proven" }, { id: "d", status: "proven" }]).map((b) => b.id), ["c", "d", "b", "a"]);
+  assert.equal(baseFacts({ trainer_label: "T", licence: { name: "MIT" }, peak_gib: 12, peak_kind: "measured" }), "T · MIT · peak measured 12 GB");
+  assert.ok(trainBlockers({ ...ok, base: { trainable: false, can_try: true }, form: { ...ok.form, first_run: false } }).some((x) => /first-run box/.test(x)));
+  assert.deepEqual(trainBlockers({ ...ok, base: { trainable: false, can_try: true }, form: { ...ok.form, first_run: true } }), []);
+  assert.equal(jobPayload({ ...f, first_run: true }, "d", "b").first_run, true);
+  assert.match(statusLine({ state: "cancelled", trainer: "ai-toolkit", can_resume: true, checkpoints: ["a", "b"] }), /resume from the last one/);
+  assert.match(abVerdict({ state: "done", audio: true, pixel_diff: 0.01 })[0].text, /for your ear/);
+  assert.match(abVerdict({ state: "done", source: "trainer samples", pixel_diff: 30 })[1].text, /trainer's own samples/);
+}
+
 console.log("ok");

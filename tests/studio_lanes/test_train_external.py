@@ -336,3 +336,13 @@ def test_simpletuner_parses_its_progress_and_says_what_is_missing(env, monkeypat
     r = rows(c)["minimax-music3"]
     assert r["status"] == "blocked" and any("SimpleTuner installed" in m for m in r["missing"]) and any("MiniMax-Music3" in m for m in r["missing"])
     assert r["media"] == "audio" and any("git clone" in x for x in r["install"])
+
+
+@pytest.mark.skipif(not __import__("shutil").which("node"), reason="node not installed")
+@pytest.mark.parametrize("name", ["train.js", "train_stage.js", "train_logic.js", "train_example.js"])
+def test_train_modules_parse(name):
+    """A module that does not parse blanks the whole page, so each one is parsed as the browser would."""
+    import subprocess
+    src = (Path(train.__file__).parent / "web" / name).read_text()
+    p = subprocess.run(["node", "--check", "--input-type=module"], input=src, capture_output=True, text=True, timeout=60)
+    assert p.returncode == 0, p.stderr[-400:]

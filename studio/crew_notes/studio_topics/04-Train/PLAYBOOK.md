@@ -1,32 +1,30 @@
 # Train: playbook
 
-These Train notes describe the code as of 2026-11-01. [code: studio/train.py:1-13]
+These Train notes describe the code as of 2026-11-02. [code: studio/train.py:1-16]
 
 ## What the Train page is
 
-The Train page takes pictures and gives back a LoRA, using ComfyUI's own nodes: LoadImageTextDataSetFromFolder, MakeTrainingDataset, TrainLoraNode and SaveLoRA. PreviewAny prints the node's loss list so the studio can read it. The studio sends the graph to ComfyUI and watches it. It does not train anything itself. [code: studio/train.py:1-6, studio/train.py:505-513]
+The Train page takes pictures, or audio clips for an audio base, and gives back a LoRA. It drives one of three trainers. ComfyUI's own nodes run LoadImageTextDataSetFromFolder, MakeTrainingDataset, TrainLoraNode and SaveLoRA, with PreviewAny printing the loss list. ostris ai-toolkit and SimpleTuner each run as a separate process, which the studio starts and follows through its own log and output folder. The studio trains nothing itself. [code: studio/train.py, studio/trainers/base.py, studio/trainers/aitoolkit.py, studio/trainers/simpletuner.py]
 
 ## Which bases Train can use
 
-Train knows two bases: Stable Diffusion XL base 1.0 (file sd_xl_base_1.0.safetensors, 768 or 1024 px) and Stable Diffusion 1.5 (file v1-5-pruned-emaonly.safetensors, 512 px). A request naming any other base is refused. No Flux, Wan, H3 or Qwen base is in the list. [code: studio/train.py:42-45, studio/train.py:636-637] [test: tests/studio_lanes/test_train.py]
+Every base Train knows is one entry in studio/train_bases.py. Each entry names its trainer, the files it needs, its licence with a link and a one-line note, the peak VRAM its family is expected to need, and how its A/B is rendered. [code: studio/train_bases.py]
 
-As of 2026-11-01 SDXL base 1.0 is the only Train base with a real run on record. Stable Diffusion 1.5 is wired in the code but has never trained here, so the page does not offer it. It only becomes available through the first-run switch described below. [run: studio/train_measured.json] [code: studio/train.py:458-460] [docs: README.md]
+Each base has one of three states on the page. Proven means its files are here and a real run is on record in train_measured.json or the studio's own runs. Not run means everything is here but no run is on record, and the first run needs a tick saying so. Blocked means something is missing, and the page names exactly which file, folder or trainer install. [code: studio/train.py] [test: tests/studio_lanes/test_train_external.py]
 
-A Train base is offered only if all of this holds: ComfyUI answers, ComfyUI lists the file, the studio can open the file, its header passes the check, and a run is on record. When any of these fails, the page greys the base out and shows the reason. [code: studio/train.py:444-462, studio/web/train.js:85] [test: tests/studio_lanes/test_train.py]
+For a ComfyUI base, Train looks for each file by name in the folder lists ComfyUI reports, sub-folders included, and reads the model's safetensors header. Quantized weights are refused unless the entry says the base is quantized. For an external trainer, it checks the trainer's install folder and Python, then each file or folder the job file names. [code: studio/train.py, studio/trainers/aitoolkit.py, studio/trainers/simpletuner.py] [test: tests/studio_lanes/test_train_external.py]
 
-The Train header check reads the safetensors header, not the file name. The file must have the tensor name prefixes of its architecture. Its diffusion model weights must be F16, BF16, F32 or F64. A file with comfy_quant or scale_weight keys counts as quantized and is refused. [code: studio/train.py:53, studio/train.py:405-421] [test: tests/studio_lanes/test_train.py]
+Some bases are blocked on purpose with a known_failure line: FLUX.3 Klein, Anima and ERNIE Image fail inside ComfyUI's TrainLoraNode, because an operation they use has no gradient, and no other trainer is wired for them yet. [code: studio/train_bases.py] [run: studio/train_measured.json] [inference]
 
-STUDIO_TRAIN_PROVE is off by default. Setting it by hand to a base id lets that one base, with no run on record, have its first run, and the page then says "Not proved yet". The header and file checks still apply. Once that run has been recorded the switch is no longer needed for that base. [code: studio/train.py:459-461] [test: tests/studio_lanes/test_train.py] [docs: README.md]
-
-The docstring of the Train code says TrainLoraNode has no list of architectures and that anything ComfyUI loads as a MODEL may run. That is a reading of ComfyUI's node, and only SDXL has been tried here. It is the reason a base needs a run on record before it is offered. [code: studio/train.py:8-10]
+STUDIO_TRAIN_PROVE is off by default. Setting it to a base id lets that base have its first run without the page's tick. [code: studio/train.py]
 
 ## What Train has measured
 
-The one recorded Train run: SDXL base 1.0, 1024 px, rank 8, batch 1, 300 steps, 0.6155 seconds per step, 13.8 seconds of setup, 40.25 GiB peak on the whole card, dated 2026-11-01, job 4d13a830507c, on the test machine. [run: studio/train_measured.json]
+Every recorded Train run is a row in studio/train_measured.json, copied from that run's own record: base, size, rank, steps, seconds per step, setup time, the whole card's peak VRAM and, where measured, the run's own peak. Most rows are 512 px, rank 16 and 150 to 300 steps on a 96 GB card, and each row's ab_effect says what a person saw in its A/B. [run: studio/train_measured.json]
 
-The Train example on the empty page comes from that same run: "Brass lighthouse", 12 pictures, 187 seconds on a 96 GB card. All 300 loss values are stored. The mean loss was 0.1626 in the first tenth and 0.1849 in the last tenth, and the test holds both figures. [run: studio/web/train_example.js] [test: tests/studio_lanes/test_train_logic.mjs]
+The whole-card peak includes everything else on the card at that moment. The run's own peak counts only that run's processes: an external trainer and its children, or the ComfyUI serving the studio, found by its port. [code: studio/train.py] [run: studio/train_measured.json]
 
-Train gives a time and VRAM figure only from a measured run on the same card, at the same size and batch, with no scaling formula. A different rank still gives a figure, marked as a close guide, and with no match the page says so and shows no number. A finished run adds its own line to measured.jsonl if its speed was seen in the log. [code: studio/train.py:489-500, studio/train.py:835-843, studio/web/train_logic.js:140-148] [test: tests/studio_lanes/test_train.py]
+Train gives a time and VRAM figure only from a measured run on the same card, at the same size and batch, with no scaling formula. [code: studio/train.py] [test: tests/studio_lanes/test_train.py]
 
 ## Pictures and captions in Train
 
