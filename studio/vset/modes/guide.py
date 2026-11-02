@@ -40,12 +40,12 @@ def steps(shot: dict, *, library) -> list[S.Step]:
 def ltx_steps(shot: dict, ms: dict, prompt: str, *, library) -> list[S.Step]:
     from studio.vset.modes import keyframes as K
     raw = ms.get("keyframes", "qwen") == "raw"
-    who = common.who(shot, library=library)
+    who = common.key_person(shot, library=library)
 
     def key(ctx):
         if raw:
             return None
-        return common.request(shot, ctx, K.KEY_TEMPLATE, "Virtual Set first frame", {"image": common.uploaded(ctx, "scene", "first"), "prompt": K.KEY_PROMPT.format(who=f" The person is {who}." if who else ""), "negative": K.KEY_NEGATIVE, "resolution": K.KEY_RESOLUTION})
+        return common.request(shot, ctx, K.KEY_TEMPLATE, "Virtual Set first frame", {"image": common.uploaded(ctx, "scene", "first"), "prompt": K.KEY_PROMPT.format(who=who), "negative": K.KEY_NEGATIVE, "resolution": K.KEY_RESOLUTION})
 
     def video(ctx):
         w, h = SH.size(shot)

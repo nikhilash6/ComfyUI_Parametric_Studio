@@ -5,7 +5,7 @@ child together with words for undress or a body on show, which the studio-wide l
 at all is refused.
 
 Pictures and meshes: a saved character's sheet goes through picturecheck.py (a readable adult face, nothing undressed); that file says what it does not catch. A picture a person adds for a prop, a generated prop picture and a finished
-mesh are NOT checked by content. The character maker stays off (character_problem) until the founders decide otherwise: turning it on with STUDIO_WORLDKIT_CHARACTERS=1 is their decision, and this text says what it does not cover.
+mesh are NOT checked by content. The character maker is on unless STUDIO_WORLDKIT_CHARACTERS=0 (character_problem), and every check here runs whether anyone looks or not. CHECK_LIMITS says what they do not cover, in the words the page shows.
 
 Characters come only from saved characters, made here from words, never an upload. Words that ask for a real person's likeness are refused, but nothing here can tell whether a finished sheet looks like a real person."""
 from __future__ import annotations
@@ -21,8 +21,11 @@ MINOR_RULE = re.compile(rf"\b{CHILD}\b.*\b{ON_SHOW}\b|\b{ON_SHOW}\b.*\b{CHILD}\b
 CHILD_WORD = re.compile(rf"\b{CHILD}\b", re.I)
 LIKENESS = re.compile(r"\b(?:looks? like|look-?alike|resembl\w*|likeness|celebrit\w*|famous|real person|real people|actor|actress|politician|president|influencer|singer|footballer|portrait of|based on|my (?:wife|husband|girlfriend|boyfriend|friend|neighbou?r|ex|boss|colleague|daughter|son|sister|brother|mother|father))\b", re.I)
 REFUSED = "World Kit makes safe-for-work assets only, and something in your text is outside that. Please reword it and try again."
-CHARACTER_OFF = ("The character maker is off: this studio cannot yet check what a character mesh shows, only the words around it. "
-                 "Places, props and looks work without it.")
+CHARACTER_OFF = "The character maker is off on this machine (STUDIO_WORLDKIT_CHARACTERS=0). Places, props and looks work without it."
+CHECK_LIMITS = ("Words: a description that names a child, asks for undress or asks for a real person's likeness is refused, but a plain name cannot be told from an invented one. "
+                "Picture: each sheet must show a readable face that reads as an adult and nothing undressed, or it is thrown away. Apparent age is an estimate with an error of years and it is trained on photographs, so a young adult can be refused and a drawn or youthful face can pass. "
+                "It sees exposed skin, not a pose, a suggestive framing or sheer clothes, and it cannot tell whether a face looks like a real person. "
+                "The finished mesh and its motion are not checked by what they show.")
 
 
 def _texts(v):
@@ -51,7 +54,7 @@ def likeness_problem(*values) -> str:
 
 
 def characters_enabled() -> bool:
-    return paths.setting("STUDIO_WORLDKIT_CHARACTERS") == "1"
+    return paths.setting("STUDIO_WORLDKIT_CHARACTERS") != "0"
 
 
 def character_problem() -> str:

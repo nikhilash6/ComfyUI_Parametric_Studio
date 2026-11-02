@@ -20,7 +20,7 @@ FILE_TYPES = {"asset.glb": "model/gltf-binary", "preview.mp4": "video/mp4", "thu
 _SESSION = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 #: Informational only: licences are recorded per asset, never a gate.
 LICENCE_NOTES = {
-    "character": "SAM 3D Body / SAM 3D Objects: SAM License; SkinTokens: MIT; Kimodo: NVIDIA Open Model License (its text encoder: Llama 3 Community Licence); retarget tools GPL (tools only)",
+    "character": "Sheet: Krea 2 Turbo (Krea 2 Community License). Picture check: InsightFace buffalo_l (its weights are for non-commercial research) and NudeNet (AGPL-3.0). Mesh: TRELLIS.2 (MIT), its image encoder DINOv3 (DINOv3 License), BiRefNet cut-out. SkinTokens: MIT; Kimodo: NVIDIA Open Model License (its text encoder: Llama 3 Community Licence); retarget tools GPL (tools only)",
     "prop": "by mesh model: SAM 3D Objects, SAM License; TRELLIS.2, TripoSR, Shap-E, MIT; Hunyuan3D, Tencent community licence. A text prop's picture comes from FLUX.2 Klein 4B (Apache-2.0)",
     "place": "procedural (Blender scripts in this repo); textures procedural, or from FLUX.2 Klein 4B (Apache-2.0)",
     "look": "Blender's bundled studio-light HDRIs (their licence not checked)",
@@ -65,31 +65,72 @@ def looks_payload() -> tuple[int, dict]:
     return 200, {"looks": looks.public(), "times": list(looks.TIMES), "weathers": list(looks.WEATHERS)}
 
 
-def characters_payload(chars) -> tuple[int, dict]:
-    """The saved characters, each with whether it can become a 3D character now and why not."""
+def characters_payload(chars, *, sheet_running=lambda cid: False) -> tuple[int, dict]:
+    """The saved characters, each with whether it can become a 3D character now and why not. A sheet marked building with no thread behind it was cut off by a restart: "interrupted", and it can be tried again."""
     off = safety.character_problem()
     out = []
     for ch in chars:
         why = off or CS.sheet_problem(ch)
-        out.append({"id": ch.id, "name": ch.name, "status": ch.status, "ok": not why, "why": why})
-    return 200, {"characters": out, "enabled": not off, "message": off}
+        running = bool(sheet_running(ch.id))
+        status = "interrupted" if ch.status == "building" and not running else ch.status
+        out.append({"id": ch.id, "name": ch.name, "description": ch.description, "status": status, "running": running, "error": ch.error, "take": ch.take, "sheet": not why and ch.sheet().is_file(), "ok": not why, "why": why})
+    return 200, {"characters": out, "enabled": not off, "message": off, "limits": safety.CHECK_LIMITS}
 
 
-def new_character(payload, *, start) -> tuple[int, dict]:
+def new_character(payload, *, start, capability=C.route) -> tuple[int, dict]:
     if not isinstance(payload, dict):
         return _err(400, "send a JSON object")
     if set(payload) - {"name", "description"}:
         return _err(400, "a saved character is made from a name and a description, and nothing else")
+    off = safety.character_problem()
+    if off:
+        return _err(403, off)
+    bad = _route_problem("character_sheet", capability)          # no picture model or no picture check: say so and make nothing
+    if bad:
+        return _err(409, bad)
     ch, why = CS.create(payload.get("name"), payload.get("description"))
     if ch is None:
-        return _err(403 if why == safety.CHARACTER_OFF else 400, why)
+        return _err(400, why)
     start(ch.id)
     return 200, {"id": ch.id, "status": ch.status}
 
 
+def character_again(cid: str, *, start, sheet_running=lambda c: False, capability=C.route) -> tuple[int, dict]:
+    """Another try at the sheet from the same words. Every check runs again on the new picture."""
+    off = safety.character_problem()
+    if off:
+        return _err(403, off)
+    if CS.get(cid) is None:
+        return _err(404, "no such saved character")
+    if sheet_running(cid):
+        return _err(409, "this character's sheet is being made now")
+    bad = _route_problem("character_sheet", capability)
+    if bad:
+        return _err(409, bad)
+    ch = CS.next_take(cid)
+    start(cid)
+    return 200, {"id": cid, "status": ch.status, "take": ch.take}
+
+
+def character_sheet_path(cid: str):
+    """The sheet's file, only while it holds a pass for this exact picture."""
+    ch = CS.get(cid)
+    return ch.sheet() if ch is not None and ch.sheet().is_file() and CS.picturecheck.passed(ch.check, ch.sheet()) else None
+
+
+_SHEETS: dict = {}
+
+
+def _sheet_running(cid: str) -> bool:
+    t = _SHEETS.get(cid)
+    return t is not None and t.is_alive()
+
+
 def _start_sheet(cid: str) -> None:
     import threading
-    threading.Thread(target=CS.build_sheet, args=(cid,), daemon=True, name=f"sheet-{cid}").start()
+    t = threading.Thread(target=CS.build_sheet, args=(cid,), daemon=True, name=f"sheet-{cid}")
+    _SHEETS[cid] = t
+    t.start()
 
 
 def _route_problem(name: str, capability) -> str:
@@ -187,7 +228,7 @@ def _as_prop(lib, meta: dict, start, capability=C.route) -> tuple[int, dict]:
     st = {r["name"]: r for r in (meta.get("build") or {}).get("steps") or []}
     if (st.get("rig") or {}).get("status") == "done":
         return _err(400, "this character has a rig; use it as a cast member")
-    shape = next((st[n] for n in ("remesh", "mesh") if (st.get(n) or {}).get("status") == "done"), None)
+    shape = next((st[n] for n in ("remesh", "flat", "mesh") if (st.get(n) or {}).get("status") == "done"), None)
     if shape is None:
         return _err(400, "this character has no mesh yet to make a static prop from")
     work_rel = "lib:" + str(lib.keep_mesh(meta["id"], shape["outputs"]["main"]["path"]))
@@ -310,7 +351,7 @@ def looks_get():
 
 @router.get("/api/worldkit/characters")
 def characters_get():
-    return _send(characters_payload(CS.all_saved()))
+    return _send(characters_payload(CS.all_saved(), sheet_running=_sheet_running))
 
 
 @router.post("/api/worldkit/characters")
@@ -319,8 +360,23 @@ def characters_post(payload: dict):
     return _send(new_character(payload, start=_start_sheet))
 
 
+@router.post("/api/worldkit/characters/{cid}/again")
+def characters_again(cid: str):
+    return _send(character_again(cid, start=_start_sheet, sheet_running=_sheet_running))
+
+
+@router.get("/api/worldkit/characters/{cid}/sheet")
+def characters_sheet(cid: str):
+    p = character_sheet_path(cid)
+    if p is None:
+        raise HTTPException(404, "no sheet")
+    return FileResponse(p, media_type="image/png", headers={"Cache-Control": "no-store"})
+
+
 @router.delete("/api/worldkit/characters/{cid}")
 def characters_delete(cid: str):
+    if _sheet_running(cid):
+        return _send(_err(409, "this character's sheet is being made now"))
     return _send((200, {"ok": True}) if CS.delete(cid) else _err(404, "no such saved character"))
 
 

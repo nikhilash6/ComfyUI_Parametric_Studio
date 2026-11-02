@@ -53,6 +53,19 @@ def test_a_tool_that_exits_zero_with_no_file_failed(tmp_path, ready):
         tools.skintokens(tmp_path / "m.glb", tmp_path, run=_fake(lambda c: []))
 
 
+def test_kimodo_moves_its_text_encoder_to_the_cpu_only_when_the_card_is_short(tmp_path, monkeypatch):
+    monkeypatch.setattr(tools, "require", lambda key: None)
+    made = lambda c: [str(c[c.index("--output") + 1]) + ".bvh"]  # noqa
+    seen = []
+    tools.kimodo("a person walks", tmp_path / "k1", run=_fake(made, seen=seen), free=lambda: 40.0)
+    assert "env_extra" not in seen[0][1]
+    seen = []
+    tools.kimodo("a person walks", tmp_path / "k2", run=_fake(made, seen=seen), free=lambda: 9.0)
+    assert seen[0][1]["env_extra"] == {"TEXT_ENCODER_DEVICE": "cpu"}
+    with pytest.raises(StepError, match="Nothing was evicted"):
+        tools.kimodo("a person walks", tmp_path / "k3", run=_fake(made), free=lambda: 5.0)
+
+
 def test_autoremesher_runs_cpu_and_kimodo_and_retarget_use_their_outputs(tmp_path, ready):
     src = tmp_path / "m.glb"
     src.write_bytes(b"glb")
@@ -67,6 +80,9 @@ def test_autoremesher_runs_cpu_and_kimodo_and_retarget_use_their_outputs(tmp_pat
     soma = tmp_path / "s.bvh"
     soma.write_text("HIERARCHY\nROOT Hips\nJOINT Spine1\nJOINT Chest\nJOINT LeftShin\nJOINT RightShin\n")
     assert tools._src_map(soma).endswith("soma77_slots.json") and Path(tools._src_map(soma)).is_file()
+    seen = []
+    assert tools.retarget(soma, tmp_path / "r.glb", tmp_path / "t2", run=_fake(lambda c: [tmp_path / "t2" / "clip.fbx"], seen=seen)).suffix == ".fbx"
+    assert any("wk_fit_motion.py" in str(x) for x in seen[0][0]) and seen[0][1]["cpu"] is True      # a Kimodo clip is fitted from joint positions
 
 
 def test_a_tool_past_its_timeout_is_killed_by_pid(tmp_path):
@@ -92,3 +108,11 @@ def test_a_tool_past_its_timeout_is_killed_by_pid(tmp_path):
     with pytest.raises(StepError, match="was killed"):
         tools.call(["/x/tool"], tmp_path / "t.log", 1, popen=lambda *a, **k: p, killpg=killpg)
     assert kills == [777]
+
+
+def test_skintokens_keeps_the_texture_and_uses_the_voxel_skin(tmp_path, ready):
+    src = tmp_path / "m.glb"
+    src.write_bytes(b"glb")
+    seen = []
+    tools.skintokens(src, tmp_path / "s", run=_fake(lambda c: [c[c.index("--output") + 1]], seen=seen))
+    assert "--use_transfer" in seen[0][0] and "--use_postprocess" in seen[0][0]

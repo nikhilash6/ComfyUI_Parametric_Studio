@@ -13,7 +13,7 @@ CAMERA_WORDS = {"push_in": "a slow push in toward", "orbit": "a slow orbit aroun
 def opening(shot: dict, *, library) -> str:
     cam = CAMERA_WORDS.get((shot.get("camera") or {}).get("preset", "custom"), "a moving camera on")
     what = common.who(shot, library=library)
-    return f"The clip opens on {cam} {what + ' in ' if what else ''}{common.where(shot, library=library)}, framed exactly as in the reference video."
+    return f"The clip opens on {cam} {what + ', in ' if what else ''}{common.where(shot, library=library)}, framed exactly as in the reference video."
 
 
 def steps(shot: dict, *, library) -> list[S.Step]:

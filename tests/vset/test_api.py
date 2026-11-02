@@ -160,7 +160,7 @@ def test_the_routes(monkeypatch):
     c = TestClient(app)
     assert c.get("/api/vset/meta").status_code == 200
     caps = c.get("/api/vset/capabilities").json()
-    assert caps["comfyui"] is False and caps["routes"]["A_wan"]["ready"] is False and caps["characters_on"] is False
+    assert caps["comfyui"] is False and caps["routes"]["A_wan"]["ready"] is False and caps["characters_on"] is True
     assert len(c.post("/api/vset/camera", json={"shot": s}).json()["keys"]) == 124
     sid = c.post("/api/vset/shots", json={"shot": s}).json()["shot"]["id"]
     assert c.get(f"/api/vset/shots/{sid}").json()["shot"]["prompt"] == s["prompt"]

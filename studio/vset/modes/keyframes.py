@@ -9,7 +9,7 @@ from studio.worldkit import steps as S
 KEY_TEMPLATE = "vset_keyframe_edit_api.json"
 VIDEO_TEMPLATE = "h3_fl2v_api.json"
 KEY_PROMPT = "Turn this 3D render into a real photograph. Keep the exact framing, camera angle, set layout and light direction. Real materials on every surface.{who}"
-KEY_NEGATIVE = "cartoon, 3D render, CGI, blurry, watermark, text"
+KEY_NEGATIVE = "cartoon, 3D render, CGI, blurry, watermark, text, mannequin, bare skin"
 KEY_RESOLUTION = 1024
 MEGAPIXELS = goals.H3_QUALITY["high"]
 
@@ -17,8 +17,7 @@ MEGAPIXELS = goals.H3_QUALITY["high"]
 def steps(shot: dict, *, library) -> list[S.Step]:
     fmt = shot["format"]
     raw = (shot.get("mode_settings") or {}).get("keyframes", "qwen") == "raw"
-    who = common.who(shot, library=library)
-    key_prompt = KEY_PROMPT.format(who=f" The person is {who}." if who else "")
+    key_prompt = KEY_PROMPT.format(who=common.key_person(shot, library=library))
     prompt = common.video_prompt(shot, library=library)
 
     def key(which):

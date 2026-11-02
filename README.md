@@ -26,7 +26,7 @@ Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Win
 | Shot Board | Full 7-job board and export. About 13 minutes, and the tab has to stay open | Other hardware |
 | Train | One SDXL LoRA: 300 steps, 40 GiB peak | Any other base |
 | Virtual Set | Blender passes on the CPU. Modes A (H3 and LTX-2.5), B, C and D rendered once each on one street shot | Wan, a pose pass, Qwen keyframes, any other shot |
-| World Kit | Places, looks, library, Godot export, a prop from a mesh, on the CPU with Blender | Every step that needs a model (tested with fakes) |
+| World Kit | Places, looks, library, Godot export, a prop from a mesh, on the CPU with Blender. A character from words to a rigged, moving, textured figure | Other steps that need a model (tested with fakes) |
 | Recipes | 2 of 10 flagships rendered. A library of 740 passes an offline format check, and 533 of its recipes show a result we rendered here (467 pictures, 18 clips, 48 sounds), each from one run. The sounds were checked for level and length, not listened to. More renders are on the way | The other 8 flagships and the rest of the library |
 | Sampling Lab | 44 renders on SDXL, SD 1.5 and SD 3.5, and core sampler measurements | Pack entries are read from source, not run |
 | RES4LYF page | A credit page. The pack is not shipped; run separately, of 154 nodes checked 92 rendered, 14 ran and 44 errored | The other nodes in the pack |
@@ -116,7 +116,7 @@ The word check covers captions, file names, the LoRA name, the trigger and the t
 Bring one clip and queue the lot: reshoot it with a new camera, orbit around the subject, recast the lead from a single picture, then run LTX-2.5 VFX for water, a clean plate, day to night and a matte. Jobs run one at a time on your GPU. The queue survives a reload, but the tab does need to stay open. Every result keeps its exact graph and seed. Export the grid as one captioned contact video. Seven jobs on one clip took about 13 minutes on our 96 GB card. A clean plate can leave a small smear when the subject fills the frame, and the page says so.
 
 ### World Kit and Virtual Set
-**World Kit** keeps one library of `.glb` places, props and characters with real scale and colliders, and exports a Godot pack. The place maker, looks, library and export ran here on the CPU with Blender, and the prop maker ran from a mesh. Every step that needs a model is written and tested with fakes, but has not run on a real model.
+**World Kit** keeps one library of `.glb` places, props and characters with real scale and colliders, and exports a Godot pack. The place maker, looks, library and export ran here on the CPU with Blender, and the prop maker ran from a mesh. Describe an invented person and the character maker makes a sheet, checks it, and builds a rigged body with motions: it ran here on real models. The figure wears the sheet's clothes, hair and colour; its back and sides are the model's guess. Word checks and a picture check run on every character; the page says what they cannot catch. Other steps that need a model are written and tested with fakes, but have not run on a real model.
 
 **Virtual Set** blocks a shot in a real-scale 3D place and steers a video model with what Blender renders. The passes ran on the CPU, and modes A, B, C and D have each rendered once on one street shot. Wan, a pose pass and Qwen keyframes have not run. World Kit and Virtual Set need extra downloads the installer does not fetch yet; the page says what is missing.
 

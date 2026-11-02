@@ -40,8 +40,9 @@ def render(ctx: dict, *, blender=None, encode=None) -> dict:
     interior = meta["type"] == "place" and meta["recipe"].get("kit") == "interior"
     work = ctx["work"] / "preview"
     frames = work / "frames"
-    res = bl.render("wk_turntable.py", {"model": model, "look": _look(meta), "frames": TURN_FRAMES, "size": TURN_SIZE, "out_dir": str(frames), "interior": interior,
-                                        "elevation": 0.35, "kit": (meta.get("recipe") or {}).get("kit", "") if meta["type"] == "place" else "", "samples": TURN_SAMPLES}, work=work, name="turntable", timeout=3600)
+    person = meta["type"] == "character"
+    res = bl.render("wk_turntable.py", {"model": model, "look": _look(meta), "frames": TURN_FRAMES, "size": TURN_SIZE, "out_dir": str(frames), "interior": interior, "fit": person,
+                                        "elevation": 0.08 if person else 0.35, "kit": (meta.get("recipe") or {}).get("kit", "") if meta["type"] == "place" else "", "samples": TURN_SAMPLES}, work=work, name="turntable", timeout=3600)
     mp4 = (encode or media.encode)(frames, TURN_FPS, work / "preview.mp4")
     pngs = sorted(frames.glob("*.png"))
     if not pngs:

@@ -72,19 +72,72 @@ def test_the_vision_opinion_is_off_by_default_and_fails_closed_when_on(tmp_path,
     assert PC.check(p, run=Run(), post=lambda b: (_ for _ in ()).throw(OSError("down")))["ok"] is False
 
 
-def test_the_store_stays_shut_with_the_switch_off():
+READY = lambda name: {"ready": True, "problems": []}  # noqa
+
+
+def test_the_store_is_open_by_default_and_shut_with_the_switch_off(monkeypatch):
+    started = []
+    code, body = api.new_character({"name": "Ada", "description": "tall, auburn hair"}, start=started.append, capability=READY)
+    assert code == 200 and started == [body["id"]]
+    CS.delete(body["id"])
+    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "0")
     assert CS.create("Ada", "tall, auburn hair")[0] is None and "off" in CS.create("Ada", "tall")[1]
     assert CS.all_saved() == []
-    code, body = api.new_character({"name": "Ada", "description": "tall"}, start=lambda c: pytest.fail("nothing may start"))
+    code, body = api.new_character({"name": "Ada", "description": "tall"}, start=lambda c: pytest.fail("nothing may start"), capability=READY)
     assert code == 403 and CS.all_saved() == []
+
+
+def test_with_the_picture_model_or_the_picture_check_missing_it_says_so_and_makes_nothing(on):
+    missing = lambda name: {"ready": False, "problems": ["Picture check for character sheets: model still downloading or missing"]}  # noqa
+    code, body = api.new_character({"name": "Ada", "description": "tall"}, start=lambda c: pytest.fail("nothing may start"), capability=missing)
+    assert code == 409 and "Picture check" in body["error"] and CS.all_saved() == []
+    code, body = api.new_character({"name": "Ada", "description": "tall"}, start=lambda c: pytest.fail("nothing may start"))     # the real check: this test's models folder is empty
+    assert code == 409 and CS.all_saved() == []
+    ch, _ = CS.create("Ada", "tall")
+    code, body = api.character_again(ch.id, start=lambda c: pytest.fail("nothing may start"), capability=missing)
+    assert code == 409 and CS.get(ch.id).take == 0
+
+
+def test_another_take_uses_the_next_seed_and_goes_through_the_checks_again(on, tmp_path):
+    ch, _ = CS.create("Ada", "tall, auburn hair")
+    first = CS.sheet_request(ch)["values"]["seed"]
+    started = []
+    code, body = api.character_again(ch.id, start=started.append, capability=READY)
+    assert code == 200 and started == [ch.id] and body["take"] == 1 and CS.sheet_request(CS.get(ch.id))["values"]["seed"] == first + 1
+    assert api.character_again(ch.id, start=lambda c: pytest.fail("nothing may start"), sheet_running=lambda c: True, capability=READY)[0] == 409
+    assert api.character_again("nosuchchar", start=lambda c: None, capability=READY)[0] == 404
+    assert api.character_again(ch.id, start=lambda c: None, capability=READY)[0] == 200
+    jobs = Jobs(tmp_path)
+    assert CS.build_sheet(ch.id, submit=jobs.submit, wait=jobs.wait, check=lambda p: {"ok": False, "why": ["no face it can read"]}).status == "blocked" and not CS.get(ch.id).sheet().exists()
+
+
+def test_the_sheet_is_served_only_while_it_holds_a_pass_for_that_exact_file(on, tmp_path):
+    ch, _ = CS.create("Ada", "tall, auburn hair")
+    assert api.character_sheet_path(ch.id) is None and api.character_sheet_path("../x") is None
+    jobs = Jobs(tmp_path)
+    got = CS.build_sheet(ch.id, submit=jobs.submit, wait=jobs.wait, check=lambda p: {"ok": True, "version": PC.VERSION, "sha256": PC.sha256(p), "why": []})
+    assert got.status == "ready" and api.character_sheet_path(ch.id) == got.sheet()
+    assert api.characters_payload([got])[1]["characters"][0]["sheet"] is True
+    got.sheet().write_bytes(b"something else")
+    assert api.character_sheet_path(ch.id) is None and api.characters_payload([CS.get(ch.id)])[1]["characters"][0]["sheet"] is False
+
+
+def test_a_sheet_cut_off_by_a_restart_reads_as_interrupted_and_the_limits_go_with_the_list(on):
+    ch, _ = CS.create("Ada", "tall")
+    ch = CS._update(ch, status="building")
+    _, body = api.characters_payload([ch])
+    assert body["characters"][0]["status"] == "interrupted" and not body["characters"][0]["running"]
+    assert api.characters_payload([ch], sheet_running=lambda c: True)[1]["characters"][0]["status"] == "building"
+    for words in ("error of years", "not checked by what they show", "cannot tell whether a face looks like a real person"):
+        assert words in body["limits"]
 
 
 def test_a_saved_character_comes_from_words_and_never_from_a_file(on):
     for extra in ({"image": "a.png"}, {"upload": "x"}, {"sheet": "/tmp/a.png"}, {"source": {"image": "a"}}):
-        code, _ = api.new_character({"name": "Ada", "description": "tall", **extra}, start=lambda c: pytest.fail("nothing may start"))
+        code, _ = api.new_character({"name": "Ada", "description": "tall", **extra}, start=lambda c: pytest.fail("nothing may start"), capability=READY)
         assert code == 400
     started = []
-    code, body = api.new_character({"name": "Ada", "description": "tall, auburn hair, green coat"}, start=started.append)
+    code, body = api.new_character({"name": "Ada", "description": "tall, auburn hair, green coat"}, start=started.append, capability=READY)
     assert code == 200 and started == [body["id"]] and CS.get(body["id"]).status == "draft"
 
 
@@ -130,7 +183,7 @@ def test_a_sheet_that_fails_is_deleted_and_blocked(on, tmp_path):
 
 def test_turning_characters_off_stops_a_build_and_the_maker(monkeypatch, on, tmp_path):
     ch, _ = CS.create("Ada", "tall, auburn hair")
-    monkeypatch.delenv("STUDIO_WORLDKIT_CHARACTERS")
+    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "0")
     jobs = Jobs(tmp_path)
     assert CS.build_sheet(ch.id, submit=jobs.submit, wait=jobs.wait).status == "draft" and jobs.reqs == []
     assert safety.character_problem()

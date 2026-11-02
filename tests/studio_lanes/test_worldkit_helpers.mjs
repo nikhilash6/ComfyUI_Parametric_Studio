@@ -1,6 +1,6 @@
 const test = (_name, f) => f();
 import assert from "node:assert/strict";
-import { statusChip, summaryOf, filterAssets, canApprove, canRetry, canMakeProp, parseTags, createPayload, stepRows, addClip, routeFor, blockers, makerRow, makerBoard, MAKERS, stepLabel, stepDone, scaleCompare, shopCounts, firstAsset, nextStep, fileUrl, exportUrl } from "./worldkit_helpers.js";
+import { CHARACTER_ROUGH, START_CLIPS, MAX_CLIPS, CHARACTER_IDEAS, clipSlug, cleanClips, clipProblem, sheetState, sheetUrl, statusChip, summaryOf, filterAssets, canApprove, canRetry, canMakeProp, parseTags, createPayload, stepRows, addClip, routeFor, blockers, makerRow, makerBoard, MAKERS, stepLabel, stepDone, scaleCompare, shopCounts, firstAsset, nextStep, fileUrl, exportUrl } from "./worldkit_helpers.js";
 
 test("status chips say what state a build is in", () => {
   assert.equal(statusChip({ running: true, progress: [2, 8] }).label, "building 2/8");
@@ -36,13 +36,16 @@ test("what stands in a maker's way comes from the server's own words", () => {
 });
 test("urls are encoded", () => { assert.equal(fileUrl("abc", "thumb.jpg"), "/api/worldkit/assets/abc/file/thumb.jpg"); assert.equal(exportUrl("a b.zip"), "/api/worldkit/exports/a%20b.zip"); });
 test("the workshop board uses the server's own words", () => {
-  const caps = { makers: { place: { ready: true, problems: [], needs: [] }, prop_image: { ready: false, problems: ["SAM 3D Objects: model still downloading or missing"], needs: [{ label: "BiRefNet", state: "ready" }, { label: "a picture-to-mesh model", state: "missing" }] }, character: { ready: false, problems: ["The character maker is off: reason.", "SAM 3D Body: missing"], needs: [{ label: "SAM 3D Body", state: "missing" }] }, look: { ready: false, problems: ["Blender was not found."], needs: [] } } };
+  const caps = { makers: { place: { ready: true, problems: [], needs: [] }, prop_image: { ready: false, problems: ["SAM 3D Objects: model still downloading or missing"], needs: [{ label: "BiRefNet", state: "ready" }, { label: "a picture-to-mesh model", state: "missing" }] }, character: { ready: false, problems: ["SAM 3D Body: missing"], needs: [{ label: "SAM 3D Body", state: "missing" }] }, look: { ready: false, problems: ["Blender was not found."], needs: [] } } };
   const row = (k) => makerBoard(caps).find((r) => r.key === k);
   assert.equal(row("place").state, "Ready"); assert.equal(row("prop_image").state, "Model not on this machine"); assert.match(row("prop_image").why, /picture-to-mesh/); assert.deepEqual(row("prop_image").more, caps.makers.prop_image.problems);
-  assert.equal(row("character").state, "Off"); assert.equal(row("character").why, "The character maker is off: reason."); assert.deepEqual(row("character").more, ["SAM 3D Body: missing"]);
+  assert.equal(row("character").state, "Model not on this machine"); assert.match(row("character").why, /SAM 3D Body/);
+  const off = { characters_on: false, makers: { character: { ready: false, problems: ["The character maker is off on this machine.", "SAM 3D Body: missing"], needs: [] } } };
+  const offRow = makerRow(off, MAKERS[5]);
+  assert.equal(offRow.state, "Off on this machine"); assert.equal(offRow.why, "The character maker is off on this machine."); assert.deepEqual(offRow.more, ["SAM 3D Body: missing"]);
   assert.equal(row("look").state, "Not ready"); assert.equal(row("look").why, "Blender was not found."); assert.equal(row("prop_text").state, "Checking");
   assert.equal(makerBoard(null).length, MAKERS.length);
-  assert.equal(makerRow({ makers: { character: { ready: true } } }, MAKERS[5]).state, "Ready");   // the day it is switched on, the board says so
+  assert.equal(makerRow({ makers: { character: { ready: true } } }, MAKERS[5]).state, "Ready");
 });
 test("steps in words, scale, counts, what opens first", () => {
   assert.equal(stepLabel("tex_wall2"), "Wall 2 texture"); assert.equal(stepLabel("tiles"), "Lay out the set"); assert.equal(stepLabel("some_new_step"), "Some new step");
@@ -53,3 +56,14 @@ test("steps in words, scale, counts, what opens first", () => {
   assert.match(nextStep({ running: true }), /Building/); assert.match(nextStep({ build: "failed" }), /Retry/); assert.match(nextStep({ build: "done", status: "draft" }), /approve/); assert.match(nextStep({ build: "done", status: "approved" }), /Approved/);
 });
 console.log("ok");
+
+test("a character's motions and sheet, in the page's own terms", () => {
+  assert.equal(clipSlug("Big Jump!"), "big_jump_"); assert.deepEqual(cleanClips([{ name: "Big Jump!", text: " up " }, { name: "", text: "" }]), [{ name: "big_jump", text: "up" }]);
+  assert.equal(clipProblem(START_CLIPS), ""); assert.match(clipProblem([]), /at least one/); assert.match(clipProblem([{ name: "", text: "x" }]), /name/); assert.match(clipProblem([{ name: "a", text: "" }]), /"a"/); assert.match(clipProblem([{ name: "a", text: "x" }, { name: "a", text: "y" }]), /same name/);
+  assert.equal(CHARACTER_ROUGH.length > 0, true); assert.equal(START_CLIPS.length <= MAX_CLIPS, true); assert.equal(CHARACTER_IDEAS.length > 0, true);
+  const p = createPayload("character", { characterId: "c", height: "1.8", clips: [{ name: "walk", text: "walks" }] });
+  assert.deepEqual(p.source, { character_id: "c" }); assert.deepEqual(p.recipe, { height_m: 1.8, clips: [{ name: "walk", text: "walks" }] });
+  assert.equal(sheetState({ status: "ready", ok: true }).cls, "ok"); assert.equal(sheetState({ status: "blocked" }).label, "did not pass"); assert.equal(sheetState({ status: "failed" }).cls, "danger"); assert.equal(sheetState({ status: "interrupted" }).cls, "warn"); assert.equal(sheetState({ running: true, status: "draft" }).label, "making the sheet");
+  assert.equal(sheetUrl("a b", 2), "/api/worldkit/characters/a%20b/sheet?take=2");
+  assert.equal(stepLabel("motion_big_jump"), "Make motion: big jump"); assert.equal(stepLabel("retarget_walk"), "Fit to the rig: walk");
+});

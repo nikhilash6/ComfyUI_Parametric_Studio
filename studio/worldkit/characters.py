@@ -1,5 +1,5 @@
 """Saved characters. A saved character is a folder in <library>/_characters/<id>/: character.json {"id", "name", "description", "status", "check", "source"} and body_front.png. The sheet is made here, from words, by an image model on
-this machine; no route accepts an upload for this, ever, and there is no way to hand in a photo of someone. Characters stay off by default (STUDIO_WORLDKIT_CHARACTERS): with the switch off nothing can be created or built.
+this machine; no route accepts an upload for this, ever, and there is no way to hand in a photo of someone. STUDIO_WORLDKIT_CHARACTERS=0 turns them off: then nothing can be created or built.
 Status: "draft" (words saved), "building", "ready" (the sheet passed the picture check), "blocked" (it did not), "failed" (it could not be made). Only "ready" with a stored pass for that exact file can become a 3D character. See safety.py and picturecheck.py for what is and is not checked."""
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ _ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 SHEET_ROLE = "body_front"
 MAX_NAME = 60
 MAX_DESCRIPTION = 400
-SHEET_PROMPT = ("Full-body front view of an invented adult character: {description}. Fully clothed, standing straight with arms a little away from the body, the whole body in frame from head to feet, face clearly visible, neutral expression, "
+SHEET_PROMPT = ("Full-body front view of an invented adult character: {description}. Fully clothed, standing straight with both arms held out from the sides at about 45 degrees, hands open and well clear of the body, legs slightly apart, the whole body in frame from head to feet, face clearly visible, neutral expression, "
                 "plain light grey studio background, even soft light.")
 
 
@@ -32,6 +32,7 @@ class Character:
     folder: Path
     check: dict = field(default_factory=dict)
     error: str = ""
+    take: int = 0
 
     def sheet(self) -> Path:
         return self.folder / f"{SHEET_ROLE}.png"
@@ -47,7 +48,7 @@ def get(cid) -> Character | None:
     d = store() / cid
     try:
         j = json.loads((d / "character.json").read_text(encoding="utf-8"))
-        return Character(id=cid, name=str(j["name"]), description=str(j.get("description", "")), status=str(j.get("status", "")), folder=d, check=j.get("check") if isinstance(j.get("check"), dict) else {}, error=str(j.get("error", "")))
+        return Character(id=cid, name=str(j["name"]), description=str(j.get("description", "")), status=str(j.get("status", "")), folder=d, check=j.get("check") if isinstance(j.get("check"), dict) else {}, error=str(j.get("error", "")), take=int(j.get("take") or 0))
     except (OSError, ValueError, KeyError, TypeError):
         return None
 
@@ -114,7 +115,7 @@ def sheet_request(ch: Character) -> dict:
     """The sheet's job: Krea 2 Turbo on the main ComfyUI. Nothing about it comes from a file a person supplied."""
     from studio.worldkit import jobs
     from studio.worldkit.makers import prop
-    return jobs.graph(prop.KREA_GRAPH, {"prompt": SHEET_PROMPT.format(description=ch.description), "width": 832, "height": 1216, "seed": int(ch.id.encode().hex()[:8], 16), "prefix": f"worldkit/character_{ch.id}"}, f"Character sheet: {ch.name}")
+    return jobs.graph(prop.KREA_GRAPH, {"prompt": SHEET_PROMPT.format(description=ch.description), "width": 832, "height": 1216, "seed": int(ch.id.encode().hex()[:8], 16) + ch.take, "prefix": f"worldkit/character_{ch.id}"}, f"Character sheet: {ch.name}")
 
 
 def build_sheet(cid: str, *, submit=None, wait=None, check=None) -> Character | None:
@@ -144,6 +145,12 @@ def build_sheet(cid: str, *, submit=None, wait=None, check=None) -> Character | 
     except Exception as exc:
         (ch.folder / "checking.png").unlink(missing_ok=True)
         return _update(ch, status="failed", error=f"{type(exc).__name__}: {exc}"[:400])
+
+
+def next_take(cid: str) -> Character | None:
+    """Another try at the sheet from the same words: the next seed. The old sheet stays until the new one has passed or failed."""
+    ch = get(cid)
+    return None if ch is None else _update(ch, take=ch.take + 1, status="draft", error="")
 
 
 def delete(cid: str) -> bool:

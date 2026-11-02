@@ -38,7 +38,7 @@ def test_create_each_type_and_refuse_bad_requests(tmp_path, monkeypatch):
     code, body = ok({"type": "character", "source": {"character_id": "savedchar"}}, _char(tmp_path))
     assert code == 200 and body["asset"]["name"] == "Ada" and started == [body["asset"]["id"]]
     meta = lib.get(body["asset"]["id"])
-    assert meta["source"]["description"] == "tall, auburn hair" and meta["build"]["steps"][0]["name"] == "sheet" and "SAM License" in meta["licence_note"]
+    assert meta["source"]["description"] == "tall, auburn hair" and meta["build"]["steps"][0]["name"] == "sheet" and "TRELLIS.2" in meta["licence_note"]
     assert ok({"type": "character", "source": {"character_id": "x"}}, _char(tmp_path, "failed"))[0] == 400
     assert ok({"type": "prop", "source": {"prompt": "a red chair"}})[0] == 200
     code, body = ok({"type": "place", "source": {"brief": "rainy downtown block"}})
@@ -49,7 +49,8 @@ def test_create_each_type_and_refuse_bad_requests(tmp_path, monkeypatch):
         assert ok(bad)[0] == 400, bad
 
 
-def test_the_character_maker_refuses_while_off_even_for_a_good_sheet(tmp_path):
+def test_the_character_maker_refuses_while_off_even_for_a_good_sheet(tmp_path, monkeypatch):
+    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "0")
     lib = L.Library()
     code, body = api.create(lib, {"type": "character", "source": {"character_id": "savedchar"}}, get_character=lambda c: _char(tmp_path), start=lambda a: None, **OK)
     assert code == 403 and "off" in body["error"] and lib.list() == []
@@ -134,7 +135,7 @@ def test_a_character_whose_rig_failed_becomes_a_static_prop(tmp_path, monkeypatc
     aid = body["asset"]["id"]
     meta = lib.get(aid)
     steps = {r["name"]: r for r in meta["build"]["steps"]}
-    steps["remesh"].update(status="done", outputs={"main": {"path": glb_file(tmp_path / "wk_work" / "lod0.glb")}})
+    steps["mesh"].update(status="done", outputs={"main": {"path": glb_file(tmp_path / "wk_work" / "lod0.glb")}})
     steps["rig"].update(status="failed", error="SkinTokens failed")
     lib.update(aid, build={**meta["build"], "state": "failed"})
     code, body = api.action(lib, aid, "as-prop", {}, start=started.append, is_running=lambda a: False, capability=READY)
@@ -163,10 +164,10 @@ def test_adding_a_clip_makes_assemble_and_later_steps_stale(tmp_path, monkeypatc
 
 def test_characters_payload_says_who_can_become_3d(tmp_path, monkeypatch):
     code, body = api.characters_payload([_char(tmp_path)])
-    assert not body["enabled"] and not body["characters"][0]["ok"] and "off" in body["characters"][0]["why"]
-    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "1")
-    code, body = api.characters_payload([_char(tmp_path)])
     assert body["enabled"] and body["characters"][0]["ok"]
+    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "0")
+    code, body = api.characters_payload([_char(tmp_path)])
+    assert not body["enabled"] and not body["characters"][0]["ok"] and "off" in body["characters"][0]["why"]
 
 
 # ---------- the router
@@ -195,7 +196,7 @@ def test_routes_list_create_get_and_refuse(tmp_path, monkeypatch):
     assert c.get(f"/api/worldkit/assets/{aid}/file/meta.json").status_code == 404
     assert "looks" in c.get("/api/worldkit/looks").json() and c.get("/api/worldkit/exports").json() == {"exports": []}
     assert c.get("/api/worldkit/exports/../x.zip").status_code == 404
-    assert c.get("/api/worldkit/characters").json()["enabled"] is False
+    assert c.get("/api/worldkit/characters").json()["enabled"] is True
 
 
 def test_a_refused_word_stops_at_the_door_in_every_field(monkeypatch):
@@ -209,12 +210,16 @@ def test_a_refused_word_stops_at_the_door_in_every_field(monkeypatch):
     assert c.get("/api/worldkit/assets").json() == {"assets": []}
 
 
-def test_capabilities_are_read_from_the_disk_each_time(tmp_path):
+def test_capabilities_are_read_from_the_disk_each_time(tmp_path, monkeypatch):
     c = _client()
     d = c.get("/api/worldkit/capabilities").json()
     assert d["makers"]["place"]["ready"] is True or d["blender"]
     assert not d["makers"]["prop_text"]["ready"] and any("still downloading or missing" in p for p in d["makers"]["prop_text"]["problems"])
-    assert not d["makers"]["character"]["ready"] and "off" in d["makers"]["character"]["problems"][0] and d["gpu"] is False
+    assert not d["makers"]["character"]["ready"] and d["characters_on"] is True and d["gpu"] is False
+    assert not any(" off " in p for p in d["makers"]["character"]["problems"]) and any("Krea 2" in p for p in d["makers"]["character_sheet"]["problems"])
+    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "0")
+    d = c.get("/api/worldkit/capabilities").json()
+    assert d["characters_on"] is False and "off" in d["makers"]["character"]["problems"][0] and "off" in d["makers"]["character_sheet"]["problems"][0]
 
 
 def test_files_are_served_from_the_library(tmp_path):

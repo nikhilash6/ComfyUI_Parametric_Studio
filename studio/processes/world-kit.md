@@ -2,7 +2,7 @@
 
 One shared library of `.glb` assets, each with a real scale, colliders (places and props), a rig and motion clips (characters) and a turntable with a thumbnail. Open it from the **World Kit** button in the left rail.
 
-Status: the place maker, looks, the library, approve, archive and the Godot pack ran here on the CPU with Blender. The prop maker ran from a mesh. Every step that needs a model is written and tested with fakes, but has not run on a real model here.
+Status: the place maker, looks, the library, approve, archive and the Godot pack ran here on the CPU with Blender. The prop maker ran from a mesh. A character ran from words to a rigged, textured figure with three motions on real models here. Other steps that need a model are written and tested with fakes, but have not run on a real model here.
 
 ## What it makes
 
@@ -11,7 +11,7 @@ Status: the place maker, looks, the library, approve, archive and the Godot pack
 | Place | a brief ("rainy downtown block at night") | a kit recipe (street, interior or beach) -> one texture per surface -> the Blender build with colliders -> turntable -> library |
 | Look | a preset (day, golden hour, night city and so on), with time and weather | a test scene under that light -> turntable -> library |
 | Prop or vehicle | a 3D result from this studio, a picture, or words | (words: the Image goal) -> (a picture: cut-out) -> picture to mesh -> Blender cleanup (real size, pivot at the bottom centre, a box collider) -> turntable -> library |
-| Character | a saved character only, never an upload. Off unless switched on (see below) | SAM 3D Body -> AutoRemesher (optional) -> SkinTokens -> one motion and retarget per clip -> Blender assemble -> turntable -> library |
+| Character | your words, never an upload | a sheet from Krea 2 Turbo -> the picture check -> TRELLIS.2 -> SkinTokens -> one motion per clip, fitted to the rig -> Blender assemble -> turntable -> library |
 
 A place needs Blender and nothing else. Its textures are procedural (brick, tarmac, paving, planks, sand, plaster, made from numbers on the CPU) unless the Image goal's model is here and ComfyUI answers, in which case each surface is a FLUX.2 Klein picture made tileable. A failed picture falls back to the procedural texture. The form lets you pick either one.
 
@@ -24,17 +24,22 @@ The New asset form asks the server, which reads the disk each time, so a model t
 | Text to picture, generated textures | FLUX.2 Klein 4B, its text encoder and VAE | the Image goal's files |
 | Cut-out | BiRefNet | `background_removal/birefnet.safetensors` |
 | Picture to mesh | SAM 3D Objects, or the Pixal3D or Hunyuan3D 2.1 family template, whichever is ready first | `_complete_pipelines/SAM-3D-Objects/checkpoints/` |
-| Body mesh | SAM 3D Body, SAM 3.1, MoGe | `detection/sam_3d_body_dinov3_bf16.safetensors`, `sam3/SAM 3D BODY/`, `checkpoints/SAM 3.1/`, `geometry_estimation/` |
+| Character sheet | Krea 2 Turbo, its text encoder and VAE, and the picture check tool | `_complete_pipelines/Krea2/`, `text_encoders/qwen3vl_4b_bf16.safetensors`, `vae/qwen_image_vae.safetensors`; `STUDIO_TOOL_PICTURECHECK` |
+| Character mesh | TRELLIS.2, its VAEs, DINOv3 and BiRefNet | `diffusion_models/3d/trellis_2_int8_convrot.safetensors`, `vae/trellis_2_*`, `text_encoders/dino_v3_L_naf_fp32.safetensors`, `background_removal/birefnet.safetensors` |
+| Plain body mesh (a recipe choice, not the default) | SAM 3D Body, SAM 3.1, MoGe | `detection/sam_3d_body_dinov3_bf16.safetensors`, `sam3/SAM 3D BODY/`, `checkpoints/SAM 3.1/`, `geometry_estimation/` |
 | Rig | SkinTokens and its runner | `_libraries/models-legacy-layout/3d/SkinTokens/` |
-| Motion | Kimodo and its runner, the Blender retarget script | `_libraries/models-legacy-layout/motion/kimodo/` |
+| Motion | Kimodo and its runner, its Llama 3 text encoder and LLM2Vec adapters, the Blender retarget script | `_libraries/models-legacy-layout/motion/kimodo/`, `_libraries/models-legacy-layout/motion/text-encoders/` |
 
-Tools that keep their own environment (SAM 3D Objects, SkinTokens, AutoRemesher, Kimodo, retarget) are found through `STUDIO_TOOL_<NAME>`. If a tool's launcher still points at a folder that no longer exists, the form says that too.
+Kimodo's text encoder runs on the card when there is room for it, about 17 GB, and on the CPU when there is not, about 3 GB on the card and slower.
+
+Tools that keep their own environment (SAM 3D Objects, SkinTokens, AutoRemesher, Kimodo, retarget, the picture check) are found through `STUDIO_TOOL_<NAME>`. If a tool's launcher still points at a folder that no longer exists, the form says that too.
 
 UniRig's weights can be here but nothing runs it: this maker rigs with SkinTokens.
 
 ## Using it
 
 1. **New asset**: pick the type, fill the form, **Make it**. The list shows thumbnails and a status.
+   For a **character**: name and describe someone, or start from an idea, and press **Make the sheet**. A picture is made from the words and goes through the picture check. Look at it: **Another take** tries again from the same words, **Reword** puts the words back in the form. Then choose a height and motions and press **Build the character**. The result is a rigged, moving 3D figure in the sheet's clothes, hair and colour. The back and sides are the model's guess. The page lists what is still rough: clothes can pull when it moves, trouser legs can stay joined near the ankles, and feet stay flat and only turn.
 2. Open an asset for the 3D viewer, the turntable, the step list and any failed step's error. **Retry** resumes from the step that did not finish. **Cancel** stops a build. **Approve for sets** works only on a finished build that passes validation: sane scale, a rig for characters, a collider for props and places. **Unapprove** reverses it. **Archive** moves the folder to `_archive/` and deletes nothing. A character whose rig failed offers **Use as a static prop**, and characters take more clips with **Add clip**.
 3. **Export for a game** (left panel): every approved asset becomes a pack.
 
@@ -54,7 +59,8 @@ Only approved assets are exported. A draft is refused by name.
 ## HTTP API (`studio/worldkit/api.py`)
 
 - `GET /api/worldkit/assets?type=&tag=&q=&status=`, `GET /api/worldkit/assets/<id>`, `GET /api/worldkit/assets/<id>/file/<asset.glb|preview.mp4|thumb.jpg>`
-- `GET /api/worldkit/looks`, `/characters`, `/capabilities`, `/meshes`
+- `GET /api/worldkit/looks`, `/characters`, `/capabilities`, `/meshes`, `GET /api/worldkit/characters/<id>/sheet`
+- `POST /api/worldkit/characters` `{name, description}` and nothing else, `POST /api/worldkit/characters/<id>/again`, `DELETE /api/worldkit/characters/<id>`
 - `POST /api/worldkit/assets`, `POST /api/worldkit/assets/<id>/<retry|cancel|approve|unapprove|archive|as-prop|clips>`
 - `POST /api/worldkit/export`, `GET /api/worldkit/exports`, `GET /api/worldkit/exports/<name>.zip`
 
@@ -69,24 +75,21 @@ Environment variables, or the machine's settings file.
 | `STUDIO_BLENDER` | the Blender program | `/snap/bin/blender` |
 | `STUDIO_WORLDKIT_THREADS` | CPU threads for a render | half the cores |
 | `STUDIO_WORLDKIT_GPU` | `1` lets a render try EEVEE, if the card has room above the floor | off, CPU Cycles only |
-| `STUDIO_WORLDKIT_CHARACTERS` | `1` turns the character maker on | off |
+| `STUDIO_WORLDKIT_CHARACTERS` | `0` turns the character maker off | on |
 
 ## Rules in force
 
 - Blender runs headless with a timeout. A run past it, or a cancel, is killed through its own process group by pid.
 - CPU is forced three ways: the environment hides the GPU, Cycles is told to use the CPU, and each script sets the scene's device and the add-on's compute device.
 - Ids are 12 lowercase letters.
-- Every name, tag, brief, prompt and clip description goes through the studio's safe-for-work word check, plus a rule that refuses any word for a young person together with words for undress or a body on show. A saved character whose own description reads as too young is refused.
-- **What that does not cover:** it reads words only. This studio has no image classifier, so a picture you add for a prop, a generated picture and a finished mesh are not checked by what they show, and nothing can tell whether a saved character looks like a real person. That is why the character maker is off by default.
-- Characters come only from saved characters. This studio has no character builder yet, so `<library>/_characters/` starts empty and the form says so.
+- Every name, tag, brief, prompt and clip description goes through the studio's safe-for-work word check, plus a rule that refuses any word for a young person together with words for undress or a body on show. A saved character's description that names a young person at all is refused, and so is one that asks for a real person's likeness in the plain ways of asking.
+- A saved character's sheet must pass the picture check: a readable face that reads as 20 or over, and nothing undressed. A sheet that does not pass is deleted and only the reason is kept. Without the picture check tool or the picture model, the form says so and nothing is made. A 3D build starts only from a sheet holding a stored pass for that exact file.
+- Characters are made here from words. No route takes an upload or a photo for this.
+- **What the checks do not cover:** a plain name cannot be told from an invented one. Apparent age is an estimate with an error of years and it is trained on photographs, so someone in their twenties can be refused and a drawn or youthful face can pass. The check sees exposed skin, not a pose, a suggestive framing or sheer clothes, and it cannot tell whether a face looks like a real person. How often it catches what it should has never been measured, by design: no such picture is ever made to test it. A picture you add for a prop, a generated prop picture, a finished mesh and its motion are not checked by what they show.
 
 ## Using it in a shot
 
-Approved places, props and looks go straight into the **Virtual Set** page: see its own guide. Unapproving or archiving an asset stops any shot that uses it from rendering, with the reason.
-
-## Not built yet
-
-Saved characters have a reader but no screen that writes them.
+Approved places, props, looks and characters go straight into the **Virtual Set** page: see its own guide. Unapproving or archiving an asset stops any shot that uses it from rendering, with the reason.
 
 ## Troubleshooting
 

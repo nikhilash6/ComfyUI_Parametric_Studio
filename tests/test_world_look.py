@@ -37,9 +37,21 @@ def test_samples_and_the_test_shot_are_marked_as_ours():
 
 def test_notes_on_what_is_not_proven_stay_on_the_page():
     js = (WEB / "virtualset.js").read_text()
-    for note in ["No face check ran", "Characters are off", "The checks do not judge the picture", "Keeps layout and camera, not exact props"]:
+    for note in ["No face check ran", "Characters are off on this machine", "The checks do not judge the picture", "Keeps layout and camera, not exact props"]:
         assert note in js, note
     assert "Licences (for your information)" in (WEB / "worldkit.js").read_text()
+
+
+def test_the_character_bench_takes_words_only_and_shows_what_the_checks_miss():
+    js = (WEB / "worldkit.js").read_text()
+    bench = js[js.index("function CharacterBench"):js.index("function NewAsset")]
+    assert 'type="file"' not in bench and "/api/upload" not in bench and "there is no photo upload" in bench
+    assert "What the checks can and cannot catch" in bench and "data.limits" in bench
+    assert "(when switched on)" not in js
+    helpers = (WEB / "worldkit_helpers.js").read_text()
+    assert "<${Rough}/>" in bench and 'meta.type === "character" && html`<${Rough}/>`' in js
+    for words in ("the model's guess", "Clothes can pull", "will not match the sheet"):
+        assert words in helpers
 
 
 def test_proof_status_is_read_from_the_server():

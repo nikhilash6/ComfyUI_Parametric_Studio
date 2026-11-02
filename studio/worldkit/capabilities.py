@@ -38,6 +38,7 @@ NEEDS: dict[str, dict] = {
     "moge": {"label": "MoGe 2", "family": ("MoGe", "3d_moge_perspective_to_mesh")},
     "triposr": {"label": "TripoSR", "tool": "triposr", "files": [("_complete_pipelines/TripoSR/checkpoints/model.ckpt", GB)]},
     "shap_e": {"label": "Shap-E (words to mesh)", "files": [("3d/shap-e/prior/diffusion_pytorch_model.fp16.safetensors", 500_000_000), ("3d/shap-e/shap_e_renderer/diffusion_pytorch_model.bin", 700_000_000), ("text_encoders/clip-vit-large-patch14.safetensors", 1_000_000_000)]},
+    "trellis2_main": {"label": "TRELLIS.2 on the main ComfyUI (a character's mesh)", "files": [("diffusion_models/3d/trellis_2_int8_convrot.safetensors", 2 * GB), ("vae/trellis_2_shape_vae_bf16.safetensors", 100_000_000), ("vae/trellis_2_texture_vae_bf16.safetensors", 100_000_000), ("text_encoders/dino_v3_L_naf_fp32.safetensors", 500_000_000), ("background_removal/birefnet.safetensors", 100_000_000)]},
     "sam3d_body": {"label": "SAM 3D Body", "files": [("detection/sam_3d_body_dinov3_bf16.safetensors", 2 * GB), ("checkpoints/SAM 3.1/sam3.1_multiplex_fp16.safetensors", GB), ("geometry_estimation/moge_2_vitl_normal_fp16.safetensors", 500_000_000)]},
     "skintokens": {"label": "SkinTokens (rig)", "tool": "skintokens", "files": [
         ("_libraries/models-legacy-layout/3d/SkinTokens/experiments/articulation_xl_quantization_256_token_4/grpo_1400.ckpt", GB),
@@ -76,7 +77,7 @@ NEEDS: dict[str, dict] = {
 }
 #: What each way of making something needs. A place's textures are not listed: with no image model it uses procedural ones.
 ROUTES = {"place": [], "look": [], "prop_mesh": [], "prop_image": ["cutout", "mesh"], "prop_text": ["text_image", "cutout", "mesh"],
-          "character": ["krea2", "picturecheck", "sam3d_body", "skintokens", "kimodo", "retarget"]}
+          "character_sheet": ["krea2", "picturecheck"], "character": ["krea2", "picturecheck", "trellis2_main", "skintokens", "kimodo", "retarget"]}
 MESH_ROUTES = ("sam3d_objects", "trellis2", "pixal3d", "hunyuan3d", "triposr")
 TEXT_MESH_ROUTES = ("shap_e",)
 TEXT_IMAGE_ROUTES = ("image", "krea2")
@@ -243,13 +244,14 @@ def report() -> dict:
     blender = blender_problem()
     makers = {n: route(n) for n in ROUTES}
     if blender:
-        for r in makers.values():
-            r["ready"], r["problems"] = False, [blender, *r["problems"]]
-    ch = makers["character"]
+        for n, r in makers.items():
+            if n != "character_sheet":          # a sheet is a picture and a check: no Blender in it
+                r["ready"], r["problems"] = False, [blender, *r["problems"]]
     why_off = safety.character_problem()
     if why_off:
-        ch.update(ready=False, problems=[why_off, *ch["problems"]])
-    return {"blender": blender, "gpu": False if not _gpu() else True, "makers": makers, "textures_generated": textures_generated(), "autoremesher": need("autoremesher"), "unirig": need("unirig")}
+        for n in ("character", "character_sheet"):
+            makers[n].update(ready=False, problems=[why_off, *makers[n]["problems"]])
+    return {"blender": blender, "characters_on": not why_off, "gpu": False if not _gpu() else True, "makers": makers, "textures_generated": textures_generated(), "autoremesher": need("autoremesher"), "unirig": need("unirig")}
 
 
 def _gpu() -> bool:

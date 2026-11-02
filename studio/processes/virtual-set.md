@@ -54,13 +54,13 @@ One shot per line in the last saved shot's set, look, mode and format, up to 12.
 
 ## Characters
 
-Off by default, as in World Kit. A shot works with a place and props alone. With `STUDIO_WORLDKIT_CHARACTERS=1`, a shot takes up to two approved, rigged characters, each with a clip and marks. H3's depth control has no identity input, and in mode D the reference picture is the first still, so nothing here locks a face.
+A shot takes up to two approved, rigged characters from World Kit, each with a motion and marks, or none: a shot works with a place and props alone. Every keyframe and video prompt carries each character's whole saved description and a line asking that they stay clothed as described. One shot with a cast has rendered here, mode A with H3 on the depth pass: the figure stayed clothed in the frames we checked, but the face, some colours and the street's look came from the words, not the character or the set. Nothing here checks a finished video by what it shows. `STUDIO_WORLDKIT_CHARACTERS=0` turns characters off. H3's depth control has no identity input, and in mode D the reference picture is the first still, so nothing here locks a face.
 
 ## What the safety check covers
 
 The shot's name, action and settings, a list's name and script, and the final prompt with the words it takes from assets go through the studio's safe-for-work word check, plus World Kit's rule that refuses a word for a young person together with words for undress or a body on show.
 
-**What it does not cover:** it reads words only. This studio has no image classifier, so a Blender frame, a generated keyframe and a finished video are not checked by what they show. Nothing can tell whether a character looks like a real person, which is why characters are off by default.
+**What it does not cover:** it reads words only. This studio has no image classifier, so a Blender frame, a generated keyframe and a finished video are not checked by what they show. A character's sheet goes through World Kit's picture check, but its mesh and motion do not, and nothing can tell whether a character looks like a real person.
 
 ## HTTP API (`studio/vset/api.py`)
 

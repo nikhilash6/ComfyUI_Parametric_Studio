@@ -8,6 +8,7 @@ from studio.worldkit import jobs, safety
 from studio.worldkit import steps as S
 
 VIDEO_TAIL = "Photoreal, real materials on every surface, steady exposure."
+CLOTHED = "Fully clothed exactly as described, from start to finish."
 
 
 def scene_step(shot: dict) -> S.Step:
@@ -15,13 +16,20 @@ def scene_step(shot: dict) -> S.Step:
 
 
 def who(shot: dict, *, library) -> str:
+    """Each cast member's name and whole saved description: the clothes come last in most, so nothing is cut. A character's mesh may be a plain body, and these words are what dress it in a keyframe or a video."""
     parts = []
     for c in shot.get("cast") or []:
         s = library.require(c["asset"]).get("source") or {}
-        desc = str(s.get("description") or "").strip()[:200]
+        desc = str(s.get("description") or "").strip()
         name = s.get("name") or "a person"
         parts.append(f"{name}, {desc}" if desc else str(name))
     return " and ".join(parts)
+
+
+def key_person(shot: dict, *, library) -> str:
+    """The words a keyframe's prompt gets for the cast."""
+    people = who(shot, library=library)
+    return f" The person is {people}. {CLOTHED}" if people else ""
 
 
 def where(shot: dict, *, library) -> str:
@@ -33,7 +41,7 @@ def video_prompt(shot: dict, *, library) -> str:
     look = SH.look_of(shot, library)
     people = who(shot, library=library)
     action = shot["prompt"].strip().rstrip(".")
-    return f"{people + ': ' if people else ''}{action}. In {where(shot, library=library)}, {look['label'].lower()}. {VIDEO_TAIL}"
+    return f"{people + '. ' + CLOTHED + ' ' if people else ''}{action}. In {where(shot, library=library)}, {look['label'].lower()}. {VIDEO_TAIL}"
 
 
 def uploaded(ctx: dict, step: str, key: str = "main") -> str:

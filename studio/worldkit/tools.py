@@ -3,6 +3,7 @@ those folders is imported into the studio. Each runner names its tool's folder t
 GPU tools ask for room above the VRAM floor first and never evict anything."""
 from __future__ import annotations
 
+import json
 import os
 import signal
 import subprocess
@@ -12,7 +13,7 @@ from studio.worldkit import capabilities as C
 from studio.worldkit import blender as B
 from studio.worldkit.steps import StepError
 
-PEAK_GB = {"anigen": 11.0, "sam3d_objects": 32.0, "skintokens": 6.0, "kimodo": 17.0}
+PEAK_GB = {"anigen": 11.0, "sam3d_objects": 32.0, "skintokens": 6.0, "kimodo": 17.0, "kimodo_cpu_text": 3.0}
 TIMEOUT_S = {"anigen": 1500, "sam3d_objects": 1800, "skintokens": 900, "autoremesher": 1800, "kimodo": 2400, "retarget": 900}
 AR_LODS = (20000, 5000, 1500)
 
@@ -29,10 +30,10 @@ def vram_gate(tool: str, *, free=None) -> None:
         raise StepError(f"{tool}: {why}. Nothing was evicted; press Retry when there is room.")
 
 
-def call(cmd: list, log: Path, timeout: int, *, cwd: Path | None = None, cpu: bool = False, popen=None, killpg=None) -> int:
+def call(cmd: list, log: Path, timeout: int, *, cwd: Path | None = None, cpu: bool = False, popen=None, killpg=None, env_extra: dict | None = None) -> int:
     popen, killpg = popen or subprocess.Popen, killpg or os.killpg
     log.parent.mkdir(parents=True, exist_ok=True)
-    env = B.environment(not cpu)
+    env = {**B.environment(not cpu), **(env_extra or {})}
     with open(log, "w", encoding="utf-8") as fh:
         proc = popen([str(c) for c in cmd], stdout=fh, stderr=subprocess.STDOUT, start_new_session=True, env=env, cwd=str(cwd) if cwd else None)
         try:
@@ -114,11 +115,11 @@ def anigen(image, work: Path, *, seed: int = 42, run=None) -> Path:
 
 
 def skintokens(mesh, work: Path, *, run=None) -> Path:
-    """A finished mesh -> a rigged GLB, texture and scale kept."""
+    """A finished mesh -> a rigged GLB, texture and scale kept. The voxel skin post-process keeps a bone's pull inside its own limb, so a raised arm stops dragging the jacket with it."""
     require("skintokens")
     vram_gate("skintokens")
     work = Path(work); work.mkdir(parents=True, exist_ok=True); out = work / "rigged.glb"; log = work / "skintokens.log"
-    rc = (run or call)([C.tool_home("skintokens") / "run_skintokens.sh", "--input", mesh, "--output", out, "--use_transfer"], log, TIMEOUT_S["skintokens"])
+    rc = (run or call)([C.tool_home("skintokens") / "run_skintokens.sh", "--input", mesh, "--output", out, "--use_transfer", "--use_postprocess"], log, TIMEOUT_S["skintokens"])
     return _made(out, rc, "SkinTokens", log)
 
 
@@ -132,12 +133,15 @@ def autoremesher(mesh, work: Path, *, run=None) -> Path:
     return _made(out / f"model_lod0_{AR_LODS[0]}q.glb", rc, "AutoRemesher", log)
 
 
-def kimodo(text: str, work: Path, *, seconds: int = 5, seed: int = 7, run=None) -> Path:
-    """A motion description -> a BVH."""
+def kimodo(text: str, work: Path, *, seconds: int = 5, seed: int = 7, run=None, free=None) -> Path:
+    """A motion description -> a BVH. Short of room for the text encoder on the card, it runs on the CPU: slower, and about 3 GB on the card instead of 17."""
     require("kimodo")
-    vram_gate("kimodo")
+    extra = {}
+    if B.vram_problem(PEAK_GB["kimodo"], free=free):
+        vram_gate("kimodo_cpu_text", free=free)
+        extra["TEXT_ENCODER_DEVICE"] = "cpu"
     work = Path(work); work.mkdir(parents=True, exist_ok=True); stem = work / "motion"; log = work / "kimodo.log"
-    rc = (run or call)([C.tool_home("kimodo") / "run_kimodo.sh", " ".join(str(text).split()), "--output", stem, "--duration", seconds, "--bvh", "--seed", seed], log, TIMEOUT_S["kimodo"])
+    rc = (run or call)([C.tool_home("kimodo") / "run_kimodo.sh", " ".join(str(text).split()), "--output", stem, "--duration", seconds, "--bvh", "--seed", seed], log, TIMEOUT_S["kimodo"], **({"env_extra": extra} if extra else {}))
     return _made(stem.with_suffix(".bvh"), rc, "Kimodo", log)
 
 
@@ -151,9 +155,13 @@ def _src_map(motion) -> str:
 
 
 def retarget(motion, target, work: Path, *, run=None) -> Path:
-    """A BVH onto a rigged character -> an FBX of the clip on that rig (CPU, Blender, no render)."""
+    """A BVH onto a rigged character -> an FBX of the clip on that rig (CPU, Blender, no render). Kimodo's SOMA BVH is fitted from joint positions (wk_fit_motion.py); any other goes through the retarget tool."""
     require("retarget")
     work = Path(work); work.mkdir(parents=True, exist_ok=True); out = work / "clip.fbx"; log = work / "retarget.log"; home = C.tool_home("retarget")
+    if _src_map(motion) != "detect":
+        pfile = work / "fit.json"
+        pfile.write_text(json.dumps({"motion": str(motion), "rig": str(target), "out": str(out)}), encoding="utf-8")
+        return _made(out, (run or call)(B.command("wk_fit_motion.py", pfile, factory_startup=True, gpu=False), log, TIMEOUT_S["retarget"], cpu=True), "Motion fit", log)
     cmd = [B.blender_path(), "-b", "--python", home / "retarget.py", "--", "--src", motion, "--src-map", _src_map(motion), "--report", work / "report.json", "--target", target, "--preset", "auto", "--out-fbx", out]
     rc = (run or call)(cmd, log, TIMEOUT_S["retarget"], cpu=True)
     return _made(out, rc, "Retarget", log)

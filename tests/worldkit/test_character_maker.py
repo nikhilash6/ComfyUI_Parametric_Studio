@@ -1,4 +1,4 @@
-"""The character maker with fakes: which steps it asks for, in which order, with which files. It stays off unless switched on, and only takes saved characters."""
+"""The character maker with fakes: which steps it asks for, in which order, with which files. On unless STUDIO_WORLDKIT_CHARACTERS=0, and it only takes saved characters."""
 import json
 from pathlib import Path
 
@@ -20,10 +20,12 @@ def _save(tmp_path, cid="savedchar", name="Ada", description="tall, auburn hair"
     return cid
 
 
-def test_off_by_default_and_on_only_by_the_setting(monkeypatch):
-    assert "off" in safety.character_problem()
+def test_on_by_default_and_off_only_by_the_setting(monkeypatch):
+    assert safety.character_problem() == "" and safety.characters_enabled()
     monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "1")
     assert safety.character_problem() == ""
+    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "0")
+    assert "off" in safety.character_problem() and not safety.characters_enabled()
 
 
 def test_only_a_built_saved_sheet_with_a_body_shot_passes(tmp_path):
@@ -52,7 +54,7 @@ def test_all_saved_lists_what_is_there_and_an_empty_store_is_fine(tmp_path):
 
 def test_recipe_defaults_and_problems():
     r, bad = CH.recipe(None)
-    assert bad == [] and r["mesh"] == "sam3d_body" and r["remesh"] is True and [c["name"] for c in r["clips"]] == ["idle", "walk", "wave"]
+    assert bad == [] and r["mesh"] == "trellis2" and r["remesh"] is False and [c["name"] for c in r["clips"]] == ["idle", "walk", "wave"]
     _, bad = CH.recipe({"mesh": "nerf", "height_m": 2.5, "clips": [{"name": "Walk!", "text": "x"}, {"name": "run", "text": " "}]})
     joined = " | ".join(bad)
     assert "mesh must be" in joined and "height_m" in joined and "lowercase" in joined and "describe the motion" in joined
@@ -109,22 +111,34 @@ def _build(tmp_path, monkeypatch, recipe=None, fail=(), fb=None):
 def test_the_default_build_runs_the_chain_in_order(tmp_path, monkeypatch):
     t, c, fb, state = _build(tmp_path, monkeypatch)
     assert state["state"] == "done", state["error"]
-    assert [r["name"] for r in state["steps"]] == ["sheet", "mesh", "remesh", "rig", "motion_idle", "retarget_idle", "motion_walk", "retarget_walk", "motion_wave", "retarget_wave", "assemble"]
-    assert [x[0] for x in t.calls] == ["autoremesher", "skintokens", "kimodo", "retarget", "kimodo", "retarget", "kimodo", "retarget"]
-    assert c.reqs[0]["template"] == CH.BODY_GRAPH and c.reqs[0]["values"] == {"image": "sheet.png"}
-    assert "autoremesher" in t.calls[1][1] and "body" in t.calls[0][1]                   # the rig takes the remesh, the remesh takes the body
-    assert fb.calls[0][0] == "wk_assemble.py" and [x["name"] for x in fb.calls[0][1]["clips"]] == ["idle", "walk", "wave"] and fb.calls[0][2]["gpu"] is False
+    assert [r["name"] for r in state["steps"]] == ["sheet", "mesh", "rig", "motion_idle", "retarget_idle", "motion_walk", "retarget_walk", "motion_wave", "retarget_wave", "assemble"]
+    assert [x[0] for x in t.calls] == ["skintokens", "kimodo", "retarget", "kimodo", "retarget", "kimodo", "retarget"]
+    assert c.reqs[0]["template"] == CH.TRELLIS_GRAPH and c.reqs[0]["values"]["image"] == "sheet.png"
+    assert fb.calls[0][0] == "wk_assemble.py"                                                # nothing to bake: the rig takes the textured mesh as it came
+    assert fb.calls[-1][0] == "wk_assemble.py" and [x["name"] for x in fb.calls[-1][1]["clips"]] == ["idle", "walk", "wave"] and fb.calls[-1][2]["gpu"] is False
 
 
 def test_a_failed_clip_is_left_out_and_a_failed_rig_stops_the_build(tmp_path, monkeypatch):
-    t, _, fb, state = _build(tmp_path, monkeypatch, {"clips": [{"name": "walk", "text": "walks"}], "remesh": False}, fail={"kimodo"})
-    assert state["state"] == "done" and fb.calls[0][1]["clips"] == [] and "retarget" not in [x[0] for x in t.calls]
+    t, _, fb, state = _build(tmp_path, monkeypatch, {"clips": [{"name": "walk", "text": "walks"}]}, fail={"kimodo"})
+    assert state["state"] == "done" and fb.calls[-1][1]["clips"] == [] and "retarget" not in [x[0] for x in t.calls]
     _, _, _, state = _build(tmp_path, monkeypatch, fail={"skintokens"})
     assert state["state"] == "failed" and state["error"].startswith("Rig (SkinTokens):")
-    assert {r["name"]: r["status"] for r in state["steps"]}["remesh"] == "done"            # the mesh is kept
+    assert {r["name"]: r["status"] for r in state["steps"]}["mesh"] == "done"            # the mesh is kept
 
 
-def test_the_first_step_refuses_while_the_maker_is_off(tmp_path):
+def test_a_recipe_can_ask_for_the_plain_body_which_is_baked_first(tmp_path, monkeypatch):
+    t, c, fb, state = _build(tmp_path, monkeypatch, {"mesh": "sam3d_body", "clips": []})
+    assert state["state"] == "done" and c.reqs[0]["template"] == CH.BODY_GRAPH and c.reqs[0]["values"] == {"image": "sheet.png"}
+    assert fb.calls[0][0] == "wk_flatten.py" and fb.calls[0][1]["out"] == t.calls[0][1]      # the rig takes the plain surface, not the pose file
+
+
+def test_a_recipe_can_still_ask_for_the_remesher(tmp_path, monkeypatch):
+    t, _, _, state = _build(tmp_path, monkeypatch, {"remesh": True, "clips": []})
+    assert state["state"] == "done" and [x[0] for x in t.calls] == ["autoremesher", "skintokens"] and "autoremesher" in t.calls[1][1]
+
+
+def test_the_first_step_refuses_while_the_maker_is_off(tmp_path, monkeypatch):
+    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "0")
     lib = L.Library()
     meta = lib.create(L.new_meta("character", "Ada", source={"kind": "character", "character_id": _save(tmp_path)}))
     state = S.run({}, CH.steps(meta), ctx=ctx_for(lib, meta, tmp_path), submit=None, wait=None, save=lambda s: None)

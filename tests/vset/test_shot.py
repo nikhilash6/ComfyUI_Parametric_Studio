@@ -23,13 +23,13 @@ def test_a_shot_works_with_a_place_and_props_alone():
     assert SH.subject_marks(s) == [[0, 0], [0, -3]]
 
 
-def test_the_cast_needs_the_character_maker_switched_on(monkeypatch):
+def test_the_cast_works_by_default_and_not_with_the_switch_off(monkeypatch):
     lib = L.Library()
     ids = make_set(lib, character=True)
     s = good_shot(ids, cast=cast_of(ids))
-    assert any("character maker is off" in p for p in SH.problems(s, library=lib))
-    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "1")
     assert SH.problems(s, library=lib) == [] and SH.subject_marks(s) == s["cast"][0]["marks"]
+    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "0")
+    assert any("character maker is off" in p for p in SH.problems(s, library=lib))
 
 
 def test_mode_limits_are_refused_with_the_reason():

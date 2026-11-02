@@ -107,7 +107,7 @@ def test_the_prompt_says_where_the_action_and_the_look_and_who_only_when_there_i
     ids = make_set(lib, character=True)
     p = common.video_prompt(good_shot(ids), library=lib)
     assert p.startswith("the camera moves down the empty street past the bench.") and "a quiet street" in p and "golden hour" in p and "skin" not in p
-    assert common.video_prompt(good_shot(ids, cast=cast_of(ids)), library=lib).startswith("Ada, tall, auburn hair: the camera")
+    assert common.video_prompt(good_shot(ids, cast=cast_of(ids)), library=lib).startswith("Ada, tall, auburn hair. Fully clothed exactly as described, from start to finish. the camera")
 
 
 def test_words_from_an_asset_cannot_pass_into_a_job_unchecked():
@@ -172,3 +172,36 @@ def test_every_job_of_every_mode_is_marked_portable():
     for kw in (dict(mode="A"), dict(mode="B"), dict(mode="C"), dict(mode="D")):
         st, _ = run_mode(good_shot(make_set(lib), **kw), lib)
         assert st.reqs and all(r["portable"] for r in st.reqs)
+
+
+def test_every_video_and_keyframe_prompt_carries_the_whole_description_and_the_clothed_line(monkeypatch, tmp_path):
+    """A plain body must not reach a video model with no words for its clothes: the wording at the end of a long description used to be cut off at 200 letters."""
+    from studio.vset.modes import guide, keyframes, motioncopy, restyle
+    from studio.worldkit import steps as S
+    monkeypatch.setenv("STUDIO_WORLDKIT_CHARACTERS", "1")
+    lib = L.Library()
+    ids = make_set(lib, character=True)
+    tail = "wearing a long sand-coloured coat, a scarf, cargo trousers and scuffed boots"
+    desc = "a lean courier in his thirties with a short beard, sun-worn skin and a slow, careful walk that has crossed a good many miles of open ground, " * 2 + tail
+    meta = lib.require(ids["char"])
+    lib.update(ids["char"], source={**meta["source"], "description": desc})
+    assert len(desc) > 200
+    seen = []
+    def ctx():
+        class Out(dict):
+            def __contains__(self, k): return True
+            def __getitem__(self, k): return {"main": {"path": "x.png"}, "first": {"path": "x.png"}, "last": {"path": "x.png"}, "shaded": {"path": "x.mp4"}, "depth": {"path": "x.mp4"}, "pose": {"path": "x.mp4"}, "clay": {"path": "x.mp4"}}
+        return {"outputs": Out(), "to_input": lambda p, stem="": "x", "seed": 1}
+    shots = [(keyframes, good_shot(ids, cast=cast_of(ids), mode="C")), (motioncopy, good_shot(ids, cast=cast_of(ids), mode="D")), (restyle, good_shot(ids, cast=cast_of(ids), mode="B")),
+             (guide, good_shot(ids, cast=cast_of(ids), mode="A")), (guide, good_shot(ids, cast=cast_of(ids), mode="A", mode_settings={"engine": "ltx"}))]
+    for mod, shot in shots:
+        for st in mod.steps(shot, library=lib):
+            if st.request is None:
+                continue
+            req = st.request(ctx())
+            if req and "prompt" in req["values"]:
+                seen.append(st.name)
+                assert tail in req["values"]["prompt"] and common.CLOTHED in req["values"]["prompt"], (mod.__name__, st.name)
+    assert {"key_first", "key_last", "video"} <= set(seen)
+    no_cast = common.video_prompt(good_shot(ids), library=lib)
+    assert common.CLOTHED not in no_cast and "mannequin" in keyframes.KEY_NEGATIVE

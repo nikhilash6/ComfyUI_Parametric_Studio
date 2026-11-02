@@ -1,5 +1,5 @@
 """The picture check for a saved character's sheet. It is deliberately a blunt rule: a sheet passes only if it shows a readable face that reads as an adult, and nothing undressed. Whatever would be
-sexual content involving a minor has to get past both halves, and a sheet that cannot be read, or a check that cannot run, does not pass. The characters switch (STUDIO_WORLDKIT_CHARACTERS) stays a decision for the founders.
+sexual content involving a minor has to get past both halves, and a sheet that cannot be read, or a check that cannot run, does not pass. It runs on every sheet; without it no sheet passes and no character is built.
 
 What runs: run_picturecheck.sh in the tool's folder (STUDIO_TOOL_PICTURECHECK), on the CPU: InsightFace buffalo_l for faces and apparent age, NudeNet 320n for exposed parts. An optional second opinion from a local vision model
 (STUDIO_WORLDKIT_VISION_CHECK=1, an OpenAI-style server at STUDIO_WORLDKIT_VISION_URL) is off by default; when on, its failure or its doubt refuses.

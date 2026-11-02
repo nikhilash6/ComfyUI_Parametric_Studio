@@ -1,4 +1,4 @@
-"""The Virtual Set shot: shot.json = the set (a place id, props with transforms), the cast (none by default, up to 2 characters when the character maker is on, each with a clip and a mark path), the marks the camera
+"""The Virtual Set shot: shot.json = the set (a place id, props with transforms), the cast (none by default, up to 2 characters, each with a clip and a mark path), the marks the camera
 follows when there is no cast, the camera (a preset or a custom path), the format, the look, the mode with its settings, the seed and the action. The shot is recreated exactly from it. state.json beside it holds the
 render steps (worldkit/steps.py), the rerolls and the QC result. The per-mode limits come from the graphs and models in MODE_SPECS; anything above a mode's limit is refused with the reason."""
 from __future__ import annotations

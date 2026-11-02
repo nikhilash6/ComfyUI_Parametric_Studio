@@ -1,8 +1,8 @@
-"""Character maker: a saved character's sheet -> SAM 3D Body (mesh) -> AutoRemesher (topology, optional) -> SkinTokens (rig) -> motion clips (Kimodo from text; each retargeted onto the rig) -> one
-glb with the clips (Blender, CPU). Off unless STUDIO_WORLDKIT_CHARACTERS=1: see safety.py for what is and is not checked. Characters come only from saved characters.
+"""Character maker: a saved character's sheet -> TRELLIS.2 (a textured mesh of the whole figure: clothes, hair and colour) -> AutoRemesher (topology, optional) -> SkinTokens (rig) -> motion clips (Kimodo from text; each retargeted onto the rig) -> one
+glb with the clips (Blender, CPU). On unless STUDIO_WORLDKIT_CHARACTERS=0: see safety.py for what is and is not checked. Characters come only from saved characters.
 
-Known limits: SAM 3D Body gives an untextured body (proportions, not clothes or hair), and AutoRemesher's quad LODs drop UVs and colour; recipe "mesh" can be
-sam3d_objects (colour kept) and "remesh" off."""
+Known limits: a recipe can ask for mesh "sam3d_body", which gives a plain untextured body, baked to a surface first, and is not the default because it is a bare grey figure. AutoRemesher is off unless a recipe asks: its quad LODs drop UVs and colour, and it can fuse limbs that nearly touch. Recipe "mesh" can be
+sam3d_objects, which keeps colour but needs a cut-out sheet and has not run here."""
 from __future__ import annotations
 
 import re
@@ -12,12 +12,13 @@ from studio.worldkit import library as L
 from studio.worldkit import steps as S
 from studio.worldkit import tools
 
-MESHES = ("sam3d_body", "sam3d_objects")
+MESHES = ("trellis2", "sam3d_body", "sam3d_objects")
+TRELLIS_GRAPH = "worldkit_trellis2_character_api.json"
 BODY_GRAPH = "worldkit_body_photo_api.json"
 DEFAULT_CLIPS = ({"name": "idle", "text": "a person stands relaxed in place, breathing, shifting weight slightly"},
                  {"name": "walk", "text": "a person walks forward at a relaxed pace"},
                  {"name": "wave", "text": "a person stands and waves with the right hand"})
-DEFAULT_RECIPE = {"mesh": "sam3d_body", "remesh": True, "height_m": 1.7}
+DEFAULT_RECIPE = {"mesh": "trellis2", "remesh": False, "height_m": 1.7}        # remeshing a body whose hands rest near its hips fuses them, and every wave then drags a strip of hip along
 CLIP_NAME = re.compile(r"^[a-z][a-z_]{0,23}$")
 MAX_CLIPS = 4
 CLIP_SECONDS = 5
@@ -74,7 +75,9 @@ def steps(meta: dict) -> list[S.Step]:
     if bad:
         raise ValueError("; ".join(bad))
     cid = meta["source"]["character_id"]
-    shape = "remesh" if r["remesh"] else "mesh"
+    body = r["mesh"] == "sam3d_body"
+    base = "flat" if body else "mesh"
+    shape = "remesh" if r["remesh"] else base
 
     def sheet(ctx):
         from studio.worldkit import characters as CS, safety
@@ -92,17 +95,25 @@ def steps(meta: dict) -> list[S.Step]:
         name = (ctx.get("to_input") or jobs.to_input)(S.out_path(ctx, "sheet"))
         return jobs.graph(BODY_GRAPH, {"image": name}, f"World Kit body: {meta['name']}")
 
+    def trellis_req(ctx):
+        tools.require("trellis2_main")
+        name = (ctx.get("to_input") or jobs.to_input)(S.out_path(ctx, "sheet"))
+        return {**jobs.graph(TRELLIS_GRAPH, {"image": name, "prefix": f"worldkit/character_{meta['id']}"}, f"World Kit character mesh: {meta['name']}"), "portable": True}
+
     def mesh_local(ctx):
         return {"main": {"path": str((ctx.get("sam3d") or tools.sam3d_objects)(S.out_path(ctx, "sheet"), ctx["work"] / "mesh"))}}
 
     def remesh(ctx):
-        return {"main": {"path": str((ctx.get("autoremesher") or tools.autoremesher)(S.out_path(ctx, "mesh"), ctx["work"] / "remesh"))}}
+        return {"main": {"path": str((ctx.get("autoremesher") or tools.autoremesher)(S.out_path(ctx, base), ctx["work"] / "remesh"))}}
 
     def rig(ctx):
         return {"main": {"path": str((ctx.get("skintokens") or tools.skintokens)(S.out_path(ctx, shape), ctx["work"] / "rig"))}}
 
-    out = [S.Step("sheet", "Sheet", local=sheet),
-           S.Step("mesh", "Mesh", request=mesh_req, pick=S.pick_first(suffix=(".glb",))) if r["mesh"] == "sam3d_body" else S.Step("mesh", "Mesh", local=mesh_local)]
+    glb = S.pick_first(suffix=(".glb",))
+    make = {"trellis2": S.Step("mesh", "Mesh", request=trellis_req, pick=glb), "sam3d_body": S.Step("mesh", "Mesh", request=mesh_req, pick=glb), "sam3d_objects": S.Step("mesh", "Mesh", local=mesh_local)}
+    out = [S.Step("sheet", "Sheet", local=sheet), make[r["mesh"]]]
+    if body:
+        out.append(S.Step("flat", "Bake the pose into the mesh (Blender)", local=flatten))
     if r["remesh"]:
         out.append(S.Step("remesh", "Remesh (AutoRemesher)", local=remesh))
     out.append(S.Step("rig", "Rig (SkinTokens)", local=rig))
@@ -110,6 +121,18 @@ def steps(meta: dict) -> list[S.Step]:
         out += _clip_steps(c)
     out.append(S.Step(BUILD_STEP, "Assemble (Blender)", local=assemble))
     return out
+
+
+def flatten(ctx: dict, *, blender=None) -> dict:
+    """SAM 3D Body's pose file (shape keys, its own armature) -> a plain surface for the remesher and the rigger (Blender, CPU only)."""
+    from studio.worldkit import blender as B
+    bl = blender or ctx.get("blender") or B
+    work = ctx["work"] / "flat"
+    work.mkdir(parents=True, exist_ok=True)
+    out = work / "body.glb"
+    with B.cpu_only():
+        bl.run("wk_flatten.py", {"mesh": S.out_path(ctx, "mesh"), "out": str(out)}, work=work, name="flatten", timeout=600, gpu=False)
+    return {"main": {"path": str(out)}}
 
 
 def assemble(ctx: dict, *, blender=None) -> dict:
