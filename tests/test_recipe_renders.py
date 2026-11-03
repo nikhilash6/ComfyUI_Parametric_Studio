@@ -144,6 +144,7 @@ def test_video_shots_keep_one_person_and_name_nothing_unwanted():
             p = str(s.get("prompt", "")); assert "gloves" not in p and "shop front" not in p and "captions" not in p, (r["id"], s["id"])
         refs = [s for s in r["steps"] if s["type"] == "h3_reference"]
         if refs: assert r["steps"][0]["id"] == "face" and all(s["pictures"] == ["@face"] and "<Picture 1>" in s["prompt"] for s in refs), r["id"]
+        assert all("same clothes as in <Picture 1>" in s["prompt"] for s in refs if "The person from <Picture 1>" in s["prompt"]), r["id"]   # the portrait holds the face; without this, the shirt changed between shots
 def test_a_render_made_by_a_family_graph_says_so_and_carries_the_cards_lora():
     via = {i: r for i, r in ROWS.items() if r.get("via")}; lib = {r["id"]: r for r in R.library()}
     assert via

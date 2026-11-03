@@ -6940,8 +6940,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "2026-11-02",
-"note": "Not rendered (checked 2026-11-02): the 720p DiTs and bridge are on disk, but MOVA's own video and audio VAEs are missing (rzgar/MOVA-720p-360p-ComfyUI, 1.0 GB). The studio's core-Wan template gave blank frames; the repack's author marks his MOVA node unfinished."
+"tested": "2026-11-03",
+"note": "Not rendered (tried 2026-11-03): with its own VAEs on disk (MOVA's video VAE holds the same tensors as Wan 2.1's) the 720p high and low-noise DiTs through core Wan nodes still give all-black frames (832x480, 49 frames, 20 steps, peak 42 GiB), so the fp8 repack does not run as a plain Wan 2.2 I2V model. It needs MOVA's own pipeline (OpenMOSS-Team/MOVA); the only ComfyUI node for it is its author's unfinished alpha."
 },
 "media": [],
 "templates": []
