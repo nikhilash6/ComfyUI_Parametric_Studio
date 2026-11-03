@@ -27,19 +27,19 @@
 "default": "a stainless steel insulated water bottle"
 },
 {
-"key": "benefit",
-"label": "Main benefit",
-"default": "keeps drinks ice cold for 24 hours"
-},
-{
 "key": "brand",
 "label": "Brand name",
 "default": "Northpeak"
 },
 {
-"key": "offer",
-"label": "Offer / call to action",
-"default": "20% off this week, link in bio"
+"key": "line_hook",
+"label": "Hook line (spoken)",
+"default": "Twenty-four hours later, my water was still ice cold. Seriously."
+},
+{
+"key": "line_cta",
+"label": "Call to action (spoken)",
+"default": "It's twenty percent off this week. The link is in my bio."
 }
 ],
 "models": [
@@ -58,7 +58,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -82,7 +82,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 149027,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> looks into the camera and opens with a surprising one-line hook about {benefit}. They speak directly to the camera. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera with a surprised smile and says: <d>[English] {line_hook}</d> Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -119,7 +119,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 149027,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> holds up {product} and gives the call to action: {offer}. They speak directly to the camera. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) holds up {product}, looks into the camera and says: <d>[English] {line_cta}</d> Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -177,24 +177,24 @@
 "default": "a stainless steel insulated water bottle"
 },
 {
-"key": "problem",
-"label": "The problem",
-"default": "cables everywhere on the desk"
-},
-{
-"key": "benefit",
-"label": "Main benefit",
-"default": "keeps drinks ice cold for 24 hours"
-},
-{
 "key": "brand",
 "label": "Brand name",
 "default": "Northpeak"
 },
 {
-"key": "offer",
-"label": "Offer / call to action",
-"default": "20% off this week, link in bio"
+"key": "line_problem",
+"label": "Problem line (spoken)",
+"default": "Every single day, my desk turns into a mess of cables. I'm done."
+},
+{
+"key": "line_benefit",
+"label": "Benefit line (spoken)",
+"default": "Now my drinks stay ice cold for twenty-four hours, so I actually drink water all day."
+},
+{
+"key": "line_cta",
+"label": "Call to action (spoken)",
+"default": "Grab one at twenty percent off this week. Link in my bio."
 }
 ],
 "models": [
@@ -213,7 +213,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot).",
 "A 10 s shot of the original is 8 s here, this studio's longest H3 option."
 ],
 "steps": [
@@ -238,7 +238,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 880867,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> complains to camera about {problem}, frustrated. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera, frustrated, and says: <d>[English] {line_problem}</d> Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -297,7 +297,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 880867,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> explains to camera how {benefit} changed their day, convinced. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera, convinced, and says: <d>[English] {line_benefit}</d> Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -319,7 +319,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 880867,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> smiles and gives the call to action: {offer}. They speak directly to the camera. Handheld selfie, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) smiles into the camera and says: <d>[English] {line_cta}</d> Handheld selfie, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -476,6 +476,16 @@
 "key": "brand",
 "label": "Brand name",
 "default": "Northpeak"
+},
+{
+"key": "line_first",
+"label": "First impression (spoken)",
+"default": "Okay, this feels way sturdier than I expected. I like it."
+},
+{
+"key": "line_verdict",
+"label": "Verdict (spoken)",
+"default": "Honest verdict? For the price, this one is a keeper."
 }
 ],
 "models": [
@@ -494,7 +504,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -562,7 +572,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 411883,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> reacts to {product} with a short honest first impression. They speak directly to the camera. Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) turns {product} over in their hands, looks into the camera and says: <d>[English] {line_first}</d> Handheld selfie framing. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -584,7 +594,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 411883,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> gives a one-line verdict on {product}. They speak directly to the camera. Handheld selfie, push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_verdict}</d> Handheld selfie, push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -651,6 +661,11 @@
 "key": "result",
 "label": "The result",
 "default": "a clean desk in two minutes"
+},
+{
+"key": "line_proud",
+"label": "Proud line (spoken)",
+"default": "Two minutes, and my desk is finally clean. I'm so proud."
 }
 ],
 "models": [
@@ -669,7 +684,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -737,7 +752,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 477574,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> shows off {result} and says one proud line. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) shows off {result}, looks into the camera and proudly says: <d>[English] {line_proud}</d> Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -790,19 +805,19 @@
 "default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
-"key": "product",
-"label": "Product (what it is)",
-"default": "a stainless steel insulated water bottle"
+"key": "line_intro",
+"label": "Introduction (spoken)",
+"default": "Last year, I quit my job to open a little bakery."
 },
 {
-"key": "story",
-"label": "The story in a sentence",
-"default": "I quit my job to open a bakery"
+"key": "line_how",
+"label": "How it helped (spoken)",
+"default": "Long shifts by the ovens get hot, but this bottle keeps my water ice cold all day."
 },
 {
-"key": "benefit",
-"label": "Main benefit",
-"default": "keeps drinks ice cold for 24 hours"
+"key": "line_recommend",
+"label": "Recommendation (spoken)",
+"default": "If you work on your feet, honestly, just get one."
 }
 ],
 "models": [
@@ -821,7 +836,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot).",
 "A 10 s shot of the original is 8 s here, this studio's longest H3 option."
 ],
 "steps": [
@@ -846,7 +861,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 844849,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> introduces themself and their situation: {story}. They speak directly to the camera. Seated medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_intro}</d> Seated medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -868,7 +883,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 844849,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> explains how {product} helped: {benefit}. They speak directly to the camera. Seated medium close-up, very slow push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and explains: <d>[English] {line_how}</d> Seated medium close-up, very slow push in. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -890,7 +905,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 844849,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> recommends it warmly in one line. They speak directly to the camera. Seated medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) smiles warmly into the camera and says: <d>[English] {line_recommend}</d> Seated medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -943,19 +958,19 @@
 "default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
-"key": "app",
-"label": "App / tool",
-"default": "a habit-tracker app"
-},
-{
 "key": "feature",
 "label": "Feature to show",
 "default": "one-tap streak reminders"
 },
 {
-"key": "offer",
-"label": "Offer / call to action",
-"default": "20% off this week, link in bio"
+"key": "line_question",
+"label": "Opening question (spoken)",
+"default": "Do you start a new habit every Monday and forget it by Friday?"
+},
+{
+"key": "line_cta",
+"label": "Call to action (spoken)",
+"default": "Try it free today. It's twenty percent off this week."
 }
 ],
 "models": [
@@ -974,7 +989,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot).",
 "A 10 s shot of the original is 8 s here, this studio's longest H3 option."
 ],
 "steps": [
@@ -999,7 +1014,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 593402,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> asks the viewer a question the {app} answers. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and asks: <d>[English] {line_question}</d> Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1043,7 +1058,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 593402,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> gives the call to action: {offer}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_cta}</d> Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1096,14 +1111,19 @@
 "default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
-"key": "offer",
-"label": "Offer / call to action",
-"default": "20% off this week, link in bio"
-},
-{
 "key": "brand",
 "label": "Brand name",
 "default": "Northpeak"
+},
+{
+"key": "line_sale",
+"label": "Announcement (spoken)",
+"default": "The sale is on! Everything is twenty percent off this week!"
+},
+{
+"key": "line_where",
+"label": "Where to get it (spoken)",
+"default": "The link is right down there in my bio. Go, go, go!"
 }
 ],
 "models": [
@@ -1122,7 +1142,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -1146,7 +1166,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 559719,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> announces excitedly that the sale is on: {offer}. They speak directly to the camera. Fast push in, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and excitedly says: <d>[English] {line_sale}</d> Fast push in, handheld. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1168,7 +1188,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 559719,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> points down and tells viewers where to get it. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) points down, looks into the camera and says: <d>[English] {line_where}</d> Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1220,20 +1240,29 @@
 "default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
-"key": "topic",
-"label": "Topic",
-"default": "three habits that fixed my sleep"
+"key": "line_hook",
+"label": "Hook (spoken)",
+"default": "Three tiny habits fixed my sleep, and none of them cost a thing."
 },
 {
-"key": "points",
-"label": "Key points (one per line)",
-"default": "no screens after 10\nsame wake time\ncold dark room",
-"multiline": true
+"key": "line_point1",
+"label": "Point 1 (spoken)",
+"default": "Number one: no screens after ten. I leave my phone in the kitchen and read instead."
 },
 {
-"key": "offer",
-"label": "Offer / call to action",
-"default": "20% off this week, link in bio"
+"key": "line_point2",
+"label": "Point 2 (spoken)",
+"default": "Number two: the same wake time every day, even on weekends. My body finally knows the schedule."
+},
+{
+"key": "line_point3",
+"label": "Point 3 (spoken)",
+"default": "Number three: a cold, dark room. I turned the heat down and blocked out every light."
+},
+{
+"key": "line_wrap",
+"label": "Wrap-up (spoken)",
+"default": "Try them for one week, and follow me for more."
 }
 ],
 "models": [
@@ -1252,7 +1281,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -1276,7 +1305,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> opens with a bold hook about {topic}. They speak directly to the camera. Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_hook}</d> Handheld selfie framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1298,7 +1327,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> explains the first point from: {points}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and explains: <d>[English] {line_point1}</d> Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1320,7 +1349,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> explains the second point from: {points}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and explains: <d>[English] {line_point2}</d> Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1342,7 +1371,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> explains the third point from: {points}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and explains: <d>[English] {line_point3}</d> Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1364,7 +1393,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 755377,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> wraps up and asks viewers to follow: {offer}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) smiles into the camera and says: <d>[English] {line_wrap}</d> Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1427,6 +1456,11 @@
 "key": "place",
 "label": "Place",
 "default": "a small coffee shop in Lisbon"
+},
+{
+"key": "line_reflect",
+"label": "Reflective line (spoken)",
+"default": "Long day, but I wouldn't trade it for anything."
 }
 ],
 "models": [
@@ -1445,7 +1479,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -1579,7 +1613,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 101453,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> says one reflective line about the day. They speak directly to the camera. Close-up, warm light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera, relaxed, and says: <d>[English] {line_reflect}</d> Close-up, warm light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1635,9 +1669,19 @@
 "default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
-"key": "story",
-"label": "The story in a sentence",
-"default": "I quit my job to open a bakery"
+"key": "line_tease",
+"label": "Tease (spoken)",
+"default": "So, I quit my job to open a bakery. Here's how that went."
+},
+{
+"key": "line_story",
+"label": "What happened (spoken)",
+"default": "On opening day the oven broke, so I baked everything in my neighbour's kitchen across the street."
+},
+{
+"key": "line_twist",
+"label": "Twist and ending (spoken)",
+"default": "That neighbour loved the bread so much, she became my business partner. We open a second shop next month."
 }
 ],
 "models": [
@@ -1656,7 +1700,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot).",
 "A 10 s shot of the original is 8 s here, this studio's longest H3 option."
 ],
 "steps": [
@@ -1681,7 +1725,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 332922,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> teases the story: {story}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) leans toward the camera and says: <d>[English] {line_tease}</d> Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1703,7 +1747,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 332922,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> tells what happened, animated. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and tells it, animated: <d>[English] {line_story}</d> Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1725,7 +1769,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 332922,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> delivers the twist and how it ended. They speak directly to the camera. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_twist}</d> Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1778,15 +1822,20 @@
 "default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
-"key": "topic",
-"label": "Topic",
-"default": "three habits that fixed my sleep"
-},
-{
 "key": "steps",
 "label": "Steps (one per line)",
 "default": "boil pasta\nsear shrimp\ntoss with butter",
 "multiline": true
+},
+{
+"key": "line_intro",
+"label": "What you'll show (spoken)",
+"default": "Here's a pasta dinner in three easy steps. Let's go."
+},
+{
+"key": "line_result",
+"label": "Result line (spoken)",
+"default": "And that's it. Dinner is ready in fifteen minutes."
 }
 ],
 "models": [
@@ -1805,7 +1854,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -1829,7 +1878,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 509985,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> says what they will show: {topic}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_intro}</d> Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1917,7 +1966,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 509985,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> shows the result and says one line. They speak directly to the camera. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) shows the result, looks into the camera and says: <d>[English] {line_result}</d> Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -1981,6 +2030,16 @@
 "label": "Steps (one per line)",
 "default": "boil pasta\nsear shrimp\ntoss with butter",
 "multiline": true
+},
+{
+"key": "line_intro",
+"label": "Introduction (spoken)",
+"default": "This garlic butter shrimp pasta takes fifteen minutes. Let's make it."
+},
+{
+"key": "line_taste",
+"label": "Reaction (spoken)",
+"default": "Mmm. Oh, that's so good. You have to try this."
 }
 ],
 "models": [
@@ -1999,7 +2058,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -2023,7 +2082,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 650632,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> introduces {recipe} with excitement. They speak directly to the camera. Medium shot in a kitchen. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera with excitement and says: <d>[English] {line_intro}</d> Medium shot in a kitchen. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2119,7 +2178,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 650632,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> tastes it and reacts. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) tastes it, looks into the camera and says: <d>[English] {line_taste}</d> Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2176,8 +2235,8 @@
 },
 {
 "key": "quote",
-"label": "Quote / message",
-"default": "Small steps every day beat big steps once"
+"label": "Quote (spoken word for word)",
+"default": "Small steps every day beat big steps once."
 },
 {
 "key": "place",
@@ -2201,7 +2260,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -2240,7 +2299,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 667014,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> says the quote with calm conviction: {quote}. They speak directly to the camera. Close-up, golden light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says with calm conviction: <d>[English] {quote}</d> Close-up, golden light, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2320,9 +2379,19 @@
 "default": "A fictional adult in a dark blue jacket"
 },
 {
-"key": "topic",
-"label": "Topic",
-"default": "three habits that fixed my sleep"
+"key": "line_question",
+"label": "Question (spoken)",
+"default": "Be honest. Is eight hours of sleep a myth?"
+},
+{
+"key": "line_answer",
+"label": "Answer (spoken)",
+"default": "It's not a myth. Most people just go to bed at a different time every night."
+},
+{
+"key": "line_react",
+"label": "Reaction (spoken)",
+"default": "Okay, that's fair. I'm guilty of that one."
 }
 ],
 "models": [
@@ -2341,7 +2410,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot).",
 "A 10 s shot of the original is 8 s here, this studio's longest H3 option."
 ],
 "steps": [
@@ -2366,7 +2435,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 676279,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> asks a sharp question about {topic} into a podcast microphone. They speak directly to the camera. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) leans into a podcast microphone and asks: <d>[English] {line_question}</d> Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2389,7 +2458,7 @@
 "label": "Answer",
 "peak_gib": 46,
 "seed": 328353,
-"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers with a strong opinion into a podcast microphone. They speak directly to the camera. Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} (S1) leans into a podcast microphone and says with a strong opinion: <d>[English] {line_answer}</d> Medium shot, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "16:9",
 "quality": "high",
@@ -2403,7 +2472,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 676279,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> laughs and reacts in one line. They speak directly to the camera. Two-shot, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) laughs into a podcast microphone and says: <d>[English] {line_react}</d> Two-shot, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2461,14 +2530,29 @@
 "default": "A fictional adult in a dark blue jacket"
 },
 {
-"key": "topic",
-"label": "Topic",
-"default": "three habits that fixed my sleep"
-},
-{
 "key": "place",
 "label": "Place",
 "default": "a small coffee shop in Lisbon"
+},
+{
+"key": "line_question",
+"label": "Question (spoken)",
+"default": "Quick question: what's one habit that fixed your sleep?"
+},
+{
+"key": "line_answer",
+"label": "Answer (spoken)",
+"default": "Honestly? I stopped drinking coffee after lunch. Total game changer."
+},
+{
+"key": "line_followup",
+"label": "Follow-up (spoken)",
+"default": "And how long did that take to work?"
+},
+{
+"key": "line_final",
+"label": "Final answer (spoken)",
+"default": "About a week. The first three days were rough."
 }
 ],
 "models": [
@@ -2487,7 +2571,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot).",
 "A 10 s shot of the original is 8 s here, this studio's longest H3 option."
 ],
 "steps": [
@@ -2512,7 +2596,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 115555,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> holds a microphone out and asks about {topic} in {place}. They speak directly to the camera. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) holds a microphone out in {place} and asks: <d>[English] {line_question}</d> Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2535,7 +2619,7 @@
 "label": "Answer",
 "peak_gib": 46,
 "seed": 278005,
-"prompt": "integrated_multimodal_description: [Shot 1] {who2} answers the question honestly, then grins. They speak directly to the camera. Handheld medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} (S1) answers honestly into the microphone, then grins, and says: <d>[English] {line_answer}</d> Handheld medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2549,7 +2633,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 115555,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> asks a quick follow-up. They speak directly to the camera. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) asks a quick follow-up into the microphone: <d>[English] {line_followup}</d> Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2572,7 +2656,7 @@
 "label": "Final",
 "peak_gib": 46,
 "seed": 409609,
-"prompt": "integrated_multimodal_description: [Shot 1] {who2} gives a funny final answer. They speak directly to the camera. Handheld close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who2} (S1) laughs and says into the microphone: <d>[English] {line_final}</d> Handheld close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -2618,19 +2702,19 @@
 "default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
-"key": "name",
-"label": "Name (person / business)",
-"default": "Maya's Plant Studio"
-},
-{
 "key": "place",
 "label": "Place",
 "default": "a small coffee shop in Lisbon"
 },
 {
-"key": "offer",
-"label": "Offer / call to action",
-"default": "20% off this week, link in bio"
+"key": "line_welcome",
+"label": "Welcome (spoken)",
+"default": "Welcome to Maya's Plant Studio! Come on in and look around."
+},
+{
+"key": "line_invite",
+"label": "Invitation (spoken)",
+"default": "Stop by this week and get twenty percent off any plant."
 }
 ],
 "models": [
@@ -2649,7 +2733,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -2673,7 +2757,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 566681,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> welcomes viewers to {name}. They speak directly to the camera. Medium shot at the entrance, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_welcome}</d> Medium shot at the entrance, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2732,7 +2816,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 566681,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> invites people in: {offer}. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_invite}</d> Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2791,9 +2875,14 @@
 "default": "a small coffee shop in Lisbon"
 },
 {
-"key": "offer",
-"label": "Offer / call to action",
-"default": "20% off this week, link in bio"
+"key": "line_intro",
+"label": "Introduction (spoken)",
+"default": "Welcome in. Let me show you around this bright little place."
+},
+{
+"key": "line_book",
+"label": "Price and booking (spoken)",
+"default": "Viewings are open this weekend. Send me a message to book yours."
 }
 ],
 "models": [
@@ -2812,7 +2901,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -2851,7 +2940,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 209860,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> stands at the door and introduces {place}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) stands at the door, looks into the camera and says: <d>[English] {line_intro}</d> Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2918,7 +3007,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 209860,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> gives the price and how to book a viewing: {offer}. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_book}</d> Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -2977,6 +3066,11 @@
 "key": "place",
 "label": "Place",
 "default": "a small coffee shop in Lisbon"
+},
+{
+"key": "line_why",
+"label": "Why it's special (spoken)",
+"default": "You come here for the coffee, and you stay for the people."
 }
 ],
 "models": [
@@ -2995,7 +3089,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -3093,7 +3187,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 798282,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> says one line about why {place} is special. They speak directly to the camera. Medium close-up, golden hour. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_why}</d> Medium close-up, golden hour. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3151,6 +3245,16 @@
 "key": "event",
 "label": "Event",
 "default": "a rooftop launch party on Friday at 8 pm"
+},
+{
+"key": "line_tease",
+"label": "Tease (spoken)",
+"default": "Something big is happening on a rooftop this Friday."
+},
+{
+"key": "line_when",
+"label": "Date and invite (spoken)",
+"default": "Friday, eight p.m., on the rooftop. Be there!"
 }
 ],
 "models": [
@@ -3169,7 +3273,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -3193,7 +3297,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 282495,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> teases {event} with excitement. They speak directly to the camera. Handheld, fast push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera with excitement and says: <d>[English] {line_tease}</d> Handheld, fast push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3230,7 +3334,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 282495,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> gives the date and tells viewers to come: {event}. They speak directly to the camera. Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_when}</d> Handheld selfie framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3286,6 +3390,16 @@
 "key": "topic",
 "label": "Topic",
 "default": "three habits that fixed my sleep"
+},
+{
+"key": "line_mistake",
+"label": "The mistake (spoken)",
+"default": "Here's the mistake I see every day in the gym: rushing every rep."
+},
+{
+"key": "line_encourage",
+"label": "Encouragement (spoken)",
+"default": "Slow it down. You've got this."
 }
 ],
 "models": [
@@ -3304,7 +3418,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -3328,7 +3442,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 270775,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> names the common mistake in {topic}. They speak directly to the camera. Medium shot in a gym. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_mistake}</d> Medium shot in a gym. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3372,7 +3486,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 270775,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> encourages the viewer in one line. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_encourage}</d> Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3425,9 +3539,14 @@
 "default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
-"key": "topic",
-"label": "Topic",
-"default": "three habits that fixed my sleep"
+"key": "line_intro",
+"label": "Introduction (spoken)",
+"default": "Get ready with me for my first big night out in months."
+},
+{
+"key": "line_plans",
+"label": "The plans (spoken)",
+"default": "Dinner first, then dancing. I haven't danced in forever."
 }
 ],
 "models": [
@@ -3446,7 +3565,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -3470,7 +3589,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 743658,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> says they're getting ready for {topic}. They speak directly to the camera. Handheld mirror framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the mirror camera and says: <d>[English] {line_intro}</d> Handheld mirror framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3536,7 +3655,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 743658,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> chats about the plans while finishing up. They speak directly to the camera. Mirror framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) finishes up, looks into the mirror camera and says: <d>[English] {line_plans}</d> Mirror framing, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3613,15 +3732,25 @@
 "default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
-"key": "topic",
-"label": "Topic",
-"default": "three habits that fixed my sleep"
-},
-{
 "key": "points",
 "label": "Key points (one per line)",
 "default": "no screens after 10\nsame wake time\ncold dark room",
 "multiline": true
+},
+{
+"key": "line_question",
+"label": "Question (spoken)",
+"default": "Why do some people wake up rested, and others don't?"
+},
+{
+"key": "line_answer",
+"label": "Answer (spoken)",
+"default": "It comes down to three things: no screens after ten, the same wake time, and a cold, dark room."
+},
+{
+"key": "line_takeaway",
+"label": "Takeaway (spoken)",
+"default": "Small changes, every night. That's the whole secret."
 }
 ],
 "models": [
@@ -3640,7 +3769,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot).",
 "A 10 s shot of the original is 8 s here, this studio's longest H3 option."
 ],
 "steps": [
@@ -3665,7 +3794,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 606946,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> asks the question behind {topic}. They speak directly to the camera. Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and asks: <d>[English] {line_question}</d> Medium close-up, locked-off. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3702,7 +3831,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 606946,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> explains the answer simply using: {points}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and explains: <d>[English] {line_answer}</d> Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3739,7 +3868,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 606946,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> gives the one-line takeaway. They speak directly to the camera. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_takeaway}</d> Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3799,10 +3928,19 @@
 "default": "three habits that fixed my sleep"
 },
 {
-"key": "points",
-"label": "Key points (one per line)",
-"default": "no screens after 10\nsame wake time\ncold dark room",
-"multiline": true
+"key": "line_headline",
+"label": "Headline (spoken)",
+"default": "Tonight: three simple habits that are changing how people sleep."
+},
+{
+"key": "line_facts",
+"label": "Key facts (spoken)",
+"default": "No screens after ten. The same wake time. And a cold, dark room."
+},
+{
+"key": "line_signoff",
+"label": "Sign-off (spoken)",
+"default": "That's all for tonight. Sleep well, and see you tomorrow."
 }
 ],
 "models": [
@@ -3821,7 +3959,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -3845,7 +3983,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 458982,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> reads the headline about {topic} like a news anchor. They speak directly to the camera. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera like a news anchor and says: <d>[English] {line_headline}</d> Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3882,7 +4020,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 458982,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> gives the key facts: {points}. They speak directly to the camera. Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_facts}</d> Medium shot at a news desk. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3904,7 +4042,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 458982,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> signs off. They speak directly to the camera. Medium shot, slow pull back. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_signoff}</d> Medium shot, slow pull back. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -3958,14 +4096,14 @@
 "default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
-"key": "name",
-"label": "Name (person / business)",
-"default": "Maya's Plant Studio"
+"key": "line_intro",
+"label": "Introduction (spoken)",
+"default": "Hi, we're Maya's Plant Studio, and we're so glad you're here."
 },
 {
-"key": "story",
-"label": "The story in a sentence",
-"default": "I quit my job to open a bakery"
+"key": "line_mission",
+"label": "Mission (spoken)",
+"default": "We started small, with one idea: make every space feel a little more alive."
 }
 ],
 "models": [
@@ -3984,7 +4122,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot).",
 "A 10 s shot of the original is 8 s here, this studio's longest H3 option."
 ],
 "steps": [
@@ -4009,7 +4147,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 432771,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> introduces {name} warmly. They speak directly to the camera. Medium shot in a bright office. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and warmly says: <d>[English] {line_intro}</d> Medium shot in a bright office. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -4046,7 +4184,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 432771,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> explains the mission: {story}. They speak directly to the camera. Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and explains: <d>[English] {line_mission}</d> Medium close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -4104,14 +4242,14 @@
 "default": "Maya's Plant Studio"
 },
 {
-"key": "role",
-"label": "Role",
-"default": "a senior designer"
+"key": "line_hiring",
+"label": "Announcement (spoken)",
+"default": "Maya's Plant Studio is hiring a senior designer! Could it be you?"
 },
 {
-"key": "offer",
-"label": "Offer / call to action",
-"default": "20% off this week, link in bio"
+"key": "line_apply",
+"label": "How to apply (spoken)",
+"default": "Send us your portfolio. The link is in our bio."
 }
 ],
 "models": [
@@ -4130,7 +4268,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -4154,7 +4292,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 207572,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> announces that {name} is hiring {role}. They speak directly to the camera. Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_hiring}</d> Medium shot, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -4191,7 +4329,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 207572,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> says how to apply: {offer}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_apply}</d> Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -4244,14 +4382,14 @@
 "default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
-"key": "for_who",
-"label": "For who",
-"default": "my brother Sam"
+"key": "message",
+"label": "Personal message (spoken word for word)",
+"default": "You're the best. See you Saturday!"
 },
 {
-"key": "message",
-"label": "Message",
-"default": "you're the best, see you Saturday"
+"key": "line_wish",
+"label": "Birthday wish (spoken)",
+"default": "Happy birthday, Sam! Another year, and you're still my favourite brother."
 }
 ],
 "models": [
@@ -4270,7 +4408,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -4294,7 +4432,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 799038,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> wishes {for_who} a happy birthday, beaming. They speak directly to the camera. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) beams into the camera and says: <d>[English] {line_wish}</d> Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -4316,7 +4454,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 799038,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> says the personal message: {message}. They speak directly to the camera. Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {message}</d> Close-up, slight push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -4368,9 +4506,14 @@
 "default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
-"key": "for_who",
-"label": "Thanking who",
-"default": "our first 1,000 customers"
+"key": "line_thanks",
+"label": "Thank-you (spoken)",
+"default": "To our first thousand customers: thank you, truly. You made this real."
+},
+{
+"key": "line_next",
+"label": "What comes next (spoken)",
+"default": "And this is only the beginning. Big things are coming."
 }
 ],
 "models": [
@@ -4389,7 +4532,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -4413,7 +4556,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 412894,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> thanks {for_who} sincerely. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and sincerely says: <d>[English] {line_thanks}</d> Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -4435,7 +4578,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 412894,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> promises what comes next, smiling. They speak directly to the camera. Close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) smiles into the camera and says: <d>[English] {line_next}</d> Close-up, slow push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -4487,19 +4630,14 @@
 "default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
-"key": "song",
-"label": "Song title",
-"default": "Midnight Line"
-},
-{
-"key": "date",
-"label": "Release date",
-"default": "Friday"
-},
-{
 "key": "music",
 "label": "Music mood",
 "default": "upbeat lo-fi"
+},
+{
+"key": "line_release",
+"label": "Release line (spoken)",
+"default": "My new song, Midnight Line, is out this Friday."
 }
 ],
 "models": [
@@ -4518,7 +4656,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -4579,7 +4717,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 435788,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> says the song {song} is out {date}. They speak directly to the camera. Close-up, neon light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says: <d>[English] {line_release}</d> Close-up, neon light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -4632,9 +4770,9 @@
 "default": "A fictional adult man in his forties with cropped black hair, clean-shaven, in a plain olive shirt"
 },
 {
-"key": "topic",
-"label": "Topic / line",
-"default": "the one habit that changed my mornings"
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "What if one tiny habit could change your whole morning?"
 }
 ],
 "models": [
@@ -4647,7 +4785,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -4657,7 +4795,7 @@
 "label": "Hook",
 "peak_gib": 46,
 "seed": 612739,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a bold question about {topic}. They speak directly to the camera. Handheld selfie, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and asks: <d>[English] {line}</d> Handheld selfie, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -4978,9 +5116,9 @@
 "default": "A fictional adult woman in her thirties with straight shoulder-length dark brown hair, a plain mustard sweater and no jewellery"
 },
 {
-"key": "topic",
-"label": "Topic / line",
-"default": "keep herbs fresh for two weeks"
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "Want herbs that stay fresh for two weeks? Wrap them in a damp paper towel and keep them in a jar."
 }
 ],
 "models": [
@@ -4993,7 +5131,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -5003,7 +5141,7 @@
 "label": "Tip",
 "peak_gib": 46,
 "seed": 661127,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} shares one quick tip: {topic}. They speak directly to the camera. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and says: <d>[English] {line}</d> Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5152,9 +5290,9 @@
 "default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
-"key": "topic",
-"label": "Topic / line",
-"default": "start before you're ready"
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "Start before you're ready. Ready never comes on its own."
 }
 ],
 "models": [
@@ -5167,7 +5305,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -5177,7 +5315,7 @@
 "label": "Line",
 "peak_gib": 46,
 "seed": 735990,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says a motivational line about {topic}. They speak directly to the camera. Close-up, golden light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and says: <d>[English] {line}</d> Close-up, golden light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5268,9 +5406,9 @@
 "default": "A fictional adult man in his thirties with short dark hair, a short neat beard and a plain navy sweater"
 },
 {
-"key": "topic",
-"label": "Topic / line",
-"default": "daily cooking hacks"
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "Follow me for a new cooking hack every single day."
 }
 ],
 "models": [
@@ -5283,7 +5421,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -5293,7 +5431,7 @@
 "label": "Cta",
 "peak_gib": 46,
 "seed": 446572,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks viewers to follow for {topic}. They speak directly to the camera. Handheld selfie. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and says: <d>[English] {line}</d> Handheld selfie. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5638,8 +5776,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "our new shop opens Saturday"
+"label": "Spoken line (exact words)",
+"default": "Our new shop opens Saturday!"
 }
 ],
 "models": [
@@ -5652,7 +5790,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -5662,7 +5800,7 @@
 "label": "News",
 "peak_gib": 46,
 "seed": 733576,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} announces excitedly: {topic}. They speak directly to the camera. Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and excitedly says: <d>[English] {topic}</d> Medium shot, push in. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5698,6 +5836,11 @@
 "key": "product",
 "label": "Product",
 "default": "a budget mechanical keyboard"
+},
+{
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "This budget keyboard feels like one three times the price. Buy it."
 }
 ],
 "models": [
@@ -5710,7 +5853,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -5720,7 +5863,7 @@
 "label": "Verdict",
 "peak_gib": 46,
 "seed": 330566,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} gives a one-line verdict on {product}. They speak directly to the camera. Medium close-up, product in hand. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) holds up {product}, looks into the camera and says: <d>[English] {line}</d> Medium close-up, product in hand. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5872,6 +6015,11 @@
 "key": "topic",
 "label": "Topic / line",
 "default": "when the Wi-Fi drops during a meeting"
+},
+{
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "So, as I was saying, our numbers are... hello? Can anyone hear me?"
 }
 ],
 "models": [
@@ -5884,7 +6032,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -5894,7 +6042,7 @@
 "label": "Skit",
 "peak_gib": 46,
 "seed": 412277,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out a funny moment: {topic}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) acts out a funny moment, {topic}, freezing mid-sentence, and says to the camera: <d>[English] {line}</d> Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5928,8 +6076,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "happy birthday, Sam"
+"label": "Spoken line (exact words)",
+"default": "Happy birthday, Sam!"
 }
 ],
 "models": [
@@ -5942,7 +6090,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -5952,7 +6100,7 @@
 "label": "Wish",
 "peak_gib": 46,
 "seed": 131513,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says {topic} warmly. They speak directly to the camera. Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and warmly says: <d>[English] {topic}</d> Medium close-up, party lights. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -5988,6 +6136,11 @@
 "key": "product",
 "label": "Product",
 "default": "a meal-kit subscription"
+},
+{
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "I was skeptical, but this meal kit actually got me cooking again."
 }
 ],
 "models": [
@@ -6000,7 +6153,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -6010,7 +6163,7 @@
 "label": "Quote",
 "peak_gib": 46,
 "seed": 327074,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says one honest line about {product}. They speak directly to the camera. Seated medium close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) talks honestly about {product}, looks into the camera and says: <d>[English] {line}</d> Seated medium close-up. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6150,8 +6303,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "what is the best advice you ever got"
+"label": "Spoken line (exact words)",
+"default": "What is the best advice you ever got?"
 }
 ],
 "models": [
@@ -6164,7 +6317,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -6174,7 +6327,7 @@
 "label": "Ask",
 "peak_gib": 46,
 "seed": 33070,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks a passer-by: {topic}. They speak directly to the camera. Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) holds out a microphone to a passer-by and asks: <d>[English] {topic}</d> Handheld medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6376,9 +6529,9 @@
 "default": "A fictional adult woman in her forties with a short grey bob and a plain teal cardigan"
 },
 {
-"key": "topic",
-"label": "Topic / line",
-"default": "10,000 followers"
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "Thank you all for ten thousand followers! I can't believe it."
 }
 ],
 "models": [
@@ -6391,7 +6544,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -6401,7 +6554,7 @@
 "label": "Thanks",
 "peak_gib": 46,
 "seed": 507634,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} thanks everyone for {topic}. They speak directly to the camera. Close-up, warm light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and says: <d>[English] {line}</d> Close-up, warm light. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6554,8 +6707,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "I'm not lazy, I'm on energy-saving mode"
+"label": "Spoken line (exact words)",
+"default": "I'm not lazy, I'm on energy-saving mode."
 }
 ],
 "models": [
@@ -6568,7 +6721,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -6578,7 +6731,7 @@
 "label": "Line",
 "peak_gib": 46,
 "seed": 894070,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says deadpan: {topic}. They speak directly to the camera. Static close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and says deadpan: <d>[English] {topic}</d> Static close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6614,6 +6767,11 @@
 "key": "topic",
 "label": "Topic / line",
 "default": "you said 'you too' when the waiter said enjoy your meal"
+},
+{
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "You too? Why did I say you too?"
 }
 ],
 "models": [
@@ -6626,7 +6784,8 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -6636,7 +6795,7 @@
 "label": "Pov",
 "peak_gib": 46,
 "seed": 346975,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} acts out {topic} with growing regret. Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) acts out {topic} with growing regret and mutters: <d>[English] {line}</d> Medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6752,7 +6911,7 @@
 "label": "When",
 "peak_gib": 46,
 "seed": 381284,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {topic} with silent fury. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} reacts to {topic} with silent fury, lips pressed tight, glaring at the screen. Close-up. One continuous shot, no cuts.\n\noverall_soundscape: Quiet office room tone, soft keyboard clicks and one slow, angry exhale through the nose.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6788,6 +6947,11 @@
 "key": "product",
 "label": "Product",
 "default": "an empty box"
+},
+{
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "Introducing the empty box! It holds nothing, does nothing, and it's yours for just nine ninety-nine!"
 }
 ],
 "models": [
@@ -6800,7 +6964,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -6810,7 +6974,7 @@
 "label": "Ad",
 "peak_gib": 46,
 "seed": 693506,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} sells {product} with full infomercial energy. They speak directly to the camera. Bright TV-style. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) sells {product} with full infomercial energy, looks into the camera and says: <d>[English] {line}</d> Bright TV-style. The product is plain and unlabelled, with a smooth blank surface. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6904,6 +7068,11 @@
 "key": "topic",
 "label": "Topic / line",
 "default": "the instructions on a shampoo bottle"
+},
+{
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "Lather. Rinse. Repeat. Oh, cruel bottle, must I repeat forever?"
 }
 ],
 "models": [
@@ -6916,7 +7085,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -6926,7 +7095,7 @@
 "label": "Read",
 "peak_gib": 46,
 "seed": 411412,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} reads {topic} like Shakespeare. They speak directly to the camera. Low angle, spotlight. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) reads {topic} like Shakespeare, looks into the camera and declaims: <d>[English] {line}</d> Low angle, spotlight. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -6960,8 +7129,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "I'm the one who never refills the ice tray"
+"label": "Spoken line (exact words)",
+"default": "I'm the one who never refills the ice tray."
 }
 ],
 "models": [
@@ -6974,7 +7143,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -6984,7 +7153,7 @@
 "label": "Reveal",
 "peak_gib": 46,
 "seed": 452652,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} confesses with an evil smile: {topic}. They speak directly to the camera. Low angle, dramatic. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera with an evil smile and confesses: <d>[English] {topic}</d> Low angle, dramatic. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -7018,8 +7187,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "I'll just fix the Wi-Fi myself"
+"label": "Spoken line (exact words)",
+"default": "I'll just fix the Wi-Fi myself."
 }
 ],
 "models": [
@@ -7038,7 +7207,7 @@
 "tips": [
 "Every shot of the presenter is made from one portrait, so the same person appears throughout. Upload your own portrait to use a different face.",
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -7062,7 +7231,7 @@
 "type": "h3_reference",
 "peak_gib": 48,
 "seed": 685260,
-"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> says confidently: {topic}. They speak directly to the camera. Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] The person from <Picture 1> (S1) looks into the camera and says confidently: <d>[English] {topic}</d> Medium shot. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "lora": "minimax_h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
@@ -7197,6 +7366,11 @@
 "key": "topic",
 "label": "Topic / line",
 "default": "the Wi-Fi password is on the back of the router"
+},
+{
+"key": "line",
+"label": "Spoken line (exact words)",
+"default": "Wait, it was on the router? This whole time?"
 }
 ],
 "models": [
@@ -7209,7 +7383,8 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech.",
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -7219,7 +7394,7 @@
 "label": "Over",
 "peak_gib": 46,
 "seed": 612011,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} over-reacts wildly to {topic}. Push in fast. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) over-reacts wildly to {topic} and shouts: <d>[English] {line}</d> Push in fast. One continuous shot, no cuts.\n\noverall_soundscape: Natural sound of the place and the action.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -7311,8 +7486,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "what's the worst way to say hello"
+"label": "Spoken line (exact words)",
+"default": "What's the worst way to say hello?"
 }
 ],
 "models": [
@@ -7325,7 +7500,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -7335,7 +7510,7 @@
 "label": "Ask",
 "peak_gib": 46,
 "seed": 796413,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} asks seriously: {topic}. They speak directly to the camera. Handheld mic framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and asks seriously: <d>[English] {topic}</d> Handheld mic framing. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -7488,8 +7663,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "pineapple belongs on every pizza"
+"label": "Spoken line (exact words)",
+"default": "Pineapple belongs on every pizza."
 }
 ],
 "models": [
@@ -7502,7 +7677,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -7512,7 +7687,7 @@
 "label": "Take",
 "peak_gib": 46,
 "seed": 786232,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} insists, eating a slice: {topic}. They speak directly to the camera. Close-up, smug. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) eats a slice, looks into the camera and insists: <d>[English] {topic}</d> Close-up, smug. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -7778,8 +7953,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "I reply-all to every company email"
+"label": "Spoken line (exact words)",
+"default": "I reply-all to every company email."
 }
 ],
 "models": [
@@ -7792,7 +7967,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -7802,7 +7977,7 @@
 "label": "Brag",
 "peak_gib": 46,
 "seed": 577064,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} brags: {topic}. They speak directly to the camera. Desk, medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and brags: <d>[English] {topic}</d> Desk, medium close-up. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
@@ -7894,8 +8069,8 @@
 },
 {
 "key": "topic",
-"label": "Topic / line",
-"default": "I always read the last page first"
+"label": "Spoken line (exact words)",
+"default": "I always read the last page first."
 }
 ],
 "models": [
@@ -7908,7 +8083,7 @@
 ],
 "tips": [
 "Every shot is its own render, so keep the description of the person the same.",
-"The earlier studio had a local model write each shot's line; here you edit the fields and H3 writes the speech."
+"Each spoken line is sent to H3 word for word inside <d>[English] ...</d>. H3 can't write speech itself: with no written words it makes up speech-like babble. Keep a line to about 2.5 words per second of shot (about 13 words for a 5-second shot)."
 ],
 "steps": [
 {
@@ -7918,7 +8093,7 @@
 "label": "Say",
 "peak_gib": 46,
 "seed": 283554,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} says proudly: {topic}. They speak directly to the camera. Close-up, book in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and proudly says: <d>[English] {topic}</d> Close-up, book in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",
