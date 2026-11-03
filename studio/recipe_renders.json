@@ -9273,7 +9273,7 @@
     "label": "GLB",
     "reduced": true
    },
-   "full_mb": 27.9
+   "full_mb": 97.1
   },
   "r3d_pic_trellis2": {
    "kind": "3d",
@@ -9300,7 +9300,7 @@
     "label": "GLB",
     "reduced": true
    },
-   "full_mb": 27.9
+   "full_mb": 47.8
   },
   "r3d_pic_triposr": {
    "kind": "3d",
@@ -9327,7 +9327,7 @@
     "label": "GLB",
     "reduced": true
    },
-   "full_mb": 27.9
+   "full_mb": 20.7
   },
   "r3d_place_beach": {
    "kind": "3d",
@@ -9354,7 +9354,7 @@
     "label": "GLB",
     "reduced": true
    },
-   "full_mb": 27.9
+   "full_mb": 9.6
   },
   "r3d_place_cafe": {
    "kind": "3d",
@@ -9381,7 +9381,7 @@
     "label": "GLB",
     "reduced": true
    },
-   "full_mb": 5.0
+   "full_mb": 4.9
   },
   "r3d_place_rainy_street": {
    "kind": "3d",
@@ -9408,7 +9408,7 @@
     "label": "GLB",
     "reduced": true
    },
-   "full_mb": 5.0
+   "full_mb": 9.6
   },
   "r3d_place_room": {
    "kind": "3d",
@@ -9462,7 +9462,7 @@
     "label": "GLB",
     "reduced": true
    },
-   "full_mb": 5.0
+   "full_mb": 9.0
   },
   "r3d_relief_moge": {
    "kind": "3d",
@@ -9628,7 +9628,7 @@
     "label": "GLB",
     "reduced": true
    },
-   "full_mb": 5.7
+   "full_mb": 60.1
   },
   "r3d_word_lamp": {
    "kind": "3d",
@@ -9655,7 +9655,7 @@
     "label": "GLB",
     "reduced": true
    },
-   "full_mb": 4.5
+   "full_mb": 46.2
   },
   "r3d_word_shap_e": {
    "kind": "3d",

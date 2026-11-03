@@ -150,3 +150,10 @@ def test_a_render_made_by_a_family_graph_says_so_and_carries_the_cards_lora():
     for rid, r in via.items():
         assert "family graph" in r["via"] and lib[rid].get("reference") and r["lora"] == lib[rid]["lora_path"].rsplit("/", 1)[-1], rid
     js = JS.read_text(encoding="utf-8"); assert "<dt>Made by</dt>" in js and '${!x.via && html`<a class="btn small" href=${"#prove/recipe/"' in js
+def test_each_3d_download_is_its_own_runs_file():
+    import hashlib
+    seen = {}
+    for rid, r in ROWS.items():
+        if r.get("download"):
+            h = hashlib.sha256((WEB / r["download"]["file"]).read_bytes()).hexdigest(); assert h not in seen, (rid, seen.get(h)); seen[h] = rid
+            if r["download"]["file"].endswith(".glb"): assert (WEB / r["download"]["file"]).stat().st_size <= 1.55e6, rid   # a Gaussian splat has no reducer here and keeps its size
