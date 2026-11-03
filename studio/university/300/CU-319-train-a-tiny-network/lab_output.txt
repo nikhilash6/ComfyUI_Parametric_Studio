@@ -1,0 +1,17 @@
+spiral: 240 points, 120 of class 1, 180 to train on, 60 held out
+
+hand-written backward against autograd, largest difference: 6.9e-18
+
+activation  parameters  worst relative error
+tanh        51          3.8e-09
+sigmoid     51          8.8e-09
+
+network        activation  rate  steps  loss before  loss after  train right  held out right
+2-8-8-1        tanh        0.3   2500   0.6722       0.0545      97.8         98.3
+2-8-8-1        linear      0.3   2500   0.6706       0.5152      77.2         45.0
+2-8-8-1        tanh        0.003 2500   0.6722       0.5402      79.4         40.0
+
+two linear layers against the single layer W2·W1: largest difference 1.1e-16
+
+SD 1.5 FeedForward at width 320: 320 -> 1280 (gated, so 2560 outputs) -> 320, 1,231,680 weights and biases
+the browser lab's 2-8-8-1 network: 105 weights and biases

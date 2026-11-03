@@ -1,6 +1,6 @@
 # ComfyUniversity course catalogue
 
-162 lessons in 18 tracks. 162 have had an independent second read, which found and fixed 203 errors. 0 are checked by their author, with the second read pending. 0 are labelled Draft. Every lesson has a CPU lab with stored output and a quiz. Rebuild with `python studio/university/build.py --labs`.
+163 lessons in 18 tracks. 162 have had an independent second read, which found and fixed 203 errors. 1 are checked by their author, with the second read pending. 0 are labelled Draft. Every lesson has a CPU lab with stored output and a quiz. Rebuild with `python studio/university/build.py --labs`.
 
 ## Your first graph
 
@@ -220,6 +220,7 @@ Drive ComfyUI from code, put a form on a graph, and let an agent queue work safe
 
 Attention, transformers, positions and flows: the machinery under every node.
 
+- **CU-319** (300) [Train a tiny network](300/CU-319-train-a-tiny-network/lesson.md). A network of 105 numbers learns a spiral in your browser: forward, backward, a gradient check, and the same block inside every SD 1.5 transformer. *Author-checked, second read pending.* Needs CU-103, CU-301.
 - **CU-301** (300) [Attention from scratch](300/CU-301-attention-from-scratch/lesson.md). Scaled dot-product attention in six lines, why the square root of d is there, and how a prompt reaches a pixel. Needs CU-103, CU-104.
 - **CU-302** (300) [Multi-head, GQA and RoPE](300/CU-302-heads-gqa-rope/lesson.md). Split attention into heads, share keys to save memory, and rotate by position so only the gap between tokens counts. Needs CU-301.
 - **CU-303** (300) [DiT and MM-DiT blocks](300/CU-303-dit-and-mmdit/lesson.md). How a transformer replaces the U-Net: patches become tokens, a time vector scales each block, text and image share attention. Needs CU-301.

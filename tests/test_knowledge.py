@@ -45,7 +45,7 @@ def test_sampling_finds_nothing_rather_than_guessing():
 
 
 def test_lessons_count_and_marks_match_the_files():
-    ls = K.lessons(); assert len(ls) == 162
+    ls = K.lessons(); assert len(ls) == 163
     assert all(c["second_read"] in ("checked", "pending") for c in ls.values()) and ls["CU-230"]["second_read"] == "checked"
 
 

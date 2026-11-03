@@ -1,0 +1,6 @@
+{
+ "https://cs231n.github.io/neural-networks-case-study": {"title": "CS231n, Neural Networks Case Study", "checked": "fetched 2026-11-02: spiral data of 3 classes, a linear softmax classifier reaches 49% training accuracy and a one-hidden-layer ReLU network of 100 units 98%, step size 1.0"},
+ "https://cs231n.github.io/neural-networks-3": {"title": "CS231n, Neural Networks Part 3: gradient checks", "checked": "fetched 2026-11-02: centred difference, relative error |a - n| / max(|a|, |n|), thresholds 1e-2, 1e-4, 1e-7, and the warning about kinks such as ReLU"},
+ "https://playground.tensorflow.org": {"title": "A Neural Network Playground", "checked": "fetched 2026-11-02: an in-browser toy network with learning rate, activation (ReLU, Tanh, Sigmoid, Linear), layers, noise and a train to test ratio; Apache licence; its own small library"},
+ "https://arxiv.org/abs/1502.01852": {"title": "Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification", "checked": "fetched abstract 2026-11-02: He, Zhang, Ren, Sun; derive an initialisation for rectifier networks. The abstract does not state the variance."}
+}

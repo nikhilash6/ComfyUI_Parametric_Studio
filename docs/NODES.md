@@ -65,7 +65,7 @@ Demo graphs, each with what it proved: `studio/web/pack_lab_demos/`. The vector 
 
 ## Node reference
 
-544 nodes: 7 in the V3 flagship pack and 537 more under 14 areas. By the code audit of 2026-11-01: 158 do real work on images, latents, audio or files, or call a service; 262 are honest utilities (maths, text, config); 102 build a plan or a payload for something else. Those last two groups load no model and render nothing, even when the name sounds bigger. 22 do not work on real ComfyUI inputs yet: PSN_AsTypeConverter, PSN_ArchCompatibilityChecker, PSN_AudioDrivenNoise, PSN_AudioScheduler, PSN_Chunked_Conditioning_Builder, PSN_GoldenSampler, PSN_HDR_Tone_Map, PSN_Latent_Inpaint_Decode, PSN_Latent_Inpaint_Encode, PSN_MasterSongCopy, PSN_Music_Master, PSN_News_Script_Generator, PSN_OCIO_Color_Grade, PSN_Peek_Visualizer, PSN_Quality_Metrics, PSN_Register_Resident_Model, PSN_SpectralScheduler, PSN_StepLifecycleMachine, PSN_StyleGAN_Direction_Apply, PSN_StyleGAN_Direction_Discover, PSN_Video_In_PNG_Decode, PSN_Video_In_PNG_Encode. 3 weak duplicates are hidden from the Add Node menu and keep working in old graphs. Written from the live classes by `scripts/build_node_docs.py`.
+546 nodes: 7 in the V3 flagship pack and 539 more under 14 areas. By the code audit of 2026-11-01: 158 do real work on images, latents, audio or files, or call a service; 262 are honest utilities (maths, text, config); 102 build a plan or a payload for something else. Those last two groups load no model and render nothing, even when the name sounds bigger. 22 do not work on real ComfyUI inputs yet: PSN_AsTypeConverter, PSN_ArchCompatibilityChecker, PSN_AudioDrivenNoise, PSN_AudioScheduler, PSN_Chunked_Conditioning_Builder, PSN_GoldenSampler, PSN_HDR_Tone_Map, PSN_Latent_Inpaint_Decode, PSN_Latent_Inpaint_Encode, PSN_MasterSongCopy, PSN_Music_Master, PSN_News_Script_Generator, PSN_OCIO_Color_Grade, PSN_Peek_Visualizer, PSN_Quality_Metrics, PSN_Register_Resident_Model, PSN_SpectralScheduler, PSN_StepLifecycleMachine, PSN_StyleGAN_Direction_Apply, PSN_StyleGAN_Direction_Discover, PSN_Video_In_PNG_Decode, PSN_Video_In_PNG_Encode. 3 weak duplicates are hidden from the Add Node menu and keep working in old graphs. Written from the live classes by `scripts/build_node_docs.py`.
 
 ## Flagship pack (V3)
 
@@ -614,6 +614,8 @@ Outputs: `value` (any (output follows input)), `free_gb` (FLOAT), `status` (STRI
 | Node | What it does | Inputs | Outputs |
 |---|---|---|---|
 | PSN Adaptive Field Filter<br>`PSN_AdaptiveFieldFilter` | Validates an Adaptive Field Filter config and builds its kernel. | `strength`, `threshold`, `kernel_size`, `mode`, `config_json`, `grid_json` | BOOLEAN, STRING, STRING, FLOAT |
+| Attention Maps per word<br>`PSN_AttentionMaps` | One heatmap per prompt word: where in the picture that word was attended to, averaged over heads, layers and steps. | `attention`, `clip`, `text`, `image`, `skip_punctuation` | IMAGE, MASK, STRING |
+| Attention Record (which word painted what)<br>`PSN_AttentionRecord` | Record cross-attention while sampling, for SD 1.5 and SDXL UNets. | `model` | MODEL, PSN_ATTENTION |
 | Attention Style Patch<br>`PSN_Attention_Style_Patch` | Builds a validated attention style patch payload (pure logic, no torch). | `style_vector`, `strength`, `op`, `model_tag` | STRING, BOOLEAN, STRING |
 | PSN Auto CFG Rescale<br>`PSN_Auto_CFG_Rescale` | Rescale a CFG value based on the conditional/unconditional noise difference. | `model`, `cfg`, `diff`, `max_cfg`, `rescale_mode` | STRING, FLOAT, STRING |
 | PSN Batch Seed Generator<br>`PSN_BatchSeedGenerator` | Generates a list of seeds based on a base seed and an offset. | `count`, `base_seed`, `offset` | INT_LIST |
@@ -621,6 +623,7 @@ Outputs: `value` (any (output follows input)), `free_gb` (FLOAT), `status` (STRI
 | CFG Steering Vector<br>`PSN_CFG_Steering_Vector` | Computes the effective CFG output with a steering vector injected. | `cond`, `uncond`, `strength`, `steering_vector`, `cond_json`, `uncond_json` | STRING, FLOAT |
 | PSN Custom Sigma Generator<br>`PSN_CustomSigmaGenerator` | Generate a custom SIGMAS schedule (Linear / Karras / Exponential / Custom). | `scheduler_type`, `steps`, `start_sigma`, `end_sigma`, `custom_sigma_string`, `config` | SIGMAS |
 | Fast Attention Patch (Plan)<br>`PSN_Fast_Attention_Patch` | Plans a fast-attention kernel patch (flash/sage/sdpa/auto) for a model. | `backend`, `sm`, `available_packages`, `head_dim`, `batch_size`, `seq_len` | STRING, BOOLEAN, STRING |
+| Fast Sampler Plan (Config)<br>`PSN_Fast_Sampler_Plan` | Validate and plan a RES4LYF fast-sampling configuration. | `steps`, `solver`, `scheduler` | BOOLEAN, STRING, STRING, STRING |
 | FreeU Patch (Config)<br>`PSN_FreeU_Patch` | Validates FreeU scale parameters and produces a patch descriptor. | `b1`, `b2`, `s1`, `s2` | BOOLEAN, STRING, STRING |
 | PSN Generalized Guidance<br>`PSN_GeneralizedGuidance` | Applies Power Law CFG and CFG++ methods for alternative guidance approaches. | `cond`, `uncond`, `method`, `power`, `cfg_scale`, `cond_vector`, `uncond_vector` | BOOLEAN, STRING, STRING |
 | PSN Golden Sampler<br>`PSN_GoldenSampler` | Sample a latent using the golden sigma schedule. | `model`, `positive`, `negative`, `latent`, `sigmas`, `sampler`, `config` | LATENT |
@@ -646,7 +649,6 @@ Outputs: `value` (any (output follows input)), `free_gb` (FLOAT), `status` (STRI
 | Model-Aware Sigma Scheduler<br>`PSN_ModelAwareScheduler` | Generate model-aware sigma schedules for Krea2, Flux1, and SD3 models. | `steps`, `model_family`, `config` | LIST, STRING |
 | One Click Prompt Generator<br>`PSN_One_Click_Prompt_Generator` | Generate a curated, reproducible SD prompt + negative prompt from theme, complexity, and seed. | `theme`, `complexity`, `seed` | STRING, STRING |
 | PSN Prompt Adherence Checker<br>`PSN_Prompt_Adherence_Checker` | Verifies that a generated prompt matches intended style/content constraints before execution. | `prompt`, `constraints`, `llm_handle` | BOOLEAN, STRING |
-| Fast Sampler Plan (Config)<br>`PSN_Fast_Sampler_Plan` | Validate and plan a RES4LYF fast-sampling configuration. | `steps`, `solver`, `scheduler` | BOOLEAN, STRING, STRING, STRING |
 | RES Fast Sampler (logic)<br>`PSN_RESFastSampler` | Plan a RES fast-sampling run (pure logic; no GPU/torch). | `steps`, `cfg`, `seed` | STRING, STRING, INT, BOOLEAN |
 | PSN Region Definition<br>`PSN_RegionDefinition` | Create a binary MASK for a rectangle, ellipse or polygon region. | `image`, `region_type`, `coords` | MASK |
 | PSN Regional Mask<br>`PSN_RegionalMask` | Creates a binary mask for a specific region of the image. | `image_width`, `image_height`, `bbox` | STRING, STRING |

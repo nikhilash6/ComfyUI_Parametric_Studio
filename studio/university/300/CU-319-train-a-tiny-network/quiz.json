@@ -1,0 +1,31 @@
+{
+ "code": "CU-319",
+ "title": "Train a tiny network",
+ "level": "300",
+ "questions": [
+  {
+   "q": "A network with two hidden layers and a linear activation is trained on the spiral. What happens?",
+   "options": ["It learns the spiral, only slower", "It can only draw a straight boundary, because linear layers stacked are one linear layer", "It blows up", "It learns it faster than tanh"],
+   "answer": "It can only draw a straight boundary, because linear layers stacked are one linear layer",
+   "why": "The lab shows two linear layers equal the single layer W2·W1 to 1e-16, and the linear network gets 45% of the held-out points right."
+  },
+  {
+   "q": "With a sigmoid output and cross-entropy loss, what is the gradient of the loss at the output logit, for one point?",
+   "options": ["p - y", "y - p", "p(1 - p)", "log p"],
+   "answer": "p - y",
+   "why": "The sigmoid's slope cancels against the loss's, which is why the lab's hand-written backward starts from p - y and matches autograd."
+  },
+  {
+   "q": "A gradient check reports a relative error of 3e-9 for every weight. What does that tell you?",
+   "options": ["The network will train well", "The backward pass computes the right derivatives", "The learning rate is right", "The data is clean"],
+   "answer": "The backward pass computes the right derivatives",
+   "why": "It compares calculus with finite differences. It says nothing about whether training will succeed, which depends on the rate, the shape and the data."
+  },
+  {
+   "q": "The training points are 100% right and the held-out rings are 70% right. What is going on?",
+   "options": ["The network memorised the training points more than it learned the shape", "The gradient is wrong", "The learning rate is too small", "Held-out points are always worse by 30%"],
+   "answer": "The network memorised the training points more than it learned the shape",
+   "why": "Held-out points never move the weights, so they show how well the shape generalises. Try fewer neurons or less noise."
+  }
+ ]
+}

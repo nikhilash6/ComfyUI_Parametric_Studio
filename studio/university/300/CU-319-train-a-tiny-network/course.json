@@ -1,0 +1,34 @@
+{
+ "code": "CU-319",
+ "title": "Train a tiny network",
+ "level": "300",
+ "prereq": [
+  "CU-103",
+  "CU-301"
+ ],
+ "char": "tune",
+ "hook": "A network of 105 numbers learns a spiral in your browser: forward, backward, a gradient check, and the same block inside every SD 1.5 transformer.",
+ "code_refs": [
+  "comfy/ldm/modules/attention.py:class FeedForward",
+  "comfy/ldm/modules/attention.py:class GEGLU",
+  "comfy/ldm/modules/attention.py:class BasicTransformerBlock"
+ ],
+ "track": "architecture",
+ "order": 5,
+ "graphs": [
+  "sd15_txt2img"
+ ],
+ "verified": [
+  {"claim": "Every transformer block in the SD 1.5 U-Net has a FeedForward: Linear, then GEGLU, then Linear, four times wider in the middle, gated by default.", "how": "source", "ref": "comfy/ldm/modules/attention.py:FeedForward"},
+  {"claim": "The browser lab's forward pass, loss and backward pass match PyTorch's autograd to 1e-12 on the same weights, for ReLU, tanh, sigmoid and linear.", "how": "test", "ref": "tests/test_university_mlp.py"},
+  {"claim": "The browser lab's gradient check agrees with its backward pass to under 1e-5 relative, and catches a backward pass with the tanh derivative left out.", "how": "test", "ref": "tests/test_university_mlp.py"},
+  {"claim": "All tables come from this lesson's lab, run here on a CPU.", "how": "run here", "ref": "lab.py"},
+  {"claim": "Centred differences, the relative error and its thresholds are as in the CS231n notes.", "how": "docs", "ref": "https://cs231n.github.io/neural-networks-3/"}
+ ],
+ "unchecked": [
+  "The √(2/n) starting scale for ReLU is the rule usually credited to He et al. 2015; we read the abstract, which does not state the formula.",
+  "Training results come from one seed and one dataset each; another seed can take more or fewer steps.",
+  "How fast the browser lab trains depends on the device; we only ran it on one desktop."
+ ],
+ "kit": true
+}

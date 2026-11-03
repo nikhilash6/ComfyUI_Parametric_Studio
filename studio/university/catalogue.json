@@ -313,6 +313,7 @@
    "blurb": "Attention, transformers, positions and flows: the machinery under every node.",
    "art": "sampling_lab/scheduler-kl_optimal.jpg",
    "codes": [
+    "CU-319",
     "CU-301",
     "CU-302",
     "CU-303",
@@ -367,17 +368,17 @@
   "res4lyf_renders/flux_control.jpg"
  ],
  "counts": {
-  "lessons": 162,
-  "audited": 162,
+  "lessons": 163,
+  "audited": 163,
   "draft": 0,
   "second_read": 162,
-  "second_read_pending": 0,
+  "second_read_pending": 1,
   "errors_fixed": 203,
-  "plays": 115,
+  "plays": 116,
   "graphs": 93,
   "graphs_ran": 25,
   "graphs_used": 93,
-  "code_refs": 1196
+  "code_refs": 1199
  },
  "courses": [
   {
@@ -2800,6 +2801,29 @@
    "second_read": {
     "errors_fixed": 0
    }
+  },
+  {
+   "code": "CU-319",
+   "title": "Train a tiny network",
+   "level": "300",
+   "prereq": [
+    "CU-103",
+    "CU-301"
+   ],
+   "char": "tune",
+   "hook": "A network of 105 numbers learns a spiral in your browser: forward, backward, a gradient check, and the same block inside every SD 1.5 transformer.",
+   "status": "audited",
+   "path": "300/CU-319-train-a-tiny-network",
+   "track": "architecture",
+   "order": 5,
+   "plays": [
+    "mlp"
+   ],
+   "graphs": [
+    "sd15_txt2img"
+   ],
+   "minutes": 4,
+   "second_read": null
   },
   {
    "code": "CU-320",
