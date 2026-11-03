@@ -7787,6 +7787,36 @@
 "model": "qwen_image_2.1_turbo_bf16.safetensors",
 "seed": 1647410878,
 "peak_vram_gib": 17.0
+},
+{
+"id": "fam_qwen-image-2-1_20",
+"prompt": "Marigold v2 surface normals",
+"seconds": 30.4,
+"tpl": "marigold_v2_normals",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_20.webp",
+"poster": "families/qwen-image-2-1_20.webp",
+"w": 640,
+"h": 354,
+"model": "qwen_image_edit_2509_int8_convrot.safetensors",
+"seed": 105176018,
+"peak_vram_gib": 16.4
+},
+{
+"id": "fam_qwen-image-2-1_21",
+"prompt": "Marigold v2 albedo",
+"seconds": 40.6,
+"tpl": "marigold_v2_albedo",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_21.webp",
+"poster": "families/qwen-image-2-1_21.webp",
+"w": 640,
+"h": 354,
+"model": "qwen_image_edit_2509_int8_convrot.safetensors",
+"seed": 613139964,
+"peak_vram_gib": 20.4
 }
 ],
 "templates": [

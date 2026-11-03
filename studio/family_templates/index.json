@@ -3601,6 +3601,80 @@
    ],
    "source": "Studio template; Maxivi/SDXLModels mirror of HelloWorld XL 7.0",
    "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "marigold_v2_normals",
+   "title": "Marigold v2 surface normals",
+   "desc": "Surface normals of a photo in one step, from Marigold v2 on Qwen-Image-Edit 2509 (ComfyUI's own template, written out as an API graph).",
+   "media": "image",
+   "cat": "Image",
+   "gb": 20.9,
+   "tags": [
+    "Studio template",
+    "Geometry"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_edit_2509_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 19.1
+    },
+    {
+     "name": "marigold_v2_normals.safetensors",
+     "dir": "loras",
+     "gb": 1.6
+    },
+    {
+     "name": "marigold_v2_normals_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.2
+    },
+    {
+     "name": "marigold_v2_normals_conditioning.safetensors",
+     "dir": "embeddings",
+     "gb": 0.0
+    }
+   ],
+   "source": "ComfyUI template image_marigold_v2_surface_normal_estimation; Comfy-Org/marigold-v2-0 (Apache-2.0)",
+   "note": ""
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "marigold_v2_albedo",
+   "title": "Marigold v2 albedo",
+   "desc": "The photo's base colour with lighting and shadows taken out (albedo), in one step, from Marigold v2 on Qwen-Image-Edit 2509 (ComfyUI's own template, written out as an API graph).",
+   "media": "image",
+   "cat": "Image",
+   "gb": 20.9,
+   "tags": [
+    "Studio template",
+    "Geometry"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_edit_2509_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 19.1
+    },
+    {
+     "name": "marigold_v2_albedo.safetensors",
+     "dir": "loras",
+     "gb": 1.6
+    },
+    {
+     "name": "marigold_v2_albedo_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.2
+    },
+    {
+     "name": "marigold_v2_albedo_conditioning.safetensors",
+     "dir": "embeddings",
+     "gb": 0.0
+    }
+   ],
+   "source": "ComfyUI template image_marigold_v2_albedo_estimation; Comfy-Org/marigold-v2-0 (Apache-2.0)",
+   "note": ""
   }
  ]
 }
