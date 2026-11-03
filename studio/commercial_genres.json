@@ -304,7 +304,7 @@
     {"id": "grill", "in": [30, 60], "w": 5, "ref": "cast", "frame": "wide", "camera": "handheld", "shot": "{cast} flips burgers on a backyard grill at golden hour while adult friends laugh at a picnic table", "sfx": "sizzle, laughter, crickets", "vo": "Long days."},
     {"id": "clink", "in": [15, 30, 60], "w": 5, "ref": "cast", "frame": "medium", "camera": "dolly_in", "shot": "{cast} and adult friends clink cold brown soda bottles together on a wooden porch at sunset", "sfx": "glass bottles clinking, laughter", "vo": "Good friends."},
     {"id": "fireflies", "in": [60], "w": 4, "ref": "none", "frame": "wide", "camera": "pan_right", "shot": "fireflies glow over a wide grassy field at dusk with a red barn in the distance", "sfx": "crickets, a soft breeze", "vo": "Longer evenings."},
-    {"id": "pour", "in": [30, 60], "w": 4, "ref": "product", "frame": "close_up", "camera": "locked", "shot": "the same bottle pours fizzy dark root soda into a frosty glass, foam rising", "sfx": "a cap hiss, fizzing", "vo": "{product}. {tagline}"}
+    {"id": "pour", "in": [15, 30, 60], "w": 4, "ref": "product", "frame": "close_up", "camera": "locked", "shot": "one hand tips the same single bottle, its brown glass completely plain, and pours fizzy dark root soda into a frosty glass, foam rising", "sfx": "a cap hiss, fizzing", "vo": "{product}. {tagline}"}
    ],
    "end_card": {"lines": ["{product}", "{tagline}", "{cta}"], "vo": "{cta}"},
    "legal": "Fictional soft drink. Non-alcoholic. Sugar levels are imaginary."
@@ -327,7 +327,7 @@
     {"id": "market", "in": [30, 60], "w": 5, "ref": "cast", "frame": "wide", "camera": "tracking", "shot": "{cast} stroll through a colourful harbour market with fruit stalls and fishing boats", "sfx": "market chatter, gulls", "vo": "Where mornings smell of salt and mango."},
     {"id": "reef", "in": [60], "w": 5, "ref": "none", "frame": "wide", "camera": "tracking", "shot": "an adult snorkeller in a long-sleeved blue wetsuit glides over a bright coral reef among tropical fish", "sfx": "underwater bubbles", "vo": "Where the water is warmer than the welcome. Almost."},
     {"id": "dinner", "in": [15, 30, 60], "w": 5, "ref": "cast", "frame": "medium", "camera": "dolly_in", "shot": "{cast} share dinner at a candlelit table on the beach at sunset, laughing", "sfx": "gentle waves, clinking cutlery", "vo": "And evenings last a little longer."},
-    {"id": "pier", "in": [30, 60], "w": 4, "ref": "none", "frame": "extreme_wide", "camera": "locked", "shot": "a wooden pier stretches into a calm sea under a pink and gold sunset sky", "sfx": "soft waves", "vo": "{product}. {tagline}"}
+    {"id": "pier", "in": [15, 30, 60], "w": 4, "ref": "none", "frame": "extreme_wide", "camera": "locked", "shot": "a wooden pier stretches into a calm sea under a pink and gold sunset sky", "sfx": "soft waves", "vo": "{product}. {tagline}"}
    ],
    "end_card": {"lines": ["{product}", "{tagline}", "{cta}"], "vo": "{cta}"},
    "legal": "Isle Verena is fictional. Please don't try to book it."
@@ -370,10 +370,10 @@
     "tagline": "Wind it up. Watch it go.", "cta": "Collect all three imaginary models."
    },
    "beats": [
-    {"id": "wind", "in": [15, 30, 60], "w": 4, "ref": "cast", "frame": "medium", "camera": "dolly_in", "shot": "{cast} winds a small tin robot toy on a wooden workshop bench with plain unlabelled tools under a warm lamp", "sfx": "clicking clockwork", "vo": "Remember when toys didn't need charging?"},
+    {"id": "wind", "in": [15, 30, 60], "w": 4, "ref": "cast", "frame": "medium", "camera": "dolly_in", "shot": "{cast} turns the key in the back of the same small red and silver humanoid tin robot toy, with arms and legs, standing on a wooden workshop bench with plain unlabelled tools under a warm lamp, a plain tool wall behind him with nothing framed", "sfx": "clicking clockwork", "vo": "Remember when toys didn't need charging?"},
     {"id": "march", "in": [15, 30, 60], "w": 5, "ref": "product", "frame": "close_up", "camera": "tracking", "shot": "the same tin robot toy marches across a wooden workbench, arms swinging", "sfx": "clockwork whirring, tiny metal footsteps", "vo": "Meet {product}."},
     {"id": "town", "in": [30, 60], "w": 5, "ref": "product", "frame": "wide", "camera": "crane_down", "shot": "the same tin robot toy marches through a tiny model town of cardboard houses like a friendly giant", "sfx": "tiny metal footsteps, a toy train whistle", "vo": "Hand-painted tin. Real clockwork."},
-    {"id": "grin", "in": [15, 30, 60], "w": 4, "ref": "cast", "frame": "close_up", "camera": "locked", "shot": "{cast} watches over his half-moon glasses and breaks into a wide grin", "sfx": "a soft chuckle", "vo": "Pure joy, no batteries."},
+    {"id": "grin", "in": [15, 30, 60], "w": 4, "ref": "cast", "frame": "close_up", "camera": "locked", "shot": "{cast}, alone at his bench, watches the same small red and silver humanoid tin robot over his half-moon glasses and breaks into a wide grin", "sfx": "a soft chuckle", "vo": "Pure joy, no batteries."},
     {"id": "shelf", "in": [60], "w": 4, "ref": "none", "frame": "medium", "camera": "orbit_right", "shot": "three tin wind-up robot toys in red, blue and gold stand in a row on a wooden shelf", "sfx": "a music box twinkle", "vo": "Collect the whole set."}
    ],
    "end_card": {"lines": ["{product}", "{tagline}", "{cta}"], "vo": "{tagline}"},

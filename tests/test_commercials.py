@@ -62,6 +62,14 @@ def test_the_image_models_are_never_asked_for_words_and_people_are_adults():
             if x.get("goal") == "h3_animate": assert "Nobody speaks" in p and "No speech, no music" in p
 
 
+def test_every_keyframe_asks_for_one_of_each_person_and_plain_surfaces():
+    for g in C.genres():
+        s = C.build_script(g["id"], {"length": g["lengths"][0]})
+        for b in s["beats"]: assert C.key_prompt(s, b).endswith(C.KEY_GUARDS), (g["id"], b["id"])
+        keys = [x for x in C.specs(s) if x["id"].startswith("key")]
+        assert keys and all(C.KEY_GUARDS in (x.get("prompt") or x["set"]["75:74"]["text"]) for x in keys), g["id"]
+
+
 # ---------- the hard rules
 @pytest.mark.parametrize("field,text,word", [
     ("brand", "Nike", "real brand"), ("product", "Coca-Cola Zero", "real"), ("product", "Koka-Kola", "real"), ("product", "Addidas Runner", "too close"), ("brand", "Nykee", "real brand"),

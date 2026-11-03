@@ -1068,6 +1068,362 @@
     "tagline": "Wear the weather.",
     "cta": "Autumn, considered."
    }
+  },
+  {
+   "id": "real_estate_larkspur",
+   "genre": "real_estate",
+   "genre_title": "Real estate",
+   "title": "14 Larkspur Lane",
+   "length": 15,
+   "tone": "earnest",
+   "status": "flawed",
+   "verdict": "A complete 15 s real-estate spot in three shots: a white farmhouse with a wraparound porch and a green lawn at golden hour, the same bearded agent in a navy blazer welcoming viewers in at the front door of a sunlit hallway, then sliding brass keys across a marble island to a smiling buyer under the 'Offers over 650,000' super; the end card and the fictional-listing line. No signs or model-drawn words. Whisper heard 95.8%.",
+   "flaws": [
+    "Shot 2: he gestures in beside a door that is already open rather than opening it, and the door has two sets of handles.",
+    "Shot 3: the buyer wears the same navy blazer and open white shirt as the agent; a different, younger, clean-shaven face, but the two read alike at a glance.",
+    "Shot 1: the porch has a few tiny figures sitting at a table though the shot asks only for the house."
+   ],
+   "video": "real_estate_larkspur/commercial.mp4",
+   "poster": "real_estate_larkspur/poster.webp",
+   "sheet": "real_estate_larkspur/sheet.webp",
+   "shots": [
+    {
+     "id": "exterior",
+     "frame": "real_estate_larkspur/shot1.webp",
+     "status": "ok",
+     "note": "Farmhouse, porch and lawn at golden hour; the camera cranes down past sunlit leaves. No signs or lettering."
+    },
+    {
+     "id": "door",
+     "frame": "real_estate_larkspur/shot2.webp",
+     "status": "flawed",
+     "note": "Same agent as the cast frame, smiling, arm out toward the hallway; adult viewers behind. Already-open door with doubled handles."
+    },
+    {
+     "id": "keys",
+     "frame": "real_estate_larkspur/shot3.webp",
+     "status": "flawed",
+     "note": "Agent and buyer at a marble island with brass keys; hands fine. The buyer is dressed like the agent. Price super set by ffmpeg."
+    },
+    {
+     "id": "end card",
+     "frame": "real_estate_larkspur/shot4.webp",
+     "status": "ok",
+     "note": "Blurred last frame under the green card; agency, tagline and call to action set by ffmpeg, legal line at the bottom."
+    }
+   ],
+   "audio": {
+    "lufs": -16.2,
+    "true_peak_db": -1.5,
+    "lra": 2.8,
+    "whisper_match": 95.8,
+    "heard": "Some houses are just houses. This one feels like home. 14 larks per lane offers over 650,000. Cornerstone and Vale, find where you belong.",
+    "vo_tempo": 1.0,
+    "stem_gains": {
+     "voice_db": 7.0,
+     "music_db": -6.9,
+     "shot_sound_db": 1.6,
+     "targets_lufs": {
+      "voice": -17,
+      "music": -23,
+      "shot_sound": -31,
+      "mix": -16.0
+     }
+    },
+    "listened_by_a_person": false
+   },
+   "seconds_of_work": 423.1,
+   "my_peak_gib": 42.1,
+   "declared_gib": 48.0,
+   "voice_model": "Kokoro 82M",
+   "voice": "am_eric",
+   "writer": "template",
+   "run": "8ab73ca23cff",
+   "seeds": {
+    "cast": 7100,
+    "key1": 7111,
+    "key2": 7112,
+    "key3": 7113,
+    "shot1": 7131,
+    "shot2": 7132,
+    "shot3": 7133,
+    "score": 7160
+   },
+   "rendered": "2026-11-02",
+   "brief": {
+    "brand": "Cornerstone and Vale",
+    "product": "14 Larkspur Lane",
+    "cast": "a man in his forties with a trimmed beard, a navy blazer and an open-collar white shirt",
+    "price": "Offers over 650,000",
+    "tagline": "Find where you belong.",
+    "cta": "Book an imaginary viewing today."
+   }
+  },
+  {
+   "id": "game_trailer_aurelia",
+   "genre": "game_trailer",
+   "genre_title": "Video game trailer",
+   "title": "Ashes of Aurelia",
+   "length": 15,
+   "tone": "epic",
+   "status": "flawed",
+   "verdict": "A complete 15 s fantasy game-trailer spot in three shots: a vast ruined city under a burning sky, the same braided warrior in scarred bronze armour and a dark green cloak striding through smoke with a glowing blade among armoured adults, then raising her arm as light breaks through the clouds; the end card with the 'not gameplay' line. One consistent face and costume, no logos or model-drawn words. Whisper heard 94.4%.",
+   "flaws": [
+    "Shot 1: the city is brown stone, not white, and a row of silhouetted people stands still along the front, though the shot asks for none.",
+    "Shot 2: as she swings the sword across her body the blade grows longer and passes in front of her other hand.",
+    "Shot 3: the raised blade reads as a beam of light from her fist, with no hilt visible, and she barely moves."
+   ],
+   "video": "game_trailer_aurelia/commercial.mp4",
+   "poster": "game_trailer_aurelia/poster.webp",
+   "sheet": "game_trailer_aurelia/sheet.webp",
+   "shots": [
+    {
+     "id": "ruin",
+     "frame": "game_trailer_aurelia/shot1.webp",
+     "status": "flawed",
+     "note": "Ruined city to the horizon under an orange sky; a still row of silhouettes in the foreground. No text."
+    },
+    {
+     "id": "hero",
+     "frame": "game_trailer_aurelia/shot2.webp",
+     "status": "flawed",
+     "note": "Same warrior as the cast frame walking toward the camera with a glowing sword, soldiers behind; face and armour steady. The blade lengthens mid-swing."
+    },
+    {
+     "id": "blade",
+     "frame": "game_trailer_aurelia/shot3.webp",
+     "status": "flawed",
+     "note": "Close on her face, arm raised, light pouring from her fist; armoured adults behind. Almost static."
+    },
+    {
+     "id": "end card",
+     "frame": "game_trailer_aurelia/shot4.webp",
+     "status": "ok",
+     "note": "Blurred last frame under the card; game, tagline and 'Coming soon' set by ffmpeg, legal line at the bottom."
+    }
+   ],
+   "audio": {
+    "lufs": -16.4,
+    "true_peak_db": -1.5,
+    "lra": 3.2,
+    "whisper_match": 94.4,
+    "heard": "They said the light would never return. They were wronged. Ashes of Aurelia. The last light is yours.",
+    "vo_tempo": 1.0,
+    "stem_gains": {
+     "voice_db": 7.1,
+     "music_db": -7.2,
+     "shot_sound_db": -11.6,
+     "targets_lufs": {
+      "voice": -17,
+      "music": -23,
+      "shot_sound": -31,
+      "mix": -16.0
+     }
+    },
+    "listened_by_a_person": false
+   },
+   "seconds_of_work": 262.9,
+   "my_peak_gib": 42.1,
+   "declared_gib": 48.0,
+   "voice_model": "Kokoro 82M",
+   "voice": "bm_daniel",
+   "writer": "template",
+   "run": "52a0fb54f445",
+   "seeds": {
+    "cast": 7100,
+    "key1": 7111,
+    "key2": 7112,
+    "key3": 7113,
+    "shot1": 7131,
+    "shot2": 7132,
+    "shot3": 7133,
+    "score": 7160
+   },
+   "rendered": "2026-11-02",
+   "brief": {
+    "brand": "Ironfern Studios",
+    "product": "Ashes of Aurelia",
+    "cast": "a woman warrior in her thirties with a long braid, scarred bronze armour and a dark green cloak",
+    "tagline": "The last light is yours.",
+    "cta": "Coming soon."
+   }
+  },
+  {
+   "id": "bank_harbourline",
+   "genre": "bank",
+   "genre_title": "Bank",
+   "title": "Harbourline Home Loans",
+   "length": 15,
+   "tone": "earnest",
+   "status": "passed",
+   "verdict": "A complete 15 s bank spot in three shots: the same woman with a short natural afro, a mustard cardigan and gold hoops sitting among plain moving boxes in an empty sunlit flat and holding up her keys, then hosting adult friends at dinner in the finished, warmly lit room, then a quiet harbour at dawn with plain white sailboats; the end card and the not-a-real-loan line. One consistent face and outfit, hands fine on the keys, no printed boxes, hull names or model-drawn words. Whisper heard 96%.",
+   "flaws": [
+    "Shot 3 adds a man standing on the pier, which the script doesn't ask for; he leaves the frame as the camera rises.",
+    "Shot 2: she stands at the head of the table while everyone else sits, so the toast-like moment has no toast."
+   ],
+   "video": "bank_harbourline/commercial.mp4",
+   "poster": "bank_harbourline/poster.webp",
+   "sheet": "bank_harbourline/sheet.webp",
+   "shots": [
+    {
+     "id": "boxes",
+     "frame": "bank_harbourline/shot1.webp",
+     "status": "ok",
+     "note": "Same woman as the cast frame among unmarked boxes, holding up a set of keys, smiling; the camera pushes in. Hand and keys fine."
+    },
+    {
+     "id": "dinner",
+     "frame": "bank_harbourline/shot2.webp",
+     "status": "ok",
+     "note": "Hosting six adult friends at a wooden table; faces natural, framed prints are plain photos, no text. The camera pulls back through the room."
+    },
+    {
+     "id": "harbour",
+     "frame": "bank_harbourline/shot3.webp",
+     "status": "ok",
+     "note": "Sailboats with plain white hulls at dawn, rising camera; a man on the pier at first. No lettering."
+    },
+    {
+     "id": "end card",
+     "frame": "bank_harbourline/shot4.webp",
+     "status": "ok",
+     "note": "Blurred last frame under the card; bank, tagline and call to action set by ffmpeg, legal line at the bottom."
+    }
+   ],
+   "audio": {
+    "lufs": -16.2,
+    "true_peak_db": -1.5,
+    "lra": 5.2,
+    "whisper_match": 96.0,
+    "heard": "Every big step starts small, until it feels like yours. Harborline Bank here for the long haul. Talk to us, we're imaginary, but we listen.",
+    "vo_tempo": 1.0,
+    "stem_gains": {
+     "voice_db": 12.0,
+     "music_db": -3.0,
+     "shot_sound_db": -4.4,
+     "targets_lufs": {
+      "voice": -17,
+      "music": -23,
+      "shot_sound": -31,
+      "mix": -16.0
+     }
+    },
+    "listened_by_a_person": false
+   },
+   "seconds_of_work": 360.7,
+   "my_peak_gib": 42.1,
+   "declared_gib": 48.0,
+   "voice_model": "Kokoro 82M",
+   "voice": "af_nova",
+   "writer": "template",
+   "run": "040e9b21e571",
+   "seeds": {
+    "cast": 7100,
+    "key1": 7111,
+    "key2": 7112,
+    "key3": 7113,
+    "shot1": 7131,
+    "shot2": 7132,
+    "shot3": 7133,
+    "score": 7160
+   },
+   "rendered": "2026-11-02",
+   "brief": {
+    "brand": "Harbourline Bank",
+    "product": "Harbourline Home Loans",
+    "cast": "a woman in her thirties with a short natural afro, a mustard cardigan and gold hoop earrings",
+    "tagline": "Here for the long haul.",
+    "cta": "Talk to us. We're imaginary, but we listen."
+   }
+  },
+  {
+   "id": "travel_isle_verena",
+   "genre": "travel",
+   "genre_title": "Travel and tourism",
+   "title": "Isle Verena",
+   "length": 15,
+   "tone": "calm",
+   "status": "flawed",
+   "verdict": "A complete 15 s tourism spot for an invented island in three shots: an aerial over a green volcanic island ringed by turquoise water and white sand, the same couple (she in white linen, he in a straw hat and pale blue shirt) laughing over a candlelit dinner on the beach at sunset, then a long wooden pier into a calm sea under a pink and gold sky; the end card and the 'please don't try to book it' line. Consistent faces and clothes, hands fine, no model-drawn words. Whisper heard 95.8%.",
+   "flaws": [
+    "Shot 3 adds two tiny figures standing on the pier, dressed alike, though the shot asks for an empty pier.",
+    "The dinner line starts over the end of the aerial shot, a little before the cut to the couple.",
+    "Whisper hears “Isle Verena” as “I'll Verena”."
+   ],
+   "video": "travel_isle_verena/commercial.mp4",
+   "poster": "travel_isle_verena/poster.webp",
+   "sheet": "travel_isle_verena/sheet.webp",
+   "shots": [
+    {
+     "id": "aerial",
+     "frame": "travel_isle_verena/shot1.webp",
+     "status": "ok",
+     "note": "Descending over a forested volcanic island, white beach, turquoise reef; no boats, buildings or text."
+    },
+    {
+     "id": "dinner",
+     "frame": "travel_isle_verena/shot2.webp",
+     "status": "ok",
+     "note": "Same couple as the cast frame at a small candlelit table on the sand, laughing; faces and hands natural."
+    },
+    {
+     "id": "pier",
+     "frame": "travel_isle_verena/shot3.webp",
+     "status": "flawed",
+     "note": "A long pier into a green-blue sea at a pink sunset; two small alike figures stand on it."
+    },
+    {
+     "id": "end card",
+     "frame": "travel_isle_verena/shot4.webp",
+     "status": "ok",
+     "note": "Blurred last frame under the card; island, tagline and call to action set by ffmpeg, legal line at the bottom."
+    }
+   ],
+   "audio": {
+    "lufs": -16.3,
+    "true_peak_db": -1.7,
+    "lra": 3.5,
+    "whisper_match": 95.8,
+    "heard": "There's a place the map forgot, and evenings last a little longer. I'll Verena, slow down, you're on island time. Plan your imaginary escape.",
+    "vo_tempo": 1.0,
+    "stem_gains": {
+     "voice_db": 5.7,
+     "music_db": -7.6,
+     "shot_sound_db": 8.2,
+     "targets_lufs": {
+      "voice": -17,
+      "music": -23,
+      "shot_sound": -31,
+      "mix": -16.0
+     }
+    },
+    "listened_by_a_person": false
+   },
+   "seconds_of_work": 410.6,
+   "my_peak_gib": 42.1,
+   "declared_gib": 48.0,
+   "voice_model": "Kokoro 82M",
+   "voice": "bf_emma",
+   "writer": "template",
+   "run": "a2a755890908",
+   "seeds": {
+    "cast": 7100,
+    "key1": 7111,
+    "key2": 7112,
+    "key3": 7113,
+    "shot1": 7131,
+    "shot2": 7132,
+    "shot3": 7133,
+    "score": 7160
+   },
+   "rendered": "2026-11-02",
+   "brief": {
+    "brand": "Visit Isle Verena",
+    "product": "Isle Verena",
+    "cast": "a couple in their forties: a woman in a white linen dress and a man in a straw hat and a pale blue shirt",
+    "tagline": "Slow down. You're on island time.",
+    "cta": "Plan your imaginary escape."
+   }
   }
  ]
 }

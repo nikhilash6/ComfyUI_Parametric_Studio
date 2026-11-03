@@ -18,6 +18,8 @@ MAX_TEMPO = 1.45; LUFS = -16.0
 LLM_URL = "http://127.0.0.1:8002"
 KLEIN_EDIT = "image_flux2_klein_image_edit_4b_distilled"
 NO_TEXT = "No text, no letters, no numbers, no logos, no signs with writing, no badges or emblems on any car or product."
+#: Added to every keyframe: Klein tends to draw the cast twice, and to letter any sign, label or printed box it is allowed.
+KEY_GUARDS = "Each person appears only once in the frame; nobody is duplicated. No printed text, labels, signs or lettering anywhere: plain surfaces."
 FIELD_LABELS = {"brand": "Brand (invented)", "product": "Product (invented)", "what": "What the product looks like", "cast": "Who is in it", "tagline": "Tagline", "cta": "Call to action", "benefit": "The promise", "price": "Price", "condition": "Invented condition", "side_effects": "Invented side effects", "rare_effects": "Invented rare side effects", "candidate": "Invented candidate", "phone": "Fictional phone number", "customer": "The customer", "owner": "The owner"}
 VO_ENGINES = {
     "kokoro": {"label": "Kokoro 82M", "licence": "Apache-2.0", "licence_class": "open", "peak_gib": 3, "note": "Fast and steady. Each genre picks one of its built-in voices."},
@@ -216,7 +218,7 @@ def key_prompt(s, b):
     if b["ref"] == "cast": who = f"The same {_ref_word(s, b)} as in the reference picture, with the same face, hair, clothing and colours: {v['cast']}. Place them in the scene described, not in front of the reference's plain backdrop." + (f" Any product in the scene is {v['what']}, plain and unprinted." if v.get("what") else "")
     elif b["ref"] == "product": who = f"The same product as in the reference picture, same shape, colours and materials, completely blank: {v['what']}."
     else: who = ""
-    return re.sub(r"\s+", " ", f"{frame} Film still from a TV commercial. {who} {b['shot']}. {s['look']}. {tone} Any people are adults, fully clothed. {NO_TEXT}").strip()
+    return re.sub(r"\s+", " ", f"{frame} Film still from a TV commercial. {who} {b['shot']}. {s['look']}. {tone} Any people are adults, fully clothed. {NO_TEXT} {KEY_GUARDS}").strip()
 
 
 def h3_prompt(s, b, camera=None, more=False):
