@@ -8,7 +8,8 @@ Newer notes carry a proof label on every paragraph, and `scripts/check_crew_note
 
 - `model_families/<family>/dossier/STATE.md`: what each family has really done, built by `scripts/build_crew_state.py`.
 - `model_families/<family>/dossier/NOW.md`: checked by hand, where a family needs more than that.
+- `model_families/<family>/dossier/GUIDE.md`: the long prompting research for a family, rewritten in plain words with its sources, checked by hand.
 - `studio_topics/<topic>/`: one specialist for each part of the studio. `_all-families` is read only by Comfy Prime.
 - `evidence/`: the render records those labels cite.
 
-Labels: `[code: file:line]` read in the source, `[test: file]` a test holds it, `[run: file]` a recorded run stored here, `[docs: file]`, `[claim: who]` someone says so and it was not checked, `[inference]` our reasoning. Where an older note disagrees with `STATE.md` or `NOW.md`, the newer one wins.
+Labels: `[code: file:line]` read in the source, `[test: file]` a test holds it, `[run: file]` a recorded run stored here, `[docs: file]`, `[claim: who]` someone says so and it was not checked, `[inference]` our reasoning. Where an older note disagrees with `STATE.md`, `NOW.md` or `GUIDE.md`, the newer one wins.

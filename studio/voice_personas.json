@@ -1,0 +1,4103 @@
+{
+ "note": "Voice-design option catalogue for the Voices page's design models. Every phrase is a neutral description of a voice, never a named person, character or brand; adults only (21 and over). Carried over from the studio's earlier copilot, with suggestive options removed or renamed.",
+ "engine_facts": {
+  "firered_languages": [
+   "English",
+   "Arabic",
+   "Cantonese",
+   "Chinese",
+   "Czech",
+   "Dutch",
+   "Finnish",
+   "French",
+   "German",
+   "Greek",
+   "Hindi",
+   "Indonesian",
+   "Italian",
+   "Japanese",
+   "Korean",
+   "Polish",
+   "Portuguese",
+   "Romanian",
+   "Russian",
+   "Spanish",
+   "Thai",
+   "Turkish",
+   "Ukrainian",
+   "Vietnamese"
+  ]
+ },
+ "drop_order": [
+  "recording",
+  "laughter",
+  "mouth",
+  "quirks",
+  "volume",
+  "diction",
+  "rhythm",
+  "warmth",
+  "confidence",
+  "style",
+  "accent_l1",
+  "energy"
+ ],
+ "conflicts": [
+  [
+   "slow",
+   "fast"
+  ],
+  [
+   "soft",
+   "loud"
+  ],
+  [
+   "low",
+   "high"
+  ]
+ ],
+ "categories": [
+  {
+   "id": "presentation",
+   "label": "Voice presentation",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 1.0,
+   "help": "Who is speaking (adult voices only).",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "woman",
+     "label": "Woman",
+     "phrase": "woman",
+     "poss": "her"
+    },
+    {
+     "key": "man",
+     "label": "Man",
+     "phrase": "man",
+     "poss": "his"
+    },
+    {
+     "key": "non_binary_person",
+     "label": "Non-binary person",
+     "phrase": "non-binary person",
+     "poss": "their"
+    },
+    {
+     "key": "androgynous_adult",
+     "label": "Androgynous adult",
+     "phrase": "androgynous adult",
+     "poss": "their"
+    },
+    {
+     "key": "feminine_leaning_voice",
+     "label": "Feminine-leaning voice",
+     "phrase": "adult with a feminine-leaning voice",
+     "poss": "their"
+    },
+    {
+     "key": "masculine_leaning_voice",
+     "label": "Masculine-leaning voice",
+     "phrase": "adult with a masculine-leaning voice",
+     "poss": "their"
+    },
+    {
+     "key": "gender_ambiguous_voice",
+     "label": "Gender-ambiguous voice",
+     "phrase": "adult with a gender-ambiguous voice",
+     "poss": "their"
+    },
+    {
+     "key": "deep_voiced_woman",
+     "label": "Deep-voiced woman",
+     "phrase": "woman with a notably deep voice",
+     "poss": "her"
+    },
+    {
+     "key": "light_voiced_man",
+     "label": "Light-voiced man",
+     "phrase": "man with a notably light voice",
+     "poss": "his"
+    },
+    {
+     "key": "soft_spoken_man",
+     "label": "Soft-spoken man",
+     "phrase": "soft-spoken man",
+     "poss": "his"
+    },
+    {
+     "key": "strong_voiced_woman",
+     "label": "Strong-voiced woman",
+     "phrase": "strong-voiced woman",
+     "poss": "her"
+    },
+    {
+     "key": "gentle_voiced_man",
+     "label": "Gentle-voiced man",
+     "phrase": "gentle-voiced man",
+     "poss": "his"
+    },
+    {
+     "key": "warm_voiced_person",
+     "label": "Warm-voiced person",
+     "phrase": "warm-voiced adult",
+     "poss": "their"
+    }
+   ]
+  },
+  {
+   "id": "age",
+   "label": "Age feel (21+ only)",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 1.0,
+   "help": "Adult age bands only: 21 and over.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "21_23_early_twenties",
+     "label": "21-23 · early twenties",
+     "phrase": "in {poss} early twenties"
+    },
+    {
+     "key": "24_26_mid_twenties",
+     "label": "24-26 · mid twenties",
+     "phrase": "in {poss} mid twenties"
+    },
+    {
+     "key": "27_29_late_twenties",
+     "label": "27-29 · late twenties",
+     "phrase": "in {poss} late twenties"
+    },
+    {
+     "key": "21_25_fresh_adult",
+     "label": "21-25 · fresh adult",
+     "phrase": "in {poss} early-to-mid twenties"
+    },
+    {
+     "key": "26_30_around_thirty",
+     "label": "26-30 · around thirty",
+     "phrase": "around thirty years old"
+    },
+    {
+     "key": "30_33_early_thirties",
+     "label": "30-33 · early thirties",
+     "phrase": "in {poss} early thirties"
+    },
+    {
+     "key": "34_36_mid_thirties",
+     "label": "34-36 · mid thirties",
+     "phrase": "in {poss} mid thirties"
+    },
+    {
+     "key": "37_39_late_thirties",
+     "label": "37-39 · late thirties",
+     "phrase": "in {poss} late thirties"
+    },
+    {
+     "key": "40_43_early_forties",
+     "label": "40-43 · early forties",
+     "phrase": "in {poss} early forties"
+    },
+    {
+     "key": "44_46_mid_forties",
+     "label": "44-46 · mid forties",
+     "phrase": "in {poss} mid forties"
+    },
+    {
+     "key": "47_49_late_forties",
+     "label": "47-49 · late forties",
+     "phrase": "in {poss} late forties"
+    },
+    {
+     "key": "50_53_early_fifties",
+     "label": "50-53 · early fifties",
+     "phrase": "in {poss} early fifties"
+    },
+    {
+     "key": "54_56_mid_fifties",
+     "label": "54-56 · mid fifties",
+     "phrase": "in {poss} mid fifties"
+    },
+    {
+     "key": "55_mature",
+     "label": "55+ · mature",
+     "phrase": "in {poss} mid-to-late fifties"
+    },
+    {
+     "key": "57_59_late_fifties",
+     "label": "57-59 · late fifties",
+     "phrase": "in {poss} late fifties"
+    },
+    {
+     "key": "60_64_early_sixties",
+     "label": "60-64 · early sixties",
+     "phrase": "in {poss} early sixties"
+    },
+    {
+     "key": "65_69_late_sixties",
+     "label": "65-69 · late sixties",
+     "phrase": "in {poss} late sixties"
+    },
+    {
+     "key": "70_79_seventies",
+     "label": "70-79 · seventies",
+     "phrase": "in {poss} seventies"
+    },
+    {
+     "key": "80_eighties_and_beyond",
+     "label": "80+ · eighties and beyond",
+     "phrase": "in {poss} eighties"
+    },
+    {
+     "key": "ageless_adult",
+     "label": "Ageless adult",
+     "phrase": "with no fixed adult age"
+    },
+    {
+     "key": "adult_settled_and_experienced",
+     "label": "Adult, settled and experienced",
+     "phrase": "a settled, experienced adult"
+    },
+    {
+     "key": "adult_fresh_voiced_and_energetic",
+     "label": "Adult, fresh-voiced and energetic",
+     "phrase": "an adult with a fresh, energetic voice"
+    }
+   ]
+  },
+  {
+   "id": "language",
+   "label": "Language (FireRedTTS3 supports these)",
+   "group": "voice",
+   "use": [
+    "design",
+    "clone"
+   ],
+   "random_p": 0.0,
+   "help": "The 24 languages in the FireRedTTS3 README. Cloning is benchmarked in all of them; voice design is benchmarked in English and Chinese only.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "english",
+     "label": "English",
+     "phrase": "speaking English",
+     "language": "English"
+    },
+    {
+     "key": "arabic",
+     "label": "Arabic",
+     "phrase": "speaking Arabic",
+     "language": "Arabic"
+    },
+    {
+     "key": "cantonese",
+     "label": "Cantonese",
+     "phrase": "speaking Cantonese",
+     "language": "Cantonese"
+    },
+    {
+     "key": "chinese_mandarin",
+     "label": "Chinese (Mandarin)",
+     "phrase": "speaking Mandarin Chinese",
+     "language": "Chinese"
+    },
+    {
+     "key": "czech",
+     "label": "Czech",
+     "phrase": "speaking Czech",
+     "language": "Czech"
+    },
+    {
+     "key": "dutch",
+     "label": "Dutch",
+     "phrase": "speaking Dutch",
+     "language": "Dutch"
+    },
+    {
+     "key": "finnish",
+     "label": "Finnish",
+     "phrase": "speaking Finnish",
+     "language": "Finnish"
+    },
+    {
+     "key": "french",
+     "label": "French",
+     "phrase": "speaking French",
+     "language": "French"
+    },
+    {
+     "key": "german",
+     "label": "German",
+     "phrase": "speaking German",
+     "language": "German"
+    },
+    {
+     "key": "greek",
+     "label": "Greek",
+     "phrase": "speaking Greek",
+     "language": "Greek"
+    },
+    {
+     "key": "hindi",
+     "label": "Hindi",
+     "phrase": "speaking Hindi",
+     "language": "Hindi"
+    },
+    {
+     "key": "indonesian",
+     "label": "Indonesian",
+     "phrase": "speaking Indonesian",
+     "language": "Indonesian"
+    },
+    {
+     "key": "italian",
+     "label": "Italian",
+     "phrase": "speaking Italian",
+     "language": "Italian"
+    },
+    {
+     "key": "japanese",
+     "label": "Japanese",
+     "phrase": "speaking Japanese",
+     "language": "Japanese"
+    },
+    {
+     "key": "korean",
+     "label": "Korean",
+     "phrase": "speaking Korean",
+     "language": "Korean"
+    },
+    {
+     "key": "polish",
+     "label": "Polish",
+     "phrase": "speaking Polish",
+     "language": "Polish"
+    },
+    {
+     "key": "portuguese",
+     "label": "Portuguese",
+     "phrase": "speaking Portuguese",
+     "language": "Portuguese"
+    },
+    {
+     "key": "romanian",
+     "label": "Romanian",
+     "phrase": "speaking Romanian",
+     "language": "Romanian"
+    },
+    {
+     "key": "russian",
+     "label": "Russian",
+     "phrase": "speaking Russian",
+     "language": "Russian"
+    },
+    {
+     "key": "spanish",
+     "label": "Spanish",
+     "phrase": "speaking Spanish",
+     "language": "Spanish"
+    },
+    {
+     "key": "thai",
+     "label": "Thai",
+     "phrase": "speaking Thai",
+     "language": "Thai"
+    },
+    {
+     "key": "turkish",
+     "label": "Turkish",
+     "phrase": "speaking Turkish",
+     "language": "Turkish"
+    },
+    {
+     "key": "ukrainian",
+     "label": "Ukrainian",
+     "phrase": "speaking Ukrainian",
+     "language": "Ukrainian"
+    },
+    {
+     "key": "vietnamese",
+     "label": "Vietnamese",
+     "phrase": "speaking Vietnamese",
+     "language": "Vietnamese"
+    }
+   ]
+  },
+  {
+   "id": "accent_en",
+   "label": "Accent: English varieties and regions",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 0.35,
+   "help": "A region or community of English speakers. Design-input words; not benchmarked per accent.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "general_american",
+     "label": "General American",
+     "phrase": "a General American accent"
+    },
+    {
+     "key": "us_southern",
+     "label": "US Southern",
+     "phrase": "a Southern US accent"
+    },
+    {
+     "key": "texan",
+     "label": "Texan",
+     "phrase": "a Texan accent"
+    },
+    {
+     "key": "appalachian",
+     "label": "Appalachian",
+     "phrase": "an Appalachian accent"
+    },
+    {
+     "key": "new_york_city",
+     "label": "New York City",
+     "phrase": "a New York City accent"
+    },
+    {
+     "key": "boston_new_england",
+     "label": "Boston · New England",
+     "phrase": "a Boston, New England accent"
+    },
+    {
+     "key": "chicago_great_lakes",
+     "label": "Chicago · Great Lakes",
+     "phrase": "a Chicago, Great Lakes accent"
+    },
+    {
+     "key": "midwestern",
+     "label": "Midwestern",
+     "phrase": "a Midwestern US accent"
+    },
+    {
+     "key": "pacific_northwest",
+     "label": "Pacific Northwest",
+     "phrase": "a Pacific Northwest accent"
+    },
+    {
+     "key": "californian",
+     "label": "Californian",
+     "phrase": "a Californian accent"
+    },
+    {
+     "key": "louisiana",
+     "label": "Louisiana",
+     "phrase": "a Louisiana accent"
+    },
+    {
+     "key": "hawaiian_english",
+     "label": "Hawaiian English",
+     "phrase": "a Hawaiian English accent"
+    },
+    {
+     "key": "african_american_english",
+     "label": "African American English",
+     "phrase": "an African American English accent"
+    },
+    {
+     "key": "received_pronunciation",
+     "label": "Received Pronunciation",
+     "phrase": "a Received Pronunciation British accent"
+    },
+    {
+     "key": "estuary_english",
+     "label": "Estuary English",
+     "phrase": "an Estuary English accent"
+    },
+    {
+     "key": "east_london",
+     "label": "East London",
+     "phrase": "an East London accent"
+    },
+    {
+     "key": "northern_english",
+     "label": "Northern English",
+     "phrase": "a Northern English accent"
+    },
+    {
+     "key": "yorkshire",
+     "label": "Yorkshire",
+     "phrase": "a Yorkshire accent"
+    },
+    {
+     "key": "manchester",
+     "label": "Manchester",
+     "phrase": "a Manchester accent"
+    },
+    {
+     "key": "liverpool",
+     "label": "Liverpool",
+     "phrase": "a Liverpool accent"
+    },
+    {
+     "key": "newcastle_geordie",
+     "label": "Newcastle · Geordie",
+     "phrase": "a Newcastle accent"
+    },
+    {
+     "key": "midlands_birmingham",
+     "label": "Midlands · Birmingham",
+     "phrase": "a Birmingham, Midlands accent"
+    },
+    {
+     "key": "west_country",
+     "label": "West Country",
+     "phrase": "a West Country accent"
+    },
+    {
+     "key": "scottish_glasgow",
+     "label": "Scottish · Glasgow",
+     "phrase": "a Glasgow Scottish accent"
+    },
+    {
+     "key": "scottish_edinburgh",
+     "label": "Scottish · Edinburgh",
+     "phrase": "an Edinburgh Scottish accent"
+    },
+    {
+     "key": "scottish_highlands",
+     "label": "Scottish · Highlands",
+     "phrase": "a Highland Scottish accent"
+    },
+    {
+     "key": "welsh_south",
+     "label": "Welsh · South",
+     "phrase": "a South Wales English accent"
+    },
+    {
+     "key": "welsh_north",
+     "label": "Welsh · North",
+     "phrase": "a North Wales English accent"
+    },
+    {
+     "key": "irish_dublin",
+     "label": "Irish · Dublin",
+     "phrase": "a Dublin Irish accent"
+    },
+    {
+     "key": "irish_cork_southern",
+     "label": "Irish · Cork · Southern",
+     "phrase": "a Southern Irish (Cork) accent"
+    },
+    {
+     "key": "northern_irish_belfast",
+     "label": "Northern Irish · Belfast",
+     "phrase": "a Belfast Northern Irish accent"
+    },
+    {
+     "key": "australian",
+     "label": "Australian",
+     "phrase": "an Australian accent"
+    },
+    {
+     "key": "australian_broad",
+     "label": "Australian · broad",
+     "phrase": "a broad Australian accent"
+    },
+    {
+     "key": "new_zealand",
+     "label": "New Zealand",
+     "phrase": "a New Zealand accent"
+    },
+    {
+     "key": "south_african",
+     "label": "South African",
+     "phrase": "a South African English accent"
+    },
+    {
+     "key": "indian_english",
+     "label": "Indian English",
+     "phrase": "an Indian English accent"
+    },
+    {
+     "key": "singapore_english",
+     "label": "Singapore English",
+     "phrase": "a Singapore English accent"
+    },
+    {
+     "key": "caribbean_jamaican",
+     "label": "Caribbean · Jamaican",
+     "phrase": "a Jamaican-influenced English accent"
+    },
+    {
+     "key": "nigerian_english",
+     "label": "Nigerian English",
+     "phrase": "a Nigerian English accent"
+    }
+   ]
+  },
+  {
+   "id": "accent_l1",
+   "label": "Accent: English spoken with another first language",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 0.08,
+   "help": "English as spoken by people whose first language is another one. Design-input words; not benchmarked per accent.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "french_speaker",
+     "label": "French speaker",
+     "phrase": "English with a light French accent"
+    },
+    {
+     "key": "german_speaker",
+     "label": "German speaker",
+     "phrase": "English with a light German accent"
+    },
+    {
+     "key": "spanish_speaker_spain",
+     "label": "Spanish speaker (Spain)",
+     "phrase": "English with a light Castilian Spanish accent"
+    },
+    {
+     "key": "mexican_spanish_speaker",
+     "label": "Mexican Spanish speaker",
+     "phrase": "English with a light Mexican Spanish accent"
+    },
+    {
+     "key": "argentinian_spanish_speaker",
+     "label": "Argentinian Spanish speaker",
+     "phrase": "English with a light Argentinian Spanish accent"
+    },
+    {
+     "key": "italian_speaker",
+     "label": "Italian speaker",
+     "phrase": "English with a light Italian accent"
+    },
+    {
+     "key": "brazilian_portuguese_speaker",
+     "label": "Brazilian Portuguese speaker",
+     "phrase": "English with a light Brazilian Portuguese accent"
+    },
+    {
+     "key": "european_portuguese_speaker",
+     "label": "European Portuguese speaker",
+     "phrase": "English with a light European Portuguese accent"
+    },
+    {
+     "key": "dutch_speaker",
+     "label": "Dutch speaker",
+     "phrase": "English with a light Dutch accent"
+    },
+    {
+     "key": "swedish_speaker",
+     "label": "Swedish speaker",
+     "phrase": "English with a light Swedish accent"
+    },
+    {
+     "key": "norwegian_speaker",
+     "label": "Norwegian speaker",
+     "phrase": "English with a light Norwegian accent"
+    },
+    {
+     "key": "danish_speaker",
+     "label": "Danish speaker",
+     "phrase": "English with a light Danish accent"
+    },
+    {
+     "key": "finnish_speaker",
+     "label": "Finnish speaker",
+     "phrase": "English with a light Finnish accent"
+    },
+    {
+     "key": "polish_speaker",
+     "label": "Polish speaker",
+     "phrase": "English with a light Polish accent"
+    },
+    {
+     "key": "russian_speaker",
+     "label": "Russian speaker",
+     "phrase": "English with a light Russian accent"
+    },
+    {
+     "key": "ukrainian_speaker",
+     "label": "Ukrainian speaker",
+     "phrase": "English with a light Ukrainian accent"
+    },
+    {
+     "key": "czech_speaker",
+     "label": "Czech speaker",
+     "phrase": "English with a light Czech accent"
+    },
+    {
+     "key": "greek_speaker",
+     "label": "Greek speaker",
+     "phrase": "English with a light Greek accent"
+    },
+    {
+     "key": "turkish_speaker",
+     "label": "Turkish speaker",
+     "phrase": "English with a light Turkish accent"
+    },
+    {
+     "key": "levantine_arabic_speaker",
+     "label": "Levantine Arabic speaker",
+     "phrase": "English with a light Levantine Arabic accent"
+    },
+    {
+     "key": "gulf_arabic_speaker",
+     "label": "Gulf Arabic speaker",
+     "phrase": "English with a light Gulf Arabic accent"
+    },
+    {
+     "key": "egyptian_arabic_speaker",
+     "label": "Egyptian Arabic speaker",
+     "phrase": "English with a light Egyptian Arabic accent"
+    },
+    {
+     "key": "hebrew_speaker",
+     "label": "Hebrew speaker",
+     "phrase": "English with a light Hebrew accent"
+    },
+    {
+     "key": "persian_speaker",
+     "label": "Persian speaker",
+     "phrase": "English with a light Persian accent"
+    },
+    {
+     "key": "hindi_speaker",
+     "label": "Hindi speaker",
+     "phrase": "English with a light Hindi accent"
+    },
+    {
+     "key": "bengali_speaker",
+     "label": "Bengali speaker",
+     "phrase": "English with a light Bengali accent"
+    },
+    {
+     "key": "urdu_speaker",
+     "label": "Urdu speaker",
+     "phrase": "English with a light Urdu accent"
+    },
+    {
+     "key": "mandarin_speaker",
+     "label": "Mandarin speaker",
+     "phrase": "English with a light Mandarin accent"
+    },
+    {
+     "key": "cantonese_speaker",
+     "label": "Cantonese speaker",
+     "phrase": "English with a light Cantonese accent"
+    },
+    {
+     "key": "japanese_speaker",
+     "label": "Japanese speaker",
+     "phrase": "English with a light Japanese accent"
+    },
+    {
+     "key": "korean_speaker",
+     "label": "Korean speaker",
+     "phrase": "English with a light Korean accent"
+    },
+    {
+     "key": "vietnamese_speaker",
+     "label": "Vietnamese speaker",
+     "phrase": "English with a light Vietnamese accent"
+    },
+    {
+     "key": "thai_speaker",
+     "label": "Thai speaker",
+     "phrase": "English with a light Thai accent"
+    },
+    {
+     "key": "indonesian_speaker",
+     "label": "Indonesian speaker",
+     "phrase": "English with a light Indonesian accent"
+    },
+    {
+     "key": "swahili_speaker",
+     "label": "Swahili speaker",
+     "phrase": "English with a light Swahili accent"
+    },
+    {
+     "key": "yoruba_speaker",
+     "label": "Yoruba speaker",
+     "phrase": "English with a light Yoruba accent"
+    },
+    {
+     "key": "zulu_speaker",
+     "label": "Zulu speaker",
+     "phrase": "English with a light Zulu accent"
+    },
+    {
+     "key": "romanian_speaker",
+     "label": "Romanian speaker",
+     "phrase": "English with a light Romanian accent"
+    },
+    {
+     "key": "filipino_speaker",
+     "label": "Filipino speaker",
+     "phrase": "English with a light Filipino accent"
+    }
+   ]
+  },
+  {
+   "id": "dialect",
+   "label": "Chinese dialect (cloning only)",
+   "group": "voice",
+   "use": [
+    "clone"
+   ],
+   "random_p": 0.0,
+   "help": "FireRedTTS3-Base clones across 21 Chinese dialects; use a reference clip in that dialect. Not used by voice design.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "anhui",
+     "label": "Anhui",
+     "phrase": "speaking in the Anhui dialect group of Chinese"
+    },
+    {
+     "key": "fujian",
+     "label": "Fujian",
+     "phrase": "speaking in the Fujian dialect group of Chinese"
+    },
+    {
+     "key": "gansu",
+     "label": "Gansu",
+     "phrase": "speaking in the Gansu dialect group of Chinese"
+    },
+    {
+     "key": "guizhou",
+     "label": "Guizhou",
+     "phrase": "speaking in the Guizhou dialect group of Chinese"
+    },
+    {
+     "key": "hebei",
+     "label": "Hebei",
+     "phrase": "speaking in the Hebei dialect group of Chinese"
+    },
+    {
+     "key": "henan",
+     "label": "Henan",
+     "phrase": "speaking in the Henan dialect group of Chinese"
+    },
+    {
+     "key": "hubei",
+     "label": "Hubei",
+     "phrase": "speaking in the Hubei dialect group of Chinese"
+    },
+    {
+     "key": "hunan",
+     "label": "Hunan",
+     "phrase": "speaking in the Hunan dialect group of Chinese"
+    },
+    {
+     "key": "jiangxi",
+     "label": "Jiangxi",
+     "phrase": "speaking in the Jiangxi dialect group of Chinese"
+    },
+    {
+     "key": "liaoning",
+     "label": "Liaoning",
+     "phrase": "speaking in the Liaoning dialect group of Chinese"
+    },
+    {
+     "key": "minnan",
+     "label": "Minnan",
+     "phrase": "speaking in Minnan (Southern Min)"
+    },
+    {
+     "key": "ningxia",
+     "label": "Ningxia",
+     "phrase": "speaking in the Ningxia dialect group of Chinese"
+    },
+    {
+     "key": "shaanxi",
+     "label": "Shaanxi",
+     "phrase": "speaking in the Shaanxi dialect group of Chinese"
+    },
+    {
+     "key": "shandong",
+     "label": "Shandong",
+     "phrase": "speaking in the Shandong dialect group of Chinese"
+    },
+    {
+     "key": "shanghai",
+     "label": "Shanghai",
+     "phrase": "speaking in Shanghainese"
+    },
+    {
+     "key": "shanxi",
+     "label": "Shanxi",
+     "phrase": "speaking in the Shanxi dialect group of Chinese"
+    },
+    {
+     "key": "sichuan",
+     "label": "Sichuan",
+     "phrase": "speaking in Sichuanese"
+    },
+    {
+     "key": "tianjin",
+     "label": "Tianjin",
+     "phrase": "speaking in the Tianjin dialect"
+    },
+    {
+     "key": "wenzhou",
+     "label": "Wenzhou",
+     "phrase": "speaking in Wenzhounese"
+    },
+    {
+     "key": "wu",
+     "label": "Wu",
+     "phrase": "speaking in Wu Chinese"
+    },
+    {
+     "key": "yunnan",
+     "label": "Yunnan",
+     "phrase": "speaking in the Yunnan dialect group of Chinese"
+    }
+   ]
+  },
+  {
+   "id": "register",
+   "label": "Voice register and pitch",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 0.8,
+   "help": "How high or low the voice sits, and how the pitch moves.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "very_low_bass",
+     "label": "Very low · bass",
+     "phrase": "very low bass pitch",
+     "tags": [
+      "low"
+     ]
+    },
+    {
+     "key": "low_deep",
+     "label": "Low · deep",
+     "phrase": "deep low pitch",
+     "tags": [
+      "low"
+     ]
+    },
+    {
+     "key": "low_rich_baritone",
+     "label": "Low · rich baritone",
+     "phrase": "low baritone register",
+     "tags": [
+      "low"
+     ]
+    },
+    {
+     "key": "low_contralto",
+     "label": "Low · contralto",
+     "phrase": "low contralto register",
+     "tags": [
+      "low"
+     ]
+    },
+    {
+     "key": "lower_than_average",
+     "label": "Lower than average",
+     "phrase": "pitch lower than average",
+     "tags": [
+      "low"
+     ]
+    },
+    {
+     "key": "low_mid",
+     "label": "Low-mid",
+     "phrase": "low-to-mid pitch",
+     "tags": [
+      "low"
+     ]
+    },
+    {
+     "key": "slightly_low",
+     "label": "Slightly low",
+     "phrase": "slightly low pitch",
+     "tags": [
+      "low"
+     ]
+    },
+    {
+     "key": "mid_low",
+     "label": "Mid-low",
+     "phrase": "mid-low pitch"
+    },
+    {
+     "key": "mid_neutral",
+     "label": "Mid · neutral",
+     "phrase": "mid-range pitch"
+    },
+    {
+     "key": "mid_centered",
+     "label": "Mid · centered",
+     "phrase": "centered middle pitch"
+    },
+    {
+     "key": "mid_high",
+     "label": "Mid-high",
+     "phrase": "mid-high pitch",
+     "tags": [
+      "high"
+     ]
+    },
+    {
+     "key": "slightly_high",
+     "label": "Slightly high",
+     "phrase": "slightly high pitch",
+     "tags": [
+      "high"
+     ]
+    },
+    {
+     "key": "higher_than_average",
+     "label": "Higher than average",
+     "phrase": "pitch higher than average",
+     "tags": [
+      "high"
+     ]
+    },
+    {
+     "key": "high_mid",
+     "label": "High-mid",
+     "phrase": "high-mid pitch",
+     "tags": [
+      "high"
+     ]
+    },
+    {
+     "key": "high_bright_soprano",
+     "label": "High · bright soprano",
+     "phrase": "bright high soprano register",
+     "tags": [
+      "high"
+     ]
+    },
+    {
+     "key": "high_light",
+     "label": "High · light",
+     "phrase": "light high pitch",
+     "tags": [
+      "high"
+     ]
+    },
+    {
+     "key": "very_high_airy",
+     "label": "Very high · airy",
+     "phrase": "very high airy pitch",
+     "tags": [
+      "high"
+     ]
+    },
+    {
+     "key": "wide_pitch_range",
+     "label": "Wide pitch range",
+     "phrase": "wide expressive pitch range"
+    },
+    {
+     "key": "narrow_pitch_range_even",
+     "label": "Narrow pitch range · even",
+     "phrase": "narrow, even pitch range"
+    },
+    {
+     "key": "monotone_leaning",
+     "label": "Monotone-leaning",
+     "phrase": "nearly monotone pitch"
+    },
+    {
+     "key": "melodic_pitch_movement",
+     "label": "Melodic pitch movement",
+     "phrase": "melodic, sing-song pitch movement"
+    },
+    {
+     "key": "dropping_pitch_at_line_ends",
+     "label": "Dropping pitch at line ends",
+     "phrase": "pitch that falls at line ends"
+    },
+    {
+     "key": "rising_pitch_at_line_ends",
+     "label": "Rising pitch at line ends",
+     "phrase": "pitch that lifts at line ends"
+    },
+    {
+     "key": "deep_chest_voice",
+     "label": "Deep chest voice",
+     "phrase": "deep chest-voice resonance",
+     "tags": [
+      "low"
+     ]
+    },
+    {
+     "key": "head_voice_lightness",
+     "label": "Head-voice lightness",
+     "phrase": "light head-voice placement",
+     "tags": [
+      "high"
+     ]
+    },
+    {
+     "key": "mixed_voice_balanced",
+     "label": "Mixed voice · balanced",
+     "phrase": "balanced mixed-voice placement"
+    }
+   ]
+  },
+  {
+   "id": "timbre",
+   "label": "Timbre and texture",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 0.9,
+   "help": "The grain of the voice.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "smooth",
+     "label": "Smooth",
+     "phrase": "smooth timbre"
+    },
+    {
+     "key": "silky",
+     "label": "Silky",
+     "phrase": "silky timbre"
+    },
+    {
+     "key": "velvety",
+     "label": "Velvety",
+     "phrase": "velvety timbre"
+    },
+    {
+     "key": "husky",
+     "label": "Husky",
+     "phrase": "husky timbre"
+    },
+    {
+     "key": "raspy",
+     "label": "Raspy",
+     "phrase": "raspy texture"
+    },
+    {
+     "key": "breathy",
+     "label": "Breathy",
+     "phrase": "breathy texture"
+    },
+    {
+     "key": "bright",
+     "label": "Bright",
+     "phrase": "bright timbre"
+    },
+    {
+     "key": "warm",
+     "label": "Warm",
+     "phrase": "warm timbre"
+    },
+    {
+     "key": "nasal",
+     "label": "Nasal",
+     "phrase": "slightly nasal timbre"
+    },
+    {
+     "key": "throaty",
+     "label": "Throaty",
+     "phrase": "throaty timbre"
+    },
+    {
+     "key": "gravelly",
+     "label": "Gravelly",
+     "phrase": "gravelly texture"
+    },
+    {
+     "key": "airy",
+     "label": "Airy",
+     "phrase": "airy timbre"
+    },
+    {
+     "key": "resonant",
+     "label": "Resonant",
+     "phrase": "resonant timbre"
+    },
+    {
+     "key": "thin",
+     "label": "Thin",
+     "phrase": "thin, light timbre"
+    },
+    {
+     "key": "rich",
+     "label": "Rich",
+     "phrase": "rich, full timbre"
+    },
+    {
+     "key": "crisp",
+     "label": "Crisp",
+     "phrase": "crisp, clean timbre"
+    },
+    {
+     "key": "clear",
+     "label": "Clear",
+     "phrase": "clear, clean timbre"
+    },
+    {
+     "key": "mellow",
+     "label": "Mellow",
+     "phrase": "mellow timbre"
+    },
+    {
+     "key": "honeyed",
+     "label": "Honeyed",
+     "phrase": "honeyed timbre"
+    },
+    {
+     "key": "smoky",
+     "label": "Smoky",
+     "phrase": "smoky timbre"
+    },
+    {
+     "key": "creamy",
+     "label": "Creamy",
+     "phrase": "creamy timbre"
+    },
+    {
+     "key": "round",
+     "label": "Round",
+     "phrase": "round, full timbre"
+    },
+    {
+     "key": "reedy",
+     "label": "Reedy",
+     "phrase": "reedy timbre"
+    },
+    {
+     "key": "metallic_edge",
+     "label": "Metallic edge",
+     "phrase": "slight metallic edge"
+    },
+    {
+     "key": "plush",
+     "label": "Plush",
+     "phrase": "plush, cushioned timbre"
+    },
+    {
+     "key": "sandy",
+     "label": "Sandy",
+     "phrase": "sandy, lightly grainy texture"
+    },
+    {
+     "key": "dry",
+     "label": "Dry",
+     "phrase": "dry timbre"
+    },
+    {
+     "key": "glassy",
+     "label": "Glassy",
+     "phrase": "glassy, clear timbre"
+    },
+    {
+     "key": "booming",
+     "label": "Booming",
+     "phrase": "booming, full-bodied timbre"
+    },
+    {
+     "key": "hoarse",
+     "label": "Hoarse",
+     "phrase": "lightly hoarse texture"
+    },
+    {
+     "key": "tender",
+     "label": "Tender",
+     "phrase": "tender, soft-edged timbre"
+    },
+    {
+     "key": "sharp",
+     "label": "Sharp",
+     "phrase": "sharp, focused timbre"
+    },
+    {
+     "key": "muffled_soft_focus",
+     "label": "Muffled · soft-focus",
+     "phrase": "soft-focus timbre"
+    },
+    {
+     "key": "chesty",
+     "label": "Chesty",
+     "phrase": "chesty timbre"
+    },
+    {
+     "key": "open_spacious",
+     "label": "Open · spacious",
+     "phrase": "open, spacious timbre"
+    },
+    {
+     "key": "dark",
+     "label": "Dark",
+     "phrase": "dark timbre"
+    },
+    {
+     "key": "sparkling",
+     "label": "Sparkling",
+     "phrase": "sparkling timbre"
+    }
+   ]
+  },
+  {
+   "id": "quirks",
+   "label": "Vocal quirks (fry, uptalk, smile...)",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 0.4,
+   "help": "Small habits that make a voice recognisable.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "vocal_fry_on_phrase_ends",
+     "label": "Vocal fry on phrase ends",
+     "phrase": "light vocal fry at phrase ends"
+    },
+    {
+     "key": "heavy_vocal_fry",
+     "label": "Heavy vocal fry",
+     "phrase": "pronounced vocal fry"
+    },
+    {
+     "key": "uptalk",
+     "label": "Uptalk",
+     "phrase": "uptalk, statements rising like questions"
+    },
+    {
+     "key": "smile_in_the_voice",
+     "label": "Smile in the voice",
+     "phrase": "audible smile in the voice"
+    },
+    {
+     "key": "constant_smile",
+     "label": "Constant smile",
+     "phrase": "an ever-present smile in the voice"
+    },
+    {
+     "key": "sighing_delivery",
+     "label": "Sighing delivery",
+     "phrase": "occasional soft sighs between phrases"
+    },
+    {
+     "key": "trailing_off",
+     "label": "Trailing off",
+     "phrase": "sentences that trail off"
+    },
+    {
+     "key": "sharp_consonant_attack",
+     "label": "Sharp consonant attack",
+     "phrase": "crisp, clipped consonant attack"
+    },
+    {
+     "key": "drawn_out_vowels",
+     "label": "Drawn-out vowels",
+     "phrase": "long, drawn-out vowels"
+    },
+    {
+     "key": "clipped_endings",
+     "label": "Clipped endings",
+     "phrase": "clipped sentence endings"
+    },
+    {
+     "key": "slight_lisp",
+     "label": "Slight lisp",
+     "phrase": "slight lisp on s sounds"
+    },
+    {
+     "key": "gentle_stutter_free_hesitation",
+     "label": "Gentle stutter-free hesitation",
+     "phrase": "brief natural hesitations before key words"
+    },
+    {
+     "key": "throat_clearing_habit",
+     "label": "Throat-clearing habit",
+     "phrase": "an occasional small throat clear"
+    },
+    {
+     "key": "giggly_undertone",
+     "label": "Giggly undertone",
+     "phrase": "a faint giggly undertone"
+    },
+    {
+     "key": "whispery_asides",
+     "label": "Whispery asides",
+     "phrase": "whispered asides mid-sentence"
+    },
+    {
+     "key": "dramatic_emphasis",
+     "label": "Dramatic emphasis",
+     "phrase": "dramatic emphasis on key words"
+    },
+    {
+     "key": "understatement",
+     "label": "Understatement",
+     "phrase": "dry understatement"
+    },
+    {
+     "key": "elongated_pet_phrases",
+     "label": "Elongated pet phrases",
+     "phrase": "elongated, affectionate stress on words"
+    },
+    {
+     "key": "sing_song_lilt",
+     "label": "Sing-song lilt",
+     "phrase": "sing-song lilt"
+    },
+    {
+     "key": "murmured_endings",
+     "label": "Murmured endings",
+     "phrase": "murmured sentence endings"
+    },
+    {
+     "key": "rolling_r_sounds",
+     "label": "Rolling r sounds",
+     "phrase": "rolled r sounds"
+    },
+    {
+     "key": "soft_t_sounds",
+     "label": "Soft t sounds",
+     "phrase": "softly dropped t sounds"
+    },
+    {
+     "key": "glottal_stops",
+     "label": "Glottal stops",
+     "phrase": "frequent glottal stops"
+    },
+    {
+     "key": "breath_before_phrases",
+     "label": "Breath before phrases",
+     "phrase": "audible breath before phrases"
+    },
+    {
+     "key": "warm_chuckle",
+     "label": "Warm chuckle",
+     "phrase": "a warm chuckle behind the words"
+    },
+    {
+     "key": "voice_crack_on_emotion",
+     "label": "Voice crack on emotion",
+     "phrase": "slight voice break on emotional words"
+    },
+    {
+     "key": "dry_vocal_quality",
+     "label": "Dry vocal quality",
+     "phrase": "slightly dry vocal quality"
+    }
+   ]
+  },
+  {
+   "id": "diction",
+   "label": "Articulation and diction",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 0.4,
+   "help": "How clearly words are formed.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "crisp_and_precise",
+     "label": "Crisp and precise",
+     "phrase": "crisp, precise diction"
+    },
+    {
+     "key": "very_clear",
+     "label": "Very clear",
+     "phrase": "very clear articulation"
+    },
+    {
+     "key": "natural",
+     "label": "Natural",
+     "phrase": "natural articulation"
+    },
+    {
+     "key": "relaxed",
+     "label": "Relaxed",
+     "phrase": "relaxed, casual articulation"
+    },
+    {
+     "key": "slurred_slightly",
+     "label": "Slurred slightly",
+     "phrase": "slightly slurred, loose articulation"
+    },
+    {
+     "key": "mumbly",
+     "label": "Mumbly",
+     "phrase": "mumbly articulation"
+    },
+    {
+     "key": "formal",
+     "label": "Formal",
+     "phrase": "formal, careful diction"
+    },
+    {
+     "key": "theatrical",
+     "label": "Theatrical",
+     "phrase": "theatrical, stage-trained diction"
+    },
+    {
+     "key": "rounded_vowels",
+     "label": "Rounded vowels",
+     "phrase": "rounded vowels"
+    },
+    {
+     "key": "clipped",
+     "label": "Clipped",
+     "phrase": "clipped diction"
+    },
+    {
+     "key": "soft_consonants",
+     "label": "Soft consonants",
+     "phrase": "soft consonants"
+    },
+    {
+     "key": "hard_consonants",
+     "label": "Hard consonants",
+     "phrase": "pronounced hard consonants"
+    },
+    {
+     "key": "drawling",
+     "label": "Drawling",
+     "phrase": "drawling articulation"
+    },
+    {
+     "key": "fast_and_blended",
+     "label": "Fast and blended",
+     "phrase": "fast, blended-together articulation"
+    },
+    {
+     "key": "mouth_forward",
+     "label": "Mouth-forward",
+     "phrase": "forward, mouth-front articulation"
+    },
+    {
+     "key": "back_of_throat",
+     "label": "Back-of-throat",
+     "phrase": "back-of-throat articulation"
+    },
+    {
+     "key": "lazy",
+     "label": "Lazy",
+     "phrase": "lazy, lax articulation"
+    },
+    {
+     "key": "perfectly_enunciated",
+     "label": "Perfectly enunciated",
+     "phrase": "perfectly enunciated words"
+    }
+   ]
+  },
+  {
+   "id": "pace",
+   "label": "Speaking pace",
+   "group": "delivery",
+   "use": [
+    "design",
+    "preset"
+   ],
+   "random_p": 0.9,
+   "help": "How fast the words come.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "very_slow",
+     "label": "Very slow",
+     "phrase": "very slow pace",
+     "tags": [
+      "slow"
+     ]
+    },
+    {
+     "key": "slow_and_unhurried",
+     "label": "Slow and unhurried",
+     "phrase": "slow, unhurried pace",
+     "tags": [
+      "slow"
+     ]
+    },
+    {
+     "key": "slow_and_deliberate",
+     "label": "Slow and deliberate",
+     "phrase": "slow, deliberate pace",
+     "tags": [
+      "slow"
+     ]
+    },
+    {
+     "key": "relaxed",
+     "label": "Relaxed",
+     "phrase": "relaxed pace",
+     "tags": [
+      "slow"
+     ]
+    },
+    {
+     "key": "easy_and_measured",
+     "label": "Easy and measured",
+     "phrase": "easy, measured pace"
+    },
+    {
+     "key": "moderate",
+     "label": "Moderate",
+     "phrase": "moderate pace"
+    },
+    {
+     "key": "conversational",
+     "label": "Conversational",
+     "phrase": "natural conversational pace"
+    },
+    {
+     "key": "steady",
+     "label": "Steady",
+     "phrase": "steady pace"
+    },
+    {
+     "key": "brisk",
+     "label": "Brisk",
+     "phrase": "brisk pace",
+     "tags": [
+      "fast"
+     ]
+    },
+    {
+     "key": "quick_and_light",
+     "label": "Quick and light",
+     "phrase": "quick, light pace",
+     "tags": [
+      "fast"
+     ]
+    },
+    {
+     "key": "lively",
+     "label": "Lively",
+     "phrase": "lively pace",
+     "tags": [
+      "fast"
+     ]
+    },
+    {
+     "key": "fast_and_punchy",
+     "label": "Fast and punchy",
+     "phrase": "fast, punchy pace",
+     "tags": [
+      "fast"
+     ]
+    },
+    {
+     "key": "rapid_fire",
+     "label": "Rapid-fire",
+     "phrase": "rapid-fire pace",
+     "tags": [
+      "fast"
+     ]
+    },
+    {
+     "key": "very_fast_auctioneer",
+     "label": "Very fast · auctioneer",
+     "phrase": "very fast pace",
+     "tags": [
+      "fast"
+     ]
+    },
+    {
+     "key": "speeding_up_when_excited",
+     "label": "Speeding up when excited",
+     "phrase": "speeding up when excited"
+    },
+    {
+     "key": "slowing_down_for_emphasis",
+     "label": "Slowing down for emphasis",
+     "phrase": "slowing down for emphasis"
+    },
+    {
+     "key": "variable_pace",
+     "label": "Variable pace",
+     "phrase": "naturally varying pace"
+    },
+    {
+     "key": "drifting_slowly",
+     "label": "Drifting slowly",
+     "phrase": "slow, drifting pace",
+     "tags": [
+      "slow"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "rhythm",
+   "label": "Rhythm and pauses",
+   "group": "delivery",
+   "use": [
+    "design",
+    "preset"
+   ],
+   "random_p": 0.4,
+   "help": "How the words are grouped and spaced.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "even_rhythm",
+     "label": "Even rhythm",
+     "phrase": "even rhythm"
+    },
+    {
+     "key": "flowing",
+     "label": "Flowing",
+     "phrase": "smooth, flowing rhythm"
+    },
+    {
+     "key": "staccato",
+     "label": "Staccato",
+     "phrase": "short, staccato rhythm"
+    },
+    {
+     "key": "long_pauses",
+     "label": "Long pauses",
+     "phrase": "long, thoughtful pauses"
+    },
+    {
+     "key": "short_pauses",
+     "label": "Short pauses",
+     "phrase": "brief, natural pauses"
+    },
+    {
+     "key": "dramatic_pauses",
+     "label": "Dramatic pauses",
+     "phrase": "dramatic pauses before key words"
+    },
+    {
+     "key": "breathless",
+     "label": "Breathless",
+     "phrase": "breathless run-on rhythm"
+    },
+    {
+     "key": "stop_start",
+     "label": "Stop-start",
+     "phrase": "stop-start rhythm"
+    },
+    {
+     "key": "lyrical",
+     "label": "Lyrical",
+     "phrase": "lyrical rhythm"
+    },
+    {
+     "key": "measured_beats",
+     "label": "Measured beats",
+     "phrase": "measured, beat-like rhythm"
+    },
+    {
+     "key": "rambling",
+     "label": "Rambling",
+     "phrase": "rambling, free-flowing rhythm"
+    },
+    {
+     "key": "tight_and_efficient",
+     "label": "Tight and efficient",
+     "phrase": "tight, efficient rhythm"
+    },
+    {
+     "key": "conversational_filler_free",
+     "label": "Conversational filler-free",
+     "phrase": "clean rhythm without filler words"
+    },
+    {
+     "key": "natural_fillers",
+     "label": "Natural fillers",
+     "phrase": "a few natural filler words"
+    },
+    {
+     "key": "syncopated",
+     "label": "Syncopated",
+     "phrase": "syncopated rhythm"
+    },
+    {
+     "key": "rolling_waves",
+     "label": "Rolling waves",
+     "phrase": "rolling rhythm that builds and releases"
+    },
+    {
+     "key": "pause_after_punchlines",
+     "label": "Pause after punchlines",
+     "phrase": "a beat of silence after each point"
+    },
+    {
+     "key": "chopped_phrases",
+     "label": "Chopped phrases",
+     "phrase": "chopped, separate phrases"
+    }
+   ]
+  },
+  {
+   "id": "energy",
+   "label": "Energy level",
+   "group": "delivery",
+   "use": [
+    "design",
+    "preset"
+   ],
+   "random_p": 0.9,
+   "help": "How much push is in the voice.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "very_low_sleepy",
+     "label": "Very low · sleepy",
+     "phrase": "very low, sleepy energy",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "low_calm",
+     "label": "Low · calm",
+     "phrase": "low, calm energy",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "low_mellow",
+     "label": "Low · mellow",
+     "phrase": "low, mellow energy",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "subdued",
+     "label": "Subdued",
+     "phrase": "subdued energy",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "gentle",
+     "label": "Gentle",
+     "phrase": "gentle energy",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "relaxed",
+     "label": "Relaxed",
+     "phrase": "relaxed energy"
+    },
+    {
+     "key": "moderate",
+     "label": "Moderate",
+     "phrase": "moderate energy"
+    },
+    {
+     "key": "balanced",
+     "label": "Balanced",
+     "phrase": "balanced energy"
+    },
+    {
+     "key": "engaged",
+     "label": "Engaged",
+     "phrase": "engaged energy"
+    },
+    {
+     "key": "upbeat",
+     "label": "Upbeat",
+     "phrase": "upbeat energy",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "bright",
+     "label": "Bright",
+     "phrase": "bright energy",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "high",
+     "label": "High",
+     "phrase": "high energy",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "bubbly",
+     "label": "Bubbly",
+     "phrase": "bubbly energy",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "excited",
+     "label": "Excited",
+     "phrase": "excited energy",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "intense",
+     "label": "Intense",
+     "phrase": "intense energy",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "explosive",
+     "label": "Explosive",
+     "phrase": "explosive energy",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "building",
+     "label": "Building",
+     "phrase": "energy that builds through the line"
+    },
+    {
+     "key": "fading",
+     "label": "Fading",
+     "phrase": "energy that fades toward the end",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "steady_burn",
+     "label": "Steady burn",
+     "phrase": "quiet but steady, burning energy"
+    },
+    {
+     "key": "restless",
+     "label": "Restless",
+     "phrase": "restless, fidgety energy"
+    }
+   ]
+  },
+  {
+   "id": "emotion",
+   "label": "Baseline emotion and mood",
+   "group": "delivery",
+   "use": [
+    "design",
+    "preset"
+   ],
+   "random_p": 0.9,
+   "help": "The mood the voice sits in by default.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "neutral",
+     "label": "Neutral",
+     "phrase": "neutral mood"
+    },
+    {
+     "key": "warm",
+     "label": "Warm",
+     "phrase": "warm mood"
+    },
+    {
+     "key": "cheerful",
+     "label": "Cheerful",
+     "phrase": "cheerful mood"
+    },
+    {
+     "key": "joyful",
+     "label": "Joyful",
+     "phrase": "joyful mood"
+    },
+    {
+     "key": "playful",
+     "label": "Playful",
+     "phrase": "playful mood"
+    },
+    {
+     "key": "affectionate",
+     "label": "Affectionate",
+     "phrase": "affectionate mood"
+    },
+    {
+     "key": "loving",
+     "label": "Loving",
+     "phrase": "loving mood"
+    },
+    {
+     "key": "teasing",
+     "label": "Teasing",
+     "phrase": "teasing mood"
+    },
+    {
+     "key": "amused",
+     "label": "Amused",
+     "phrase": "amused mood"
+    },
+    {
+     "key": "content",
+     "label": "Content",
+     "phrase": "content mood"
+    },
+    {
+     "key": "peaceful",
+     "label": "Peaceful",
+     "phrase": "peaceful mood"
+    },
+    {
+     "key": "hopeful",
+     "label": "Hopeful",
+     "phrase": "hopeful mood"
+    },
+    {
+     "key": "curious",
+     "label": "Curious",
+     "phrase": "curious mood"
+    },
+    {
+     "key": "wondering",
+     "label": "Wondering",
+     "phrase": "wondering, awed mood"
+    },
+    {
+     "key": "thoughtful",
+     "label": "Thoughtful",
+     "phrase": "thoughtful mood"
+    },
+    {
+     "key": "nostalgic",
+     "label": "Nostalgic",
+     "phrase": "nostalgic mood"
+    },
+    {
+     "key": "wistful",
+     "label": "Wistful",
+     "phrase": "wistful mood"
+    },
+    {
+     "key": "melancholy",
+     "label": "Melancholy",
+     "phrase": "melancholy mood"
+    },
+    {
+     "key": "sad",
+     "label": "Sad",
+     "phrase": "sad mood"
+    },
+    {
+     "key": "tender",
+     "label": "Tender",
+     "phrase": "tender mood"
+    },
+    {
+     "key": "anxious",
+     "label": "Anxious",
+     "phrase": "anxious mood"
+    },
+    {
+     "key": "nervous",
+     "label": "Nervous",
+     "phrase": "nervous mood"
+    },
+    {
+     "key": "tense",
+     "label": "Tense",
+     "phrase": "tense mood"
+    },
+    {
+     "key": "irritated",
+     "label": "Irritated",
+     "phrase": "irritated mood"
+    },
+    {
+     "key": "angry",
+     "label": "Angry",
+     "phrase": "angry mood"
+    },
+    {
+     "key": "defiant",
+     "label": "Defiant",
+     "phrase": "defiant mood"
+    },
+    {
+     "key": "cold",
+     "label": "Cold",
+     "phrase": "cold, distant mood"
+    },
+    {
+     "key": "smug",
+     "label": "Smug",
+     "phrase": "smug mood"
+    },
+    {
+     "key": "bored",
+     "label": "Bored",
+     "phrase": "bored mood"
+    },
+    {
+     "key": "weary",
+     "label": "Weary",
+     "phrase": "weary mood"
+    },
+    {
+     "key": "reassuring",
+     "label": "Reassuring",
+     "phrase": "reassuring mood"
+    },
+    {
+     "key": "mischievous",
+     "label": "Mischievous",
+     "phrase": "mischievous mood"
+    },
+    {
+     "key": "dreamy",
+     "label": "Dreamy",
+     "phrase": "dreamy mood"
+    },
+    {
+     "key": "serious",
+     "label": "Serious",
+     "phrase": "serious mood"
+    },
+    {
+     "key": "solemn",
+     "label": "Solemn",
+     "phrase": "solemn mood"
+    }
+   ]
+  },
+  {
+   "id": "warmth",
+   "label": "Warmth and formality",
+   "group": "delivery",
+   "use": [
+    "design",
+    "preset"
+   ],
+   "random_p": 0.6,
+   "help": "How close or formal the voice feels.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "very_warm_and_friendly",
+     "label": "Very warm and friendly",
+     "phrase": "very warm and friendly"
+    },
+    {
+     "key": "warm_and_approachable",
+     "label": "Warm and approachable",
+     "phrase": "warm and approachable"
+    },
+    {
+     "key": "kind_and_caring",
+     "label": "Kind and caring",
+     "phrase": "kind and caring"
+    },
+    {
+     "key": "motherly",
+     "label": "Motherly",
+     "phrase": "nurturing, motherly warmth"
+    },
+    {
+     "key": "fatherly",
+     "label": "Fatherly",
+     "phrase": "steady, fatherly warmth"
+    },
+    {
+     "key": "cozy",
+     "label": "Cozy",
+     "phrase": "cozy and familiar"
+    },
+    {
+     "key": "casual_and_chatty",
+     "label": "Casual and chatty",
+     "phrase": "casual and chatty"
+    },
+    {
+     "key": "informal",
+     "label": "Informal",
+     "phrase": "informal"
+    },
+    {
+     "key": "neutral",
+     "label": "Neutral",
+     "phrase": "neutrally polite"
+    },
+    {
+     "key": "polite",
+     "label": "Polite",
+     "phrase": "polite"
+    },
+    {
+     "key": "professional",
+     "label": "Professional",
+     "phrase": "professional"
+    },
+    {
+     "key": "formal",
+     "label": "Formal",
+     "phrase": "formal"
+    },
+    {
+     "key": "very_formal",
+     "label": "Very formal",
+     "phrase": "very formal"
+    },
+    {
+     "key": "reserved",
+     "label": "Reserved",
+     "phrase": "reserved"
+    },
+    {
+     "key": "aloof",
+     "label": "Aloof",
+     "phrase": "aloof"
+    },
+    {
+     "key": "cool_and_distant",
+     "label": "Cool and distant",
+     "phrase": "cool and distant"
+    },
+    {
+     "key": "brusque",
+     "label": "Brusque",
+     "phrase": "brusque"
+    },
+    {
+     "key": "playfully_rude",
+     "label": "Playfully rude",
+     "phrase": "playfully irreverent"
+    }
+   ]
+  },
+  {
+   "id": "confidence",
+   "label": "Confidence and attitude",
+   "group": "delivery",
+   "use": [
+    "design",
+    "preset"
+   ],
+   "random_p": 0.6,
+   "help": "The stance behind the words.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "very_confident",
+     "label": "Very confident",
+     "phrase": "very confident"
+    },
+    {
+     "key": "quietly_confident",
+     "label": "Quietly confident",
+     "phrase": "quietly confident"
+    },
+    {
+     "key": "self_assured",
+     "label": "Self-assured",
+     "phrase": "self-assured"
+    },
+    {
+     "key": "commanding",
+     "label": "Commanding",
+     "phrase": "commanding"
+    },
+    {
+     "key": "authoritative",
+     "label": "Authoritative",
+     "phrase": "authoritative"
+    },
+    {
+     "key": "calm_authority",
+     "label": "Calm authority",
+     "phrase": "calmly authoritative"
+    },
+    {
+     "key": "assertive",
+     "label": "Assertive",
+     "phrase": "assertive"
+    },
+    {
+     "key": "bold",
+     "label": "Bold",
+     "phrase": "bold"
+    },
+    {
+     "key": "cocky",
+     "label": "Cocky",
+     "phrase": "cocky"
+    },
+    {
+     "key": "charming",
+     "label": "Charming",
+     "phrase": "charming"
+    },
+    {
+     "key": "easygoing",
+     "label": "Easygoing",
+     "phrase": "easygoing"
+    },
+    {
+     "key": "humble",
+     "label": "Humble",
+     "phrase": "humble"
+    },
+    {
+     "key": "shy",
+     "label": "Shy",
+     "phrase": "shy"
+    },
+    {
+     "key": "hesitant",
+     "label": "Hesitant",
+     "phrase": "hesitant"
+    },
+    {
+     "key": "unsure",
+     "label": "Unsure",
+     "phrase": "unsure"
+    },
+    {
+     "key": "sheepish",
+     "label": "Sheepish",
+     "phrase": "sheepish"
+    },
+    {
+     "key": "sarcastic",
+     "label": "Sarcastic",
+     "phrase": "sarcastic"
+    },
+    {
+     "key": "deadpan",
+     "label": "Deadpan",
+     "phrase": "deadpan"
+    },
+    {
+     "key": "witty",
+     "label": "Witty",
+     "phrase": "witty"
+    },
+    {
+     "key": "wry",
+     "label": "Wry",
+     "phrase": "wry"
+    },
+    {
+     "key": "cynical",
+     "label": "Cynical",
+     "phrase": "cynical"
+    },
+    {
+     "key": "earnest",
+     "label": "Earnest",
+     "phrase": "earnest"
+    },
+    {
+     "key": "sincere",
+     "label": "Sincere",
+     "phrase": "sincere"
+    },
+    {
+     "key": "vulnerable",
+     "label": "Vulnerable",
+     "phrase": "vulnerable"
+    },
+    {
+     "key": "sassy",
+     "label": "Sassy",
+     "phrase": "sassy"
+    },
+    {
+     "key": "haughty",
+     "label": "Haughty",
+     "phrase": "haughty"
+    },
+    {
+     "key": "gentle_but_firm",
+     "label": "Gentle but firm",
+     "phrase": "gentle but firm"
+    },
+    {
+     "key": "unbothered",
+     "label": "Unbothered",
+     "phrase": "unbothered"
+    }
+   ]
+  },
+  {
+   "id": "style",
+   "label": "Delivery style",
+   "group": "delivery",
+   "use": [
+    "design",
+    "preset"
+   ],
+   "random_p": 0.5,
+   "help": "A way of speaking, described by role, never by a named person.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "influencer_vlog",
+     "label": "Influencer vlog",
+     "phrase": "influencer vlogger delivery"
+    },
+    {
+     "key": "podcast_host",
+     "label": "Podcast host",
+     "phrase": "relaxed podcast host delivery"
+    },
+    {
+     "key": "news_anchor",
+     "label": "News anchor",
+     "phrase": "polished news anchor delivery"
+    },
+    {
+     "key": "asmr_whisper",
+     "label": "ASMR whisper",
+     "phrase": "close ASMR whisper delivery",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "bedtime_storyteller",
+     "label": "Bedtime storyteller",
+     "phrase": "soothing bedtime storyteller delivery",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "fitness_coach",
+     "label": "Fitness coach",
+     "phrase": "motivating fitness coach delivery",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "teacher",
+     "label": "Teacher",
+     "phrase": "clear, patient teacher delivery"
+    },
+    {
+     "key": "luxury_concierge",
+     "label": "Luxury concierge",
+     "phrase": "polished luxury concierge delivery"
+    },
+    {
+     "key": "stand_up_comedian",
+     "label": "Stand-up comedian",
+     "phrase": "stand-up comedian delivery"
+    },
+    {
+     "key": "audiobook_narrator",
+     "label": "Audiobook narrator",
+     "phrase": "expressive audiobook narrator delivery"
+    },
+    {
+     "key": "radio_dj",
+     "label": "Radio DJ",
+     "phrase": "smooth radio DJ delivery"
+    },
+    {
+     "key": "customer_support_calm",
+     "label": "Customer-support calm",
+     "phrase": "calm customer-support delivery"
+    },
+    {
+     "key": "documentary_narrator",
+     "label": "Documentary narrator",
+     "phrase": "measured documentary narrator delivery"
+    },
+    {
+     "key": "best_friend_gossip",
+     "label": "Best-friend gossip",
+     "phrase": "best-friend gossip delivery"
+    },
+    {
+     "key": "gamer_streamer",
+     "label": "Gamer streamer",
+     "phrase": "energetic gamer streamer delivery",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "spiritual_guide",
+     "label": "Spiritual guide",
+     "phrase": "serene spiritual guide delivery",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "sports_commentator",
+     "label": "Sports commentator",
+     "phrase": "excited sports commentator delivery",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "trailer_voice",
+     "label": "Trailer voice",
+     "phrase": "dramatic movie-trailer delivery"
+    },
+    {
+     "key": "meditation_guide",
+     "label": "Meditation guide",
+     "phrase": "slow meditation guide delivery",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "voice_note_to_a_friend",
+     "label": "Voice-note to a friend",
+     "phrase": "casual voice-note-to-a-friend delivery"
+    },
+    {
+     "key": "phone_call",
+     "label": "Phone call",
+     "phrase": "natural phone-call delivery"
+    },
+    {
+     "key": "interview_answer",
+     "label": "Interview answer",
+     "phrase": "thoughtful interview-answer delivery"
+    },
+    {
+     "key": "late_night_talk",
+     "label": "Late-night talk",
+     "phrase": "late-night talk delivery"
+    },
+    {
+     "key": "cooking_show_host",
+     "label": "Cooking show host",
+     "phrase": "friendly cooking show host delivery"
+    },
+    {
+     "key": "product_review",
+     "label": "Product review",
+     "phrase": "genuine product-review delivery"
+    },
+    {
+     "key": "tour_guide",
+     "label": "Tour guide",
+     "phrase": "engaging tour guide delivery"
+    },
+    {
+     "key": "poetry_reading",
+     "label": "Poetry reading",
+     "phrase": "slow poetry-reading delivery"
+    },
+    {
+     "key": "public_speaker",
+     "label": "Public speaker",
+     "phrase": "rousing public speaker delivery",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "therapist",
+     "label": "Therapist",
+     "phrase": "gentle, grounded therapist delivery",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "flight_attendant",
+     "label": "Flight attendant",
+     "phrase": "calm, friendly in-flight announcement delivery"
+    },
+    {
+     "key": "museum_curator",
+     "label": "Museum curator",
+     "phrase": "thoughtful curator delivery"
+    },
+    {
+     "key": "shopping_channel_host",
+     "label": "Shopping channel host",
+     "phrase": "bright shopping-channel host delivery",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "drill_instructor",
+     "label": "Drill instructor",
+     "phrase": "barking drill-instructor delivery",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "game_narrator",
+     "label": "Game narrator",
+     "phrase": "storybook game-narrator delivery"
+    },
+    {
+     "key": "wellness_coach",
+     "label": "Wellness coach",
+     "phrase": "encouraging wellness coach delivery"
+    },
+    {
+     "key": "courtroom_lawyer",
+     "label": "Courtroom lawyer",
+     "phrase": "precise courtroom delivery"
+    },
+    {
+     "key": "radio_drama",
+     "label": "Radio drama",
+     "phrase": "theatrical radio-drama delivery"
+    },
+    {
+     "key": "campfire_story",
+     "label": "Campfire story",
+     "phrase": "hushed campfire-story delivery",
+     "tags": [
+      "soft"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "volume",
+   "label": "Volume and projection",
+   "group": "delivery",
+   "use": [
+    "design",
+    "preset"
+   ],
+   "random_p": 0.3,
+   "help": "How loud and how projected.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "quiet_hushed",
+     "label": "Quiet · hushed",
+     "phrase": "quiet, hushed volume",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "soft",
+     "label": "Soft",
+     "phrase": "soft volume",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "low_conversational",
+     "label": "Low conversational",
+     "phrase": "low conversational volume",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "normal",
+     "label": "Normal",
+     "phrase": "normal volume"
+    },
+    {
+     "key": "clear_projection",
+     "label": "Clear projection",
+     "phrase": "clear projection"
+    },
+    {
+     "key": "strong_projection",
+     "label": "Strong projection",
+     "phrase": "strong projection",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "loud",
+     "label": "Loud",
+     "phrase": "loud volume",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "stage_voice",
+     "label": "Stage voice",
+     "phrase": "stage-projected voice",
+     "tags": [
+      "loud"
+     ]
+    },
+    {
+     "key": "close_quiet",
+     "label": "Close and quiet",
+     "phrase": "close, quiet volume",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "variable_dynamics",
+     "label": "Variable dynamics",
+     "phrase": "wide dynamic range"
+    },
+    {
+     "key": "steady_level",
+     "label": "Steady level",
+     "phrase": "very even level"
+    },
+    {
+     "key": "swelling",
+     "label": "Swelling",
+     "phrase": "volume that swells on key words"
+    },
+    {
+     "key": "trailing_quiet",
+     "label": "Trailing quiet",
+     "phrase": "volume that trails off at the end",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "hushed_urgency",
+     "label": "Hushed urgency",
+     "phrase": "hushed but urgent volume",
+     "tags": [
+      "soft"
+     ]
+    },
+    {
+     "key": "shouting",
+     "label": "Shouting",
+     "phrase": "shouted volume",
+     "tags": [
+      "loud"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mouth",
+   "label": "Breathiness and mouth noise",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 0.25,
+   "help": "Breaths and small mouth sounds.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "clean_no_mouth_noise",
+     "label": "Clean · no mouth noise",
+     "phrase": "very clean, no mouth noise"
+    },
+    {
+     "key": "slight_breath",
+     "label": "Slight breath",
+     "phrase": "slight audible breath"
+    },
+    {
+     "key": "audible_breaths",
+     "label": "Audible breaths",
+     "phrase": "audible breaths between phrases"
+    },
+    {
+     "key": "close_breaths",
+     "label": "Close breaths",
+     "phrase": "close, soft breaths"
+    },
+    {
+     "key": "soft_lip_sounds",
+     "label": "Soft lip sounds",
+     "phrase": "soft lip sounds"
+    },
+    {
+     "key": "light_mouth_clicks",
+     "label": "Light mouth clicks",
+     "phrase": "light mouth clicks"
+    },
+    {
+     "key": "breathy_whisper_voice",
+     "label": "Breathy whisper-voice",
+     "phrase": "breathy whispered phrasing"
+    },
+    {
+     "key": "sibilant_s",
+     "label": "Sibilant s",
+     "phrase": "noticeable sibilant s sounds"
+    },
+    {
+     "key": "de_essed",
+     "label": "De-essed",
+     "phrase": "smooth, de-essed s sounds"
+    },
+    {
+     "key": "swallowing_pauses",
+     "label": "Swallowing pauses",
+     "phrase": "small swallow pauses"
+    },
+    {
+     "key": "warm_inhale_before_lines",
+     "label": "Warm inhale before lines",
+     "phrase": "a warm inhale before each line"
+    },
+    {
+     "key": "quiet_exhale_after_lines",
+     "label": "Quiet exhale after lines",
+     "phrase": "a quiet exhale after each line"
+    },
+    {
+     "key": "dry_mouth",
+     "label": "Dry mouth",
+     "phrase": "slightly dry mouth sounds"
+    }
+   ]
+  },
+  {
+   "id": "laughter",
+   "label": "Laughter style",
+   "group": "delivery",
+   "use": [
+    "design",
+    "preset"
+   ],
+   "random_p": 0.25,
+   "help": "How the voice laughs when it does.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "no_laughing",
+     "label": "No laughing",
+     "phrase": "no laughter"
+    },
+    {
+     "key": "soft_giggle",
+     "label": "Soft giggle",
+     "phrase": "soft giggle"
+    },
+    {
+     "key": "light_chuckle",
+     "label": "Light chuckle",
+     "phrase": "light chuckle"
+    },
+    {
+     "key": "warm_laugh",
+     "label": "Warm laugh",
+     "phrase": "warm, genuine laugh"
+    },
+    {
+     "key": "big_belly_laugh",
+     "label": "Big belly laugh",
+     "phrase": "big belly laugh"
+    },
+    {
+     "key": "snort_laugh",
+     "label": "Snort-laugh",
+     "phrase": "occasional snort when laughing"
+    },
+    {
+     "key": "breathy_laugh",
+     "label": "Breathy laugh",
+     "phrase": "breathy laugh"
+    },
+    {
+     "key": "husky_laugh",
+     "label": "Husky laugh",
+     "phrase": "low, husky laugh"
+    },
+    {
+     "key": "nervous_laugh",
+     "label": "Nervous laugh",
+     "phrase": "nervous laugh"
+    },
+    {
+     "key": "dry_laugh",
+     "label": "Dry laugh",
+     "phrase": "dry, brief laugh"
+    },
+    {
+     "key": "cackle",
+     "label": "Cackle",
+     "phrase": "cackling laugh"
+    },
+    {
+     "key": "silent_shoulder_shake",
+     "label": "Silent shoulder shake",
+     "phrase": "laughing under the breath"
+    },
+    {
+     "key": "contagious",
+     "label": "Contagious",
+     "phrase": "contagious, bubbling laugh"
+    },
+    {
+     "key": "polite_laugh",
+     "label": "Polite laugh",
+     "phrase": "polite laugh"
+    },
+    {
+     "key": "laughing_while_talking",
+     "label": "Laughing while talking",
+     "phrase": "laughing through words"
+    },
+    {
+     "key": "sigh_laugh",
+     "label": "Sigh-laugh",
+     "phrase": "laugh that ends in a sigh"
+    }
+   ]
+  },
+  {
+   "id": "recording",
+   "label": "Recording character",
+   "group": "voice",
+   "use": [
+    "design"
+   ],
+   "random_p": 0.3,
+   "help": "The sound of the room and the microphone.",
+   "options": [
+    {
+     "key": "auto",
+     "label": "Auto (let the model choose)",
+     "phrase": ""
+    },
+    {
+     "key": "studio_condenser_mic",
+     "label": "Studio condenser mic",
+     "phrase": "clean studio condenser microphone recording"
+    },
+    {
+     "key": "podcast_mic",
+     "label": "Podcast mic",
+     "phrase": "podcast microphone recording, close and warm"
+    },
+    {
+     "key": "broadcast_booth",
+     "label": "Broadcast booth",
+     "phrase": "polished broadcast-booth recording"
+    },
+    {
+     "key": "whisper_close_mic",
+     "label": "Whisper-close mic",
+     "phrase": "whisper-close microphone, very near the mouth"
+    },
+    {
+     "key": "phone_voice_note",
+     "label": "Phone voice note",
+     "phrase": "phone voice-note recording"
+    },
+    {
+     "key": "phone_call",
+     "label": "Phone call",
+     "phrase": "slightly band-limited phone-call sound"
+    },
+    {
+     "key": "headset_mic",
+     "label": "Headset mic",
+     "phrase": "gamer headset microphone recording"
+    },
+    {
+     "key": "laptop_mic",
+     "label": "Laptop mic",
+     "phrase": "laptop microphone recording"
+    },
+    {
+     "key": "car_cabin",
+     "label": "Car cabin",
+     "phrase": "recorded inside a parked car"
+    },
+    {
+     "key": "bathroom_echo",
+     "label": "Bathroom echo",
+     "phrase": "bathroom echo, hard reflective room"
+    },
+    {
+     "key": "large_hall",
+     "label": "Large hall",
+     "phrase": "large hall reverb"
+    },
+    {
+     "key": "small_room",
+     "label": "Small room",
+     "phrase": "small carpeted room, dry and close"
+    },
+    {
+     "key": "walk_in_closet",
+     "label": "Walk-in closet",
+     "phrase": "dead, dry closet booth sound"
+    },
+    {
+     "key": "kitchen",
+     "label": "Kitchen",
+     "phrase": "warm kitchen room tone"
+    },
+    {
+     "key": "outdoors_quiet",
+     "label": "Outdoors, quiet",
+     "phrase": "outdoors with quiet air"
+    },
+    {
+     "key": "cafe_backdrop",
+     "label": "Cafe backdrop",
+     "phrase": "soft cafe room tone"
+    },
+    {
+     "key": "lavalier_mic",
+     "label": "Lavalier mic",
+     "phrase": "lavalier microphone on clothing"
+    },
+    {
+     "key": "vintage_radio",
+     "label": "Vintage radio",
+     "phrase": "vintage radio sound"
+    },
+    {
+     "key": "noise_free",
+     "label": "Noise-free",
+     "phrase": "completely noise-free recording"
+    }
+   ]
+  }
+ ],
+ "personas": [
+  {
+   "id": "vlogger_warm",
+   "label": "Warm next-door vlogger",
+   "blurb": "A friendly woman who talks to camera like a friend.",
+   "picks": {
+    "presentation": "woman",
+    "age": "24_26_mid_twenties",
+    "register": "mid_high",
+    "timbre": "bright",
+    "quirks": "smile_in_the_voice",
+    "accent_en": "general_american",
+    "pace": "lively",
+    "energy": "upbeat",
+    "emotion": "cheerful",
+    "warmth": "warm_and_approachable",
+    "style": "influencer_vlog",
+    "laughter": "light_chuckle",
+    "recording": "phone_voice_note"
+   }
+  },
+  {
+   "id": "radio_night",
+   "label": "Cool late-night radio host",
+   "blurb": "Low and unhurried, a smooth host after midnight.",
+   "picks": {
+    "presentation": "man",
+    "age": "37_39_late_thirties",
+    "register": "low_rich_baritone",
+    "timbre": "velvety",
+    "pace": "slow_and_unhurried",
+    "energy": "low_mellow",
+    "emotion": "content",
+    "confidence": "quietly_confident",
+    "style": "radio_dj",
+    "recording": "broadcast_booth",
+    "mouth": "clean_no_mouth_noise"
+   }
+  },
+  {
+   "id": "news_anchor_f",
+   "label": "Polished news anchor (woman)",
+   "blurb": "Crisp, neutral and composed.",
+   "picks": {
+    "presentation": "woman",
+    "age": "40_43_early_forties",
+    "register": "mid_neutral",
+    "timbre": "crisp",
+    "accent_en": "general_american",
+    "pace": "steady",
+    "emotion": "neutral",
+    "warmth": "professional",
+    "confidence": "authoritative",
+    "style": "news_anchor",
+    "diction": "crisp_and_precise",
+    "recording": "broadcast_booth"
+   }
+  },
+  {
+   "id": "news_anchor_m",
+   "label": "Polished news anchor (man)",
+   "blurb": "Clear, steady and trustworthy.",
+   "picks": {
+    "presentation": "man",
+    "age": "44_46_mid_forties",
+    "register": "low_mid",
+    "timbre": "clear",
+    "accent_en": "received_pronunciation",
+    "pace": "steady",
+    "emotion": "serious",
+    "warmth": "professional",
+    "confidence": "authoritative",
+    "style": "news_anchor",
+    "diction": "perfectly_enunciated",
+    "recording": "broadcast_booth"
+   }
+  },
+  {
+   "id": "asmr_whisper",
+   "label": "Soft ASMR whisperer",
+   "blurb": "Breathy, close and slow.",
+   "picks": {
+    "presentation": "woman",
+    "age": "27_29_late_twenties",
+    "register": "mid_low",
+    "timbre": "breathy",
+    "pace": "very_slow",
+    "energy": "very_low_sleepy",
+    "emotion": "peaceful",
+    "style": "asmr_whisper",
+    "mouth": "close_breaths",
+    "volume": "quiet_hushed",
+    "recording": "whisper_close_mic"
+   }
+  },
+  {
+   "id": "bedtime_storyteller",
+   "label": "Bedtime storyteller",
+   "blurb": "Warm, slow and soothing.",
+   "picks": {
+    "presentation": "woman",
+    "age": "47_49_late_forties",
+    "register": "mid_low",
+    "timbre": "honeyed",
+    "pace": "slow_and_unhurried",
+    "energy": "gentle",
+    "emotion": "tender",
+    "warmth": "motherly",
+    "style": "bedtime_storyteller",
+    "volume": "soft",
+    "recording": "small_room"
+   }
+  },
+  {
+   "id": "fitness_coach_f",
+   "label": "High-energy fitness coach (woman)",
+   "blurb": "Punchy and motivating.",
+   "picks": {
+    "presentation": "strong_voiced_woman",
+    "age": "30_33_early_thirties",
+    "register": "mid_high",
+    "timbre": "bright",
+    "pace": "fast_and_punchy",
+    "energy": "high",
+    "emotion": "joyful",
+    "confidence": "bold",
+    "style": "fitness_coach",
+    "volume": "strong_projection",
+    "recording": "headset_mic"
+   }
+  },
+  {
+   "id": "fitness_coach_m",
+   "label": "Loud fitness coach (man)",
+   "blurb": "Driving and relentless.",
+   "picks": {
+    "presentation": "man",
+    "age": "34_36_mid_thirties",
+    "register": "mid_low",
+    "timbre": "booming",
+    "pace": "fast_and_punchy",
+    "energy": "intense",
+    "emotion": "defiant",
+    "confidence": "commanding",
+    "style": "fitness_coach",
+    "volume": "loud"
+   }
+  },
+  {
+   "id": "teacher_patient",
+   "label": "Patient teacher",
+   "blurb": "Clear, kind and measured.",
+   "picks": {
+    "presentation": "woman",
+    "age": "44_46_mid_forties",
+    "register": "mid_neutral",
+    "timbre": "clear",
+    "pace": "easy_and_measured",
+    "energy": "balanced",
+    "emotion": "reassuring",
+    "warmth": "kind_and_caring",
+    "confidence": "gentle_but_firm",
+    "style": "teacher",
+    "diction": "very_clear"
+   }
+  },
+  {
+   "id": "luxury_concierge",
+   "label": "Luxury concierge",
+   "blurb": "Polished, discreet and attentive.",
+   "picks": {
+    "presentation": "man",
+    "age": "40_43_early_forties",
+    "register": "mid_low",
+    "timbre": "smooth",
+    "accent_en": "received_pronunciation",
+    "pace": "slow_and_deliberate",
+    "energy": "subdued",
+    "emotion": "content",
+    "warmth": "very_formal",
+    "confidence": "self_assured",
+    "style": "luxury_concierge",
+    "diction": "perfectly_enunciated"
+   }
+  },
+  {
+   "id": "standup_comic",
+   "label": "Dry stand-up comic",
+   "blurb": "Wry, deadpan and fast on the beat.",
+   "picks": {
+    "presentation": "man",
+    "age": "34_36_mid_thirties",
+    "register": "mid_neutral",
+    "timbre": "dry",
+    "pace": "quick_and_light",
+    "rhythm": "pause_after_punchlines",
+    "emotion": "amused",
+    "confidence": "deadpan",
+    "style": "stand_up_comedian",
+    "laughter": "dry_laugh"
+   }
+  },
+  {
+   "id": "audiobook_f",
+   "label": "Expressive audiobook narrator (woman)",
+   "blurb": "Warm and richly varied.",
+   "picks": {
+    "presentation": "woman",
+    "age": "37_39_late_thirties",
+    "register": "mid_low",
+    "timbre": "rich",
+    "pace": "conversational",
+    "rhythm": "flowing",
+    "emotion": "thoughtful",
+    "warmth": "warm_and_approachable",
+    "style": "audiobook_narrator",
+    "diction": "natural",
+    "recording": "studio_condenser_mic"
+   }
+  },
+  {
+   "id": "audiobook_m",
+   "label": "Resonant audiobook narrator (man)",
+   "blurb": "Deep and unhurried.",
+   "picks": {
+    "presentation": "man",
+    "age": "50_53_early_fifties",
+    "register": "low_deep",
+    "timbre": "resonant",
+    "pace": "slow_and_deliberate",
+    "rhythm": "long_pauses",
+    "emotion": "thoughtful",
+    "style": "audiobook_narrator",
+    "recording": "studio_condenser_mic"
+   }
+  },
+  {
+   "id": "support_calm",
+   "label": "Calm support agent",
+   "blurb": "Steady, patient and helpful.",
+   "picks": {
+    "presentation": "woman",
+    "age": "27_29_late_twenties",
+    "register": "mid_neutral",
+    "timbre": "clear",
+    "pace": "moderate",
+    "energy": "balanced",
+    "emotion": "reassuring",
+    "warmth": "polite",
+    "confidence": "quietly_confident",
+    "style": "customer_support_calm",
+    "recording": "headset_mic"
+   }
+  },
+  {
+   "id": "documentary_m",
+   "label": "Documentary narrator (man)",
+   "blurb": "Calm, deep and measured.",
+   "picks": {
+    "presentation": "man",
+    "age": "54_56_mid_fifties",
+    "register": "low_deep",
+    "timbre": "gravelly",
+    "pace": "slow_and_deliberate",
+    "emotion": "thoughtful",
+    "confidence": "calm_authority",
+    "style": "documentary_narrator",
+    "recording": "studio_condenser_mic"
+   }
+  },
+  {
+   "id": "gossip_bff",
+   "label": "Best-friend gossip",
+   "blurb": "Fast, giggly and conspiratorial.",
+   "picks": {
+    "presentation": "woman",
+    "age": "24_26_mid_twenties",
+    "register": "mid_high",
+    "timbre": "bright",
+    "quirks": "uptalk",
+    "pace": "fast_and_punchy",
+    "energy": "bubbly",
+    "emotion": "mischievous",
+    "warmth": "casual_and_chatty",
+    "style": "best_friend_gossip",
+    "laughter": "soft_giggle",
+    "recording": "phone_voice_note"
+   }
+  },
+  {
+   "id": "gamer_streamer",
+   "label": "Gamer streamer",
+   "blurb": "Energetic, quick and funny.",
+   "picks": {
+    "presentation": "man",
+    "age": "24_26_mid_twenties",
+    "register": "mid_neutral",
+    "timbre": "clear",
+    "pace": "lively",
+    "energy": "excited",
+    "emotion": "playful",
+    "confidence": "cocky",
+    "style": "gamer_streamer",
+    "laughter": "big_belly_laugh",
+    "recording": "headset_mic"
+   }
+  },
+  {
+   "id": "spiritual_guide",
+   "label": "Serene spiritual guide",
+   "blurb": "Slow, warm and grounded.",
+   "picks": {
+    "presentation": "woman",
+    "age": "50_53_early_fifties",
+    "register": "low_contralto",
+    "timbre": "mellow",
+    "pace": "slow_and_unhurried",
+    "energy": "low_calm",
+    "emotion": "peaceful",
+    "warmth": "very_warm_and_friendly",
+    "style": "spiritual_guide",
+    "volume": "soft"
+   }
+  },
+  {
+   "id": "sports_caller",
+   "label": "Excited sports commentator",
+   "blurb": "Rising and fast.",
+   "picks": {
+    "presentation": "man",
+    "age": "37_39_late_thirties",
+    "register": "mid_high",
+    "timbre": "crisp",
+    "pace": "rapid_fire",
+    "energy": "explosive",
+    "emotion": "joyful",
+    "style": "sports_commentator",
+    "volume": "strong_projection"
+   }
+  },
+  {
+   "id": "trailer_voice",
+   "label": "Movie-trailer voice",
+   "blurb": "Deep, dramatic, with weight.",
+   "picks": {
+    "presentation": "man",
+    "age": "54_56_mid_fifties",
+    "register": "very_low_bass",
+    "timbre": "gravelly",
+    "pace": "slow_and_deliberate",
+    "rhythm": "dramatic_pauses",
+    "emotion": "serious",
+    "confidence": "commanding",
+    "style": "trailer_voice",
+    "volume": "stage_voice"
+   }
+  },
+  {
+   "id": "meditation_guide",
+   "label": "Meditation guide",
+   "blurb": "Quiet, slow and spacious.",
+   "picks": {
+    "presentation": "man",
+    "age": "40_43_early_forties",
+    "register": "low_mid",
+    "timbre": "mellow",
+    "pace": "very_slow",
+    "rhythm": "long_pauses",
+    "energy": "low_calm",
+    "emotion": "peaceful",
+    "style": "meditation_guide",
+    "volume": "soft"
+   }
+  },
+  {
+   "id": "cheerful_barista",
+   "label": "Cheerful cafe worker",
+   "blurb": "Bright, easy and welcoming.",
+   "picks": {
+    "presentation": "woman",
+    "age": "24_26_mid_twenties",
+    "register": "mid_high",
+    "timbre": "bright",
+    "pace": "lively",
+    "energy": "upbeat",
+    "emotion": "cheerful",
+    "warmth": "very_warm_and_friendly",
+    "quirks": "smile_in_the_voice",
+    "recording": "cafe_backdrop"
+   }
+  },
+  {
+   "id": "noir_detective",
+   "label": "Noir detective",
+   "blurb": "Low, smoky and weary.",
+   "picks": {
+    "presentation": "man",
+    "age": "54_56_mid_fifties",
+    "register": "low_deep",
+    "timbre": "smoky",
+    "pace": "slow_and_deliberate",
+    "emotion": "weary",
+    "confidence": "cynical",
+    "warmth": "cool_and_distant",
+    "style": "radio_drama"
+   }
+  },
+  {
+   "id": "wise_elder_f",
+   "label": "Wise elder (woman)",
+   "blurb": "Soft, warm, a little wavering.",
+   "picks": {
+    "presentation": "woman",
+    "age": "70_79_seventies",
+    "register": "mid_low",
+    "timbre": "tender",
+    "pace": "slow_and_unhurried",
+    "energy": "gentle",
+    "emotion": "nostalgic",
+    "warmth": "kind_and_caring",
+    "style": "bedtime_storyteller"
+   }
+  },
+  {
+   "id": "wise_elder_m",
+   "label": "Wise elder (man)",
+   "blurb": "Raspy, slow and kind.",
+   "picks": {
+    "presentation": "man",
+    "age": "70_79_seventies",
+    "register": "low_deep",
+    "timbre": "raspy",
+    "pace": "slow_and_unhurried",
+    "emotion": "nostalgic",
+    "warmth": "fatherly",
+    "confidence": "humble"
+   }
+  },
+  {
+   "id": "executive_f",
+   "label": "Composed executive (woman)",
+   "blurb": "Low-mid, precise, in control.",
+   "picks": {
+    "presentation": "woman",
+    "age": "50_53_early_fifties",
+    "register": "low_mid",
+    "timbre": "crisp",
+    "pace": "steady",
+    "emotion": "serious",
+    "warmth": "professional",
+    "confidence": "calm_authority",
+    "diction": "crisp_and_precise"
+   }
+  },
+  {
+   "id": "confident_host_f",
+   "label": "Confident podcast host (woman)",
+   "blurb": "Easy and engaged.",
+   "picks": {
+    "presentation": "woman",
+    "age": "30_33_early_thirties",
+    "register": "mid_neutral",
+    "timbre": "warm",
+    "pace": "conversational",
+    "energy": "engaged",
+    "emotion": "curious",
+    "warmth": "warm_and_approachable",
+    "confidence": "self_assured",
+    "style": "podcast_host"
+   }
+  },
+  {
+   "id": "confident_host_m",
+   "label": "Relaxed podcast host (man)",
+   "blurb": "Friendly, conversational, light humour.",
+   "picks": {
+    "presentation": "man",
+    "age": "34_36_mid_thirties",
+    "register": "mid_low",
+    "timbre": "warm",
+    "pace": "conversational",
+    "energy": "relaxed",
+    "emotion": "amused",
+    "warmth": "casual_and_chatty",
+    "style": "podcast_host",
+    "laughter": "warm_laugh"
+   }
+  },
+  {
+   "id": "villain_smooth",
+   "label": "Smooth villain",
+   "blurb": "Low, silky and amused.",
+   "picks": {
+    "presentation": "man",
+    "age": "44_46_mid_forties",
+    "register": "low_rich_baritone",
+    "timbre": "silky",
+    "pace": "slow_and_deliberate",
+    "energy": "subdued",
+    "emotion": "smug",
+    "confidence": "haughty",
+    "warmth": "cool_and_distant"
+   }
+  },
+  {
+   "id": "villain_icy_f",
+   "label": "Icy antagonist (woman)",
+   "blurb": "Low, controlled and cutting.",
+   "picks": {
+    "presentation": "woman",
+    "age": "34_36_mid_thirties",
+    "register": "low_contralto",
+    "timbre": "crisp",
+    "pace": "slow_and_deliberate",
+    "emotion": "cold",
+    "confidence": "haughty",
+    "diction": "crisp_and_precise"
+   }
+  },
+  {
+   "id": "hero_determined",
+   "label": "Determined hero",
+   "blurb": "Firm, earnest, steady.",
+   "picks": {
+    "presentation": "man",
+    "age": "27_29_late_twenties",
+    "register": "mid_low",
+    "timbre": "round",
+    "pace": "steady",
+    "energy": "engaged",
+    "emotion": "hopeful",
+    "confidence": "earnest"
+   }
+  },
+  {
+   "id": "heroine_fearless",
+   "label": "Fearless heroine",
+   "blurb": "Strong, quick, defiant and warm.",
+   "picks": {
+    "presentation": "woman",
+    "age": "27_29_late_twenties",
+    "register": "mid_neutral",
+    "timbre": "clear",
+    "pace": "brisk",
+    "energy": "high",
+    "emotion": "defiant",
+    "confidence": "bold",
+    "warmth": "warm_and_approachable"
+   }
+  },
+  {
+   "id": "gruff_captain",
+   "label": "Gruff sea captain",
+   "blurb": "Raspy, booming and hearty.",
+   "picks": {
+    "presentation": "man",
+    "age": "60_64_early_sixties",
+    "register": "very_low_bass",
+    "timbre": "gravelly",
+    "pace": "slow_and_deliberate",
+    "energy": "high",
+    "emotion": "mischievous",
+    "confidence": "commanding",
+    "laughter": "big_belly_laugh"
+   }
+  },
+  {
+   "id": "lounge_host",
+   "label": "Late-night lounge host",
+   "blurb": "Low, slow and smoky, like a jazz radio host after midnight.",
+   "picks": {
+    "presentation": "woman",
+    "age": "37_39_late_thirties",
+    "register": "low_contralto",
+    "timbre": "smoky",
+    "pace": "slow_and_unhurried",
+    "energy": "low_mellow",
+    "emotion": "content",
+    "confidence": "self_assured",
+    "mouth": "slight_breath"
+   }
+  },
+  {
+   "id": "sweet_librarian",
+   "label": "Gentle librarian",
+   "blurb": "Soft, careful, kind.",
+   "picks": {
+    "presentation": "woman",
+    "age": "47_49_late_forties",
+    "register": "mid_neutral",
+    "timbre": "tender",
+    "pace": "easy_and_measured",
+    "energy": "gentle",
+    "emotion": "warm",
+    "warmth": "kind_and_caring",
+    "confidence": "humble",
+    "volume": "low_conversational"
+   }
+  },
+  {
+   "id": "tired_nurse",
+   "label": "Tired night-shift nurse",
+   "blurb": "Soft, husky, weary but caring.",
+   "picks": {
+    "presentation": "woman",
+    "age": "34_36_mid_thirties",
+    "register": "mid_low",
+    "timbre": "husky",
+    "pace": "slow_and_unhurried",
+    "energy": "low_calm",
+    "emotion": "weary",
+    "warmth": "kind_and_caring"
+   }
+  },
+  {
+   "id": "sassy_best_friend",
+   "label": "Sassy best friend",
+   "blurb": "Quick, bright, teasing.",
+   "picks": {
+    "presentation": "woman",
+    "age": "27_29_late_twenties",
+    "register": "mid_high",
+    "timbre": "bright",
+    "pace": "fast_and_punchy",
+    "energy": "bubbly",
+    "emotion": "teasing",
+    "confidence": "sassy",
+    "style": "best_friend_gossip"
+   }
+  },
+  {
+   "id": "quiet_introvert",
+   "label": "Quiet introvert",
+   "blurb": "Soft, careful, a little shy.",
+   "picks": {
+    "presentation": "soft_spoken_man",
+    "age": "24_26_mid_twenties",
+    "register": "mid_neutral",
+    "timbre": "mellow",
+    "pace": "easy_and_measured",
+    "energy": "subdued",
+    "emotion": "thoughtful",
+    "confidence": "shy",
+    "volume": "low_conversational"
+   }
+  },
+  {
+   "id": "cool_streetwise",
+   "label": "Streetwise talker",
+   "blurb": "Quick, blunt, confident.",
+   "picks": {
+    "presentation": "man",
+    "age": "37_39_late_thirties",
+    "register": "mid_neutral",
+    "timbre": "nasal",
+    "accent_en": "new_york_city",
+    "pace": "fast_and_punchy",
+    "emotion": "irritated",
+    "confidence": "assertive",
+    "warmth": "brusque"
+   }
+  },
+  {
+   "id": "glam_host",
+   "label": "Glamorous event host",
+   "blurb": "Bright, polished, a wide smile.",
+   "picks": {
+    "presentation": "woman",
+    "age": "34_36_mid_thirties",
+    "register": "mid_high",
+    "timbre": "sparkling",
+    "pace": "lively",
+    "energy": "upbeat",
+    "emotion": "joyful",
+    "confidence": "charming",
+    "style": "shopping_channel_host",
+    "quirks": "constant_smile"
+   }
+  },
+  {
+   "id": "dry_scientist",
+   "label": "Dry scientist",
+   "blurb": "Precise, flat and curious.",
+   "picks": {
+    "presentation": "man",
+    "age": "44_46_mid_forties",
+    "register": "mid_neutral",
+    "timbre": "dry",
+    "pace": "steady",
+    "energy": "balanced",
+    "emotion": "curious",
+    "warmth": "reserved",
+    "confidence": "deadpan",
+    "diction": "crisp_and_precise"
+   }
+  },
+  {
+   "id": "android_calm",
+   "label": "Calm android",
+   "blurb": "Even, smooth, nearly monotone.",
+   "picks": {
+    "presentation": "gender_ambiguous_voice",
+    "age": "ageless_adult",
+    "register": "narrow_pitch_range_even",
+    "timbre": "smooth",
+    "pace": "steady",
+    "energy": "balanced",
+    "emotion": "neutral",
+    "warmth": "cool_and_distant",
+    "rhythm": "even_rhythm",
+    "volume": "steady_level"
+   }
+  },
+  {
+   "id": "poet_reader",
+   "label": "Poetry reader",
+   "blurb": "Quiet, slow, with space between lines.",
+   "picks": {
+    "presentation": "woman",
+    "age": "50_53_early_fifties",
+    "register": "mid_low",
+    "timbre": "velvety",
+    "pace": "slow_and_deliberate",
+    "rhythm": "long_pauses",
+    "emotion": "wistful",
+    "style": "poetry_reading"
+   }
+  },
+  {
+   "id": "tour_guide",
+   "label": "Friendly tour guide",
+   "blurb": "Bright, clear, easily heard.",
+   "picks": {
+    "presentation": "man",
+    "age": "40_43_early_forties",
+    "register": "mid_neutral",
+    "timbre": "clear",
+    "pace": "conversational",
+    "energy": "upbeat",
+    "emotion": "cheerful",
+    "warmth": "warm_and_approachable",
+    "style": "tour_guide",
+    "volume": "clear_projection"
+   }
+  },
+  {
+   "id": "cooking_host",
+   "label": "Cooking show host",
+   "blurb": "Warm, bubbly and generous.",
+   "picks": {
+    "presentation": "woman",
+    "age": "44_46_mid_forties",
+    "register": "mid_neutral",
+    "timbre": "warm",
+    "pace": "lively",
+    "energy": "upbeat",
+    "emotion": "joyful",
+    "warmth": "cozy",
+    "style": "cooking_show_host"
+   }
+  },
+  {
+   "id": "therapist_soft",
+   "label": "Grounded therapist",
+   "blurb": "Slow, gentle, no judgement.",
+   "picks": {
+    "presentation": "woman",
+    "age": "44_46_mid_forties",
+    "register": "mid_low",
+    "timbre": "mellow",
+    "pace": "slow_and_unhurried",
+    "energy": "low_calm",
+    "emotion": "reassuring",
+    "warmth": "kind_and_caring",
+    "style": "therapist"
+   }
+  },
+  {
+   "id": "country_neighbour",
+   "label": "Easygoing southern neighbour",
+   "blurb": "Slow, warm drawl.",
+   "picks": {
+    "presentation": "man",
+    "age": "44_46_mid_forties",
+    "register": "mid_low",
+    "timbre": "warm",
+    "accent_en": "us_southern",
+    "pace": "relaxed",
+    "energy": "relaxed",
+    "emotion": "content",
+    "warmth": "cozy",
+    "diction": "drawling"
+   }
+  },
+  {
+   "id": "british_lady",
+   "label": "Refined British woman",
+   "blurb": "Polished and measured.",
+   "picks": {
+    "presentation": "woman",
+    "age": "44_46_mid_forties",
+    "register": "mid_neutral",
+    "timbre": "clear",
+    "accent_en": "received_pronunciation",
+    "pace": "easy_and_measured",
+    "warmth": "polite",
+    "diction": "perfectly_enunciated"
+   }
+  },
+  {
+   "id": "irish_storyteller",
+   "label": "Irish storyteller",
+   "blurb": "Lilting, warm, quick wit.",
+   "picks": {
+    "presentation": "man",
+    "age": "50_53_early_fifties",
+    "register": "mid_low",
+    "timbre": "warm",
+    "accent_en": "irish_dublin",
+    "pace": "conversational",
+    "quirks": "sing_song_lilt",
+    "emotion": "amused",
+    "confidence": "witty"
+   }
+  },
+  {
+   "id": "aussie_sunny",
+   "label": "Sunny Australian",
+   "blurb": "Relaxed and upbeat.",
+   "picks": {
+    "presentation": "woman",
+    "age": "24_26_mid_twenties",
+    "register": "mid_high",
+    "timbre": "bright",
+    "accent_en": "australian",
+    "pace": "lively",
+    "energy": "upbeat",
+    "emotion": "cheerful"
+   }
+  },
+  {
+   "id": "scottish_cheerful",
+   "label": "Cheerful Scot",
+   "blurb": "Lively lilt.",
+   "picks": {
+    "presentation": "man",
+    "age": "34_36_mid_thirties",
+    "register": "mid_neutral",
+    "accent_en": "scottish_glasgow",
+    "pace": "lively",
+    "energy": "upbeat",
+    "emotion": "cheerful",
+    "laughter": "warm_laugh"
+   }
+  },
+  {
+   "id": "french_charm",
+   "label": "Charming French speaker",
+   "blurb": "Smooth, warm, relaxed.",
+   "picks": {
+    "presentation": "man",
+    "age": "34_36_mid_thirties",
+    "register": "mid_low",
+    "timbre": "smooth",
+    "accent_l1": "french_speaker",
+    "pace": "relaxed",
+    "emotion": "warm",
+    "confidence": "charming"
+   }
+  },
+  {
+   "id": "indian_tech_lead",
+   "label": "Clear Indian-English tech lead",
+   "blurb": "Quick, articulate.",
+   "picks": {
+    "presentation": "woman",
+    "age": "34_36_mid_thirties",
+    "register": "mid_neutral",
+    "timbre": "clear",
+    "accent_en": "indian_english",
+    "pace": "brisk",
+    "energy": "engaged",
+    "warmth": "professional",
+    "confidence": "self_assured"
+   }
+  },
+  {
+   "id": "spanish_lang_teacher",
+   "label": "Spanish-speaking host",
+   "blurb": "Warm, clear and lively.",
+   "picks": {
+    "presentation": "woman",
+    "age": "37_39_late_thirties",
+    "register": "mid_neutral",
+    "timbre": "warm",
+    "language": "spanish",
+    "pace": "lively",
+    "energy": "upbeat",
+    "emotion": "cheerful",
+    "style": "tour_guide"
+   }
+  },
+  {
+   "id": "japanese_announcer",
+   "label": "Japanese announcer",
+   "blurb": "Polite and bright.",
+   "picks": {
+    "presentation": "woman",
+    "age": "27_29_late_twenties",
+    "register": "mid_high",
+    "timbre": "clear",
+    "language": "japanese",
+    "pace": "steady",
+    "warmth": "polite",
+    "style": "flight_attendant"
+   }
+  },
+  {
+   "id": "german_narrator",
+   "label": "German narrator",
+   "blurb": "Calm and precise.",
+   "picks": {
+    "presentation": "man",
+    "age": "47_49_late_forties",
+    "register": "low_mid",
+    "timbre": "crisp",
+    "language": "german",
+    "pace": "slow_and_deliberate",
+    "style": "documentary_narrator"
+   }
+  }
+ ]
+}

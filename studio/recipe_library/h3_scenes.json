@@ -1,0 +1,597 @@
+{
+ "version": 1,
+ "kind": "video_templates",
+ "note": "Ten H3 scenes written for this studio from the official H3 writing rules and the earlier studio's tested patterns (see the crew's H3 guide). Each is one text-only shot of 8 seconds. Nothing here counts as tested until it is rendered here.",
+ "recipes": [
+  {
+   "id": "h3s_product_hero",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Product hero with sound design",
+   "pitch": "A macro product shot where every sound matches something you see.",
+   "why": "Sound events are tied to visible actions, and the label text is quoted and short.",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "product",
+     "label": "The product",
+     "default": "an amber glass dropper bottle with a plain white label"
+    },
+    {
+     "key": "label",
+     "label": "Label text (keep it short)",
+     "default": "DAWN"
+    },
+    {
+     "key": "surface",
+     "label": "What it stands on",
+     "default": "a wet black slate surface"
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Hero",
+     "peak_gib": 46,
+     "seed": 731201,
+     "prompt": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, a macro close-up of {product} reading \"{label}\" standing on {surface}, soft top light, shallow depth of field. The camera pushes in with small amplitude at slow speed as one drop gathers at the tip, swells and falls. [Shot 2] At 00:04.000, the camera cuts to a medium close-up as a hand lifts the bottle out of frame, leaving a ring of water behind; the camera tilts up with small amplitude at slow speed to a blurred window of morning light.\n\noverall_soundscape: Low room tone under the tick of glass on stone, the soft plop of a single drop into a small pool, a quiet ripple.\n\nnon_diegetic_music: Minimal solo piano, three sparse notes at a slow tempo over a soft synth pad, fading at the end.",
+     "options": {
+      "aspect": "9:16",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  },
+  {
+   "id": "h3s_door_world",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Door to another world",
+   "pitch": "A plain hallway door opens onto somewhere else.",
+   "why": "Start state, trigger, transition and end state in order; the floor changing gives the model a visible boundary.",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "hallway",
+     "label": "The ordinary place",
+     "default": "a plain grey apartment hallway with a single white door at the end"
+    },
+    {
+     "key": "world",
+     "label": "What is behind the door",
+     "default": "a sunlit alpine meadow"
+    },
+    {
+     "key": "who",
+     "label": "Who steps through",
+     "default": "a young man in a plain grey hoodie with no print or logo"
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Through the door",
+     "peak_gib": 46,
+     "seed": 731202,
+     "prompt": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, a static medium shot of {hallway}. The camera holds a static shot as the door opens inward on its own and warm light pours out, revealing {world} where the hallway floor should be. {who} stands in front of the door, takes one step forward, and the grey floor under his foot turns into grass as he crosses the threshold, wind lifting his hood. One continuous shot, no cuts.\n\noverall_soundscape: A low door creak, then a rush of wind as the room tone fades out and outdoor ambience with distant birdsong fades in.\n\nnon_diegetic_music: A single sustained string chord rising gently at a slow tempo, then a soft harp glissando.",
+     "options": {
+      "aspect": "16:9",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  },
+  {
+   "id": "h3s_walkthrough",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Interior walkthrough",
+   "pitch": "One smooth, level glide through an empty room.",
+   "why": "One straight move at one height keeps the walls straight; the room is described as empty rather than told 'no people'.",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "room",
+     "label": "The room",
+     "default": "a bright open-plan living room with pale oak floors, a grey linen sofa, a round marble coffee table and floor-to-ceiling windows on the right"
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Walkthrough",
+     "peak_gib": 46,
+     "seed": 731203,
+     "prompt": "integrated_multimodal_description: [Shot 1] Live-action, architectural interiors film, a wide shot from the doorway of {room}. One continuous shot, no cuts. The camera tracks forward at slow speed at a steady eye level, passing the sofa and gliding toward the windows, where sheer curtains move slightly in a light breeze. The room is empty and the light is soft, steady midday daylight.\n\noverall_soundscape: Quiet room tone, the faint swell of the curtains, distant birdsong through the glass, the soft creak of floorboards.\n\nnon_diegetic_music: N/A",
+     "options": {
+      "aspect": "16:9",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  },
+  {
+   "id": "h3s_cooking",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Cooking montage, three macro shots",
+   "pitch": "Slice, sizzle, glaze: three close shots, hands only.",
+   "why": "Each shot is one object and one sensory moment (the cut, the sizzle, the gloss).",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "ingredient",
+     "label": "What is cooked",
+     "default": "thick slices of aubergine"
+    },
+    {
+     "key": "sauce",
+     "label": "The sauce",
+     "default": "a dark soy and ginger glaze"
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Montage",
+     "peak_gib": 46,
+     "seed": 731204,
+     "prompt": "integrated_multimodal_description: [Shot 1] Live-action, food film, a top-down macro shot of a chef's knife slicing {ingredient} on a wooden board, soft overhead window light. The camera holds a static shot. [Shot 2] At 00:02.500, the camera cuts to a 45-degree close shot of the slices laid into a hot iron pan, oil spitting and the edges curling. The camera pushes in with small amplitude at slow speed. [Shot 3] At 00:05.500, the camera cuts to a side macro as {sauce} is poured in and bubbles into a glossy coat, steam rising across the lens. Only hands are in frame.\n\noverall_soundscape: Crisp knife taps on wood, a loud sizzle as the slices hit the pan, thick bubbling as the sauce reduces, soft kitchen room tone.\n\nnon_diegetic_music: N/A",
+     "options": {
+      "aspect": "9:16",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  },
+  {
+   "id": "h3s_coast_aerial",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Coastal aerial establishing shot",
+   "pitch": "A drone-style opener over a coastline at sunrise.",
+   "why": "Named start and end framing plus amplitude; a push-in and a truck instead of an orbit.",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "place",
+     "label": "The landscape",
+     "default": "a rugged coastline of dark sea cliffs with a lone white lighthouse on the headland"
+    },
+    {
+     "key": "time",
+     "label": "Time of day",
+     "default": "sunrise"
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Aerial",
+     "peak_gib": 46,
+     "seed": 731205,
+     "prompt": "integrated_multimodal_description: [Shot 1] Live-action, cinematic aerial, a wide drone shot over {place} at {time}, turquoise water breaking against the rocks. The camera pushes in with large amplitude at slow speed toward the lighthouse while mist drifts in the valleys. [Shot 2] At 00:04.500, the camera cuts to a high top-down view of waves folding into white lace against the rocks, the camera trucking right at slow speed.\n\noverall_soundscape: Surf crashing on rocks, steady wind, distant gulls.\n\nnon_diegetic_music: Sparse orchestral strings at a slow tempo, a soft horn melody entering after the cut, then a quiet fade.",
+     "options": {
+      "aspect": "16:9",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  },
+  {
+   "id": "h3s_anime_rooftop",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Anime rooftop at sunset",
+   "pitch": "A hand-drawn anime moment with one spoken line.",
+   "why": "The style word opens shot 1, the voice is described outside the dialogue tags, and the line fits the time.",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "who",
+     "label": "The character",
+     "default": "a young woman with a short silver bob and a red scarf"
+    },
+    {
+     "key": "line",
+     "label": "What she says",
+     "default": "If we run now, we can still catch the last train."
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Rooftop",
+     "peak_gib": 46,
+     "seed": 731206,
+     "prompt": "integrated_multimodal_description: [Shot 1] 2D-animated, hand-drawn anime look, soft cel shading, warm sunset palette, a medium-wide shot of {who} sitting on a rooftop railing above a glowing city. The camera trucks right with small amplitude at slow speed as her scarf streams in the wind and she turns toward the camera. The young woman with a clear, slightly shy voice (S1) says: <d>[English] {line}</d> [Shot 2] At 00:05.000, the camera cuts to a close-up of her eyes in the same 2D-animated look, the sun reflected in them, a single petal drifting across the frame.\n\noverall_soundscape: Steady rooftop wind, a distant train horn, soft fabric flutter.\n\nnon_diegetic_music: Light piano arpeggios at a moderate tempo with a soft string pad, rising slightly in the second shot.",
+     "options": {
+      "aspect": "16:9",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  },
+  {
+   "id": "h3s_storybook_fox",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Storybook fox and the lantern",
+   "pitch": "A gentle animated moment for young viewers.",
+   "why": "Short simple actions, no sudden camera moves, one speaking character with a described voice.",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "hero",
+     "label": "The little hero",
+     "default": "a small orange fox cub with big round eyes and a tiny blue scarf"
+    },
+    {
+     "key": "line",
+     "label": "What it says",
+     "default": "Don't be scared. I will show you the way home."
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Lantern",
+     "peak_gib": 46,
+     "seed": 731207,
+     "prompt": "integrated_multimodal_description: [Shot 1] 3D CG, soft storybook look, warm lantern light, a wide shot of {hero} standing in a mossy forest clearing at dusk, a paper lantern glowing at its feet. The camera pushes in with small amplitude at slow speed as the cub nudges the lantern and the light grows brighter. The little cub with a high, gentle, curious voice (S1) says: <d>[English] {line}</d> [Shot 2] At 00:05.500, the camera cuts to a rabbit peeking from behind a mossy log, ears lifting, then hopping toward the light.\n\noverall_soundscape: Soft crickets, a quiet breeze through leaves, the gentle rustle of paper, tiny paw steps on moss.\n\nnon_diegetic_music: A music-box melody at a slow tempo with soft harp notes, ending on a warm held chord.",
+     "options": {
+      "aspect": "16:9",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  },
+  {
+   "id": "h3s_street_interview",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Street interview, one-line joke",
+   "pitch": "A setup question, a deadpan beat, then the answer.",
+   "why": "Two voices with different descriptions and IDs; the interviewer is off screen, so only one face needs lip sync.",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "who",
+     "label": "The person answering",
+     "default": "a man in his sixties in a flat cap"
+    },
+    {
+     "key": "question",
+     "label": "The question",
+     "default": "Sir, what is the best sandwich in the world?"
+    },
+    {
+     "key": "answer",
+     "label": "The answer",
+     "default": "The one somebody else makes for you."
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Interview",
+     "peak_gib": 46,
+     "seed": 731208,
+     "prompt": "integrated_multimodal_description: [Shot 1] Live-action, handheld street documentary look, a medium close-up of {who}, a foam-covered microphone held out from the left edge of the frame, a busy market street behind him, natural overcast light. The off-screen interviewer with a bright, fast, cheerful voice (S1) says in an off-screen voice: <d>[English] {question}</d> The camera shakes slightly. The man with a gravelly, deadpan voice (S2) stares at the lens for a beat, then says: <d>[English] {answer}</d> One continuous shot, no cuts.\n\noverall_soundscape: Market chatter, passing bicycle bells, the soft scrape of microphone foam against fabric.\n\nnon_diegetic_music: N/A",
+     "options": {
+      "aspect": "9:16",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  },
+  {
+   "id": "h3s_narrated_explainer",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Narrated explainer",
+   "pitch": "An off-screen narrator explains something while the camera looks closely.",
+   "why": "The official voiceover phrasing, the same speaker ID in every shot, and about 10 words per shot.",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "subject",
+     "label": "What is explained",
+     "default": "a large rotating glass lens inside a lighthouse lamp room at dusk"
+    },
+    {
+     "key": "line1",
+     "label": "First line",
+     "default": "A lighthouse focuses one flame into a single narrow beam."
+    },
+    {
+     "key": "line2",
+     "label": "Second line",
+     "default": "Each ring of glass bends the light a little further."
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Explainer",
+     "peak_gib": 46,
+     "seed": 731209,
+     "prompt": "integrated_multimodal_description: [Shot 1] Live-action, documentary explainer, a medium shot of {subject}, warm light sweeping across brass rails. The camera pushes in with small amplitude at slow speed. The calm narrator with a warm, measured voice (S1) says in an off-screen voiceover: <d>[English] {line1}</d> while no person is visible on screen. [Shot 2] At 00:04.000, the camera cuts to a close-up of the curved glass bending the light into a bright line, the camera trucking right with small amplitude at slow speed. The narrator (S1) says in an off-screen voiceover: <d>[English] {line2}</d> while no person is visible on screen.\n\noverall_soundscape: A low mechanical hum of the turning lens, soft wind against the glass, a faint distant foghorn.\n\nnon_diegetic_music: Sparse piano at a slow tempo with a quiet sustained string pad.",
+     "options": {
+      "aspect": "16:9",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  },
+  {
+   "id": "h3s_seed_timelapse",
+   "kind": "video",
+   "group": "H3 scenes",
+   "rating": "sfw",
+   "title": "Seed to sapling time-lapse",
+   "pitch": "A seed splits, roots and unfolds its first leaves.",
+   "why": "A physical path with clear middle states. Written as text only, so it needs no frames; the first-and-last-frame version is in the crew's H3 guide.",
+   "tags": [
+    "video",
+    "h3-scene"
+   ],
+   "fields": [
+    {
+     "key": "seed",
+     "label": "What grows",
+     "default": "a single seed resting in dark damp soil, which grows into a small green sapling"
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    }
+   ],
+   "tips": [
+    "Written to the official H3 rules in the crew's H3 guide: style first, one camera move as move plus amplitude plus speed, sound in its own two fields.",
+    "Change the blanks, not the structure. Keep any spoken line to about 20 words for 8 seconds."
+   ],
+   "steps": [
+    {
+     "id": "shot",
+     "type": "goal",
+     "goal": "h3_video",
+     "label": "Time-lapse",
+     "peak_gib": 46,
+     "seed": 731210,
+     "prompt": "integrated_multimodal_description: [Shot 1] Live-action, macro nature time-lapse, one continuous shot, no cuts, {seed}. The camera pushes in with small amplitude at slow speed as the seed splits, a pale root pushes down into the soil, and a curled green shoot rises and unfolds its first two leaves. Soil crumbles aside and the light shifts from cool to warm as the stem thickens and straightens.\n\noverall_soundscape: Faint soil crackle and tiny pops, a soft rustle of leaves unfurling, quiet morning birdsong building gently.\n\nnon_diegetic_music: N/A",
+     "options": {
+      "aspect": "1:1",
+      "quality": "high",
+      "seconds": 8,
+      "speed": "fast"
+     }
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Never rendered through this recipe. Written for this studio from the official H3 writing rules."
+   }
+  }
+ ]
+}

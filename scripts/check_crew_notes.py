@@ -8,7 +8,7 @@ from pathlib import Path
 LABEL = re.compile(r"\[(code|test|run|docs|claim|inference)(?::\s*([^\]]*))?\]")
 NEEDS_PATH = ("code", "test", "run", "docs")
 CITE = re.compile(r"^([\w./+-]+?)(?::(\d+)(?:-(\d+))?)?$")
-CHECKED_NAMES = ("NOW.md", "STATE.md")     # in model_families/*/dossier: older notes there came from the knowledge base and carry no labels
+CHECKED_NAMES = ("NOW.md", "STATE.md", "GUIDE.md")     # in model_families/*/dossier: older notes there came from the knowledge base and carry no labels
 PRIVATE = re.compile(r"/" r"mnt/|/" r"home/|~/|127\.0\.0\.1|localhost|\b0\.0\.0\.0\b|:(?:80|81|82|83)\d\d\b|:11434\b|\bour box\b|\bthis box\b|\bthis machine\b|\bowner\b|\bfounders?\b", re.I)
 UNSAFE = re.compile(r"\bnsfw\b|\bnude\b|\bnaked\b|\blingerie\b|\bporn\w*|\bhentai\b|\berotic\w*|\btopless\b|\bfetish\b|\bgore\b", re.I)
 PLACEHOLDER = re.compile(r"\bTODO\b|\bTBD\b|\bFIXME\b")

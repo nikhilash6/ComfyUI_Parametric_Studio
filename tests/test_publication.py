@@ -95,7 +95,7 @@ def test_a_clean_clone_answers_crew_questions_from_the_notes_in_the_repo(monkeyp
 
 def test_crew_notes_hold_only_clean_fact_files():
     root = ROOT / "studio" / "crew_notes"; files = [f for f in root.rglob("*") if f.is_file()]; assert len(files) > 50
-    assert {f.name for f in files} <= {"PITFALLS.md", "PLAYBOOK.md", "PROMPTING.md", "RECIPES.md", "README.md", "NOW.md", "STATE.md", "model_proof_2026-11-01.tsv"}
+    assert {f.name for f in files} <= {"PITFALLS.md", "PLAYBOOK.md", "PROMPTING.md", "RECIPES.md", "README.md", "NOW.md", "STATE.md", "GUIDE.md", "model_proof_2026-11-01.tsv"}
     for f in files:
         text = f.read_text(encoding="utf-8"); assert not sfw.BAD.search(text), f
         assert not CHECKS.public_problems(ROOT, [str(f.relative_to(ROOT))], deny=[]), f
