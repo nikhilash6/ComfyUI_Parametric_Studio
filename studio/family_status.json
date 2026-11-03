@@ -3872,14 +3872,33 @@
 ],
 "what": null,
 "what_source": null,
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:41:22",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "hymotion_t2m_preview",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 59.6,
+"note": "hymotion_t2m_preview rendered on this box 2026-11-02 on the family's own instance (seed 20261102, 59.6 s, peak 4.9 GiB with the text encoder on the CPU) and every second was looked at.",
+"peak_gib": 4.9
 },
-"media": [],
+"media": [
+{
+"id": "fam_hy-motion_0",
+"prompt": "A person walks forward a few steps, stops, then raises both arms above the head and waves.",
+"seconds": 59.6,
+"tpl": "hymotion_t2m_preview",
+"own": true,
+"kind": "video",
+"src": "families/hy-motion_0.mp4",
+"poster": "families/hy-motion_0.webp",
+"model": "HY-Motion-1.0 latest.ckpt + Qwen3-8B + CLIP-L",
+"seed": 20261102,
+"note": "4 seconds at 30 fps as the pack's skeleton preview (camera on the body). A natural walk with arm swing, a stop, and both arms raised high. Fault: it never waves; the arms rise and hold still. Two runs with the same seed gave different walks (dopri5 sampling on this card). Tencent Hunyuan licence (not the EU, UK or South Korea; over 1M monthly users needs a licence).",
+"peak_vram_gib": 4.9
+}
+],
 "templates": []
 },
 "Ideogram4": {
@@ -4375,14 +4394,35 @@
 ],
 "what": null,
 "what_source": null,
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
+"tpl": "kolors_t2i",
+"render": "ok",
 "tested": "2026-11-02",
-"note": "Not rendered (checked 2026-11-02): the UNet and VAE weights are gone (only their .sha256-ok markers are left); the ChatGLM3 text encoder and both IP-Adapters are on disk. Needs Kwai-Kolors/Kolors unet fp16 (5.16 GB) and vae fp16 (0.17 GB), then a Kolors pack (kijai KwaiKolorsWrapper or MZ-Kolors) read and added."
+"secs": 24.8,
+"note": "kolors_t2i rendered on this box 2026-11-02 on the family's own instance (seed 20261102, 24.8 s, peak 12.7 GiB) after the UNet and VAE were fetched with the founder's OK; the instance keeps the venv's cuDNN first on its library path (worker/CUDNN_PACK_CONFLICT.md).",
+"peak_gib": 12.7
 },
-"media": [],
+"media": [
+{
+"id": "fam_kolors_0",
+"prompt": "a bowl of ripe peaches and a blue ceramic jug on a weathered wooden table by a window, soft morning light, still life photograph, shallow depth of field",
+"seconds": 24.8,
+"tpl": "kolors_t2i",
+"own": true,
+"kind": "image",
+"src": "families/kolors_0.webp",
+"poster": "families/kolors_0.webp",
+"w": 640,
+"h": 640,
+"model": "Kolors unet fp16 + ChatGLM3-6B",
+"seed": 20261102,
+"note": "A convincing window-light still life: warm wood, glazed blue jug, soft garden background. Faults: the peaches have no fuzz and read as nectarines, colour runs a little hot, and the window frame bends slightly. Kolors model licence (custom; over 100 million monthly users or a cloud platform needs a licence), labelled as such.",
+"peak_vram_gib": 12.7
+}
+],
 "templates": []
 },
 "Krea2": {
@@ -9402,6 +9442,66 @@
 "model": "sd_xl_base_1.0.safetensors",
 "seed": 790251397,
 "peak_vram_gib": 11.0
+},
+{
+"id": "fam_sdxl_13",
+"prompt": "SDXL control: depth (xinsir)",
+"seconds": 30.4,
+"tpl": "sdxl_controlnet_depth",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_13.webp",
+"poster": "families/sdxl_13.webp",
+"w": 640,
+"h": 354,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 1581438831,
+"peak_vram_gib": 9.8
+},
+{
+"id": "fam_sdxl_14",
+"prompt": "SDXL control: scribble (xinsir)",
+"seconds": 35.5,
+"tpl": "sdxl_controlnet_scribble",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_14.webp",
+"poster": "families/sdxl_14.webp",
+"w": 640,
+"h": 640,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 1927414726,
+"peak_vram_gib": 11.3
+},
+{
+"id": "fam_sdxl_15",
+"prompt": "SDXL: LEOSAM's HelloWorld XL 7.0",
+"seconds": 25.2,
+"tpl": "sdxl_helloworldxl70_t2i",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_15.webp",
+"poster": "families/sdxl_15.webp",
+"w": 438,
+"h": 640,
+"model": "leosamsHelloworldXL_helloworldXL70.safetensors",
+"seed": 806114494,
+"peak_vram_gib": 8.8
+},
+{
+"id": "fam_sdxl_16",
+"prompt": "SDXL control: tile (xinsir)",
+"seconds": 25.3,
+"tpl": "sdxl_controlnet_tile",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_16.webp",
+"poster": "families/sdxl_16.webp",
+"w": 640,
+"h": 480,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 1521497031,
+"peak_vram_gib": 9.8
 }
 ],
 "templates": [

@@ -56,8 +56,12 @@ WRAPS = {
 # Families first rendered 2026-11-02 (the 26 that had no render). Kept apart from the dicts above so each can ship on its own.
 PATCHED_LIB = paths.setting("PSN_PATCHED_LIB", default=os.path.join(os.path.dirname(REPO_LIB), "patched"))
 #: Packs taken from the hardened copies (nodepack_library/patched, see its README) rather than the plain clones.
-PACK_SOURCE = {}
-FAMILY_PACKS.update({"Iris-3B": ["bani4kaskashka__Iris-3B-Comfy-Nodes"], "face": ["comfyorg__comfyui_gfpgan"]})
+PACK_SOURCE = {p: os.path.join(PATCHED_LIB, p) for p in ("Aero-Ex__ComfyUI-HyMotion", "kijai__ComfyUI-KwaiKolorsWrapper")}
+#: Extra environment for one family's instance only. A pack that imports diffusers.pipelines pulls the system cuDNN 9.27 in beside torch's 9.28 and every
+#: convolution then fails (worker/CUDNN_PACK_CONFLICT.md); putting the venv's own cuDNN first on the library path keeps that instance on one version.
+VENV_CUDNN = paths.setting("PSN_VENV_CUDNN", default=os.path.join(sys.prefix, "lib", f"python{sys.version_info[0]}.{sys.version_info[1]}", "site-packages", "nvidia", "cudnn", "lib"))
+INSTANCE_ENV = {"Kolors": {"LD_LIBRARY_PATH": VENV_CUDNN}} if os.path.isdir(VENV_CUDNN) else {}
+FAMILY_PACKS.update({"Iris-3B": ["bani4kaskashka__Iris-3B-Comfy-Nodes"], "HY-Motion": ["Aero-Ex__ComfyUI-HyMotion"], "Kolors": ["kijai__ComfyUI-KwaiKolorsWrapper"], "face": ["comfyorg__comfyui_gfpgan"]})
 WRAPS.update({
  "Iris-3B": {"loader": "pack", "files": [("diffusion_models", "iris-3b.safetensors", "_complete_pipelines/Iris-3B/diffusion_models/model.safetensors"),
              ("text_encoders", "Qwen3-VL-4B-Instruct", "_complete_pipelines/Iris-3B/text_encoders/Qwen3-VL-4B-Instruct")],
@@ -65,6 +69,11 @@ WRAPS.update({
  "face": {"loader": "pack", "files": [("face_restoration", "GFPGANv1.4.pth", "face/restore/GFPGANv1.4.pth"), ("face_detection", "detection_Resnet50_Final.pth", "face/detection/detection_Resnet50_Final.pth"),
           ("face_detection", "parsing_parsenet.pth", "face/detection/parsing_parsenet.pth"), ("face_detection", "parsing_bisenet.pth", "face/detection/parsing_bisenet.pth")],
           "note": "comfyorg's GFPGAN node (Apache-2.0) looks in models/face_restoration and hands models/face_detection to facexlib; with the files there it downloads nothing"},
+ "Kolors": {"loader": "pack", "files": [("diffusers", "Kolors", "_complete_pipelines/Kolors/view/Kolors"), ("vae", "kolors_vae_fp16.safetensors", "diffusers/Kolors/vae/diffusion_pytorch_model.fp16.safetensors")],
+            "note": "kijai's KwaiKolorsWrapper reads models/diffusers/Kolors (the diffusers repo with its ChatGLM3 encoder; the view joins the encoder weights kept under text_encoders), and the image is decoded by core VAEDecode with Kolors' own VAE; the pack ships its own ChatGLM code, so nothing runs remote code"},
+ "HY-Motion": {"loader": "pack", "files": [("hymotion", "HY-Motion-1.0", "hy-motion/HY-Motion-1.0"), ("hymotion", "HY-Motion-1.0-Lite", "hy-motion/HY-Motion-1.0-Lite"),
+               ("text_encoders", "clip-vit-large-patch14.safetensors", "text_encoders/clip-vit-large-patch14.safetensors"), ("text_encoders", "qwen3_8b_bf16_single.safetensors", "text_encoders/qwen3_8b_bf16_single.safetensors")],
+               "note": "Tencent's DiT folders (config.yml and latest.ckpt) where the pack looks (models/hymotion), and CLIP-L plus Qwen3-8B in the instance's own text_encoders, the only folder the pack lists. The pack loads its LLM from one file, so Qwen3-8B's five bf16 shards were joined into one (no tensor changed); its block-scaled fp8 reader cannot read Comfy's per-tensor fp8 file. The pack is the hardened copy (official download URLs, no remote code)"},
 })
 
 def slug(family): return re.sub(r"[^a-z0-9]+", "-", family.lower()).strip("-")
@@ -166,7 +175,7 @@ def generate(family, models=None, root=None, ps_nodes=None, ports=None):
     info = {"family": family, "slug": s, "port": port, "est_vram_gb": vram_estimate_gb(family, models), "model_types": {t: len(v) for t, v in md.items()}, "packs": linked, "packs_not_installed": absent, "args": args,
             "launch": LAUNCH, "unit": f"comfy-family@{s}.service", "loader": (spec or {}).get("loader", "core"), "wrapped": wrapped, "wrap_missing": missing_w, "note": (spec or {}).get("note", "")}
     apply_theme(d)
-    _write(os.path.join(d, "instance.json"), json.dumps(info, indent=1)); _write(os.path.join(d, "instance.env"), f"PS_PORT={port}\nARGS={' '.join(args)}\n" + (f"PYTHONPATH={cn}\n" if any(p in PACK_LINK_AS for p in wanted) else "")); return info
+    _write(os.path.join(d, "instance.json"), json.dumps(info, indent=1)); _write(os.path.join(d, "instance.env"), f"PS_PORT={port}\nARGS={' '.join(args)}\n" + (f"PYTHONPATH={cn}\n" if any(p in PACK_LINK_AS for p in wanted) else "") + "".join(f"{k}={v}\n" for k, v in INSTANCE_ENV.get(family, {}).items())); return info
 
 UNIT = """[Unit]
 Description=ComfyUI instance for model family %i (on demand; started by psn.instances, never enabled)

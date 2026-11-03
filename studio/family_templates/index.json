@@ -2,6 +2,69 @@
  "built": "2026-10-31",
  "templates": [
   {
+   "family": "HY-Motion",
+   "name": "hymotion_t2m_preview",
+   "title": "HY-Motion 1.0: Words to Motion",
+   "desc": "Tencent's HY-Motion 1.0 DiT turns a sentence into a body motion (Qwen3-8B and CLIP-L read the words), previewed as a skeleton clip that follows the body, through Aero-Ex's HY-Motion nodes.",
+   "media": "video",
+   "cat": "3D",
+   "gb": 20.7,
+   "tags": [
+    "Studio template",
+    "Motion"
+   ],
+   "models": [
+    {
+     "name": "latest.ckpt",
+     "dir": "hymotion",
+     "url": "https://huggingface.co/tencent/HY-Motion-1.0/resolve/main/HY-Motion-1.0/latest.ckpt",
+     "gb": 3.89
+    },
+    {
+     "name": "clip-vit-large-patch14.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/openai/clip-vit-large-patch14/resolve/main/model.safetensors",
+     "gb": 1.59
+    },
+    {
+     "name": "qwen3_8b_bf16_single.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/Qwen/Qwen3-8B",
+     "gb": 15.26
+    }
+   ],
+   "source": "Studio template; Aero-Ex/ComfyUI-HyMotion as the hardened copy (official download URLs, no remote code, a ComfyUI v0.43 weight fix)",
+   "note": "The pack loads Qwen3-8B from one file: join the repo's five bf16 shards into one (no tensor changes). The text encoder runs on the CPU here to keep VRAM low. The sampler also needs Tencent's wooden mannequin data (assets/dump_wooden from Tencent-Hunyuan/HY-Motion-1.0). Tencent Hunyuan licence: not the EU, UK or South Korea."
+  },
+  {
+   "family": "Kolors",
+   "name": "kolors_t2i",
+   "title": "Kolors: Text to Image",
+   "desc": "Kwai's Kolors (SDXL-style UNet with a ChatGLM3 text encoder) through kijai's KwaiKolorsWrapper, 25 steps at cfg 5, decoded by core VAEDecode with Kolors' own VAE.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 5.0,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "diffusion_pytorch_model.fp16.safetensors",
+     "dir": "diffusers",
+     "url": "https://huggingface.co/Kwai-Kolors/Kolors/resolve/main/unet/diffusion_pytorch_model.fp16.safetensors",
+     "gb": 4.8
+    },
+    {
+     "name": "kolors_vae_fp16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Kwai-Kolors/Kolors/resolve/main/vae/diffusion_pytorch_model.fp16.safetensors",
+     "gb": 0.16
+    }
+   ],
+   "source": "Studio template; kijai/ComfyUI-KwaiKolorsWrapper (Apache-2.0) as the hardened copy with two transformers-5 fixes (nodepack_library/patched)",
+   "note": "The pack reads models/diffusers/Kolors as the whole diffusers repo, including the ChatGLM3 text_encoder (7 .bin shards, 12.5 GB, Kwai-Kolors/Kolors text_encoder/). Kolors model licence: over 100 million monthly users, or a cloud platform, needs a licence from Kuaishou."
+  },
+  {
    "family": "face",
    "name": "face_gfpgan_restore",
    "title": "GFPGAN 1.4: Restore a Face",
@@ -3435,6 +3498,108 @@
     }
    ],
    "source": "variant of ltxv_text_to_video",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "sdxl_controlnet_depth",
+   "title": "SDXL control: depth (xinsir)",
+   "desc": "A depth map holds the scene's layout while the words change everything else.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 8.8,
+   "tags": [
+    "Studio template",
+    "Control"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 6.5
+    },
+    {
+     "name": "xinsir_depth_sdxl.safetensors",
+     "dir": "controlnet",
+     "gb": 2.3
+    }
+   ],
+   "source": "Studio template; xinsir controlnet-depth-sdxl-1.0",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "sdxl_controlnet_scribble",
+   "title": "SDXL control: scribble (xinsir)",
+   "desc": "A rough line drawing becomes a finished picture that keeps its shapes.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 8.8,
+   "tags": [
+    "Studio template",
+    "Control"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 6.5
+    },
+    {
+     "name": "xinsir_scribble_sdxl.safetensors",
+     "dir": "controlnet",
+     "gb": 2.3
+    }
+   ],
+   "source": "Studio template; xinsir controlnet-scribble-sdxl-1.0",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "sdxl_controlnet_tile",
+   "title": "SDXL control: tile (xinsir)",
+   "desc": "A soft or low-resolution picture is redrawn with fine detail and the same layout.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 8.8,
+   "tags": [
+    "Studio template",
+    "Control"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 6.5
+    },
+    {
+     "name": "xinsir_tile_sdxl.safetensors",
+     "dir": "controlnet",
+     "gb": 2.3
+    }
+   ],
+   "source": "Studio template; xinsir controlnet-tile-sdxl-1.0",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "sdxl_helloworldxl70_t2i",
+   "title": "SDXL: LEOSAM's HelloWorld XL 7.0",
+   "desc": "LEOSAM's photoreal SDXL fine-tune, text to image.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 6.5,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "leosamsHelloworldXL_helloworldXL70.safetensors",
+     "dir": "checkpoints",
+     "gb": 6.5
+    }
+   ],
+   "source": "Studio template; Maxivi/SDXLModels mirror of HelloWorld XL 7.0",
    "note": ""
   }
  ]
