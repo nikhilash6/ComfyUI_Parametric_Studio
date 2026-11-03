@@ -4,7 +4,7 @@
   "about": "The image's embedding goes in through the model's vector input, not the text tokens.",
   "runs": "model",
   "needs": [
-   "An SD 2.1 unCLIP checkpoint. Its fourth output is the CLIP vision model."
+   "not shipped: unsafe pickle source. The graph needs an SD 2.1 unCLIP checkpoint (its fourth output is the CLIP vision model). Stability AI's own repository is gone; the only copy we found is a community mirror's pickle .ckpt (sd2-community/stable-diffusion-2-1-unclip, sd21-unclip-h.ckpt), and a pickle file can run code when it loads, so we don't download or ship it. If you have a safetensors unCLIP checkpoint from a source you trust, pick it in the loader."
   ],
   "packs": [],
   "notes": {

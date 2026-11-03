@@ -220,7 +220,7 @@ def tool_rows(oi=None):
     for tid, _cat, label, tpl, _b in E.TOOLS:
         p = E._path(tpl)
         if oi is not None and E._hidden(tid, p, oi): continue
-        rows.append(_row(f"edit:{tid}", "edits", p or "", graph=_load(p) if p else None, extra={"label": label, "template": tpl}))
+        rows.append(_row(f"edit:{tid}", "edits", p or "", graph=_load(p) if p else None, extra={"label": label, "template": tpl, "meta": {"needs": [E.NOT_SHIPPED[tid]]} if tid in getattr(E, "NOT_SHIPPED", {}) else {}}))
     try:
         for aid, p in A.find_apps(oi or {}).items(): rows.append(_row("app:" + aid, "apps", p, graph=_load(p)))
     except Exception: pass

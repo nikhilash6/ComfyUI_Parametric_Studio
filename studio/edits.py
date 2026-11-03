@@ -23,6 +23,8 @@ TOOLS = [  # id, category, label, template, blurb
  ("bernini", "edit", "Edit by instruction (Bernini)", "video_bernini_r_video_editing", "Say what to change; the model edits the clip."),
  ("capybara", "edit", "Edit by instruction (Capybara)", "video_capybara_v0_1_video_edit", "Another instruction-driven video editor."),
 ]
+#: Tools whose model the studio does not download or ship, and why. They stay listed, marked, so the page can say so instead of offering a download.
+NOT_SHIPPED = {"capybara": "not shipped: licence. Capybara v0.1 (Comfy-Org/Hunyuan-Video-1.5, capybara_v0.1.safetensors) is under the Tencent Hunyuan Community License, which limits territories and user counts, so the studio does not download it."}
 PARTNER_TOOLS = {"bgremove"}      # its template runs a partner node; named here too, so it stays hidden when ComfyUI runs with --disable-api-nodes and /object_info cannot flag it
 EXTRA_GRAPHS = [os.path.join(os.path.dirname(os.path.abspath(__file__)), d) for d in ("family_templates", os.path.join("pipelines", "graphs"))]   # steps of a recipe or pipeline may use them; they are not listed as tools
 def _path(name):
@@ -41,6 +43,7 @@ def catalogue(oi):
         p = _path(tpl)
         if _hidden(tid, p, oi): continue
         row = {"id": tid, "category": cat, "category_label": CAT[cat], "label": label, "blurb": blurb, "template": tpl, "installed": bool(p)}
+        if tid in NOT_SHIPPED: row["not_shipped"] = NOT_SHIPPED[tid]
         if p:
             try: d = A.describe(tid, p, oi); row.update(ready=d["ready"], runnable=d["runnable"], inputs=len(d["inputs"]), missing_models=d["missing_models"], unknown_nodes=d["unknown_nodes"])
             except Exception: row.update(ready=False, runnable=False, inputs=0, missing_models=[], unknown_nodes=[])

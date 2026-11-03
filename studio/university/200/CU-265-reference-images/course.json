@@ -70,7 +70,7 @@
   }
  ],
  "unchecked": [
-  "We didn't run c_unclip or c_style_redux. They pass validation only, and the model file names in them are examples.",
+  "We didn't run c_unclip: the only SD 2.1 unCLIP checkpoint we found is a pickle file on a community mirror, so we don't ship it. c_style_redux ran here on FLUX.1 schnell (2 Nov 2026).",
   "The vision model's token counts in the lab are stand-ins. Real counts depend on the vision model.",
   "We read the attn_bias path but don't claim what it does to a picture.",
   "We describe the core nodes only. IP-Adapter is a separate paper and a third-party pack, and CU-214 covers the idea."
