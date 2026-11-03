@@ -35,7 +35,7 @@ def main():
         open(os.path.join(d, name + ".json"), "w").write(json.dumps(clean(data))); saved += 1; return data
     for p in ("goals", "atlas", "crew", "edits", "models", "models/readiness", "models3d", "packs", "apps", "processes", "recipes", "schedules", "calibrate", "voice", "user", "recipe-library?limit=2000", "sampling/measures", "sampling/renders", "vset/capabilities", "vset/meta", "vset/lists", "vset/shots", "worldkit/assets", "worldkit/capabilities", "worldkit/looks", "worldkit/meshes", "worldkit/characters", "train/info", "train/datasets", "train/jobs", "train/loras",
               "feature-pages", "all-graphs", "edits/catalogue", "pipelines", "3d/models", "motion", "music/models", "voices/models", "tryon/methods", "lorashow/loras", "loras", "packlab/picks",
-              "director/status", "doctor/example", "project/runs", "rotation/status", "schedules/week", "live", "families/downloads/state", "models/download"): save(p)
+              "director/status", "doctor/example", "project/runs", "rotation/status", "schedules/week", "live", "families/downloads/state", "models/download", "anatomy", "sampling/walk"): save(p)
     # every graph the Apps, API and Pro pages can open, the renders Prove It can open, and the Hardware Fit table for each card size it offers
     for r in ((save("all-graphs") or {}).get("rows") or []):
         if (r.get("graph_url") or "").startswith("/api/"): save(r["graph_url"][5:])
@@ -47,6 +47,8 @@ def main():
     except Exception: ph = {}
     save("phone", {"tailscale": {"installed": False, "connected": False, "https_url": None, "serving": False}, "serve_command": ph.get("serve_command", ""), "lan_enabled": False, "lan_command": ph.get("lan_command", ""), "url": None})
     for e in ((save("sampling/atlas") or {}).get("entries") or []): save("sampling/entry/" + e["id"])
+    for m in ((save("anatomy") or {}).get("models") or []):      # Model Anatomy: every file the header was read for
+        if m.get("read"): save("anatomy/model/" + m["id"])
     for f in ((save("music-styles") or {}).get("families") or []):
         for s in f.get("styles") or []: save("music-styles/" + s["id"])
     for r in ((save("recipes") or {}).get("recipes") or []): save("recipes/" + r["id"])
