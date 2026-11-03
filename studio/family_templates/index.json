@@ -2,6 +2,90 @@
  "built": "2026-10-31",
  "templates": [
   {
+   "family": "Qwen-Image-2.1",
+   "name": "marigold_v2_depth",
+   "title": "Marigold v2 depth",
+   "desc": "A depth map of a photo in one step, from Marigold v2 (log depth, stage 2) on Qwen-Image-Edit 2509 (ComfyUI's own template, written out as an API graph).",
+   "media": "image",
+   "cat": "Image",
+   "gb": 20.9,
+   "tags": [
+    "Studio template",
+    "Geometry"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_edit_2509_int8_convrot.safetensors",
+     "dir": "diffusion_models",
+     "gb": 19.1
+    },
+    {
+     "name": "marigold_v2_depth_log_stage2.safetensors",
+     "dir": "loras",
+     "gb": 1.59
+    },
+    {
+     "name": "marigold_v2_depth_log_stage2_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.24
+    },
+    {
+     "name": "marigold_v2_depth_conditioning.safetensors",
+     "dir": "embeddings",
+     "gb": 0.0
+    }
+   ],
+   "source": "ComfyUI template image_marigold_v2_depth_estimation; Comfy-Org/marigold-v2-0 (Apache-2.0)",
+   "note": ""
+  },
+  {
+   "family": "LongCat-Avatar-15",
+   "name": "longcat_avatar15_talk",
+   "title": "LongCat-Avatar 1.5: Picture and Voice to a Talking Clip",
+   "desc": "Meituan's LongCat-Video-Avatar 1.5 (Kijai's ComfyUI repack) through WanVideoWrapper: one picture and a voice clip make 93 frames at 25 fps, 12 distilled steps, Whisper-large-v3 audio features.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 43.1,
+   "tags": [
+    "Studio template",
+    "Talking"
+   ],
+   "models": [
+    {
+     "name": "LongCat-Avatar-15_bf16.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LongCat/LongCat-Avatar-15_bf16.safetensors",
+     "gb": 29.53
+    },
+    {
+     "name": "LongCat-Avatar-15_dmd_distill_lora_rank128_bf16.safetensors",
+     "dir": "loras",
+     "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LongCat/LongCat-Avatar-15_dmd_distill_lora_rank128_bf16.safetensors",
+     "gb": 1.18
+    },
+    {
+     "name": "whisper_large_v3_encoder_fp16.safetensors",
+     "dir": "audio_encoders",
+     "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/HuMo/whisper_large_v3_encoder_fp16.safetensors",
+     "gb": 1.58
+    },
+    {
+     "name": "umt5-xxl-enc-bf16.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors",
+     "gb": 10.58
+    },
+    {
+     "name": "Wan2_1_VAE_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors",
+     "gb": 0.24
+    }
+   ],
+   "source": "Studio template; kijai/ComfyUI-WanVideoWrapper (LongCat nodes)",
+   "note": "Use a picture of an invented person or someone who agreed, and a voice that is theirs or made from a description. One 93-frame window; longer audio needs the extend loop. 24 of 48 blocks swap to RAM to keep VRAM near 21 GiB."
+  },
+  {
    "family": "HY-Motion",
    "name": "hymotion_t2m_preview",
    "title": "HY-Motion 1.0: Words to Motion",
@@ -3675,6 +3759,116 @@
    ],
    "source": "ComfyUI template image_marigold_v2_albedo_estimation; Comfy-Org/marigold-v2-0 (Apache-2.0)",
    "note": ""
+  },
+  {
+   "family": "Flux.2",
+   "name": "klein9b_character_scene",
+   "title": "Character swap: FLUX.2 Klein 9B, character + outfit + place",
+   "desc": "Three reference pictures: a character, an outfit and a place. Klein 9B puts that character, wearing that outfit, into that place, 4 steps, CFG 1. Ported from the tested three-reference graph (the plain arm: the KV-cache arm changed the face).",
+   "media": "image",
+   "cat": "Image",
+   "gb": 27.2,
+   "tags": [
+    "Studio template",
+    "Character swap"
+   ],
+   "models": [
+    {
+     "name": "flux-2-klein-9b.safetensors",
+     "dir": "diffusion_models",
+     "gb": 18.16
+    },
+    {
+     "name": "qwen_3_8b_fp8mixed.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.66
+    },
+    {
+     "name": "flux2-vae.safetensors",
+     "dir": "vae",
+     "gb": 0.34
+    }
+   ],
+   "source": "Studio template from the saved three-reference Klein graph (character, outfit, room)",
+   "note": "Use invented people or people who agreed. Proof on this box: an invented painter, a rust field jacket and an empty greenhouse, 17.5 s, 28.6 GiB peak; the face and build held, the jacket's pockets and collar carried over. Flaws seen: the hair came out lighter and wavier in the warm light, a slight smile was added, the character's own trousers and shoes stay (only the named garment changes), and the output is square at 1 MP."
+  },
+  {
+   "family": "Qwen-Image-2.1",
+   "name": "qwen21_outfit_turbo",
+   "title": "Outfit swap: Qwen Image 2.1 Turbo, 8 steps",
+   "desc": "A person and a garment to that person wearing it, fast: the Outfit Swap LoRA at strength 1 on the Qwen Image 2.1 Turbo transformer, the tuned 8-step sigma list, CFG 1. The 25-step try-on template is the slower, higher-effort version.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 32.6,
+   "tags": [
+    "Studio template",
+    "Fashion",
+    "Try-on",
+    "Character swap"
+   ],
+   "models": [
+    {
+     "name": "qwen_image_2.1_turbo_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.23
+    },
+    {
+     "name": "qwen3vl_8b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 17.53
+    },
+    {
+     "name": "qwen_image_2.1_vae_bf16.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors",
+     "gb": 0.68
+    },
+    {
+     "name": "qwen-image-2.1-outfit-swap.safetensors",
+     "dir": "loras",
+     "gb": 0.16
+    }
+   ],
+   "source": "Comfy Copilot graph qwen21_outfit_turbo, with the Turbo transformer in place of the Turbo LoRA (the LoRA is not on this box)",
+   "note": "The LoRA's licence is rent-only on its source; read it before commercial use."
+  },
+  {
+   "family": "Krea2",
+   "name": "krea2_identity_swap",
+   "title": "Character swap: Krea 2 Identity Edit, person into a scene",
+   "desc": "A scene with a person and a character picture: the person in the scene becomes the character, in the same place, pose and light. Krea 2 Turbo with the Krea 2 Identity Edit v1.2 LoRA (rank 128), 10 steps, CFG 1, the character weighted 3 to the scene's 1.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 36.3,
+   "tags": [
+    "Studio template",
+    "Character swap"
+   ],
+   "models": [
+    {
+     "name": "krea2_turbo_bf16.safetensors",
+     "dir": "diffusion_models",
+     "gb": 26.28
+    },
+    {
+     "name": "qwen3vl_4b_bf16.safetensors",
+     "dir": "text_encoders",
+     "gb": 8.88
+    },
+    {
+     "name": "qwen_image_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.25
+    },
+    {
+     "name": "krea2_identity_edit_v1_2_r128.safetensors",
+     "dir": "loras",
+     "url": "https://huggingface.co/conradlocke/krea2-identity-edit/resolve/main/krea2_identity_edit_v1_2_r128.safetensors",
+     "gb": 0.91
+    }
+   ],
+   "source": "Studio template from the comfyui-mcp krea2-identity-edit pack (its outfit layout turned into a person swap, as the LoRA's card describes); nodes from lbouaraba/comfyui-krea2edit (Apache-2.0) on the Krea2 instance",
+   "note": "Unofficial community fine-tune of Krea 2 Raw by Lars Bouaraba; Krea 2 Community License; not affiliated with Krea. Use v1.2 (the V2 files add a non-commercial licence). Invented people only: the licence bans deceptive pictures of real people. Runs on the Krea2 instance, which loads the comfyui-krea2edit nodes. Proof on this box: an invented man at a rainy tram shelter swapped for an invented lifeguard, 36.9 s, 36.9 GiB peak; the street, shelter, shop window and light held, and the face matches the character. Flaws seen: the character's own arms-out pose and bare feet came along instead of the replaced man's stance (a whole-person swap, as the LoRA card warns), and the camera sits a little closer than in the scene."
   }
  ]
 }

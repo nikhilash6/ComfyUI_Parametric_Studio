@@ -45,3 +45,17 @@ Characters are not held to a face in video. H3's control has no identity input, 
 Characters in frames and videos are not checked by what they show. The safety text states this plainly: the check covers the sheet and the words, and it does not cover a mesh or a later frame. [code: studio/worldkit/safety.py:7-10, studio/worldkit/picturecheck.py:8] [docs: studio/processes/virtual-set.md]
 
 Characters stay off until someone turns them on. The off message says the studio cannot yet check what a character mesh shows, only the words around it. [code: studio/worldkit/safety.py:24-25]
+
+## Final session findings, 2026-11-03
+
+Several older Characters pitfalls describe code that has since changed. The switch is now on by default; there is an "Another take" route; a missing picture model or check refuses before anything is made; and the default recipe has remesh off, so the AutoRemesher pitfall applies only when a recipe asks for it. Trust the current code over those paragraphs. [code: studio/worldkit/safety.py:56-57, studio/worldkit/api.py:80-113, studio/worldkit/makers/character.py:21] [test: tests/worldkit/test_character_maker.py, tests/worldkit/test_picturecheck.py]
+
+The older Characters pitfall "the default body has no colour" no longer holds for the default route. TRELLIS.2 keeps the sheet's clothes, hair and colour. A plain grey figure now comes only from a recipe that asks for sam3d_body or turns remesh on, since AutoRemesher's quad levels drop UVs and colour. [code: studio/worldkit/makers/character.py:1-5]
+
+Characters built on real models still have rough spots the page names: clothes can pull in motion, trouser legs can stay joined near the ankles, feet stay flat and only turn, and the back and sides are guessed. Do not promise a clean figure from one build. [docs: studio/processes/world-kit.md]
+
+Characters in video still drift toward their words. In the one cast shot on record, the face and some colours came from the prompt, not the built character. Nothing locks a face between shots. [docs: studio/processes/virtual-set.md]
+
+The Characters picture check uses InsightFace buffalo_l, whose weights are for non-commercial research. A commercial user must swap that tool before relying on the character maker. [code: studio/web/worldkit.js:76, studio/worldkit/api.py:23]
+
+The try-on panel on the Fashion designer does not go through the Characters checks. It takes uploaded person and garment pictures, the run route checks only that the pictures were given and that the method can run, and the page only asks for invented, fully clothed adults. Every method except FASHN VTON is labelled non-commercial, and the Klein try-on LoRA is rent-only at its source. [code: studio/tryon.py:11-17, studio/tryon.py:114-119, studio/web/extras.js:126] [inference]

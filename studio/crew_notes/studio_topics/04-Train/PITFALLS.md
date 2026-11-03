@@ -59,3 +59,9 @@ An external trainer's A/B is its own first sample against its last, same seed an
 Train's folder import only reads inside the home folder, ComfyUI's input and output folders, or STUDIO_TRAIN_IMPORT_ROOTS. It refuses relative paths and any path through a hidden folder. It reads only pictures and .txt files directly in that folder, skips links, and stops after 1000 files. Subfolders are not read. [code: studio/train.py:310-324, studio/train.py:333-342] [test: tests/studio_lanes/test_train.py]
 
 Train needs ComfyUI's input folder on the same machine, because LoadImageTextDataSetFromFolder cannot read anywhere else. If the studio cannot find it, the start fails with a 503 asking for STUDIO_COMFY_INPUT. A ComfyUI on another machine would not see the prepared copy. [code: studio/train.py:55, studio/train.py:657-658] [inference]
+
+## Final session findings, 2026-11-03
+
+The older Train pitfall says FLUX.1 schnell and Krea 2 "passed 70 GB before failing out of memory". The base entries are more exact: schnell passed 70 GB on its one run on 2 November, Krea 2 Raw passed 73 GB on runs on 1 and 2 November, both at 512 px and rank 16. [code: studio/train_bases.py:55, studio/train_bases.py:58]
+
+A Train page module that fails to parse blanks the whole studio, not just Train. It happened once on 2026-11-01, when train_example.js declared FAMILIES twice, and a parse test for the four Train modules now guards it. That test skips without node, so a green run on a machine without node did not check it. [test: tests/studio_lanes/test_train_external.py] [claim: studio commit log, 2026-11-01]

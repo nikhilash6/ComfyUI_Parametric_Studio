@@ -37,3 +37,9 @@ Virtual Set route readiness reads files, not whether ComfyUI is running. The nod
 Virtual Set saves a rerolled seed into the shot, so the seed shown afterwards can be one higher than the seed typed. A video that fails twice ends "failed". A flicker failure twice ends in "review", not failed. QC that cannot run goes to review with no reroll. After a restart, Retry resumes a shot left in "building". [code: studio/vset/runner.py:3, studio/vset/runner.py:84-88] [test: tests/vset/test_runner.py]
 
 Virtual Set lists have no cancel route. While a list renders, its shots are run directly and not registered as running shots, so a shot in the list reads as not running and its Retry and save are not blocked. This comes from reading the code and no test covers it. [code: studio/vset/runner.py:97, studio/vset/runner.py:155-156, studio/vset/api.py:379-385, studio/web/vset_helpers.js:94] [inference]
+
+## Final session findings, 2026-11-03
+
+Virtual Set's older pitfall that "the cast needs the character switch, which is off by default" no longer matches the code. Characters are on unless STUDIO_WORLDKIT_CHARACTERS is "0", so a default install can put a rigged character in a shot and use a pose pass in mode A. The pose pass itself has still not rendered, per the guide's status line. [code: studio/worldkit/safety.py:56-57] [docs: studio/processes/virtual-set.md]
+
+Virtual Set's one cast shot shows the limit of steering by words. The face, some colours and the street's look came from the prompt, not from the character asset or the set. Expect the character's look to drift toward its description, and do not promise that a shot matches the World Kit figure. [docs: studio/processes/virtual-set.md]

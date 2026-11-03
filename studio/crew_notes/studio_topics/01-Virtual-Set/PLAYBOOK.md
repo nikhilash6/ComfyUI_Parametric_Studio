@@ -73,3 +73,17 @@ Virtual Set shot lists turn a script into up to 12 shots, one per line, in one s
 Virtual Set routes: GET meta and capabilities, POST camera, GET and POST shots, GET one shot and its files by a fixed name, POST a shot's render, passes, retry or cancel, GET and POST lists, POST a list's order or render. All sit under /api/vset. [code: studio/vset/api.py:311-385]
 
 Virtual Set stores shots and lists under the STUDIO_VSET_ROOT setting. The default is a parametric-studio/vset folder under the home folder's .local/share, so a missing ComfyUI never moves them. [code: studio/vset/__init__.py:8-13]
+
+## Final session findings, 2026-11-03
+
+Virtual Set cast words changed after the older notes were written. Every keyframe and video prompt now carries each cast member's name and whole saved description, not the first 200 characters, followed by the line "Fully clothed exactly as described, from start to finish." The reason given in the code: clothes usually come last in a description, and a character's mesh may be a plain body. [code: studio/vset/modes/common.py:11, studio/vset/modes/common.py:18-33, studio/vset/modes/common.py:40-44] [test: tests/vset/test_modes.py]
+
+Virtual Set has rendered one shot with a cast, per its guide: mode A with H3 on the depth pass. The figure stayed clothed in the frames that were checked, but the face, some colours and the street's look came from the words, not from the character or the set. That is one shot, not a measured rate. [docs: studio/processes/virtual-set.md]
+
+Virtual Set cast is now available by default, because World Kit characters are on unless STUDIO_WORLDKIT_CHARACTERS is set to "0". The older notes say the cast needs a switch that is off by default; that changed in the code. [code: studio/worldkit/safety.py:56-57] [docs: studio/processes/virtual-set.md] [test: tests/worldkit/test_character_maker.py]
+
+Virtual Set pickers name each model's licence limit since 2026-11-02. The mode A Engine list reads "MiniMax H3 Fun Union (licence excludes US, EU, UK, South Korea)", "Wan 2.2 Fun Control (Apache-2.0)" and "LTX-2.5 Layout to Render, clay pass (revenue cap US$10M)". The Keyframes list marks Qwen-Image 2.1 as a research-only licence. [code: studio/web/virtualset.js:123, studio/web/virtualset.js:125]
+
+Virtual Set controls got 40 px tap areas on 2026-11-02. The scrub and step sliders keep a thin track but their touch height is 40 px. Small buttons, selects, inputs, segment toggles, the play button and disclosure summaries have a 40 px floor, and text links grow their hit area with padding that does not move the text. No wording or data changed. [code: studio/web/virtualset.css:59, studio/web/virtualset.css:150-153]
+
+Virtual Set's compare wipe now carries the studio's shared hero light: a fine grain over the real render and one soft pass of light that plays once after the page opens. The mode cards rise as they scroll in and take the gold edge. All of it uses transform and opacity only and is off under prefers-reduced-motion. [code: studio/web/polish.css:74-83, studio/web/polish.css:128]

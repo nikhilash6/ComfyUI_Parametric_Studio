@@ -1,0 +1,58 @@
+diff --git a/film_pipeline.py b/film_pipeline.py
+index c36ea4a..b5b4272 100644
+--- a/film_pipeline.py
++++ b/film_pipeline.py
+@@ -16,7 +16,7 @@ except Exception:
+     has_guided = False
+ 
+ from .dng_reader import DNGImageReader
+-from .film_sim import FilmSimNode
++from .film_sim import FilmSimNode, FILM_PRESETS
+ from .hdr_merge import HDRMergeNode
+ from .save_sdr import SaveSDR
+ from .save_avif_hdr import SaveAVIF_HDR
+@@ -27,7 +27,7 @@ class FilmPipelineNode:
+ 
+     @classmethod
+     def INPUT_TYPES(cls):
+-        film_list = list(FilmSimNode().get_film_params.__self__.FILM_PRESETS.keys()) if hasattr(FilmSimNode, 'get_film_params') else []
++        film_list = list(FILM_PRESETS.keys())
+         # fallback
+         if not film_list:
+             film_list = ["Kodak Portra 400"]
+diff --git a/film_sim.py b/film_sim.py
+index d6d8d98..d2c4bbd 100644
+--- a/film_sim.py
++++ b/film_sim.py
+@@ -67,6 +67,10 @@ class FilmSimNode:
+                 "local_contrast": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 2.0, "step": 0.1}),
+                 "is_linear_input": ("BOOLEAN", {"default": True})
+             },
++            # deterministic grain (was seeded from cv2.getTickCount, so re-queues changed the image)
++            "optional": {
++                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffff}),
++            },
+         }
+ 
+     RETURN_TYPES = ("IMAGE", "IMAGE")
+@@ -178,9 +182,9 @@ class FilmSimNode:
+         out = out * scale 
+         return out
+ 
+-    def apply_film(self, image, film_type, wb_temperature_K, wb_tint, auto_exposure, exposure, effect_strength, grain_power, halation_power, local_contrast, is_linear_input):
++    def apply_film(self, image, film_type, wb_temperature_K, wb_tint, auto_exposure, exposure, effect_strength, grain_power, halation_power, local_contrast, is_linear_input, seed=0):
+         # image: torch tensor batch with shape likely (N,H,W,3) or (N,3,H,W)
+-        self.time_hash = int(cv2.getTickCount())
++        self.time_hash = int(seed)
+         p = self.get_film_params(film_type)
+         
+         hdr_results = []
+@@ -273,7 +277,7 @@ class FilmSimNode:
+             # 8. Grain
+             grain_base = p.get("grain_base", [0,0,0,0])
+             if np.sum(grain_base) > 0 and grain_power > 0:
+-                np.random.seed(self.time_hash % 2**32)
++                np.random.seed((self.time_hash + i) % 2**32)  # per-frame grain, reproducible
+                 luma = np.mean(img_graded, axis=2)
+                 log_luma = np.log2(np.maximum(luma, 1e-4))
+                 mask = 1.0 - np.abs(log_luma - np.log2(0.18)) / 5.0

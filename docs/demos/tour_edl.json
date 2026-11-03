@@ -1,0 +1,333 @@
+{
+ "music": {
+  "credit": "“Paper Boats”, made in the studio with ACE-Step 1.5 XL Turbo (seed 7701, MIT), then “Paper Boats” again, made in the studio with DiffSynth-Music (seed 7701, Apache-2.0)",
+  "lufs": -15.9,
+  "true_peak_db": -4.1,
+  "lra": 9.3
+ },
+ "recorded_on": "a preview studio of this release, ComfyUI not attached",
+ "tabs": [
+  {
+   "tab": "create",
+   "label": "Create",
+   "title": "Create",
+   "cut_start": 0.0,
+   "cut_end": 2.6
+  },
+  {
+   "tab": "shots",
+   "label": "Shot Board",
+   "title": "Shot Board",
+   "cut_start": 2.6,
+   "cut_end": 6.601
+  },
+  {
+   "tab": "library",
+   "label": "Library",
+   "title": "Library",
+   "cut_start": 6.601,
+   "cut_end": 8.602
+  },
+  {
+   "tab": "families",
+   "label": "Families",
+   "title": "Model families",
+   "cut_start": 8.602,
+   "cut_end": 12.603
+  },
+  {
+   "tab": "atlas",
+   "label": "Atlas",
+   "title": "Atlas",
+   "cut_start": 12.603,
+   "cut_end": 14.604
+  },
+  {
+   "tab": "recipes",
+   "label": "Recipes",
+   "title": "Recipes",
+   "cut_start": 14.604,
+   "cut_end": 18.604
+  },
+  {
+   "tab": "pipelines",
+   "label": "Pipelines",
+   "title": "Pipelines",
+   "cut_start": 18.604,
+   "cut_end": 22.605
+  },
+  {
+   "tab": "future",
+   "label": "Future",
+   "title": "The future",
+   "cut_start": 22.605,
+   "cut_end": 24.607
+  },
+  {
+   "tab": "apps",
+   "label": "Apps",
+   "title": "ComfyUI Apps",
+   "cut_start": 24.607,
+   "cut_end": 26.607
+  },
+  {
+   "tab": "processes",
+   "label": "Processes",
+   "title": "Processes",
+   "cut_start": 26.607,
+   "cut_end": 28.608
+  },
+  {
+   "tab": "design",
+   "label": "Design",
+   "title": "Designers",
+   "cut_start": 28.608,
+   "cut_end": 30.61
+  },
+  {
+   "tab": "auto",
+   "label": "Auto",
+   "title": "Auto",
+   "cut_start": 30.61,
+   "cut_end": 32.612
+  },
+  {
+   "tab": "edit",
+   "label": "Edit",
+   "title": "Edit",
+   "cut_start": 32.612,
+   "cut_end": 34.613
+  },
+  {
+   "tab": "university",
+   "label": "Learn",
+   "title": "ComfyUniversity",
+   "cut_start": 34.613,
+   "cut_end": 38.614
+  },
+  {
+   "tab": "models",
+   "label": "Models",
+   "title": "Models",
+   "cut_start": 38.614,
+   "cut_end": 40.615
+  },
+  {
+   "tab": "crew",
+   "label": "Crew",
+   "title": "The Crew",
+   "cut_start": 40.615,
+   "cut_end": 42.615
+  },
+  {
+   "tab": "site",
+   "label": "Sites",
+   "title": "Site builder",
+   "cut_start": 42.615,
+   "cut_end": 44.617
+  },
+  {
+   "tab": "viewer",
+   "label": "3D",
+   "title": "3D viewer",
+   "cut_start": 44.617,
+   "cut_end": 46.617
+  },
+  {
+   "tab": "worldkit",
+   "label": "World Kit",
+   "title": "World Kit",
+   "cut_start": 46.617,
+   "cut_end": 48.616
+  },
+  {
+   "tab": "train",
+   "label": "Train",
+   "title": "Train",
+   "cut_start": 48.616,
+   "cut_end": 50.616
+  },
+  {
+   "tab": "virtualset",
+   "label": "Virtual Set",
+   "title": "Virtual Set",
+   "cut_start": 50.616,
+   "cut_end": 52.616
+  },
+  {
+   "tab": "sampling",
+   "label": "Sampling",
+   "title": "Sampling Lab",
+   "cut_start": 52.616,
+   "cut_end": 54.616
+  },
+  {
+   "tab": "res4lyf",
+   "label": "RES4LYF",
+   "title": "RES4LYF",
+   "cut_start": 54.616,
+   "cut_end": 56.617
+  },
+  {
+   "tab": "blepping",
+   "label": "blepping",
+   "title": "blepping",
+   "cut_start": 56.617,
+   "cut_end": 58.617
+  },
+  {
+   "tab": "api",
+   "label": "API",
+   "title": "API",
+   "cut_start": 58.617,
+   "cut_end": 60.617
+  },
+  {
+   "tab": "pro",
+   "label": "Pro",
+   "title": "Pro mode",
+   "cut_start": 60.617,
+   "cut_end": 62.617
+  },
+  {
+   "tab": "anatomy",
+   "label": "Anatomy",
+   "title": "Model Anatomy",
+   "cut_start": 62.617,
+   "cut_end": 66.618
+  },
+  {
+   "tab": "campath",
+   "label": "Camera Paths",
+   "title": "Camera Paths",
+   "cut_start": 66.618,
+   "cut_end": 68.618
+  },
+  {
+   "tab": "clipsound",
+   "label": "Captions & Sound",
+   "title": "Captions & Sound",
+   "cut_start": 68.618,
+   "cut_end": 70.618
+  },
+  {
+   "tab": "commercials",
+   "label": "Commercials",
+   "title": "Commercials",
+   "cut_start": 70.618,
+   "cut_end": 72.619
+  },
+  {
+   "tab": "director",
+   "label": "Live Director",
+   "title": "Live Director",
+   "cut_start": 72.619,
+   "cut_end": 74.619
+  },
+  {
+   "tab": "doctor",
+   "label": "Graph Doctor",
+   "title": "Graph Doctor",
+   "cut_start": 74.619,
+   "cut_end": 76.619
+  },
+  {
+   "tab": "dub",
+   "label": "Dub & Voice",
+   "title": "Dub & Voice",
+   "cut_start": 76.619,
+   "cut_end": 78.619
+  },
+  {
+   "tab": "finish",
+   "label": "LTX Finish",
+   "title": "LTX Finish",
+   "cut_start": 78.619,
+   "cut_end": 80.62
+  },
+  {
+   "tab": "fit",
+   "label": "Hardware Fit",
+   "title": "Hardware Fit",
+   "cut_start": 80.62,
+   "cut_end": 82.621
+  },
+  {
+   "tab": "gamebuilder",
+   "label": "Game Builder",
+   "title": "Game Builder",
+   "cut_start": 82.621,
+   "cut_end": 84.621
+  },
+  {
+   "tab": "lorashow",
+   "label": "LoRA Showcase",
+   "title": "LoRA Showcase",
+   "cut_start": 84.621,
+   "cut_end": 86.621
+  },
+  {
+   "tab": "moe",
+   "label": "Experts",
+   "title": "Inside a mixture of experts",
+   "cut_start": 86.621,
+   "cut_end": 90.622
+  },
+  {
+   "tab": "motion",
+   "label": "Motion",
+   "title": "Motion",
+   "cut_start": 90.622,
+   "cut_end": 92.622
+  },
+  {
+   "tab": "music",
+   "label": "Music",
+   "title": "Music",
+   "cut_start": 92.622,
+   "cut_end": 94.622
+  },
+  {
+   "tab": "packlab",
+   "label": "Pack Lab",
+   "title": "Pack Lab",
+   "cut_start": 94.622,
+   "cut_end": 98.622
+  },
+  {
+   "tab": "project",
+   "label": "Project File",
+   "title": "Project File",
+   "cut_start": 98.622,
+   "cut_end": 100.623
+  },
+  {
+   "tab": "prove",
+   "label": "Prove It",
+   "title": "Prove It",
+   "cut_start": 100.623,
+   "cut_end": 102.628
+  },
+  {
+   "tab": "swap",
+   "label": "Swap",
+   "title": "Swap on any model",
+   "cut_start": 102.628,
+   "cut_end": 104.628
+  },
+  {
+   "tab": "voices",
+   "label": "Voices",
+   "title": "Voices",
+   "cut_start": 104.628,
+   "cut_end": 106.629
+  },
+  {
+   "tab": "words",
+   "label": "Which Word",
+   "title": "Which word painted what",
+   "cut_start": 106.629,
+   "cut_end": 108.634
+  }
+ ]
+}

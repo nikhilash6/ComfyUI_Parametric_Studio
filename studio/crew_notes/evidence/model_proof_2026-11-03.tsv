@@ -1,0 +1,375 @@
+family	file	gb	function	status	proof
+	af_alloy.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_alloy (en, Whisper 100% of the words, no person listened)
+	af_aoede.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_aoede (en, Whisper 100% of the words, no person listened)
+	af_bella.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_bella (en, Whisper 100% of the words, no person listened)
+	af_heart.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_heart (en, Whisper 100% of the words, no person listened)
+	af_jessica.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_jessica (en, Whisper 100% of the words, no person listened)
+	af_kore.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_kore (en, Whisper 100% of the words, no person listened)
+	af_nicole.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_nicole (en, Whisper 100% of the words, no person listened)
+	af_nova.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_nova (en, Whisper 100% of the words, no person listened)
+	af_river.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_river (en, Whisper 100% of the words, no person listened)
+	af_sarah.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_sarah (en, Whisper 100% of the words, no person listened)
+	af_sky.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/af_sky (en, Whisper 100% of the words, no person listened)
+	am_adam.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/am_adam (en, Whisper 100% of the words, no person listened)
+	am_echo.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/am_echo (en, Whisper 100% of the words, no person listened)
+	am_eric.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/am_eric (en, Whisper 100% of the words, no person listened)
+	am_fenrir.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/am_fenrir (en, Whisper 100% of the words, no person listened)
+	am_liam.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/am_liam (en, Whisper 100% of the words, no person listened)
+	am_michael.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/am_michael (en, Whisper 100% of the words, no person listened)
+	am_onyx.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/am_onyx (en, Whisper 100% of the words, no person listened)
+	am_puck.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/am_puck (en, Whisper 100% of the words, no person listened)
+	am_santa.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/am_santa (en, Whisper 95% of the words, no person listened)
+	audiovae.pth	0.38	Text-to-speech and voice	rendered	rendered voices/voxcpm2 (46.5 s, peak 6.1 GB, Whisper 100% of the words, no person listened)
+	bf_alice.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/bf_alice (en, Whisper 100% of the words, no person listened)
+	bf_emma.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/bf_emma (en, Whisper 100% of the words, no person listened)
+	bf_isabella.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/bf_isabella (en, Whisper 100% of the words, no person listened)
+	bf_lily.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/bf_lily (en, Whisper 100% of the words, no person listened)
+	bm_daniel.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/bm_daniel (en, Whisper 100% of the words, no person listened)
+	bm_fable.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/bm_fable (en, Whisper 100% of the words, no person listened)
+	bm_george.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/bm_george (en, Whisper 100% of the words, no person listened)
+	bm_lewis.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/bm_lewis (en, Whisper 100% of the words, no person listened)
+	campplus_voxceleb.bin	0.03	Text-to-speech and voice	rendered	rendered voices/firered_instruct (20.9 s, peak 14.9 GB, Whisper 100% of the words, no person listened)
+	chunk.onnx	0.09	Text-to-speech and voice	rendered	rendered voices/voxlock_fp32 (16.6 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	chunk_fp16.onnx	0.04	Text-to-speech and voice	rendered	rendered voices/voxlock_fp16 (18.4 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	chunk_int8.onnx	0.07	Text-to-speech and voice	rendered	rendered voices/voxlock (19.0 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	chunk_int8_full.onnx	0.06	Text-to-speech and voice	rendered	rendered voices/voxlock (19.0 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	dsine.pt	0.29	arrived, no plan row	rendered	tool run anigen (190.7 s, families/anigen_turn.webp); looked at: 33 bones, pose test viewed
+	ef_dora.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/ef_dora (es, Whisper 100% of the words, no person listened)
+	em_alex.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/em_alex (es, Whisper 100% of the words, no person listened)
+	em_santa.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/em_santa (es, Whisper 100% of the words, no person listened)
+	enroll.onnx	0.01	Text-to-speech and voice	rendered	rendered voices/voxlock (19.0 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	ff_siwis.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/ff_siwis (fr, Whisper 100% of the words, no person listened)
+	grpo_1400.ckpt	1.05	3D generation	rendered	tool run skintokens (42.2 s, no sheet); looked at: pose test: tears in a hard pose
+	hf_alpha.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/hf_alpha (hi, Whisper 93% of the words, no person listened)
+	hf_beta.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/hf_beta (hi, Whisper 100% of the words, no person listened)
+	hm_omega.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/hm_omega (hi, Whisper 93% of the words, no person listened)
+	hm_psi.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/hm_psi (hi, Whisper 96% of the words, no person listened)
+	if_sara.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/if_sara (it, Whisper 100% of the words, no person listened)
+	im_nicola.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/im_nicola (it, Whisper 100% of the words, no person listened)
+	jf_alpha.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/jf_alpha (ja, Whisper 92% of the words, no person listened)
+	jf_gongitsune.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/jf_gongitsune (ja, Whisper 92% of the words, no person listened)
+	jf_nezumi.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/jf_nezumi (ja, Whisper 92% of the words, no person listened)
+	jf_tebukuro.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/jf_tebukuro (ja, Whisper 92% of the words, no person listened)
+	jm_kumo.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/jm_kumo (ja, Whisper 71% of the words, no person listened)
+	kokoro-v1_0.pth	0.33	Text-to-speech and voice	rendered	rendered voices/kokoro (26.7 s, peak 1.4 GB, Whisper 100% of the words, no person listened)
+	last.ckpt	0.45	VAEs (latent encoders/decoders)	rendered	tool run skintokens (42.2 s, no sheet); looked at: pose test: tears in a hard pose
+	last_best_checkpoint.pt	0.04	Text-to-speech and voice	rendered	rendered voices/clear_se16 (57.9 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	last_best_checkpoint.pt	0.22	Text-to-speech and voice	rendered	rendered voices/clear_se48 (8.5 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	last_best_checkpoint_g.pt	0.22	Text-to-speech and voice	rendered	rendered voices/clear_sr48 (55.5 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	last_best_checkpoint_m.pt	0.22	Text-to-speech and voice	rendered	rendered voices/clear_sr48 (55.5 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model-00001-of-00002.safetensors	4.99	Text-to-speech and voice	rendered	rendered voices/maya1 (22.9 s, peak 7.3 GB, Whisper 100% of the words, no person listened)
+	model-00002-of-00002.safetensors	1.61	Text-to-speech and voice	rendered	rendered voices/maya1 (22.9 s, peak 7.3 GB, Whisper 100% of the words, no person listened)
+	model.bin	0.08	Speech recognition	rendered	rendered voices/whisper_ct2_tiny (13.2 s, peak 0 GB, Whisper 85% of the words, no person listened)
+	model.bin	1.51	Speech recognition	rendered	rendered voices/whisper_ct2_distil (18.5 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model.onnx	0.18	Text-to-speech and voice	rendered	rendered voices/kokoro_onnx (18.4 s, peak 1.1 GB, Whisper 100% of the words, no person listened)
+	model.pt	0.99	Text-to-speech and voice	rendered	rendered voices/paraformer_soulx (31.8 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	0.04	Text-to-speech and voice	rendered	rendered voices/phonon_31m (64.0 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	0.1	Text-to-speech and voice	rendered	rendered voices/phonon_31m (64.0 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	0.12	Text-to-speech and voice	rendered	rendered voices/phonon_40m (83.4 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	0.39	Text-to-speech and voice	rendered	rendered voices/humaneness_vc (16.6 s, peak 2.2 GB, Whisper 95% of the words, no person listened)
+	model.safetensors	0.68	Text-to-speech and voice	rendered	rendered voices/qwen3_custom_17 (36.8 s, peak 4.9 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	0.81	Text-to-speech and voice	rendered	rendered voices/omnivoice (20.7 s, peak 3.9 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	0.95	Text-to-speech and voice	rendered	rendered voices/granite_speech (18.2 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	0.98	Text-to-speech and voice	rendered	rendered voices/rubato (15.6 s, peak 4.1 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	1.06	Text-to-speech and voice	rendered	rendered voices/humaneness_vc (16.6 s, peak 2.2 GB, Whisper 95% of the words, no person listened)
+	model.safetensors	1.81	Text-to-speech and voice	rendered	rendered voices/qwen3_custom_06 (38.5 s, peak 3.0 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	1.83	Text-to-speech and voice	rendered	rendered voices/qwen3_base_06 (36.0 s, peak 3.2 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	2.45	Text-to-speech and voice	rendered	rendered voices/omnivoice (20.7 s, peak 3.9 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	3.25	Text-to-speech and voice	rendered	rendered voices/zonos (33.1 s, peak 4.5 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	3.78	Text-to-speech and voice	rendered	rendered voices/firered_instruct (20.9 s, peak 14.9 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	3.83	Text-to-speech and voice	rendered	rendered voices/qwen3_custom_17 (36.8 s, peak 4.9 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	3.83	Text-to-speech and voice	rendered	rendered voices/qwen3_design_17 (33.4 s, peak 4.9 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	3.86	Text-to-speech and voice	rendered	rendered voices/qwen3_base_17 (31.1 s, peak 5.1 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	4.58	Text-to-speech and voice	rendered	rendered voices/voxcpm2 (46.5 s, peak 6.1 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	8.48	Text-to-speech and voice	rendered	rendered voices/firered_instruct (20.9 s, peak 14.9 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	8.48	Text-to-speech and voice	rendered	rendered voices/firered_base (20.9 s, peak 12.3 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	0.15	Speech recognition	rendered	rendered voices/whisper_hf_tiny (19.3 s, peak 0 GB, Whisper 85% of the words, no person listened)
+	model.safetensors	1.26	Speech recognition	rendered	rendered voices/parakeet_ultra (18.1 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	2.47	Speech recognition	rendered	rendered voices/nemotron (21.4 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	2.51	Speech recognition	rendered	rendered voices/parakeet_v3 (25.8 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model.safetensors	4.08	Speech recognition	rendered	rendered voices/qwen3_asr (36.5 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	model_1250000.safetensors	1.35	Text-to-speech and voice	rendered	rendered voices/f5tts (22.3 s, peak 2.4 GB, Whisper 100% of the words, no person listened)
+	paradee.onnx	0.03	Text-to-speech and voice	rendered	rendered voices/paradee (9.7 s, peak 0 GB, Whisper 100% of the words, no person listened)
+	pf_dora.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/pf_dora (pt, Whisper 100% of the words, no person listened)
+	pm_alex.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/pm_alex (pt, Whisper 100% of the words, no person listened)
+	pm_santa.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/pm_santa (pt, Whisper 100% of the words, no person listened)
+	pytorch_model.bin	0.05	Text-to-speech and voice	rendered	rendered voices/f5tts (22.3 s, peak 2.4 GB, Whisper 100% of the words, no person listened)
+	pytorch_model.bin	4.49	Text-to-speech and voice	rendered	rendered voices/bark (51.5 s, peak 5.3 GB, Whisper 85% of the words, no person listened)
+	s3gen.pt	1.06	Text-to-speech and voice	rendered	rendered voices/chatterbox (45.0 s, peak 4.0 GB, Whisper 95% of the words, no person listened)
+	t3_cfg.pt	1.06	Text-to-speech and voice	rendered	rendered voices/chatterbox (45.0 s, peak 4.0 GB, Whisper 95% of the words, no person listened)
+	tiny.pt	0.08	Speech recognition	rendered	rendered voices/whisper_pt_tiny (8.7 s, peak 0 GB, Whisper 85% of the words, no person listened)
+	zf_xiaobei.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/zf_xiaobei (zh, Whisper 100% of the words, no person listened)
+	zf_xiaoxiao.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/zf_xiaoxiao (zh, Whisper 100% of the words, no person listened)
+	zf_xiaoyi.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/zf_xiaoyi (zh, Whisper 100% of the words, no person listened)
+	zm_yunjian.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/zm_yunjian (zh, Whisper 100% of the words, no person listened)
+	zm_yunxi.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/zm_yunxi (zh, Whisper 100% of the words, no person listened)
+	zm_yunxia.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/zm_yunxia (zh, Whisper 100% of the words, no person listened)
+	zm_yunyang.pt	0.0	Text-to-speech and voice	rendered	rendered voices/kokoro/zm_yunyang (zh, Whisper 100% of the words, no person listened)
+ACE-Step-1.5	ace_1.5_vae.safetensors	0.34	Repo coverage	rendered	rendered ace-step-1-5/audio_ace_step1_5_xl_base (72.8 s); looked at: spectrogram only: structured sound, not listened to
+ACE-Step-1.5	acestep_v1.5_turbo.safetensors	4.79	Repo coverage	rendered	rendered ace-step-1-5/audio_ace_step_1_5_split (25.3 s); looked at: spectrogram only: structured sound, not listened to
+ACE-Step-1.5	acestep_v1.5_xl_base_bf16.safetensors	9.97	Music and audio generation	rendered	rendered ace-step-1-5/audio_ace_step1_5_xl_base (72.8 s); looked at: spectrogram only: structured sound, not listened to
+ACE-Step-1.5	acestep_v1.5_xl_turbo_bf16.safetensors	9.97	Music and audio generation	rendered	rendered ace-step-1-5/audio_ace_step1_5_xl_turbo (25.6 s); looked at: spectrogram only: structured sound, not listened to
+ACE-Step-1.5	qwen_0.6b_ace15.safetensors	1.19	arrived, no plan row	rendered	rendered ace-step-1-5/audio_ace_step1_5_xl_base (72.8 s); looked at: spectrogram only: structured sound, not listened to
+ACE-Step-1.5	qwen_1.7b_ace15.safetensors	3.71	Repo coverage	rendered	rendered ace-step-1-5/audio_ace_step_1_5_split (25.3 s); looked at: spectrogram only: structured sound, not listened to
+ACE-Step-1.5	qwen_4b_ace15.safetensors	8.38	arrived, no plan row	rendered	rendered ace-step-1-5/audio_ace_step1_5_xl_base (72.8 s); looked at: spectrogram only: structured sound, not listened to
+AniGen	decoder_final.pt	0.75	3D generation	rendered	tool run anigen (190.7 s, families/anigen_turn.webp); looked at: 33 bones, pose test viewed
+AniGen	decoder_final.pt	0.63	3D generation	rendered	tool run anigen (190.7 s, families/anigen_turn.webp); looked at: 33 bones, pose test viewed
+AniGen	denoiser.pt	3.14	3D generation	rendered	tool run anigen (190.7 s, families/anigen_turn.webp); looked at: 33 bones, pose test viewed
+AniGen	denoiser.pt	2.29	3D generation	rendered	tool run anigen (190.7 s, families/anigen_turn.webp); looked at: 33 bones, pose test viewed
+Anima	anima-aesthetic-v1.1.safetensors	4.18	Image generation	rendered	rendered anima/anima_aesthetic_t2i (20.2 s); looked at: thumbnail sheet, on brief
+Anima	anima-base-v1.0.safetensors	4.18	Image generation	rendered	rendered anima/image_anima_base_v1 (20.2 s); looked at: thumbnail sheet, on brief
+Anima	anima-lllite-any-test-like-v2.safetensors	0.02	Repo coverage	rendered	rendered anima/image_anima_lllite_any_control_to_image (20.2 s); looked at: WEAK: control followed badly, broken figure
+Anima	anima-preview3-base.safetensors	4.18	Repo coverage	rendered	rendered anima/image_anima_preview (25.4 s); looked at: thumbnail sheet, on brief
+Anima	anima-turbo-lora-v0.2.safetensors	0.15	Repo coverage	rendered	rendered anima/image_anima_base_v1 (20.2 s); looked at: thumbnail sheet, on brief
+Anima	anima-turbo-v1.1.safetensors	4.18	Image generation	rendered	rendered anima/anima_turbo_t2i (15.6 s); looked at: thumbnail sheet, on brief
+Anima	depth_anything_3_mono_large.safetensors	1.34	Repo coverage	rendered	rendered anima/image_anima_lllite_depth_control_to_image (25.3 s); looked at: thumbnail sheet, on brief
+Anima	qwen_3_06b_base.safetensors	1.19	arrived, no plan row	rendered	rendered anima/image_anima_base_v1 (20.2 s); looked at: thumbnail sheet, on brief
+Anima	qwen_image_vae.safetensors	0.25	arrived, no plan row	rendered	rendered anima/image_anima_base_v1 (20.2 s); looked at: thumbnail sheet, on brief
+AnimateDiff	animatediff_lightning_4step_comfyui.safetensors	0.91	Motion and character animation	rendered	rendered animatediff/animatediff_sd15_lightning (35.6 s); looked at: real motion clip
+AnimateDiff	mm_sd_v15_v2.ckpt	1.82	Motion and character animation	rendered	rendered animatediff/animatediff_sd15_v2 (40.7 s); looked at: real motion clip
+AnimateDiff	mm_sdxl_v10_beta.ckpt	0.95	Motion and character animation	rendered	rendered animatediff/animatediff_sdxl_beta (70.8 s); looked at: real motion clip
+AnimateDiff	v3_sd15_mm.ckpt	1.67	Motion and character animation	rendered	rendered animatediff/animatediff_sd15_v3 (40.6 s); looked at: real motion clip
+Boogu	boogu_image_edit_turbo_hotfix_1k_20260708_int8_convrot.safetensors	10.33	Image generation	rendered	rendered boogu/boogu_edit_turbo (25.2 s); looked at: thumbnail sheet, on brief
+Boogu	boogu_image_turbo_hotfix_int8_convrot.safetensors	11.37	Image generation	rendered	rendered boogu/boogu_turbo_t2i (25.3 s); looked at: thumbnail sheet, on brief
+CCSR	real-world_ccsr-fp16.safetensors	3.44	Image generation	rendered	rendered ccsr/ccsr_upscale_x2 (55.5 s); looked at: thumbnail sheet, same scene upscaled
+Chroma	Chroma1-HD-fp8mixed.safetensors	9.19	Planned, image/diffusion	rendered	rendered chroma/chroma1_hd_t2i (56.1 s); looked at: lighthouse painting as prompted
+Chroma	Chroma1-HD.safetensors	17.8	Planned, image/diffusion	rendered	rendered chroma/chroma1_hd_t2i (56.1 s); looked at: lighthouse painting as prompted
+Ernie-Image	ernie-image.safetensors	16.07	Image generation	rendered	rendered ernie-image/ernie_image_core_t2i (30.2 s); looked at: thumbnail sheet, on brief
+Ernie-Image	ministral-3-3b.safetensors	7.72	arrived, no plan row	rendered	rendered ernie-image/ernie_image_core_t2i (30.2 s); looked at: thumbnail sheet, on brief
+Fibo-2.0	fibo2_dev_int8_convrot.safetensors	8.41	Family completion	rendered	rendered fibo-2-0/image_fibo2_edit_dev_pe (130.1 s); looked at: thumbnail sheet, on brief
+Fibo-2.0	fibo2_edit_turbo_int8_convrot.safetensors	8.41	Family completion	rendered	rendered fibo-2-0/image_fibo2_edit_turbo_pe (82.9 s); looked at: thumbnail sheet, on brief
+Fibo-2.0	fibo_2.0_turbo_lora_avg_rank_270_bf16.safetensors	1.99	Family completion	rendered	rendered fibo-2-0/fibo2_dev_turbo_lora_t2i (40.7 s); looked at: thumbnail sheet, on brief at 8 steps
+Fibo-2.0	qwen3vl_8b_int8_convrot.safetensors	9.35	arrived, no plan row	rendered	rendered fibo-2-0/image_fibo2_edit_dev_pe (130.1 s); looked at: thumbnail sheet, on brief
+FireRed-Image-Edit	FireRed-Image-Edit-1.1-Lightning-8steps-v1.2.safetensors	0.85	Planned, image/diffusion	rendered	rendered firered-image-edit/firered_image_edit_11 (30.2 s); looked at: thumbnail sheet, coat turned red, scene kept
+FireRed-Image-Edit	FireRed-Image-Edit-1.1-transformer.safetensors	40.86	Planned, image/diffusion	rendered	rendered firered-image-edit/firered_image_edit_11 (30.2 s); looked at: thumbnail sheet, coat turned red, scene kept
+Flux-Kontext	ae.safetensors	0.34	arrived, no plan row	rendered	rendered flux-kontext/flux_kontext_dev_basic (25.2 s); looked at: thumbnail sheet, on brief
+Flux-Kontext	clip_l.safetensors	0.25	arrived, no plan row	rendered	rendered flux-kontext/flux_kontext_dev_basic (25.2 s); looked at: thumbnail sheet, on brief
+Flux-Kontext	flux1-dev-kontext_fp8_scaled.safetensors	11.9	Image generation	rendered	rendered flux-kontext/flux_kontext_dev_basic (25.2 s); looked at: thumbnail sheet, on brief
+Flux-Kontext	t5xxl_fp8_e4m3fn_scaled.safetensors	5.16	arrived, no plan row	rendered	rendered flux-kontext/flux_kontext_dev_basic (25.2 s); looked at: thumbnail sheet, on brief
+Flux.1	flux-2-klein-4b.safetensors	7.75	Image generation	rendered	rendered flux-2/image_flux2_klein_text_to_image (25.2 s); looked at: thumbnail sheet, on brief
+Flux.1	flux-2-klein-9b.safetensors	18.16	Image generation	rendered	rendered flux-2/klein9b_t2i (20.2 s); looked at: thumbnail sheet, on brief
+Flux.1	flux-2-klein-base-4b.safetensors	7.75	Image generation	rendered	rendered flux-2/image_flux2_klein_text_to_image (25.2 s); looked at: thumbnail sheet, on brief
+Flux.1	flux1-schnell.safetensors	23.78	Image generation	rendered	rendered flux-1/flux_schnell_full_text_to_image (36.2 s); looked at: thumbnail sheet, on brief
+Flux.1	t5xxl_fp16.safetensors	9.79	arrived, no plan row	rendered	rendered flux-1/flux_fill_inpaint_example (40.6 s); looked at: thumbnail sheet, the masked hole filled with a new figure, rest kept
+Flux.2	KleinBase4B_TryOn.safetensors	0.05	arrived, no plan row	rendered	rendered flux-2/klein4b_tryon (66.2 s); looked at: dress and coat replaced cleanly
+Flux.2	KleinBase9B_TryOn.safetensors	0.08	arrived, no plan row	rendered	rendered flux-2/klein9b_tryon_lora (43.4 s); looked at: dress replaced, paler, shorter hem
+Flux.2	full_encoder_small_decoder.safetensors	0.25	VAE	rendered	rendered flux-2/image_flux2_klein_image_edit_4b_base (35.7 s); looked at: WEAK: snow added, but the person and street were redrawn
+Flux.2	qwen_3_4b.safetensors	8.04	arrived, no plan row	rendered	rendered flux-2/image_flux2_klein_text_to_image (25.2 s); looked at: thumbnail sheet, on brief
+Flux.2	qwen_3_8b_fp8mixed.safetensors	8.66	arrived, no plan row	rendered	rendered flux-2/image_flux2_klein_image_edit_9b_distilled (25.2 s); looked at: thumbnail sheet, snow added, scene kept
+Flux.3-Klein	flux2-vae.safetensors	0.33	Contest	rendered	rendered fibo-2-0/image_fibo2_edit_dev_pe (130.1 s); looked at: thumbnail sheet, on brief
+Flux.3-Klein	flux3_image_klein_bf16.safetensors	11.08	Image generation	rendered	rendered flux-3-klein/flux3_klein_bf16_t2i (20.2 s); looked at: thumbnail sheet, on brief
+Flux.3-Klein	flux3_image_klein_nvfp4.safetensors	5.26	Image generation	rendered	rendered flux-3-klein/flux3_klein_nvfp4_t2i (20.2 s); looked at: thumbnail sheet, on brief
+Flux.3-Klein	flux3_image_klein_sd_nvfp4.safetensors	5.28	Image generation	rendered	rendered flux-3-klein/flux3_klein_sd_nvfp4_t2i (30.4 s); looked at: thumbnail sheet, on brief
+Flux.3-Klein	qwen3vl_4b_bf16.safetensors	8.88	Contest	rendered	rendered fibo-2-0/image_fibo2_edit_dev_pe (130.1 s); looked at: thumbnail sheet, on brief
+HiDream	clip_g_hidream.safetensors	1.39	arrived, no plan row	rendered	rendered hidream/hidream_e1_1 (72.6 s); looked at: thumbnail sheet, on brief
+HiDream	clip_l_hidream.safetensors	0.25	Repo coverage	rendered	rendered hidream/hidream_e1_1 (72.6 s); looked at: thumbnail sheet, on brief
+HiDream	hidream_e1_1_bf16.safetensors	34.21	Image generation	rendered	rendered hidream/hidream_e1_1 (72.6 s); looked at: thumbnail sheet, on brief
+HiDream	hidream_o1_image_bf16.safetensors	16.37	Image generation	rendered	rendered hidream/hidream_o1_full_t2i (40.2 s); looked at: thumbnail sheet, on brief
+HiDream	hidream_o1_image_dev_fp8_scaled.safetensors	8.07	Image generation	rendered	rendered hidream/hidream_o1_dev_t2i (20.2 s); looked at: thumbnail sheet, on brief
+HiDream	llama_3.1_8b_instruct_fp8_scaled.safetensors	9.08	arrived, no plan row	rendered	rendered hidream/hidream_e1_1 (72.6 s); looked at: thumbnail sheet, on brief
+Hunyuan3D-2.1	hunyuan3d-dit-v2_fp16.safetensors	4.93	Repo coverage	rendered	rendered hunyuan3d-2-1/3d_hunyuan3d_image_to_model (45.8 s); looked at: turntable: bear on a white matte
+HunyuanDiT-1.2	byt5_small_glyphxl_fp16.safetensors	0.44	arrived, no plan row	rendered	rendered hunyuandit-1-2/hunyuan_image_21_t2i (30.2 s); looked at: thumbnail sheet, on brief
+HunyuanDiT-1.2	hunyuan_dit_1.2.safetensors	8.24	Image generation	rendered	rendered hunyuandit-1-2/hunyuandit_core_t2i (20.2 s); looked at: thumbnail sheet, on brief
+HunyuanDiT-1.2	hunyuan_image_2.1_vae_fp16.safetensors	0.81	VAE	rendered	rendered hunyuandit-1-2/hunyuan_image_21_t2i (30.2 s); looked at: thumbnail sheet, on brief
+HunyuanDiT-1.2	hunyuanimage2.1_fp8_e4m3fn.safetensors	17.43	Image generation	rendered	rendered hunyuandit-1-2/hunyuan_image_21_t2i (30.2 s); looked at: thumbnail sheet, on brief
+IC-Light	iclight_sd15_fc_unet_ldm.safetensors	1.72	Image generation	rendered	rendered ic-light/iclight_fc_relight (20.1 s); looked at: WEAK: light from the left as asked, but the black mug came back beige
+JoyAI-Video-Edit	Wan2.1_VAE.pth	0.51	arrived, no plan row	rendered	rendered joyai-video-edit/image_joyai_image_edit (65.2 s); looked at: thumbnail sheet, on brief
+JoyAI-Video-Edit	joyai_image_edit_int8_convrot.safetensors	16.43	Image generation	rendered	rendered joyai-video-edit/image_joyai_image_edit (65.2 s); looked at: thumbnail sheet, on brief
+JoyAI-Video-Edit	qwen3vl_8b_joyimage_edit_int8_convrot.safetensors	10.06	arrived, no plan row	rendered	rendered joyai-video-edit/image_joyai_image_edit (65.2 s); looked at: thumbnail sheet, on brief
+JoyAI-Video-Edit	wan_2.1_vae.safetensors	0.25	arrived, no plan row	rendered	rendered joyai-video-edit/image_joyai_image_edit (65.2 s); looked at: thumbnail sheet, on brief
+Kandinsky-5.0-T2I-Lite	hunyuan_video_vae_bf16.safetensors	0.49	Repo coverage	rendered	rendered kandinsky-5-0-t2i-lite/video_kandinsky5_i2v (354.6 s); looked at: thumbnail sheet, two frames differ, on brief
+Kandinsky-5.0-T2I-Lite	kandinsky5lite_i2v_5s.safetensors	4.57	Repo coverage	rendered	rendered kandinsky-5-0-t2i-lite/video_kandinsky5_i2v (354.6 s); looked at: thumbnail sheet, two frames differ, on brief
+Kandinsky-5.0-T2I-Lite	kandinsky5lite_t2i.safetensors	12.04	Video generation	rendered	rendered kandinsky-5-0-t2i-lite/image_kandinsky5_t2i (66.9 s); looked at: thumbnail sheet, on brief
+Kandinsky-5.0-T2I-Lite	kandinsky5lite_t2v_sft_5s.safetensors	4.57	Repo coverage	rendered	rendered kandinsky-5-0-t2i-lite/video_kandinsky5_t2v (243.4 s); looked at: thumbnail sheet, two frames differ, on brief
+Kandinsky-5.0-T2I-Lite	qwen2.5-vl-7b-bf16.safetensors	16.58	arrived, no plan row	rendered	rendered kandinsky-5-0-t2i-lite/image_kandinsky5_t2i (66.9 s); looked at: thumbnail sheet, on brief
+Kandinsky-5.0-T2I-Lite	qwen_2.5_vl_7b_fp8_scaled.safetensors	9.38	arrived, no plan row	rendered	rendered kandinsky-5-0-t2i-lite/image_kandinsky5_t2i (66.9 s); looked at: thumbnail sheet, on brief
+Krea2	krea2_darkbrush.safetensors	0.47	Repo coverage	rendered	rendered krea2/image_krea2_turbo_t2i (21.2 s); looked at: thumbnail sheet, on brief
+Krea2	krea2_raw_bf16.safetensors	26.28	Image generation	rendered	rendered krea2/krea2_raw_t2i (60.4 s); looked at: thumbnail sheet, on brief
+Krea2	krea2_style_reference.safetensors	0.46	Repo coverage	rendered	rendered krea2/image_krea2_turbo_int8_image_style_reference (35.6 s); looked at: thumbnail sheet, on brief
+Krea2	krea2_turbo_bf16.safetensors	26.28	Image generation	rendered	rendered krea2/krea2_turbo_t2i (25.3 s); looked at: thumbnail sheet, on brief
+Krea2	qwen3vl_4b_fp8_scaled.safetensors	5.24	arrived, no plan row	rendered	rendered krea2/image_krea2_turbo_int8_image_style_reference (35.6 s); looked at: thumbnail sheet, on brief
+LTX-2.5	gemma4-12b-with-proj-ltx-2.5-comfy-int8-convrot.safetensors	15.37	arrived, no plan row	rendered	rendered ltx-2-5/ltx25_core_t2v (35.3 s); looked at: thumbnail sheet, two frames, sunset headland, lighthouse small; sound not listened to
+LTX-2.5	ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors	21.5	Video generation	rendered	rendered ltx-2-5/ltx25_core_t2v (35.3 s); looked at: thumbnail sheet, two frames, sunset headland, lighthouse small; sound not listened to
+LTX-2.5	ltx-2.5-audio-vae-bf16.safetensors	0.36	arrived, no plan row	rendered	rendered ltx-2-5/ltx25_core_t2v (35.3 s); looked at: thumbnail sheet, two frames, sunset headland, lighthouse small; sound not listened to
+LTX-2.5	ltx-2.5-video-vae-conv-bf16.safetensors	1.45	arrived, no plan row	rendered	rendered ltx-2-5/ltx25_core_t2v (35.3 s); looked at: thumbnail sheet, two frames, sunset headland, lighthouse small; sound not listened to
+LTX-2.5	ltxv-13b-0.9.8-distilled-fp8.safetensors	15.69	Video generation	rendered	rendered ltx-2-5/ltxv13b_098_distilled_t2v (30.3 s); looked at: thumbnail sheet of the 97-frame clip: a steam locomotive with a long white plume crossing a stone arched viaduct over a misty green valley, the sun low behind the hills; it moves across the frame as asked (2026-11-02)
+LivePortrait	spade_generator.pth	0.22	Motion and character animation	rendered	rendered LivePortrait/motion_liveportrait (motion/liveportrait_0.mp4); looked at: thumbnail sheet, two frames, face moved little
+LivePortrait	spade_generator.pth	0.22	Motion and character animation	rendered	rendered LivePortrait/motion_liveportrait (motion/liveportrait_0.mp4); looked at: thumbnail sheet, two frames, face moved little
+LivePortrait	spade_generator.pth	0.22	Motion and character animation	rendered	rendered LivePortrait/motion_liveportrait (motion/liveportrait_0.mp4); looked at: thumbnail sheet, two frames, face moved little
+LongCat-Avatar-15	model.bin	3.09	Speech recognition	rendered	rendered voices/whisper_ct2_large3 (195.7 s, peak 0 GB, Whisper 100% of the words, no person listened)
+LongCat-Avatar-15	wan_2.1_vae.safetensors	0.24	Family completion	not_on_disk	rendered joyai-video-edit/image_joyai_image_edit (65.2 s); looked at: thumbnail sheet, on brief
+LongCat-Image	longcat_image_bf16.safetensors	12.54	Image generation	rendered	rendered longcat-image/image_longcat_text_to_image (30.3 s); looked at: thumbnail sheet, on brief
+LongCat-Image	longcat_image_edit_bf16.safetensors	12.54	Image generation	rendered	rendered longcat-image/image_longcat_image_edit (50.2 s); looked at: thumbnail sheet, on brief
+Lotus	lotus-depth-d-v1-1.safetensors	1.74	Repo coverage	rendered	rendered lotus/image_lotus_depth_v1_1 (20.1 s); looked at: thumbnail sheet, on brief
+Lotus	vae-ft-mse-840000-ema-pruned.safetensors	0.33	Repo coverage	rendered	rendered lotus/image_lotus_depth_v1_1 (20.1 s); looked at: thumbnail sheet, on brief
+Lumina-2	NewBie-Image-Exp0.1-bf16.safetensors	6.97	Image generation	rendered	rendered lumina-2/newbie_exp01_t2i (25.2 s); looked at: thumbnail sheet, on brief
+Lumina-2	gemma2-2b-fp16.safetensors	5.23	arrived, no plan row	rendered	rendered lumina-2/lumina2_gemma2_fp16_t2i (35.4 s); looked at: thumbnail sheet, on brief
+Lumina-2	gemma_3_4b_it_bf16.safetensors	7.77	arrived, no plan row	rendered	rendered lumina-2/newbie_exp01_t2i (25.2 s); looked at: thumbnail sheet, on brief
+Lumina-2	jina_clip_v2_bf16.safetensors	1.12	arrived, no plan row	rendered	rendered lumina-2/newbie_exp01_t2i (25.2 s); looked at: thumbnail sheet, on brief
+Lumina-2	lumina_2_model_bf16.safetensors	5.22	Image generation	rendered	rendered lumina-2/lumina2_core_t2i (25.2 s); looked at: thumbnail sheet, on brief
+Matrix-3D	umt5_xxl_fp8_e4m3fn_scaled.safetensors	6.74	arrived, no plan row	rendered	rendered matrix-3d/video_wan2_2_5B_ti2v (90.7 s); looked at: thumbnail sheet, two frames differ, on brief
+Matrix-3D	wan2.2_vae.safetensors	1.41	arrived, no plan row	rendered	rendered matrix-3d/video_wan2_2_5B_ti2v (90.7 s); looked at: thumbnail sheet, two frames differ, on brief
+Mini-Max-Music3	minimax_music3_dav.safetensors	0.22	arrived, no plan row	rendered	rendered mini-max-music3/audio_minimax_music_3 (65.3 s); looked at: spectrogram only: structured sound, not listened to
+Mini-Max-Music3	minimax_music3_dav_full.safetensors	0.31	arrived, no plan row	rendered	rendered mini-max-music3/music3_dav_full (55.6 s); looked at: 60 s of audio, -16.3 LUFS, LRA 5.1, peak +0.2 dBFS (touches full scale); the spectrum shows a soft intro then steady beat transients over low harmonic content, no silence (read from the spectrum and loudness, not listened to) (2026-11-02)
+Mini-Max-Music3	minimax_music3_dit_fp16.safetensors	4.91	arrived, no plan row	rendered	rendered mini-max-music3/audio_minimax_music_3 (65.3 s); looked at: spectrogram only: structured sound, not listened to
+Mini-Max-Music3	minimax_music3_text_encoder_pruned_int8_convrot.safetensors	9.2	arrived, no plan row	rendered	rendered mini-max-music3/audio_minimax_music_3 (65.3 s); looked at: spectrogram only: structured sound, not listened to
+Mini-Max-Music3	minimax_music3_turbo_lora_8step.safetensors	0.19	arrived, no plan row	rendered	rendered mini-max-music3/music3_turbo8 (61.0 s); looked at: 60 s of audio at 8 steps, -18.6 LUFS, LRA 9.4, peak -1.4 dBFS; the spectrum shows a quiet intro then regular beat transients and harmonic content to the end, no silence (read from the spectrum and loudness, not listened to) (2026-11-02)
+MiniMax-H3	MiniMax_H3_Ref2VA_pruned_nvfp4.safetensors	12.53	arrived, no plan row	rendered	rendered minimax-h3/video_minimax_h3_fun_controlnet_union (385.6 s); looked at: thumbnail sheet, two frames differ, on brief
+MiniMax-H3	minimax_h3_audio_vae_fp32.safetensors	0.61	arrived, no plan row	rendered	rendered minimax-h3/video_minimax_h3_fun_controlnet_union (385.6 s); looked at: thumbnail sheet, two frames differ, on brief
+MiniMax-H3	minimax_h3_audio_vae_fp32.safetensors	0.61	arrived, no plan row	rendered	rendered minimax-h3/video_minimax_h3_fun_controlnet_union (385.6 s); looked at: thumbnail sheet, two frames differ, on brief
+MiniMax-H3	minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors	1.96	arrived, no plan row	rendered	rendered minimax-h3/image_minimax_h3_t2i (30.2 s); looked at: thumbnail sheet, on brief
+MiniMax-H3	minimax_h3_fl2va_pruned_int8_convrot.safetensors	20.97	arrived, no plan row	rendered	rendered minimax-h3/image_minimax_h3_t2i (30.2 s); looked at: thumbnail sheet, on brief
+MiniMax-H3	minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors	2.3	arrived, no plan row	rendered	rendered minimax-h3/video_minimax_h3_fun_controlnet_union (385.6 s); looked at: thumbnail sheet, two frames differ, on brief
+MiniMax-H3	minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors	1.96	arrived, no plan row	rendered	rendered minimax-h3/video_minimax_h3_fun_controlnet_union (385.6 s); looked at: thumbnail sheet, two frames differ, on brief
+MiniMax-H3	minimax_h3_ref2va_pruned_int8_convrot.safetensors	20.97	arrived, no plan row	rendered	rendered minimax-h3/video_minimax_h3_fun_controlnet_union (385.6 s); looked at: thumbnail sheet, two frames differ, on brief
+MiniMax-H3	minimax_h3_video_vae_fp16.safetensors	5.21	arrived, no plan row	rendered	rendered minimax-h3/image_minimax_h3_t2i (30.2 s); looked at: thumbnail sheet, on brief
+MiniMax-H3	qwen3-vl-32b-minimax-h3-nvfp4-awq.safetensors	15.69	arrived, no plan row	rendered	rendered minimax-h3/image_minimax_h3_t2i (30.2 s); looked at: thumbnail sheet, on brief
+MoGe	moge_3_vitg_fp16.safetensors	2.5	Repo coverage	rendered	rendered moss-image/image_moss_image_color_depth_control (30.5 s); looked at: thumbnail sheet, on brief
+Moss-Image	flux2-vae_small.safetensors	0.25	VAE	rendered	rendered moss-image/image_moss_image_color_depth_control (30.5 s); looked at: thumbnail sheet, on brief
+Moss-Image	moss_image_color_depth_control.safetensors	0.31	Repo coverage	rendered	rendered moss-image/image_moss_image_color_depth_control (30.5 s); looked at: thumbnail sheet, on brief
+Moss-Image	moss_image_sft_int8_convrot.safetensors	5.41	Image generation	rendered	rendered moss-image/image_moss_image_color_depth_control (30.5 s); looked at: thumbnail sheet, on brief
+Moss-Image	qwen3.5_9b_int8_convrot.safetensors	9.75	arrived, no plan row	rendered	rendered moss-image/image_moss_image_color_depth_control (30.5 s); looked at: thumbnail sheet, on brief
+Omnigen-2	omnigen2_fp16.safetensors	7.93	Image generation	rendered	rendered omnigen-2/image_omnigen2_image_edit (30.6 s); looked at: thumbnail sheet, on brief
+Omnigen-2	qwen_2.5_vl_fp16.safetensors	7.51	arrived, no plan row	rendered	rendered omnigen-2/image_omnigen2_image_edit (30.6 s); looked at: thumbnail sheet, on brief
+Ovis-Image	ovis_2.5.safetensors	5.14	arrived, no plan row	rendered	rendered ovis-image/image_ovis_text_to_image (30.4 s); looked at: shown a young child; do not use as a public sample
+Ovis-Image	ovis_image_bf16.safetensors	14.74	Image generation	rendered	rendered ovis-image/image_ovis_text_to_image (30.4 s); looked at: shown a young child; do not use as a public sample
+PixArt-Sigma	diffusion_pytorch_model.safetensors	0.31	Family completion	rendered	rendered sdxl/sdxl_vae_fp16_fix_t2i (30.4 s); looked at: thumbnail sheet, on brief
+PixArt-Sigma	sdxl_vae.safetensors	0.33	arrived, no plan row	rendered	rendered pixart-sigma/pixart_sigma_core_t2i (25.7 s); looked at: thumbnail sheet, on brief
+PixelDiT	gemma_2_2b_it_elm_bf16.safetensors	5.23	arrived, no plan row	rendered	rendered pixeldit/image_pixeldit_t2i (10.2 s); looked at: thumbnail sheet, on brief
+PixelDiT	pid_flux1_1024_to_4096_4step_bf16.safetensors	2.72	Repo coverage	rendered	rendered z-image/utility_pid_latent_upscale_dit (57.3 s); looked at: thumbnail sheet, on brief
+PixelDiT	pixeldit_1300m_1024px_bf16.safetensors	2.6	Image generation	rendered	rendered pixeldit/image_pixeldit_t2i (10.2 s); looked at: thumbnail sheet, on brief
+Qwen-Image-2.1	QWEN_EDIT_ACTION_V1.safetensors	0.3	Repo coverage	rendered	rendered qwen-image-2-1/template_qwen_image_edit_2511_systms_action (42.7 s); looked at: thumbnail sheet, small edit, scene kept
+Qwen-Image-2.1	Qwen-Image-2512-Fun-Controlnet-Union-2602.safetensors	3.51	Repo coverage	rendered	rendered qwen-image-2-1/image_qwen_Image_2512_controlnet (61.0 s); not looked at yet
+Qwen-Image-2.1	Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors	1.7	Repo coverage	rendered	rendered qwen-image-2-1/image_qwen_Image_2512 (76.3 s); not looked at yet
+Qwen-Image-2.1	Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors	0.85	Repo coverage	rendered	rendered qwen-image-2-1/image_qwen_image_edit_2509 (30.3 s); looked at: thumbnail sheet, edit visible, scene kept
+Qwen-Image-2.1	Qwen-Image-Edit-2509-Relight.safetensors	0.24	Repo coverage	rendered	rendered qwen-image-2-1/image_qwen_image_edit_2509_relight (25.2 s); looked at: thumbnail sheet, relit warm, scene kept
+Qwen-Image-2.1	Qwen-Image-Edit-2511-Lightning-4steps-V1.0-bf16.safetensors	0.85	Repo coverage	rendered	rendered qwen-image-2-1/image_qwen_image_edit_2511 (117.4 s); looked at: thumbnail sheet, raincoat changed to a fur coat, street kept
+Qwen-Image-2.1	Qwen-Image-Lightning-4steps-V1.0.safetensors	1.7	Repo coverage	rendered	rendered qwen-image-2-1/image_qwen_Image_2512_controlnet (61.0 s); not looked at yet
+Qwen-Image-2.1	Qwen_Image_Edit_2511-SYSTMS_INFL8.safetensors	0.3	Repo coverage	rendered	rendered qwen-image-2-1/image-qwen_image_edit_2511_lora_inflation (70.3 s); looked at: thumbnail sheet, on brief
+Qwen-Image-2.1	Wuli-Qwen-Image-2512-Turbo-LoRA-2steps-V1.0-bf16.safetensors	2.36	Repo coverage	rendered	rendered qwen-image-2-1/image_qwen_image_2512_with_2steps_lora (10.3 s); not looked at yet
+Qwen-Image-2.1	mage_flow_int8_convrot.safetensors	4.16	Image generation	rendered	rendered qwen-image-2-1/mage_flow_int8_t2i (20.3 s); looked at: thumbnail sheet, on brief
+Qwen-Image-2.1	mage_flow_vae_bf16.safetensors	0.35	arrived, no plan row	rendered	rendered qwen-image-2-1/mage_flow_int8_t2i (20.3 s); looked at: thumbnail sheet, on brief
+Qwen-Image-2.1	qwen-360-diffusion-2512-int8-bf16-v2.safetensors	0.76	Repo coverage	rendered	rendered qwen-image-2-1/template_qwen_Image_2512_360_lora (70.9 s); not looked at yet
+Qwen-Image-2.1	qwen-image-2.1-outfit-swap.safetensors	0.16	arrived, no plan row	rendered	rendered qwen-image-2-1/qwen21_tryon (53.7 s); looked at: garment faithful, jeans left under dress
+Qwen-Image-2.1	qwen3.5_9b_qwen_image_2.1_pe_i2i.int8_convrot.safetensors	9.47	arrived, no plan row	rendered	rendered qwen-image-2-1/image_qwen_image_2_1_image_edit (30.2 s); looked at: thumbnail sheet, coat turned red, scene kept
+Qwen-Image-2.1	qwen3vl_8b_turbo_nvfp4.safetensors	9.33	arrived, no plan row	rendered	rendered qwen-image-2-1/qwen21_turbo_nvfp4te_t2i (25.2 s); looked at: thumbnail sheet, on brief
+Qwen-Image-2.1	qwen_image_2.1_bf16.safetensors	14.23	Image generation	rendered	rendered qwen-image-2-1/qwen21_t2i (30.2 s); looked at: thumbnail sheet, on brief
+Qwen-Image-2.1	qwen_image_2.1_turbo_bf16.safetensors	14.23	Image generation	rendered	rendered qwen-image-2-1/qwen21_turbo_t2i (20.2 s); looked at: thumbnail sheet, on brief
+Qwen-Image-2.1	qwen_image_2.1_vae_bf16.safetensors	0.68	VAE	rendered	rendered qwen-image-2-1/image_qwen_image_2_1_background_removal (30.2 s); looked at: thumbnail sheet, figure cut out on flat colour
+Qwen-Image-2.1	qwen_image_edit_2509_int8_convrot.safetensors	20.5	Image generation	rendered	rendered qwen-image-2-1/qwen_image_edit_2509_int8 (40.3 s); looked at: thumbnail sheet, on brief
+Qwen-Image-2.1	qwen_image_edit_2511_fp8mixed.safetensors	20.53	Image generation	rendered	rendered qwen-image-2-1/image_qwen_image_edit_2511 (117.4 s); looked at: thumbnail sheet, raincoat changed to a fur coat, street kept
+SAM-3D-Body	moge_2_vitl_normal_fp16.safetensors	0.62	Vision tools (segment, depth, pose, detect, OCR)	rendered	rendered sam-3d-body/utility_sam3d_body (255.2 s); looked at: body mesh viewed
+SAM-3D-Body	sam_3d_body_dinov3_bf16.safetensors	2.64	Vision tools (segment, depth, pose, detect, OCR)	rendered	rendered sam-3d-body/utility_sam3d_body (255.2 s); looked at: body mesh viewed
+SAM-3D-Objects	slat_decoder_gs.ckpt	0.16	Vision tools (segment, depth, pose, detect, OCR)	rendered	tool run sam3d_objects (210.0 s, families/sam3d-objects_turn.webp); looked at: turntable: good shape, colour uneven
+SAM-3D-Objects	slat_decoder_gs_4.ckpt	0.16	Vision tools (segment, depth, pose, detect, OCR)	rendered	tool run sam3d_objects (210.0 s, families/sam3d-objects_turn.webp); looked at: turntable: good shape, colour uneven
+SAM-3D-Objects	slat_decoder_mesh.ckpt	0.34	Vision tools (segment, depth, pose, detect, OCR)	rendered	tool run sam3d_objects (210.0 s, families/sam3d-objects_turn.webp); looked at: turntable: good shape, colour uneven
+SAM-3D-Objects	slat_decoder_mesh.pt	0.34	Vision tools (segment, depth, pose, detect, OCR)	rendered	tool run sam3d_objects (210.0 s, families/sam3d-objects_turn.webp); looked at: turntable: good shape, colour uneven
+SAM-3D-Objects	slat_generator.ckpt	4.57	Vision tools (segment, depth, pose, detect, OCR)	rendered	tool run sam3d_objects (210.0 s, families/sam3d-objects_turn.webp); looked at: turntable: good shape, colour uneven
+SAM-3D-Objects	ss_decoder.ckpt	0.14	Vision tools (segment, depth, pose, detect, OCR)	rendered	tool run sam3d_objects (210.0 s, families/sam3d-objects_turn.webp); looked at: turntable: good shape, colour uneven
+SAM-3D-Objects	ss_encoder.ckpt	0.11	Vision tools (segment, depth, pose, detect, OCR)	rendered	tool run sam3d_objects (210.0 s, families/sam3d-objects_turn.webp); looked at: turntable: good shape, colour uneven
+SAM-3D-Objects	ss_generator.ckpt	6.23	Vision tools (segment, depth, pose, detect, OCR)	rendered	tool run sam3d_objects (210.0 s, families/sam3d-objects_turn.webp); looked at: turntable: good shape, colour uneven
+SD15	CLIP-ViT-H-fp16.safetensors	1.26	arrived, no plan row	rendered	rendered sd15/ipa_ip_adapter_sd15 (20.3 s); looked at: SD 1.5 + IP-Adapter: a black mug with a gold handle on a coaster; the reference's black and gold carried onto a prompt that names neither colour (2026-11-02)
+SD15	DreamShaper_8_pruned.safetensors	2.13	Image generation	rendered	rendered sd15/sd15_core_t2i (15.3 s); looked at: thumbnail sheet, on brief
+SD15	diffusion_pytorch_model.fp16.safetensors	1.72	Image generation	rendered	rendered sd15/sd15_diffusers_unet_t2i (15.1 s); looked at: thumbnail sheet, on brief
+SD15	instruct-pix2pix-00-22000.safetensors	7.7	Image generation	rendered	rendered sd15/sd15_instruct_pix2pix (20.2 s); looked at: edit visible
+SD15	ip-adapter-full-face_sd15.safetensors	0.04	Family completion	rendered	rendered sd15/ipa_ip_adapter_full_face_sd15 (25.3 s); looked at: SD 1.5 + IP-Adapter Full Face: the same invented woman, closest likeness, holding a cup in a cafe, fully clothed (2026-11-02)
+SD15	ip-adapter-plus-face_sd15.safetensors	0.09	Family completion	rendered	rendered sd15/ipa_ip_adapter_plus_face_sd15 (30.4 s); looked at: SD 1.5 + IP-Adapter Plus Face: an adult woman in a green sweater in a cafe with the reference's dark straight hair and brows; reference is an invented Z-Image person (2026-11-02)
+SD15	ip-adapter-plus_sd15.safetensors	0.09	Family completion	rendered	rendered sd15/ipa_ip_adapter_plus_sd15 (25.3 s); looked at: SD 1.5 + IP-Adapter Plus: a black cup with a gold rim on reflective glass, very close to the reference's look (2026-11-02)
+SD15	ip-adapter_sd15.safetensors	0.04	Family completion	rendered	rendered sd15/ipa_ip_adapter_sd15 (20.3 s); looked at: SD 1.5 + IP-Adapter: a black mug with a gold handle on a coaster; the reference's black and gold carried onto a prompt that names neither colour (2026-11-02)
+SD15	ip-adapter_sd15_light.safetensors	0.04	Family completion	rendered	rendered sd15/ipa_ip_adapter_sd15_light (25.3 s); looked at: SD 1.5 + IP-Adapter light: a black and gold kitchen scene with a small pot and cup; steered but the loosest likeness (2026-11-02)
+SD15	ip-adapter_sd15_vit-G.safetensors	0.04	Family completion	rendered	rendered sd15/ipa_ip_adapter_sd15_vit_g (25.3 s); looked at: SD 1.5 + IP-Adapter ViT-G: a black cup and saucer with gold rims (2026-11-02)
+SD15	model.fp16.safetensors	0.25	arrived, no plan row	rendered	rendered sd15/sd15_clip_sd11_t2i (20.2 s); looked at: thumbnail sheet, on brief
+SD15	model.safetensors	0.49	arrived, no plan row	rendered	rendered sd15/sd15_clip_sd14_t2i (15.1 s); looked at: thumbnail sheet, on brief
+SD15	model.safetensors	0.49	arrived, no plan row	rendered	rendered sd15/sd15_clip_fofr_t2i (15.1 s); looked at: thumbnail sheet, on brief
+SD15	v1-5-pruned-emaonly.safetensors	4.27	Image generation	rendered	rendered sd15/sd15_v15_pruned_t2i (15.1 s); looked at: thumbnail sheet, on brief
+SD3-SD3.5	clip_g.safetensors	1.39	arrived, no plan row	rendered	rendered sd3-sd3-5/sd35_large_t2i (25.2 s); looked at: thumbnail sheet, on brief
+SD3-SD3.5	ip-adapter_sd35_large.bin	1.49	Family completion	rendered	rendered sd3-sd3-5/ipa_sd35_large_instantx (47.0 s); looked at: WEAK: SD 3.5 Large + InstantX IP-Adapter: a black matte rounded container on a wooden table in a dark kitchen; the reference's black matte look carried over but not the mug's shape or gold rim (2026-11-02)
+SD3-SD3.5	sd3.5_large.safetensors	16.46	Image generation	rendered	rendered sd3-sd3-5/sd35_large_t2i (25.2 s); looked at: thumbnail sheet, on brief
+SD3-SD3.5	sd3.5_large.safetensors	16.46	arrived, no plan row	rendered	rendered sd3-sd3-5/sd35_large_t2i (25.2 s); looked at: thumbnail sheet, on brief
+SD3-SD3.5	sd3.5_medium.safetensors	5.11	Image generation	rendered	rendered sd3-sd3-5/sd35_medium_t2i (20.2 s); looked at: thumbnail sheet, on brief
+SD3-SD3.5	sd3.5_medium.safetensors	5.11	arrived, no plan row	rendered	rendered sd3-sd3-5/sd35_medium_t2i (20.2 s); looked at: thumbnail sheet, on brief
+SD3-SD3.5	sd3_medium.safetensors	4.34	Image generation	rendered	rendered sd3-sd3-5/sd3_medium_t2i (30.4 s); looked at: thumbnail sheet, on brief
+SD3-SD3.5	sigclip_vision_patch14_384.safetensors	0.86	Repo coverage	rendered	rendered sd3-sd3-5/ipa_sd35_large_instantx (47.0 s); looked at: WEAK: SD 3.5 Large + InstantX IP-Adapter: a black matte rounded container on a wooden table in a dark kitchen; the reference's black matte look carried over but not the mug's shape or gold rim (2026-11-02)
+SD3-SD3.5	sigclip_vision_patch14_384.safetensors	0.86	arrived, no plan row	rendered	rendered sd3-sd3-5/ipa_sd35_large_instantx (47.0 s); looked at: WEAK: SD 3.5 Large + InstantX IP-Adapter: a black matte rounded container on a wooden table in a dark kitchen; the reference's black matte look carried over but not the mug's shape or gold rim (2026-11-02)
+SDPose	rt_detr_v4-x-hgnet_fp16.safetensors	0.12	Repo coverage	rendered	rendered minimax-h3/video_minimax_h3_fun_controlnet_union (385.6 s); looked at: thumbnail sheet, two frames differ, on brief
+SDPose	rt_detr_v4-x-hgnet_fp32.safetensors	0.25	Repo coverage	rendered	rendered sam-3d-body/utility_sam3d_body (255.2 s); looked at: body mesh viewed
+SDPose	sdpose_wholebody_fp16.safetensors	1.92	Repo coverage	rendered	rendered minimax-h3/video_minimax_h3_fun_controlnet_union (385.6 s); looked at: thumbnail sheet, two frames differ, on brief
+SDXL	CLIP-VIT-H-LAION.safetensors	3.94	arrived, no plan row	rendered	rendered sdxl/ipa_ip_adapter_sdxl_vit_h (35.4 s); looked at: SDXL + IP-Adapter ViT-H: two black mugs with gold rims and handles (2026-11-02)
+SDXL	clip_vision_g.safetensors	3.69	clip vision (hardlink)	rendered	rendered sdxl/sdxl_revision_clip_g (20.3 s); looked at: thumbnail sheet, on brief
+SDXL	clip_vision_g.safetensors	3.69	arrived, no plan row	rendered	rendered sdxl/sdxl_revision_clip_g (20.3 s); looked at: thumbnail sheet, on brief
+SDXL	diffusion_pytorch_model.safetensors	2.5	Planned, image/diffusion	rendered	rendered sdxl/sdxl_controlnet_openpose (74.8 s); looked at: WEAK: ran but followed the pose loosely, cropped legs
+SDXL	diffusion_pytorch_model.safetensors	2.5	Planned, image/diffusion	rendered	rendered sdxl/sdxl_controlnet_depth (30.4 s); looked at: SDXL + xinsir depth: the Lotus depth map of the rainy street became a snowy evening street with lit shop windows, cars and a person in a red hooded coat, the street, cars and figure in the same places as the map (2026-11-02)
+SDXL	diffusion_pytorch_model.safetensors	2.5	Planned, image/diffusion	rendered	rendered sdxl/sdxl_controlnet_scribble (35.5 s); looked at: SDXL + xinsir scribble: the hand-drawn white-on-black house, tree and sun became a watercolour red cottage with two windows, a door, a round tree and the sun top left, every shape where the scribble put it (2026-11-02)
+SDXL	diffusion_pytorch_model.safetensors	2.5	Planned, image/diffusion	rendered	rendered sdxl/sdxl_controlnet_tile (25.3 s); looked at: SDXL + xinsir tile: a 128-px bear blown up to 1024 came back with defined fur strands, a visible eye and the same pose and outline; a few white flecks in the fur (strength 0.6, denoise 0.9; the first run at 0.8/0.65 stayed soft and is not counted) (2026-11-02)
+SDXL	diffusion_pytorch_model_twins.safetensors	2.5	Planned, image/diffusion	rendered	rendered sdxl/sdxl_controlnet_openpose_twins (30.3 s); looked at: WEAK: ran, pose followed loosely
+SDXL	ip-adapter-plus-face_sdxl_vit-h.safetensors	0.79	Family completion	rendered	rendered sdxl/ipa_ip_adapter_plus_face_sdxl_vit_h (40.7 s); looked at: SDXL + IP-Adapter Plus Face ViT-H: the invented woman's face and hair, in a green cardigan; it also carried the reference's white tee and grey backdrop, so the cafe in the prompt is lost (2026-11-02)
+SDXL	ip-adapter-plus_sdxl_vit-h.safetensors	0.79	Family completion	rendered	rendered sdxl/ipa_ip_adapter_plus_sdxl_vit_h (20.2 s); looked at: SDXL + IP-Adapter Plus ViT-H: a dark grey mug with a gold rim on reflective glass, closest to the reference (2026-11-02)
+SDXL	ip-adapter_sdxl.safetensors	0.65	Family completion	rendered	rendered sdxl/ipa_ip_adapter_sdxl (35.4 s); looked at: SDXL + IP-Adapter: a black cup with a gold rim on a wooden saucer (2026-11-02)
+SDXL	ip-adapter_sdxl_vit-h.safetensors	0.65	Family completion	rendered	rendered sdxl/ipa_ip_adapter_sdxl_vit_h (35.4 s); looked at: SDXL + IP-Adapter ViT-H: two black mugs with gold rims and handles (2026-11-02)
+SDXL	leosamsHelloworldXL_helloworldXL70.safetensors	6.94	Image generation	rendered	rendered sdxl/sdxl_helloworldxl70_t2i (25.2 s); looked at: HelloWorld XL 7.0: photoreal elderly fisherman in a cable-knit sweater and cap mending a net on a wooden pier, morning mist on the water; clean hands and net (2026-11-02)
+SDXL	sd_xl_base_1.0.safetensors	6.94	Image generation	rendered	rendered sdxl/image_sdxl_simple (20.2 s); looked at: thumbnail sheet, on brief
+SDXL	sd_xl_base_1.0_unet_fp16.safetensors	5.14	Image generation	rendered	rendered sdxl/sdxl_unet_fp16_t2i (25.2 s); looked at: thumbnail sheet, on brief
+SDXL	sd_xl_refiner_1.0.safetensors	6.08	Image generation	rendered	rendered sdxl/sdxl_refiner_prompt_example (20.2 s); looked at: thumbnail sheet, on brief
+SDXL	sd_xl_turbo_1.0_fp16.safetensors	6.94	Image generation	rendered	rendered sdxl/sdxlturbo_example (15.2 s); looked at: thumbnail sheet, on brief
+SDXL	xinsir_openpose_sdxl.safetensors	2.5	arrived, no plan row	rendered	rendered sdxl/sdxl_controlnet_openpose (74.8 s); looked at: WEAK: ran but followed the pose loosely, cropped legs
+SDXL	xinsir_openpose_sdxl_twins.safetensors	2.5	arrived, no plan row	rendered	rendered sdxl/sdxl_controlnet_openpose_twins (30.3 s); looked at: WEAK: ran, pose followed loosely
+SVD	svd_xt_1_1.safetensors	4.78	Image generation	rendered	rendered svd/svd_xt_1_1_i2v (65.7 s); looked at: real motion clip
+SeedVR2	seedvr2_3b_int8_convrot.safetensors	3.46	Repo coverage	rendered	rendered seedvr2/utility_seedvr2_3b_int8_upscale_image (36.7 s); looked at: thumbnail sheet, on brief
+SeedVR2	seedvr2_ema_vae_fp16.safetensors	0.5	Repo coverage	rendered	rendered seedvr2/utility_seedvr2_3b_int8_upscale_image (36.7 s); looked at: thumbnail sheet, on brief
+Shap-E	diffusion_pytorch_model.bin	0.84	3D generation	rendered	tool run shap_e (41.8 s, families/shap-e_turn.webp); looked at: turntable: simple correct object
+Shap-E	diffusion_pytorch_model.fp16.safetensors	0.59	3D generation	rendered	tool run shap_e (41.8 s, families/shap-e_turn.webp); looked at: turntable: simple correct object
+Shap-E	diffusion_pytorch_model.fp16.safetensors	0.42	3D generation	rendered	tool run shap_e (41.8 s, families/shap-e_turn.webp); looked at: turntable: simple correct object
+Stable-Cascade	stable_cascade_stage_b.safetensors	4.55	Image generation	rendered	rendered stable-cascade/stable_cascade_core_t2i (20.2 s); looked at: thumbnail sheet, on brief
+Stable-Cascade	stable_cascade_stage_c.safetensors	9.22	Image generation	rendered	rendered stable-cascade/stable_cascade_core_t2i (20.2 s); looked at: thumbnail sheet, on brief
+TRELLIS-2-4B	dino_v3_L_naf_fp32.safetensors	1.22	arrived, no plan row	rendered	rendered trellis-2-4b/trellis2_image_to_mesh (142.1 s); looked at: turntable: detailed bear, baked texture
+TRELLIS-2-4B	trellis_2_int8_convrot.safetensors	4.89	3D generation	rendered	rendered trellis-2-4b/trellis2_image_to_mesh (142.1 s); looked at: turntable: detailed bear, baked texture
+TRELLIS-2-4B	trellis_2_shape_vae_bf16.safetensors	1.1	arrived, no plan row	rendered	rendered trellis-2-4b/trellis2_image_to_mesh (142.1 s); looked at: turntable: detailed bear, baked texture
+TRELLIS-2-4B	trellis_2_texture_vae_bf16.safetensors	0.95	arrived, no plan row	rendered	rendered trellis-2-4b/trellis2_image_to_mesh (142.1 s); looked at: turntable: detailed bear, baked texture
+TripoSplat	birefnet.safetensors	0.44	background removal	rendered	rendered TripoSplat/3d_triposplat_image_to_gaussian_splat (families/triposplat_turn.webp); looked at: splat turntable: bear
+TripoSplat	dino_v3_vit_h.safetensors	1.68	Repo coverage	rendered	rendered TripoSplat/3d_triposplat_image_to_gaussian_splat (families/triposplat_turn.webp); looked at: splat turntable: bear
+TripoSplat	triposplat_fp16.safetensors	0.69	3D generation	rendered	rendered TripoSplat/3d_triposplat_image_to_gaussian_splat (families/triposplat_turn.webp); looked at: splat turntable: bear
+TripoSplat	triposplat_vae_decoder_fp16.safetensors	0.58	arrived, no plan row	rendered	rendered TripoSplat/3d_triposplat_image_to_gaussian_splat (families/triposplat_turn.webp); looked at: splat turntable: bear
+UniRig	skeleton_model.ckpt	1.44	Image generation	rendered	tool run unirig (129.2 s, families/unirig_vs_skintokens.webp); looked at: pose test: bends with less tearing, neck stretches
+UniRig	skin_model.ckpt	4.38	Image generation	rendered	tool run unirig (129.2 s, families/unirig_vs_skintokens.webp); looked at: pose test: bends with less tearing, neck stretches
+Wan-SCAIL-2	lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors	0.74	Repo coverage	rendered	rendered Wan-SCAIL-2/motion_scail2 (motion/scail2_0.mp4); not looked at yet
+Wan-SCAIL-2	wan2.1_14B_SCAIL_2_nvfp4_mxpf8_mix.safetensors	11.02	Video generation	rendered	rendered Wan-SCAIL-2/motion_scail2 (motion/scail2_0.mp4); not looked at yet
+Wan-SCAIL-2	wan2.1_SCAIL_2_DPO_lora_bf16.safetensors	1.23	Repo coverage	rendered	rendered Wan-SCAIL-2/motion_scail2 (motion/scail2_0.mp4); not looked at yet
+Wan2.1	causal_forcing-framewise.safetensors	5.68	Planned, video	rendered	rendered wan2-1/video_causal_forcing_i2v (61.0 s); looked at: thumbnail sheet, two frames, starts from the picture and moves
+Wan2.1	clip_vision_h.safetensors	1.26	arrived, no plan row	rendered	rendered wan2-1/video_wan2.1_fun_camera_v1.1_1.3B (46.0 s); looked at: thumbnail sheet, two frames differ, on brief
+Wan2.1	lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors	0.63	Repo coverage	rendered	rendered wan2-1/video_wan2.1_alpha_t2v_14B (96.1 s); not looked at yet
+Wan2.1	wan2.1_fun_camera_v1.1_1.3B_bf16.safetensors	3.23	Video generation	rendered	rendered wan2-1/video_wan2.1_fun_camera_v1.1_1.3B (46.0 s); looked at: thumbnail sheet, two frames differ, on brief
+Wan2.1	wan2.1_fun_control_1.3B_bf16.safetensors	3.13	Repo coverage	rendered	rendered wan2-1/wan2.1_fun_control (164.4 s); looked at: thumbnail sheet, two frames differ, on brief
+Wan2.1	wan2.1_fun_inp_1.3B_bf16.safetensors	3.13	Repo coverage	rendered	rendered wan2-1/wan2.1_fun_inp (101.6 s); looked at: thumbnail sheet, two frames differ, on brief
+Wan2.1	wan2.1_t2v_1.3B_fp16.safetensors	2.84	Video generation	rendered	rendered wan2-1/text_to_video_wan (61.8 s); looked at: thumbnail sheet, two frames differ, on brief
+Wan2.1	wan2.1_t2v_14B_fp8_scaled.safetensors	14.29	Video generation	rendered	rendered wan2-1/video_wan2.1_alpha_t2v_14B (96.1 s); not looked at yet
+Wan2.1	wan_alpha_2.1_rgba_lora.safetensors	0.31	Repo coverage	rendered	rendered wan2-1/video_wan2.1_alpha_t2v_14B (96.1 s); not looked at yet
+Wan2.1	wan_alpha_2.1_vae_alpha_channel.safetensors	0.25	Repo coverage	rendered	rendered wan2-1/video_wan2.1_alpha_t2v_14B (96.1 s); not looked at yet
+Wan2.1	wan_alpha_2.1_vae_rgb_channel.safetensors	0.25	Repo coverage	rendered	rendered wan2-1/video_wan2.1_alpha_t2v_14B (96.1 s); not looked at yet
+Wan2.2	Wan2_2-T2V-A14B-HIGH_fp8_e4m3fn_scaled_KJ.safetensors	15.0	Video generation	rendered	rendered wan2-2/wan22_14b_t2v_kj (258.3 s); looked at: thumbnail sheet of the 81-frame clip: a red sailboat with a white sail crossing turquoise water with a wake and gulls, the camera drifting with it; bright daylight rather than the golden hour asked for (2026-11-02)
+Wan2.2	Wan2_2-T2V-A14B-LOW_fp8_e4m3fn_scaled_KJ.safetensors	15.0	Video generation	rendered	rendered wan2-2/wan22_14b_t2v_kj (258.3 s); looked at: thumbnail sheet of the 81-frame clip: a red sailboat with a white sail crossing turquoise water with a wake and gulls, the camera drifting with it; bright daylight rather than the golden hour asked for (2026-11-02)
+Wan2.2	wan2.2_fun_camera_high_noise_14B_fp8_scaled.safetensors	15.3	Video generation	rendered	rendered wan2-2/video_wan2_2_14B_fun_camera (307.7 s); looked at: thumbnail sheet, two frames, camera moves
+Wan2.2	wan2.2_fun_camera_low_noise_14B_fp8_scaled.safetensors	15.3	Video generation	rendered	rendered wan2-2/video_wan2_2_14B_fun_camera (307.7 s); looked at: thumbnail sheet, two frames, camera moves
+Wan2.2	wan2.2_fun_control_5B_bf16.safetensors	10.0	Video generation	rendered	rendered wan2-2/video_wan2_2_5B_fun_control (90.9 s); looked at: thumbnail sheet, two frames, follows the clip's framing
+Wan2.2	wan2.2_fun_control_high_noise_14B_fp8_scaled.safetensors	14.3	Video generation	rendered	rendered wan2-2/video_wan2_2_14B_fun_control (232.0 s); looked at: thumbnail sheet, two frames, follows the control clip
+Wan2.2	wan2.2_fun_control_low_noise_14B_fp8_scaled.safetensors	14.3	Video generation	rendered	rendered wan2-2/video_wan2_2_14B_fun_control (232.0 s); looked at: thumbnail sheet, two frames, follows the control clip
+Wan2.2	wan2.2_fun_inpaint_5B_bf16.safetensors	10.0	Video generation	rendered	rendered wan2-2/video_wan2_2_5B_fun_inpaint (60.5 s); looked at: thumbnail sheet, two frames, street kept
+Wan2.2	wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors	14.29	Video generation	rendered	rendered wan2-2/templates-6-key-frames (41.0 s); not looked at yet
+Wan2.2	wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors	1.23	Repo coverage	rendered	rendered wan2-2/templates-6-key-frames (41.0 s); not looked at yet
+Wan2.2	wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors	1.23	Repo coverage	rendered	rendered wan2-2/templates-6-key-frames (41.0 s); not looked at yet
+Wan2.2	wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors	14.29	Video generation	rendered	rendered wan2-2/templates-6-key-frames (41.0 s); not looked at yet
+Wan2.2	wan2.2_t2v_lightx2v_4steps_lora_v1.1_high_noise.safetensors	1.23	Repo coverage	rendered	rendered wan2-2/wan22_14b_t2v_kj (258.3 s); looked at: thumbnail sheet of the 81-frame clip: a red sailboat with a white sail crossing turquoise water with a wake and gulls, the camera drifting with it; bright daylight rather than the golden hour asked for (2026-11-02)
+Wan2.2	wan2.2_t2v_lightx2v_4steps_lora_v1.1_low_noise.safetensors	1.23	Repo coverage	rendered	rendered wan2-2/wan22_14b_t2v_kj (258.3 s); looked at: thumbnail sheet of the 81-frame clip: a red sailboat with a white sail crossing turquoise water with a wake and gulls, the camera drifting with it; bright daylight rather than the golden hour asked for (2026-11-02)
+Wan2.2	wan2.2_ti2v_5B_fp16.safetensors	10.0	Video generation	rendered	rendered matrix-3d/video_wan2_2_5B_ti2v (90.7 s); looked at: thumbnail sheet, two frames differ, on brief
+Wan2.2-Animate	Wan2_1_VAE_bf16.safetensors	0.25	Repo coverage	rendered	rendered Wan2.2-Animate/video_wan_animate2_distilled (families/wan2-2-animate_0.webp); not looked at yet
+Wan2.2-Animate	wan_animate_2_distill_int8_convrot.safetensors	16.65	Motion and character animation	rendered	rendered Wan2.2-Animate/video_wan_animate2_distilled (families/wan2-2-animate_0.webp); not looked at yet
+Z-Image	Z-Image-Turbo-Fun-Controlnet-Union.safetensors	3.1	Repo coverage	rendered	rendered z-image/image_z_image_turbo_fun_union_controlnet (30.7 s); looked at: WEAK: garbled face collage over the street
+Z-Image	pixel_art_style_z_image_turbo.safetensors	0.17	Repo coverage	rendered	rendered z-image/basic_switch_node (25.5 s); looked at: thumbnail sheet, on brief
+Z-Image	z_image_bf16.safetensors	12.31	Image generation	rendered	rendered z-image/image_z_image (30.2 s); looked at: thumbnail sheet, on brief
+Z-Image	z_image_turbo_bf16.safetensors	12.31	Image generation	rendered	rendered z-image/image_z_image_turbo (25.4 s); looked at: thumbnail sheet, on brief
+frame_interpolation	rife_v4.25.safetensors	0.02	Family completion	rendered	rendered frame-interpolation/frame_interp_rife_v4_25 (50.8 s); looked at: thumbnail sheet, two frames, clip interpolated
+frame_interpolation	rife_v4.25_heavy.safetensors	0.08	Family completion	rendered	rendered frame-interpolation/frame_interp_rife_v4_25_heavy (50.7 s); looked at: thumbnail sheet, two frames, clip interpolated
+frame_interpolation	rife_v4.25_lite.safetensors	0.02	Family completion	rendered	rendered frame-interpolation/frame_interp_rife_v4_25_lite (35.4 s); looked at: thumbnail sheet, two frames, clip interpolated
+rife	film_net_fp16.safetensors	0.07	Repo coverage	rendered	rendered rife/utility_video_frame_interpolation (80.7 s); looked at: thumbnail sheet, two frames differ, on brief
+sam3	sam3.1_multiplex_fp16.safetensors	1.63	Vision tools (segment, depth, pose, detect, OCR)	rendered	rendered sam3/utility_video_segment_sam3 (45.6 s); looked at: thumbnail sheet, two frames differ, on brief
+upscale_models	RealESRGAN_x4plus.safetensors	0.07	upscaler	rendered	rendered upscale-models/utility-gan_upscaler (271.6 s); looked at: thumbnail sheet, two frames differ, on brief
+yue2	yue2_3b_int8_convrot.safetensors	3.96	Repo coverage	rendered	rendered yue2/audio_yue2_text2music (55.4 s); looked at: spectrogram only: structured sound, not listened to

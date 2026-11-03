@@ -49,3 +49,15 @@ RES4LYF's Sigmas Math nodes run their formula text through Python's eval. The pa
 The Sampling Lab credits list flags RES4LYF for runtime installs, decoded or dynamic code, a paid or partner API, and global patching of torch or ComfyUI. Those come from a keyword scan and a local model's reading, not a check by hand, and they are not a safety guarantee. [run: studio/sampling_lab/atlas.json] [code: studio/web/samplinglab.js:154]
 
 RES4LYF page facts are pinned to commit 56e4475 of 2026-10-01, so names and counts can drift from the live repo. The author calls the work experimental and subject to further changes. Some node notes mention options that look unfinished. Check the source link before relying on a detail. [code: studio/web/res4lyf.js:176, studio/web/res4lyf.js:186, studio/web/res4lyf.js:243]
+
+## Final session findings, 2026-11-03
+
+Sonar's WaveletCFG has no render on the blepping page. The run stopped with "Wavelet noise requires the pytorch_wavelets package"; the page's note says the library was installed in that environment but could not load, because it needs pkg_resources and that setuptools no longer has it. That is an environment failure, not a verdict on the node. [code: studio/web/blepping.js:26, studio/web/blepping_data.js]
+
+OCS ttm_jvp failed on SD 1.5 with a float and half-precision mismatch inside the step, because SD 1.5 ran in half precision there. A different precision might run; it was not tried. [code: studio/web/blepping.js:30, studio/web/blepping_data.js] [inference]
+
+The blepping page's OCS unsafe-expression test is meant to fail: OCS refused "unsafe_torch" with "Unsafe Torch access not allowed". The page does not count that refusal as a failure. It was rerun once after a malformed config. [code: studio/web/blepping_logic.js:16-20, studio/web/blepping_data.js] [claim: studio commit log, 2026-11-02]
+
+The blepping packs, like RES4LYF, are not installed in the studio. They ran only in a separate, throwaway ComfyUI, and the studio cannot run their nodes. [run: studio/sampling_lab/atlas.json] [code: studio/web/blepping_data.js]
+
+RES4LYF chapter 07 figures (stars, likes, last push, licence) are a snapshot from 2 November 2026 and will drift. Several of the author's Hugging Face repos state no licence. [code: studio/web/res4lyf.js:42, studio/web/res4lyf.js:46-48]

@@ -49,3 +49,23 @@ Every RES4LYF node has a note written from reading its source: what it does, whe
 To use RES4LYF you install it yourself in your own ComfyUI. The page gives the README's steps: clone the repo into custom_nodes, then pip install its requirements (opencv-python, matplotlib, pywavelets, numpy 1.26.4 or newer) in ComfyUI's environment. The README also recommends rgthree-comfy. Read the licence first. [code: studio/web/res4lyf.js:26-29, studio/web/res4lyf.js:255]
 
 The RES4LYF "What it can do" section is taken from the README and links to the author's example workflows: style transfer, anti-blur, regional conditioning, temporal conditioning, unsampling and video to video. Those feature and model lists are the author's and were not all tried here. [code: studio/web/res4lyf.js:31-38, studio/web/res4lyf.js:231] [claim: RES4LYF README]
+
+## Final session findings, 2026-11-03
+
+RES4LYF page chapter 07 is "More from ClownsharkBatwing" since 2026-11-02, and its entry in the chapter list reads "More". The chapters are now Story, Plates, The math, Samplers, What it does, Node map, More and Licence. [code: studio/web/res4lyf.js:40, studio/web/res4lyf.js:256] [test: tests/test_res4lyf_page.py, tests/test_res4lyf_look.py]
+
+RES4LYF chapter 07 lists the author's other public work as read on 2 November 2026: UltraCascade (a native ComfyUI version of UltraPixel for Stable Cascade, 38 stars, no licence file), the ComfyUI-UltraPixel fork, and three Hugging Face model repos (CSBW_Style, Cascade_Stage_B_CSBW_Refined, ultrapixel_convert). Each line comes from that project's own README or model card, and the page says plainly that none of them was run. [code: studio/web/res4lyf.js:41-48, studio/web/res4lyf.js:256]
+
+RES4LYF chapter 07 names, but does not describe, the forks that are not separate projects (ComfyUI-Manager, ComfyUI_LayerStyle and WAS Node Suite) and three Hugging Face repos with no model card. Its links may only point at the author's GitHub or Hugging Face, which a test holds. [code: studio/web/res4lyf.js:258] [test: tests/test_res4lyf_page.py]
+
+The blepping page is a thank-you page in the RES4LYF page's style, added 2026-11-02, for blepping's Sonar (MIT, 54 nodes, commit 6c4ae67), Overly Complicated Sampling (MIT, 16 nodes, commit d8574ba) and bleh (Apache-2.0, 32 nodes, commit 1c2bc62), with Skoogeer-Noise (MIT, 62 nodes) run beside them. Its chapters are Story, First check, Sonar, OCS, bleh, Together, What didn't and Licences. No pack code is bundled or copied. [code: studio/web/blepping_data.js, studio/web/blepping.js:15] [test: tests/test_blepping_page.py]
+
+The blepping page's pictures come from a throwaway ComfyUI with only those four packs, against core renders made the same way with no packs: one prompt, seed 424242, 20 steps, no re-rolls, and the graph for each. It holds 78 render records: 23 core, 55 pack. Of the pack graphs, 52 made a picture, 2 failed and 1 was refused as expected. [code: studio/web/blepping_data.js, studio/web/blepping_logic.js:16-20] [run: studio/web/blepping_renders/graphs]
+
+The blepping page's first check, stage 0, loads the packs and runs the core graphs again: SD 1.5, SDXL and SD 3.5 all came out pixel-identical, so loading the packs changed nothing on its own. Pixels are compared after decoding, because each PNG embeds its own graph. [code: studio/web/blepping_data.js, studio/web/blepping_logic.js:21-26]
+
+Blepping page results worth quoting, from notes written after looking at each picture: OCS euler at eta 0 lands almost exactly on core euler, the sanity check. bleh's HyperTile at 1536 px is pixel for pixel the same as core HyperTile. Sonar's dpmpp_sde with default settings gave a flat brown field on SD 1.5 with karras, untuned. Sonar pyramid noise at full ancestral strength swamped an SDXL picture. [code: studio/web/blepping.js:21-32]
+
+Blepping providers are marked in the Sampling Lab atlas, so OCS, Sonar and bleh method pages link to the blepping page. [code: studio/web/samplinglab_method.js:91] [run: studio/sampling_lab/atlas.json]
+
+RES4LYF page sliders keep a thin track with a 40 px touch height since 2026-11-02, and other small controls and card links reach 40 px. Its cover carries the shared hero light. No wording or data changed. [code: studio/web/res4lyf.css:197, studio/web/res4lyf.css:318-322, studio/web/polish.css:74-83]

@@ -79,3 +79,23 @@ World Kit export writes a folder and a .zip under _exports: the approved .glb fi
 World Kit routes sit under /api/worldkit: assets (list, create, get, a fixed list of files, and retry, cancel, approve, unapprove, archive, as-prop, clips), looks, characters, capabilities, meshes, export and exports. [code: studio/worldkit/api.py:278-359]
 
 World Kit settings: STUDIO_WORLDKIT_ROOT for the library (default a parametric-studio/worldkit folder under the home folder's .local/share), STUDIO_WORLDKIT_WORK for scratch, STUDIO_BLENDER, STUDIO_WORLDKIT_THREADS, STUDIO_WORLDKIT_GPU (off) and STUDIO_WORLDKIT_CHARACTERS (off). [code: studio/worldkit/__init__.py:8-19, studio/worldkit/blender.py:30-43, studio/worldkit/safety.py:53-54]
+
+## Final session findings, 2026-11-03
+
+World Kit turntables frame every asset that is not a place by its bounding sphere, since 2026-11-02. The sphere is centred on the bounds' centre with the farthest vertex as its radius, and the camera stands where the sphere plus a 12% margin just fits the narrower field of view. A sphere looks the same from every side, so the fit holds through the whole orbit, for a 5 cm ring and a 40 m tower alike. [code: studio/worldkit/blender_scripts/_fit.py:1-7, studio/worldkit/blender_scripts/_fit.py:10, studio/worldkit/blender_scripts/_fit.py:25-28] [test: tests/worldkit/test_turntable_fit.py]
+
+World Kit turntable details from the same change: an asset whose height is under a quarter of its longest side is looked down on at least about 42 degrees, so its top shows. The near clip follows the camera distance, because Blender's 10 cm default would cut off a small ring. Places and interiors keep their own framing. [code: studio/worldkit/blender_scripts/_fit.py:12-13, studio/worldkit/blender_scripts/_fit.py:40-49, studio/worldkit/blender_scripts/wk_turntable.py:117-127] [test: tests/worldkit/test_turntable_fit.py]
+
+World Kit turntable frames no longer hint at size: a ring and an anchor both fill the frame. The page's "Real scale" tag gives the asset's longest side instead. [code: studio/worldkit/blender_scripts/wk_turntable.py:6-7, studio/web/worldkit.js:159]
+
+World Kit look previews show a small lit street corner since 2026-11-02. A look has no geometry of its own, and the old tiny test set gave a plain sky card for golden hour and overcast and pure black for night and rain. The set is now ground whose roughness follows the look's wetness, three blocks of different heights and colours, a matte ball and a mirror ball. Night looks get three street lamps, and fog sits in a 40 m box around the set instead of in the world. [code: studio/worldkit/blender_scripts/wk_turntable.py:36-79, studio/worldkit/blender_scripts/wk_turntable.py:102]
+
+World Kit look preview camera: it swings to and fro in front of the blocks at 1.5 m height, 6.5 m out, so the sky and the light both show and the clip loops. In the merged script this branch comes before the bounding-sphere branch, so a look never reaches the sphere fit even though that branch's comment still mentions a look's test scene. [code: studio/worldkit/blender_scripts/wk_turntable.py:128-136] [inference]
+
+World Kit look recipes were re-rendered after that fix. Six of the seven look renders in recipe_renders.json are dated 2026-11-02 (golden hour, overcast, rainy, night city, interior day, interior night), from 50.0 to 161.1 s each, with no GPU peak because Blender runs on the CPU. [run: studio/recipe_renders.json]
+
+World Kit characters are on by default in the current code, and their mesh step is TRELLIS.2, not SAM 3D Body. See the Characters notes for the whole change. The older paragraph saying World Kit characters are off by default is out of date. [code: studio/worldkit/safety.py:56-57, studio/worldkit/makers/character.py:1-5] [docs: studio/processes/world-kit.md]
+
+World Kit shows licence limits where models are picked since 2026-11-02. The character form says Krea 2 allows commercial use only for companies under US$1,000,000 yearly revenue and that the picture check's InsightFace buffalo_l weights are for non-commercial research. The prop licence line now notes that Hunyuan3D is not for use in the EU, UK or South Korea. [code: studio/web/worldkit.js:76, studio/worldkit/api.py:23-24]
+
+World Kit text links, small buttons, selects, inputs and disclosure summaries reach a 40 px tap area since 2026-11-02, and the World Kit showpiece carries the shared hero light. No wording or data changed. [code: studio/web/worldkit.css:167-170, studio/web/polish.css:74-83]

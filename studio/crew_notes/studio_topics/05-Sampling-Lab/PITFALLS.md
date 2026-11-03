@@ -51,3 +51,23 @@ The Sampling Lab atlas records security notes among its surprises. A static scan
 Sampling Lab refuses what is not core, so a run cannot name a pack, and it refuses SkipLayerGuidanceSD3 except on the flow model. It will not swap a missing model: the run stops and names the checkpoint. If the /object_info call itself fails, the file list counts as empty, so the message says "not installed" even when the real cause was that call. [code: studio/sampling_lab.py:49-50, studio/sampling_lab.py:59, studio/sampling_lab.py:76-87] [test: tests/test_sampling_lab.py]
 
 Sampling Lab tests stub ComfyUI, with no GPU and no real queue, so they prove routes and data, not a render. The check that the core name lists match ComfyUI's source is skipped unless COMFYUI_DIR points at a checkout. The numbers in measures.json came from one torch build, 2.16.0.dev20261027. [test: tests/test_sampling_lab.py] [run: studio/sampling_lab/measures.json]
+
+## Final session findings, 2026-11-03
+
+Sampling Lab Walk is not core-only, unlike the Sampling Lab run route. Its graphs use KJNodes GenerateNoise and the studio's own PSN latent nodes. The walk's end frames are not pixel-identical to an ordinary KSampler on the same seeds: mean differences of 0.99 and 0.93 of 255. [run: studio/sampling_lab/walk.json]
+
+Sampling Lab Walk is one model, one prompt per walk and one seed pair, on SD 1.5 only. It shows what slerp and a straight blend do there; it does not show how other models behave. [run: studio/sampling_lab/walk.json] [inference]
+
+The 24 atlas entries added on 2026-11-02 for OCS and Skoogeer-Noise did not go through the full atlas build or its second reader. They carry no second-reader pill and none has a render in the atlas. [run: studio/sampling_lab/atlas.json]
+
+Which Word's recorder does not give exactly the plain picture. Its source says it draws the same picture up to float rounding, but on the SDXL red-hat render the largest pixel difference was 119 of 255 and 2.1% of pixels moved by more than 10. On SD 1.5 the largest was 16. [code: psn_nodes/attention_maps.py:8] [run: studio/sampling_lab/attention.json]
+
+Which Word's colour-region checks are stored with failures included. "teacup" failed on both models, "red" failed by plain lift on both, and SDXL "hat" failed by plain lift while passing once the map's floor was removed. A heatmap is a mean over heads, layers and steps, so read it as a hint, not a segmentation. [run: studio/sampling_lab/attention.json] [inference]
+
+Which Word refuses DiT models such as Flux, SD3 and Wan, because they have no UNet cross-attention for it to record. It works on SD 1.5 and SDXL UNets only. [code: psn_nodes/attention_maps.py:9]
+
+Model Anatomy reads headers only. It does not open pickles, because listing their tensors means running an unpickler that can run code: 248 pickle files and 32 others were listed but not read. Quantized layers count the weights they stand for from their descriptor or scale shapes, so counts there are derived, not read directly. [run: studio/anatomy/index.json] [code: studio/anatomy.py]
+
+The mixture-of-experts page is one recording of one 4-bit quantized model, text only, on invented prompts. Routing in the 4-bit build may differ from the full-precision model, and nothing on the page measures that. [run: studio/moe/index.json] [inference]
+
+Detail Daemon, one of the node packs added to the main ComfyUI on 2026-11-03, was tried once on SDXL at 1024 x 1024 and 25 steps: at 0.15 it added fine detail and kept the picture; at 0.5 it overcooked it into a stipple. It is not in the Sampling Lab atlas yet, so treat strengths above about 0.2 as untested. [claim: studio install record 2026-11-03] [inference]

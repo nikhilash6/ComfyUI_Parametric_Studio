@@ -110,33 +110,41 @@ def roster(kb_root):
             "has_dossier": len(files) > 0
         })
     
+    def part_files(pid):      # parts/<id>/*.md: notes for a member that covers one kind of model part, not a family
+        d = os.path.join(kb_root, "parts", pid)
+        return [os.path.join(d, f) for f in sorted(os.listdir(d)) if f.endswith(".md")] if os.path.isdir(d) else []
+
     secondary_ids = ['text-encoders', 'vae', 'vision']
     for sid in secondary_ids:
         name = NAMES[name_index % len(NAMES)]
         name_index += 1
+        files = part_files(sid)
         members.append({
             "id": sid,
             "family": sid,
             "name": name,
             "tier": "secondary",
-            "files": []
+            "files": files,
+            "has_dossier": len(files) > 0
         })
     
     tertiary_ids = ['lora', 'controlnet', 'upscaler']
     for tid in tertiary_ids:
         name = NAMES[name_index % len(NAMES)]
         name_index += 1
+        files = part_files(tid)
         members.append({
             "id": tid,
             "family": tid,
             "name": name,
             "tier": "tertiary",
-            "files": []
+            "files": files,
+            "has_dossier": len(files) > 0
         })
     
     all_dossier_files = []
     for m in members:
-        if m["tier"] == "family":
+        if m["tier"] in ("family", "secondary", "tertiary"):
             all_dossier_files.extend(m["files"])
 
     topics_dir = os.path.join(kb_root, "studio_topics")
@@ -374,7 +382,7 @@ CHARACTERS = {  # id: (Kokoro voice, speed, first line). Only Kokoro's 28 Englis
     "master": ("af_heart", 1.0, "Hi, I'm Comfy Prime, your guide to this studio."),
     "3d-trellis-hunyuan3d-sam3d-mesh": ("bm_george", 0.94, "Ah, come in. I study 3D models: Trellis, Hunyuan3D and SAM 3D. What shall we examine?"),
     "anima": ("am_santa", 0.96, "Welcome aboard. I keep the charts for Anima, our anime model. Where are we sailing?"),
-    "audio-fx-separation-foley-models": ("bf_emma", 0.98, "Charmed. Sound effects, foley and separating stems are my domain. What are you listening for?"),
+    "audio-fx-separation-foley-models": ("bf_emma", 0.98, "Charmed. Sound effects, foley, separating stems and ambience for a silent clip are my domain. What are you listening for?"),
     "chroma": ("bm_lewis", 0.98, "Well met! I have sworn my oath to Chroma. Ask, and I shall answer from my notes."),
     "cogvideox-mochi-cosmos-svd-animatediff-older-video": ("bm_daniel", 0.88, "Hello. I look after the older video models: CogVideoX, Mochi, Cosmos, SVD and AnimateDiff. Tell me where it hurts."),
     "depth-normals-pose": ("bf_isabella", 0.92, "Darling, I notice everything: depth, normals and pose. You have my full attention."),
@@ -386,8 +394,8 @@ CHARACTERS = {  # id: (Kokoro voice, speed, first line). Only Kokoro's 28 Englis
     "hunyuanvideo-framepack": ("af_nova", 0.98, "Hello. HunyuanVideo and FramePack are my field, one smooth frame into the next. What would you like to know?"),
     "kandinsky-omnigen-ovis-hunyuanimage": ("af_jessica", 1.06, "Hi there! Kandinsky, OmniGen, Ovis and HunyuanImage: I've cracked them all open. Ask me."),
     "krea-2": ("af_kore", 1.02, "Hello, dear! Krea 2 is fresh out of my oven. What can I bake for you?"),
-    "ltx-video-ltx-2": ("am_eric", 1.04, "Right on time. LTX Video is what I keep ticking. What would you like to know?"),
-    "minimax-h3": ("am_adam", 0.86, "Oh. Hello. I know MiniMax H3, the bad days and the good ones. Go on, ask me."),
+    "ltx-video-ltx-2": ("am_eric", 1.04, "Right on time. LTX Video is what I keep ticking: effects, finishing passes and dubbing. What would you like to know?"),
+    "minimax-h3": ("am_adam", 0.86, "Oh. Hello. I know MiniMax H3, the bad days and the good ones. Give it the exact words and it says them. Go on, ask me."),
     "music-song-models": ("am_michael", 1.18, "Let's go! Music and song models keep me rolling. What are we making?"),
     "pony-illustrious-noobai": ("am_adam", 1.08, "Hey. Pony, Illustrious and NoobAI are my thing. What are you drawing?"),
     "prism-longcat-void-joyai-video": ("am_echo", 1.0, "Morning. I've walked every trail of Prism, LongCat, VOID and JoyAI Video, downhill one step at a time. Ask away."),
@@ -396,7 +404,7 @@ CHARACTERS = {  # id: (Kokoro voice, speed, first line). Only Kokoro's 28 Englis
     "sd-1-5": ("am_liam", 0.84, "Oh, hey. I left school, but I never left SD 1.5. What's up?"),
     "sd3-sd3-5": ("am_michael", 0.92, "Good day. SD3 and 3.5, all filed in order. What do you need?"),
     "sdxl": ("af_aoede", 1.1, "Hey. SDXL is my ramp, and I've skated all of it. What trick are you after?"),
-    "tts-voice-models": ("af_nicole", 0.92, "Hello, softly now. Voice models are what I listen to all day. What would you like to hear about?"),
+    "tts-voice-models": ("af_nicole", 0.92, "Hello, softly now. Voice models, voice-overs and dubbing are what I listen to all day. What would you like to hear about?"),
     "upscale-restore-models": ("bm_fable", 0.96, "Hello there. I make small things bigger and old things new. What do you have for me?"),
     "vlm-captioning-tagging": ("af_sarah", 1.08, "Hi! I look at pictures and say what's in them: captions and tags. What are you looking at?"),
     "wan-version-not-stated": ("am_onyx", 1.04, "Hey there. I cover the Wan notes that don't say which version. Ask away."),
@@ -413,8 +421,8 @@ CHARACTERS = {  # id: (Kokoro voice, speed, first line). Only Kokoro's 28 Englis
     "world-kit": ("af_nova", 1.14, "Hello. I build with World Kit: places, props and characters you can walk around. What are we making?"),
     "characters": ("af_kore", 0.86, "Come in, come in. I look after saved characters and their sheets. Who are we casting?"),
     "train": ("bf_isabella", 1.1, "Right, warm up. I know the Train page: what can train here and what it really took. What's your base?"),
-    "sampling-lab": ("af_sarah", 0.92, "Good timing, the bench is free. I read the Sampling Lab: what each method really does. What are you testing?"),
-    "res4lyf": ("bf_alice", 1.12, "Oh, solvers! I look after the RES4LYF page, and I know where its licence draws the line. Ask me."),
+    "sampling-lab": ("af_sarah", 0.92, "Good timing, the bench is free. I read the Sampling Lab: what each method really does, and the walk between two seeds. What are you testing?"),
+    "res4lyf": ("bf_alice", 1.12, "Oh, solvers! I look after the RES4LYF and blepping pages, and I know where their licences draw the line. Ask me."),
     "recipes": ("af_heart", 1.16, "Hi! I keep the recipe shelf: what's on it, and which ones have really been cooked here. Hungry?"),
     "designers": ("af_bella", 0.92, "Darling, sit. I know the designers on the Design page, and what each one brings. Whose eye do you want?"),
     "university": ("bf_lily", 1.16, "Welcome to the University. Every lesson says whether a second reader has checked it. What shall we learn?"),

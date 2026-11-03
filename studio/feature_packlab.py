@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException
 router = APIRouter(prefix="/api/packlab")
 PAGE = {"tab": "packlab", "label": "Pack Lab", "title": ["Pack Lab", "Try a node pack. Keep it away from your work.", "Reviewed picks with their risks in plain sight, and a sandbox to load one in. Reviewed does not mean safe."], "module": "packlab.js", "export": "PackLab", "css": "packlab.css"}
 DATA = Path(__file__).resolve().parent / "pack_lab_picks.json"
+POOL51 = Path(__file__).resolve().parent / "pool51_catalogue.json"     # the packs install.py --packs pool51 installs, in the review's 51 sections
 NETWORK = "psn-pack-sandbox"; PREFIX = "psn-pack-sandbox-"; IMAGE = "ubuntu:24.04"; PORT = 8188; START_LIMIT_S = 600; POLL_S = 10; MEMORY = "16g"; PIDS = "2000"
 NAME_OK = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,80}__[A-Za-z0-9][A-Za-z0-9._-]{0,120}")
 WARNINGS = ["This runs the pack's own code, inside the sandbox, as soon as it loads. That is the point of the sandbox, and it is why the pack never goes near your live ComfyUI.", "Nobody here has proved anything about this pack's safety. The notes come from reading its text. Being a pick does not make it safe, and a sandbox can have holes.", "The sandbox has no internet, no GPU and no models, so it shows whether a pack loads and what nodes it adds. It will not render anything.", "Its libraries are not installed for it. A pack that needs one you lack fails to load, and that is a real result."]
@@ -203,6 +204,27 @@ def list_picks():
         s = state(p["pack"]) or {}
         rows.append({**p, "installable": p["action"] == "install-candidate" and not is_flagged(p["pack"]), "sandbox_state": s.get("state"), "sandbox_nodes": s.get("node_count")})
     return {"about": picks().get("about"), "made": picks().get("made"), "can": c, "warnings": WARNINGS, "picks": rows, "flag_note": FLAG_NOTE}
+
+
+def pool51() -> dict:
+    if "p51" not in _cache:
+        try: _cache["p51"] = json.loads(POOL51.read_text(encoding="utf-8"))
+        except (OSError, ValueError): _cache["p51"] = {"sections": [], "packs": [], "about": "", "how": ""}
+    return _cache["p51"]
+
+
+def installed_folders() -> set:
+    """Folder names in this machine's ComfyUI custom_nodes, when the studio knows where ComfyUI is. Read only."""
+    cr = _setting("STUDIO_COMFY_ROOT")
+    try: return {e.name for e in (Path(cr) / "custom_nodes").iterdir()} if cr else set()
+    except OSError: return set()
+
+
+@router.get("/pool51")
+def list_pool51():
+    d = pool51(); have = installed_folders()
+    packs = [{**p, "installed": (p["folder"] in have) if have else None} for p in d["packs"]]
+    return {**d, "packs": packs, "checked_here": bool(have)}
 
 
 @router.get("/sandbox/{pack}")

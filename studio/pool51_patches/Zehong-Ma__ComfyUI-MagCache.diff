@@ -1,0 +1,41 @@
+diff --git a/nodes.py b/nodes.py
+index 01d88e0..15ec59c 100644
+--- a/nodes.py
++++ b/nodes.py
+@@ -10,7 +10,10 @@ from typing import Optional
+ from unittest.mock import patch
+ 
+ from comfy.ldm.flux.layers import timestep_embedding, apply_mod
+-from comfy.ldm.lightricks.model import precompute_freqs_cis
++try:
++    from comfy.ldm.lightricks.model import precompute_freqs_cis
++except ImportError:
++    precompute_freqs_cis = None
+ from comfy.ldm.lightricks.symmetric_patchifier import latent_to_pixel_coords
+ from comfy.ldm.wan.model import sinusoidal_embedding_1d
+ 
+@@ -1087,7 +1090,7 @@ class MagCache:
+         return {
+             "required": {
+                 "model": ("MODEL", {"tooltip": "The diffusion model the MagCache will be applied to."}),
+-                "model_type": (["flux", "flux_kontext", "chroma", "qwen_image", "hunyuan_video", "hunyuan_video1.5", "wan2.1_t2v_1.3B", "wan2.1_t2v_14B", "wan2.1_i2v_480p_14B", "wan2.1_i2v_720p_14B", "wan2.1_vace_1.3B", "wan2.1_vace_14B"], {"default": "wan2.1_t2v_1.3B", "tooltip": "Supported diffusion model."}),
++                "model_type": (["flux", "flux_kontext", "chroma", "qwen_image", "hunyuan_video", "hunyuan_video1.5", "wan2.1_t2v_1.3B", "wan2.1_t2v_14B", "wan2.1_i2v_480p_14B", "wan2.1_i2v_720p_14B", "wan2.1_vace_1.3B", "wan2.1_vace_14B", "wan2.2_t2v_14B", "wan2.2_i2v_14B", "wan2.2_ti2v_5B"], {"default": "wan2.1_t2v_1.3B", "tooltip": "Supported diffusion model."}),
+                 "magcache_thresh": ("FLOAT", {"default": 0.06, "min": 0.0, "max": 0.3, "step": 0.01, "tooltip": "How strongly to cache the output of diffusion model. This value must be non-negative."}),
+                 "retention_ratio": ("FLOAT", {"default": 0.2, "min": 0.1, "max": 0.3, "step": 0.01, "tooltip": "The start percentage of the steps that will apply MagCache."}),
+                 "magcache_K": ("INT", {"default": 2, "min": 0, "max": 6, "step": 1, "tooltip": "The maxium skip steps of MagCache."}),
+diff --git a/nodes_calibration.py b/nodes_calibration.py
+index bd5207e..af1cb28 100644
+--- a/nodes_calibration.py
++++ b/nodes_calibration.py
+@@ -10,7 +10,10 @@ from typing import Optional
+ from unittest.mock import patch
+ 
+ from comfy.ldm.flux.layers import timestep_embedding, apply_mod
+-from comfy.ldm.lightricks.model import precompute_freqs_cis
++try:
++    from comfy.ldm.lightricks.model import precompute_freqs_cis
++except ImportError:
++    precompute_freqs_cis = None
+ from comfy.ldm.lightricks.symmetric_patchifier import latent_to_pixel_coords
+ from comfy.ldm.wan.model import sinusoidal_embedding_1d
+ 

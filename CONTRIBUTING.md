@@ -31,7 +31,7 @@ Tests must never touch real accounts or live services. Stub HTTP, the filesystem
 
 ## Common changes
 
-- **A new goal:** a graph in `workflows/` with `${placeholders}` for what may change, an entry in `GOALS` in `studio/goals.py` that states the model's licence, its files with sizes and SHA-256 in `studio/models_manifest.json` (`scripts/build_manifest.py` makes these), a row in [MODELS.md](MODELS.md), and a test.
+- **A new goal:** a graph in `workflows/` with `${placeholders}` for what may change, an entry in `GOALS` in `studio/goals.py` that states the model's licence, its files with sizes and SHA-256 in `studio/models_manifest.json` (`scripts/build_manifest.py` makes these), a row in [MODELS.md](MODELS.md), and a test. Any graph, template or recipe that names a new model file also needs `python3 scripts/build_model_links.py` run once (with your download plans via `--plans` if you have them), which finds the file's official link, size, SHA-256 and licence for the `files` list in the manifest and MODELS.md; `tests/test_model_links.py` fails until it is.
 - **A new node:** add it under `psn_nodes/`, with `INPUT_TYPES`, `RETURN_TYPES` and tests that run without a GPU.
 - **A new subagent role:** one entry in `psn/subagents/roles.py`, with a good and a bad case in `tests/test_subagents.py`.
 

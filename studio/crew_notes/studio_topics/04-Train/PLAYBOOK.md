@@ -55,3 +55,19 @@ A finished Train LoRA is copied to a parametric_trained folder inside the loras 
 ## Train and the LoRA recipes
 
 Train does not read lora_recipes.json. That file holds 162 tuned settings for third-party LoRAs, with families such as h3, wan22, qwen and ltx and none for SDXL or SD 1.5. The only thing train.py does with studio/loras.py is clear its file-list cache after a run. [run: studio/lora_recipes.json] [code: studio/train.py:846-850, studio/loras.py:21-25]
+
+## Final session findings, 2026-11-03
+
+Train's proven bases, each from one short run on 2026-11-01 on the test machine's 96 GB card, given as base, trainer, seconds per step, run's own peak: SD 1.5, ComfyUI, 0.17 s, 7.6 GiB. SDXL at 768 px, ComfyUI, 0.45 s, 21.4 GiB. SD3.5 Medium, ComfyUI, 0.27 s, 23.3 GiB. FLUX.1 dev, ai-toolkit, 0.66 s, 23.0 GiB. Lumina 2, ComfyUI, 0.20 s, 26.5 GiB. LTX-2.5, ai-toolkit, 2.85 s, 33.4 GiB. FLUX.2 Klein 4B, ComfyUI, 0.35 s, 37.3 GiB. Wan 2.2 5B, ComfyUI, 0.30 s, 38.2 GiB. Z-Image, ComfyUI, 0.47 s, 53.8 GiB. FLUX.2 Klein 9B, ComfyUI, 0.81 s, 72.3 GiB. All at 512 px and rank 16 unless named. [run: studio/train_measured.json]
+
+Train A/B effects recorded with those runs: strong for Klein 9B and Wan 2.2 5B, strong but overcooked for LTX-2.5, strong but overfitting for SDXL at 768 px, strong or clear only on a prompt close to the set for Klein 4B, SD 1.5 and SD3.5 Medium, moderate for Z-Image, small for FLUX.1 dev and weak for Lumina 2. [run: studio/train_measured.json]
+
+Train's first recorded row, SDXL at 1024 px and rank 8 on 2026-11-01, has only a whole-card peak of 40.25 GiB and no run's own peak, so it says nothing about what SDXL training needs alone. The SDXL 768 px row has both: 32.34 GiB card, 21.44 GiB own. [run: studio/train_measured.json]
+
+Train shows a "tried" line for a base that failed, since 2026-11-02. FLUX.1 schnell's line says its one run on 2 Nov 2026 failed out of memory after its own processes passed 70 GB at 512 px and rank 16. Krea 2 Raw's says runs on 1 and 2 Nov 2026 failed after passing 73 GB. Both bases now expect a 75 GB peak, and the page shows the line as a warning while the base is not proven. [code: studio/train_bases.py:55, studio/train_bases.py:58, studio/train.py:586, studio/web/train.js:86]
+
+Train page modules are now checked by a test that parses each one (train.js, train_stage.js, train_logic.js, train_example.js) as the browser would, because one module that does not parse blanks the whole page. The test skips when node is not installed. [test: tests/studio_lanes/test_train_external.py]
+
+Train's core-node path also has a ready graph in ComfyUniversity: sd15_train_lora, six nodes, now with a small captioned set that ships in the repo (six 512 x 512 pictures of an invented brass astrolabe drawn by the studio's own SD 1.5 lessons, each with a caption). Copy the folder into ComfyUI's input folder to use it. The graph passes ComfyUI's validation; it was not executed by the checker. [run: studio/university/graphs/verified.json] [docs: studio/university/graphs/sd15_train_lora.json] [code: studio/graph_audit.py:13-16]
+
+Train controls reach a 40 px tap area since 2026-11-02: text links, small buttons, selects, inputs, segment buttons and the fine-settings summary. No wording or data changed. [code: studio/web/train.css:235-238]

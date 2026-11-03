@@ -47,3 +47,11 @@ The ComfyUniversity source rule says an author must have opened each linked sour
 ComfyUniversity progress lives only in that browser. Clearing site data, changing browser or changing device loses it, and if storage is blocked it is not saved. A finished lesson is not a certificate: quiz answers can be retried without limit. [code: studio/web/university_logic.js:4-6, studio/web/university_parts.js:14] [test: tests/test_university_page.py]
 
 ComfyUniversity topics_next.txt lists 12 planned topics, such as video VAEs and offloading. They are plans, not lessons, so a crew answer should not cite them as taught. [code: studio/university/topics_next.txt]
+
+## Final session findings, 2026-11-03
+
+ComfyUniversity CU-319 is the one lesson with its second read pending, so the page shows it as "Author-checked, second read pending" and the tutor agent must say so when it cites it. Its course.json lists 5 verified claims and 3 it could not check. [run: studio/university/catalogue.json] [docs: studio/university/300/CU-319-train-a-tiny-network/course.json] [test: tests/test_qwen_agents.py]
+
+ComfyUniversity's FLUX.1 graphs were validated, not executed. c_flux_guidance uses FLUX.1 Kontext dev as a stand-in for FLUX.1 dev, because FLUX.1 dev exists on the test machine only as a diffusers folder that UNETLoader cannot read. c_style_redux runs on schnell without FluxGuidance, so it is not the dev graph a reader may expect. [run: studio/university/graphs/verified.json] [docs: studio/university/200/CU-251-embedded-guidance/lesson.md] [claim: studio commit log, 2026-11-02]
+
+ComfyUniversity's sd15_train_lora graph does not find its dataset on its own: the shipped folder must be copied into ComfyUI's input folder by hand. The graph was validated, not run, so training on that set from this graph has no recorded result. [docs: studio/university/graphs/sd15_train_lora.json] [run: studio/university/graphs/verified.json]

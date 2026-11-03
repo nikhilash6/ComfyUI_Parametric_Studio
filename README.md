@@ -4,7 +4,7 @@
 
 ### One clip in, a whole shoot out, on your own GPU.
 
-**[▶ Watch the Shot Board demo (1:49)](docs/media/shotboard_demo.mp4)** &nbsp;·&nbsp; **[Try the read-only demo](https://parametricparadigm.github.io/ComfyUI_Parametric_Studio/)** &nbsp;·&nbsp; **[⚡ Install](#install)** &nbsp;·&nbsp; **[For the judges](#for-the-judges)** &nbsp;·&nbsp; **[✅ What's proven](#whats-proven)**
+**[▶ Watch the Shot Board demo (1:49)](docs/media/shotboard_demo.mp4)** &nbsp;·&nbsp; **[See how big it is](#see-how-big-it-is)** &nbsp;·&nbsp; **[Try the read-only demo](https://parametricparadigm.github.io/ComfyUI_Parametric_Studio/)** &nbsp;·&nbsp; **[⚡ Install](#install)** &nbsp;·&nbsp; **[For the judges](#for-the-judges)** &nbsp;·&nbsp; **[✅ What's proven](#whats-proven)**
 <!-- shot board demo link: for GitHub's inline player, drop docs/media/shotboard_demo.mp4 (4.3 MB) into a comment box on github.com and paste the user-attachments URL on its own line here -->
 
 [![One source clip on the Shot Board: reshoot, orbit 360, recast, then LTX-2.5 water, clean plate, day to night and a matte](docs/media/shotboard_preview.webp)](docs/media/shotboard_demo.mp4)
@@ -16,7 +16,7 @@
 Bring one clip and queue the shoot: a new camera, a frozen orbit, a recast lead, then LTX-2.5 for water, a clean plate, day to night and a matte. Jobs run one at a time on your GPU, at 0 credits. Every result keeps its exact ComfyUI graph and seed, and you can open that graph and copy it out. Every clip and image on this page is AI-generated.
 
 - **Real graphs.** What you see in Pro is what ComfyUI runs, not a diagram of it.
-- **Audited nodes.** We read all 544 custom nodes and published the result: 158 do real work, 364 are honest utilities or payload builders that load no model, and 22 don't work yet, [listed by name](docs/NODES.md#node-reference). We removed or renamed the ones that faked results.
+- **Audited nodes.** We read all 544 custom nodes and published the result: 158 do real work, 364 are honest utilities or payload builders that load no model, and 22 don't work yet, [listed by name](docs/NODES.md#node-reference). We removed or renamed the ones that faked results. The two nodes added since record and draw the attention maps on the Which Word page.
 - **Open weights only.** No partner nodes or closed APIs in the open edition, enforced by tests. Models keep their own licences, and some limit where or how you can use them. MiniMax H3's community licence excludes the US, EU, UK and South Korea: [read MODELS.md](MODELS.md) before you install those goals.
 
 ## Made in Parametric Studio
@@ -25,6 +25,15 @@ Bring one clip and queue the shoot: a new camera, a frozen orbit, a recast lead,
 |---|---|
 | **[▶ Film A "RUN"](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_FilmA_RUN_MiniMaxH3.mp4)** (1:31, MiniMax H3). One room, one GPU, one real 24-node H3 graph | **[▶ Film B "ONE CLIP"](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_FilmB_ONE_CLIP_LTX25.mp4)** (1:31, LTX-2.5). One plain clip, then water, night, a clean plate and a matte |
 | <sub>AI-generated, an invented person. Video: MiniMax H3 (MiniMax H3 Community License, which excludes the US, EU, UK and South Korea). Keyframes: FLUX.2 Klein 9B (FLUX Non-Commercial License) from a FLUX.3 Klein reference. Sound: a Music 3 score over H3's own room and set ambience, no dialogue. Score: MiniMax Music 3 (MiniMax-Music3 Community License). Screens are real captures.</sub> | <sub>AI-generated, an invented person and town. Video and VFX: LTX-2.5 with four Lightricks IC-LoRAs (LTX-2.x Community License). Keyframes: FLUX.2 Klein 9B (FLUX Non-Commercial License) from a FLUX.3 Klein reference. Sound: a Music 3 score over LTX-2.5's own ambience, no dialogue. Score: MiniMax Music 3 (MiniMax-Music3 Community License). Screens are real captures.</sub> |
+
+### See how big it is
+
+| [![Highlight reel: 48 clips from 11 parts of the repo, each labelled with the model or graph that made it](docs/media/demo_reel.webp)](docs/media/demo_reel.mp4) | [![The wall: 100 different renders fill a 10 by 10 grid while a counter runs to 2,034](docs/media/demo_wall.webp)](docs/media/demo_wall.mp4) | [![Studio tour: every one of the 46 tabs, with a caption naming each](docs/media/demo_tour.webp)](docs/media/demo_tour.mp4) |
+|---|---|---|
+| **[▶ Highlight reel](docs/media/demo_reel.mp4)** (1:10). 48 clips from 11 parts of the repo: model families, recipes, pipelines, 3D, commercials, Shot Board, music, ComfyUniversity and the films. [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Demo_Reel.mp4) | **[▶ The wall](docs/media/demo_wall.mp4)** (0:25). 100 different renders fill in while the counter runs to the 2,034 rendered files in the repo. [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Demo_Wall.mp4) | **[▶ Studio tour](docs/media/demo_tour.mp4)** (1:49). All 46 tabs, recorded on a preview of this release with no GPU attached. Also on a [phone](docs/media/demo_tour_phone.mp4) (0:20). [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Demo_Tour.mp4) |
+| <sub>Every label names the model or graph from that clip's own record: [`docs/demos/reel_edl.json`](docs/demos/reel_edl.json). The Wren Halloway clip was made before the studio and says so.</sub> | <sub>Each tile is a different render already in the repo: [`docs/demos/wall_tiles.json`](docs/demos/wall_tiles.json). Counted from this release, with how each figure was counted, in [`docs/demos/numbers.json`](docs/demos/numbers.json).</sub> | <sub>Pages, renders and figures are the repo's own; ComfyUI shows as offline because none was attached. Tabs and times: [`docs/demos/tour_edl.json`](docs/demos/tour_edl.json).</sub> |
+
+<sub>Counted from this release: 6,303 ComfyUI node classes loaded (partner API nodes left out), 1,093 graphs that open in the studio, 818 recipes, 76 model families rendered here, 24 pipelines, 163 lessons, 46 tabs, 2,034 rendered files, 189 crew notes, 7,423 tests. All AI-generated. Music: the studio's own renders of one song, "Paper Boats": MiniMax-Music3 (MiniMax-Music3 Community License) on the reel, ACE-Step 1.5 (MIT) and DiffSynth-Music (Apache-2.0) on the wall and the tour, levelled to -16 LUFS.</sub>
 
 ## For the judges
 
@@ -71,10 +80,10 @@ Run on one Linux box with a 96 GB RTX PRO 6000. Nothing here has been run on Win
 | Train | Short real runs on SDXL, SD 1.5, SD3.5 Medium, FLUX.2 Klein 4B and 9B, FLUX.1 dev, Z-Image, Lumina 2, Wan 2.2 5B and LTX-2.5, each with its peak and an A/B we looked at. The effect ranged from strong (Klein 9B, Wan, LTX) to weak (Lumina, FLUX.1 dev). Wan and LTX trained on stills and were tested on one frame. Klein 9B used about 72 GB | Any base marked Not run, including MiniMax H3, Qwen-Image 2.1, HiDream-O1 and Music 3. FLUX.1 schnell and Krea 2 ran out of memory here. FLUX.3 Klein, Anima and ERNIE fail in ComfyUI's training node. Video motion |
 | Virtual Set | Blender passes on the CPU. Modes A (H3 and LTX-2.5), B, C and D rendered once each on one street shot | Wan, a pose pass, Qwen keyframes, any other shot |
 | World Kit | Places, looks, library, Godot export, a prop from a mesh, on the CPU with Blender. A character from words to a rigged, moving, textured figure | Other steps that need a model (tested with fakes) |
-| Recipes | 10 of 10 flagships rendered. A library of 740 passes an offline format check, and 674 of its recipes show a result we rendered here (480 pictures, 126 clips, 48 sounds, 20 3D models), each from one run. The sounds were checked for level and length, not listened to. More renders are on the way | The rest of the library |
+| Recipes | 10 of 10 flagships rendered. A library of 818 passes an offline format check, and 701 of its recipes show a result we rendered here (487 pictures, 141 clips, 48 sounds, 25 3D models), each from one run. The sounds were checked for level and length, not listened to. | The rest of the library |
 | Sampling Lab | 44 renders on SDXL, SD 1.5 and SD 3.5, and core sampler measurements | Pack entries are read from source, not run |
 | RES4LYF page | A credit page. The pack is not shipped; run separately, of 154 nodes checked 92 rendered, 14 ran and 44 errored | The other nodes in the pack |
-| Families | 95 wired, 61 with a render on record | The other 34 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
+| Families | 95 wired, 80 with a render on record | The other 15 have no render on record. World Kit and Virtual Set extras are not in the installer yet |
 
 ## Bonus tracks: what's built for each
 
@@ -118,6 +127,8 @@ MiniMax H3's community licence excludes the US, EU, UK and South Korea, outputs 
 <td width="33%"><a href="studio/web/recipe_renders/lora_c87bc8ef16.mp4"><img src="studio/web/recipe_renders/lora_c87bc8ef16.poster.webp" alt="H3 orbit LoRA: a frozen instant of a man in a blue jacket in a sunlit plaza, the camera circling"></a><br><sub><b>Orbit 360</b>, frozen time with the orbit LoRA: this render is its LoRA recipe (<code>lora_c87bc8ef16</code> in <a href="studio/recipe_renders.json">recipe_renders.json</a>). The Orbit goal's own graph, <a href="workflows/h3_orbit360_api.json">h3_orbit360_api.json</a>, has no render on record and the app marks it unproven. Core: MiniMax H3</sub></td>
 </tr></table>
 
+**H3 voice with written lines:** every talking template gives H3 the exact words to say, in the vendor's `<d>[English] …</d>` form ([`video_templates.json`](studio/recipe_library/video_templates.json), held to it by [`tests/test_h3_dialogue.py`](tests/test_h3_dialogue.py)), because with no words H3 voices made-up babble. The greeting card, an H3 clip with the turbo LoRA, speaks its line ([render](studio/web/recipe_renders/vid_short_greeting.mp4), record `vid_short_greeting` in [`recipe_renders.json`](studio/recipe_renders.json)): Whisper hears exactly "Happy birthday, Sam!". That was measured by Whisper, not listened to.
+
 **H3 LoRAs:** 75 H3 LoRA settings in [`studio/lora_recipes.json`](studio/lora_recipes.json), 59 of them with a render in [`studio/recipe_renders.json`](studio/recipe_renders.json) (sliders, bullet time, voice and lip-sync LoRAs, character swap, orbit). Text to video with sound, image to video and first-and-last-frame run on [`h3_t2v_api.json`](workflows/h3_t2v_api.json), [`h3_i2v_api.json`](workflows/h3_i2v_api.json) and [`h3_fl2v_api.json`](workflows/h3_fl2v_api.json), with renders in [`showcase.json`](studio/web/showcase/showcase.json) (`v_h3_dragon`, `v_h3_foundry`, `director_keyframes_bloom`).
 
 ## Swap the person, on any model
@@ -125,7 +136,7 @@ MiniMax H3's community licence excludes the US, EU, UK and South Korea, outputs 
 These graphs swap a person: a whole character in a video, a performer, or an outfit. Each row below links the graph and a render we made with it on our card. The studio's **Swap** page shows the same rows with the clips playing, from the same file ([`studio/swap_showcase.json`](studio/swap_showcase.json)). Swap only invented adults, or people who gave you permission.
 
 <!-- swap-table:start (scripts/build_swap_table.py writes this) -->
-7 graphs with a render, on 5 model families (MiniMax H3, Wan 2.1 SCAIL-2, Wan 2.2 Animate, Qwen-Image 2.1, FLUX.2 Klein).
+9 graphs with a render, on 6 model families (MiniMax H3, Wan 2.1 SCAIL-2, Wan 2.2 Animate, Qwen-Image 2.1, FLUX.2 Klein, Krea 2).
 
 | Render | Swap | Core model | What it swaps | Out | Graph and proof | Licence |
 |---|---|---|---|---|---|---|
@@ -136,8 +147,10 @@ These graphs swap a person: a whole character in a video, a performer, or an out
 | [<img src="studio/web/families/flux-2_11.webp" width="120" alt="Klein 4B try-on: The cleanest on our tests: it replaced the whole outfit on both the coat and the dress and kept the face.">](studio/web/families/flux-2_11.webp) | **Klein 4B try-on** | FLUX.2 Klein Base 4B + try-on LoRA | the outfit | still | [graph](studio/family_templates/klein4b_tryon.json) · [render](studio/web/families/flux-2_11.webp) · record `studio/family_status.json` (fam_flux-2_11), 66.2 s, peak 21.2 GiB. The LoRA is rent-only on Civitai, so check before selling pictures. | Klein 4B Apache-2.0; the LoRA is rent-only on Civitai |
 | [<img src="studio/web/families/flux-2_12.webp" width="120" alt="Klein 9B try-on, two references + LoRA: Quicker than 4B, and it replaced the whole outfit.">](studio/web/families/flux-2_12.webp) | **Klein 9B try-on, two references + LoRA** | FLUX.2 Klein 9B + try-on LoRA | the outfit | still | [graph](studio/family_templates/klein9b_tryon_lora.json) · [render](studio/web/families/flux-2_12.webp) · record `studio/family_status.json` (fam_flux-2_12), 43.4 s, peak 29.1 GiB. On our dress test the colour came out paler and the hem shorter. The LoRA was made for Base 9B and runs here on the distilled 9B. | FLUX Non-Commercial License (Klein 9B); the LoRA is rent-only on Civitai |
 | [<img src="studio/web/families/flux-2_10.webp" width="120" alt="Klein 9B try-on, two references: It dressed the coat well.">](studio/web/families/flux-2_10.webp) | **Klein 9B try-on, two references** | FLUX.2 Klein 9B, no LoRA | the outfit | still | [graph](studio/family_templates/klein9b_tryon.json) · [render](studio/web/families/flux-2_10.webp) · record `studio/family_status.json` (fam_flux-2_10), 79.9 s, peak 27.5 GiB. It also recoloured the trousers to match the coat. | FLUX Non-Commercial License (Klein 9B) |
+| [<img src="studio/web/families/flux-2_15.webp" width="120" alt="Klein 9B, three references: Three pictures in (an invented painter, a rust field jacket, an empty greenhouse), and he stands in the greenhouse wearing the jacket. Face and build held; the pockets and collar carried over. The render shows the three references beside the result.">](studio/web/families/flux-2_15.webp) | **Klein 9B, three references** | FLUX.2 Klein 9B | the character into a scene: character, outfit and place from three pictures | still | [graph](studio/family_templates/klein9b_character_scene.json) · [render](studio/web/families/flux-2_15.webp) · record `studio/family_status.json` (fam_flux-2_15), 17.5 s, peak 28.6 GiB. A slight smile was added and the hair came out a little lighter in the warm light. His own trousers stay. | FLUX Non-Commercial License (Klein 9B) |
+| [<img src="studio/web/families/krea2_2.webp" width="120" alt="Krea 2 identity edit: An invented man at a rainy tram shelter is swapped for an invented lifeguard. The street, shelter, shop window and light held, and the face matches the picture. The render shows both inputs beside the result.">](studio/web/families/krea2_2.webp) | **Krea 2 identity edit** | Krea 2 Turbo + Krea 2 Identity Edit LoRA (community fine-tune, not by Krea) | the person in an existing scene | still | [graph](studio/family_templates/krea2_identity_swap.json) · [render](studio/web/families/krea2_2.webp) · record `studio/family_status.json` (fam_krea2_2), 36.9 s, peak 36.9 GiB. The new person brought his own arms-out pose and bare feet instead of taking the man's stance, and the camera sits a little closer. | Krea 2 Community License: commercial use only for companies under US$1,000,000 annual revenue; the Identity Edit LoRA is a community fine-tune, not by Krea |
 
-**Coming** (graph written, proof render under way; each gets a row above once its render is on record): **Klein 9B, three references** (FLUX.2 Klein 9B; still; swaps the character into a scene: character, outfit and place from three pictures); **Qwen outfit swap, turbo** (Qwen-Image 2.1 Turbo + Outfit Swap LoRA; still; swaps the outfit); **Krea 2 identity edit** (Krea 2 Turbo + Krea 2 Identity Edit LoRA (community fine-tune, not by Krea); still; swaps the person in an existing scene).
+**Coming** (graph written, proof render under way; each gets a row above once its render is on record): **Qwen outfit swap, turbo** (Qwen-Image 2.1 Turbo + Outfit Swap LoRA; still; swaps the outfit).
 <!-- swap-table:end -->
 
 ## Install
@@ -145,8 +158,8 @@ These graphs swap a person: a whole character in a video, a performer, or an out
 **Already run ComfyUI?** You only need the studio, and a link so ComfyUI loads its `PSN_` nodes:
 
 ```bash
-git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git && cd ComfyUI_Parametric_Studio
-python3 -m venv .venv && . .venv/bin/activate
+git clone --depth 1 https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git && cd ComfyUI_Parametric_Studio
+python3 -m venv .venv && . .venv/bin/activate                            # Python 3.12 is the tested version
 pip install fastapi "uvicorn[standard]" python-multipart pydantic numpy pillow brotli apscheduler "huggingface_hub[hf_xet]"
 ln -s "$PWD" /path/to/ComfyUI/custom_nodes/comfyui_parametric_studio    # then restart ComfyUI
 COMFYUI_URL=http://127.0.0.1:8188 python -m studio.server               # open http://127.0.0.1:8310
@@ -154,17 +167,27 @@ COMFYUI_URL=http://127.0.0.1:8188 python -m studio.server               # open h
 
 With uv instead: `uv sync`, then `COMFYUI_URL=http://127.0.0.1:8188 uv run python -m studio.server`. On Ubuntu, get uv with `sudo apt install pipx && pipx install uv`; a plain `pip install uv` fails there.
 
+**Models in one command.** Every model file the studio uses has its official link, size, SHA-256, licence and folder in [`studio/models_manifest.json`](studio/models_manifest.json), and `scripts/get_models.py` fetches them into your ComfyUI (resumable, hash-checked, skips what you have; gated models read `HF_TOKEN` from the environment only):
+
+```bash
+python3 scripts/get_models.py --list                                                   # goals and families
+python3 scripts/get_models.py --for image --models-dir /path/to/ComfyUI/models --dry-run  # see what is missing, then drop --dry-run
+python3 scripts/get_models.py --for family:Anima --models-dir /path/to/ComfyUI/models     # or --for all, a graph id, or one file name
+```
+
 Each app's page lists the model files it is missing and any node your ComfyUI doesn't have. The Shot Board needs MiniMax H3 for reshoot, orbit and recast, LTX-2.5 with four Lightricks IC-LoRAs for the VFX, and the ComfyUI-LTXVideo and KJNodes packs. The files, sizes and hashes for each goal are in [`studio/models_manifest.json`](studio/models_manifest.json) (goals `reshoot`, `orbit360`, `recast`, `vfx_ltx`), and the licences are in [MODELS.md](MODELS.md). Folder settings are in [INSTALL.md](INSTALL.md#using-a-comfyui-you-already-have).
 
 **Starting from nothing?** One command, sized to your machine. See what it would do first:
 
 ```bash
 sudo apt update && sudo apt install -y git ffmpeg python3-venv   # Ubuntu or Debian; other systems are in INSTALL.md
-git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
+git clone --depth 1 https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
 cd ComfyUI_Parametric_Studio
 python3 install.py --dry-run     # shows what fits this box and the disk it needs, changes nothing
 python3 install.py               # or --goals anime for the smallest download, --channel nightly, --goals image,video
 ```
+
+`install.py` fetches the models for the goals it installs. For a family or anything else, run `python3 scripts/get_models.py --for family:<name> --models-dir ../parametric-studio-runtime/ComfyUI/models` afterwards (on Windows, `scripts\install_windows.ps1 -Models family:<name>` does both).
 
 It needs a GPU driver already installed, and about 10 GB of disk plus the models: 25 GB is enough for the default goal. Then run the launcher it prints and open http://127.0.0.1:8310.
 
@@ -190,7 +213,7 @@ Closed AI video apps give you a prompt box and hide everything else. ComfyUI giv
 |---|---|---|
 | **Cost per render** | Credits | **0 on your own GPU** |
 | **How a result was made** | Hidden | **The real graph, in 3D** |
-| **Which models** | The ones they sell you | **95 families wired, 61 with a render on record** |
+| **Which models** | The ones they sell you | **95 families wired, 80 with a render on record** |
 | **Your files and prompts** | On their servers | **Stay on your machine** |
 | **Help** | A docs page | **A crew of characters that answer from cited notes, out loud** |
 | **Can you fork it?** | No | **Yes: AGPL-3.0** |
@@ -237,12 +260,12 @@ Open **Pro** and the exact ComfyUI graph appears in 3D, with data flowing along 
 ![The real graph in 3D](docs/img/pro.jpg)
 
 ### A crew you can talk to
-**Comfy Prime** greets you, learns your name, and drives the studio for you, but never starts a render without your say. 37 specialists answer questions **only from notes, and show the quote**; this needs a local language model, and our tests stub it. Push to talk with local Whisper, hear replies in local Kokoro voices. Nothing leaves your machine.
+**Comfy Prime** greets you, learns your name, and drives the studio for you, but never starts a render without your say. 46 specialists answer questions **only from notes, and show the quote**; this needs a local language model, and our tests stub it. Push to talk with local Whisper, hear replies in local Kokoro voices. Nothing leaves your machine.
 
 ![Comfy Prime and the crew](docs/img/crew.jpg)
 
 ### Model families, each with its own backend
-95 families are wired, and 61 have a render on record. They run from **Stable Diffusion 1.5, SDXL and SD3** through **FLUX, Wan, HunyuanVideo, Mochi, LTX and MiniMax H3**, plus 3D, audio and utility models. Each has its own isolated ComfyUI instance with its own custom nodes and model view, started on demand behind a VRAM check and stopped when idle. Each family shows its state: rendered, ready, or what to download. Most family weights are not on our box any more, so a family with no render on record is wired, not proven.
+95 families are wired, and 80 have a render on record. They run from **Stable Diffusion 1.5, SDXL and SD3** through **FLUX, Wan, HunyuanVideo, Mochi, LTX and MiniMax H3**, plus 3D, audio and utility models. Each has its own isolated ComfyUI instance with its own custom nodes and model view, started on demand behind a VRAM check and stopped when idle. Each family shows its state: rendered, ready, or what to download. A family with no render on record is wired, not proven.
 
 ![Model families](docs/img/families.jpg)
 
@@ -282,7 +305,7 @@ Learn ComfyUI by doing it, in tracks from your first wire to reading the sampler
 More than 130 models across 8 eras, from the first VAEs and GANs to today: what each was, why it mattered, its licence, whether it runs here, and a button to use it.
 
 ### Recipes and processes
-**Recipes** chain models into one click and pass each output along to the next model. 2 of the 10 flagships have been rendered. The library of 740 (621 prompt recipes and 119 LoRA settings) passes an offline format check. 674 of its recipes show a result we rendered here (480 pictures, 126 clips, 48 sounds, 20 3D models), each from one run, and more renders are on the way. Without rendering, the page can also read each recipe against your ComfyUI's nodes and your model files. On our box 154 passed that, and most of the rest wait on a model file. **Processes** lists 97 methods, most with guides. Many guides were written for the earlier studio and say so at the top. Most entries open a real tool or family page here today; the rest are marked Coming soon.
+**Recipes** chain models into one click and pass each output along to the next model. All 10 flagships have been rendered. The library of 818 (657 prompt recipes and 161 LoRA settings) passes an offline format check. 701 of its recipes show a result we rendered here (487 pictures, 141 clips, 48 sounds, 25 3D models), each from one run. Without rendering, the page can also read each recipe against your ComfyUI's nodes and your model files. On our box 765 passed that; most of the other 53 are LoRA cards that still wait on a graph or a file. **Processes** lists 97 methods, most with guides. Many guides were written for the earlier studio and say so at the top. Most entries open a real tool or family page here today; the rest are marked Coming soon.
 
 ### Apps: every graph in one place
 The 18 studio graphs, the recipes, 53 family templates and ComfyUI's own app templates when that package is installed, searchable, each one click from its form. If a graph needs a model you don't have, its page says what to download.

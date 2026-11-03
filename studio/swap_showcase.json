@@ -208,11 +208,26 @@
       "family": "FLUX.2 Klein",
       "graph": "studio/family_templates/klein9b_character_scene.json",
       "swaps": "the character into a scene: character, outfit and place from three pictures",
-      "inputs": "three pictures",
+      "inputs": "three pictures: the character, the outfit and the place",
       "output": "still",
-      "status": "coming",
+      "status": "rendered",
       "licence": "FLUX Non-Commercial License (Klein 9B)",
-      "commercial": false
+      "commercial": false,
+      "proof": {
+        "src": "families/flux-2_15.webp",
+        "poster": "families/flux-2_15.webp",
+        "record": "studio/family_status.json",
+        "key": "fam_flux-2_15",
+        "seconds": 17.5,
+        "peak_vram_gib": 28.6,
+        "seed": 20261009
+      },
+      "looked": "Three pictures in (an invented painter, a rust field jacket, an empty greenhouse), and he stands in the greenhouse wearing the jacket. Face and build held; the pockets and collar carried over. The render shows the three references beside the result.",
+      "flaw": "A slight smile was added and the hair came out a little lighter in the warm light. His own trousers stay.",
+      "open": {
+        "hash": "families/flux-2",
+        "label": "Open in Families"
+      }
     },
     {
       "id": "qwen21_outfit_turbo",
@@ -234,11 +249,26 @@
       "family": "Krea 2",
       "graph": "studio/family_templates/krea2_identity_swap.json",
       "swaps": "the person in an existing scene",
-      "inputs": "a scene and a picture of the person",
+      "inputs": "two pictures: the scene and the person",
       "output": "still",
-      "status": "coming",
-      "licence": "Krea 2 Community License",
-      "commercial": false
+      "status": "rendered",
+      "licence": "Krea 2 Community License: commercial use only for companies under US$1,000,000 annual revenue; the Identity Edit LoRA is a community fine-tune, not by Krea",
+      "commercial": "conditional",
+      "proof": {
+        "src": "families/krea2_2.webp",
+        "poster": "families/krea2_2.webp",
+        "record": "studio/family_status.json",
+        "key": "fam_krea2_2",
+        "seconds": 36.9,
+        "peak_vram_gib": 36.9,
+        "seed": 4207
+      },
+      "looked": "An invented man at a rainy tram shelter is swapped for an invented lifeguard. The street, shelter, shop window and light held, and the face matches the picture. The render shows both inputs beside the result.",
+      "flaw": "The new person brought his own arms-out pose and bare feet instead of taking the man's stance, and the camera sits a little closer.",
+      "open": {
+        "hash": "families/krea2",
+        "label": "Open in Families"
+      }
     }
   ]
 }

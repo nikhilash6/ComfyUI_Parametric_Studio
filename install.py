@@ -56,6 +56,9 @@ PEAK_VRAM_GIB.update({"product": 24.1, "recast": 36.3, "vfx_ltx": 44.8, "directo
 BACKENDS["product"] = BACKENDS["flux3"]
 BACKENDS.update({g: ["cuda"] for g in ("recast", "vfx_ltx", "director", "reshoot", "director_keyframes", "orbit360", "reshoot_wan")})
 NEEDS.update({g: ["nvfp4"] for g in ("recast", "director", "reshoot", "director_keyframes", "orbit360")})
+# Optional node-pack sets (--packs). pool51: the reviewed, load-tested set listed in studio/pool51_catalogue.json, each at a pinned commit (Pack Lab shows it).
+PACK_SETS = {"pool51": REPO / "studio" / "pool51_catalogue.json"}
+PACK_SET_GB = {"pool51": 1.8}        # the packs' files at their pinned commits, measured; pip packages and first-use model downloads are on top
 GOAL_PACKS.update({"vfx_ltx": ["https://github.com/Lightricks/ComfyUI-LTXVideo.git"], "recast": ["https://github.com/kijai/ComfyUI-KJNodes.git"]})
 def load_json(path):
     with open(path, encoding="utf-8") as f:
@@ -107,7 +110,20 @@ def installed_goals(plan_result, skipped):
     return [i["goal"] for i in plan_result["items"] if i["goal"] not in gone]
 
 
-def build_commands(plan_result, plan_manifest, channels, channel, base_dir, backend, include_gated=False, models=True):
+def pack_commands(catalogue, comfy_dir, python):
+    """One pseudo step per pack (clone at the pinned commit, apply the shipped patch), then its pip packages: one pip call with dependencies, one without."""
+    comfy_dir = Path(comfy_dir); cmds = []; deps, nodeps = [], []
+    for p in catalogue["packs"]:
+        patch = str(REPO / "studio" / "pool51_patches" / p["patch"]) if p.get("patch") else ""
+        cmds.append(["pack", p["url"] + ".git", p["commit"], str(comfy_dir / "custom_nodes" / p["folder"]), patch])
+        target = nodeps if p.get("pip_no_deps") else deps
+        target += [x for x in p.get("pip") or [] if x not in target]
+    if deps: cmds.append([python, "-m", "pip", "install", *deps])
+    if nodeps: cmds.append([python, "-m", "pip", "install", "--no-deps", *nodeps])
+    return cmds
+
+
+def build_commands(plan_result, plan_manifest, channels, channel, base_dir, backend, include_gated=False, models=True, pack_sets=()):
     """Pure: returns the steps as argument lists. Pseudo commands 'download' and 'link' run inside this script."""
     base_dir = Path(base_dir)
     python = str(get_venv_python_path(base_dir))
@@ -131,6 +147,8 @@ def build_commands(plan_result, plan_manifest, channels, channel, base_dir, back
         dest = comfy_dir / "custom_nodes" / url.rsplit("/", 1)[1].removesuffix(".git")
         cmds.append(["git", "clone", "--depth", "1", url, str(dest)])
         cmds.append([python, "-m", "pip", "install", "-r", str(dest / "requirements.txt")])
+    for name in pack_sets:
+        cmds += pack_commands(load_json(PACK_SETS[name]), comfy_dir, python)
     if models:
         for f in files:
             url = f"https://huggingface.co/{f['repo']}/resolve/main/{urllib.parse.quote(f['path'])}"
@@ -229,6 +247,8 @@ def step_label(cmd):
         return f"Downloading model {Path(cmd[2]).name}"
     if cmd[0] == "link":
         return "Linking the studio's custom nodes into ComfyUI"
+    if cmd[0] == "pack":
+        return f"Node pack {Path(cmd[3]).name} at {cmd[2][:10]}" + (", patched" if cmd[4] else "")
     if cmd[1:3] == ["-m", "venv"]:
         return "Creating the Python environment"
     if cmd[:2] == ["git", "clone"]:
@@ -262,6 +282,19 @@ def run_step(cmd, tries=NETWORK_TRIES, sleep=time.sleep):
                 print(f"Trying that step again in {NETWORK_WAIT_S} s ({attempt} of {tries - 1})", flush=True)
                 sleep(NETWORK_WAIT_S)
     return False
+
+
+def install_pack(url, commit, dest, patch="", step=None):
+    """Clone one pack at exactly its pinned commit (no hooks, no submodules), then apply its patch. A checkout already there is kept."""
+    step = step or run_step
+    if already_cloned(dest):
+        print(f"  already there, keeping it: {dest}")
+        return True
+    git = ["git", "-c", "core.hooksPath=" + os.devnull]
+    steps = [git + ["init", "-q", str(dest)], git + ["-C", str(dest), "fetch", "--depth", "1", url, commit], git + ["-C", str(dest), "checkout", "-q", "FETCH_HEAD"]]
+    if patch:
+        steps.append(git + ["-C", str(dest), "apply", patch])
+    return all(step(c) for c in steps)
 
 
 def link_nodes(src, dst):
@@ -345,6 +378,7 @@ def parse_args(argv=None):
                    help="comma-separated goals to fetch models for, or 'all' (default: image). See --list")
     p.add_argument("--include-gated", action="store_true", help="also fetch gated models; needs HF_TOKEN and an accepted licence")
     p.add_argument("--no-models", action="store_true", help="install the software only")
+    p.add_argument("--packs", choices=["none", *PACK_SETS], default="none", help="also install a node-pack set at pinned commits: pool51 is the reviewed, load-tested set Pack Lab lists (about 1.8 GB plus pip packages)")
     p.add_argument("--yes", action="store_true", help="do not ask for confirmation; also allows running as root")
     p.add_argument("--dry-run", action="store_true", help="print the plan and every step, change nothing")
     p.add_argument("--profile-json", help="use a simulated hardware profile from this JSON file")
@@ -419,7 +453,7 @@ def main(argv=None):
         return EXIT_NOTHING
     base_dir = Path(args.dir).resolve()
     size = 0.0 if args.no_models else sum(f["size_gb"] for f in files if not (base_dir / "ComfyUI" / "models" / f["dest"]).exists())
-    software = 0.0 if get_venv_python_path(base_dir).exists() else SOFTWARE_GB
+    software = (0.0 if get_venv_python_path(base_dir).exists() else SOFTWARE_GB) + (PACK_SET_GB[args.packs] if args.packs != "none" else 0.0)
     print(f"Download: {size:.1f} GB of models into {base_dir}")
     free = profile.get("disk_free_gb")
     print(f"Disk: about {size + software:.0f} GB needed ({size:.1f} GB of models, about {software:.0f} GB of software)" + ("" if free is None else f", {free:.0f} GB free there"))
@@ -431,7 +465,7 @@ def main(argv=None):
         print(H3_NOTICE)
 
     cmds = build_commands(result, plan_manifest, channels, args.channel, args.dir, profile.get("backend", "cpu"),
-                          args.include_gated, not args.no_models)
+                          args.include_gated, not args.no_models, [] if args.packs == "none" else [args.packs])
     if args.dry_run:
         for cmd in cmds:
             print(" ".join(map(str, cmd)))
@@ -448,6 +482,10 @@ def main(argv=None):
                 return EXIT_FAILED
         elif cmd[0] == "link":
             link_nodes(cmd[1], cmd[2])
+        elif cmd[0] == "pack":
+            if not install_pack(*cmd[1:]):
+                print("Fix that and run the same command again: finished steps are kept.")
+                return EXIT_FAILED
         elif cmd[:2] == ["git", "clone"] and already_cloned(cmd[-1]):
             print(f"  already there, keeping it: {cmd[-1]}")
         elif not run_step(cmd):

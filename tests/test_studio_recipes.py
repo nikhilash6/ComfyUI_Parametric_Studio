@@ -213,6 +213,8 @@ def test_the_readme_counts_the_rendered_flagships():
     import re
     from pathlib import Path
     m = re.search(r"(\d+) of (\d+) flagships rendered", (Path(__file__).resolve().parent.parent / "README.md").read_text(encoding="utf-8")); d = R.load()["recipes"]; assert m and int(m.group(1)) == sum(1 for r in d if r.get("tested")) and int(m.group(2)) == len(d)
+    other = re.findall(r"(\d+|All \d+) of the (\d+) flagships|(\d+) of the \d+ flagships have been rendered", (Path(__file__).resolve().parent.parent / "README.md").read_text(encoding="utf-8"))
+    assert not other, f"a second flagship count in the README can drift from the first: {other}"
 @ffmpeg
 def test_level_lifts_a_quiet_clip_with_one_gain_and_leaves_silence_alone(tmp_path):
     a = tmp_path / "q.mp4"; subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=red:s=160x90:r=24:d=4", "-f", "lavfi", "-i", "sine=frequency=440:duration=4", "-af", "volume=-25dB", "-pix_fmt", "yuv420p", "-c:v", "libx264", "-shortest", str(a)], check=True)

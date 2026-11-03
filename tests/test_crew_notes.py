@@ -1,5 +1,5 @@
 """The crew's state notes: labelled, citing what exists, and what a specialist can really answer from. No model here: a scripted chat stands in."""
-import asyncio, json, re, subprocess, sys
+import asyncio, json, os, re, subprocess, sys
 from pathlib import Path
 import pytest
 from studio import crew, crew_api as C
@@ -35,6 +35,13 @@ def test_no_existing_member_changed_name_when_the_studio_tier_came():
     m = members()
     fixed = {"3d-trellis-hunyuan3d-sam3d-mesh": "Professor Latent", "anima": "Captain Checkpoint", "text-encoders": crew.NAMES[31], "vae": crew.NAMES[32], "vision": crew.NAMES[33], "lora": crew.NAMES[34], "controlnet": crew.NAMES[35], "upscaler": crew.NAMES[36]}
     assert {k: m[k]["name"] for k in fixed} == fixed and m["master"]["name"] == "Comfy Prime"
+
+
+def test_the_six_part_members_have_their_own_notes_and_prime_holds_them():
+    m = members(); prime = set(m["master"]["files"])
+    for pid in ("text-encoders", "vae", "vision", "lora", "controlnet", "upscaler"):
+        assert m[pid]["tier"] in ("secondary", "tertiary") and m[pid]["has_dossier"] and m[pid]["files"], pid
+        assert all(f.endswith(".md") and f"parts{os.sep}{pid}{os.sep}" in f for f in m[pid]["files"]) and set(m[pid]["files"]) <= prime, pid
 
 
 def test_prime_holds_every_note_but_all_families_is_nobody_else():

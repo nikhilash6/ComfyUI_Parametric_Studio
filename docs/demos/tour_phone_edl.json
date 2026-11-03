@@ -1,0 +1,67 @@
+{
+ "music": {
+  "credit": "“Paper Boats”, made in the studio with ACE-Step 1.5 Turbo (seed 7701, MIT)",
+  "lufs": -16.0,
+  "true_peak_db": -4.3,
+  "lra": 11.0
+ },
+ "recorded_on": "a preview studio of this release, ComfyUI not attached",
+ "tabs": [
+  {
+   "tab": "create",
+   "label": "Create",
+   "title": "Create",
+   "cut_start": 0.0,
+   "cut_end": 3.001
+  },
+  {
+   "tab": "shots",
+   "label": "Shot Board",
+   "title": "Shot Board",
+   "cut_start": 3.001,
+   "cut_end": 5.402
+  },
+  {
+   "tab": "families",
+   "label": "Families",
+   "title": "Model families",
+   "cut_start": 5.402,
+   "cut_end": 7.802
+  },
+  {
+   "tab": "recipes",
+   "label": "Recipes",
+   "title": "Recipes",
+   "cut_start": 7.802,
+   "cut_end": 10.202
+  },
+  {
+   "tab": "pipelines",
+   "label": "Pipelines",
+   "title": "Pipelines",
+   "cut_start": 10.202,
+   "cut_end": 12.602
+  },
+  {
+   "tab": "university",
+   "label": "Learn",
+   "title": "ComfyUniversity",
+   "cut_start": 12.602,
+   "cut_end": 15.002
+  },
+  {
+   "tab": "music",
+   "label": "Music",
+   "title": "Music",
+   "cut_start": 15.002,
+   "cut_end": 17.404
+  },
+  {
+   "tab": "moe",
+   "label": "Experts",
+   "title": "Inside a mixture of experts",
+   "cut_start": 17.404,
+   "cut_end": 19.804
+  }
+ ]
+}

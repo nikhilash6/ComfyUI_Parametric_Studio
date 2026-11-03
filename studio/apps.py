@@ -100,7 +100,7 @@ def is_api_graph(o):
     """A graph in ComfyUI's API format (node id -> class_type and inputs), as the studio's own family templates are stored."""
     return isinstance(o, dict) and bool(o) and all(isinstance(v, dict) and "class_type" in v for v in o.values())
 API_MEDIA = {"LoadImage": ("image", "image"), "LoadVideo": ("file", "video"), "LoadAudio": ("audio", "audio")}
-API_TEXT = {"CLIPTextEncode": "text", "TextEncodeFibo2": "prompt", "WanVideoTextEncodeCached": "positive_prompt", "WanVideoTextEncode": "positive_prompt"}
+API_TEXT = {"CLIPTextEncode": "text", "TextEncodeFibo2": "prompt", "WanVideoTextEncodeCached": "positive_prompt", "WanVideoTextEncode": "positive_prompt", "TextEncodeQwenImage21": "prompt", "Krea2EditGroundedEncode": "prompt"}
 def api_inputs(g):
     """The form for an API-format graph: its media loaders, positive prompts and first seed."""
     out, seeded = [], False

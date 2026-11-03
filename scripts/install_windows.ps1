@@ -4,8 +4,12 @@
 .DESCRIPTION
   Checks for Python 3.12, Git, ffmpeg and an NVIDIA or AMD driver, shows install.py's plan (a dry run that changes nothing), asks, then runs install.py,
   which sets up ComfyUI, the studio and the models in -Dir and writes run_studio.bat. If a step fails, please open an issue with its output.
+  -Models also fetches the model files for a family, a graph, a file or "all" with scripts\get_models.py (official links, resumable, SHA-256 checked),
+  after the same kind of dry run. Gated models need HF_TOKEN set in the environment; it is never stored.
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File scripts\install_windows.ps1 -Goals anime
+.EXAMPLE
+  powershell -ExecutionPolicy Bypass -File scripts\install_windows.ps1 -Goals image -Models family:Anima
 #>
 [CmdletBinding()]
 param(
@@ -13,6 +17,8 @@ param(
     [ValidateSet("stable", "nightly")][string]$Channel = "stable",
     [string]$Dir = "",
     [switch]$NoModels,
+    [string]$Models = "",
+    [ValidateSet("none", "pool51")][string]$Packs = "none",
     [switch]$Yes
 )
 $ErrorActionPreference = "Stop"
@@ -58,6 +64,7 @@ if (-not $longPaths -or $longPaths.LongPathsEnabled -ne 1) {
 
 $installArgs = @((Join-Path $Repo "install.py"), "--goals", $Goals, "--channel", $Channel, "--dir", $Dir)
 if ($NoModels) { $installArgs += "--no-models" }
+if ($Packs -ne "none") { $installArgs += @("--packs", $Packs) }
 
 Write-Host "`nThe plan (a dry run: nothing is changed yet):"
 & $py[0] $py[1] @installArgs --dry-run
@@ -71,6 +78,18 @@ if (-not $Yes) {
 if ($LASTEXITCODE -ne 0) {
     Write-Host "A step failed. Run the same command again: finished steps and partly downloaded files are kept." -ForegroundColor Red
     exit $LASTEXITCODE
+}
+if ($Models -and -not $NoModels) {
+    $getArgs = @((Join-Path $Repo "scripts\get_models.py"), "--for", $Models, "--models-dir", (Join-Path $Dir "ComfyUI\models"))
+    Write-Host "`nThe models for '$Models' (a dry run: nothing is downloaded yet):"
+    & $py[0] $py[1] @getArgs --dry-run
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    $fetch = [bool]$Yes
+    if (-not $Yes) { $fetch = (Read-Host "`nDownload these? [y/N]") -match "^[yY]" }
+    if ($fetch) {
+        & $py[0] $py[1] @getArgs
+        if ($LASTEXITCODE -ne 0) { Write-Host "Some downloads did not finish. Run the same command again: partly downloaded files are kept." -ForegroundColor Red }
+    }
 }
 Write-Host "`nInstalled. Start it with: $(Join-Path $Dir 'run_studio.bat'), then open http://127.0.0.1:8310" -ForegroundColor Green
 Write-Host "Windows may refuse the symlink for the custom nodes without Developer Mode; install.py then copies the folder instead."

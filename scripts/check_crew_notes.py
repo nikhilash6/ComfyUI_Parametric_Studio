@@ -18,6 +18,7 @@ def note_files(root):
     notes = Path(root) / "studio" / "crew_notes"
     out = sorted((notes / "studio_topics").rglob("*.md")) if (notes / "studio_topics").is_dir() else []
     for name in CHECKED_NAMES: out += sorted((notes / "model_families").glob(f"*/dossier/{name}"))
+    out += sorted((notes / "parts").rglob("*.md")) if (notes / "parts").is_dir() else []
     return out
 
 

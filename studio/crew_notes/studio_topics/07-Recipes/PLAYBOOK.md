@@ -69,3 +69,25 @@ The 3 processes tested here are image-flux3-klein, music-minimax and video-h3-mo
 Process open links: 50 rows in processes.json name something to open (28 family pages, 10 goals, 5 designers, 4 recipes, 3 edits), and 21 more get a family page from a NEAR table when loaded. That makes 71 that open and 26 that show as coming soon. 93 of 97 have a guide. [run: studio/processes.json] [code: studio/processes.py:10, studio/processes.py:12-16]
 
 A process card reads "Tested here", "Opens here", "Closest match" or "Coming soon". "Closest match" means the same main model, with the full pipeline still to come. [code: studio/web/processes.js:56-57, studio/web/processes.js:63]
+
+## Final session findings, 2026-11-03
+
+Recipe render counts have grown since the older notes. recipe_renders.json now holds 698 rows: picture 419, lora 80, video 56, stylizer 50, sound 48, 3d 25, timelapse 11, loop 9. 559 are dated 2026-11-01 and 139 are dated 2026-11-02. The count stood at 696 after the last reviewed batch on 2026-11-02; the two LoRA cards that show a family render brought it to 698. [run: studio/recipe_renders.json]
+
+Recipe render peak scope in the current file: 621 rows give the recipe's own lane, 12 give the whole card and 65 have no GPU peak (48 sounds and 17 3D recipes). [run: studio/recipe_renders.json]
+
+The recipe library now has 818 rows: 657 from eight files (pictures 419, video_templates 82, stylizers 50, sounds 48, models3d 26, timelapses 12, h3_scenes 10, loops 10) plus 161 curated LoRA rows. The older figures of 783 rows and 162 LoRA rows are out of date. [run: studio/recipe_library/pictures.json, studio/recipe_library/models3d.json, studio/recipe_library/h3_scenes.json, studio/lora_recipes.json] [code: studio/recipes.py:28-36]
+
+Recipe LoRA rows by route, of 161: 55 H3 rows run directly, 16 H3 rows run through the reference step, 19 run on their family's own graph, 22 run in their family's own ComfyUI template, and 49 are reference cards. 80 LoRA rows have a render; the 22 template rows have none yet. [run: studio/lora_recipes.json, studio/recipe_renders.json] [code: studio/recipes.py:51-73]
+
+Recipe template LoRA rows came in two batches on 2026-11-02. Eight reference cards were wired into the family template that already loads their LoRA: FLUX.1 depth, Qwen-Image union control, MOSS-Image edit, the Wan 2.2 T2V and I2V speed pairs and Wan Alpha. Fourteen Wan 2.2 14B LoRAs (speed LoRAs and Stable Video Infinity LoRAs) were wired into the official Wan 2.2 I2V and T2V templates. [run: studio/lora_recipes.json] [code: studio/recipes.py:58-66]
+
+Two recipe LoRA cards show a family render instead of a recipe render: the Moss-Image depth-control LoRA and the Wan-SCAIL-2 DPO LoRA. The family graph's recorded job was traced to confirm its LoRA node feeds the sampler. The card says which family graph made it, shows "Made by", and has no "Prove it" button. [run: studio/recipe_renders.json] [code: studio/web/recipes.js:42] [test: tests/test_recipe_renders.py]
+
+Recipe presenter videos now start from one portrait. 32 of the 82 video templates draw a head-and-shoulders picture first, then make each presenter shot with H3's reference step and its 8-step turbo LoRA, because a fixed description and one seed did not hold one person across shots. [run: studio/recipe_library/video_templates.json] [claim: studio commit log, 2026-11-02]
+
+Recipe web clips were re-encoded twice on 2026-11-02 and now sit near 450 KB: 165 clips, median 456 KB, largest 484 KB. The commit records that faces, hands and fast motion were compared frame against frame with the larger copies and showed no visible loss. [run: studio/recipe_renders.json] [claim: studio commit log, 2026-11-02]
+
+Recipe 3D downloads are each their own run's file since 2026-11-02: 18 rows carry a download (GLB meshes, two BVH motions and one Gaussian splat). Reduced GLB copies are welded and smoothed before decimating and kept under 1.5 MB; the 3.0 MB splat keeps its size because no reducer exists for it. A test fails if two recipes share one download or a GLB passes the cap. [run: studio/recipe_renders.json] [test: tests/test_recipe_renders.py]
+
+Recipe cards with no render show their real step chain and first models instead of a plain box since 2026-11-02, the phone grid is two columns, and filter chips are 40 px tall. [code: studio/web/recipes.js] [claim: studio commit log, 2026-11-02]

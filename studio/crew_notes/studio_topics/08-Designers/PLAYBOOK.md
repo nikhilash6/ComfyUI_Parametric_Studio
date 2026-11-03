@@ -47,3 +47,21 @@ Designer tile art is one real render per designer, 13 in all, from the designer'
 ## Tests
 
 Designer tests check the data has no listed brand names or unsafe words, every group has at least 2 options, every designer has views, the composer rejects bad input, and the character and fashion rules hold. A page test checks labels exist. [test: tests/test_studio_packs.py, tests/test_look_design.py]
+
+## Final session findings, 2026-11-03
+
+There are 32 designers in the current data, not 13. The 19 added on 2026-11-01 are sneaker, watch, jewellery, perfume, architecture, robot, spaceship, creature, helmet, album, poster, stained glass, textile, cake, stage, lamp, game prop, toy and flash sheet. The first three tiles are still character, fashion and vehicle. The option lists now hold 4,271 options. [code: studio/packs/packs.json, studio/packs.py:26-27] [test: tests/test_studio_packs.py, tests/test_look_design.py]
+
+Designer tile art is now 32 renders, one per designer, all at seed 11 from the designer's own composer. 13 are on FLUX.2 Klein 4B base at 20 steps (goal image, mode quality), 6.0 to 18.9 s, peak at most 23.0 GiB. 19 are on FLUX.3 Klein (goal flux3), 4.0 to 21.3 s, with no peak recorded. [run: studio/web/designer_art/art.json]
+
+Designer sheets are a gallery of real renders since 2026-11-01: 181 pictures across all 32 designers, 85 other views and 96 single-choice variations, each through the designer's own composer at the same seed. 104 are on FLUX.3 Klein and 77 on FLUX.2 Klein 4B, all made 2026-11-01, 4.0 to 192.6 s each, with no peak VRAM recorded. Moving across a picture or tapping a thumbnail flips views, and picking a choice shows that choice's render where one exists, labelled as the studio's own. [run: studio/web/designer_art/sheets.json] [test: tests/test_look_design.py]
+
+The home page Designers card now says "many more designers inside", which fixes the older off-by-two wording. [code: studio/web/app.js:191]
+
+The Fashion designer has a try-on panel: a person picture and a garment picture give the person wearing it, or a person picture gives the garment alone. Methods are ordered best first from the studio's own test on the same invented model and garments, and the first one ready is the default. [code: studio/tryon.py:1-2, studio/tryon.py:11-17, studio/tryon.py:46-48, studio/web/extras.js:115-134] [test: tests/test_tryon.py]
+
+Try-on methods and their recorded runs: FLUX.2 Klein 4B with a try-on LoRA, the default, 66.2 s and 21.2 GiB. FLUX.2 Klein 9B with that LoRA, 43.4 s and 29.1 GiB. Klein 9B with two references, 79.9 s and 27.5 GiB. Qwen-Image 2.1 with an outfit-swap LoRA, 53.7 s and 35.1 GiB. FASHN VTON 1.5 runs in its own process at 576 px. Try-off uses Qwen-Image 2.1. Each was one run on the test machine. [run: studio/family_status.json] [code: studio/tryon.py:12-17]
+
+The look library picker (461 grouped looks), the "Improve for <model>" button with its seven prompt kits, and the 56 voice personas are on the Create and Voices pages, not on Design. A designer sheet still sends only a goal, a prompt and empty options, so none of those reach it. [code: studio/web/app.js:170, studio/web/extras.js:192] [run: studio/look_library.json, studio/prompt_kits.json, studio/voice_personas.json]
+
+The Designers stage carries the shared hero light since 2026-11-02, using transform and opacity only, off under prefers-reduced-motion. [code: studio/web/polish.css:74-83]

@@ -1,0 +1,38 @@
+diff --git a/nodes.py b/nodes.py
+index eb44df2..9d478d8 100644
+--- a/nodes.py
++++ b/nodes.py
+@@ -29,16 +29,13 @@ class LoadDepthPro:
+         device = model_management.get_torch_device()
+         dtype = torch.float16 if precision == "fp16" else torch.float32
+         
+-        depth_model_path = os.path.join(folder_paths.models_dir, "depth", "ml-depth-pro")
+-        if not os.path.exists(depth_model_path):
+-            from huggingface_hub import snapshot_download
+-            snapshot_download(
+-                repo_id="spacepxl/ml-depth-pro",
+-                local_dir=depth_model_path,
+-                local_dir_use_symlinks=False,
+-                )
+-        
+-        depth_model_path = os.path.join(depth_model_path, "depth_pro.fp16.safetensors")
++        # Parametric Studio patch: weights come only from Apple's official release (apple/DepthPro, depth_pro.pt),
++        # never from a third-party re-host. An existing local copy is used first; nothing is fetched if one is present.
++        model_dir = os.path.join(folder_paths.models_dir, "depth", "ml-depth-pro")
++        depth_model_path = next((os.path.join(model_dir, f) for f in ("depth_pro.pt", "depth_pro.fp16.safetensors") if os.path.isfile(os.path.join(model_dir, f))), None)
++        if depth_model_path is None:
++            from huggingface_hub import hf_hub_download
++            depth_model_path = hf_hub_download(repo_id="apple/DepthPro", filename="depth_pro.pt", local_dir=model_dir)
+         model, transform = depth_pro.create_model_and_transforms(depth_model_path, device=device, precision=dtype)
+         model.eval()
+         
+diff --git a/requirements.txt b/requirements.txt
+index c989d10..40c31cc 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -1,2 +1,2 @@
+ timm>=0.9.16
+-numpy<2
+\ No newline at end of file
++# numpy<2  (dropped by Parametric Studio: the venv has numpy 2.x and the code runs on it)
+\ No newline at end of file

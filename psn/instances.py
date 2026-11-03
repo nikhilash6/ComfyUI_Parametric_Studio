@@ -61,11 +61,15 @@ PACK_SOURCE = {p: os.path.join(PATCHED_LIB, p) for p in ("Aero-Ex__ComfyUI-HyMot
 #: convolution then fails (worker/CUDNN_PACK_CONFLICT.md); putting the venv's own cuDNN first on the library path keeps that instance on one version.
 VENV_CUDNN = paths.setting("PSN_VENV_CUDNN", default=os.path.join(sys.prefix, "lib", f"python{sys.version_info[0]}.{sys.version_info[1]}", "site-packages", "nvidia", "cudnn", "lib"))
 INSTANCE_ENV = {"Kolors": {"LD_LIBRARY_PATH": VENV_CUDNN}} if os.path.isdir(VENV_CUDNN) else {}
-FAMILY_PACKS.update({"Iris-3B": ["bani4kaskashka__Iris-3B-Comfy-Nodes"], "HY-Motion": ["Aero-Ex__ComfyUI-HyMotion"], "Kolors": ["kijai__ComfyUI-KwaiKolorsWrapper"], "face": ["comfyorg__comfyui_gfpgan"]})
+FAMILY_PACKS.update({"Iris-3B": ["bani4kaskashka__Iris-3B-Comfy-Nodes"], "HY-Motion": ["Aero-Ex__ComfyUI-HyMotion"], "Kolors": ["kijai__ComfyUI-KwaiKolorsWrapper"], "face": ["comfyorg__comfyui_gfpgan"], "LongCat-Avatar-15": ["kijai__ComfyUI-WanVideoWrapper"]})
+#: Krea 2 Identity Edit (an unofficial community LoRA on Krea 2 Raw) needs its two nodes, Krea2EditModelPatch and Krea2EditGroundedEncode; on the Krea2 instance only, never the main ComfyUI.
+FAMILY_PACKS["Krea2"] = ["lbouaraba__comfyui-krea2edit"]
 WRAPS.update({
  "Iris-3B": {"loader": "pack", "files": [("diffusion_models", "iris-3b.safetensors", "_complete_pipelines/Iris-3B/diffusion_models/model.safetensors"),
              ("text_encoders", "Qwen3-VL-4B-Instruct", "_complete_pipelines/Iris-3B/text_encoders/Qwen3-VL-4B-Instruct")],
              "note": "the pack lists Iris weights by an 'iris' file name and wants Qwen3-VL-4B-Instruct as a Hugging Face folder; that folder is the repo's config and tokenizer with Comfy-Org's qwen3vl_4b_bf16.safetensors, which holds the same 713 tensors under the same names"},
+ "LongCat-Avatar-15": {"loader": "pack", "files": [("loras", "LongCat-Avatar-15_dmd_distill_lora_rank128_bf16.safetensors", "_complete_pipelines/LongCat-Avatar-15/extra/LongCat-Avatar-15_dmd_distill_lora_rank128_bf16.safetensors")],
+                       "note": "Kijai's ComfyUI repack of LongCat-Video-Avatar 1.5 through WanVideoWrapper; its 12-step DMD distill LoRA kept in the pipeline's extra folder is shown as a LoRA; the Whisper-large-v3 encoder is in the pipeline's audio_encoders"},
  "face": {"loader": "pack", "files": [("face_restoration", "GFPGANv1.4.pth", "face/restore/GFPGANv1.4.pth"), ("face_detection", "detection_Resnet50_Final.pth", "face/detection/detection_Resnet50_Final.pth"),
           ("face_detection", "parsing_parsenet.pth", "face/detection/parsing_parsenet.pth"), ("face_detection", "parsing_bisenet.pth", "face/detection/parsing_bisenet.pth")],
           "note": "comfyorg's GFPGAN node (Apache-2.0) looks in models/face_restoration and hands models/face_detection to facexlib; with the files there it downloads nothing"},

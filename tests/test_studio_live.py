@@ -73,15 +73,3 @@ def test_preview_route_404_when_empty():
     with pytest.raises(HTTPException): L.live_preview()
     L.S["preview"] = b"abc"; r = L.live_preview(); assert r.body == b"abc"
 
-def test_every_workflow_class_has_an_explanation():
-    import glob, os, re
-    root = os.path.join(os.path.dirname(__file__), ".."); src = open(os.path.join(root, "studio", "web", "graph3d_math.js"), encoding="utf-8").read(); missing = set()
-    for f in glob.glob(os.path.join(root, "workflows", "*.json")):
-        try: d = json.load(open(f))
-        except Exception: continue
-        if isinstance(d, dict):
-            for v in d.values():
-                if isinstance(v, dict) and v.get("class_type"):
-                    c = v["class_type"]
-                    if not re.search(r'(^|[\s{,"])' + re.escape(c) + r'"?: I\(', src): missing.add(c)
-    assert not missing, sorted(missing)

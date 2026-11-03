@@ -77,3 +77,43 @@ The glb.py list_glb walks a folder, skips symlinks and anything outside the root
 ## Chains that have not run whole
 
 3D models in World Kit have not run as a whole chain. Picture to prop through a model and the character chain are tested with fakes, and the runs above were single steps from the 3D page or the family watcher. No rigged person made from a saved character is on record. [docs: studio/processes/world-kit.md] [test: tests/worldkit/test_character_maker.py, tests/worldkit/test_prop_maker.py]
+
+## Final session findings, 2026-11-03
+
+Three statements in the 2026-11-01 part of this file are out of date: SAM 3D Objects has now run, UniRig is now wired with two recorded runs, and HY-Motion and HunyuanWorld each have a render. The paragraphs below give the records. [docs: studio/crew_notes/model_families/01-3D-Trellis-Hunyuan3D-SAM3D-mesh/dossier/NOW.md:39, studio/crew_notes/model_families/01-3D-Trellis-Hunyuan3D-SAM3D-mesh/dossier/NOW.md:43, studio/crew_notes/model_families/01-3D-Trellis-Hunyuan3D-SAM3D-mesh/dossier/NOW.md:45] [run: studio/model3d_proof.json:102-121]
+
+### Runs added since the first proof
+
+SAM 3D Objects ran on 2026-11-01 through its tool on a bear cut-out and its mask: 210.0 s, peak 21.7 GiB, seed 42, giving a mesh plus a splat. Good overall shape with fur detail; the colour is uneven, pale on one side and brown on the other. Its gate still assumes a 32 GB peak, well above the measured one. [run: studio/model3d_proof.json:102-111] [code: studio/worldkit/tools.py:17, studio/model3d.py:14]
+
+UniRig is now on the 3D page as a rig job run by its own tool, with a 1500 s limit and an assumed 8.0 GB peak. It turns a mesh into a rigged GLB. [code: studio/model3d.py:19, studio/model3d.py:112, studio/worldkit/tools.py:17-18, studio/worldkit/tools.py:127-132]
+
+UniRig's first run, on 2026-11-01, used TripoSR's bear mesh, the same one SkinTokens rigged: 129.2 s, peak 5.9 GiB, seed 12345, 31 bones. A pose test moved 98,912 of 226,530 vertices and bent with less tearing than SkinTokens, with some stretch at the neck. One mesh only. [run: studio/model3d_proof.json:112-121]
+
+UniRig's second run, on 2026-11-02, rigged TRELLIS.2's textured bear: 195.9 s, peak 5.9 GiB, seed 12345, 36 bones on a 555,011-vertex mesh. Bending the four lowest chains in Blender moved 405,190 vertices. The legs swing cleanly; the fur stretches and smears at the hips, and the belly lifts with the front legs. MIT. [run: studio/family_status.json:10293, studio/family_status.json:10310]
+
+HY-Motion 1.0 (template hymotion_t2m_preview) turns a sentence into a body motion through Aero-Ex's HY-Motion nodes from a hardened copy, with Qwen3-8B and CLIP-L reading the words. The pack wants Qwen3-8B as one file, so the repo's five bf16 shards were joined with no tensor changes; the text encoder runs on the CPU. The sampler also needs Tencent's wooden mannequin data. [code: studio/family_templates/index.json:90-92, psn/instances.py:59, psn/instances.py:64, psn/instances.py:76-78]
+
+HY-Motion's run on 2026-11-02, on the family's own instance: walk forward, stop, raise both arms and wave. 59.6 s, peak 4.9 GiB, seed 20261102, 4 seconds at 30 fps as a skeleton preview. A natural walk with arm swing, a stop, and both arms raised high; it never waves, the arms rise and hold. Two runs with the same seed gave different walks. Licence: Tencent Hunyuan, not for the EU, UK or South Korea, and over 1 million monthly users needs a licence. [run: studio/family_status.json:3888, studio/family_status.json:3903]
+
+HunyuanWorld's panorama stage (template hunyuanworld_pano_t2i) runs its PanoDiT-Text LoRA on FLUX.1-dev through core nodes, 1920x960, guidance 30, 50 steps, on its own instance. The 3D world stages are not on the test machine. [code: studio/family_templates/index.json:194-197] [run: studio/family_status.json:3846]
+
+HunyuanWorld's run on 2026-11-02 (40.7 s, peak 35.6 GiB, seed 20261102) made an alpine valley that wraps the full 360 with a level horizon. Faults: the mist never appears, the look is more illustration than photo, and a faint vertical line shows where the edges meet (mean edge difference 3.8 against 1.5 between neighbouring columns), because ComfyUI's sampler has no circular padding. FLUX.1-dev is non-commercial; the LoRA's Tencent licence excludes the EU, UK and South Korea. [run: studio/family_status.json:3863] [code: studio/family_templates/index.json:237]
+
+### 3D families with no render, and InstantMesh, which now has one
+
+InstantMesh rendered on 2026-11-03, after Zero123++ v1.2 and DINO ViT-B/16 were fetched: 67.1 s, 22.8 GiB peak for the process, seed 20261102; the six views and the GLB turntable were looked at. MIDI-3D, PartCrafter, Stable-Fast-3D and Matrix-3D still record why they have no render (checked 2026-11-02). MIDI-3D lacks its transformer and VAE, and has no runner. PartCrafter lacks its VAE and its pack, ComfyUI-TripoSG, fails to import. Stable-Fast-3D needs the sf3d package with compiled parts, which means a pip change to the studio venv. Matrix-3D has no runner for its pipeline. [run: studio/family_status.json:4040, studio/family_status.json]
+
+### Mesh clean-up, downloads and framing
+
+The 3D page now has a Mesh tools section listing core ComfyUI's own mesh nodes: WeldVertices first, then DecimateMesh, RemeshMesh, FillHoles, MeshSmoothNormals, UnwrapMesh and others. On 2026-11-02 a clean-up of the Hunyuan3D sample went from 181,548 faces to 6,612 for a budget of 8,000 in 2.5 s. Two more runs gave 6,547 and 6,588, so the budget is a ceiling, not an exact count. Flipped triangles remain as speckles on the legs. [run: studio/web/mesh_tools.json:60] [code: studio/web/mesh_tools.json:2-45, studio/web/studio3d.js:93-96] [test: tests/test_geometry_math.py]
+
+ComfyUI-GeometryPack, which adds booleans, alpha wrap and self-intersection repair, was read but not installed or run: it installs through its own installer, which pip-installs other packages and downloads a separate environment. ComfyMath-NG ran in Pack Lab only and is not part of the install. [code: studio/web/mesh_tools.json:62-75] [test: tests/test_geometry_math.py]
+
+3D downloads on the Recipes page were wrong until 2026-11-02. Every World Kit run names its mesh mesh_asset.glb, and the build searched the whole output folder by that name, so several recipes shared one file. Each download now comes from its own run's folder. A test fails if two recipes share a download, and GLB downloads stay under about 1.5 MB; the Gaussian splat has no reducer and keeps its size. [test: tests/test_recipe_renders.py:154-160] [claim: studio commit 767f3ffe, 2026-11-02]
+
+Web copies of meshes that store every triangle on its own (TripoSR, Hunyuan3D, SAM 3D, SkinTokens, Shap-E) came out shattered when decimated. They are now welded and smoothed before decimating, and each was compared with its turntable. [claim: studio commit 767f3ffe, 2026-11-02]
+
+World Kit turntables now fit the camera to the asset's bounding sphere with a 12% margin, so the fit holds at every step of the orbit; flat assets are looked down on, and the near clip follows the distance. The frame no longer hints at size; the page's Real scale tag shows that. [code: studio/worldkit/blender_scripts/_fit.py:1-12] [test: tests/worldkit/test_turntable_fit.py]
+
+SAM 3D Body's captured motion can now go onto a rig. Its BVH names joints joint_001 to joint_126; the studio finds the body's joints by position in the first frame, renames them to the names the motion fit reads, levels the clip and turns it to face forward. [code: studio/worldkit/mhr_bvh.py:1, studio/worldkit/mhr_bvh.py:83-84] [test: tests/worldkit/test_mhr_bvh.py]

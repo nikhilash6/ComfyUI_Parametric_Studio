@@ -37,3 +37,15 @@ A designer sheet needs a running ComfyUI. Without one, the page lets a user set 
 A designer view gives up after 600 polls at 1.5 s, about 15 minutes, and shows as failed. [code: studio/web/extras.js:116-119]
 
 The designer option lists came from the author's earlier modules by a read-only parse of constants. They were not each tried. An option existing means it is offered, not that it gives a good picture. [code: studio/packs/packs.json] [inference]
+
+## Final session findings, 2026-11-03
+
+The older Designers pitfall that no designer render exists on flux3 is out of date: 19 tiles and 104 sheet pictures are on FLUX.3 Klein. No stored designer render uses anima, product or krea2. [run: studio/web/designer_art/art.json, studio/web/designer_art/sheets.json]
+
+Designer sheet renders and the FLUX.3 Klein tiles record no peak VRAM, so they say nothing about memory. Only the 13 FLUX.2 Klein 4B tiles carry a peak. [run: studio/web/designer_art/art.json, studio/web/designer_art/sheets.json]
+
+The 19 newer designers have generic choice lists, and the stored pictures are the ones kept after review. Renders with stray lettering or too close to a real design were thrown away, and the vehicle and furniture designers restarted from new briefs for that reason. A user's own sheet can still show either fault. [test: tests/test_look_design.py] [claim: studio commit log, 2026-11-01]
+
+Try-on on the Fashion designer is labelled non-commercial for every method except FASHN VTON 1.5. The Klein try-on LoRA is rent-only at its source, Klein 9B is under the FLUX Non-Commercial License and Qwen-Image 2.1 is research or evaluation only. [code: studio/tryon.py:12-17]
+
+Try-on reads the uploaded pictures with no picture check. The page asks for invented, fully clothed adults and has no face or identity input, but nothing checks what the person picture shows. [code: studio/tryon.py:1-2, studio/tryon.py:114-119, studio/web/extras.js:126] [inference]

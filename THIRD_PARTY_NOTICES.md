@@ -14,6 +14,8 @@ This project is AGPL-3.0-or-later. It bundles or builds on the following, each u
 | MiniMax-Music3 caption-rewriter library (style names, tempos, keys and short excerpts of its templates, at upstream commit `945655064d59`) | official styles in `studio/music3_styles.json` (full licence in `studio/LICENSE-MiniMax-Music3.txt`) | MiniMax-Music3 Community License |
 | QR Code Generator for JavaScript | `studio/web/vendor/qrcode.js` (licence header kept in the file) | MIT |
 | ComfyUI | runtime dependency, not bundled; the node packs load inside it | GPL-3.0 |
+| Pool 51 node packs (215 repositories at pinned commits) | not bundled: `install.py --packs pool51` clones them from their own repositories; `studio/pool51_catalogue.json` lists each one's repository, commit and licence as stated | each pack's own licence: MIT (134), GPL-3.0 (39), Apache-2.0 (38), AGPL-3.0 (2), GPL-2.0 (1), Unlicense (1) |
+| Patches over four of those packs (context lines are excerpts of their code) | `studio/pool51_patches/` (Comfy-FilmSimulator, comfyui_controlnet_aux, ComfyUI-MagCache, ComfyUI-Depth-Pro) | Apache-2.0, as each of those packs is |
 
 The MiniMax-Music3 row is data from MiniMax, not code: it keeps its own licence and is not relicensed under AGPL-3.0, and that licence asks commercial products to show "MiniMax-Music3" prominently. See the [upstream repository](https://github.com/MiniMax-AI/MiniMax-Music3) and the note in MODELS.md.
 

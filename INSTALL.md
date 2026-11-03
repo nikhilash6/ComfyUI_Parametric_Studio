@@ -37,7 +37,7 @@ sudo apt install -y git ffmpeg python3-venv
 Then:
 
 ```bash
-git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
+git clone --depth 1 https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
 cd ComfyUI_Parametric_Studio
 python3 install.py --dry-run
 python3 install.py
@@ -51,7 +51,7 @@ If anything stops the install, such as a dropped connection, run the same comman
 
 ```bash
 brew install python@3.12 git ffmpeg
-git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
+git clone --depth 1 https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
 cd ComfyUI_Parametric_Studio
 python3.12 install.py --dry-run
 python3.12 install.py
@@ -64,7 +64,7 @@ Apple machines use MPS. The planner offers only the goals with no NVIDIA-specifi
 Install [Python 3.12](https://www.python.org/downloads/), [Git](https://git-scm.com/download/win) and [ffmpeg](https://ffmpeg.org/download.html), then in PowerShell:
 
 ```powershell
-git clone https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
+git clone --depth 1 https://github.com/parametricparadigm/ComfyUI_Parametric_Studio.git
 cd ComfyUI_Parametric_Studio
 py -3.12 install.py --dry-run
 py -3.12 install.py
@@ -93,6 +93,7 @@ The open edition, which is the contest entry, uses local open-weights models onl
 2. **Plans.** For each goal you ask for, it compares the measured peak VRAM with your usable VRAM (2 GiB is held back), then chooses `gpu`, `offload` (adds `--lowvram` or `--novram`) or `unavailable`, and says why. Models that cannot work on the machine are not downloaded. The H3 goals need a card that can use NVFP4; on others they show as unavailable.
 3. **Prints the plan and asks.** `--dry-run` stops after printing every step. `--yes` skips the question. It refuses to run as root without `--yes`.
 4. **Installs** into `--dir` (default: a `parametric-studio-runtime` folder beside the repository): a venv, PyTorch for the backend, ComfyUI at the ref in `channels.json`, ComfyUI's requirements, the studio's packages, and a link to this repository in `ComfyUI/custom_nodes`. LTX goals also clone the Lightricks ComfyUI-LTXVideo pack, because the LTX graphs use its `LTXFloatToInt` node.
+   With `--packs pool51` it also installs the reviewed node-pack set that Pack Lab lists under "The installed set, in 51 sections" (`studio/pool51_catalogue.json`). That is 215 packs, about 1.8 GB. Each one is fetched at its pinned commit with git hooks off, and the four with a small patch get it from `studio/pool51_patches/`. Then a short list of pip packages is installed. Some of those pip packages are NVIDIA-only or Linux and Windows only. Several packs download model weights the first time one of their nodes runs. Licences are as each repository states them, and some are copyleft: GPL, and AGPL for two packs. DepthPro's weights are for research use only.
 5. **Downloads models** from Hugging Face into `ComfyUI/models`, with a SHA-256 check against `studio/models_manifest.json`. A stalled or dropped connection waits and carries on from the bytes on disk, and a stopped run leaves a `.part` file that the next run continues. A file that fails the check is deleted.
 6. **Writes a launcher**, `run_studio.sh` or `run_studio.bat`, which starts ComfyUI on port 8200 and the studio on port 8310 with the right paths and flags.
 

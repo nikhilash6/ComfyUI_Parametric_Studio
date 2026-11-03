@@ -31,3 +31,9 @@ World Kit's list of 3D results reads only the main output folder and shows at mo
 World Kit GPU tools stop with a sentence rather than evict: "Nothing was evicted; press Retry when there is room." Blender defaults to one fixed program path, so on another machine set STUDIO_BLENDER, or the page says Blender is not installed. [code: studio/worldkit/tools.py:26-29, studio/worldkit/blender.py:30-31, studio/worldkit/capabilities.py:221-225]
 
 World Kit lists UniRig as a need but does not wire it. Its weights can be present and nothing runs them, because the maker rigs with SkinTokens. [code: studio/worldkit/capabilities.py:45] [docs: studio/processes/world-kit.md]
+
+## Final session findings, 2026-11-03
+
+World Kit's older pitfall that the guide "says there is no character builder" is resolved. The guide now describes the character route (Krea 2 sheet, picture check, TRELLIS.2, SkinTokens, a motion per clip) and says a character ran from words to a rigged, textured figure with three motions on real models. [docs: studio/processes/world-kit.md]
+
+World Kit's new turntable and look preview framing is covered by a maths test that needs no Blender, but no stored turntable in the repo was filmed and compared before and after it. The six look recipe renders dated 2026-11-02 are the only render evidence. [test: tests/worldkit/test_turntable_fit.py] [run: studio/recipe_renders.json] [inference]

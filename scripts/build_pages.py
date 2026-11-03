@@ -35,7 +35,10 @@ def main():
         open(os.path.join(d, name + ".json"), "w").write(json.dumps(clean(data))); saved += 1; return data
     for p in ("goals", "atlas", "crew", "edits", "models", "models/readiness", "models3d", "packs", "apps", "processes", "recipes", "schedules", "calibrate", "voice", "user", "recipe-library?limit=2000", "sampling/measures", "sampling/renders", "vset/capabilities", "vset/meta", "vset/lists", "vset/shots", "worldkit/assets", "worldkit/capabilities", "worldkit/looks", "worldkit/meshes", "worldkit/characters", "train/info", "train/datasets", "train/jobs", "train/loras",
               "feature-pages", "all-graphs", "edits/catalogue", "pipelines", "3d/models", "motion", "music/models", "voices/models", "tryon/methods", "lorashow/loras", "loras", "packlab/picks",
-              "director/status", "doctor/example", "project/runs", "rotation/status", "schedules/week", "live", "families/downloads/state", "models/download", "anatomy", "sampling/walk", "moe/load"): save(p)
+              "director/status", "doctor/example", "project/runs", "rotation/status", "schedules/week", "live", "families/downloads/state", "models/download", "anatomy", "sampling/walk", "moe/load",
+              # feature pages that open on one of these and otherwise showed only "no saved answer" in the demo
+              "campath", "clipsound/clips", "clipsound/models", "commercials/genres", "commercials/proof", "dub/audio", "dub/clips", "dub/models", "finish", "finish/clips", "words",
+              "prompt-kits", "presets/library", "voices/personas", "sampling/graph", "oneclick", "packlab/pool51"): save(p)
     # every graph the Apps, API and Pro pages can open, the renders Prove It can open, and the Hardware Fit table for each card size it offers
     for r in ((save("all-graphs") or {}).get("rows") or []):
         if (r.get("graph_url") or "").startswith("/api/"): save(r["graph_url"][5:])

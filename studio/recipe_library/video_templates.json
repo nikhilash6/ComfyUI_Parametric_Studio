@@ -8093,7 +8093,7 @@
 "label": "Say",
 "peak_gib": 46,
 "seed": 283554,
-"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) looks into the camera and proudly says: <d>[English] {topic}</d> Close-up, book in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
+"prompt": "integrated_multimodal_description: [Shot 1] {who} (S1) holds a closed book with a plain, blank cream cover, looks into the camera and proudly says: <d>[English] {topic}</d> Close-up, book in hand. One continuous shot, no cuts.\n\noverall_soundscape: Clear close speech in a quiet room.\n\nnon_diegetic_music: N/A",
 "options": {
 "aspect": "9:16",
 "quality": "high",

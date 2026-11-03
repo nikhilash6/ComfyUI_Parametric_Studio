@@ -1,0 +1,52 @@
+diff --git a/src/custom_controlnet_aux/dwpose/body.py b/src/custom_controlnet_aux/dwpose/body.py
+index 32934f1..cb0be7d 100644
+--- a/src/custom_controlnet_aux/dwpose/body.py
++++ b/src/custom_controlnet_aux/dwpose/body.py
+@@ -2,7 +2,7 @@ import cv2
+ import numpy as np
+ import math
+ import time
+-from scipy.ndimage.filters import gaussian_filter
++from scipy.ndimage import gaussian_filter  # scipy 2.0 removed the ndimage.filters alias (pool51-install)
+ import matplotlib.pyplot as plt
+ import matplotlib
+ import torch
+diff --git a/src/custom_controlnet_aux/dwpose/hand.py b/src/custom_controlnet_aux/dwpose/hand.py
+index 74767de..54e5f23 100644
+--- a/src/custom_controlnet_aux/dwpose/hand.py
++++ b/src/custom_controlnet_aux/dwpose/hand.py
+@@ -3,7 +3,7 @@ import json
+ import numpy as np
+ import math
+ import time
+-from scipy.ndimage.filters import gaussian_filter
++from scipy.ndimage import gaussian_filter  # scipy 2.0 removed the ndimage.filters alias (pool51-install)
+ import matplotlib.pyplot as plt
+ import matplotlib
+ import torch
+diff --git a/src/custom_controlnet_aux/open_pose/body.py b/src/custom_controlnet_aux/open_pose/body.py
+index edd7448..3529a9c 100644
+--- a/src/custom_controlnet_aux/open_pose/body.py
++++ b/src/custom_controlnet_aux/open_pose/body.py
+@@ -5,7 +5,7 @@ import cv2
+ import matplotlib.pyplot as plt
+ import numpy as np
+ import torch
+-from scipy.ndimage.filters import gaussian_filter
++from scipy.ndimage import gaussian_filter  # scipy 2.0 removed the ndimage.filters alias (pool51-install)
+ 
+ from . import util
+ from .model import bodypose_model
+diff --git a/src/custom_controlnet_aux/open_pose/hand.py b/src/custom_controlnet_aux/open_pose/hand.py
+index ba64187..7a71a7f 100644
+--- a/src/custom_controlnet_aux/open_pose/hand.py
++++ b/src/custom_controlnet_aux/open_pose/hand.py
+@@ -1,7 +1,7 @@
+ import cv2
+ import numpy as np
+ import torch
+-from scipy.ndimage.filters import gaussian_filter
++from scipy.ndimage import gaussian_filter  # scipy 2.0 removed the ndimage.filters alias (pool51-install)
+ from skimage.measure import label
+ 
+ from . import util
