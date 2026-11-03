@@ -6,7 +6,7 @@
 
 Most video models make silent frames, and sound comes later from something else. H3 doesn't work that way. It denoises picture and sound together, in one sequence of tokens, with both streams placed on one shared clock. So a door that slams on screen can slam in the audio without anyone lining them up.
 
-{{video:showcase/v_h3_chef.mp4|H3, 5 seconds asked, 124 frames, stereo at 32000 Hz. The prompt asks for a chef flambeing a pan, with sizzling sounds and a low flame roar. One seed. Recorded: peak 45.4 GiB on our test machine. Play it with sound on.}}
+{{video:showcase/v_h3_chef.mp4|H3, 5 seconds asked, 124 frames, stereo at 32000 Hz. The prompt asks for a chef flambeing a pan, with sizzling sounds and a low flame roar. One seed. Recorded: peak 45.4 GiB on our test machine. Play it with sound on.|showcase/v_h3_chef.webp}}
 
 ## Walk the graph
 
@@ -29,6 +29,12 @@ audio [batch, 32, 2, audio T]
 
 The `2` is stereo. Audio has its own latent frames at 40 a second.
 
+Here is `first_frame` on its own, then both keyframes together.
+
+{{video:showcase/v_h3_foundry.mp4|Image to video with the studio's h3_i2v graph (workflows/h3_i2v_api.json). The first frame is a gallery still of a gold foundry, held fixed; H3 makes the molten river surge and sparks rise, and the framing barely moves. 124 frames at 960 x 530, stereo at 32000 Hz. Recorded: 66.6 s, peak 46.8 GiB on our test machine. One seed.|showcase/v_h3_foundry.webp}}
+
+{{video:showcase/director_keyframes_bloom.mp4|First and last frame with the h3_fl2v graph (workflows/h3_fl2v_api.json): a seedling in a clay pot as first_frame, red poppies in the same pot as last_frame. H3 grew the plant between them while the window and table stayed put. 124 frames at 960 x 530, with sound. Recorded: 71.2 s, peak 48.0 GiB. One seed.|showcase/director_keyframes_bloom.webp}}
+
 **Turbo switch, nodes 134 to 139.** `LoraLoaderModelOnly` loads a turbo LoRA. The two `ComfySwitchNode`s choose base or LoRA, and 20 or 6 steps, from a single boolean. It starts off.
 
 **Sampling, nodes 123 to 126 and 129.** `BasicGuider` has only one conditioning and no negative, so there's no CFG here. `BasicScheduler` is `simple`, and `KSamplerSelect` is `res_multistep`. `SamplerCustomAdvanced` denoises.
@@ -48,6 +54,10 @@ Audio is cheap. At 5 seconds it adds 414 tokens to 37,296 video tokens, about 1.
 ## Writing prompts
 
 Our `minimax-h3` skill suggests: subject, action, camera path, environment, lighting, and what you should hear. Our `h3-prompts` skill has templates and a linter. Treat those as house advice, tested by us and not stated by MiniMax. Say what you want to hear. The chef's prompt above names the sizzle and the roar.
+
+Our studio's Director goal writes that kind of prompt from a few choices: it adds one sentence each for the shot, the camera move, the lens, the light and the mood after your words.
+
+{{video:showcase/director_wide.mp4|The Director goal on the plain h3_t2v graph. The words: a lone traveller walks across a vast white salt flat toward a distant ring of light. The goal added a wide shot, a crane up, an anamorphic lens, golden hour and an epic mood. The camera rises as the traveller walks into low sun; the ring of light came out as the sun itself. 124 frames at 960 x 530, with sound. Recorded: 127.1 s, peak 45.6 GiB. One seed.|showcase/director_wide.webp}}
 
 ## What goes wrong
 

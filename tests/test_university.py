@@ -70,3 +70,8 @@ def test_audited_labs_run_on_cpu_and_reproduce_and_stay_quick_when_idle():
 
 def test_university_stays_small_and_text_only():
     files = [p for p in B.HERE.rglob("*") if p.is_file() and "__pycache__" not in p.parts]; assert sum(p.stat().st_size for p in files) < 8 << 20; assert {p.suffix for p in files} <= {".md", ".py", ".txt", ".json"}
+
+
+def test_video_poster_is_checked_as_media():
+    md = "{{video:showcase/a.mp4|A clip|showcase/a.webp}}\n{{video:showcase/b.mp4|No poster}}\n{{wipe:x.webp|y.webp|X|Y|cap}}\n"
+    assert B.lesson_directives(md)["media"] == ["showcase/a.mp4", "showcase/a.webp", "showcase/b.mp4", "x.webp", "y.webp"]

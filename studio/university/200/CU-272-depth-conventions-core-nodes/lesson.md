@@ -79,6 +79,8 @@ after ImageInvert: near object 0.05, far wall 0.95: the same geometry as a negat
 
 If the near thing is darker, you have a far-is-white map. `ImageInvert` turns one into the other exactly, as the correlation of −1 says. If everything is one pale shade, the range has been used up by a far outlier. Try another `normalization`.
 
+![Lotus depth from a pack, on our rainy street test picture. The woman in front is white and the far end of the street is dark, so this map is near-is-white. One seed.](families/lotus_0.webp)
+
 ## What goes wrong
 
 - **Depth is inverted, so the layout comes out inside out.** Look at it first. Use `ImageInvert` if it's far-is-white. Depth-map files from other programs vary.

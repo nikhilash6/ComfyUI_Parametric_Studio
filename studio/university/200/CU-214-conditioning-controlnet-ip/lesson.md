@@ -53,6 +53,14 @@ The query Q is shared. With λ = 0 it is the original model. The paper reports t
 
 **IP-Adapter** is not in core. A case-insensitive search of `comfy/`, `comfy_extras/`, `comfy_api/` and `nodes.py` in v0.43.0 finds no mention of it, so in ComfyUI it comes from custom nodes. Core does have two other ways to use an image as a prompt. `StyleModelApply` appends the style model's tokens after the text tokens. It has two strength types: `multiply` scales those tokens, and `attn_bias` adds log(strength) to their attention logits, with a code comment that log(0) is -inf, "which is what we want". `unCLIPConditioning` stores a CLIP vision output in the conditioning with a strength and a noise augmentation.
 
+![IP-Adapter Plus on SDXL base, from a custom pack. Left: the reference. Right: the result, with the words: a product photo on a wooden kitchen table, soft daylight. At weight 0.8 the reference won over the words: the mug, the gold rim and the dark glass carried over, and the wooden table never appeared. One seed.](families/ip-adapter_0.webp)
+
+Video adds one more entry point. LTX-2.5's IC-LoRAs take a whole clip as the hint. `LTXAddVideoICLoRAGuide`, from Lightricks' own pack, adds the clip's frames as conditioning frames, and a LoRA trained for one edit does the rest. The layout and motion come from the guide clip:
+
+{{video:showcase/vfx_same_src.mp4|The guide: a source clip made for this example with LTX-2.5 text to video at 1920 x 1088, shown at 960 x 544. An invented woman in a red coat walks down a sunny cobblestone street, stops and looks to her left; the camera is locked off. 121 frames, with sound. Recorded: 53.7 s, peak 38.8 GiB. One seed.|showcase/vfx_same_src.webp}}
+
+{{video:showcase/vfx_same_night.mp4|The same clip through the studio's VFX graph (workflows/ltx25_vfx_api.json) with the day-to-night IC-LoRA at strength 1.3. Her steps, the street and the locked camera follow the guide; the sky goes dark and the wall lamps light up. 121 frames, with sound. Recorded: 38.5 s, peak 38.5 GiB. One seed.|showcase/vfx_same_night.webp}}
+
 ## Lab
 
 The lab rebuilds the SD 1.x noise levels the way `comfy/model_sampling.py` does, then applies the same slicing as `set_steps`. For img2img it compares the formula with a measured correlation over a million samples:

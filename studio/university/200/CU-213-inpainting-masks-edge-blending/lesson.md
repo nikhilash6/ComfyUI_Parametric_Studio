@@ -39,6 +39,12 @@ In every node below, a mask value of 1 means new content.
 
 **Compositing after decoding.** `ImageCompositeMasked` computes `mask · source + (1 − mask) · destination` on the stored pixel values. `LatentCompositeMasked` does the same on latents, with x and y in steps of 8. The decoded image will not equal the original outside the mask, because the VAE is lossy (CU-201). Compositing the decoded result over the original with a feathered mask restores the original pixels there. The values are blended as stored, so the blend is not done in linear light (CU-229).
 
+A matte is the same kind of mask for a whole clip, and a cutout is that blend with a checkerboard as the destination:
+
+{{video:showcase/vfx_same_matte.mp4|A matte pulled with no hand painting: the studio's VFX graph with LTX-2.5's Alpha-Gen IC-LoRA, on the red coat clip from CU-214. White is the woman, mask 1; black is everything else, mask 0. Recorded: 31.9 s, peak 38.5 GiB. One seed.|showcase/vfx_same_matte.webp}}
+
+{{video:showcase/vfx_same_cutout.mp4|The source clip with that matte as its alpha, over a checkerboard. Look at the hair and the edge of the coat: that is where a hard matte would show a seam. Silent.|showcase/vfx_same_cutout.webp}}
+
 Here's the sampler's view, live. Slide a thin stripe through a cell and see when the sampler loses it. CU-273 is about which route to choose.
 
 {{play:maskgrid}}

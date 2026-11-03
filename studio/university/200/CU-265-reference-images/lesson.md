@@ -65,6 +65,10 @@ It only does something on a model class that reads the key. These are the two us
 | An SD 2.1 unCLIP checkpoint | `unCLIPConditioning` |
 | Neither | Not these. See CU-214 for other routes |
 
+Video models read reference pictures through their own nodes, which this lesson leaves out. One example from our studio, so you can see what such a door can do:
+
+{{video:showcase/recast_chef.mp4|Recast, the studio's h3_recast graph (workflows/h3_recast_api.json): MiniMax H3's MiniMaxH3ReferenceToVideo node with a character-swap LoRA takes a source clip and one character picture. The source was the H3 chef clip in CU-332. The kitchen, framing, pose and pan stayed, a red-bearded man in a navy jacket now plays the chef, and the tall flame of the source did not come through. 124 frames at 960 x 548. Recorded: 522.9 s, peak 36.3 GiB. One seed.|showcase/recast_chef.webp}}
+
 ## What goes wrong
 
 - **unCLIP does nothing.** Your model class doesn't read that key. It's silently ignored (CU-260).

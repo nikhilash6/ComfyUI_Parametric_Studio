@@ -38,6 +38,8 @@ The `CONST` class in `comfy/model_sampling.py` implements this: `noise_scaling` 
 
 {{graph:sd35_flow}}
 
+![SD 3.5 Medium, a flow model, run here through ComfyUI's template: a weathered brass lighthouse on a rocky coast at golden hour, gulls overhead, crashing surf. 1024 x 1024, 20 euler steps, cfg 4. One render.](families/sd3-sd3-5_1.webp)
+
 ## What goes wrong
 
 - **Using one step because "flow is straight".** The lab's first row: one Euler step has an error of 1.67 on a mixture. The lab's last block shows a reflowed network getting close on this toy. Reflow is one route to few steps, not the only one.

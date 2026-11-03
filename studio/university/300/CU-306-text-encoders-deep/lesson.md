@@ -62,6 +62,8 @@ Klein, with one LLM encoder through `CLIPLoader`:
 
 {{graph:c_klein_fast}}
 
+![Another LLM encoder: Lumina 2 with plain Gemma 2 2B reading the prompt, a weathered brass lighthouse on a rocky coast at golden hour. 1024 x 1024, 30 steps, cfg 4. Recorded peak 12.3 GiB. One render.](families/lumina-2_4.webp)
+
 ## What goes wrong
 
 - **A word past token 75 seems ignored on SD 1.5.** It went into a new chunk, and it can't see the words of the first one while encoded. Move it earlier, or shorten the prompt.

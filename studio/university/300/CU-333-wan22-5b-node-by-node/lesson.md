@@ -6,7 +6,7 @@
 
 Two Wan 2.2 releases share a name and differ in design. TI2V-5B is a single small model with a stronger VAE. T2V-A14B is a pair: one model for high noise and one for low noise, handing over in the middle of the run. Both have the same patch size, so the VAE's compression decides how many tokens they see. A 14B run at the same picture size has four times as many.
 
-{{video:showcase/v_wan_waves.mp4|Wan 2.2, 121 frames at 960 x 528, silent. Prompt: golden sunset waves crash in slow motion on black volcanic rocks, spray lit from behind. Recorded: 105.4 s, peak 34.5 GiB on our test machine. One seed.}}
+{{video:showcase/v_wan_waves.mp4|Wan 2.2, 121 frames at 960 x 528, silent. Prompt: golden sunset waves crash in slow motion on black volcanic rocks, spray lit from behind. Recorded: 105.4 s, peak 34.5 GiB on our test machine. One seed.|showcase/v_wan_waves.webp}}
 
 ## Side by side
 
@@ -36,6 +36,8 @@ From Wan's own config files:
 
 **Latent, node 7.** `Wan22ImageToVideoLatent` takes the VAE, the size and the length. With no start image it returns zeros, shaped `[1, 48, (n - 1) // 4 + 1, H / 16, W / 16]`. Give it `start_image`, and the node encodes it into the first latent frames and marks them with a mask. That is how one model does both text and image to video: "TI2V" in its name. `WAN22.process_timestep` then gives each latent frame its own timestep from the mask, so the frames you gave it count as already clean.
 
+{{video:showcase/v_wan_nook.mp4|Image to video on this 5B model, the studio's Animate goal (workflows/wan22_5b_i2v_api.json): a still of a reading nook went in as start_image. Steam rises from the cup and rain runs down the window while the room holds still. A silent web copy, 97 frames at 640 x 370. One seed.|showcase/v_wan_nook.webp}}
+
 **Sampling, node 8.** A plain `KSampler`: 20 steps, cfg 5, `uni_pc`, `simple`. All of it runs on one model, so this works like an image graph.
 
 **Decode and save, nodes 9 to 11.** `VAEDecode`, `CreateVideo` at 24 fps, `SaveVideo`. No sound: the gallery's Wan files have no audio stream.
@@ -43,6 +45,8 @@ From Wan's own config files:
 ## The 14B route
 
 Wan's code uses the boundary to pick a model at each step: at high noise it uses the high-noise model, then it swaps to the low-noise model. ComfyUI has no single node for this. You load both with two `UNETLoader`s and chain two `KSamplerAdvanced` nodes, using `start_at_step` and `end_at_step`, with leftover noise passed from the first to the second. Our studio's earlier notes used that pattern, with 2 + 2 steps and a speed LoRA.
+
+{{video:showcase/v_wan_camera.mp4|That pattern in a real graph: the studio's Wan camera reshoot (workflows/wan_camera_api.json) loads the Fun Camera 14B high-noise and low-noise models with two UNETLoaders. The first KSamplerAdvanced runs steps 0 to 10 of 20 and returns its leftover noise, and the second runs from step 10 to the end. The first frame came from a clip of an astronaut, and WanCameraEmbedding asked for a slow circle; the move in this take is small. A silent web copy, 80 frames at 16 fps. One seed.|showcase/v_wan_camera.webp}}
 
 The split depends on shift. Try Wan's own numbers.
 

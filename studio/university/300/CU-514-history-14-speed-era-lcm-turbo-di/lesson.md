@@ -54,6 +54,8 @@ An LCM LoRA on an SD 1.5 model, and a Turbo checkpoint in one call.
 
 {{graph:h5_sdturbo}}
 
+{{wipe:families/z-image_4.webp|families/z-image_5.webp|Z-Image base, 25 steps|Z-Image Turbo, 8 steps|A distilled model against its base, one prompt: a weathered brass lighthouse on a rocky coast at golden hour. Base: 25 steps at cfg 4, two model calls a step. Turbo: 8 steps at cfg 1, one call a step, with its weights loaded as fp8. One render each.}}
+
 ## What goes wrong
 
 - **You treat it as a normal model at normal settings.** A file distilled for 4 steps at cfg 1 has different settings from its base. Read the notes of your file. At cfg 7 the two calls come back, and LCM's abstract says the student was distilled from a guided model already, so that push would land on top.

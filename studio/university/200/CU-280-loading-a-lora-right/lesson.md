@@ -66,6 +66,12 @@ So "strength 1" doesn't mean the same across files. It means what its maker tune
 
 At strength 0 on both inputs, `LoraLoader` returns what you gave it and doesn't read the file at all.
 
+Here's strength on real clips. Both use LTX-2.5's water IC-LoRA through the studio's VFX graph, loaded by Lightricks' IC-LoRA loader, which passes `strength_model` to core's `load_lora_for_models`. They start from different source clips, so read them as an example, not a measurement.
+
+{{video:showcase/vfx_same_water.mp4|Strength 1.0, the studio's natural setting, on the red coat clip from CU-214: a shallow layer of water spreads over the cobbles and splashes around her shoes, and the walls and doors stay as they were. Recorded: 33.2 s, peak 38.5 GiB. One seed.|showcase/vfx_same_water.webp}}
+
+{{video:showcase/vfx_flood.mp4|Strength 1.45, the studio's highest setting, on another clip: a figure in a yellow raincoat walks toward the camera through water that fills the whole street, up to the knees. Recorded: 62.7 s, peak 47.3 GiB. One seed.|showcase/vfx_flood.webp}}
+
 ## The log lines
 
 This is the part worth learning. Read your terminal after the first run with a new file.

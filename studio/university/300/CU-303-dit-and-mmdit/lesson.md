@@ -41,6 +41,8 @@ FLUX has its own version in `comfy/ldm/flux/layers.py`. `DoubleStreamBlock` keep
 
 {{graph:wf_flux2_klein}}
 
+![From the studio's FLUX.2 Klein 4B graph (workflows/flux2_klein4b_t2i_api.json): a dark foundry with a river of molten gold, sparks in a green haze, one tiny worker for scale. It is the still the H3 foundry clip in CU-332 starts from. One render.](families/flux-2_0.webp)
+
 PixArt (`comfy/ldm/pixart/`) keeps text separate and reaches it through cross-attention. Not every DiT is joint. To learn which kind a model is, look at its block class in `comfy/ldm`.
 
 ## What goes wrong

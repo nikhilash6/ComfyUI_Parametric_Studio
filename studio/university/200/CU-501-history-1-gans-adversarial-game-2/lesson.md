@@ -47,6 +47,8 @@ The nearest thing to a GAN you can queue is an upscale model. If the file you lo
 
 {{graph:sd15_upscale}}
 
+![GFPGAN 1.4, a face restorer from a pack, whose paper says it draws on the priors in a pretrained face GAN. Left: an invented adult's face shrunk to 160 px, blurred and saved as a JPEG at quality 30. Middle: GFPGAN's result. Right: the clean original. The eyes, brows and lips come back sharp, and the face comes out a little rounder and younger: detail that looks real, not detail that was there.](families/face_1.webp)
+
 ## What goes wrong
 
 - **You read 50% discriminator accuracy as success.** In the lab all four seeds sat near chance, 0.461 to 0.515, while the samples were still 7 to 21 times further from the data than two real samples are. Judge the samples, or a distance like W1, and not the judge's score.

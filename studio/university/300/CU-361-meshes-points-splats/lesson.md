@@ -59,6 +59,8 @@ Compare with a mesh made directly:
 - Need something to look real on a turntable, fast: splats.
 - Need depth for a picture: a point map, and often a mesh made from it.
 
+![A splat from one picture: TripoSplat on a bear cut-out, turned in Blender on the CPU. It looks real from every side, and a little blotchy on the back. Peak 5.5 GiB. One seed.](families/triposplat_turn.webp)
+
 We're describing what the data structures can do. We haven't compared results on the same object.
 
 ## What goes wrong

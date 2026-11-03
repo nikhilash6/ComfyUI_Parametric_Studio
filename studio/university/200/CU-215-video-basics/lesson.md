@@ -51,6 +51,8 @@ A video in ComfyUI is an image batch with a frame rate. Here is the smallest one
 
 {{graph:nm_video}}
 
+{{video:families/frame-interpolation_3.mp4|Frame rate changed after the fact: RIFE v4.25 interpolation with a multiplier of 2, on a clip of a woman in a yellow raincoat walking toward the camera. The file has 247 frames at 48 fps, which fits one new frame between each pair of a 124-frame clip at 24 fps: 2 x 124 − 1. Peak 1.2 GiB.|families/frame-interpolation_3.webp}}
+
 ## Lab
 
 The lab is arithmetic on those constants. First, five seconds at three frame rates, then what happens to a requested length for each temporal factor:

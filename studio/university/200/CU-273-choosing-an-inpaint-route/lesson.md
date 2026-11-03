@@ -91,9 +91,17 @@ These follow from what each route feeds the model. We did not compare pictures f
 
 {{play:denoise}}
 
+### Removal with no mask at all
+
+One more route sits outside core. LTX-2.5's clean-plate IC-LoRA, in the studio's VFX graph, removes people from a moving shot with no mask drawn: its prompt asks for the same place with no one in it, and the LoRA is made for that edit.
+
+{{video:showcase/vfx_same_plate.mp4|Clean plate on the red coat clip from CU-214: the woman is gone, and the street, the shutters and the plants stay. Recorded: 28.7 s, peak 38.5 GiB. One seed.|showcase/vfx_same_plate.webp}}
+
+{{video:showcase/vfx_clean_plate.mp4|Clean plate on another clip, asked to paint a violinist out of a moving shot: an empty stone bridge at dusk with its lamps lit. Only the result is shown here. 97 frames at 960 x 544, with sound. Recorded: 49.0 s, peak 44.8 GiB. One seed.|showcase/vfx_clean_plate.webp}}
+
 ## What goes wrong
 
-No real model ran for this lesson, so the looks below come from the arithmetic and the source, not from pictures.
+No real model ran on core's three routes for this lesson, so the looks below come from the arithmetic and the source, not from pictures.
 
 - **A flat grey patch in the hole.** You used `VAEEncodeForInpaint` below denoise 1. Set denoise to 1, or switch route.
 - **A hard seam despite a feathered mask.** The route rounded it. Use a soft route, or composite after decoding (CU-213).

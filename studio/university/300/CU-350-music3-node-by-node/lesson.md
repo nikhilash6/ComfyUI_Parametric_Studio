@@ -12,6 +12,10 @@ So the song has two stages. Music 3's README calls them a Global LLM and a Local
 
 {{audio:families/mini-max-music3_0.mp3|Prompt: slow cinematic ambient score, warm cello and soft piano, deep pads, golden hour mood, hopeful and calm, instrumental. One seed, a shortened web copy.}}
 
+Because the song comes first, it can set the clock for a whole video:
+
+{{video:pipelines/song_to_video/cut.mp4|Our Song to Video pipeline: Music 3 sang the lyrics first, FLUX.2 Klein drew one keeper and four keyframes with her as the reference, H3 moved each keyframe, and the last step cut on the song's downbeats. 392 frames at 1216 x 672, with the song. Our review lists flaws: in shot 3 the coat turns khaki on top and she carries two lanterns. Whole pipeline: 436.5 s, peak 41.1 GiB.|pipelines/song_to_video/cut.webp}}
+
 ## Walk the graph
 
 {{graph:wf_music3}}

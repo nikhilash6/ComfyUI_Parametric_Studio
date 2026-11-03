@@ -41,9 +41,15 @@ Look at the step sizes in the lab: four tiny steps, then bigger and bigger ones.
 
 These are earlier renders from our gallery, at 960 x 544 with 145 frames. One seed each.
 
-{{video:showcase/v_ltx_ink.mp4|Text to video with sound. Recorded: 21.3 s, peak 44.3 GiB of VRAM on our test machine. The prompt asks for gold and emerald ink in black water.}}
+{{video:showcase/v_ltx_ink.mp4|Text to video with sound. Recorded: 21.3 s, peak 44.3 GiB of VRAM on our test machine. The prompt asks for gold and emerald ink in black water.|showcase/v_ltx_ink.webp}}
 
-{{video:showcase/v_ltx_shatter.mp4|Prompt: a black glass sphere shatters on a dark marble floor and the shards turn into gold butterflies. Recorded: 57.8 s, peak 44.3 GiB.}}
+{{video:showcase/v_ltx_shatter.mp4|Prompt: a black glass sphere shatters on a dark marble floor and the shards turn into gold butterflies. Recorded: 57.8 s, peak 44.3 GiB.|showcase/v_ltx_shatter.webp}}
+
+{{video:showcase/v_ltx_portal.mp4|Prompt: a swirling portal of green energy tears open in a rainy alley, gold sparks spill out and light the wet walls, a figure in a long coat steps back. The portal fills the first second, then the sparks rain down on the figure. Recorded: 54.4 s, peak 44.3 GiB. One seed.|showcase/v_ltx_portal.webp}}
+
+The same model also starts from a picture. The image-to-video graph (workflows/ltx25_core_i2v_api.json) keeps this sampler, the 8-step list and both decoders, and adds `LoadImage`, `LTXVPreprocess` and `LTXVImgToVideoInplace` to put the still at the start of the video latent.
+
+{{video:showcase/v_ltx_greenhouse.mp4|Image to video from a gallery still of a glowing greenhouse with a figure holding a lantern. The figure is there in the first frames, then the camera cranes up the glass wall until the roof fills the frame. 145 frames at 960 x 544, with sound. Recorded: 33.6 s, peak 43.2 GiB. One seed.|showcase/v_ltx_greenhouse.webp}}
 
 ## What goes wrong
 

@@ -8,6 +8,8 @@ Between two frames, things change for two very different reasons. Something move
 
 So counting changed pixels tells you little. You need to ask: after undoing the motion, what's left? That's the idea behind optical flow, and behind every useful flicker check.
 
+{{video:showcase/reshoot_orbit_take.mp4|Nearly every pixel changes here, and none of it is a fault. The studio's Reshoot goal (workflows/h3_reshoot_api.json) took the first frame of the H3 chef clip in CU-332 and made a new take with the camera orbiting right: the kitchen slides behind her and the flame grows. A frame difference is large on every frame; a flow check would call it motion. 124 frames at 960 x 548, with sound. Recorded: 147.2 s, peak 49.3 GiB. One seed.|showcase/reshoot_orbit_take.webp}}
+
 ## What flow is
 
 Optical flow is a field of two numbers per pixel, (u, v), saying where that pixel went in the next frame. It rests on one assumption, called brightness constancy: a point keeps its brightness as it moves.

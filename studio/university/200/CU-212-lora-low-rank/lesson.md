@@ -50,6 +50,8 @@ Here's a LoRA in a graph, and CU-280 goes through loading it right.
 
 {{graph:sd15_lora}}
 
+![A style LoRA from our recipe library, pixel_art_style_z_image_turbo on Z-Image Turbo, with the words: Pixel art style. A small lighthouse on a rocky island at sunset, seagulls in the sky. Recorded: 10.0 s, peak 16.3 GiB. One seed. We have no matching render without the LoRA, so this shows what a style LoRA can do, not how much of it the LoRA did.](recipe_renders/lora_982b704f6a.webp)
+
 ## Lab
 
 The first block counts parameters for three layer shapes. At rank 128 on a 320 × 320 layer the LoRA is 80% of the layer, so most of the saving is gone. It disappears once r · (d + k) reaches d · k.

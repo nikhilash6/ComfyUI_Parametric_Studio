@@ -34,11 +34,17 @@ Why 17k + 5? H3's latent frames don't all cover the same time. `FRAME_PER_TOKEN`
 
 Here's an LTX-2.5 clip from our gallery, asked for 6 seconds at 24 fps. That is 144 frames, which is off the grid. The file has 145 frames, which is 8 x 18 + 1, one more than the sum. Typed as 144, the node floors it to 137, so 145 is what the node was given: our studio's helper rounds to the nearest 8k + 1 first. The prompt was "Macro shot, liquid gold and emerald ink collide in black water and bloom into huge swirling clouds".
 
-{{video:showcase/v_ltx_ink.mp4|LTX-2.5 at 960 x 544, 145 frames, with sound. One seed. The file's size and frame count were read with ffprobe.}}
+{{video:showcase/v_ltx_ink.mp4|LTX-2.5 at 960 x 544, 145 frames, with sound. One seed. The file's size and frame count were read with ffprobe.|showcase/v_ltx_ink.webp}}
 
 Its size also fits the grid: 960 and 544 are both multiples of 32. A Wan 2.2 clip has 121 frames at 960 x 528. Those are multiples of 16, and 528 isn't a multiple of 32, so that size couldn't come from the LTX node without being trimmed.
 
-{{video:showcase/v_wan_waves.mp4|Wan 2.2 at 960 x 528, 121 frames, silent. Prompt: golden sunset waves crash in slow motion on black volcanic rocks.}}
+{{video:showcase/v_wan_waves.mp4|Wan 2.2 at 960 x 528, 121 frames, silent. Prompt: golden sunset waves crash in slow motion on black volcanic rocks.|showcase/v_wan_waves.webp}}
+
+Two more from our gallery, one per rule. H3 asked for 5 seconds at 9:16, and an LTX-2.5 clip at a square size:
+
+{{video:showcase/director_portrait.mp4|MiniMax H3 at 672 x 1216, 124 frames. That is 5 + 7 x 17, on the 17k + 5 grid, and both sides are multiples of 32. Prompt: a dancer in a flowing emerald silk dress spins on a black mirrored stage, made with the studio's Director goal on the h3_t2v graph. Recorded: 67.3 s, peak 45.5 GiB. One seed.|showcase/director_portrait.webp}}
+
+{{video:showcase/v_ltx_watch.mp4|LTX-2.5 image to video at 704 x 704, again 145 frames, 8 x 18 + 1. A square changes nothing about the grid: 704 is 22 x 32. The first frame was a gallery still of a watch movement; the camera moves in and the gold bridge turns. With sound. Recorded: 21.3 s, peak 44.6 GiB. One seed.|showcase/v_ltx_watch.webp}}
 
 ## Try it
 

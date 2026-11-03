@@ -40,6 +40,8 @@ latent frames = ((frames − 1) // 8) + 1            LTX
 - **The grid in code.** `EmptyHunyuanLatentVideo` makes `((length - 1) // 4) + 1` latent frames. `EmptyLTXVLatentVideo` makes `((length - 1) // 8) + 1` at height // 32. `VAE` in `comfy/sd.py` holds the inverse, such as `a * 4 - 3`.
 - **Decoding long clips.** `VAEDecodeTiled` has `temporal_size` and `temporal_overlap`. `AutoencoderKLCogVideoX` has `_decode_rolling`, which runs the expensive high-resolution layers in chunks of 4 frames.
 
+{{video:families/svd_0.mp4|The 2023 design, run here: SVD XT 1.1 through core nodes, one still of a rainy street to a 25-frame clip. The woman in the yellow raincoat takes a few steps and the camera drifts. A web copy at 640 x 360, 6 fps. Peak 27.8 GiB. One seed.|families/svd_0.webp}}
+
 Try the grid. Ask for a frame count and see what you get back.
 
 {{play:frames}}

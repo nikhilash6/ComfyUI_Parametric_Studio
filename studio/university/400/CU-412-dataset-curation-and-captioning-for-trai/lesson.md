@@ -100,6 +100,8 @@ Practical advice, and this part is common practice and not something we measured
 - Cull. Blurry or near-duplicate pictures use up sightings. `ImageDeduplication` can help with duplicates.
 - Check the caption by reading it next to its picture. It's the only feedback you get before spending the run.
 
+![A vision-language model as captioner: Qwen3-VL 4B through core's TextGenerate node, asked for three sentences on subject, setting and light, then for anything physically wrong. The description is accurate and it caught the picture's real fault, the stylised steam. It also put the steam at the fox's nose, when it floats well above. Read machine captions next to their pictures. One run.](families/vlm_0.webp)
+
 ## What goes wrong
 
 - **Empty captions, no warning.** A `.txt` with the wrong name counts as none. Our Train page's check blocks this. In a bare graph, read the `texts` output with a preview node first.

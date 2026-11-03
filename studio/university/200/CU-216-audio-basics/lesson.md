@@ -36,6 +36,8 @@ An AUDIO value in a graph is a waveform and a sample rate. This one needs no mod
 
 {{graph:nm_audio}}
 
+{{audio:recipe_renders/snd_amb_clock.m4a|A clock from our sound recipes, made on the CPU with no model: a sharp tick repeated at a steady rate. A 5.3 s web copy at 44100 Hz, mono. Each tick is short and broadband, the kind of sound a short window resolves in time.}}
+
 ## Lab
 
 First aliasing. One second of a cosine at 10 kHz sampling, so the bins are exactly 1 Hz apart:

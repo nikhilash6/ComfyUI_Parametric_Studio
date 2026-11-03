@@ -30,6 +30,8 @@ Several graphs earn their keep when:
 
 Hand-off is by file. `/history` names the output, `/view` fetches it, and `/upload/image` makes it an input for the next graph.
 
+{{video:showcase/music_video.mp4|Our Music Video Maker recipe, a pipeline of separate graphs: Music 3 writes the song first, FLUX.2 Klein draws one character into each keyframe, H3 moves each keyframe with its own camera move, and the edit is cut to the song. This file is 24.9 s, 598 frames, with the song. Recorded: 781.4 s for the whole recipe, peak 68.6 GiB, so don't read that peak as one model's.|showcase/music_video.webp}}
+
 ## The ledger
 
 A script calling several graphs needs what the engine gave you free: "did I already do this?" So store, per step, a hash of its graph and inputs, and its output file. If a step fails, re-running the pipeline repeats only what's missing.

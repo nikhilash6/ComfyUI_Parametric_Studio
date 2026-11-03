@@ -12,6 +12,8 @@ We have not run these graphs. They pass ComfyUI's validation, but the weights ar
 
 ![A sample for Hunyuan3D 2.1 from ComfyUI's template library. MIT licensed, and not rendered by us.](families/lib_hunyuan3d-2-1.webp)
 
+![Our own run of the same family: Hunyuan3D 2.1 through ComfyUI's image-to-model template, on a bear cut-out on white, shape only, turned in Blender on the CPU. Earlier runs on a black background built a wall behind the bear, which is why the cut-out now goes on white. Peak 5.8 GiB. One seed.](families/hunyuan3d-2-1_turn.webp)
+
 ## Walk the graph
 
 **`ImageOnlyCheckpointLoader`.** The loader returns a model, a vision encoder and a VAE, with no text encoder at all.

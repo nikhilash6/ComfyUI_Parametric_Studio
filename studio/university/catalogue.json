@@ -2228,7 +2228,7 @@
    "graphs": [
     "sd15_upscale"
    ],
-   "minutes": 7,
+   "minutes": 8,
    "second_read": {
     "errors_fixed": 3
    }
@@ -2452,7 +2452,7 @@
     "sd35_flow",
     "wf_flux2_klein"
    ],
-   "minutes": 4,
+   "minutes": 5,
    "second_read": {
     "errors_fixed": 1
    }
@@ -2527,7 +2527,7 @@
     "sd15_txt2img",
     "sd35_flow"
    ],
-   "minutes": 4,
+   "minutes": 5,
    "second_read": {
     "errors_fixed": 0
    }
@@ -3881,7 +3881,7 @@
    "graphs": [
     "sd15_train_lora"
    ],
-   "minutes": 5,
+   "minutes": 6,
    "second_read": {
     "errors_fixed": 1
    }

@@ -34,6 +34,7 @@ def lesson_directives(md):
         if kind == "play": out["play"].append(body.strip().split()[0])
         elif kind == "graph": out["graph"].append(body.strip())
         elif kind == "wipe": out["media"] += [x.strip() for x in body.split("|")[:2]]
+        elif kind == "video": out["media"] += [x.strip() for x in body.split("|")[:3:2] if x.strip()]   # the clip, and its poster when one is given
         else: out["media"].append(body.split("|")[0].strip())
     out["media"] += re.findall(r"^!\[[^\]]*\]\(([^)\s]+)\)\s*$", md, re.M)
     return out

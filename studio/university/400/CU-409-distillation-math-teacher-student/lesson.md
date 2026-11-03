@@ -105,6 +105,8 @@ To run them:
 
 Our graph uses 4 steps and CFG 1. That's the usual way for LCM files, and we haven't tested it here. The maker's notes for your file come first.
 
+{{video:families/animatediff_0.mp4|A distilled student, run here: AnimateDiff Lightning, distilled from AnimateDiff SD 1.5 v2, on the DreamShaper 8 checkpoint through a custom pack. 4 steps at cfg 1. 16 frames at 512 x 512, 8 fps: the waves move and the lighthouse holds. Peak 3.7 GiB. One seed.|families/animatediff_0.webp}}
+
 ## What goes wrong
 
 - **Ordinary settings on a distilled model.** 30 steps at CFG 7 is what you'd use for its teacher. Read its notes: few steps, and CFG often at or near 1.

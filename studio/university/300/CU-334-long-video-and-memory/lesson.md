@@ -40,11 +40,19 @@ Here's the last step of a chain, on a CPU. Clip 2 begins on clip 1's last frame,
 
 {{play:longchunks}}
 
+A join doesn't have to be a cut. Our studio's Transition goal generates the frames in between:
+
+{{video:showcase/vfx_same_transition.mp4|The Transition goal (workflows/ltx25_transition_api.json) gives LTX-2.5 the last frame of one clip and the first frame of the next as guides, makes a 2-second bridge, and joins clip, bridge and clip into one take. Here the red coat clip from CU-214 flows into its night version: she turns and walks away as the light falls. 291 frames at 960 x 544, silent. Recorded: 16.5 s, peak 37.8 GiB. One seed.|showcase/vfx_same_transition.webp}}
+
 ## What it looks like
 
 Our gallery's short film came from such a recipe, with a prompt about a lamplighter rowing through a flooded city. It's 544 frames against 124 for one H3 shot, so it can't be a single render at that clip length. Recorded peak on our test machine: 76.2 GiB, with the whole recipe taking 689.8 s. That recipe does more than video generation, so don't read the peak as a video figure.
 
-{{video:showcase/short_film.mp4|A short film from a recipe, 544 frames with sound. Watch the cuts: those are where one clip hands to the next.}}
+{{video:showcase/short_film.mp4|A short film from a recipe, 544 frames with sound. Watch the cuts: those are where one clip hands to the next.|showcase/short_film.webp}}
+
+A pipeline can also join with no model at all:
+
+{{video:pipelines/world_flood/join.mp4|Our World Flood pipeline: Blender built a street from one sentence, H3 filled a camera move along it, LTX-2.5 ran a flood through the same clip, and ffmpeg played the dry take and then the flooded one. 245 frames at 960 x 530, with sound. Our review: the flood works and the move holds, but the set still looks like a blockout. Whole pipeline: 1198.1 s, peak 41.2 GiB.|pipelines/world_flood/join.webp}}
 
 ## What goes wrong
 

@@ -38,6 +38,10 @@ Core passes three geometry types on wires: `VOXEL`, `MESH` and `SPLAT`.
 
 ![A sample for Trellis 2 and Pixal3D from ComfyUI's template library. MIT licensed, and not rendered by us.](families/lib_trellis-2-4b.webp)
 
+![Our own Trellis 2 run: ComfyUI's core Trellis.2 nodes with a baked PBR texture, from one cut-out picture of a bear, turned in Blender on the CPU. Lit from the side, the fur reads pale. Recorded: 253.1 s, peak 18.2 GiB. One seed.](families/trellis-2-4b_turn.webp)
+
+{{video:pipelines/drawing_to_figure/figure.mp4|A pipeline built on it, Drawing to Figure: Anima drew a round robot postman, Trellis 2 built a textured mesh from that one picture, and Blender set it at 18 cm with its pivot at the base and turned it. From the front it matches the drawing; the back, which the drawing never showed, is covered in grey smudges. 72 frames at 512 x 512.|pipelines/drawing_to_figure/figure.webp}}
+
 ## What goes wrong
 
 - **Calling an SDF a mesh.** An SDF is a value at every point. You have to extract a surface from it.

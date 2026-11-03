@@ -51,6 +51,8 @@ FLUX.2 Klein is the same idea, with the parts laid out as separate nodes.
 
 {{graph:wf_flux2_klein}}
 
+{{wipe:families/sd3-sd3-5_0.webp|families/flux-2_3.webp|SD 3.5 Large|FLUX.2 Klein 9B|Two transformer families, one prompt: a weathered brass lighthouse on a rocky coast at golden hour. SD 3.5 Large ran 20 steps at cfg 4; Klein 9B ran 4 steps at cfg 1. Same size, one render each, so this shows what each gave, not which is better.}}
+
 ## What goes wrong
 
 - **"Straight, so one step will do."** Not for a model trained on random pairs. The lab's trained first flow scores 1.30 at one step, about the same bad result as the exact field. One step needs reflow or another form of distillation (CU-514), and a file made that way.
