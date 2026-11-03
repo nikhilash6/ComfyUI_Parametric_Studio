@@ -63,6 +63,13 @@ No node pack's code is in this repository. These are fetched by the installer, l
 | [ClownsharkBatwing/RES4LYF](https://github.com/ClownsharkBatwing/RES4LYF) | RES4LYF page graphs, below | AGPL-3.0 text with a commercial-service restriction in front of it |
 
 Trainers the Train page drives as separate installs: [ostris/ai-toolkit](https://github.com/ostris/ai-toolkit) (MIT) and [bghira/SimpleTuner](https://github.com/bghira/SimpleTuner) (AGPL-3.0). Neither is bundled.
+### ComfyMath-NG
+
+[ComfyMath-NG](https://github.com/rabanti-github/ComfyMath) by Raphael Stoeckli, a fork of [ComfyMath](https://github.com/evanspearman/ComfyMath) by Evan Spearman, Apache-2.0, is not bundled, and no line of it is copied here. The demo graphs `studio/web/pack_lab_demos/comfymath_*.json` call its `CM_*` nodes by name and need the pack installed. It is a Pack Lab pick, not part of the studio's install. Its numbers in the docs and on the 3D page come from running the pack on a separate ComfyUI with no internet.
+
+### ComfyUI-GeometryPack
+
+[ComfyUI-GeometryPack](https://github.com/PozzettiAndrea/ComfyUI-GeometryPack), GPL-3.0-or-later, Copyright (C) 2025 ComfyUI-GeometryPack Contributors, is not bundled, not installed by the studio, and was not run. The 3D page and the Pack Lab notes describe it from its own files.
 
 ### ComfyUI template thumbnails
 

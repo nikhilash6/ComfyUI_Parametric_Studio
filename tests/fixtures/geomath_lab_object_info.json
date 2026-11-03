@@ -1,0 +1,1943 @@
+{
+"CLIPTextEncode": {
+"category": "model/conditioning",
+"description": "Encodes a text prompt using a CLIP model into an embedding that can be used to guide the diffusion model towards generating specific images.",
+"display_name": "CLIP Text Encode (Prompt)",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"clip": [
+"CLIP",
+{
+"tooltip": "The CLIP model used for encoding the text."
+}
+],
+"text": [
+"STRING",
+{
+"dynamicPrompts": true,
+"multiline": true,
+"tooltip": "The text to be encoded."
+}
+]
+}
+},
+"input_order": {
+"required": [
+"text",
+"clip"
+]
+},
+"is_input_list": false,
+"name": "CLIPTextEncode",
+"output": [
+"CONDITIONING"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"CONDITIONING"
+],
+"output_node": false,
+"output_tooltips": [
+"A conditioning containing the embedded text used to guide the diffusion model."
+],
+"python_module": "nodes",
+"search_aliases": [
+"text",
+"prompt",
+"text prompt",
+"positive prompt",
+"negative prompt",
+"encode text",
+"text encoder",
+"encode prompt"
+]
+},
+"CM_AspectRatioResolution": {
+"category": "math/graphics",
+"description": "Calculates a resolution from an aspect ratio, target megapixels, and pixel multiple.",
+"display_name": "AspectRatioResolution",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"aspect_ratio": [
+[
+"1:1",
+"16:9",
+"9:16",
+"4:3",
+"3:4",
+"3:2",
+"2:3",
+"4:5",
+"5:4",
+"21:9",
+"9:21"
+]
+],
+"megapixels": [
+"FLOAT",
+{
+"default": 1.0,
+"min": 0.01,
+"round": false,
+"step": 0.05
+}
+],
+"multiple": [
+"INT",
+{
+"default": 16,
+"max": 512,
+"min": 1
+}
+]
+}
+},
+"input_order": {
+"required": [
+"aspect_ratio",
+"megapixels",
+"multiple"
+]
+},
+"is_input_list": false,
+"name": "CM_AspectRatioResolution",
+"output": [
+"INT",
+"INT"
+],
+"output_is_list": [
+false,
+false
+],
+"output_name": [
+"width",
+"height"
+],
+"output_node": false,
+"python_module": "custom_nodes.rabanti-github__ComfyMath",
+"search_aliases": []
+},
+"CM_ChooseFloat": {
+"category": "math/control",
+"description": "Returns a when condition is true, otherwise returns b.",
+"display_name": "ChooseFloat",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"a": [
+"FLOAT",
+{
+"default": 0.0,
+"round": false,
+"step": 0.001
+}
+],
+"b": [
+"FLOAT",
+{
+"default": 0.0,
+"round": false,
+"step": 0.001
+}
+],
+"condition": [
+"BOOLEAN",
+{
+"default": false
+}
+]
+}
+},
+"input_order": {
+"required": [
+"condition",
+"a",
+"b"
+]
+},
+"is_input_list": false,
+"name": "CM_ChooseFloat",
+"output": [
+"FLOAT"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"FLOAT"
+],
+"output_node": false,
+"python_module": "custom_nodes.rabanti-github__ComfyMath",
+"search_aliases": []
+},
+"CM_ComposeVec3": {
+"category": "math/conversion",
+"description": "Builds a Vec3 from component floats.",
+"display_name": "ComposeVec3",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"x": [
+"FLOAT",
+{
+"default": 0.0
+}
+],
+"y": [
+"FLOAT",
+{
+"default": 0.0
+}
+],
+"z": [
+"FLOAT",
+{
+"default": 0.0
+}
+]
+}
+},
+"input_order": {
+"required": [
+"x",
+"y",
+"z"
+]
+},
+"is_input_list": false,
+"name": "CM_ComposeVec3",
+"output": [
+"VEC3"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"VEC3"
+],
+"output_node": false,
+"python_module": "custom_nodes.rabanti-github__ComfyMath",
+"search_aliases": []
+},
+"CM_FloatBinaryCondition": {
+"category": "math/float",
+"description": "Compares two float values. Conditions include various operators. See help or readme for a full list.",
+"display_name": "FloatBinaryCondition",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"a": [
+"FLOAT",
+{
+"default": 0.0,
+"round": false,
+"step": 0.001
+}
+],
+"b": [
+"FLOAT",
+{
+"default": 0.0,
+"round": false,
+"step": 0.001
+}
+],
+"op": [
+[
+"Eq",
+"Neq",
+"Gt",
+"Gte",
+"Lt",
+"Lte"
+]
+]
+}
+},
+"input_order": {
+"required": [
+"op",
+"a",
+"b"
+]
+},
+"is_input_list": false,
+"name": "CM_FloatBinaryCondition",
+"output": [
+"BOOLEAN"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"BOOLEAN"
+],
+"output_node": false,
+"python_module": "custom_nodes.rabanti-github__ComfyMath",
+"search_aliases": []
+},
+"CM_FloatBinaryOperation": {
+"category": "math/float",
+"description": "Applies a binary (two inputs) float operation. Operations include various operators. See help or readme for a full list.",
+"display_name": "FloatBinaryOperation",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"a": [
+"FLOAT",
+{
+"default": 0.0,
+"round": false,
+"step": 0.001
+}
+],
+"b": [
+"FLOAT",
+{
+"default": 0.0,
+"round": false,
+"step": 0.001
+}
+],
+"op": [
+[
+"Add",
+"Sub",
+"Mul",
+"Div",
+"Mod",
+"Pow",
+"FloorDiv",
+"Max",
+"Min",
+"Log",
+"Atan2"
+]
+]
+}
+},
+"input_order": {
+"required": [
+"op",
+"a",
+"b"
+]
+},
+"is_input_list": false,
+"name": "CM_FloatBinaryOperation",
+"output": [
+"FLOAT"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"FLOAT"
+],
+"output_node": false,
+"python_module": "custom_nodes.rabanti-github__ComfyMath",
+"search_aliases": []
+},
+"CM_FloatUnaryOperation": {
+"category": "math/float",
+"description": "Applies a unary (one input) float operation. Operations include various operators. See help or readme for a full list.",
+"display_name": "FloatUnaryOperation",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"a": [
+"FLOAT",
+{
+"default": 0.0,
+"round": false,
+"step": 0.001
+}
+],
+"op": [
+[
+"Neg",
+"Inc",
+"Dec",
+"Abs",
+"Sqr",
+"Cube",
+"Sqrt",
+"Exp",
+"Ln",
+"Log10",
+"Log2",
+"Sin",
+"Cos",
+"Tan",
+"Asin",
+"Acos",
+"Atan",
+"Sinh",
+"Cosh",
+"Tanh",
+"Asinh",
+"Acosh",
+"Atanh",
+"Round",
+"Floor",
+"Ceil",
+"Trunc",
+"Erf",
+"Erfc",
+"Gamma",
+"Radians",
+"Degrees"
+]
+]
+}
+},
+"input_order": {
+"required": [
+"op",
+"a"
+]
+},
+"is_input_list": false,
+"name": "CM_FloatUnaryOperation",
+"output": [
+"FLOAT"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"FLOAT"
+],
+"output_node": false,
+"python_module": "custom_nodes.rabanti-github__ComfyMath",
+"search_aliases": []
+},
+"CM_IntBinaryOperation": {
+"category": "math/int",
+"description": "Applies a binary (two inputs) integer operation. Operations include arithmetic, bitwise logic, shifts, Max, and Min.",
+"display_name": "IntBinaryOperation",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"a": [
+"INT",
+{
+"default": 0
+}
+],
+"b": [
+"INT",
+{
+"default": 0
+}
+],
+"op": [
+[
+"Add",
+"Sub",
+"Mul",
+"Div",
+"Mod",
+"Pow",
+"And",
+"Nand",
+"Or",
+"Nor",
+"Xor",
+"Xnor",
+"Shl",
+"Shr",
+"Max",
+"Min"
+]
+]
+}
+},
+"input_order": {
+"required": [
+"op",
+"a",
+"b"
+]
+},
+"is_input_list": false,
+"name": "CM_IntBinaryOperation",
+"output": [
+"INT"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"INT"
+],
+"output_node": false,
+"python_module": "custom_nodes.rabanti-github__ComfyMath",
+"search_aliases": []
+},
+"CM_SDXLResolution": {
+"category": "math/graphics",
+"description": "Selects one of the standard or extended SDXL width/height presets.",
+"display_name": "SDXLResolution",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"resolution": [
+[
+"1024x1024",
+"1152x896",
+"896x1152",
+"1216x832",
+"832x1216",
+"1344x768",
+"768x1344",
+"1536x640",
+"640x1536"
+]
+]
+}
+},
+"input_order": {
+"required": [
+"resolution"
+]
+},
+"is_input_list": false,
+"name": "CM_SDXLResolution",
+"output": [
+"INT",
+"INT"
+],
+"output_is_list": [
+false,
+false
+],
+"output_name": [
+"width",
+"height"
+],
+"output_node": false,
+"python_module": "custom_nodes.rabanti-github__ComfyMath",
+"search_aliases": []
+},
+"CM_Vec3ToScalarBinaryOperation": {
+"category": "math/vec3",
+"description": "Converts two vectors to a scalar. Operations: Dot, Distance.",
+"display_name": "Vec3ToScalarBinaryOperation",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"a": [
+"VEC3",
+{
+"default": [
+0.0,
+0.0,
+0.0
+]
+}
+],
+"b": [
+"VEC3",
+{
+"default": [
+0.0,
+0.0,
+0.0
+]
+}
+],
+"op": [
+[
+"Dot",
+"Distance"
+]
+]
+}
+},
+"input_order": {
+"required": [
+"op",
+"a",
+"b"
+]
+},
+"is_input_list": false,
+"name": "CM_Vec3ToScalarBinaryOperation",
+"output": [
+"FLOAT"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"FLOAT"
+],
+"output_node": false,
+"python_module": "custom_nodes.rabanti-github__ComfyMath",
+"search_aliases": []
+},
+"CheckpointLoaderSimple": {
+"category": "model/loaders",
+"description": "Loads a diffusion model checkpoint, diffusion models are used to denoise latents.",
+"display_name": "Load Checkpoint",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"ckpt_name": [
+[
+"v1-5-pruned-emaonly.safetensors"
+],
+{
+"tooltip": "The name of the checkpoint (model) to load."
+}
+]
+}
+},
+"input_order": {
+"required": [
+"ckpt_name"
+]
+},
+"is_input_list": false,
+"name": "CheckpointLoaderSimple",
+"output": [
+"MODEL",
+"CLIP",
+"VAE"
+],
+"output_is_list": [
+false,
+false,
+false
+],
+"output_name": [
+"MODEL",
+"CLIP",
+"VAE"
+],
+"output_node": false,
+"output_tooltips": [
+"The model used for denoising latents.",
+"The CLIP model used for encoding text prompts.",
+"The VAE model used for encoding and decoding images to and from latent space."
+],
+"python_module": "nodes",
+"search_aliases": [
+"load model",
+"checkpoint",
+"model loader",
+"load checkpoint",
+"ckpt",
+"model"
+]
+},
+"ComfyMathExpression": {
+"api_node": false,
+"category": "utilities",
+"deprecated": false,
+"description": "",
+"dev_only": false,
+"display_name": "Math Expression",
+"essentials_category": null,
+"experimental": false,
+"has_intermediate_output": false,
+"input": {
+"required": {
+"expression": [
+"STRING",
+{
+"default": "a + b",
+"multiline": true
+}
+],
+"values": [
+"COMFY_AUTOGROW_V3",
+{
+"template": {
+"input": {
+"required": {
+"value": [
+"FLOAT,INT,BOOLEAN",
+{}
+]
+}
+},
+"min": 1,
+"names": [
+"a",
+"b",
+"c",
+"d",
+"e",
+"f",
+"g",
+"h",
+"i",
+"j",
+"k",
+"l",
+"m",
+"n",
+"o",
+"p",
+"q",
+"r",
+"s",
+"t",
+"u",
+"v",
+"w",
+"x",
+"y",
+"z"
+]
+}
+}
+]
+}
+},
+"input_order": {
+"required": [
+"expression",
+"values"
+]
+},
+"is_input_list": false,
+"name": "ComfyMathExpression",
+"output": [
+"FLOAT",
+"INT",
+"BOOLEAN"
+],
+"output_is_list": [
+false,
+false,
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"FLOAT",
+"INT",
+"BOOL"
+],
+"output_node": false,
+"output_tooltips": [
+null,
+null,
+null
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_math",
+"search_aliases": [
+"math",
+"expression",
+"formula",
+"calculate",
+"calculator",
+"eval"
+]
+},
+"DecimateMesh": {
+"api_node": false,
+"category": "3d/mesh",
+"deprecated": false,
+"description": "Simplifies a mesh to a target face count using QEM, on the active compute device. 'midpoint' is the cumesh-faithful preset (best quality, preserves thin features / hair); 'qem' places vertices at the QEM optimum with line/feature-edge controls. Output stays welded.",
+"dev_only": false,
+"display_name": "Decimate Mesh",
+"essentials_category": null,
+"experimental": false,
+"has_intermediate_output": false,
+"input": {
+"hidden": {
+"unique_id": [
+"UNIQUE_ID"
+]
+},
+"required": {
+"mesh": [
+"MESH",
+{}
+],
+"placement_mode": [
+"COMFY_DYNAMICCOMBO_V3",
+{
+"display_name": "placement_mode",
+"options": [
+{
+"inputs": {
+"required": {}
+},
+"key": "midpoint"
+},
+{
+"inputs": {
+"required": {
+"clamp_v_to_edge": [
+"BOOLEAN",
+{
+"default": true,
+"tooltip": "Project the QEM-optimal position onto the collapsed edge segment."
+}
+],
+"feature_edge_min_dihedral_deg": [
+"FLOAT",
+{
+"default": 30.0,
+"max": 180.0,
+"min": 0.0,
+"step": 1.0,
+"tooltip": "Minimum dihedral angle (degree) to count an edge as a feature edge."
+}
+],
+"feature_edge_quadric_weight": [
+"FLOAT",
+{
+"default": 0.0,
+"max": 1000.0,
+"min": 0.0,
+"step": 1.0,
+"tooltip": "Extra quadric weight on dihedral feature edges (creases). 0 = off."
+}
+],
+"line_quadric_weight": [
+"FLOAT",
+{
+"default": 0.0,
+"max": 100.0,
+"min": 0.0,
+"step": 0.1,
+"tooltip": "Per-edge line-quadric weight; preserves sharp ridges/valleys. 0 = off."
+}
+]
+}
+},
+"key": "qem"
+}
+],
+"tooltip": "midpoint: cumesh-faithful (recommended). qem: QEM-optimal placement."
+}
+],
+"target_face_count": [
+"INT",
+{
+"default": 200000,
+"max": 50000000,
+"min": 0,
+"tooltip": "Target max faces. 0 disables."
+}
+]
+}
+},
+"input_order": {
+"hidden": [
+"unique_id"
+],
+"required": [
+"mesh",
+"target_face_count",
+"placement_mode"
+]
+},
+"is_input_list": false,
+"name": "DecimateMesh",
+"output": [
+"MESH"
+],
+"output_is_list": [
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"mesh"
+],
+"output_node": false,
+"output_tooltips": [
+null
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_mesh_postprocess",
+"search_aliases": null
+},
+"EmptyLatentImage": {
+"category": "model/latent",
+"description": "Create a new batch of empty latent images to be denoised via sampling.",
+"display_name": "Empty Latent Image",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"batch_size": [
+"INT",
+{
+"default": 1,
+"max": 4096,
+"min": 1,
+"tooltip": "The number of latent images in the batch."
+}
+],
+"height": [
+"INT",
+{
+"default": 1024,
+"max": 16384,
+"min": 16,
+"step": 8,
+"tooltip": "The height of the latent images in pixels."
+}
+],
+"width": [
+"INT",
+{
+"default": 1024,
+"max": 16384,
+"min": 16,
+"step": 8,
+"tooltip": "The width of the latent images in pixels."
+}
+]
+}
+},
+"input_order": {
+"required": [
+"width",
+"height",
+"batch_size"
+]
+},
+"is_input_list": false,
+"name": "EmptyLatentImage",
+"output": [
+"LATENT"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"LATENT"
+],
+"output_node": false,
+"output_tooltips": [
+"The empty latent image batch."
+],
+"python_module": "nodes",
+"search_aliases": [
+"empty",
+"empty latent",
+"new latent",
+"create latent",
+"blank latent",
+"blank"
+]
+},
+"Get3DComponents": {
+"api_node": false,
+"category": "3d",
+"deprecated": false,
+"description": "Parse a 3D model file (GLB, GLTF, OBJ, STL) into an editable MESH for the mesh-processing nodes (decimate, remesh, UV unwrap, bake, ...). All scene nodes/primitives are merged into one mesh with their transforms applied; textures and material factors come from the first material. Counterpart of MeshToFile3D.",
+"dev_only": false,
+"display_name": "Get 3D Components",
+"essentials_category": null,
+"experimental": true,
+"has_intermediate_output": false,
+"input": {
+"required": {
+"model_3d": [
+"FILE_3D_GLB,FILE_3D_GLTF,FILE_3D_OBJ,FILE_3D_STL,FILE_3D",
+{
+"tooltip": "3D model file from Load 3D or another 3D node. FBX/USDZ are not supported - convert to GLB first."
+}
+]
+}
+},
+"input_order": {
+"required": [
+"model_3d"
+]
+},
+"is_input_list": false,
+"name": "Get3DComponents",
+"output": [
+"MESH"
+],
+"output_is_list": [
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"mesh"
+],
+"output_node": false,
+"output_tooltips": [
+null
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_mesh_io",
+"search_aliases": [
+"file 3d to mesh",
+"extract mesh",
+"convert 3d",
+"parse glb",
+"import mesh",
+"load mesh from file",
+"file to mesh"
+]
+},
+"GetMeshInfo": {
+"api_node": false,
+"category": "3d/mesh",
+"deprecated": false,
+"description": "",
+"dev_only": false,
+"display_name": "Get Mesh Info",
+"essentials_category": null,
+"experimental": false,
+"has_intermediate_output": false,
+"input": {
+"hidden": {
+"unique_id": [
+"UNIQUE_ID"
+]
+},
+"required": {
+"mesh": [
+"MESH",
+{}
+]
+}
+},
+"input_order": {
+"hidden": [
+"unique_id"
+],
+"required": [
+"mesh"
+]
+},
+"is_input_list": false,
+"name": "GetMeshInfo",
+"output": [
+"MESH",
+"STRING"
+],
+"output_is_list": [
+false,
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"mesh",
+"info"
+],
+"output_node": false,
+"output_tooltips": [
+null,
+null
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_save_3d",
+"search_aliases": null
+},
+"KSampler": {
+"category": "model/sampling",
+"description": "Uses the provided model, positive and negative conditioning to denoise the latent image.",
+"display_name": "KSampler",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"cfg": [
+"FLOAT",
+{
+"default": 8.0,
+"max": 100.0,
+"min": 0.0,
+"round": 0.01,
+"step": 0.1,
+"tooltip": "The Classifier-Free Guidance scale balances creativity and adherence to the prompt. Higher values result in images more closely matching the prompt however too high values will negatively impact quality."
+}
+],
+"denoise": [
+"FLOAT",
+{
+"default": 1.0,
+"max": 1.0,
+"min": 0.0,
+"step": 0.01,
+"tooltip": "The amount of denoising applied, lower values will maintain the structure of the initial image allowing for image to image sampling."
+}
+],
+"latent_image": [
+"LATENT",
+{
+"tooltip": "The latent image to denoise."
+}
+],
+"model": [
+"MODEL",
+{
+"tooltip": "The model used for denoising the input latent."
+}
+],
+"negative": [
+"CONDITIONING",
+{
+"tooltip": "The conditioning describing the attributes you want to exclude from the image."
+}
+],
+"positive": [
+"CONDITIONING",
+{
+"tooltip": "The conditioning describing the attributes you want to include in the image."
+}
+],
+"sampler_name": [
+[
+"euler",
+"euler_cfg_pp",
+"euler_ancestral",
+"euler_ancestral_cfg_pp",
+"heun",
+"heunpp2",
+"exp_heun_2_x0",
+"exp_heun_2_x0_sde",
+"dpm_2",
+"dpm_2_ancestral",
+"lms",
+"dpm_fast",
+"dpm_adaptive",
+"dpmpp_2s_ancestral",
+"dpmpp_2s_ancestral_cfg_pp",
+"dpmpp_sde",
+"dpmpp_sde_gpu",
+"dpmpp_2m",
+"dpmpp_2m_cfg_pp",
+"dpmpp_2m_sde",
+"dpmpp_2m_sde_gpu",
+"dpmpp_2m_sde_heun",
+"dpmpp_2m_sde_heun_gpu",
+"dpmpp_3m_sde",
+"dpmpp_3m_sde_gpu",
+"ddpm",
+"lcm",
+"ipndm",
+"ipndm_v",
+"deis",
+"cfgpp_ud10_ab",
+"res_multistep",
+"res_multistep_cfg_pp",
+"res_multistep_ancestral",
+"res_multistep_ancestral_cfg_pp",
+"gradient_estimation",
+"gradient_estimation_cfg_pp",
+"er_sde",
+"seeds_2",
+"seeds_3",
+"sa_solver",
+"sa_solver_pece",
+"ddim",
+"uni_pc",
+"uni_pc_bh2"
+],
+{
+"tooltip": "The algorithm used when sampling, this can affect the quality, speed, and style of the generated output."
+}
+],
+"scheduler": [
+[
+"simple",
+"sgm_uniform",
+"karras",
+"exponential",
+"ddim_uniform",
+"beta",
+"normal",
+"linear_quadratic",
+"kl_optimal"
+],
+{
+"tooltip": "The scheduler controls how noise is gradually removed to form the image."
+}
+],
+"seed": [
+"INT",
+{
+"control_after_generate": true,
+"default": 0,
+"max": 18446744073709551615,
+"min": 0,
+"tooltip": "The random seed used for creating the noise."
+}
+],
+"steps": [
+"INT",
+{
+"default": 20,
+"max": 10000,
+"min": 1,
+"tooltip": "The number of steps used in the denoising process."
+}
+]
+}
+},
+"input_order": {
+"required": [
+"model",
+"seed",
+"steps",
+"cfg",
+"sampler_name",
+"scheduler",
+"positive",
+"negative",
+"latent_image",
+"denoise"
+]
+},
+"is_input_list": false,
+"name": "KSampler",
+"output": [
+"LATENT"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"LATENT"
+],
+"output_node": false,
+"output_tooltips": [
+"The denoised latent."
+],
+"python_module": "nodes",
+"search_aliases": [
+"sampler",
+"sample",
+"generate",
+"denoise",
+"diffuse",
+"txt2img",
+"img2img"
+]
+},
+"Load3DAdvanced": {
+"api_node": false,
+"category": "3d",
+"deprecated": false,
+"description": "",
+"dev_only": false,
+"display_name": "Load 3D (Advanced)",
+"essentials_category": null,
+"experimental": true,
+"has_intermediate_output": false,
+"input": {
+"required": {
+"height": [
+"INT",
+{
+"default": 1024,
+"max": 4096,
+"min": 1,
+"step": 1,
+"tooltip": "Render height of the viewport in pixels."
+}
+],
+"model_file": [
+"COMBO",
+{
+"file_upload": true,
+"multiselect": false,
+"options": [
+"none",
+"3d/hunyuan3d_sample.glb"
+]
+}
+],
+"viewport_state": [
+"LOAD_3D",
+{}
+],
+"width": [
+"INT",
+{
+"default": 1024,
+"max": 4096,
+"min": 1,
+"step": 1,
+"tooltip": "Render width of the viewport in pixels."
+}
+]
+}
+},
+"input_order": {
+"required": [
+"model_file",
+"viewport_state",
+"width",
+"height"
+]
+},
+"is_input_list": false,
+"name": "Load3DAdvanced",
+"output": [
+"FILE_3D",
+"LOAD3D_MODEL_INFO",
+"LOAD3D_CAMERA",
+"INT",
+"INT"
+],
+"output_is_list": [
+false,
+false,
+false,
+false,
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"model_3d",
+"model_3d_info",
+"camera_info",
+"width",
+"height"
+],
+"output_node": false,
+"output_tooltips": [
+"Loaded 3D model file (glb/obj/stl/etc.).",
+"Placement of each model in the scene: position, rotation, and scale (Y-up world space).",
+"Viewport camera information: position, look-at target, zoom, and type.",
+"Render width of the viewport in pixels.",
+"Render height of the viewport in pixels."
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_load_3d",
+"search_aliases": [
+"load mesh",
+"load gltf",
+"load glb",
+"load obj",
+"load fbx",
+"load stl"
+]
+},
+"MeshSmoothNormals": {
+"api_node": false,
+"category": "3d/mesh",
+"deprecated": false,
+"description": "Compute smooth per-vertex normals and attach them to the mesh. Meshes without normals are shaded flat (per-face) by glTF viewers; this makes them shade smoothly. With crease_angle below 180, edges sharper than the threshold are kept hard by splitting vertices along them.",
+"dev_only": false,
+"display_name": "Smooth Mesh Normals",
+"essentials_category": null,
+"experimental": false,
+"has_intermediate_output": false,
+"input": {
+"required": {
+"crease_angle": [
+"FLOAT",
+{
+"default": 180.0,
+"max": 180.0,
+"min": 0.0,
+"step": 1.0,
+"tooltip": "Edges whose dihedral angle exceeds this value (degrees) stay hard (vertices are split). 180 = fully smooth; lower preserves sharp edges (e.g. ~30-60 for hard-surface)."
+}
+],
+"mesh": [
+"MESH",
+{}
+]
+}
+},
+"input_order": {
+"required": [
+"mesh",
+"crease_angle"
+]
+},
+"is_input_list": false,
+"name": "MeshSmoothNormals",
+"output": [
+"MESH"
+],
+"output_is_list": [
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"mesh"
+],
+"output_node": false,
+"output_tooltips": [
+null
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_mesh_postprocess",
+"search_aliases": null
+},
+"PreviewAny": {
+"category": "utilities",
+"description": "Preview any input value as text.",
+"display_name": "Preview as Text",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"source": [
+"*",
+{}
+]
+}
+},
+"input_order": {
+"required": [
+"source"
+]
+},
+"is_input_list": false,
+"name": "PreviewAny",
+"output": [
+"STRING"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"STRING"
+],
+"output_node": true,
+"python_module": "comfy_extras.nodes_preview_any",
+"search_aliases": [
+"preview",
+"preview text",
+"show output",
+"inspect",
+"debug",
+"print value",
+"show text"
+]
+},
+"PrimitiveFloat": {
+"api_node": false,
+"category": "utilities/primitive",
+"deprecated": false,
+"description": "",
+"dev_only": false,
+"display_name": "Float",
+"essentials_category": null,
+"experimental": false,
+"has_intermediate_output": false,
+"input": {
+"required": {
+"value": [
+"FLOAT",
+{
+"max": 9223372036854775807,
+"min": -9223372036854775807,
+"step": 0.1
+}
+]
+}
+},
+"input_order": {
+"required": [
+"value"
+]
+},
+"is_input_list": false,
+"name": "PrimitiveFloat",
+"output": [
+"FLOAT"
+],
+"output_is_list": [
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"FLOAT"
+],
+"output_node": false,
+"output_tooltips": [
+null
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_primitive",
+"search_aliases": null
+},
+"RenderMesh": {
+"api_node": false,
+"category": "3d/mesh",
+"deprecated": false,
+"description": "Ray-casts a single view of a mesh. The camera and optional model transform can come from a Load3D / Preview3D viewer.",
+"dev_only": false,
+"display_name": "Render Mesh",
+"essentials_category": null,
+"experimental": false,
+"has_intermediate_output": false,
+"input": {
+"optional": {
+"camera_info": [
+"LOAD3D_CAMERA",
+{
+"tooltip": "Camera from a Load3D / Preview3D viewer or a Create Camera Info node. If none is connected, a default front view is auto-framed."
+}
+],
+"model_3d_info": [
+"LOAD3D_MODEL_INFO",
+{
+"tooltip": "Model transform from the same Load3D / Preview3D viewer. Connect it with camera_info to match the viewer framing."
+}
+]
+},
+"required": {
+"background": [
+"COLOR",
+{
+"default": "#000000",
+"socketless": true
+}
+],
+"height": [
+"INT",
+{
+"default": 1024,
+"max": 4096,
+"min": 64,
+"step": 8
+}
+],
+"mesh": [
+"MESH",
+{}
+],
+"mode": [
+"COMBO",
+{
+"multiselect": false,
+"options": [
+"auto",
+"texture",
+"vertex colors",
+"solid",
+"normal",
+"depth"
+],
+"tooltip": "What to render. auto: texture if present, else vertex colours, else shaded clay."
+}
+],
+"width": [
+"INT",
+{
+"default": 1024,
+"max": 4096,
+"min": 64,
+"step": 8
+}
+]
+}
+},
+"input_order": {
+"optional": [
+"model_3d_info",
+"camera_info"
+],
+"required": [
+"mesh",
+"mode",
+"width",
+"height",
+"background"
+]
+},
+"is_input_list": false,
+"name": "RenderMesh",
+"output": [
+"IMAGE",
+"MASK"
+],
+"output_is_list": [
+false,
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"image",
+"mask"
+],
+"output_node": false,
+"output_tooltips": [
+null,
+null
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_mesh_postprocess",
+"search_aliases": [
+"mesh to image",
+"render mesh",
+"preview textured mesh"
+]
+},
+"RotateMesh": {
+"api_node": false,
+"category": "3d/mesh",
+"deprecated": false,
+"description": "Rotate a mesh. Euler XYZ applies X then Y then Z about the world axes (degrees). Quaternion is (w, x, y, z), auto-normalized.",
+"dev_only": false,
+"display_name": "Rotate Mesh",
+"essentials_category": null,
+"experimental": false,
+"has_intermediate_output": false,
+"input": {
+"required": {
+"mesh": [
+"MESH",
+{}
+],
+"mode": [
+"COMFY_DYNAMICCOMBO_V3",
+{
+"options": [
+{
+"inputs": {
+"required": {
+"angle_x": [
+"FLOAT",
+{
+"default": 0.0,
+"max": 360.0,
+"min": -360.0,
+"step": 0.1,
+"tooltip": "Rotation around the X axis in degrees."
+}
+],
+"angle_y": [
+"FLOAT",
+{
+"default": 0.0,
+"max": 360.0,
+"min": -360.0,
+"step": 0.1,
+"tooltip": "Rotation around the Y axis in degrees."
+}
+],
+"angle_z": [
+"FLOAT",
+{
+"default": 0.0,
+"max": 360.0,
+"min": -360.0,
+"step": 0.1,
+"tooltip": "Rotation around the Z axis in degrees."
+}
+]
+}
+},
+"key": "euler_xyz"
+},
+{
+"inputs": {
+"required": {
+"qw": [
+"FLOAT",
+{
+"default": 1.0,
+"max": 1.0,
+"min": -1.0,
+"step": 0.001
+}
+],
+"qx": [
+"FLOAT",
+{
+"default": 0.0,
+"max": 1.0,
+"min": -1.0,
+"step": 0.001
+}
+],
+"qy": [
+"FLOAT",
+{
+"default": 0.0,
+"max": 1.0,
+"min": -1.0,
+"step": 0.001
+}
+],
+"qz": [
+"FLOAT",
+{
+"default": 0.0,
+"max": 1.0,
+"min": -1.0,
+"step": 0.001
+}
+]
+}
+},
+"key": "quaternion"
+}
+]
+}
+]
+}
+},
+"input_order": {
+"required": [
+"mesh",
+"mode"
+]
+},
+"is_input_list": false,
+"name": "RotateMesh",
+"output": [
+"MESH"
+],
+"output_is_list": [
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"mesh"
+],
+"output_node": false,
+"output_tooltips": [
+null
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_save_3d",
+"search_aliases": null
+},
+"SaveGLB": {
+"api_node": false,
+"category": "3d",
+"deprecated": false,
+"description": "",
+"dev_only": false,
+"display_name": "Save 3D Model",
+"essentials_category": "Basics",
+"experimental": false,
+"has_intermediate_output": false,
+"input": {
+"hidden": {
+"extra_pnginfo": [
+"EXTRA_PNGINFO"
+],
+"prompt": [
+"PROMPT"
+]
+},
+"required": {
+"filename_prefix": [
+"STRING",
+{
+"default": "3d/ComfyUI",
+"multiline": false
+}
+],
+"mesh": [
+"MESH,FILE_3D_GLB,FILE_3D_GLTF,FILE_3D_OBJ,FILE_3D_FBX,FILE_3D_STL,FILE_3D_USDZ,FILE_3D_PLY,FILE_3D_SPLAT,FILE_3D_SPZ,FILE_3D_KSPLAT,FILE_3D_SPLAT_ANY,FILE_3D_POINT_CLOUD_ANY,FILE_3D",
+{
+"tooltip": "Mesh or 3D file to save"
+}
+]
+}
+},
+"input_order": {
+"hidden": [
+"prompt",
+"extra_pnginfo"
+],
+"required": [
+"mesh",
+"filename_prefix"
+]
+},
+"is_input_list": false,
+"name": "SaveGLB",
+"output": [],
+"output_is_list": [],
+"output_matchtypes": null,
+"output_name": [],
+"output_node": true,
+"output_tooltips": [],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_save_3d",
+"search_aliases": [
+"export 3d model",
+"save mesh"
+]
+},
+"SaveImage": {
+"category": "image",
+"description": "Saves the input images to your ComfyUI output directory.",
+"display_name": "Save Image",
+"essentials_category": "Basics",
+"has_intermediate_output": false,
+"input": {
+"hidden": {
+"extra_pnginfo": "EXTRA_PNGINFO",
+"prompt": "PROMPT"
+},
+"required": {
+"filename_prefix": [
+"STRING",
+{
+"default": "ComfyUI",
+"tooltip": "The prefix for the file to save. This may include formatting information such as %date:yyyy-MM-dd% or %Empty Latent Image.width% to include values from nodes."
+}
+],
+"images": [
+"IMAGE",
+{
+"tooltip": "The images to save."
+}
+]
+}
+},
+"input_order": {
+"hidden": [
+"prompt",
+"extra_pnginfo"
+],
+"required": [
+"images",
+"filename_prefix"
+]
+},
+"is_input_list": false,
+"name": "SaveImage",
+"output": [
+"IMAGE"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"images"
+],
+"output_node": true,
+"python_module": "nodes",
+"search_aliases": [
+"save",
+"save image",
+"export image",
+"output image",
+"write image",
+"download"
+]
+},
+"VAEDecode": {
+"category": "model/latent",
+"description": "Decodes latent images back into pixel space images.",
+"display_name": "VAE Decode",
+"has_intermediate_output": false,
+"input": {
+"required": {
+"samples": [
+"LATENT",
+{
+"tooltip": "The latent to be decoded."
+}
+],
+"vae": [
+"VAE",
+{
+"tooltip": "The VAE model used for decoding the latent."
+}
+]
+}
+},
+"input_order": {
+"required": [
+"samples",
+"vae"
+]
+},
+"is_input_list": false,
+"name": "VAEDecode",
+"output": [
+"IMAGE"
+],
+"output_is_list": [
+false
+],
+"output_name": [
+"IMAGE"
+],
+"output_node": false,
+"output_tooltips": [
+"The decoded image."
+],
+"python_module": "nodes",
+"search_aliases": [
+"decode",
+"decode latent",
+"latent to image",
+"render latent"
+]
+},
+"WeldVertices": {
+"api_node": false,
+"category": "3d/mesh",
+"deprecated": false,
+"description": "Merge coincident vertices via L_inf grid quantization. Use when a mesh comes in unwelded (per-face verts, no shared edges) \u2014 pre-pass before FillHoles, DecimateMesh, or any topology-aware op. Colors averaged per cluster.",
+"dev_only": false,
+"display_name": "Weld Vertices",
+"essentials_category": null,
+"experimental": false,
+"has_intermediate_output": false,
+"input": {
+"required": {
+"epsilon_abs": [
+"FLOAT",
+{
+"default": 0.0,
+"min": 0.0,
+"step": 1e-06,
+"tooltip": "Absolute weld tolerance (overrides epsilon_rel when > 0)."
+}
+],
+"epsilon_rel": [
+"FLOAT",
+{
+"default": 1e-05,
+"min": 0.0,
+"step": 1e-06,
+"tooltip": "Weld tolerance (fraction of bbox diagonal). 1e-5 for float dedup; 1e-3 for visibly-close-but-distinct verts."
+}
+],
+"mesh": [
+"MESH",
+{}
+]
+}
+},
+"input_order": {
+"required": [
+"mesh",
+"epsilon_rel",
+"epsilon_abs"
+]
+},
+"is_input_list": false,
+"name": "WeldVertices",
+"output": [
+"MESH"
+],
+"output_is_list": [
+false
+],
+"output_matchtypes": null,
+"output_name": [
+"mesh"
+],
+"output_node": false,
+"output_tooltips": [
+null
+],
+"price_badge": null,
+"python_module": "comfy_extras.nodes_mesh_postprocess",
+"search_aliases": null
+}
+}

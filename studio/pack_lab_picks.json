@@ -382,20 +382,6 @@
 "risk": "`src/comfyui_gfpgan/gfpganer.py:70` is a plain `torch.load` of a `.pth`, which unpickles the file. Use a hash-checked file only."
 },
 {
-"pack": "ComfyUI-GeometryPack",
-"repo": "ComfyUI-GeometryPack",
-"action": "docs-only",
-"sections": [
-"3D mesh and camera"
-],
-"sandbox": "untested",
-"adds": "a map of what exists for mesh repair, boolean, alpha wrap, self-intersection checks and skeleton extraction, and which library does each. Read it when building a World Kit mesh check. Too heavy to install for that.",
-"nodes": "`GeomPackBoolean`, `GeomPackAlphaWrap`, `GeomPackDetectSelfIntersections`, `GeomPackFillHoles`, `GeomPackExtractSkeleton`",
-"needs": "none.",
-"licence": "GPL-3.0",
-"risk": "`prestartup_script.py` runs `setup_env()` and copies 19 viewers. The `pip` scan hits I sampled are error text, for example `nodes/repair/meshfix.py:110`."
-},
-{
 "pack": "ComfyUI-JH__ComfyUI-JH-XMP-Metadata-Nodes",
 "repo": "ComfyUI-JH/ComfyUI-JH-XMP-Metadata-Nodes",
 "action": "borrow-the-idea",
@@ -1220,6 +1206,20 @@
 "risk": "none found by scan and sampling of `nodes.py`. The `paid` count of 3 was not traced line by line; a grep for network and subprocess found nothing."
 },
 {
+"pack": "PozzettiAndrea__ComfyUI-GeometryPack",
+"repo": "PozzettiAndrea/ComfyUI-GeometryPack",
+"action": "docs-only",
+"sections": [
+"3D mesh and camera"
+],
+"sandbox": "untested",
+"adds": "a map of what exists for mesh repair, boolean, alpha wrap, self-intersection checks, remeshing, smoothing, sharpening, UV unwrap and skeleton extraction, and which library does each (one node per job with a backend dropdown: CGAL, libigl, PyMeshLab, Blender, cumesh, geogram, pmp and others). Read it when building a World Kit mesh check. Core ComfyUI now ships its own mesh set (`DecimateMesh`, `RemeshMesh`, `FillHoles`, `WeldVertices`, `MeshSmoothNormals`, `UnwrapMesh`, `RotateMesh`, `MergeMeshes`, `GetMeshInfo`, `RenderMesh`, `BakeNormalMapFromMesh`, `BakeAmbientOcclusion`), which covers decimate, remesh, small-hole fill, weld, normals and unwrap. What GeometryPack adds beyond core: boolean, alpha wrap, self-intersection detect and fix, skeleton extraction, surface reconstruction from points, sharpening, quad remeshers.",
+"nodes": "about 90, including `Remesh`, `Boolean`, `Alpha Wrap`, `Self Intersections`, `Extract Skeleton`, `Reconstruct Surface`, `Fill Holes`, `UV Unwrap`",
+"needs": "none.",
+"licence": "GPL-3.0-or-later (LICENSE file and SPDX headers). Compatible with an AGPL-3.0 project; its Blender and CGAL backends carry their own GPL terms.",
+"risk": "it cannot load without new packages. `__init__.py` imports `comfy_env.register_nodes`, and `prestartup_script.py` runs `comfy_env.setup_env()` and `comfy_3d_viewers.copy_viewer` at every start. `requirements.txt` pins `comfy-env==0.3.89` and `comfy-3d-viewers==0.2.44`, and `install.py` calls `comfy_env.install()`, which the pyproject says downloads the pixi package manager and builds a separate environment from `nodes/comfy-env.toml`: conda-forge `cgal`, `igl`, `mesalib`, `pymeshlab`, `mmgpy`, `bpy` from the author's own conda channel, `cumesh` for CUDA, and PyPI packages from the author's own indexes (`pyquadriflow`, `pygeogram-ap`, `pypmp`, `pyquadwild`, `pymesh2`) plus `point-cloud-utils`, `skeletor`, `pynanoinstantmeshes`, `embreex`. That is network and pip at install time, which this review does not do. `nodes/__init__.py` also imports the CGAL modules without a guard, so even with the Python libraries a main ComfyUI already has (trimesh, igl, pymeshlab, pymeshfix, xatlas, fast_simplification), the node package fails without that environment. The prestartup also copies sample meshes into ComfyUI's input folder. `nodes/blender_texture_remeshing/remesh_uv.py:438` runs a subprocess. The `pip` scan hits sampled are error text, for example `nodes/repair/meshfix.py:110`."
+},
+{
 "pack": "PozzettiAndrea__ComfyUI-HYWM2",
 "repo": "PozzettiAndrea/ComfyUI-HYWM2",
 "action": "borrow-the-idea",
@@ -1288,6 +1288,21 @@
 "needs": "none.",
 "licence": "none found, so no copying and no install without owner review.",
 "risk": "none found by grep for subprocess, exec, network. aiohttp route import at `nodes.py:18`, route body not read."
+},
+{
+"pack": "rabanti-github__ComfyMath",
+"repo": "rabanti-github/ComfyMath",
+"action": "install-candidate",
+"sections": [
+"Math, logic, control flow"
+],
+"sandbox": "ok",
+"adds": "one-operation maths nodes with a dropdown, for people who would rather not type an expression: int, float and generic-number unary and binary ops, typed comparisons that return BOOLEAN, ops that run only when a condition is true (with a fallback), a choose-A-or-B pair, Vec2, Vec3 and Vec4 maths (dot, distance, cross, normalize, norm, scale), conversions, a fixed or stepped random int, and resolution helpers (aspect ratio at a megapixel budget rounded to a multiple, nearest SDXL size, the SDXL presets). Most scalar ops repeat core `ComfyMathExpression` and `PSN_Expression`; the vectors, the conditional ops and the megapixel helper are the new part. Core `ResolutionSelector` and `ResolutionBucket` overlap the resolution nodes.",
+"nodes": "64, all `CM_*`, for example `CM_FloatBinaryOperation`, `CM_IntBinaryOperation`, `CM_FloatBinaryCondition`, `CM_ChooseFloat`, `CM_AspectRatioResolution`, `CM_SDXLResolution`, `CM_Vec3ToScalarBinaryOperation`, `CM_IntRandomNumber`",
+"needs": "none",
+"licence": "Apache-2.0 (LICENSE file; the original ComfyMath is Apache-2.0 too)",
+"risk": "plain Python and numpy, no requirements beyond numpy. No exec, eval, subprocess, network, routes or global patches by grep of `src` and `__init__.py`. One small web file (`src/comfymath/web/js/random_int.js`) writes `CM_IntRandomNumber`'s value back to its widget. Unbounded integer maths: `Factorial`, `Pow` and `Shl` in `src/comfymath/int.py:32, 50, 57` have no size cap and the INT inputs set no min or max, so a shared workflow with huge numbers can hold the server busy. Core `ComfyMathExpression` caps exponents; this pack does not. Clashes with `evanspearman__ComfyMath` (same ids): never load both.",
+"note": "Pack Lab proof 2026-11-02. A values graph returned 640 x 448 for 3:2 at 0.25 MP rounded to 64 (it counts a megapixel as 2^20 pixels), 7.0 for 3.5 x 2, 20 for 4 x 5, True for 7.0 > 6, 13.0 for the distance to (3, 4, 12), 180.0 degrees for pi, and 832 x 1216 for the SDXL preset: all correct. Those nodes then set width, height, CFG and steps of an SD 1.5 render at seed 424242, and the picture was pixel for pixel the same as a control graph with the numbers typed in. A CM_ value also set the turn of a mesh in core's RotateMesh. Not used by any studio goal. Demo graphs: `studio/web/pack_lab_demos/comfymath_*.json`."
 },
 {
 "pack": "realmarauder__ComfyUI-TensorTrap",

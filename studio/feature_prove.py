@@ -245,7 +245,7 @@ def renders_list(q: str = "", limit: int = 24):
         if not ok: continue
         r = R.find(rid) or {}
         if q and q not in (str(r.get("title")) + " " + rid + " " + x["kind"]).lower(): continue
-        out.append({"id": rid, "title": r.get("title") or rid, "kind": x["kind"], "poster": x.get("poster") or (x.get("file") if x["kind"] == "image" else None), "seconds": x.get("seconds")})
+        out.append({"id": rid, "title": r.get("title") or rid, "kind": x["kind"], "poster": x.get("poster") or (x.get("file") if x["kind"] in ("image", "picture") else None), "seconds": x.get("seconds")})
     return {"renders": out[:max(1, min(limit, 60))], "total": len(out)}
 
 
