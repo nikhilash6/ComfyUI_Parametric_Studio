@@ -4036,14 +4036,35 @@
 ],
 "what": null,
 "what_source": null,
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "2026-11-02",
-"note": "Not rendered (checked 2026-11-02): InstantMesh's own UNet and LRM checkpoint are on disk, but the Zero123++ v1.2 pipeline it builds on (sudo-ai/zero123plus-v1.2, 5.6 GB) is not."
+"tpl": "runner:instantmesh",
+"render": "ok",
+"tested": "2026-11-03",
+"secs": 67.1,
+"note": "InstantMesh ran on this box 2026-11-03 (seed 20261102, 67.1 s, peak 22.8 GiB for the process) after Zero123++ v1.2 and DINO ViT-B/16 were fetched with the founder's OK; the six views and the GLB turntable were looked at.",
+"peak_gib": 22.8
 },
-"media": [],
+"media": [
+{
+"id": "fam_instantmesh_turn",
+"prompt": "Turntable, Blender, CPU: the studio showcase's generated teapot picture through InstantMesh (Zero123++ v1.2 six views with InstantMesh's white-background UNet, then the large LRM with FlexiCubes), vertex colour",
+"seconds": 67.1,
+"tpl": "runner:instantmesh",
+"own": true,
+"kind": "image",
+"src": "families/instantmesh_turn.webp",
+"poster": "families/instantmesh_turn.webp",
+"w": 1280,
+"h": 213,
+"model": "instant_mesh_large.ckpt + Zero123++ v1.2 (InstantMesh UNet)",
+"seed": 20261102,
+"note": "A complete, well-proportioned teapot from one picture in about a minute: body, lid, knob, handle and spout all solid and in place from every side. Faults: the colour washes out to cream, losing most of the green glaze, and the surface pattern is soft. Run with scripts/family_instantmesh.py, the official InstantMesh code as jtydhr88's pack carries it, with two transformers-5 shims. Apache-2.0.",
+"peak_vram_gib": 22.8
+}
+],
 "templates": []
 },
 "IP-Adapter": {
@@ -7169,26 +7190,33 @@
 ],
 "what": "Upload your own separate view images, or use one mixed multi-view turnaround sheet. The workflow prepares front, back, left and right views, then reconstructs a textured 3D model with Pixal3D Multi-View.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:44:02",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "3d_pixal3d_trellis2_image_to_model",
+"render": "ok",
+"tested": "2026-11-03",
+"secs": 286.3,
+"note": "3d_pixal3d_trellis2_image_to_model ran on this box 2026-11-03 on the family's own instance (286 s, peak 17.6 GiB) and the GLB was looked at in a Blender turntable.",
+"peak_gib": 17.6
 },
 "media": [
 {
-"id": "lib_pixal3d",
+"id": "fam_pixal3d_turn",
+"prompt": "Turntable, Blender, CPU: the studio showcase's generated teapot picture through ComfyUI's Pixal3D image-to-model template (Pixal3D shape and texture on TRELLIS.2's VAEs, baked 4K PBR)",
+"seconds": 286.3,
+"tpl": "3d_pixal3d_trellis2_image_to_model",
+"own": true,
 "kind": "image",
-"src": "families/lib_pixal3d.webp",
-"poster": "families/lib_pixal3d.webp",
-"w": 350,
-"h": 350,
-"prompt": "Pixal3D: Multi Views to 3D: sample from ComfyUI's template library",
-"tpl": "3d_pixal3d_multi_views",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"src": "families/pixal3d_turn.webp",
+"poster": "families/pixal3d_turn.webp",
+"w": 1280,
+"h": 213,
+"model": "pixal3d_int8_convrot.safetensors",
+"seed": 20261106,
+"note": "A textured teapot that matches the picture from the front: glaze streaks, knob and handle all there. Faults: a loose blob, part of the hidden spout, floats free beside the body in the side views, and the unseen back is smeared and paler. MIT (ComfyUI repackage).",
+"peak_vram_gib": 17.6
 }
 ],
 "templates": [
