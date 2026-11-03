@@ -1,6 +1,6 @@
 {
  "about": "Our own renders of library recipes, one passed run each. Pictures are resized and converted to WebP; clips and sounds are small web copies, clip_seconds long, of a full_seconds output. Figures come from that run's own record. peak_vram_gib is the recipe's own lane when peak_scope is recipe, the whole card when it is card.",
- "snapshot": "2026-11-02T19:49:53-05:00",
+ "snapshot": "2026-11-03T00:25:44-05:00",
  "renders": {
   "loop_blink_smile": {
    "kind": "video",
@@ -117,6 +117,30 @@
    "lora": "minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
    "file": "recipe_renders/loop_hair_sway.mp4",
    "poster": "recipe_renders/loop_hair_sway.poster.webp",
+   "full_seconds": 4.7,
+   "width": 354,
+   "height": 640,
+   "clip_seconds": 4.7
+  },
+  "loop_neon_flicker": {
+   "kind": "video",
+   "family": "loop",
+   "model": "flux-2-klein-base-4b.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+   "seed": 487809,
+   "seeds": {
+    "still": 487809,
+    "clip": 593335
+   },
+   "seconds": 87.2,
+   "peak_vram_gib": 41.1,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 62.0,
+   "rendered": "2026-11-02",
+   "run": "89b9a88076a4",
+   "prompt": "The still: a glowing pink and blue neon tube shaped like a simple wave line on a brick wall at night above a wet street. No text, no logos.\n\nFirst frame = last frame: the neon tubes flicker once and settle, the glow on the wet street pulses in one steady cycle and returns to the same brightness. A soft electric buzz and a distant city hum. Keep the neon tube, the wall, the framing and the colours the same",
+   "lora": "minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
+   "file": "recipe_renders/loop_neon_flicker.mp4",
+   "poster": "recipe_renders/loop_neon_flicker.poster.webp",
    "full_seconds": 4.7,
    "width": 354,
    "height": 640,
@@ -587,6 +611,27 @@
    "width": 640,
    "height": 358,
    "clip_seconds": 5.2
+  },
+  "lora_398d2ad270": {
+   "kind": "picture",
+   "family": "lora",
+   "model": "flux-2-klein-base-4b.safetensors, lotus-depth-d-v1-1.safetensors, flux1-dev.safetensors",
+   "seed": 8323,
+   "seeds": {
+    "pic": 8324,
+    "shot": 8323
+   },
+   "seconds": 50.1,
+   "peak_vram_gib": 35.1,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 86.0,
+   "rendered": "2026-11-02",
+   "run": "dcc42e723be6",
+   "prompt": "The picture to start from: A photograph of a white ceramic teapot and two cups on a wooden table beside a window. No text, no logos.\n\nflux1-depth-dev-lora: A teapot and two cups made of glossy blue glass on a wooden table, soft window light, product photograph.",
+   "lora": "flux1-depth-dev-lora.safetensors",
+   "file": "recipe_renders/lora_398d2ad270.webp",
+   "width": 512,
+   "height": 512
   },
   "lora_3ee68cbb69": {
    "kind": "video",
@@ -1208,6 +1253,27 @@
    "width": 640,
    "height": 370,
    "clip_seconds": 3.1
+  },
+  "lora_9490ecbae1": {
+   "kind": "picture",
+   "family": "lora",
+   "model": "flux-2-klein-base-4b.safetensors, moss_image_sft_int8_convrot.safetensors",
+   "seed": 8988,
+   "seeds": {
+    "pic": 8989,
+    "shot": 8988
+   },
+   "seconds": 30.6,
+   "peak_vram_gib": 18.2,
+   "peak_scope": "recipe",
+   "card_peak_vram_gib": 70.6,
+   "rendered": "2026-11-03",
+   "run": "05710c92bc3d",
+   "prompt": "The picture to start from: A photograph of a plain wooden chair in an empty white room. No text, no logos.",
+   "lora": "moss_image_edit_lora_rank_64_bf16.safetensors",
+   "file": "recipe_renders/lora_9490ecbae1.webp",
+   "width": 512,
+   "height": 512
   },
   "lora_95a2c5bf14": {
    "kind": "video",
