@@ -98,6 +98,20 @@ Not every LoRA works the same way. A camera event LoRA (bullet time, crash zoom,
 
 Short, flowing prompts suit LoRAs best, because they were trained on one-paragraph captions. No test has compared the same LoRA with a short and a very long prompt, so no strength rule exists for long prompts. [claim: fal H3 trainer page, fal.ai/models/minimax/h3/t2v/trainer] [inference]
 
+## How long a prompt should be
+
+MiniMax's reference guide asks for 350 to 500 English words in detailed_description, and gives no token cap beyond that. The earlier studio's old long mode asked for 950 to 1,100 words, which no official source supports. [claim: MiniMax reference writing guide] [claim: earlier studio research, 2026-10-17]
+
+Length was not the problem; filler was. A rule-based count of the earlier studio's writer output found 47% of 8,295 words were filler: breathing and blinking, hair and cloth drift, ambient hums, repeated light. The 50 most-liked safe-for-work community prompts had a median of 11% filler at 131 words. Cutting a prompt from 1,006 to 332 words lowered the filler share by only 5 points and removed purposeful words with it. The classifier was hand-checked on three samples by the person who wrote its rules, at about 8% wrong labels. [docs: studio/processes/video-h3-modes.md:115-130]
+
+The fix the earlier studio wrote: 3 to 5 beats inside one take, each saying who does what to what, where the camera is and why, and what changed by its end, inside a budget of 30 + 14 s to 50 + 24 s words (100 to 170 words for 5 s). It was never rendered, so it is a plan with a measured reason, not a proven setting. [docs: studio/processes/video-h3-modes.md:134-138] [claim: earlier studio research, 2026-10-18]
+
+What people post: in a count of public H3 prompts, base H3 prompts had a median of 173 words (90th percentile 579). 84% described sound, 64% set non_diegetic_music (46% to N/A), and 92% of posts ran at CFG 1, where the negative prompt does nothing. Dialogue appeared in 42 to 48% of prompts, mostly as a bare quote or "she says"; only a minority used the d tag or a speaker tag. Popularity is not quality. [claim: earlier studio community prompt count, 2026-10-17]
+
+## First-and-last-frame LoRAs
+
+An audit of about 14 LoRA recipes built on the FL2VA base found only about 3 that really need both a first and a last still, such as a loop or an orbit. The rest run better as first-frame-only (I2VA). Forcing a last frame on them pins the clip towards a still picture. [claim: earlier studio recipe audit, 2026-10-17]
+
 ## When it goes wrong
 
 Slideshow pacing or timid motion: give a timed shot list and name the start and end framing. A reference is ignored: give every file one job ("Image 2 defines the green jacket"). Garbled text: quote it and keep it short. A plastic look: name real imperfections rather than saying "realistic". Unwanted cuts: drop the "then" chains. Music when you wanted ambience: describe the sounds and set the music to N/A. [claim: community guides, rundiffusion.com and pixo.video H3 guides] [claim: earlier studio tests]
