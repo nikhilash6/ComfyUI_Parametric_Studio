@@ -8635,26 +8635,31 @@
 ],
 "what": "Makes in-between frames, so a clip plays smoother.",
 "what_source": "notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:46:46",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "frame_interp_rife_v4_25",
+"render": "ok",
+"tested": "2026-11-03",
+"secs": 15.3,
+"note": "frame_interp_rife_v4_25 ran on this box 2026-11-03 on the rife family's own instance (15.3 s, peak 0.9 GiB) on the Allegro clip; in-between frames were checked one by one.",
+"peak_gib": 0.9
 },
 "media": [
 {
-"id": "lib_rife",
-"kind": "image",
-"src": "families/lib_rife.webp",
-"poster": "families/lib_rife.webp",
-"w": 350,
-"h": 350,
-"prompt": "Frame Interpolation: FILM or RIFE: sample from ComfyUI's template library",
-"tpl": "utility_video_frame_interpolation",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"id": "fam_rife_0",
+"prompt": "RIFE 4.25 doubles this box's Allegro turtle clip from 15 to 30 frames a second (88 frames in, 175 out)",
+"seconds": 15.3,
+"tpl": "frame_interp_rife_v4_25",
+"own": true,
+"kind": "video",
+"src": "families/rife_0.mp4",
+"poster": "families/rife_0.webp",
+"model": "rife_v4.25.safetensors",
+"seed": null,
+"note": "The in-between frames are clean: the turtle, sand ripples and caustics move smoothly with no ghost edges. Fault: the fast fish at the frame's edge smears a little in the made-up frames. The studio template lives under frame_interpolation; this run was on the rife family's own instance. MIT (RIFE) and Apache-2.0 (ComfyUI repackage).",
+"peak_vram_gib": 0.9
 }
 ],
 "templates": [
@@ -8689,26 +8694,33 @@
 ],
 "what": "One picture and a mask to one object mesh. It has no ComfyUI graph here: it runs as World Kit's SAM 3D Objects tool.",
 "what_source": "tool notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:44:30",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "tool:sam3d_objects",
+"render": "ok",
+"tested": "2026-11-03",
+"secs": 210.0,
+"note": "SAM 3D Objects (worker/tools/sam3d-objects) ran on this box 2026-11-01 (seed 42, 210 s, peak 21.7 GiB) and its turntable was looked at; recorded for this family 2026-11-03.",
+"peak_gib": 21.7
 },
 "media": [
 {
-"id": "lib_sam-3d-objects",
+"id": "fam_sam-3d-objects_turn",
+"prompt": "Turntable, Blender, CPU: a cut-out bear and its mask through Meta's SAM 3D Objects (worker/tools/sam3d-objects), mesh and splat",
+"seconds": 210.0,
+"tpl": "tool:sam3d_objects",
+"own": true,
 "kind": "image",
-"src": "families/lib_sam-3d-objects.webp",
-"poster": "families/lib_sam-3d-objects.webp",
-"w": 350,
-"h": 350,
-"prompt": "SAM 3D Body: 3D Human Mesh Extraction From Video: sample from ComfyUI's template library",
-"tpl": "utility_sam3d_body",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"src": "families/sam-3d-objects_turn.webp",
+"poster": "families/sam-3d-objects_turn.webp",
+"w": 1600,
+"h": 267,
+"model": "SAM 3D Objects",
+"seed": 42,
+"note": "Reused from the 3D page's proof run (2026-11-01, studio/model3d_proof.json): a good overall shape with fur detail, from one picture. Fault: the colour is uneven, pale on one side and brown on the other. SAM licence (commercial use allowed, with use rules).",
+"peak_vram_gib": 21.7
 }
 ],
 "templates": []
@@ -8725,26 +8737,33 @@
 ],
 "what": "Use the SAM3 model to segment the main subject or content from a photo or image, isolating specific objects or regions. Input an image and receive a segmented mask output.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:46:51",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "utility_image_segment_sam3",
+"render": "ok",
+"tested": "2026-11-03",
+"secs": 6.2,
+"note": "utility_image_segment_sam3 ran on this box 2026-11-03 on the family's own instance (6.2 s, peak 2.4 GiB) on the Kolors render; the mask was looked at over the picture.",
+"peak_gib": 2.4
 },
 "media": [
 {
-"id": "lib_sam3",
-"kind": "image",
-"src": "families/lib_sam3.webp",
-"poster": "families/lib_sam3.webp",
-"w": 350,
-"h": 350,
-"prompt": "Image Segmentation: SAM3: sample from ComfyUI's template library",
+"id": "fam_sam3_0",
+"prompt": "SAM 3.1 asked for 'blue jug' in this box's Kolors still life. Left: the picture; middle: SAM 3.1's mask; right: the mask laid over it.",
+"seconds": 6.2,
 "tpl": "utility_image_segment_sam3",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"own": true,
+"kind": "image",
+"src": "families/sam3_0.webp",
+"poster": "families/sam3_0.webp",
+"w": 1544,
+"h": 512,
+"model": "sam3.1_multiplex_fp16.safetensors",
+"seed": null,
+"note": "One clean mask of the jug from two words, handle and spout included, with the peaches in front of it correctly cut out. Fault: the mask edge is a little soft along the jug's right side. ComfyUI's own template (threshold 0.5, two refine passes). SAM licence (Meta).",
+"peak_vram_gib": 2.4
 }
 ],
 "templates": [
