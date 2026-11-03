@@ -50,6 +50,8 @@ def main():
     for m in ((save("anatomy") or {}).get("models") or []):      # Model Anatomy: every file the header was read for
         if m.get("read"): save("anatomy/model/" + m["id"])
     for p in ((save("moe") or {}).get("prompts") or []): save("moe/prompt/" + p["id"])      # Inside a mixture of experts: the routing record, prompt by prompt
+    for r in ((save("swap") or {}).get("rows") or []):      # Swap on any model: each graph that is in the repo, for its download button
+        if r.get("graph_here"): save("swap/graph/" + r["id"])
     for f in ((save("music-styles") or {}).get("families") or []):
         for s in f.get("styles") or []: save("music-styles/" + s["id"])
     for r in ((save("recipes") or {}).get("recipes") or []): save("recipes/" + r["id"])
