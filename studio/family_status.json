@@ -3912,26 +3912,33 @@
 ],
 "what": "Input a text prompt or structured JSON description. Generate an image with precise layout, color, and style control using Ideogram 4.0.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:41:57",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "image_ideogram4_t2i",
+"render": "ok",
+"tested": "2026-11-03",
+"secs": 28.6,
+"note": "image_ideogram4_t2i ran on this box 2026-11-03 on the family's own instance (seed 20261103, 28.6 s, peak 33.2 GiB) with qwen3vl_8b_bf16 in place of the template's qwen3vl_8b_fp8_scaled; looked at full size.",
+"peak_gib": 33.2
 },
 "media": [
 {
-"id": "lib_ideogram4",
-"kind": "image",
-"src": "families/lib_ideogram4.webp",
-"poster": "families/lib_ideogram4.webp",
-"w": 400,
-"h": 400,
-"prompt": "Ideogram v4: Text to Image: sample from ComfyUI's template library",
+"id": "fam_ideogram4_0",
+"prompt": "JSON caption: a lone white lighthouse on a grassy sea cliff at dusk, waves on dark rocks, a few gulls in an orange and violet sky; no text or signage",
+"seconds": 28.6,
 "tpl": "image_ideogram4_t2i",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"own": true,
+"kind": "image",
+"src": "families/ideogram4_0.webp",
+"poster": "families/ideogram4_0.webp",
+"w": 357,
+"h": 640,
+"model": "ideogram4_fp8_scaled.safetensors (+ unconditional model)",
+"seed": 20261103,
+"note": "A convincing photograph: lit lantern, surf on the rocks, gulls, real dusk colour, and no lettering anywhere. Faults: the lighthouse sits on a tidy paved platform the caption never asked for, and the cliff grass is over-green for dusk. ComfyUI's own template (Default preset, 20 steps), with Qwen3-VL-8B in bf16 because its fp8 copy is not on disk. Ideogram 4 Non-Commercial licence (ComfyUI repackage of ideogram-ai/ideogram-4-fp8; text gated).",
+"peak_vram_gib": 33.2
 }
 ],
 "templates": [
@@ -5919,26 +5926,33 @@
 ],
 "what": "Edit an existing image with Ming Image 0.1 Design, a 6B model tuned for UI, infographics, and posters. It takes one input image plus the boxes you draw on it — position, description, and colour palette — and rebuilds them into a layer-by-layer caption, returning one re-rendered image. Ideal for restaging a layout, poster-style re-renders, and turning a photograph into a designed composition.",
 "what_source": "ComfyUI template notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:43:16",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "image_ming_image_01_design_t2i",
+"render": "ok",
+"tested": "2026-11-03",
+"secs": 21.4,
+"note": "image_ming_image_01_design_t2i ran on this box 2026-11-03 on the family's own instance (seed 20261103, 21.4 s, peak 23.6 GiB) with the prompt expander bypassed; looked at full size.",
+"peak_gib": 23.6
 },
 "media": [
 {
-"id": "lib_ming-image",
+"id": "fam_ming-image_0",
+"prompt": "A square flat-vector travel-app splash: a mountain lake at sunrise, red cabin, pines, jetty and yellow boat, no text, no letters, no logos",
+"seconds": 21.4,
+"tpl": "image_ming_image_01_design_t2i",
+"own": true,
 "kind": "image",
-"src": "families/lib_ming-image.webp",
-"poster": "families/lib_ming-image.webp",
-"w": 400,
-"h": 400,
-"prompt": "Ming Image 0.1 Design: Image Edit: sample from ComfyUI's template library",
-"tpl": "image_ming_image_01_design_image_edit",
-"own": false,
-"library": true,
-"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
+"src": "families/ming-image_0.webp",
+"poster": "families/ming-image_0.webp",
+"w": 640,
+"h": 640,
+"model": "ming_image_0.1_design_int8_convrot.safetensors + Ling-mini-2.0 encoder",
+"seed": 20261103,
+"note": "Clean, well-balanced flat design that follows every listed element, and no stray lettering. Faults: the reflections are wrong (a sun shows in the water though the sun is behind a peak, and the boat floats above its own jetty). ComfyUI's own template, 12 steps, with its optional Qwen3.8 27B prompt expander bypassed because that file is not on disk; the caption was written by hand. MIT (ComfyUI repackage).",
+"peak_vram_gib": 23.6
 }
 ],
 "templates": [
