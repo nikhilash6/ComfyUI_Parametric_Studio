@@ -96,8 +96,11 @@ def test_effects_clip_runs_ltx_from_the_photo_to_the_edit():
     g, v, labels, name = graph_of("effects", image="a.png", options={"effect": "inflate", "output": "still + clip", "seconds": 4})
     assert name == "oneclick_effect_clip_api.json" and list(labels) == ["save1", "l_save"]
     assert (v["width"], v["height"]) == O.LTX_SIZES["9:16"] and v["frames"] == 97 and (v["frames"] - 1) % 8 == 0
-    assert g["first"]["inputs"]["image"] == ["src", 0] and g["last"]["inputs"]["image"] == ["dec1", 0]
-    assert g["g_first"]["inputs"]["frame_idx"] == 0 and g["g_last"]["inputs"]["frame_idx"] == -1 and g["l_crop"]["inputs"]["latent"] == ["l_sep", 0]
+    assert g["first"]["inputs"]["image"] == ["src", 0] and g["unload"]["inputs"]["image_pass"] == ["dec1", 0]
+    assert g["l_i2v"]["inputs"]["image"] == ["first_p", 0] and g["l_i2v"]["inputs"]["strength"] == 1.0 and "g_first" not in g, "a guide on both ends dissolved; the photo starts in place"
+    assert g["g_last"]["inputs"]["latent"] == ["l_i2v", 0] and g["g_last"]["inputs"]["frame_idx"] == -1 and g["l_crop"]["inputs"]["latent"] == ["l_sep", 0]
+    assert g["unload"]["class_type"] == "VRAM_Debug" and g["unload"]["inputs"]["unload_all_models"] is True and g["last"]["inputs"]["image"] == ["unload", 1], "Qwen leaves the card before LTX loads"
+    assert "no fades" in g["l_pos"]["inputs"]["text"] and "second by second" in g["l_pos"]["inputs"]["text"]
 
 
 def test_matte_is_the_vfx_matte_pass_with_a_new_set():

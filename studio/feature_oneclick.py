@@ -72,16 +72,16 @@ LIGHTS = {
 }
 
 EFFECTS = {   # LoRA strength, still prompt, motion prompt. INFL8's card: "inflate the [subject]"; the statues need no LoRA.
-    "inflate": (1.0, "Inflate the {subject}.", "The {subject} slowly inflates like a balloon, swelling up smoothly and bouncing gently. The camera stays still. Soft rubbery stretching sounds, no music, no speech."),
-    "marble statue": (0.0, "Turn the {subject} into a white marble statue with carved stone texture. Keep the pose, the framing and the background unchanged.", "The {subject} slowly turns to white marble, the stone spreading over clothes and skin until it is a still statue. The camera stays still. A soft stone grinding sound, no music, no speech."),
-    "gold statue": (0.0, "Turn the {subject} into a polished gold statue with a mirror-like metal surface. Keep the pose, the framing and the background unchanged.", "The {subject} slowly turns to shining gold, the metal spreading over clothes and skin until it is a still statue. The camera stays still. A soft metallic shimmer sound, no music, no speech."),
+    "inflate": (1.0, "Inflate the {subject}.", "The clothes of the {subject} slowly puff up and swell like an inflating balloon, growing rounder and shinier second by second, while the {subject} keeps the same pose. Continuous smooth inflation, no cuts, no fades. The camera stays still. Soft rubbery stretching sounds, no music, no speech."),
+    "marble statue": (0.0, "Turn the {subject} into a white marble statue with carved stone texture. Keep the pose, the framing and the background unchanged.", "The {subject} slowly turns to white marble, the stone spreading over clothes and skin second by second until it is a still statue. Continuous change, no cuts, no fades. The camera stays still. A soft stone grinding sound, no music, no speech."),
+    "gold statue": (0.0, "Turn the {subject} into a polished gold statue with a mirror-like metal surface. Keep the pose, the framing and the background unchanged.", "The {subject} slowly turns to shining gold, the metal spreading over clothes and skin second by second until it is a still statue. Continuous change, no cuts, no fades. The camera stays still. A soft metallic shimmer sound, no music, no speech."),
 }
 NEG_VIDEO = "worst quality, inconsistent motion, blurry, jittery, distorted, watermark, text"
 LTX_SIZES = {"16:9": (960, 544), "9:16": (544, 960), "1:1": (704, 704)}
 MATTE_SET = "An empty {place}, no people, photorealistic, natural light, wide shot, sharp focus"
 
-#: peak_gib: the lane's measured peak on a 96 GB card, plus a tenth, each from an empty card: angles 29.2, relight 29.1, the effect still 28.7, the effect still + clip 66.0
-#: (ComfyUI kept Qwen loaded beside LTX because the card had room), the matte 51.9 GiB
+#: peak_gib: the lane's measured peak on a 96 GB card, plus a tenth, each from an empty card: angles 29.2, relight 29.1, the effect still 28.7, the effect still + clip 38.9
+#: (66.0 before the graph unloaded Qwen ahead of LTX), the matte 51.9 GiB
 TOOLS = {
     "angles": {"label": "Coverage set from one still", "blurb": "Upload one photo and get four new camera angles of the same scene: a wide, a close-up, a three-quarter and a low angle, or a full turnaround.",
                "input": "image", "graph": "oneclick_angles_api.json", "models": ["qwen2511", "lightning2511", "angles", "qwen_vl"], "peak_gib": 32,
@@ -90,8 +90,8 @@ TOOLS = {
                 "input": "image", "graph": "oneclick_relight_api.json", "models": ["qwen2509", "lightning2509", "relight", "qwen_vl"], "peak_gib": 32,
                 "options": {"light": list(LIGHTS)}, "defaults": {"light": "golden hour"}, "text": {"direction": "Your own light, in plain words (optional, replaces the pick)"}},
     "effects": {"label": "One-tap photo effects", "blurb": "Inflate the subject like a balloon, or turn it to marble or gold. Ask for a clip and LTX-2.5 moves from your photo to the effect, with sound.",
-                "input": "image", "graph": "oneclick_effect_api.json", "graph_clip": "oneclick_effect_clip_api.json", "models": ["qwen2511", "lightning2511", "infl8", "qwen_vl", "ltx"], "peak_gib": 32, "peak_clip_gib": 73,
-                "options": {"effect": list(EFFECTS), "output": ["still", "still + clip"], "seconds": [3, 4, 5]}, "defaults": {"effect": "inflate", "output": "still", "seconds": 4},
+                "input": "image", "graph": "oneclick_effect_api.json", "graph_clip": "oneclick_effect_clip_api.json", "models": ["qwen2511", "lightning2511", "infl8", "qwen_vl", "ltx"], "peak_gib": 32, "peak_clip_gib": 43,
+                "options": {"effect": list(EFFECTS), "output": ["still", "still + clip"], "seconds": [3, 4, 5]}, "defaults": {"effect": "inflate", "output": "still", "seconds": 5},
                 "text": {"subject": "What to change, in a few words (default: the person)"}},
     "matte": {"label": "Alpha matte and a new background", "blurb": "Pull the person out of a clip as a real alpha video (ProRes 4444 and WebM), and drop them onto a new set made from your words.",
               "input": "video", "graph": "oneclick_matte_api.json", "models": ["ltx", "alpha", "zimage"], "peak_gib": 57,
