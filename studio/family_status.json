@@ -1208,13 +1208,30 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tpl": "runner:insightface_buffalo_l",
+"tpl": "face_gfpgan_restore",
 "render": "ok",
 "tested": "2026-11-02",
-"secs": 0.8,
-"note": "InsightFace buffalo_l detection and 106-point landmarks ran on this box 2026-11-02 on the CPU (0.8 s, no GPU) and the marks were looked at; restore and identity weights are missing."
+"secs": 3.1,
+"note": "face_gfpgan_restore ran on this box 2026-11-02 on the family's own instance (3.1 s warm, peak 0.5 GiB) on a damaged copy of an invented adult from World Kit's library, and was compared with the clean original.",
+"peak_gib": 0.5
 },
 "media": [
+{
+"id": "fam_face_1",
+"prompt": "GFPGAN 1.4 restore. Left: the invented adult's face shrunk to 160 px, blurred and saved as a JPEG at quality 30. Middle: GFPGAN's result. Right: the clean original.",
+"seconds": 3.1,
+"tpl": "face_gfpgan_restore",
+"own": true,
+"kind": "image",
+"src": "families/face_1.webp",
+"poster": "families/face_1.webp",
+"w": 1216,
+"h": 400,
+"model": "GFPGANv1.4.pth + facexlib RetinaFace and parsers",
+"seed": null,
+"note": "Eyes, brows, lips and hair edges come back sharp and the face still reads as the same invented person, a little rounder and younger. Only the face is redrawn: the collar and background stay as blurred as they came in. On a harsher test (100 px, JPEG quality 18) it redrew the face as a visibly different person, so the template warns about that. Apache-2.0 (GFPGAN), MIT (facexlib).",
+"peak_vram_gib": 0.5
+},
 {
 "id": "fam_face_0",
 "prompt": "InsightFace buffalo_l on the CPU: face box (det_10g) and 106 landmarks (2d106det) on an invented adult from World Kit's character library (made from words)",

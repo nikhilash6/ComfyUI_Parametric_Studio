@@ -2,6 +2,47 @@
  "built": "2026-10-31",
  "templates": [
   {
+   "family": "face",
+   "name": "face_gfpgan_restore",
+   "title": "GFPGAN 1.4: Restore a Face",
+   "desc": "comfyorg's GFPGAN node: facexlib finds and parses the face, GFPGAN 1.4 redraws it and pastes it back. Faces only; the rest of the picture is left as it was.",
+   "media": "image",
+   "cat": "Utility",
+   "gb": 0.6,
+   "tags": [
+    "Studio template",
+    "Face"
+   ],
+   "models": [
+    {
+     "name": "GFPGANv1.4.pth",
+     "dir": "face_restoration",
+     "url": "https://github.com/TencentARC/GFPGAN/releases/download/v1.3.4/GFPGANv1.4.pth",
+     "gb": 0.32
+    },
+    {
+     "name": "detection_Resnet50_Final.pth",
+     "dir": "face_detection",
+     "url": "https://github.com/xinntao/facexlib/releases/download/v0.1.0/detection_Resnet50_Final.pth",
+     "gb": 0.1
+    },
+    {
+     "name": "parsing_parsenet.pth",
+     "dir": "face_detection",
+     "url": "https://github.com/xinntao/facexlib/releases/download/v0.2.2/parsing_parsenet.pth",
+     "gb": 0.08
+    },
+    {
+     "name": "parsing_bisenet.pth",
+     "dir": "face_detection",
+     "url": "https://github.com/xinntao/facexlib/releases/download/v0.2.0/parsing_bisenet.pth",
+     "gb": 0.05
+    }
+   ],
+   "source": "Studio template; comfyorg/comfyui_gfpgan (Apache-2.0, Pack Lab shortlist, loaded ok in the sandbox)",
+   "note": "Use it on generated faces or with the person's consent. It redraws a face rather than recovering it: from a very small face it can change who it looks like."
+  },
+  {
    "family": "HunyuanWorld",
    "name": "hunyuanworld_pano_t2i",
    "title": "HunyuanWorld: Words to 360 Panorama",

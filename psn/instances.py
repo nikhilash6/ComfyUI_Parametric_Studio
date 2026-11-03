@@ -54,11 +54,17 @@ WRAPS = {
                     "note": "core ComfyUI cannot detect this model; it needs the Stable-Fast-3D inference code wrapped as nodes"},
 }
 # Families first rendered 2026-11-02 (the 26 that had no render). Kept apart from the dicts above so each can ship on its own.
-FAMILY_PACKS.update({"Iris-3B": ["bani4kaskashka__Iris-3B-Comfy-Nodes"]})
+PATCHED_LIB = paths.setting("PSN_PATCHED_LIB", default=os.path.join(os.path.dirname(REPO_LIB), "patched"))
+#: Packs taken from the hardened copies (nodepack_library/patched, see its README) rather than the plain clones.
+PACK_SOURCE = {}
+FAMILY_PACKS.update({"Iris-3B": ["bani4kaskashka__Iris-3B-Comfy-Nodes"], "face": ["comfyorg__comfyui_gfpgan"]})
 WRAPS.update({
  "Iris-3B": {"loader": "pack", "files": [("diffusion_models", "iris-3b.safetensors", "_complete_pipelines/Iris-3B/diffusion_models/model.safetensors"),
              ("text_encoders", "Qwen3-VL-4B-Instruct", "_complete_pipelines/Iris-3B/text_encoders/Qwen3-VL-4B-Instruct")],
              "note": "the pack lists Iris weights by an 'iris' file name and wants Qwen3-VL-4B-Instruct as a Hugging Face folder; that folder is the repo's config and tokenizer with Comfy-Org's qwen3vl_4b_bf16.safetensors, which holds the same 713 tensors under the same names"},
+ "face": {"loader": "pack", "files": [("face_restoration", "GFPGANv1.4.pth", "face/restore/GFPGANv1.4.pth"), ("face_detection", "detection_Resnet50_Final.pth", "face/detection/detection_Resnet50_Final.pth"),
+          ("face_detection", "parsing_parsenet.pth", "face/detection/parsing_parsenet.pth"), ("face_detection", "parsing_bisenet.pth", "face/detection/parsing_bisenet.pth")],
+          "note": "comfyorg's GFPGAN node (Apache-2.0) looks in models/face_restoration and hands models/face_detection to facexlib; with the files there it downloads nothing"},
 })
 
 def slug(family): return re.sub(r"[^a-z0-9]+", "-", family.lower()).strip("-")
@@ -128,7 +134,7 @@ def generate(family, models=None, root=None, ps_nodes=None, ports=None):
     for e in os.listdir(cn):
         if os.path.islink(os.path.join(cn, e)): os.unlink(os.path.join(cn, e))
     for p in wanted:
-        src = os.path.join(ps_nodes, p)
+        src = PACK_SOURCE.get(p) or os.path.join(ps_nodes, p)        # a hardened copy, when one is named, wins over both
         if not os.path.exists(src): src = os.path.join(REPO_LIB, p)          # a family pack that is not installed in the main instance comes from the library of cloned repos (linked into this instance only)
         if os.path.exists(src): os.symlink(os.path.realpath(src), os.path.join(cn, PACK_LINK_AS.get(p, p))); linked.append(p)
         else: absent.append(p)
