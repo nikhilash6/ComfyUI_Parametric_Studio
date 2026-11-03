@@ -206,14 +206,16 @@ def family_rows():
     return rows
 
 
-def tool_rows():
-    """The edit tools (Create's edit page) and the apps (linear-mode workflows)."""
+def tool_rows(oi=None):
+    """The edit tools (Create's edit page) and the apps (linear-mode workflows) this edition offers: one that uses a partner node (a closed, paid API) is hidden in the open edition, so it is not listed here either."""
     from studio import edits as E, apps as A
     rows = []
     for tid, _cat, label, tpl, _b in E.TOOLS:
-        p = E._path(tpl); rows.append(_row(f"edit:{tid}", "edits", p or "", graph=_load(p) if p else None, extra={"label": label, "template": tpl}))
+        p = E._path(tpl)
+        if oi is not None and E._hidden(tid, p, oi): continue
+        rows.append(_row(f"edit:{tid}", "edits", p or "", graph=_load(p) if p else None, extra={"label": label, "template": tpl}))
     try:
-        for aid, p in A.find_apps({}).items(): rows.append(_row("app:" + aid, "apps", p, graph=_load(p)))
+        for aid, p in A.find_apps(oi or {}).items(): rows.append(_row("app:" + aid, "apps", p, graph=_load(p)))
     except Exception: pass
     return rows
 
@@ -257,7 +259,7 @@ def goal_rows():
 
 
 def collect(oi, steps=True):
-    rows = file_rows() + goal_rows() + family_rows() + tool_rows()
+    rows = file_rows() + goal_rows() + family_rows() + tool_rows(oi)
     if steps: rows += step_rows(oi)
     return rows
 
