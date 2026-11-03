@@ -9,7 +9,8 @@ NOT_THIS_FAMILY = {"Matrix-3D": {"video_wan2_2_5B_ti2v"}, "rife": {"utility_vide
 #: Ran to the end but the picture says otherwise: Ideogram 4 returned its grey "Image blocked by safety filter" card on these neutral test prompts. Not a render.
 NOT_A_RENDER = {"Ideogram4": {"ideogram4_json_t2i", "ideogram4_poster_t2i"}}
 #: Fine runs of a template's own sample people; the studio's pages don't show faces we can't vouch for.
-NOT_SHOWN = {"Ovis-Image": {"image_ovis_text_to_image"}, "MiniMax-H3": {"video_minimax_h3_multiframe_reference", "video_minimax_h3_r2v"}, "Kandinsky-5.0-T2I-Lite": {'video_kandinsky5_t2v'}}
+#: Also kept off the page: weak results (the run is real and the map keeps its WEAK label, but the founder features only excellent ones).
+NOT_SHOWN = {"SD3-SD3.5": {"ipa_sd35_large_instantx"}, "Ovis-Image": {"image_ovis_text_to_image"}, "MiniMax-H3": {"video_minimax_h3_multiframe_reference", "video_minimax_h3_r2v"}, "Kandinsky-5.0-T2I-Lite": {'video_kandinsky5_t2v'}}
 MAX_NEW = 4; IMG = (".png", ".jpg", ".jpeg", ".webp"); VID = (".mp4", ".webm", ".mov"); AUD = (".wav", ".flac", ".mp3", ".ogg", ".m4a")
 
 

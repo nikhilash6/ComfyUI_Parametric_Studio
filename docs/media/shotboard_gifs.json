@@ -6,7 +6,7 @@
    "effect": "VFX: water",
    "before": "the same source clip",
    "layout": "wipe: the effect left of the moving white line, the source right of it",
-   "bytes": 2631974,
+   "bytes": 1992754,
    "size": [
     480,
     272
@@ -19,7 +19,7 @@
    "effect": "VFX: day to night",
    "before": "the same source clip",
    "layout": "wipe: the effect left of the moving white line, the source right of it",
-   "bytes": 2739619,
+   "bytes": 1969142,
    "size": [
     480,
     272
@@ -32,7 +32,7 @@
    "effect": "VFX: clean plate",
    "before": "the same source clip",
    "layout": "wipe: the effect left of the moving white line, the source right of it",
-   "bytes": 2729313,
+   "bytes": 1994722,
    "size": [
     480,
     272
@@ -45,7 +45,7 @@
    "effect": "VFX: matte, as a cutout",
    "before": "the same source clip",
    "layout": "wipe: the effect left of the moving white line, the source right of it",
-   "bytes": 1475652,
+   "bytes": 978663,
    "size": [
     480,
     272

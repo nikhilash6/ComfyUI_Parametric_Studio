@@ -3410,6 +3410,32 @@
    ],
    "source": "variant of audio_minimax_music_3",
    "note": ""
+  },
+  {
+   "family": "LTX-2.5",
+   "name": "ltxv13b_098_distilled_t2v",
+   "title": "LTX-Video 13B 0.9.8 distilled (fp8) text to video",
+   "desc": "ComfyUI's LTX-Video text-to-video graph on Lightricks' 13B 0.9.8 distilled fp8 checkpoint (transformer and VAE in one file), 8 steps at cfg 1 as a distilled model runs.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 23.7,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "ltxv-13b-0.9.8-distilled-fp8.safetensors",
+     "dir": "checkpoints",
+     "gb": 14.62
+    },
+    {
+     "name": "t5xxl_fp16.safetensors",
+     "dir": "text_encoders",
+     "gb": 9.1
+    }
+   ],
+   "source": "variant of ltxv_text_to_video",
+   "note": ""
   }
  ]
 }

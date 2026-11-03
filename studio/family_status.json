@@ -4813,6 +4813,19 @@
 "model": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors",
 "seed": 254052656,
 "peak_vram_gib": 35.9
+},
+{
+"id": "fam_ltx-2-5_5",
+"prompt": "LTX-Video 13B 0.9.8 distilled (fp8) text to video",
+"seconds": 30.3,
+"tpl": "ltxv13b_098_distilled_t2v",
+"own": true,
+"kind": "video",
+"src": "families/ltx-2-5_5.mp4",
+"poster": "families/ltx-2-5_5.webp",
+"model": "ltxv-13b-0.9.8-distilled-fp8.safetensors",
+"seed": 1348406720,
+"peak_vram_gib": 23.1
 }
 ],
 "templates": [
@@ -9063,21 +9076,6 @@
 "model": "sd3_medium.safetensors",
 "seed": 11965092,
 "peak_vram_gib": 9.2
-},
-{
-"id": "fam_sd3-sd3-5_3",
-"prompt": "SD 3.5 Large picture prompt: InstantX IP-Adapter",
-"seconds": 47.0,
-"tpl": "ipa_sd35_large_instantx",
-"own": true,
-"kind": "image",
-"src": "families/sd3-sd3-5_3.webp",
-"poster": "families/sd3-sd3-5_3.webp",
-"w": 640,
-"h": 640,
-"model": "sd3.5_large.safetensors",
-"seed": 735200289,
-"peak_vram_gib": 27.7
 }
 ],
 "templates": [
