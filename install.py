@@ -349,6 +349,7 @@ def parse_args(argv=None):
     p.add_argument("--dry-run", action="store_true", help="print the plan and every step, change nothing")
     p.add_argument("--profile-json", help="use a simulated hardware profile from this JSON file")
     p.add_argument("--list", action="store_true", help="list goals with download size and exit")
+    p.add_argument("--docker", action="store_true", help="print how to build and run the studio in a container instead (see Dockerfile) and exit")
     return p.parse_args(argv)
 
 
@@ -373,11 +374,20 @@ def started_by_comfyui(argv, env=None, repo=REPO):
         return False
 
 
+DOCKER_HINT = ("In a container (needs Docker and the NVIDIA Container Toolkit; only the GPU driver comes from this machine):\n"
+               "  docker build -t parametric-studio .\n"
+               "  docker run --gpus all --network host -v ps-models:/opt/runtime/ComfyUI/models -v ps-output:/opt/runtime/ComfyUI/output -e PSN_GOALS=anime parametric-studio\n"
+               "Then open http://127.0.0.1:8310. PSN_GOALS takes the same goals as --goals (see --list); the first start downloads them into the models volume.")
+
+
 def main(argv=None):
     if started_by_comfyui(sys.argv[1:] if argv is None else argv):
         print(COMFYUI_NOTE)
         return EXIT_OK
     args = parse_args(argv)
+    if args.docker:
+        print(DOCKER_HINT)
+        return EXIT_OK
     goal_manifest = load_json(REPO / "studio" / "models_manifest.json")
     if args.list:
         print_goal_list(goal_manifest)

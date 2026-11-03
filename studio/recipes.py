@@ -14,6 +14,8 @@ class StepError(Exception): pass
 class Cancelled(Exception): pass
 #: Step types other modules add ({type: fn(run, st, spec, ctx) -> files}). studio/pipelines.py adds its World Kit and Virtual Set steps here.
 EXTRA_STEPS = {}
+#: Step types that use no GPU: no turn on the card, no unload after. pipelines.py adds its ffmpeg and caption steps.
+CPU_KINDS = {"cpu"}
 
 def load():
     return json.load(open(DATA))
@@ -528,19 +530,19 @@ def _execute(run, rec):
                 f["local"] = _localize(run, f); ctx["out"][st["id"]] = [f]; st.update(status="skipped", note="Using your upload", files=[{k: f[k] for k in ("filename", "kind", "url")}]); _save(run); continue
             st["status"] = "running"; st["started"] = time.time(); _save(run); box = [0.0]; stop = threading.Event(); th = None
             try:
-                if kind != "cpu":
+                if kind not in CPU_KINDS:
                     _vram_gate(run, st, float(spec.get("peak_gib") or 8)); st["started"] = time.time(); _save(run)
                     th = threading.Thread(target=_sampler, args=(box, stop), daemon=True); th.start()
                     files = EXTRA_STEPS[kind](run, st, spec, ctx) if kind in EXTRA_STEPS else _run_goal(run, st, spec, ctx) if kind == "goal" else _run_template(run, st, spec, ctx)
                     for f in files: f["local"] = _localize(run, f)
-                else: files = _cpu(run, st, spec, ctx)
+                else: files = EXTRA_STEPS[kind](run, st, spec, ctx) if kind in EXTRA_STEPS else _cpu(run, st, spec, ctx)
             finally:
                 stop.set()
                 if th: th.join(timeout=3)
-                if kind != "cpu": _unload(); time.sleep(POLL)
+                if kind not in CPU_KINDS: _unload(); time.sleep(POLL)
             ctx["out"][st["id"]] = files; st["files"] = [{k: f[k] for k in ("filename", "kind", "url") if k in f} for f in files]; st["status"] = "done"; st["seconds"] = round(time.time() - st["started"], 1)
-            if kind != "cpu": st["peak_gib"] = round(box[0], 1); peak = max(peak, box[0])
-            st.pop("note", None) if kind != "cpu" else None; _save(run)
+            if kind not in CPU_KINDS: st["peak_gib"] = round(box[0], 1); peak = max(peak, box[0])
+            st.pop("note", None) if kind not in CPU_KINDS else None; _save(run)
         fin = next((s for s in reversed(run["steps"]) if s.get("final")), run["steps"][-1]); run["output"] = next((f for f in (fin.get("files") or []) if f["kind"] != "image"), (fin.get("files") or [None])[0]); run["status"] = "done"
     except Cancelled:
         run["status"] = "cancelled"; _mark(run, "cancelled")

@@ -1,0 +1,185 @@
+{
+ "id": "level_pack",
+ "order": 22,
+ "kicker": "Games",
+ "title": "A game level from one sentence and two drawings",
+ "pitch": "A place described in a sentence and two props drawn in. A real-scale beach, two meshes, and one pack with them placed, out.",
+ "why": "World Kit builds the ground and buildings at real scale, Krea 2 draws the props, Hunyuan3D 2 builds them, and the pack places them in a scene an engine opens.",
+ "tags": [
+  "game",
+  "3d"
+ ],
+ "fields": [
+  {
+   "key": "brief",
+   "label": "The place",
+   "default": "a small sunny beach with a wooden pier",
+   "multiline": true
+  }
+ ],
+ "models": [
+  {
+   "name": "Blender",
+   "licence": "GPL, runs as a separate tool",
+   "licence_class": "open"
+  },
+  {
+   "name": "Krea 2",
+   "licence": "Krea 2 Community License",
+   "licence_class": "community",
+   "note": "Read the terms before commercial use."
+  },
+  {
+   "name": "Hunyuan3D 2",
+   "licence": "Tencent Hunyuan Community License",
+   "licence_class": "community",
+   "note": "Read its territory and use terms before relying on it."
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Hunyuan3D 2 builds shape only; colour comes later."
+ ],
+ "steps": [
+  {
+   "id": "place",
+   "type": "worldkit",
+   "label": "The beach",
+   "model": "Blender",
+   "peak_gib": 17,
+   "asset": {
+    "type": "place",
+    "name": "Beach level",
+    "source": {
+     "brief": "{brief}"
+    },
+    "recipe": {
+     "seed": 2201
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "A real-scale place, built in Blender from the sentence."
+  },
+  {
+   "id": "a1",
+   "type": "goal",
+   "goal": "krea2",
+   "label": "Art: barrel",
+   "model": "Krea 2",
+   "peak_gib": 23,
+   "seed": 2202,
+   "does": "The first prop.",
+   "prompt": "Stylised game prop concept art of a weathered wooden barrel with rope wrapped round it, a single object, the whole object in view, centred, three-quarter view, hand-painted texture, plain light grey studio background, soft even light. No text, no logos.",
+   "options": {
+    "aspect": "1:1"
+   }
+  },
+  {
+   "id": "m1",
+   "type": "template",
+   "template": "3d_hunyuan3d_image_to_model",
+   "label": "Mesh: barrel",
+   "model": "Hunyuan3D 2",
+   "peak_gib": 8,
+   "seed": 2203,
+   "seed_node": "91:3",
+   "seed_input": "seed",
+   "values": {
+    "56|image": "@a1"
+   },
+   "does": "Builds a mesh from one picture."
+  },
+  {
+   "id": "p1",
+   "type": "worldkit",
+   "label": "Asset: barrel",
+   "model": "Blender",
+   "peak_gib": 4,
+   "asset": {
+    "type": "prop",
+    "name": "Rope barrel",
+    "source": {
+     "mesh": "@m1"
+    },
+    "recipe": {
+     "size_m": 0.9
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Real size, pivot at the base, a collider and a turntable, in Blender."
+  },
+  {
+   "id": "a2",
+   "type": "goal",
+   "goal": "krea2",
+   "label": "Art: lifebuoy post",
+   "model": "Krea 2",
+   "peak_gib": 23,
+   "seed": 2204,
+   "does": "The second prop.",
+   "prompt": "Stylised game prop concept art of a wooden post with a red and white lifebuoy ring hanging on it, a single object, the whole object in view, centred, three-quarter view, hand-painted texture, plain light grey studio background, soft even light. No text, no logos.",
+   "options": {
+    "aspect": "1:1"
+   }
+  },
+  {
+   "id": "m2",
+   "type": "template",
+   "template": "3d_hunyuan3d_image_to_model",
+   "label": "Mesh: post",
+   "model": "Hunyuan3D 2",
+   "peak_gib": 8,
+   "seed": 2205,
+   "seed_node": "91:3",
+   "seed_input": "seed",
+   "values": {
+    "56|image": "@a2"
+   },
+   "does": "Builds a mesh from one picture."
+  },
+  {
+   "id": "p2",
+   "type": "worldkit",
+   "label": "Asset: post",
+   "model": "Blender",
+   "peak_gib": 4,
+   "asset": {
+    "type": "prop",
+    "name": "Lifebuoy post",
+    "source": {
+     "mesh": "@m2"
+    },
+    "recipe": {
+     "size_m": 1.6
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Real size, pivot at the base, a collider and a turntable, in Blender."
+  },
+  {
+   "id": "pack",
+   "type": "worldkit_pack",
+   "label": "Level pack",
+   "model": "Blender",
+   "final": true,
+   "assets": [
+    "@place",
+    "@p1",
+    "@p2"
+   ],
+   "name": "beach-level",
+   "peak_gib": 1,
+   "does": "The place and props as glb files, a scene and a manifest, zipped."
+  }
+ ]
+}

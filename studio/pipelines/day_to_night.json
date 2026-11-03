@@ -1,0 +1,89 @@
+{
+ "id": "day_to_night",
+ "order": 18,
+ "kicker": "VFX",
+ "title": "A day plate turned to night, with its sound",
+ "pitch": "A daylight shot of a street in. The same shot at night, with night sound, side by side out.",
+ "why": "Wan 2.2 makes the plate. LTX-2.5 with its day-to-night IC-LoRA relights the same move and writes new sound for it, so the night isn't a colour grade.",
+ "tags": [
+  "vfx"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "Wan 2.2 TI2V-5B",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "LTX-2.5",
+   "licence": "LTX-2.x community licence (gated download)",
+   "licence_class": "community",
+   "note": "Accept the terms first; read them before commercial use."
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "A slow, steady shot with lamps and windows in frame gives the night something to light."
+ ],
+ "steps": [
+  {
+   "id": "day",
+   "type": "goal",
+   "goal": "video",
+   "label": "The day plate",
+   "model": "Wan 2.2 TI2V-5B",
+   "peak_gib": 24,
+   "seed": 1801,
+   "does": "The daylight shot.",
+   "prompt": "A quiet cobbled street in an old town on a sunny afternoon, shop windows, iron street lamps, a few pigeons on the cobbles, no people. The camera slowly pushes forward.",
+   "options": {
+    "aspect": "16:9",
+    "quality": "480p",
+    "seconds": 5
+   }
+  },
+  {
+   "id": "night",
+   "type": "goal",
+   "goal": "vfx_ltx",
+   "label": "The night",
+   "model": "LTX-2.5",
+   "peak_gib": 40,
+   "seed": 1802,
+   "does": "The same shot at night, with night sound.",
+   "video": "@day",
+   "scene": "a quiet cobbled street in an old town with shop windows and iron street lamps",
+   "options": {
+    "effect": "day_to_night",
+    "intensity": "strong",
+    "aspect": "auto",
+    "seconds": 5
+   }
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "compare",
+   "label": "Day and night",
+   "model": "ffmpeg",
+   "final": true,
+   "clips": [
+    "@day",
+    "@night"
+   ],
+   "args": {
+    "labels": [
+     "Day",
+     "Night"
+    ],
+    "audio_from": 1
+   },
+   "does": "Side by side, with the night's sound."
+  }
+ ]
+}

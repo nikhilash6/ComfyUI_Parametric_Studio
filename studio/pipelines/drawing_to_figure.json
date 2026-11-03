@@ -1,0 +1,88 @@
+{
+ "id": "drawing_to_figure",
+ "order": 12,
+ "kicker": "Collectibles",
+ "title": "A drawn character becomes a 3D figure",
+ "pitch": "A character design in. A textured mesh at the size of a desk figure, with a turntable, out.",
+ "why": "Anima draws a clean front view in one style, TRELLIS.2 reads it into a textured mesh, and Blender gives it a real size, a base and a turntable.",
+ "tags": [
+  "3d",
+  "anime"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "Anima",
+   "licence": "Anima's own licence, non-commercial",
+   "licence_class": "noncommercial",
+   "note": "Non-commercial: this whole result can't be sold while it contains Anima frames."
+  },
+  {
+   "name": "TRELLIS.2",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "Blender",
+   "licence": "GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "A plain background and the whole figure in frame make a cleaner mesh."
+ ],
+ "steps": [
+  {
+   "id": "art",
+   "type": "goal",
+   "goal": "anime",
+   "label": "The design",
+   "model": "Anima",
+   "peak_gib": 7,
+   "seed": 1201,
+   "does": "One clean front view.",
+   "prompt": "full body character design of a small round robot postman with a canvas satchel and a peaked cap, standing, front view, whole figure in frame, plain white background",
+   "options": {
+    "aspect": "1:1",
+    "style": "chibi",
+    "mode": "quality"
+   }
+  },
+  {
+   "id": "mesh",
+   "type": "template",
+   "template": "trellis2_image_to_mesh",
+   "label": "Textured mesh",
+   "model": "TRELLIS.2",
+   "peak_gib": 25,
+   "seed": 1202,
+   "seed_node": "12",
+   "seed_input": "seed",
+   "values": {
+    "122|image": "@art"
+   },
+   "does": "Cuts the object out and builds a textured mesh from one picture."
+  },
+  {
+   "id": "figure",
+   "type": "worldkit",
+   "label": "Desk figure",
+   "model": "Blender",
+   "peak_gib": 4,
+   "asset": {
+    "type": "prop",
+    "name": "Robot postman figure",
+    "source": {
+     "mesh": "@mesh"
+    },
+    "recipe": {
+     "size_m": 0.18
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Real size, pivot at the base, a collider and a turntable, in Blender."
+  }
+ ]
+}

@@ -84,6 +84,24 @@ def world_bounds(objs):
     return [min(p[i] for p in pts) for i in range(3)], [max(p[i] for p in pts) for i in range(3)]
 
 
+def sphere_radius(objs, centre) -> float:
+    """The farthest vertex of `objs` from `centre`, in world space: the radius of the sphere the turntable frames."""
+    import numpy as np
+    bpy.context.view_layer.update()
+    c = np.array(centre[:3], dtype=np.float64)
+    best = 0.0
+    for o in objs:
+        n = len(o.data.vertices)
+        if not n:
+            continue
+        co = np.empty(n * 3, dtype=np.float32)
+        o.data.vertices.foreach_get("co", co)
+        m = np.array(o.matrix_world, dtype=np.float64)
+        pts = co.reshape(-1, 3).astype(np.float64) @ m[:3, :3].T + m[:3, 3]
+        best = max(best, float(np.sqrt(((pts - c) ** 2).sum(axis=1)).max()))
+    return best
+
+
 def bones(objs) -> list:
     out = []
     for a in [o for o in objs if o.type == "ARMATURE"]:

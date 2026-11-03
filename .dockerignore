@@ -1,0 +1,17 @@
+# What a container build doesn't need: version control, caches, local proof work and anything private.
+.git
+.github
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.ruff_cache
+.venv
+venv
+site
+*_proof_work
+*_work
+.env
+*.env
+**/.env*
+*.log
+docs/superpowers

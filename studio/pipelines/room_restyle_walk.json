@@ -1,0 +1,111 @@
+{
+ "id": "room_restyle_walk",
+ "order": 19,
+ "kicker": "Interiors",
+ "title": "A room restyled, then walked into",
+ "pitch": "A photo of an empty room in. The same room in a new style and a camera moving into it out.",
+ "why": "Qwen-Image 2.1 changes the furniture and finish but keeps the walls and windows, and Wan 2.2 Fun Camera moves into the new room along a set camera path.",
+ "tags": [
+  "interior",
+  "video"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "Z-Image Turbo",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Qwen-Image 2.1",
+   "licence": "Qwen-Image 2.1's own licence",
+   "licence_class": "community",
+   "note": "Not Apache: read the 2.1 terms before commercial use."
+  },
+  {
+   "name": "Wan 2.2 Fun Camera 14B",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Shoot the room straight on: the edit holds walls and windows best from the front."
+ ],
+ "steps": [
+  {
+   "id": "room",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "The room",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 1901,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "Wide straight-on photograph of an empty plain living room with white walls, a large window on the back wall, wooden floor, soft daylight, no furniture, no people."
+    },
+    "57:13": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "does": ""
+  },
+  {
+   "id": "styled",
+   "type": "template",
+   "template": "qwen21_edit",
+   "label": "Restyled",
+   "model": "Qwen-Image 2.1",
+   "peak_gib": 34,
+   "seed": 1902,
+   "seed_node": "8",
+   "seed_input": "seed",
+   "values": {
+    "7|image": "@room"
+   },
+   "set": {
+    "5": {
+     "prompt": "Furnish this room in a warm mid-century modern style: a low walnut sideboard, a mustard yellow sofa, a round rug, a tall plant and a brass floor lamp. Keep the walls, window, floor, light and camera exactly the same."
+    },
+    "8": {
+     "steps": 30
+    }
+   },
+   "does": "Same room, new furniture and finish."
+  },
+  {
+   "id": "walk",
+   "type": "template",
+   "template": "video_wan2_2_14B_fun_camera",
+   "label": "Walking in",
+   "model": "Wan 2.2 Fun Camera 14B",
+   "peak_gib": 40,
+   "seed": 1903,
+   "seed_node": "102",
+   "seed_input": "noise_seed",
+   "final": true,
+   "values": {
+    "97|image": "@styled"
+   },
+   "set": {
+    "107": {
+     "text": "A calm walk into a warm mid-century modern living room, soft daylight, steady smooth camera."
+    },
+    "108": {
+     "camera_pose": "Zoom In",
+     "width": 832,
+     "height": 480
+    }
+   },
+   "does": "The camera moves into the room on a set path."
+  }
+ ]
+}

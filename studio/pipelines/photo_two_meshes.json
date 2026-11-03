@@ -1,0 +1,134 @@
+{
+ "id": "photo_two_meshes",
+ "order": 13,
+ "kicker": "3D, compared",
+ "title": "One photo, two 3D models, side by side",
+ "pitch": "A product photo in. Two meshes from two different 3D models, each at the same real size, turning side by side.",
+ "why": "Same picture, same size, same light, so the only difference is the model. Hunyuan3D 2 and TRELLIS.2 read the same photo of an invented ceramic owl.",
+ "tags": [
+  "3d",
+  "compare"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "Z-Image Turbo",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Hunyuan3D 2",
+   "licence": "Tencent Hunyuan Community License",
+   "licence_class": "community",
+   "note": "Read its territory and use terms before relying on it."
+  },
+  {
+   "name": "TRELLIS.2",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "Blender",
+   "licence": "GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Compare silhouettes first, then texture: Hunyuan3D 2 here builds shape only."
+ ],
+ "steps": [
+  {
+   "id": "photo",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "The photo",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 1301,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "Product photograph of a small glazed ceramic owl figurine, speckled cream and blue glaze, the whole object in frame, centred, plain light grey studio background, soft even light. No text."
+    },
+    "57:13": {
+     "width": 1024,
+     "height": 1024
+    }
+   },
+   "does": "One object on a plain background."
+  },
+  {
+   "id": "hy",
+   "type": "template",
+   "template": "3d_hunyuan3d_image_to_model",
+   "label": "Hunyuan3D 2 mesh",
+   "model": "Hunyuan3D 2",
+   "peak_gib": 8,
+   "seed": 1302,
+   "seed_node": "91:3",
+   "seed_input": "seed",
+   "values": {
+    "56|image": "@photo"
+   },
+   "does": "Builds a mesh from one picture."
+  },
+  {
+   "id": "tr",
+   "type": "template",
+   "template": "trellis2_image_to_mesh",
+   "label": "TRELLIS.2 mesh",
+   "model": "TRELLIS.2",
+   "peak_gib": 25,
+   "seed": 1303,
+   "seed_node": "12",
+   "seed_input": "seed",
+   "values": {
+    "122|image": "@photo"
+   },
+   "does": "Cuts the object out and builds a textured mesh from one picture."
+  },
+  {
+   "id": "pa",
+   "type": "worldkit",
+   "label": "Hunyuan3D 2 at size",
+   "model": "Blender",
+   "peak_gib": 4,
+   "asset": {
+    "type": "prop",
+    "name": "Owl, Hunyuan3D",
+    "source": {
+     "mesh": "@hy"
+    },
+    "recipe": {
+     "size_m": 0.15
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Real size, pivot at the base, a collider and a turntable, in Blender."
+  },
+  {
+   "id": "pb",
+   "type": "worldkit",
+   "label": "TRELLIS.2 at size",
+   "model": "Blender",
+   "peak_gib": 4,
+   "asset": {
+    "type": "prop",
+    "name": "Owl, TRELLIS",
+    "source": {
+     "mesh": "@tr"
+    },
+    "recipe": {
+     "size_m": 0.15
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Real size, pivot at the base, a collider and a turntable, in Blender."
+  }
+ ]
+}

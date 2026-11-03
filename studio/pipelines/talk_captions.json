@@ -1,0 +1,161 @@
+{
+ "id": "talk_captions",
+ "order": 9,
+ "kicker": "Speech",
+ "title": "A written talk becomes a captioned clip",
+ "pitch": "Three lines of script in. Two voices, a set, a waveform and captions timed by what was actually said out.",
+ "why": "Kokoro reads the lines in two voices, Z-Image makes the empty set, and Whisper listens to the finished audio, so the captions come from what was said, not from the script.",
+ "tags": [
+  "speech",
+  "captions"
+ ],
+ "fields": [
+  {
+   "key": "a",
+   "label": "First voice",
+   "default": "Welcome back to Small Rooms. Today we are talking about why an old wooden chair creaks.",
+   "multiline": true
+  },
+  {
+   "key": "b",
+   "label": "Second voice",
+   "default": "It is the joints. Wood shrinks a little every winter, the glue lets go, and every time you sit down, two pieces rub.",
+   "multiline": true
+  },
+  {
+   "key": "c",
+   "label": "First voice again",
+   "default": "So the fix is new glue, not more nails. Thanks for listening.",
+   "multiline": true
+  }
+ ],
+ "models": [
+  {
+   "name": "Kokoro 82M",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Z-Image Turbo",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Whisper distil large-v3",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Write the lines the way you want them said; the captions come from the audio, so a misread word shows."
+ ],
+ "steps": [
+  {
+   "id": "a",
+   "type": "voice",
+   "label": "Host",
+   "model": "Kokoro 82M",
+   "voice_model": "kokoro",
+   "voice": "am_michael",
+   "text": "{a}",
+   "seed": 901,
+   "peak_gib": 2,
+   "does": "Reads the line."
+  },
+  {
+   "id": "b",
+   "type": "voice",
+   "label": "Guest",
+   "model": "Kokoro 82M",
+   "voice_model": "kokoro",
+   "voice": "af_heart",
+   "text": "{b}",
+   "seed": 902,
+   "peak_gib": 2,
+   "does": "Reads the line."
+  },
+  {
+   "id": "c",
+   "type": "voice",
+   "label": "Host again",
+   "model": "Kokoro 82M",
+   "voice_model": "kokoro",
+   "voice": "am_michael",
+   "text": "{c}",
+   "seed": 903,
+   "peak_gib": 2,
+   "does": "Reads the line."
+  },
+  {
+   "id": "talk",
+   "type": "edit",
+   "op": "concat_audio",
+   "label": "The conversation",
+   "model": "ffmpeg",
+   "does": "The three lines one after another, with a short pause.",
+   "clips": [
+    "@a",
+    "@b",
+    "@c"
+   ],
+   "args": {
+    "gap": 0.45
+   }
+  },
+  {
+   "id": "set",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "The set",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 904,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "An empty small podcast studio corner, two microphones on boom arms over a wooden table, warm lamps, wood panelled wall, soft evening light, no people, nothing written anywhere."
+    },
+    "57:13": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "does": "An empty set, no people."
+  },
+  {
+   "id": "clip",
+   "type": "edit",
+   "op": "podcast",
+   "label": "Picture and waveform",
+   "model": "ffmpeg",
+   "does": "The set with a waveform drawn from the real audio.",
+   "image": "@set",
+   "audio": "@talk"
+  },
+  {
+   "id": "caps",
+   "type": "captions",
+   "label": "Captions",
+   "model": "Whisper distil large-v3",
+   "audio": "@talk",
+   "does": "Whisper writes timed captions from what it hears."
+  },
+  {
+   "id": "final",
+   "type": "edit",
+   "op": "burn",
+   "label": "Captions on",
+   "model": "ffmpeg",
+   "does": "Burns the captions into the clip.",
+   "final": true,
+   "clip": "@clip",
+   "captions": "@caps"
+  }
+ ]
+}

@@ -1,0 +1,120 @@
+{
+ "id": "multicam_scene",
+ "order": 23,
+ "kicker": "Coverage",
+ "title": "One shot, re-shot from three cameras",
+ "pitch": "One invented performer and one take in. The same moment from three camera moves, cut together out.",
+ "why": "H3 makes the master take, then re-shoots that exact clip with new camera moves, so all three angles show the same performance.",
+ "tags": [
+  "video",
+  "edit"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "FLUX.2 Klein 4B",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "MiniMax H3",
+   "licence": "MiniMax H3 Community License",
+   "licence_class": "community",
+   "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "One clear action reads best from every angle."
+ ],
+ "steps": [
+  {
+   "id": "still",
+   "type": "goal",
+   "goal": "image",
+   "label": "The frame",
+   "model": "FLUX.2 Klein 4B",
+   "peak_gib": 18,
+   "seed": 2301,
+   "does": "The first frame.",
+   "prompt": "Film still, medium wide shot: an invented man in his fifties with a grey beard, in a dark green wool sweater, playing a cello alone on an empty theatre stage, one warm spotlight, dark seats behind. No text.",
+   "options": {
+    "aspect": "16:9",
+    "mode": "quality"
+   }
+  },
+  {
+   "id": "master",
+   "type": "goal",
+   "goal": "h3_animate",
+   "label": "Master take",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "seed": 2302,
+   "does": "One performance.",
+   "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Cinematic, live-action. The man plays the cello slowly with long smooth bow strokes, eyes half closed. The spotlight holds steady. The camera stays locked on a medium wide framing. One continuous shot, no cuts.\n\noverall_soundscape: Slow solo cello, a quiet theatre.\n\nnon_diegetic_music: N/A",
+   "image": "@still",
+   "options": {
+    "aspect": "16:9",
+    "quality": "high",
+    "seconds": 5,
+    "speed": "fast"
+   }
+  },
+  {
+   "id": "orbit",
+   "type": "goal",
+   "goal": "reshoot",
+   "label": "Camera B",
+   "model": "MiniMax H3",
+   "peak_gib": 37,
+   "seed": 2303,
+   "does": "The same take, orbiting right.",
+   "video": "@master",
+   "options": {
+    "camera": "orbit_right",
+    "aspect": "auto",
+    "quality": "high",
+    "seconds": 5
+   }
+  },
+  {
+   "id": "push",
+   "type": "goal",
+   "goal": "reshoot",
+   "label": "Camera C",
+   "model": "MiniMax H3",
+   "peak_gib": 37,
+   "seed": 2304,
+   "does": "The same take, dollying in.",
+   "video": "@master",
+   "options": {
+    "camera": "dolly_in",
+    "aspect": "auto",
+    "quality": "high",
+    "seconds": 5
+   }
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "cut_between",
+   "label": "The cut",
+   "model": "ffmpeg",
+   "final": true,
+   "clips": [
+    "@master",
+    "@orbit",
+    "@push"
+   ],
+   "args": {
+    "audio_from": 0
+   },
+   "does": "Cuts between the three angles on the master's sound."
+  }
+ ]
+}

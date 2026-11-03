@@ -1,0 +1,18 @@
+{
+ "v": {"class_type": "LoadVideo", "inputs": {"file": "first.mp4"}},
+ "parts": {"class_type": "GetVideoComponents", "inputs": {"video": ["v", 0]}},
+ "ck": {"class_type": "CheckpointLoaderSimple", "inputs": {"ckpt_name": "SAM 3.1/sam3.1_multiplex_fp16.safetensors"}},
+ "txt": {"class_type": "CLIPTextEncode", "inputs": {"clip": ["ck", 1], "text": "kite"}},
+ "det": {"class_type": "SAM3_Detect", "inputs": {"model": ["ck", 0], "image": ["parts", 0], "conditioning": ["txt", 0], "threshold": 0.5, "refine_iterations": 2, "individual_masks": false}},
+ "grow": {"class_type": "GrowMask", "inputs": {"mask": ["det", 0], "expand": 2, "tapered_corners": true}},
+ "size": {"class_type": "GetImageSize", "inputs": {"image": ["parts", 0]}},
+ "bgimg": {"class_type": "LoadImage", "inputs": {"image": "backdrop.png"}},
+ "bg": {"class_type": "ImageScale", "inputs": {"image": ["bgimg", 0], "upscale_method": "lanczos", "width": ["size", 0], "height": ["size", 1], "crop": "center"}},
+ "bgr": {"class_type": "RepeatImageBatch", "inputs": {"image": ["bg", 0], "amount": ["size", 2]}},
+ "comp": {"class_type": "ImageCompositeMasked", "inputs": {"destination": ["bgr", 0], "source": ["parts", 0], "mask": ["grow", 0], "x": 0, "y": 0, "resize_source": false}},
+ "cv": {"class_type": "CreateVideo", "inputs": {"images": ["comp", 0], "fps": ["parts", 2]}},
+ "save": {"class_type": "SaveVideo", "inputs": {"video": ["cv", 0], "filename_prefix": "pipeline_cut/comp", "format": "auto", "codec": "auto"}},
+ "mimg": {"class_type": "MaskToImage", "inputs": {"mask": ["grow", 0]}},
+ "mv": {"class_type": "CreateVideo", "inputs": {"images": ["mimg", 0], "fps": ["parts", 2]}},
+ "msave": {"class_type": "SaveVideo", "inputs": {"video": ["mv", 0], "filename_prefix": "pipeline_cut/matte", "format": "auto", "codec": "auto"}}
+}

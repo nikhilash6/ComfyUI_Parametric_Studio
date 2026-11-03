@@ -1,0 +1,199 @@
+{
+ "id": "cooking_short",
+ "order": 16,
+ "kicker": "Food",
+ "title": "A recipe becomes a cooking short",
+ "pitch": "Three moments of a recipe in. Three moving overhead shots and a light score out, with no hands in frame.",
+ "why": "Overhead food shots are the clearest test of steam, bubbles and shine. Z-Image draws each step from the same angle, Wan 2.2 makes it move, and ACE-Step scores it.",
+ "tags": [
+  "food",
+  "video"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "Z-Image Turbo",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Wan 2.2 TI2V-5B",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "ACE-Step 1.5",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Keep the same angle and board in every step so the cut feels like one kitchen."
+ ],
+ "steps": [
+  {
+   "id": "k1",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "Step 1",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 1601,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "Overhead photograph of ripe red tomatoes, garlic and fresh basil on a worn wooden chopping board, a chef's knife beside them, soft window light, no people, no hands."
+    },
+    "57:13": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "does": ""
+  },
+  {
+   "id": "k2",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "Step 2",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 1602,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "Overhead photograph of a wide black pan of tomato sauce simmering with basil leaves on a wooden board beside a gas hob, gentle steam, soft window light, no people, no hands."
+    },
+    "57:13": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "does": ""
+  },
+  {
+   "id": "k3",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "Step 3",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 1603,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "Overhead photograph of a white plate of spaghetti with tomato sauce and fresh basil on a worn wooden table, a little steam rising, soft window light, no people, no hands."
+    },
+    "57:13": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "does": ""
+  },
+  {
+   "id": "m1",
+   "type": "goal",
+   "goal": "animate",
+   "label": "Shot 1",
+   "model": "Wan 2.2 TI2V-5B",
+   "peak_gib": 24,
+   "seed": 1611,
+   "does": "Moves the first step.",
+   "prompt": "Soft window light shifts slightly across the tomatoes and basil, a basil leaf moves a little in a breeze. The camera stays still overhead.",
+   "image": "@k1",
+   "options": {
+    "seconds": 5
+   }
+  },
+  {
+   "id": "m2",
+   "type": "goal",
+   "goal": "animate",
+   "label": "Shot 2",
+   "model": "Wan 2.2 TI2V-5B",
+   "peak_gib": 24,
+   "seed": 1612,
+   "does": "Moves the second step.",
+   "prompt": "The tomato sauce bubbles gently in the pan and steam rises and drifts. The camera stays still overhead.",
+   "image": "@k2",
+   "options": {
+    "seconds": 5
+   }
+  },
+  {
+   "id": "m3",
+   "type": "goal",
+   "goal": "animate",
+   "label": "Shot 3",
+   "model": "Wan 2.2 TI2V-5B",
+   "peak_gib": 24,
+   "seed": 1613,
+   "does": "Moves the third step.",
+   "prompt": "Steam rises slowly from the hot spaghetti, the sauce glistens. The camera stays still overhead.",
+   "image": "@k3",
+   "options": {
+    "seconds": 5
+   }
+  },
+  {
+   "id": "score",
+   "type": "template",
+   "template": "audio_ace_step_1_5_split",
+   "label": "The score",
+   "model": "ACE-Step 1.5",
+   "peak_gib": 11,
+   "seed": 1614,
+   "seed_node": "3",
+   "seed_input": "seed",
+   "set": {
+    "94": {
+     "tags": "Light acoustic guitar and soft hand percussion, warm and cheerful, kitchen morning, no vocals",
+     "lyrics": "[inst]",
+     "bpm": 96,
+     "seed": 1614
+    },
+    "98": {
+     "seconds": 20
+    }
+   },
+   "does": "An original instrumental."
+  },
+  {
+   "id": "cut",
+   "type": "cpu",
+   "op": "join",
+   "label": "Three shots",
+   "model": "ffmpeg",
+   "does": "The shots in order with soft dissolves.",
+   "clips": [
+    "@m1",
+    "@m2",
+    "@m3"
+   ],
+   "args": {
+    "crossfade": 0.4,
+    "keep_audio": false
+   }
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "mux",
+   "label": "Picture and score",
+   "model": "ffmpeg",
+   "does": "Lays the score under the cut.",
+   "final": true,
+   "clip": "@cut",
+   "audio": "@score"
+  }
+ ]
+}

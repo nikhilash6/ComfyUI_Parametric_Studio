@@ -1,0 +1,130 @@
+{
+ "id": "emblem_sting",
+ "order": 14,
+ "kicker": "Motion graphics",
+ "title": "A drawn emblem becomes a 3D sting with sound",
+ "pitch": "An emblem with no lettering in. A bronze 3D version, turning, with an original sound out.",
+ "why": "Krea 2 draws the emblem, TRELLIS.2 gives it depth, Blender turns it under studio light, and ACE-Step writes the hit under it.",
+ "tags": [
+  "3d",
+  "sound"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "Krea 2",
+   "licence": "Krea 2 Community License",
+   "licence_class": "community",
+   "note": "Read the terms before commercial use."
+  },
+  {
+   "name": "TRELLIS.2",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "Blender",
+   "licence": "GPL, runs as a separate tool",
+   "licence_class": "open"
+  },
+  {
+   "name": "ACE-Step 1.5",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Ask for a symbol with no letters: image models still write gibberish when asked for words."
+ ],
+ "steps": [
+  {
+   "id": "art",
+   "type": "goal",
+   "goal": "krea2",
+   "label": "The emblem",
+   "model": "Krea 2",
+   "peak_gib": 23,
+   "seed": 1401,
+   "does": "A symbol, no lettering.",
+   "prompt": "A heavy cast bronze emblem: a stylised fox head inside a thick round ring, no letters, no words, a single object, the whole object in view, centred, three-quarter view, plain light grey studio background, soft even light.",
+   "options": {
+    "aspect": "1:1"
+   }
+  },
+  {
+   "id": "mesh",
+   "type": "template",
+   "template": "trellis2_image_to_mesh",
+   "label": "Textured mesh",
+   "model": "TRELLIS.2",
+   "peak_gib": 25,
+   "seed": 1402,
+   "seed_node": "12",
+   "seed_input": "seed",
+   "values": {
+    "122|image": "@art"
+   },
+   "does": "Cuts the object out and builds a textured mesh from one picture."
+  },
+  {
+   "id": "turn",
+   "type": "worldkit",
+   "label": "Turning in light",
+   "model": "Blender",
+   "peak_gib": 4,
+   "asset": {
+    "type": "prop",
+    "name": "Fox emblem",
+    "source": {
+     "mesh": "@mesh"
+    },
+    "recipe": {
+     "size_m": 0.4
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "Real size, pivot at the base, a collider and a turntable, in Blender."
+  },
+  {
+   "id": "hit",
+   "type": "template",
+   "template": "audio_ace_step_1_5_split",
+   "label": "The sting",
+   "model": "ACE-Step 1.5",
+   "peak_gib": 11,
+   "seed": 1403,
+   "seed_node": "3",
+   "seed_input": "seed",
+   "set": {
+    "94": {
+     "tags": "Cinematic logo sting: deep brass hit, rising shimmer, warm reverb tail, short, no vocals",
+     "lyrics": "[inst]",
+     "bpm": 100,
+     "seed": 1403
+    },
+    "98": {
+     "seconds": 8
+    }
+   },
+   "does": "An eight-second sound for the turn."
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "mux",
+   "label": "Picture and sound",
+   "model": "ffmpeg",
+   "does": "Lays the sting under the turntable.",
+   "final": true,
+   "clip": "@turn",
+   "audio": "@hit"
+  }
+ ]
+}

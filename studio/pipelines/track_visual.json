@@ -1,0 +1,114 @@
+{
+ "id": "track_visual",
+ "order": 11,
+ "kicker": "Music",
+ "title": "A track becomes its looping visual",
+ "pitch": "A style of music in. An original track and a seamless moving picture cut to its length out.",
+ "why": "Small models, small card. ACE-Step writes the track, Wan 2.2 makes five seconds of motion, FILM doubles the frames, and ffmpeg closes the seam and loops it for the length of the song.",
+ "tags": [
+  "music",
+  "loop"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "ACE-Step 1.5",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "Wan 2.2 TI2V-5B",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "FILM frame interpolation",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Abstract motion loops best: ink, smoke, water, light."
+ ],
+ "steps": [
+  {
+   "id": "track",
+   "type": "template",
+   "template": "audio_ace_step_1_5_split",
+   "label": "The track",
+   "model": "ACE-Step 1.5",
+   "peak_gib": 11,
+   "seed": 1101,
+   "seed_node": "3",
+   "seed_input": "seed",
+   "set": {
+    "94": {
+     "tags": "Slow ambient electronic, warm analog pads, soft pulse, deep and calm, no vocals",
+     "lyrics": "[inst]",
+     "bpm": 80,
+     "seed": 1101
+    },
+    "98": {
+     "seconds": 30
+    }
+   },
+   "does": "An original 30-second instrumental."
+  },
+  {
+   "id": "motion",
+   "type": "goal",
+   "goal": "video",
+   "label": "The motion",
+   "model": "Wan 2.2 TI2V-5B",
+   "peak_gib": 24,
+   "seed": 1112,
+   "does": "Five seconds of moving ink.",
+   "prompt": "Macro photograph: thick plumes of deep blue and bright gold ink slowly billow and curl through clear water against a pure black background, sharp detail, soft studio light. The camera stays still.",
+   "options": {
+    "aspect": "16:9",
+    "quality": "480p",
+    "seconds": 5
+   }
+  },
+  {
+   "id": "smooth",
+   "type": "template",
+   "template": "utility_video_frame_interpolation",
+   "label": "Smoother",
+   "model": "FILM frame interpolation",
+   "peak_gib": 8,
+   "values": {
+    "4|file": "@motion"
+   },
+   "does": "Doubles the frame rate."
+  },
+  {
+   "id": "seam",
+   "type": "cpu",
+   "op": "loop",
+   "label": "Close the seam",
+   "model": "ffmpeg",
+   "clip": "@smooth",
+   "args": {
+    "crossfade": 0.5
+   },
+   "does": "Crossfades the end into the start, so it loops."
+  },
+  {
+   "id": "final",
+   "type": "edit",
+   "op": "loop_to_audio",
+   "label": "Loop to the track",
+   "model": "ffmpeg",
+   "does": "Repeats the loop for the whole track.",
+   "final": true,
+   "clip": "@seam",
+   "audio": "@track"
+  }
+ ]
+}

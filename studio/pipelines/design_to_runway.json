@@ -1,0 +1,178 @@
+{
+ "id": "design_to_runway",
+ "order": 21,
+ "kicker": "Fashion",
+ "title": "A fashion sketch becomes a runway walk",
+ "pitch": "A design drawing in. The real garment, worn by an invented model, walking a runway, with a score out.",
+ "why": "Every step changes one thing. Krea 2 draws the design, Qwen-Image 2.1 makes it a real garment, the Outfit Swap edit puts it on an invented model, and H3 walks her down the runway.",
+ "tags": [
+  "fashion",
+  "video"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "Krea 2",
+   "licence": "Krea 2 Community License",
+   "licence_class": "community",
+   "note": "Read the terms before commercial use."
+  },
+  {
+   "name": "Qwen-Image 2.1",
+   "licence": "Qwen-Image 2.1's own licence",
+   "licence_class": "community",
+   "note": "Not Apache: read the 2.1 terms before commercial use."
+  },
+  {
+   "name": "Z-Image Turbo",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Qwen-Image 2.1 with the Outfit Swap LoRA",
+   "licence": "Qwen-Image 2.1's own licence; the LoRA is rent-only at its source",
+   "licence_class": "noncommercial",
+   "note": "Treat this stage as non-commercial."
+  },
+  {
+   "name": "MiniMax H3",
+   "licence": "MiniMax H3 Community License",
+   "licence_class": "community",
+   "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+  },
+  {
+   "name": "MiniMax Music 3",
+   "licence": "MiniMax-Music3 Community License",
+   "licence_class": "community",
+   "note": "Commercial use must show the name MiniMax-Music3."
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Invented people only."
+ ],
+ "steps": [
+  {
+   "id": "design",
+   "type": "goal",
+   "goal": "krea2",
+   "label": "The design",
+   "model": "Krea 2",
+   "peak_gib": 23,
+   "seed": 2101,
+   "does": "The idea, drawn.",
+   "prompt": "Fashion design illustration of a long sleeveless dress in deep cobalt blue silk with a high neck and a long flowing skirt, shown on a plain dress form, loose watercolour and ink, plain white paper, no people, no lettering.",
+   "options": {
+    "aspect": "2:3"
+   }
+  },
+  {
+   "id": "garment",
+   "type": "template",
+   "template": "qwen21_edit",
+   "label": "The real garment",
+   "model": "Qwen-Image 2.1",
+   "peak_gib": 34,
+   "seed": 2102,
+   "seed_node": "8",
+   "seed_input": "seed",
+   "values": {
+    "7|image": "@design"
+   },
+   "set": {
+    "5": {
+     "prompt": "Turn this illustration into a realistic product photograph of the real dress on the same dress form: real cobalt blue silk with natural folds and sheen, plain light grey studio background, soft even light. Keep the design, shape and colour the same."
+    },
+    "8": {
+     "steps": 30
+    }
+   },
+   "does": "The drawing as a real dress."
+  },
+  {
+   "id": "model",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "The model",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 2103,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "Full body photograph of an invented tall woman in her late twenties with short black hair, wearing a plain fitted black long-sleeved top and black trousers, standing at the start of a long white runway, arms relaxed at her sides, the whole figure in frame, soft even light."
+    },
+    "57:13": {
+     "width": 832,
+     "height": 1216
+    }
+   },
+   "does": "An invented model, whole figure in frame."
+  },
+  {
+   "id": "worn",
+   "type": "template",
+   "template": "qwen21_tryon",
+   "label": "Worn",
+   "model": "Qwen-Image 2.1 with the Outfit Swap LoRA",
+   "peak_gib": 35,
+   "seed": 2104,
+   "seed_node": "8",
+   "seed_input": "seed",
+   "values": {
+    "7|image": "@model",
+    "17|image": "@garment"
+   },
+   "does": "The same model wearing the dress."
+  },
+  {
+   "id": "walk",
+   "type": "goal",
+   "goal": "h3_animate",
+   "label": "The walk",
+   "model": "MiniMax H3",
+   "peak_gib": 42,
+   "seed": 2105,
+   "does": "The dress in motion.",
+   "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Fashion runway film. The woman walks slowly toward the camera down the white runway. The long silk skirt flows with each step. Her arms stay relaxed at her sides. The camera holds still at the end of the runway. One continuous shot, no cuts.\n\noverall_soundscape: Footsteps, a soft room tone.\n\nnon_diegetic_music: N/A",
+   "image": "@worn",
+   "options": {
+    "aspect": "9:16",
+    "quality": "high",
+    "seconds": 5,
+    "speed": "fast"
+   }
+  },
+  {
+   "id": "score",
+   "type": "goal",
+   "goal": "music",
+   "label": "The score",
+   "model": "MiniMax Music 3",
+   "peak_gib": 23,
+   "seed": 2106,
+   "does": "An original instrumental.",
+   "prompt": "Global Metadata\nBasic Attributes: bpm is 120. Sleek minimal house.\nGlobal Emotional Progression: A tight kick and a deep bass from the first bar.\nApplication Scenarios & Imagery: A runway show.\nSonics & Production Profile: Clean, punchy, wide.\nVocal Details\nVocal Gender & Timbre: No vocals. Purely instrumental.\nArrangement\nInstrument Lifecycle Description (Primary/Secondary Layering):\nPrimary: Kick, deep bass.\nSecondary: Glassy synth stabs.\nGroove & Foundation Progression: A steady 120 BPM.\nEmbellishments, Textures & Spatial FX: Swells and rises into each new section.",
+   "lyrics": "[inst]",
+   "options": {
+    "seconds": 30
+   }
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "mux",
+   "label": "Picture and score",
+   "model": "ffmpeg",
+   "does": "Lays the score under the walk.",
+   "final": true,
+   "clip": "@walk",
+   "audio": "@score"
+  }
+ ]
+}

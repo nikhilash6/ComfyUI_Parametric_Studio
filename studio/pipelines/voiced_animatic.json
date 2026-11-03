@@ -1,0 +1,186 @@
+{
+ "id": "voiced_animatic",
+ "order": 10,
+ "kicker": "Pre-production",
+ "title": "A script becomes a voiced animatic",
+ "pitch": "Three beats of a story in. Three drawn panels, a narrator, and a timed animatic out.",
+ "why": "An animatic is timing, not polish. Anima draws the panels in one style, Kokoro reads each beat, and each panel stays on screen exactly as long as its line.",
+ "tags": [
+  "story",
+  "speech"
+ ],
+ "fields": [
+  {
+   "key": "n1",
+   "label": "Beat 1",
+   "default": "On the roof of the tallest building, a small robot gardener wakes up with the sun.",
+   "multiline": true
+  },
+  {
+   "key": "n2",
+   "label": "Beat 2",
+   "default": "It waters every pot in a long row, one careful drop at a time.",
+   "multiline": true
+  },
+  {
+   "key": "n3",
+   "label": "Beat 3",
+   "default": "When the last flower opens, it sits down and watches the city wake.",
+   "multiline": true
+  }
+ ],
+ "models": [
+  {
+   "name": "Anima",
+   "licence": "Anima's own licence, non-commercial",
+   "licence_class": "noncommercial",
+   "note": "Non-commercial: this whole result can't be sold while it contains Anima frames."
+  },
+  {
+   "name": "Kokoro 82M",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Anima is non-commercial. Swap the panels for your own drawings if you need to sell the animatic."
+ ],
+ "steps": [
+  {
+   "id": "p1",
+   "type": "goal",
+   "goal": "anime",
+   "label": "Panel 1",
+   "model": "Anima",
+   "peak_gib": 7,
+   "seed": 1001,
+   "does": "The first panel.",
+   "prompt": "storyboard panel, loose ink lines with soft grey wash, cinematic framing, a small round robot gardener on a rooftop garden at sunrise, wide shot, city skyline behind",
+   "options": {
+    "aspect": "16:9",
+    "style": "storybook",
+    "mode": "quality"
+   }
+  },
+  {
+   "id": "p2",
+   "type": "goal",
+   "goal": "anime",
+   "label": "Panel 2",
+   "model": "Anima",
+   "peak_gib": 7,
+   "seed": 1002,
+   "does": "The second panel, same style.",
+   "prompt": "storyboard panel, loose ink lines with soft grey wash, cinematic framing, a small round robot gardener watering a long row of flower pots with a tiny watering can, medium shot",
+   "options": {
+    "aspect": "16:9",
+    "style": "storybook",
+    "mode": "quality"
+   }
+  },
+  {
+   "id": "p3",
+   "type": "goal",
+   "goal": "anime",
+   "label": "Panel 3",
+   "model": "Anima",
+   "peak_gib": 7,
+   "seed": 1003,
+   "does": "The third panel, same style.",
+   "prompt": "storyboard panel, loose ink lines with soft grey wash, cinematic framing, a small round robot gardener sitting at the roof edge beside open flowers, seen from behind, the city at sunrise",
+   "options": {
+    "aspect": "16:9",
+    "style": "storybook",
+    "mode": "quality"
+   }
+  },
+  {
+   "id": "v1",
+   "type": "voice",
+   "label": "Line 1",
+   "model": "Kokoro 82M",
+   "voice_model": "kokoro",
+   "voice": "bf_emma",
+   "text": "{n1}",
+   "seed": 1011,
+   "peak_gib": 2,
+   "does": "Reads the line."
+  },
+  {
+   "id": "v2",
+   "type": "voice",
+   "label": "Line 2",
+   "model": "Kokoro 82M",
+   "voice_model": "kokoro",
+   "voice": "bf_emma",
+   "text": "{n2}",
+   "seed": 1012,
+   "peak_gib": 2,
+   "does": "Reads the line."
+  },
+  {
+   "id": "v3",
+   "type": "voice",
+   "label": "Line 3",
+   "model": "Kokoro 82M",
+   "voice_model": "kokoro",
+   "voice": "bf_emma",
+   "text": "{n3}",
+   "seed": 1013,
+   "peak_gib": 2,
+   "does": "Reads the line."
+  },
+  {
+   "id": "s1",
+   "type": "edit",
+   "op": "still",
+   "label": "Shot 1",
+   "model": "ffmpeg",
+   "does": "The panel held for its line, with a slow push in.",
+   "image": "@p1",
+   "audio": "@v1"
+  },
+  {
+   "id": "s2",
+   "type": "edit",
+   "op": "still",
+   "label": "Shot 2",
+   "model": "ffmpeg",
+   "does": "Held for its line.",
+   "image": "@p2",
+   "audio": "@v2"
+  },
+  {
+   "id": "s3",
+   "type": "edit",
+   "op": "still",
+   "label": "Shot 3",
+   "model": "ffmpeg",
+   "does": "Held for its line.",
+   "image": "@p3",
+   "audio": "@v3"
+  },
+  {
+   "id": "final",
+   "type": "edit",
+   "op": "concat",
+   "label": "The animatic",
+   "model": "ffmpeg",
+   "does": "The three shots, cut together.",
+   "final": true,
+   "clips": [
+    "@s1",
+    "@s2",
+    "@s3"
+   ],
+   "args": {
+    "crossfade": 0.3
+   }
+  }
+ ]
+}

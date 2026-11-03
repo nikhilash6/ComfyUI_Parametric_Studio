@@ -1,0 +1,102 @@
+{
+ "id": "clip_cutout",
+ "order": 17,
+ "kicker": "Compositing",
+ "title": "A clip, cut out by name, placed somewhere new",
+ "pitch": "A moving shot in. The subject found by a word on every frame, its matte, and the same motion over a new place out.",
+ "why": "SAM 3.1 finds the subject from one word, frame by frame, so no one paints a mask. Wan 2.2 makes the shot, Z-Image makes the new place, and ACE-Step scores it.",
+ "tags": [
+  "vfx",
+  "matte"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "Wan 2.2 TI2V-5B",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "SAM 3.1",
+   "licence": "SAM License (Meta), gated download",
+   "licence_class": "community",
+   "note": "Read Meta's SAM License before commercial use."
+  },
+  {
+   "name": "Z-Image Turbo",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "ACE-Step 1.5",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "One clear subject against a plain sky gives SAM the easiest job."
+ ],
+ "steps": [
+  {
+   "id": "plate",
+   "type": "goal",
+   "goal": "video",
+   "label": "The shot",
+   "model": "Wan 2.2 TI2V-5B",
+   "peak_gib": 24,
+   "seed": 1701,
+   "does": "One subject against a plain sky.",
+   "prompt": "A bright red diamond kite with a long ribbon tail flies and dips in the wind against a plain pale blue sky. The camera stays still.",
+   "options": {
+    "aspect": "16:9",
+    "quality": "480p",
+    "seconds": 5
+   }
+  },
+  {
+   "id": "place",
+   "type": "template",
+   "template": "image_z_image_turbo",
+   "label": "The new place",
+   "model": "Z-Image Turbo",
+   "peak_gib": 22,
+   "seed": 1702,
+   "seed_node": "57:3",
+   "seed_input": "seed",
+   "set": {
+    "57:27": {
+     "text": "A wide lavender field at golden hour with rolling hills and a few trees on the horizon, warm low sun, soft haze, nothing in the sky."
+    },
+    "57:13": {
+     "width": 1344,
+     "height": 768
+    }
+   },
+   "does": "Where the kite goes."
+  },
+  {
+   "id": "cut",
+   "type": "template",
+   "template": "pipeline_video_sam3_cut",
+   "label": "Found, cut, placed",
+   "model": "SAM 3.1",
+   "peak_gib": 8,
+   "final": true,
+   "values": {
+    "v|file": "@plate",
+    "bgimg|image": "@place"
+   },
+   "set": {
+    "txt": {
+     "text": "kite"
+    }
+   },
+   "does": "SAM 3.1 finds the kite on every frame from the word 'kite' and lays it over the new place. The matte is saved too."
+  }
+ ]
+}

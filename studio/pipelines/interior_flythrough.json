@@ -1,0 +1,147 @@
+{
+ "id": "interior_flythrough",
+ "order": 24,
+ "kicker": "Previs",
+ "title": "A built interior becomes a film",
+ "pitch": "A sentence about a room in. A real-scale 3D interior, a planned camera move rendered through it, and a score out.",
+ "why": "World Kit builds the room at real scale. LTX-2.5's layout-to-render LoRA turns Blender's grey clay pass into a finished shot along the same path, and ACE-Step scores it.",
+ "tags": [
+  "3d",
+  "video"
+ ],
+ "fields": [
+  {
+   "key": "brief",
+   "label": "The room",
+   "default": "a quiet library reading room at night with tall shelves and warm lamps",
+   "multiline": true
+  }
+ ],
+ "models": [
+  {
+   "name": "Blender",
+   "licence": "GPL, runs as a separate tool",
+   "licence_class": "open"
+  },
+  {
+   "name": "Qwen-Image 2.1",
+   "licence": "Qwen-Image 2.1's own licence",
+   "licence_class": "community",
+   "note": "Not Apache: read the 2.1 terms before commercial use."
+  },
+  {
+   "name": "LTX-2.5",
+   "licence": "LTX-2.x community licence (gated download)",
+   "licence_class": "community",
+   "note": "Accept the terms first; read them before commercial use."
+  },
+  {
+   "name": "ACE-Step 1.5",
+   "licence": "MIT",
+   "licence_class": "open"
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "The brief picks the interior kit and the time of day."
+ ],
+ "steps": [
+  {
+   "id": "place",
+   "type": "worldkit",
+   "label": "The room",
+   "model": "Blender",
+   "peak_gib": 17,
+   "asset": {
+    "type": "place",
+    "name": "Reading room",
+    "source": {
+     "brief": "{brief}"
+    },
+    "recipe": {
+     "seed": 2401
+    },
+    "tags": [
+     "pipeline"
+    ]
+   },
+   "does": "A real-scale interior, built in Blender."
+  },
+  {
+   "id": "shot",
+   "type": "vset",
+   "label": "The shot",
+   "model": "LTX-2.5",
+   "peak_gib": 42,
+   "shot": {
+    "name": "Reading room push",
+    "set": {
+     "place": "@place",
+     "props": []
+    },
+    "cast": [],
+    "marks": [
+     [
+      0,
+      0
+     ]
+    ],
+    "camera": {
+     "preset": "push_in",
+     "params": {}
+    },
+    "format": {
+     "aspect": "16:9",
+     "seconds": 5
+    },
+    "look_from_place": true,
+    "mode": "A",
+    "mode_settings": {
+     "engine": "ltx",
+     "control": "depth"
+    },
+    "seed": 2402,
+    "prompt": "The camera moves slowly into a quiet library reading room at night, tall wooden shelves, warm reading lamps, soft shadows."
+   },
+   "does": "Blender renders the clay pass, Qwen-Image 2.1 sets the first frame's look, LTX-2.5 renders the move."
+  },
+  {
+   "id": "score",
+   "type": "template",
+   "template": "audio_ace_step_1_5_split",
+   "label": "The score",
+   "model": "ACE-Step 1.5",
+   "peak_gib": 11,
+   "seed": 2403,
+   "seed_node": "3",
+   "seed_input": "seed",
+   "set": {
+    "94": {
+     "tags": "Quiet piano and soft strings, late night, calm and warm, no vocals",
+     "lyrics": "[inst]",
+     "bpm": 70,
+     "seed": 2403
+    },
+    "98": {
+     "seconds": 12
+    }
+   },
+   "does": "An original instrumental."
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "mux",
+   "label": "Picture and score",
+   "model": "ffmpeg",
+   "does": "Lays the score under the shot.",
+   "final": true,
+   "clip": "@shot",
+   "audio": "@score"
+  }
+ ]
+}

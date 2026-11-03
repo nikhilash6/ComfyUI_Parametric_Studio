@@ -1,6 +1,6 @@
 """Pipelines: productions where several model families make one result. One JSON file in studio/pipelines is one pipeline, in the recipe format (recipes.py runs it), and the page reads what a real run left in web/pipelines/<id>/proof.json. To add one see docs/ADDING_A_PIPELINE.md.
 Two step types join the recipe engine here, so a World Kit asset and a Virtual Set shot chain like any other step: `worldkit` builds an asset and `vset` renders a shot, through the same functions as their pages."""
-import json, re, shutil, time
+import json, os, re, shutil, subprocess, time
 from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from studio import recipes as R
@@ -139,6 +139,63 @@ def _run_pack(run, st, spec, ctx):
     st["facts"] = {"assets": body["assets"], "engine": body["manifest"]["engine"], "files": [a.get("file") or a.get("path") or a.get("name") for a in body["manifest"]["assets"]]}
     return [_local_file(run, st["id"], X.export_root(lib) / body["zip"], "file")]
 R.EXTRA_STEPS.update(worldkit=_run_worldkit, vset=_run_vset, worldkit_pack=_run_pack, worldkit_sheet=_run_sheet)
+
+# ---------- speech, captions and ffmpeg edits
+def _voice_cmd(cmd):
+    """The Voices page's runner, with the environment its proof used when STUDIO_VOICE_ENV names one."""
+    env = os.environ.get("STUDIO_VOICE_ENV")
+    return ["bash", "-c", 'source "$0" && exec "$@"', env, *cmd] if env and os.path.isfile(env) else cmd
+def _run_proc(cmd, what, timeout=1800):
+    from psn import paths
+    r = subprocess.run(_voice_cmd(cmd), capture_output=True, text=True, timeout=timeout, env={**os.environ, "PSN_MODELS_ROOT": paths.models_root() or ""})
+    if r.returncode: raise R.StepError(f"{what} failed: {(r.stderr or r.stdout).strip()[-400:]}")
+    try: return json.loads(r.stdout.strip().splitlines()[-1])
+    except (ValueError, IndexError): return {}
+def _run_voice(run, st, spec, ctx):
+    """One line read by a speech model from the Voices page (Kokoro, Chatterbox, Qwen3-TTS...), in its own process."""
+    from studio import feature_voices as FV
+    m = FV.model(spec["voice_model"]); d = R._root() / run["run"]; d.mkdir(parents=True, exist_ok=True); out = d / f"{st['id']}.wav"
+    b = {"text": R._fill(spec["text"], ctx["values"]), "voice": spec.get("voice") or "", "seed": int(spec.get("seed", 7)) + ctx["seed_add"]}; st["seed"] = b["seed"]
+    try: cmd = FV.command(m, b, out)
+    except Exception as e: raise R.StepError(R._detail(e)) from None
+    got = _run_proc(cmd, m["label"]); st["facts"] = {k: got.get(k) for k in ("seconds", "voice") if got.get(k) is not None}
+    return [{"filename": out.name, "subfolder": "", "type": "recipe", "kind": "audio", "local": str(out), "url": f"/api/recipes/files/{run['run']}/{out.name}"}]
+def _run_captions(run, st, spec, ctx):
+    """Timed captions from what was said: Whisper, on the CPU."""
+    import sys
+    src = R._pick(ctx, spec["audio"])["local"]; d = R._root() / run["run"]; out = d / f"{st['id']}.srt"
+    got = _run_proc([os.environ.get("STUDIO_VOICE_PYTHON") or sys.executable, str(HERE / "worldkit" / "runners" / "captions_srt.py"), "--audio", src, "--out", str(out)], "Whisper")
+    st["facts"] = {"cues": got.get("cues"), "heard": got.get("text", "")[:600]}; st["note"] = f"{got.get('cues')} captions"
+    return [{"filename": out.name, "subfolder": "", "type": "recipe", "kind": "file", "local": str(out), "url": f"/api/recipes/files/{run['run']}/{out.name}"}]
+def _ffd(path): return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(path)], capture_output=True, text=True).stdout.strip() or 0)
+STYLE = "FontName=Archivo,FontSize=17,Bold=1,PrimaryColour=&H0018C5F5,OutlineColour=&H00080907,BorderStyle=1,Outline=2,Shadow=0,MarginV=34"
+def _run_edit(run, st, spec, ctx):
+    """ffmpeg on the CPU. still: a picture held for a line of speech with a slow push in. concat: clips one after another. burn: captions onto a clip. podcast: a picture, a waveform and the audio."""
+    op = spec["op"]; a = spec.get("args") or {}; d = R._root() / run["run"]; d.mkdir(parents=True, exist_ok=True); out = d / f"{st['id']}.mp4"; W, H = a.get("size", [1280, 720])
+    pic = lambda r: R._pick(ctx, r, "image")["local"]; aud = lambda r: R._pick(ctx, r, "audio")["local"]; vid = lambda r: R._pick(ctx, r, "video")["local"]
+    if op == "still":
+        img = pic(spec["image"]); sound = aud(spec["audio"]) if spec.get("audio") else None; secs = (_ffd(sound) + float(a.get("pad", 0.6))) if sound else float(a.get("seconds", 4)); n = int(secs * R.FPS)
+        z = f"scale={W * 2}:{H * 2}:force_original_aspect_ratio=increase,crop={W * 2}:{H * 2},zoompan=z='1+{float(a.get('zoom', 0.08))}*on/{n}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={n}:s={W}x{H}:fps={R.FPS},format=yuv420p"
+        args = ["-loop", "1", "-i", img] + (["-i", sound, "-af", "apad", "-c:a", "aac", "-b:a", "160k"] if sound else []) + ["-vf", z, "-t", f"{secs:.2f}", "-c:v", "libx264", "-crf", "18", str(out)]
+        R._ff(args)
+    elif op == "concat":
+        r = R.join([vid(x) for x in spec["clips"]], out, float(a.get("crossfade", 0)), True); st["note"] = r.get("note", "")
+    elif op == "burn":
+        srt = R._pick(ctx, spec["captions"])["local"]; R._ff(["-i", vid(spec["clip"]), "-vf", f"subtitles={srt}:force_style='{STYLE}'", "-c:v", "libx264", "-crf", "19", "-c:a", "copy", str(out)])
+    elif op == "podcast":
+        img = pic(spec["image"]); sound = aud(spec["audio"])
+        R._ff(["-loop", "1", "-i", img, "-i", sound, "-filter_complex", f"[0]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},setsar=1[b];[1:a]aformat=channel_layouts=mono,showwaves=s={W}x{H // 6}:mode=cline:colors=#f5c518:rate={R.FPS}[w];[b][w]overlay=0:H-h-{H // 4},format=yuv420p[v]", "-map", "[v]", "-map", "1:a", "-c:v", "libx264", "-crf", "19", "-c:a", "aac", "-b:a", "160k", "-shortest", str(out)])
+    elif op == "loop_to_audio":
+        sound = aud(spec["audio"]); secs = _ffd(sound)
+        R._ff(["-stream_loop", "-1", "-i", vid(spec["clip"]), "-i", sound, "-map", "0:v", "-map", "1:a", "-t", f"{secs:.2f}", "-c:v", "libx264", "-crf", "19", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", str(out)])
+    elif op == "concat_audio":
+        out = d / f"{st['id']}.wav"; parts = [aud(x) for x in spec["clips"]]; gap = float(a.get("gap", 0.5))
+        fc = "".join(f"[{i}:a]aresample=48000,aformat=channel_layouts=mono,apad=pad_dur={gap}[a{i}];" for i in range(len(parts))) + "".join(f"[a{i}]" for i in range(len(parts))) + f"concat=n={len(parts)}:v=0:a=1[o]"
+        R._ff(sum((["-i", p] for p in parts), []) + ["-filter_complex", fc, "-map", "[o]", str(out)])
+        return [{"filename": out.name, "subfolder": "", "type": "recipe", "kind": "audio", "local": str(out), "url": f"/api/recipes/files/{run['run']}/{out.name}"}]
+    else: raise R.StepError(f"unknown edit {op}")
+    return [{"filename": out.name, "subfolder": "", "type": "recipe", "kind": "video", "local": str(out), "url": f"/api/recipes/files/{run['run']}/{out.name}"}]
+R.EXTRA_STEPS.update(voice=_run_voice, captions=_run_captions, edit=_run_edit); R.CPU_KINDS |= {"captions", "edit"}
 
 # ---------- API. Runs go through /api/recipes/{id}/run, the same queue as every recipe.
 def _public(r):

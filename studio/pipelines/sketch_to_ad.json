@@ -1,0 +1,130 @@
+{
+ "id": "sketch_to_ad",
+ "order": 20,
+ "kicker": "Product design",
+ "title": "A product sketch becomes an ad",
+ "pitch": "A pencil sketch of a lamp in. A photo that follows the sketch's lines, the lamp switching on, and a score out.",
+ "why": "The sketch is the brief. Klein draws it, Z-Image's union ControlNet follows its lines into a photo, Wan 2.2 turns the lamp on, and Music 3 scores the moment.",
+ "tags": [
+  "product",
+  "video"
+ ],
+ "fields": [],
+ "models": [
+  {
+   "name": "FLUX.2 Klein 4B",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Z-Image Turbo",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Z-Image Fun Union ControlNet",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "Wan 2.2 TI2V-5B",
+   "licence": "Apache-2.0",
+   "licence_class": "open"
+  },
+  {
+   "name": "MiniMax Music 3",
+   "licence": "MiniMax-Music3 Community License",
+   "licence_class": "community",
+   "note": "Commercial use must show the name MiniMax-Music3."
+  },
+  {
+   "name": "ffmpeg",
+   "licence": "LGPL/GPL, runs as a separate tool",
+   "licence_class": "open"
+  }
+ ],
+ "tips": [
+  "Clean dark lines on white paper are easiest for the ControlNet to follow."
+ ],
+ "steps": [
+  {
+   "id": "sketch",
+   "type": "goal",
+   "goal": "image",
+   "label": "The sketch",
+   "model": "FLUX.2 Klein 4B",
+   "peak_gib": 18,
+   "seed": 2001,
+   "does": "The design, as lines.",
+   "prompt": "A clean pencil line drawing of a modern adjustable desk lamp with a round shade and a weighted base, side view, dark lines on plain white paper, no shading, no text.",
+   "options": {
+    "aspect": "16:9",
+    "mode": "quality"
+   }
+  },
+  {
+   "id": "photo",
+   "type": "template",
+   "template": "image_z_image_turbo_fun_union_controlnet",
+   "label": "Photo from the sketch",
+   "model": "Z-Image Fun Union ControlNet",
+   "peak_gib": 25,
+   "seed": 2002,
+   "seed_node": "70:44",
+   "seed_input": "seed",
+   "values": {
+    "58|image": "@sketch"
+   },
+   "set": {
+    "70:45": {
+     "text": "Studio product photograph of a modern brushed brass desk lamp with a round shade and a heavy round base on a dark walnut desk, dark background, soft rim light. No text."
+    },
+    "70:60": {
+     "strength": 1.0
+    }
+   },
+   "does": "A photo that keeps the sketch's lines."
+  },
+  {
+   "id": "on",
+   "type": "goal",
+   "goal": "animate",
+   "label": "Switching on",
+   "model": "Wan 2.2 TI2V-5B",
+   "peak_gib": 24,
+   "seed": 2003,
+   "does": "The lamp turns on.",
+   "prompt": "The lamp switches on and warm light spreads slowly across the walnut desk. The camera slowly pushes in.",
+   "image": "@photo",
+   "options": {
+    "seconds": 5
+   }
+  },
+  {
+   "id": "score",
+   "type": "goal",
+   "goal": "music",
+   "label": "The score",
+   "model": "MiniMax Music 3",
+   "peak_gib": 23,
+   "seed": 2004,
+   "does": "An original instrumental.",
+   "prompt": "Global Metadata\nBasic Attributes: bpm is 96. Minimal warm electronic.\nGlobal Emotional Progression: One soft note grows into a calm, confident pulse.\nApplication Scenarios & Imagery: A lamp turning on in a dark room.\nSonics & Production Profile: Warm, clean, intimate.\nVocal Details\nVocal Gender & Timbre: No vocals. Purely instrumental.\nArrangement\nInstrument Lifecycle Description (Primary/Secondary Layering):\nPrimary: Soft synth keys.\nSecondary: Warm pad.\nGroove & Foundation Progression: A steady 96 BPM pulse.\nEmbellishments, Textures & Spatial FX: Swells and rises into each new section.",
+   "lyrics": "[inst]",
+   "options": {
+    "seconds": 30
+   }
+  },
+  {
+   "id": "final",
+   "type": "cpu",
+   "op": "mux",
+   "label": "Picture and score",
+   "model": "ffmpeg",
+   "does": "Lays the score under the clip.",
+   "final": true,
+   "clip": "@on",
+   "audio": "@score"
+  }
+ ]
+}

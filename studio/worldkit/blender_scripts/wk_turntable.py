@@ -1,8 +1,10 @@
 """blender -b --factory-startup --python wk_turntable.py -- PAYLOAD.json
 payload {"model": glb or "" (a look: a test scene), "look", "frames", "size", "out_dir", "interior": bool,
-         "elevation": camera height as a share of the asset's size, "kit": a place's kit (frames the orbit on the place), "fit": fill the frame with the asset, in its rest pose (a character), "samples", "engine"}
+         "elevation": camera height over its horizontal distance (0.35 looks down about 19 degrees), "kit": a place's kit (frames the orbit on the place),
+         "fit": show a character in its rest pose, not caught in a clip, "samples", "engine"}
 out_dir/0001.png .. NNNN.png: the camera circles the asset once (inside a room it turns on the spot), under the look.
-Colliders are hidden. PPWK {"ok", "frames"}."""
+An asset that is not a place is framed by its bounding sphere (_fit.py), so a ring and an anchor both fill the frame;
+the page's "Real scale" tag says how big it really is. Colliders are hidden. PPWK {"ok", "frames"}."""
 import math
 import os
 import sys
@@ -11,11 +13,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bpy  # noqa: E402
 from mathutils import Vector  # noqa: E402
 
+import _fit  # noqa: E402
 import _wk  # noqa: E402
 
 #: A place's orbit: camera height as a share of the footprint's half diagonal, and how much of the footprint fits the frame (under 1 crops in).
 PLACE_VIEW = {"street": (0.85, 0.88), "beach": (0.30, 0.72)}
-FIT_MARGIN = 1.04
 
 
 def _test_scene() -> list:
@@ -54,18 +56,21 @@ def run(p):
             bpy.context.view_layer.update()
     else:
         ms = _test_scene()
-    lo, hi = _wk.world_bounds(_wk.solids(ms) or ms)
+    body = _wk.solids(ms) or ms
+    lo, hi = _wk.world_bounds(body)
     _wk.apply_look(p["look"])
     c = Vector([(lo[i] + hi[i]) / 2 for i in range(3)])
-    r = max(hi[i] - lo[i] for i in range(3))
+    dims = [hi[i] - lo[i] for i in range(3)]
     cam = bpy.data.objects.new("turn_cam", bpy.data.cameras.new("turn_cam"))
     sc.collection.objects.link(cam)
-    sc.camera, cam.rotation_mode, cam.data.lens, cam.data.clip_end = cam, "QUATERNION", 18.0 if p.get("interior") else 35.0, 8000.0
+    sc.camera, cam.rotation_mode, cam.data.lens, cam.data.clip_end = cam, "QUATERNION", 18.0 if p.get("interior") else 35.0, _fit.CLIP_END
     _wk.set_engine(sc, p.get("engine", "cycles"), int(p.get("samples", 16)))
     sc.render.resolution_x = sc.render.resolution_y = int(p["size"])
     sc.render.image_settings.file_format = "PNG"
     sc.render.image_settings.color_mode = "RGB"
     os.makedirs(p["out_dir"], exist_ok=True)
+    fov = _fit.view_angle(cam.data.lens, cam.data.sensor_width, sc.render.resolution_x, sc.render.resolution_y)
+    radius = _wk.sphere_radius(body, c)
     n = int(p["frames"])
     for i in range(n):
         a = 2 * math.pi * i / n
@@ -79,15 +84,10 @@ def run(p):
             dist = foot * near / math.tan(cam.data.angle / 2)
             pos = Vector((c.x + math.sin(a) * dist, c.y - math.cos(a) * dist, lo[2] + foot * high))
             look = Vector((c.x, c.y, lo[2] + min(hi[2] - lo[2], 6.0) * 0.3))
-        elif p.get("fit"):
-            half = (Vector(hi) - Vector(lo)).length / 2
-            dist = half * FIT_MARGIN / math.tan(cam.data.angle / 2)
-            pos = c + Vector((math.sin(a) * dist, -math.cos(a) * dist, r * float(p.get("elevation", 0.1))))
-            look = c
         else:
-            dist = r * 1.6 + 0.5
-            pos = c + Vector((math.sin(a) * dist, -math.cos(a) * dist, r * float(p.get("elevation", 0.35)) + 0.3))
-            look = c
+            # a prop, a figure, a character or a look's test scene: its bounding sphere fills the frame from every side
+            xyz, cam.data.clip_start, cam.data.clip_end = _fit.orbit(c, radius, dims, fov, a, float(p.get("elevation", 0.35)))
+            pos, look = Vector(xyz), c
         cam.location = pos
         cam.rotation_quaternion = (look - pos).to_track_quat("-Z", "Y")
         sc.render.filepath = os.path.join(p["out_dir"], f"{i + 1:04d}.png")
