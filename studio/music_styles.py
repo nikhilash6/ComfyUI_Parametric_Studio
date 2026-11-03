@@ -3,7 +3,7 @@ import json, re
 from pathlib import Path
 from fastapi import APIRouter, HTTPException
 
-DATA = Path(__file__).resolve().parent / "music3_styles.json"; SAFE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+LYRICS = Path(__file__).resolve().parent / "music3_lyrics.json"; DATA = Path(__file__).resolve().parent / "music3_styles.json"; SAFE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 router = APIRouter()
 _cache = {}
 
@@ -16,22 +16,35 @@ def load():
         _cache.update(mt=mt, data=d)
     return _cache["data"]
 
+def lyrics():
+    """Screened finished lyrics from the owner's genre batch, by style id (music3_lyrics.json). Empty when the file is missing: the library still works."""
+    try: mt = LYRICS.stat().st_mtime
+    except OSError: return {}
+    if _cache.get("lmt") != mt:
+        try: _cache.update(lmt=mt, lyrics=json.loads(LYRICS.read_text(encoding="utf-8")))
+        except ValueError: _cache.update(lmt=mt, lyrics={})
+    return _cache.get("lyrics") or {}
+
 def _summary(s):
     """What the browse list needs: no card text, so the list stays small. A studio-authored style carries its marks everywhere it is listed."""
     c = s["cards"]; row = {"id": s["id"], "label": s["label"], "cards": len(c), "bpm": c[0].get("bpm")}
     for k in ("source", "proof", "note", "aliases"):
         if s.get(k): row[k] = s[k]
+    if s["id"] in (lyrics().get("sets") or {}): row["lyrics"] = True
     return row
 
 @router.get("/api/music-styles")
 def styles_list():
     d = load()
-    return {"note": d["note"], "counts": d["counts"], "source": d["source"], "families": [{"id": f["id"], "label": f["label"], "cues": f["cues"], "styles": [_summary(s) for s in f["styles"]]} for f in d["families"]]}
+    return {"note": d["note"], "counts": d["counts"], "with_lyrics": len(lyrics().get("sets") or {}), "source": d["source"], "families": [{"id": f["id"], "label": f["label"], "cues": f["cues"], "styles": [_summary(s) for s in f["styles"]]} for f in d["families"]]}
 
 @router.get("/api/music-styles/{style_id}")
 def style_detail(style_id: str):
     if not SAFE.match(style_id): raise HTTPException(400, "bad style id")
     for f in load()["families"]:
         for s in f["styles"]:
-            if s["id"] == style_id: return {**s, "family": f["id"], "family_label": f["label"]}
+            if s["id"] == style_id:
+                out = {**s, "family": f["id"], "family_label": f["label"]}; L = lyrics(); ls = (L.get("sets") or {}).get(style_id)
+                if ls: out["lyrics_set"] = {**ls, "written_by": L.get("written_by"), "screened": L.get("screened"), "note": L.get("note")}
+                return out
     raise HTTPException(404, "unknown style")

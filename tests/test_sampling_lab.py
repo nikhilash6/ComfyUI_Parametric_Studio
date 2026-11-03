@@ -72,7 +72,8 @@ def test_no_pack_files_copied_in():
     src = (ROOT / "scripts" / "build_sampling_lab.py").read_text(); assert "import_module" not in src and not re.search(r"\b(exec|eval)\(", src)
 
 def test_every_render_file_is_there_and_all_core():
-    done = [r for r in renders["renders"] if r["status"] == "rendered"]; assert 35 <= len(done) <= 60
+    """The core proof sets stay core-only. Pack renders live in their own pack-* sets, checked in test_sampling_lab_live.py."""
+    done = [r for r in renders["renders"] if r["status"] == "rendered" and not str(r.get("set", "")).startswith("pack-")]; assert 35 <= len(done) <= 60
     core = set(G.CORE_PATCHES) | {"PerpNegGuider"}
     for r in done:
         assert (ROOT / "studio/web" / r["url"]).exists(), r["id"]
@@ -143,8 +144,12 @@ def test_no_em_dashes_in_the_page():
     for f in ("samplinglab.js", "samplinglab_kit.js", "samplinglab_bench.js", "samplinglab_method.js", "samplinglab_logic.js", "samplinglab.css"): assert "\u2014" not in (WEB / f).read_text(), f
 
 def test_only_core_methods_claim_a_render():
-    assert not [e["id"] for e in atlas["entries"] if e["rendered"] and not e["in_core"]]
-    assert renders["pack_lab"]["rendered"] == 0, "the page says no pack method is proven; change the copy if that ever changes"
+    """A method outside core may claim a render only through a pack-* set rendered on this machine with its pack installed, and the page says so."""
+    pack_shots = {r["id"] for r in renders["renders"] if str(r.get("set", "")).startswith("pack-") and r["status"] == "rendered" and not r.get("baseline")}
+    for e in atlas["entries"]:
+        if e["rendered"] and not e["in_core"]: assert e["live"] and set(e["rendered_ids"]) <= pack_shots, e["id"]
+    assert renders["pack_lab"]["rendered"] == 0, "the old Pack Lab sandbox never proved a pack method"
+    assert renders["packs"]["rendered"] == len(pack_shots) and "own ComfyUI" in (ROOT / "studio/web/samplinglab.js").read_text()
 
 def test_surprise_figures_match_the_measures():
     by = {r["id"]: r for r in renders["renders"]}; s = measures["schedules"]

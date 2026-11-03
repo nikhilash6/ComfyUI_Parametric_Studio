@@ -22,9 +22,9 @@ SECONDS = [2, 3, 4, 5]
 H3_ASPECTS = {"16:9": "16:9 (Widescreen)", "1:1": "1:1 (Square)", "9:16": "9:16 (Portrait Widescreen)"}   # ResolutionSelector's exact labels on ComfyUI 0.43 (object_info); a wrong label is a 400 "Value not in list" on node 115
 H3_QUALITY = {"standard": 0.4, "high": 0.8}   # megapixels
 MUSIC_SECONDS = [30, 60, 90, 120]
-def G(label, tagline, template, family, kind, lic, lic_class, options, defaults, needs_image=False, negative="", gated=False, needs_video=False, needs_last_image=False, prompt_optional=False, fields=None, image_label="", video_label=""):
+def G(label, tagline, template, family, kind, lic, lic_class, options, defaults, needs_image=False, negative="", gated=False, needs_video=False, needs_last_image=False, prompt_optional=False, fields=None, image_label="", video_label="", needs_audio=False, audio_label=""):
     return {"label": label, "tagline": tagline, "template": template, "family": family, "kind": kind, "license": lic, "license_class": lic_class, "gated": gated, "needs_image": needs_image, "options": options, "defaults": defaults, "negative": negative,
-            "needs_video": needs_video, "needs_last_image": needs_last_image, "prompt_optional": prompt_optional, "fields": fields or {}, "image_label": image_label, "video_label": video_label}
+            "needs_video": needs_video, "needs_last_image": needs_last_image, "prompt_optional": prompt_optional, "fields": fields or {}, "image_label": image_label, "video_label": video_label, "needs_audio": needs_audio, "audio_label": audio_label}
 # ---------- flagship apps: recast, vfx_ltx, reshoot, director. Video inputs are uploaded with /api/upload and sent as {"video": name}; a second still as {"last_image": name}.
 H3_LICENCE = "MiniMax H3 community licence"; LTX_LICENCE = "LTX-2.x community licence (gated download)"
 # Owner's prompting rules for H3: camera = action + amplitude + speed + start/end framing; one main action; one continuous shot, no cuts.
@@ -168,6 +168,7 @@ GOALS = {
  "orbit360": G("Frozen orbit", "Freeze one moment of a clip and orbit the camera 360 degrees around it (MiniMax H3)", "h3_orbit360_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {"moment": ["start", "middle", "end"]}, {"moment": "middle"}, needs_video=True, prompt_optional=True, video_label="Source video"),
  "reshoot_wan": G("Reshoot (Wan camera)", "A new take with a real camera path from a clip's first frame, Wan 2.2 Fun Camera; the action is regenerated", "wan_camera_api.json", "Wan 2.2 Fun Camera 14B", "video", "Apache-2.0", "open", {"camera": list(WAN_CAMERA_POSES), "aspect": ASPECTS_AUTO, "seconds": [3, 5]}, {"camera": "zoom_in", "aspect": "auto", "seconds": 5}, needs_video=True, prompt_optional=True, negative=WAN_NEG, video_label="Source video"),
  "director": G("Director", "Direct your shot: camera move, lens, lighting and mood on MiniMax H3", "h3_t2v_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {**DIRECTOR_OPTIONS, "aspect": list(H3_ASPECTS), "quality": list(H3_QUALITY), "seconds": [2, 3, 4, 5, 6, 8], "speed": ["quality", "fast"]}, {**DIRECTOR_DEFAULTS, "aspect": "16:9", "quality": "high", "seconds": 5, "speed": "fast"}),
+ "song_lock": G("Song lock", "Bring your song: MiniMax H3 makes the performer in your picture sing it. Your song stays exact; the lip-sync is still weak", "h3_song_lock_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {"camera": ["locked", "push_in", "arc", "track", "handheld"], "aspect": list(H3_VIDEO_SIZES), "quality": ["draft", "high"], "seconds": [5, 6, 7, 8], "part": list(range(1, 9)), "speed": ["fast", "quality"]}, {"camera": "locked", "aspect": "16:9", "quality": "high", "seconds": 5, "part": 1, "speed": "fast"}, needs_image=True, prompt_optional=True, fields={"target": "Who sings, in plain words (default: the singer in the picture)", "lyrics": "The words sung in this stretch (optional; they guide the mouth shapes)", "start": "Start at, in seconds into your song (default 0)"}, image_label="Performer picture", needs_audio=True, audio_label="Your song"),
  "director_keyframes": G("Director: first + last frame", "Direct a shot between two frames you choose on MiniMax H3", "h3_fl2v_api.json", "MiniMax H3", "video", H3_LICENCE, "community", {**DIRECTOR_OPTIONS, "aspect": list(H3_ASPECTS), "quality": list(H3_QUALITY), "seconds": [2, 3, 4, 5, 6, 8], "speed": ["quality", "fast"]}, {**DIRECTOR_DEFAULTS, "camera": "locked", "aspect": "16:9", "quality": "high", "seconds": 5, "speed": "fast"}, needs_image=True, needs_last_image=True, image_label="First frame"),
 }
 for _g in GOALS.values():      # what a person must know before picking it (studio/licences.py): shown on the tile and beside the Generate button
@@ -180,6 +181,9 @@ def values_for(goal, req, image_name=None):
     fam = g["family"]
     if goal == "product": req = {**req, "prompt": product_prompt(req.get("prompt", ""), o)}
     if goal in FLAGSHIP: return flagship_values(goal, req, image_name, o, seed), o
+    if goal == "song_lock":
+        from studio import song_lock
+        return song_lock.goal_values(req, image_name, o, seed), o
     if goal == "music":
         v = {"caption": str(req.get("prompt", "")).strip(), "lyrics": str(req.get("lyrics", "") or "").strip(), "duration": int(o["seconds"]), "seed": seed}
         v["prompt"] = v["caption"]; return v, o

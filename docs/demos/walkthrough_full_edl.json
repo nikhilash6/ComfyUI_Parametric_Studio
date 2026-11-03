@@ -1,0 +1,1162 @@
+{
+ "voice": "Kokoro 82M, am_michael (Apache-2.0), on the CPU",
+ "music": "Music: one instrumental brief (warm cello and soft piano), made in the studio with MiniMax-Music3 (MiniMax-Music3 Community License) and ACE-Step 1.5 XL Base (MIT).",
+ "lufs": -16.1,
+ "true_peak_db": -1.9,
+ "lra": 3.1,
+ "seconds": 579.3,
+ "whisper": {
+  "model": "faster-distil-whisper large-v3, CPU, int8, one sentence at a time",
+  "wer": 0.0255,
+  "repeats": 0
+ },
+ "shots": [
+  {
+   "section": "Parametric Studio",
+   "shot": "clip:showcase/v_h3_dragon.mp4",
+   "start": 0.0,
+   "end": 14.2,
+   "label": "MiniMax H3",
+   "record": "studio/web/showcase/showcase.json v_h3_dragon (goal h3_video)"
+  },
+  {
+   "section": "Parametric Studio",
+   "shot": "tab:create",
+   "start": 14.2,
+   "end": 28.4,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Parametric Studio",
+   "shot": "tab:create@12",
+   "start": 28.4,
+   "end": 42.6,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Shot Board: one clip in, a whole shoot out",
+   "shot": "tab:shots",
+   "start": 42.6,
+   "end": 49.9,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Shot Board: one clip in, a whole shoot out",
+   "shot": "clip:docs/media/shotboard_demo.mp4@90.5",
+   "start": 49.9,
+   "end": 57.2,
+   "label": "Screen recording of one real Shot Board run",
+   "record": "README.md Demo"
+  },
+  {
+   "section": "Shot Board: one clip in, a whole shoot out",
+   "shot": "clip:showcase/vfx_same_water.mp4",
+   "start": 57.2,
+   "end": 64.5,
+   "label": "LTX-2.5 with IC-LoRAs",
+   "record": "studio/web/showcase/showcase.json vfx_same_water (goal vfx_ltx)"
+  },
+  {
+   "section": "Shot Board: one clip in, a whole shoot out",
+   "shot": "clip:showcase/vfx_same_night.mp4",
+   "start": 64.5,
+   "end": 71.8,
+   "label": "LTX-2.5 with IC-LoRAs",
+   "record": "studio/web/showcase/showcase.json vfx_same_night (goal vfx_ltx)"
+  },
+  {
+   "section": "Shot Board: one clip in, a whole shoot out",
+   "shot": "clip:showcase/vfx_same_cutout.mp4",
+   "start": 71.8,
+   "end": 79.1,
+   "label": "LTX-2.5 with IC-LoRAs",
+   "record": "studio/web/showcase/showcase.json vfx_same_cutout (goal vfx_ltx)"
+  },
+  {
+   "section": "The LTX VFX track",
+   "shot": "clip:showcase/vfx_same_transition.mp4",
+   "start": 79.1,
+   "end": 91.767,
+   "label": "LTX-2.5",
+   "record": "studio/web/showcase/showcase.json vfx_same_transition (goal ltx_transition)"
+  },
+  {
+   "section": "The LTX VFX track",
+   "shot": "tab:finish",
+   "start": 91.767,
+   "end": 104.433,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "The LTX VFX track",
+   "shot": "clip:campath/track_boat.mp4",
+   "start": 104.433,
+   "end": 117.1,
+   "label": "LTX-2.5 22B distilled int8 + LTX-2.3 Motion-Track-Control IC-LoRA",
+   "record": "studio/camera_proof.json"
+  },
+  {
+   "section": "The LTX VFX track",
+   "shot": "tab:campath",
+   "start": 117.1,
+   "end": 129.767,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Swap on any model",
+   "shot": "tab:swap",
+   "start": 129.767,
+   "end": 140.3,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Swap on any model",
+   "shot": "clip:showcase/recipes/recast_character.mp4",
+   "start": 140.3,
+   "end": 150.8,
+   "label": "FLUX.2 Klein 4B → MiniMax H3",
+   "record": "studio/recipes.json recipes.recast_character"
+  },
+  {
+   "section": "Swap on any model",
+   "shot": "clip:motion/scail2_0.mp4",
+   "start": 150.8,
+   "end": 161.3,
+   "label": "Wan SCAIL 2",
+   "record": "studio/family_status.json families.Wan-SCAIL-2.media[fam_wan-scail-2_0]"
+  },
+  {
+   "section": "The real graph, in 3D",
+   "shot": "tab:pro",
+   "start": 161.3,
+   "end": 171.433,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "The real graph, in 3D",
+   "shot": "tab:api",
+   "start": 171.433,
+   "end": 181.567,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "The real graph, in 3D",
+   "shot": "tab:apps",
+   "start": 181.567,
+   "end": 191.7,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Every model, its real state",
+   "shot": "tab:families",
+   "start": 191.7,
+   "end": 200.933,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Every model, its real state",
+   "shot": "tab:atlas",
+   "start": 200.933,
+   "end": 210.167,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Every model, its real state",
+   "shot": "tab:models",
+   "start": 210.167,
+   "end": 219.433,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Every model, its real state",
+   "shot": "tab:fit",
+   "start": 219.433,
+   "end": 228.667,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Recipes, pipelines and commercials",
+   "shot": "tab:recipes",
+   "start": 228.667,
+   "end": 236.167,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Recipes, pipelines and commercials",
+   "shot": "clip:showcase/recipes/anime_opening.mp4",
+   "start": 236.167,
+   "end": 243.7,
+   "label": "Anima → MiniMax H3 → MiniMax Music 3",
+   "record": "studio/recipes.json recipes.anime_opening"
+  },
+  {
+   "section": "Recipes, pipelines and commercials",
+   "shot": "tab:pipelines",
+   "start": 243.7,
+   "end": 251.2,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Recipes, pipelines and commercials",
+   "shot": "clip:pipelines/room_century/final.mp4",
+   "start": 251.2,
+   "end": 258.733,
+   "label": "Z-Image Turbo → Lotus depth → Z-Image Fun Union ControlNet → MiniMax H3 → ACE-Step 1.5",
+   "record": "studio/web/pipelines/room_century/proof.json"
+  },
+  {
+   "section": "Recipes, pipelines and commercials",
+   "shot": "tab:commercials",
+   "start": 258.733,
+   "end": 266.233,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Recipes, pipelines and commercials",
+   "shot": "clip:commercials/perfume_nocturne/commercial.mp4@12",
+   "start": 266.233,
+   "end": 273.767,
+   "label": "FLUX.2 Klein 4B → MiniMax H3 → MiniMax Music 3",
+   "record": "studio/commercial_proof.json spots.perfume_nocturne and /api/commercials/genres models"
+  },
+  {
+   "section": "Sound and voice",
+   "shot": "tab:clipsound",
+   "start": 273.767,
+   "end": 281.633,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Sound and voice",
+   "shot": "tab:dub",
+   "start": 281.633,
+   "end": 289.467,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Sound and voice",
+   "shot": "tab:voices",
+   "start": 289.467,
+   "end": 297.333,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Sound and voice",
+   "shot": "tab:music",
+   "start": 297.333,
+   "end": 305.2,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Sound and voice",
+   "shot": "clip:music/reactive.mp4",
+   "start": 305.2,
+   "end": 313.067,
+   "label": "MiniMax Music 3 → FlexAudioVisualizerCircular",
+   "record": "studio/music_proof.json extras.visual"
+  },
+  {
+   "section": "Motion, 3D and training",
+   "shot": "tab:motion",
+   "start": 313.067,
+   "end": 317.967,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Motion, 3D and training",
+   "shot": "clip:motion/wan_animate2_1.mp4",
+   "start": 317.967,
+   "end": 322.833,
+   "label": "Wan Animate 2",
+   "record": "/api/motion routes.wan_animate2 (studio/feature_motion.py)"
+  },
+  {
+   "section": "Motion, 3D and training",
+   "shot": "tab:worldkit",
+   "start": 322.833,
+   "end": 327.733,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Motion, 3D and training",
+   "shot": "tab:virtualset",
+   "start": 327.733,
+   "end": 332.633,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Motion, 3D and training",
+   "shot": "tab:viewer",
+   "start": 332.633,
+   "end": 337.533,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Motion, 3D and training",
+   "shot": "tab:train",
+   "start": 337.533,
+   "end": 342.4,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Motion, 3D and training",
+   "shot": "tab:gamebuilder",
+   "start": 342.4,
+   "end": 347.3,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Learn by doing",
+   "shot": "tab:university",
+   "start": 347.3,
+   "end": 356.7,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Learn by doing",
+   "shot": "tab:sampling",
+   "start": 356.7,
+   "end": 366.067,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Learn by doing",
+   "shot": "tab:words",
+   "start": 366.067,
+   "end": 375.433,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Learn by doing",
+   "shot": "tab:anatomy",
+   "start": 375.433,
+   "end": 384.833,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Learn by doing",
+   "shot": "tab:moe",
+   "start": 384.833,
+   "end": 394.2,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Tools that keep you honest",
+   "shot": "tab:packlab",
+   "start": 394.2,
+   "end": 404.4,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Tools that keep you honest",
+   "shot": "tab:doctor",
+   "start": 404.4,
+   "end": 414.633,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Tools that keep you honest",
+   "shot": "tab:prove",
+   "start": 414.633,
+   "end": 424.833,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Tools that keep you honest",
+   "shot": "tab:project",
+   "start": 424.833,
+   "end": 435.033,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "And the rest of the studio",
+   "shot": "tab:library",
+   "start": 435.033,
+   "end": 439.967,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "And the rest of the studio",
+   "shot": "tab:design",
+   "start": 439.967,
+   "end": 444.9,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "And the rest of the studio",
+   "shot": "tab:edit",
+   "start": 444.9,
+   "end": 449.833,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "And the rest of the studio",
+   "shot": "tab:auto",
+   "start": 449.833,
+   "end": 454.767,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "And the rest of the studio",
+   "shot": "tab:site",
+   "start": 454.767,
+   "end": 459.7,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "And the rest of the studio",
+   "shot": "tab:crew",
+   "start": 459.7,
+   "end": 464.6,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "And the rest of the studio",
+   "shot": "tab:director",
+   "start": 464.6,
+   "end": 469.533,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Held to its claims",
+   "shot": "card:checks",
+   "start": 469.533,
+   "end": 480.633,
+   "label": "card",
+   "record": "this script"
+  },
+  {
+   "section": "Held to its claims",
+   "shot": "tab:prove@3",
+   "start": 480.633,
+   "end": 491.7,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "In your pocket",
+   "shot": "phone",
+   "start": 491.7,
+   "end": 508.5,
+   "label": "screen capture, phone",
+   "record": "phone tour"
+  },
+  {
+   "section": "What comes next",
+   "shot": "tab:future",
+   "start": 508.5,
+   "end": 520.3,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "What comes next",
+   "shot": "clip:pipelines/room_century/final.mp4",
+   "start": 520.3,
+   "end": 532.1,
+   "label": "Z-Image Turbo → Lotus depth → Z-Image Fun Union ControlNet → MiniMax H3 → ACE-Step 1.5",
+   "record": "studio/web/pipelines/room_century/proof.json"
+  },
+  {
+   "section": "What comes next",
+   "shot": "tab:future@10",
+   "start": 532.1,
+   "end": 543.9,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "What comes next",
+   "shot": "clip:pipelines/anime_short/final.mp4",
+   "start": 543.9,
+   "end": 555.7,
+   "label": "Anima → Wan 2.2 TI2V-5B → FILM frame interpolation → ACE-Step 1.5",
+   "record": "studio/web/pipelines/anime_short/proof.json"
+  },
+  {
+   "section": "What comes next",
+   "shot": "clip:showcase/v_ltx_ink.mp4",
+   "start": 555.7,
+   "end": 567.5,
+   "label": "LTX-2.5",
+   "record": "studio/web/showcase/showcase.json v_ltx_ink (goal video_ltx)"
+  },
+  {
+   "section": "What comes next",
+   "shot": "card:end",
+   "start": 567.5,
+   "end": 579.3,
+   "label": "card",
+   "record": "this script"
+  }
+ ],
+ "captions": [
+  {
+   "text": "This is Parametric Studio: a creative studio built on ComfyUI that runs on your own GPU,",
+   "start": 0.6,
+   "end": 7.592
+  },
+  {
+   "text": "with open-weight models, at zero credits.",
+   "start": 7.592,
+   "end": 10.85
+  },
+  {
+   "text": "The code is open, under AGPL three, and each model keeps its own licence.",
+   "start": 11.13,
+   "end": 16.955
+  },
+  {
+   "text": "Let's walk through all of it.",
+   "start": 17.235,
+   "end": 19.385
+  },
+  {
+   "text": "The Create page is where most people start.",
+   "start": 19.985,
+   "end": 23.035
+  },
+  {
+   "text": "Pick what you want to make, describe it, and press Generate.",
+   "start": 23.315,
+   "end": 27.015
+  },
+  {
+   "text": "Each app shows what it needs to download, its model's licence,",
+   "start": 27.295,
+   "end": 31.593
+  },
+  {
+   "text": "and the memory it took on our card.",
+   "start": 31.593,
+   "end": 34.02
+  },
+  {
+   "text": "The wall behind is our own renders in 3D.",
+   "start": 34.3,
+   "end": 37.975
+  },
+  {
+   "text": "Drag it, and click any shot to see how it was made.",
+   "start": 38.255,
+   "end": 41.705
+  },
+  {
+   "text": "The headline feature is the Shot Board.",
+   "start": 42.605,
+   "end": 45.555
+  },
+  {
+   "text": "One clip in, a whole shoot out.",
+   "start": 45.835,
+   "end": 48.335
+  },
+  {
+   "text": "Drop in a clip and queue the shoot: a new camera move, a frozen-time orbit,",
+   "start": 48.615,
+   "end": 54.19
+  },
+  {
+   "text": "a recast lead from a single picture, then four LTX-2.5 effects: water, a clean plate,",
+   "start": 54.19,
+   "end": 60.507
+  },
+  {
+   "text": "day to night, and a matte.",
+   "start": 60.507,
+   "end": 62.44
+  },
+  {
+   "text": "Jobs run one at a time on your GPU, and every result keeps its exact graph and seed.",
+   "start": 62.72,
+   "end": 69.295
+  },
+  {
+   "text": "Export the board as one captioned contact video.",
+   "start": 69.575,
+   "end": 73.35
+  },
+  {
+   "text": "Seven jobs on one clip took about thirteen minutes on our card.",
+   "start": 73.63,
+   "end": 78.205
+  },
+  {
+   "text": "We entered the VFX Workflow Built with LTX track,",
+   "start": 79.105,
+   "end": 83.521
+  },
+  {
+   "text": "and LTX-2.5 is the core video model in every graph in that block.",
+   "start": 83.521,
+   "end": 89.38
+  },
+  {
+   "text": "Each effect adds one Lightricks IC-LoRA.",
+   "start": 89.66,
+   "end": 92.885
+  },
+  {
+   "text": "A transition graph bridges the last frame of one clip into the first frame of the next.",
+   "start": 93.165,
+   "end": 99.115
+  },
+  {
+   "text": "LTX Finish restores, deblurs, removes compression, colorizes, upscales, and turns SDR into HDR,",
+   "start": 99.395,
+   "end": 107.875
+  },
+  {
+   "text": "with HLG, EXR and ProRes masters, each measured against the clean original.",
+   "start": 107.875,
+   "end": 114.57
+  },
+  {
+   "text": "Camera Paths lets you draw a line for something to follow,",
+   "start": 114.85,
+   "end": 118.626
+  },
+  {
+   "text": "and it checks a take against the move you asked for: a match, a mismatch, or not enough to tell.",
+   "start": 118.626,
+   "end": 124.875
+  },
+  {
+   "text": "It can also pick the best of several takes by the move.",
+   "start": 125.155,
+   "end": 128.88
+  },
+  {
+   "text": "Swap on any model.",
+   "start": 129.78,
+   "end": 131.78
+  },
+  {
+   "text": "The Swap page lists every graph in the repo that swaps a character, a performer or an outfit,",
+   "start": 132.06,
+   "end": 138.494
+  },
+  {
+   "text": "each with a render made on our card, its time, its peak memory and its licence.",
+   "start": 138.494,
+   "end": 143.96
+  },
+  {
+   "text": "Recast on MiniMax H3 keeps the performance, the camera and the sound, and changes the person.",
+   "start": 144.24,
+   "end": 151.215
+  },
+  {
+   "text": "There are swaps on Wan, Qwen-Image and FLUX.2 Klein too.",
+   "start": 151.495,
+   "end": 155.77
+  },
+  {
+   "text": "Swap only invented adults, or people who gave you permission.",
+   "start": 156.05,
+   "end": 160.4
+  },
+  {
+   "text": "Every result is one click from the exact ComfyUI graph that made it.",
+   "start": 161.3,
+   "end": 166.375
+  },
+  {
+   "text": "Open Pro and the graph appears in 3D, with data flowing along its wires.",
+   "start": 166.655,
+   "end": 172.355
+  },
+  {
+   "text": "Click a node for a plain-language explanation of what it does.",
+   "start": 172.635,
+   "end": 176.76
+  },
+  {
+   "text": "The same graph runs when you press Generate, and you can copy it straight into ComfyUI.",
+   "start": 177.04,
+   "end": 182.915
+  },
+  {
+   "text": "The API page makes every graph callable from code,",
+   "start": 183.195,
+   "end": 186.814
+  },
+  {
+   "text": "and Apps puts every graph one click from a simple form.",
+   "start": 186.814,
+   "end": 190.795
+  },
+  {
+   "text": "Families shows every model family on this machine.",
+   "start": 191.695,
+   "end": 195.495
+  },
+  {
+   "text": "Each one has its own isolated ComfyUI,",
+   "start": 195.775,
+   "end": 198.749
+  },
+  {
+   "text": "started on demand behind a memory check and stopped when idle.",
+   "start": 198.749,
+   "end": 203.6
+  },
+  {
+   "text": "Most of them have rendered here, and the page says what the rest still need.",
+   "start": 203.88,
+   "end": 208.73
+  },
+  {
+   "text": "Atlas tells the history of generative AI, model by model,",
+   "start": 209.01,
+   "end": 213.218
+  },
+  {
+   "text": "with each one's licence and whether it runs here.",
+   "start": 213.218,
+   "end": 216.835
+  },
+  {
+   "text": "Models shows what is ready and what to fetch,",
+   "start": 217.115,
+   "end": 219.918
+  },
+  {
+   "text": "and Hardware Fit checks every goal against your card: measured where we measured it,",
+   "start": 219.918,
+   "end": 225.149
+  },
+  {
+   "text": "and labelled an estimate where we did not.",
+   "start": 225.149,
+   "end": 227.765
+  },
+  {
+   "text": "Recipes chain models into one click: a music video from a song, a short film from one sentence,",
+   "start": 228.665,
+   "end": 235.856
+  },
+  {
+   "text": "a product ad.",
+   "start": 235.856,
+   "end": 236.84
+  },
+  {
+   "text": "The library holds eight hundred and eighteen recipes,",
+   "start": 237.12,
+   "end": 240.554
+  },
+  {
+   "text": "and more than seven hundred of them show a result we rendered here.",
+   "start": 240.554,
+   "end": 244.895
+  },
+  {
+   "text": "Pipelines go further, with many models on one card: words to an actor on a built set,",
+   "start": 245.175,
+   "end": 251.199
+  },
+  {
+   "text": "or one room through a hundred years.",
+   "start": 251.199,
+   "end": 253.75
+  },
+  {
+   "text": "Every stage shows its model, seed, time and peak memory, and what failed.",
+   "start": 254.03,
+   "end": 259.28
+  },
+  {
+   "text": "Commercials writes, shoots and cuts a captioned TV spot in twenty-four genres,",
+   "start": 259.56,
+   "end": 265.204
+  },
+  {
+   "text": "with invented brands only.",
+   "start": 265.204,
+   "end": 267.085
+  },
+  {
+   "text": "Every word on screen is set by ffmpeg, never painted by a model.",
+   "start": 267.365,
+   "end": 272.865
+  },
+  {
+   "text": "Captions and Sound writes down what is said with Whisper and sets it in a real font,",
+   "start": 273.765,
+   "end": 279.266
+  },
+  {
+   "text": "and ControlFoley makes sound for a silent clip, for non-commercial use.",
+   "start": 279.266,
+   "end": 283.915
+  },
+  {
+   "text": "Dub and Voice keeps the face and changes the language.",
+   "start": 284.195,
+   "end": 288.07
+  },
+  {
+   "text": "Voices reads one line with every speech model on the machine,",
+   "start": 288.35,
+   "end": 292.641
+  },
+  {
+   "text": "and MiniMax H3 speaks the line you write into its prompt.",
+   "start": 292.641,
+   "end": 296.65
+  },
+  {
+   "text": "Every talking recipe now carries real written words, and a test holds it to that.",
+   "start": 296.93,
+   "end": 302.58
+  },
+  {
+   "text": "Music renders one song brief on every music model here, from MiniMax Music 3 to ACE-Step,",
+   "start": 302.86,
+   "end": 309.276
+  },
+  {
+   "text": "each measured, and checked with Whisper.",
+   "start": 309.276,
+   "end": 312.16
+  },
+  {
+   "text": "Motion makes a body move from words, follows a performance,",
+   "start": 313.06,
+   "end": 317.086
+  },
+  {
+   "text": "animates a portrait and lip-syncs a clip, and it shows only what ran here.",
+   "start": 317.086,
+   "end": 322.135
+  },
+  {
+   "text": "World Kit builds real-scale 3D places, props and rigged characters.",
+   "start": 322.415,
+   "end": 327.665
+  },
+  {
+   "text": "Virtual Set steers a video model with what Blender renders,",
+   "start": 327.945,
+   "end": 332.255
+  },
+  {
+   "text": "and the 3D viewer lets you orbit any result.",
+   "start": 332.255,
+   "end": 335.47
+  },
+  {
+   "text": "Train turns your pictures into a LoRA, and LoRA Showcase packages the proof.",
+   "start": 335.75,
+   "end": 340.975
+  },
+  {
+   "text": "Game Builder goes from a few prompts to a game that a bot has played to the end.",
+   "start": 341.255,
+   "end": 346.405
+  },
+  {
+   "text": "Then there is the teaching.",
+   "start": 347.305,
+   "end": 349.43
+  },
+  {
+   "text": "ComfyUniversity has a hundred and sixty-three lessons,",
+   "start": 349.71,
+   "end": 353.394
+  },
+  {
+   "text": "from your first wire to reading the sampler's source.",
+   "start": 353.394,
+   "end": 357.01
+  },
+  {
+   "text": "Each has a graph you can open, a lab that runs in the browser with no GPU, and a quiz.",
+   "start": 357.29,
+   "end": 363.99
+  },
+  {
+   "text": "Sampling Lab explains samplers and schedulers with real renders.",
+   "start": 364.27,
+   "end": 369.195
+  },
+  {
+   "text": "Which Word shows where each prompt word looked while the picture was drawn.",
+   "start": 369.475,
+   "end": 374.2
+  },
+  {
+   "text": "Model Anatomy opens a model file and shows what it is made of, without loading a single weight.",
+   "start": 374.48,
+   "end": 381.23
+  },
+  {
+   "text": "And Experts replays real routing from a thirty-billion-parameter mixture of experts:",
+   "start": 381.51,
+   "end": 386.839
+  },
+  {
+   "text": "for every word piece,",
+   "start": 386.839,
+   "end": 388.171
+  },
+  {
+   "text": "each of its forty-eight layers picks eight of a hundred and twenty-eight experts.",
+   "start": 388.171,
+   "end": 393.31
+  },
+  {
+   "text": "Pack Lab is where you try a node pack away from your work, with its risks in plain sight,",
+   "start": 394.21,
+   "end": 400.1
+  },
+  {
+   "text": "and reviewed never means safe.",
+   "start": 400.1,
+   "end": 402.085
+  },
+  {
+   "text": "Tonight our ComfyUI took on Pool 51, over two hundred reviewed node packs in fifty-one sections,",
+   "start": 402.365,
+   "end": 409.489
+  },
+  {
+   "text": "and now loads more than six thousand six hundred node classes.",
+   "start": 409.489,
+   "end": 414.09
+  },
+  {
+   "text": "Installed is not the same as proven.",
+   "start": 414.37,
+   "end": 417.245
+  },
+  {
+   "text": "Graph Doctor checks a broken workflow against the nodes you really have.",
+   "start": 417.525,
+   "end": 422.575
+  },
+  {
+   "text": "Prove It reruns our exact graph and seed on your machine, and lists what differs.",
+   "start": 422.855,
+   "end": 428.18
+  },
+  {
+   "text": "Project File packs a whole shoot into one file: never weights, never your folders.",
+   "start": 428.46,
+   "end": 434.135
+  },
+  {
+   "text": "There is more.",
+   "start": 435.035,
+   "end": 436.635
+  },
+  {
+   "text": "Library keeps everything you have made.",
+   "start": 436.915,
+   "end": 439.84
+  },
+  {
+   "text": "Designers makes whole concept sheets from a few choices.",
+   "start": 440.12,
+   "end": 443.945
+  },
+  {
+   "text": "Edit does AI edits, then a timeline.",
+   "start": 444.225,
+   "end": 447.325
+  },
+  {
+   "text": "Auto schedules creations for when the machine is idle.",
+   "start": 447.605,
+   "end": 451.505
+  },
+  {
+   "text": "The Site builder turns facts into a clean website.",
+   "start": 451.785,
+   "end": 455.235
+  },
+  {
+   "text": "And the Crew, led by Comfy Prime, answers from cited notes, out loud, in a local voice.",
+   "start": 455.515,
+   "end": 461.84
+  },
+  {
+   "text": "Live Director builds a Shot Board as you talk,",
+   "start": 462.12,
+   "end": 465.063
+  },
+  {
+   "text": "and nothing renders until you press the button yourself.",
+   "start": 465.063,
+   "end": 468.645
+  },
+  {
+   "text": "All of this is held to its claims.",
+   "start": 469.545,
+   "end": 472.145
+  },
+  {
+   "text": "Every release goes through a privacy scan of every file, for private paths,",
+   "start": 472.425,
+   "end": 477.449
+  },
+  {
+   "text": "secrets and private strings, a licence check, and the full test suite,",
+   "start": 477.449,
+   "end": 482.139
+  },
+  {
+   "text": "more than seven thousand tests, on the exact tree that ships.",
+   "start": 482.139,
+   "end": 486.225
+  },
+  {
+   "text": "Every number in this video comes from the repo's own records.",
+   "start": 486.505,
+   "end": 490.805
+  },
+  {
+   "text": "And it fits in your pocket.",
+   "start": 491.705,
+   "end": 493.805
+  },
+  {
+   "text": "Add the studio to your phone's home screen over Tailscale, with private HTTPS and a QR code.",
+   "start": 494.085,
+   "end": 501.635
+  },
+  {
+   "text": "The layout folds down to one column, and your GPU at home still does the work.",
+   "start": 501.915,
+   "end": 507.615
+  },
+  {
+   "text": "Where next?",
+   "start": 508.515,
+   "end": 509.965
+  },
+  {
+   "text": "First, what we learned.",
+   "start": 510.245,
+   "end": 512.195
+  },
+  {
+   "text": "Owning a model is not using it: of the more than eleven hundred model files on our map,",
+   "start": 512.475,
+   "end": 518.217
+  },
+  {
+   "text": "fewer than four hundred have rendered.",
+   "start": 518.217,
+   "end": 520.725
+  },
+  {
+   "text": "Installed is not proven, either.",
+   "start": 521.005,
+   "end": 523.58
+  },
+  {
+   "text": "So here is what we want to build, as plans, not promises.",
+   "start": 523.86,
+   "end": 528.135
+  },
+  {
+   "text": "Swap a stage: when a new model lands, drop it into a working pipeline,",
+   "start": 528.415,
+   "end": 533.231
+  },
+  {
+   "text": "rerun that stage and everything after it, and compare the two side by side.",
+   "start": 533.231,
+   "end": 538.39
+  },
+  {
+   "text": "Proof that travels: the graph, seed, models and licences carried inside each file.",
+   "start": 538.67,
+   "end": 544.72
+  },
+  {
+   "text": "Smaller cards: which pipelines fit which memory, from measured peaks.",
+   "start": 545.0,
+   "end": 549.825
+  },
+  {
+   "text": "A class for each chain, so every pipeline becomes a lesson.",
+   "start": 550.105,
+   "end": 554.455
+  },
+  {
+   "text": "And a way in for every model we hold but cannot reach yet.",
+   "start": 554.735,
+   "end": 559.16
+  },
+  {
+   "text": "We think graphs will outlast apps,",
+   "start": 559.44,
+   "end": 561.78
+  },
+  {
+   "text": "models will become parts that pass the same depth map and character sheet down a chain,",
+   "start": 561.78,
+   "end": 567.768
+  },
+  {
+   "text": "and one local GPU will become a small studio.",
+   "start": 567.768,
+   "end": 570.865
+  },
+  {
+   "text": "Parametric Studio.",
+   "start": 571.145,
+   "end": 573.17
+  },
+  {
+   "text": "Real graphs, your GPU, open weights, zero credits.",
+   "start": 573.45,
+   "end": 577.5
+  }
+ ]
+}

@@ -6,9 +6,9 @@ This file collects what the studio this one grew from learned about LightWan, Tu
 
 LightWan, TurboWan and Wan 2.2 S2V each have a guide card on the Processes tab and no studio route. LightWan and TurboWan are marked "tested on the author's old stack"; S2V is untested. Their cards open the Wan 2.2 family page, or the TurboWan family page, as the nearest thing. [run: studio/processes.json] [code: studio/processes.py:1]
 
-TurboWan was checked on 2026-11-02 and did not render: both 14.5 GB quantised experts are missing, and the earlier copies failed in the core UNETLoader with a KeyError, because TurboDiffusion's int8 checkpoints need TurboDiffusion's own runner. [run: studio/family_status.json:10269]
+TurboWan was checked on 2026-11-02 and did not render: both 14.5 GB quantised experts are missing, and the earlier copies failed in the core UNETLoader with a KeyError, because TurboDiffusion's int8 checkpoints need TurboDiffusion's own runner. [run: studio/family_status.json]
 
-Wan 2.2 S2V's fp8 weights are not present, so its ComfyUI template cannot run. [run: studio/family_status.json:11911]
+Wan 2.2 S2V's fp8 weights are not present, so its ComfyUI template cannot run. [run: studio/family_status.json]
 
 ## What the earlier studio measured
 
@@ -40,20 +40,20 @@ A count of about 41,000 distinct public Wan 2.2 prompts found short, plain Engli
 
 Every time and peak below is one run on the test machine's 96 GB card, not a promise for other cards. [inference]
 
-Wan 2.2 14B text to video now renders in the studio. ComfyUI's Wan 2.2 14B text-to-video graph, with its 4-step Lightning LoRAs, runs on the fp8-scaled high- and low-noise files Wan2_2-T2V-A14B-HIGH/LOW_fp8_e4m3fn_scaled_KJ, which were on disk with no graph before. A neutral prompt replaced the template's sample person. 81 frames at 640x640 in 258.3 s, 41.2 GiB peak, viewed. [run: studio/family_status.json:11589-11601] [code: studio/family_templates/wan22_14b_t2v_kj.json]
+Wan 2.2 14B text to video now renders in the studio. ComfyUI's Wan 2.2 14B text-to-video graph, with its 4-step Lightning LoRAs, runs on the fp8-scaled high- and low-noise files Wan2_2-T2V-A14B-HIGH/LOW_fp8_e4m3fn_scaled_KJ, which were on disk with no graph before. A neutral prompt replaced the template's sample person. 81 frames at 640x640 in 258.3 s, 41.2 GiB peak, viewed. [run: studio/family_status.json] [code: studio/family_templates/wan22_14b_t2v_kj.json]
 
-Wan 2.2 Fun renders recorded on 2026-11-02 through ComfyUI's templates: 14B Fun Camera in 307.7 s at 48.1 GiB and 14B Fun Control in 232.0 s at 42.9 GiB. The 5B Fun Control and Fun Inpaint graphs took 90.9 s at 24.3 GiB and 60.5 s at 23.2 GiB. [run: studio/family_status.json:11518-11569]
+Wan 2.2 Fun renders recorded on 2026-11-02 through ComfyUI's templates: 14B Fun Camera in 307.7 s at 48.1 GiB and 14B Fun Control in 232.0 s at 42.9 GiB. The 5B Fun Control and Fun Inpaint graphs took 90.9 s at 24.3 GiB and 60.5 s at 23.2 GiB. [run: studio/family_status.json]
 
-Fourteen Wan 2.2 14B LoRAs are wired into the official Wan 2.2 14B image-to-video and text-to-video templates. A speed LoRA takes the place of the template's own 4-step LoRA on the same expert; the Stable Video Infinity LoRAs are inserted right after it, through a new recipe step that adds one LoRA after a named model node. [code: studio/recipes.py:486-491] [run: studio/lora_recipes.json:7322-7406, studio/lora_recipes.json:9065-9155]
+Fourteen Wan 2.2 14B LoRAs are wired into the official Wan 2.2 14B image-to-video and text-to-video templates. A speed LoRA takes the place of the template's own 4-step LoRA on the same expert; the Stable Video Infinity LoRAs are inserted right after it, through a new recipe step that adds one LoRA after a named model node. [code: studio/recipes.py:486-491] [run: studio/lora_recipes.json]
 
-None of the fourteen Wan 2.2 14B LoRA cards can start yet: their LoRA files were still downloading, and none has rendered. The cards still say "This edition has no Wan 2.2 14B LoRA graph yet"; that wording is out of date, since the graph is wired and only the files are missing. [run: studio/lora_recipes.json:7384] [inference]
+None of the fourteen Wan 2.2 14B LoRA cards can start yet: their LoRA files were still downloading, and none has rendered. The cards still say "This edition has no Wan 2.2 14B LoRA graph yet"; that wording is out of date, since the graph is wired and only the files are missing. [run: studio/lora_recipes.json] [inference]
 
-Wan 2.2 Fun Camera follows a drawn camera path on the Camera Paths page: 832x480, 81 frames at 16 fps. A canyon path dragged 60 degrees round to the right and rising 20 degrees came out as a smooth rising orbit, MATCH by the checker and by eye: 252.8 s, 44.9 GiB. [code: studio/feature_camera.py:18] [run: studio/camera_proof.json:312-391]
+Wan 2.2 Fun Camera follows a drawn camera path on the Camera Paths page: 832x480, 81 frames at 16 fps. A canyon path dragged 60 degrees round to the right and rising 20 degrees came out as a smooth rising orbit, MATCH by the checker and by eye: 252.8 s, 44.9 GiB. [code: studio/feature_camera.py:18] [run: studio/camera_proof.json]
 
-Wan 2.2 Fun Camera only partly followed a cathedral path dragged 40 degrees to the left. It orbited a point behind the stone font, so the font drifted and the move read as a pan; the checker called it INCONCLUSIVE, never a pass (216.9 s). [run: studio/camera_proof.json:392-470, studio/camera_proof.json:7]
+Wan 2.2 Fun Camera only partly followed a cathedral path dragged 40 degrees to the left. It orbited a point behind the stone font, so the font drifted and the move read as a pan; the checker called it INCONCLUSIVE, never a pass (216.9 s). [run: studio/camera_proof.json]
 
-Wan 2.2 Fun Camera peaked at 44.9 GiB on both drawn paths, 0.9 GiB over the 44 GiB declared. The declaration is now 48 GiB for the proof and 46 GiB on the page. [run: studio/camera_proof.json:4] [code: studio/feature_camera.py:18]
+Wan 2.2 Fun Camera peaked at 44.9 GiB on both drawn paths, 0.9 GiB over the 44 GiB declared. The declaration is now 48 GiB for the proof and 46 GiB on the page. [run: studio/camera_proof.json] [code: studio/feature_camera.py:18]
 
-Wan Animate 2 is proven on the Motion page: an invented woman following another invented woman's clip (151.3 s, 40.9 GiB) and following a dance filmed from a 3D rig (127.5 s, 40.5 GiB), looked at frame by frame. Its flaws: 3.4 s (81 frames) per graph, its own plain background, a face that reads younger than the picture, and hair that swings oddly on fast turns. The family record still shows an older 2.0 s, 6.9 GiB entry, which is not a real render time. [run: studio/motion_proof.json:135-170, studio/family_status.json:12048-12071] [inference]
+Wan Animate 2 is proven on the Motion page: an invented woman following another invented woman's clip (151.3 s, 40.9 GiB) and following a dance filmed from a 3D rig (127.5 s, 40.5 GiB), looked at frame by frame. Its flaws: 3.4 s (81 frames) per graph, its own plain background, a face that reads younger than the picture, and hair that swings oddly on fast turns. The family record still shows an older 2.0 s, 6.9 GiB entry, which is not a real render time. [run: studio/motion_proof.json, studio/family_status.json] [inference]
 
-Wan Dancer has no usable render: its template ran and left no files in history. It is not proven here. [run: studio/family_status.json:12174-12194]
+Wan Dancer has no usable render: its template ran and left no files in history. It is not proven here. [run: studio/family_status.json]

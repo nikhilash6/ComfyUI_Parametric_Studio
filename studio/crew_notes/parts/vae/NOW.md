@@ -12,10 +12,10 @@ LTX audio VAE and precision: DubIt keeps a speaker's voice by encoding the clip'
 
 LTX audio VAE proof: the DubIt run that worked used a ComfyUI lane started with --fp32-vae (WER 0 on the Spanish line, 53.2 s, 43.1 GiB). With the half-precision VAE flag the audio encoder stopped. [run: studio/dub_proof.json:148-170]
 
-VAE precision and H3 voices: the half-precision VAE was first suspected of garbling MiniMax H3's speech. That was not the cause: talking templates gave H3 no written words. Clips with exact words inside the d tag measured 0 to 6% WER on the same half-precision lanes. [code: studio/recipe_library/video_templates.json:61] [claim: commit b60c9e34, 2026-11-02]
+VAE precision and H3 voices: the half-precision VAE was first suspected of garbling MiniMax H3's speech. That was not the cause: talking templates gave H3 no written words. Clips with exact words inside the d tag measured 0 to 6% WER on the same half-precision lanes. [code: studio/recipe_library/video_templates.json] [claim: commit b60c9e34, 2026-11-02]
 
-SDXL fp16-fix VAE: a studio template runs SDXL base with madebyollin's fp16-fix VAE for decoding. One recorded render: 30.4 s, 7.3 GiB peak. [code: studio/family_templates/index.json:3045-3047] [run: studio/family_status.json:9504-9506]
+SDXL fp16-fix VAE: a studio template runs SDXL base with madebyollin's fp16-fix VAE for decoding. One recorded render: 30.4 s, 7.3 GiB peak. [code: studio/family_templates/index.json] [run: studio/family_status.json]
 
-Music 3 full DAV decoder: a variant of ComfyUI's Music 3 graph decodes with minimax_music3_dav_full (292 MB, origin not identified) in place of the 207 MB DAV decoder. It made 60 s of music in 55.6 s at 14.7 GiB, checked by loudness and spectrum (steady beat, harmonic content, no silence), not by ear. [code: studio/family_templates/index.json:3495-3497] [run: studio/family_status.json:6110] [claim: commit 2099f6d7, 2026-11-02]
+Music 3 full DAV decoder: a variant of ComfyUI's Music 3 graph decodes with minimax_music3_dav_full (292 MB, origin not identified) in place of the 207 MB DAV decoder. It made 60 s of music in 55.6 s at 14.7 GiB, checked by loudness and spectrum (steady beat, harmonic content, no silence), not by ear. [code: studio/family_templates/index.json] [run: studio/family_status.json] [claim: commit 2099f6d7, 2026-11-02]
 
 VAE and black pictures: when the latent looks fine and the picture is black, the University lesson says to try --fp32-vae first; --fp16-vae warns it may cause black images. [docs: studio/university/200/CU-291-black-images-nan-grey/lesson.md:54-55]

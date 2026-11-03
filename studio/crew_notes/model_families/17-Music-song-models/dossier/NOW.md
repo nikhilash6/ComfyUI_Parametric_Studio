@@ -66,13 +66,13 @@ Sell the song: ACE-Step 1.5 is MIT; MiniMax Music 3 needs its name shown promine
 
 ## Final session findings, 2026-11-03
 
-Music 3 turbo is a studio template: ComfyUI's Music 3 graph with guillaume127's 8-step turbo LoRA on the DiT at strength 1.0, 8 steps, cfg 1.6, euler sampler, simple scheduler, settings taken from the LoRA's card. One render on 2026-11-02 took 61.0 s at 15.9 GiB peak, seed 238203647, on the test machine, one run. [code: studio/family_templates/music3_turbo8.json:80-90] [code: studio/family_templates/music3_turbo8.json:150-160] [run: studio/family_status.json:6118-6129]
+Music 3 turbo is a studio template: ComfyUI's Music 3 graph with guillaume127's 8-step turbo LoRA on the DiT at strength 1.0, 8 steps, cfg 1.6, euler sampler, simple scheduler, settings taken from the LoRA's card. One render on 2026-11-02 took 61.0 s at 15.9 GiB peak, seed 238203647, on the test machine, one run. [code: studio/family_templates/music3_turbo8.json:80-90] [code: studio/family_templates/music3_turbo8.json:150-160] [run: studio/family_status.json]
 
-Music 3 with the full DAV is a studio template that decodes with minimax_music3_dav_full (292 MB) in place of the 207 MB DAV decoder, keeping 30 steps and cfg 1.7. One render on 2026-11-02 took 55.6 s at 14.7 GiB peak, seed 1450167393, on the test machine, one run. [code: studio/family_templates/music3_dav_full.json:38] [code: studio/family_templates/music3_dav_full.json:83-84] [run: studio/family_status.json:6106-6117]
+Music 3 with the full DAV is a studio template that decodes with minimax_music3_dav_full (292 MB) in place of the 207 MB DAV decoder, keeping 30 steps and cfg 1.7. One render on 2026-11-02 took 55.6 s at 14.7 GiB peak, seed 1450167393, on the test machine, one run. [code: studio/family_templates/music3_dav_full.json:38] [code: studio/family_templates/music3_dav_full.json:83-84] [run: studio/family_status.json]
 
 Music 3 turbo and full DAV were checked by loudness and spectrum only: each made about 60 s of music with a steady beat, harmonic content and no silence. Nobody listened, so don't say which sounds better. [claim: commit 2099f6d7, 2026-11-02]
 
-Music 3 full DAV has an unknown origin. The template index says its origin was not identified, and its download link points to the ordinary 207 MB DAV file, not a 292 MB one, so following that link will not get the file that rendered. The turbo LoRA has no download link in the index at all. [code: studio/family_templates/index.json:3495-3520] [code: studio/family_templates/index.json:3527-3559]
+Music 3 full DAV has an unknown origin. The template index says its origin was not identified, and its download link points to the ordinary 207 MB DAV file, not a 292 MB one, so following that link will not get the file that rendered. The turbo LoRA has no download link in the index at all. [code: studio/family_templates/index.json] [code: studio/family_templates/index.json]
 
 The Music page now shows a whole music video, "Light the Wreckage" by Wren Halloway, an invented singer. It is labelled "Made before this studio": it was made on 2026-10-06 with the earlier studio's scripts, and no page or graph in this studio made it. [code: studio/music_models.json:676-685] [code: studio/music_models.json:706-707] [test: tests/test_music_page.py]
 

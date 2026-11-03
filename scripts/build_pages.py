@@ -9,7 +9,10 @@ SHIM = """<script>/* read-only demo: GET /api/x comes from saved files, POST exp
   window.fetch = async (u, o = {}) => { const m = String(u && u.url || u).match(/(?:^|\\/)api\\/(.*)$/); if (!m) return real(u, o);
     if ((o.method || "GET").toUpperCase() !== "GET") { if (m[1].split("?")[0] === "graph") { let g = ""; try { g = JSON.parse(o.body).goal; } catch {} const r = await answer("graphs__" + String(g).replace(/[^\\w.-]+/g, "__")); if (r.ok) return r; } return json({ detail: "This is the read-only demo. Install Parametric Studio to run this on your own GPU." }, 403); }
     const [path, q] = decodeURIComponent(m[1]).split("?"), key = (x) => x.replace(/[^\\w.-]+/g, "__"), have = await saved; return answer(q && have && have.has(key(path + "?" + q)) ? key(path + "?" + q) : key(path)); }; })();</script>"""
-BANNER = """<a href="%s" style="position:fixed;left:50%%;bottom:10px;transform:translateX(-50%%);z-index:60;background:#f5c518;color:#141006;font:600 13px Inter,system-ui;padding:8px 14px;border-radius:10px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.5);max-width:92vw;text-align:center">Read-only demo: real UI, real renders from one GPU. Get it and generate your own</a>"""
+BANNER = """<style>.demo-banner{position:fixed;right:100px;bottom:12px;z-index:60;display:block;min-height:40px;box-sizing:border-box;background:#f5c518;color:#141006;font:600 13px/1.3 Inter,system-ui,sans-serif;padding:8px 14px;border-radius:10px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.5);max-width:min(560px,calc(100vw - 200px))}.demo-banner:focus-visible{outline:2px solid #fff;outline-offset:2px}.demo-banner b{font-weight:800}main{padding-bottom:64px}
+@media (max-width:900px){.demo-banner{left:12px;right:auto;bottom:96px;max-width:calc(100vw - 104px);font-size:12px;padding:6px 10px}main{padding-bottom:120px}}</style>
+<a class="demo-banner" href="%s"><b>Read-only demo.</b> Real UI and real renders from one GPU; nothing generates here. Get it and make your own</a>
+<script>window.STUDIO_REPO = %s;</script>"""
 
 AUTHOR_FIGURES = ("free_gb", "disk_free_gb", "vram_free_gb")
 
@@ -33,12 +36,12 @@ def main():
         try: data = get(a.base, "/api/" + path) if obj is None else obj
         except Exception as e: print("  skipped", path, type(e).__name__); return None
         open(os.path.join(d, name + ".json"), "w").write(json.dumps(clean(data))); saved += 1; return data
-    for p in ("goals", "atlas", "crew", "edits", "models", "models/readiness", "models3d", "packs", "apps", "processes", "recipes", "schedules", "calibrate", "voice", "user", "recipe-library?limit=2000", "sampling/measures", "sampling/renders", "vset/capabilities", "vset/meta", "vset/lists", "vset/shots", "worldkit/assets", "worldkit/capabilities", "worldkit/looks", "worldkit/meshes", "worldkit/characters", "train/info", "train/datasets", "train/jobs", "train/loras",
-              "feature-pages", "all-graphs", "edits/catalogue", "pipelines", "3d/models", "motion", "music/models", "voices/models", "tryon/methods", "lorashow/loras", "loras", "packlab/picks",
+    for p in ("goals", "atlas", "crew", "edits", "models", "models/readiness", "models3d", "packs", "apps", "processes", "recipes", "schedules", "calibrate", "voice", "user", "recipe-library?limit=2000", "sampling/measures", "sampling/renders", "sampling/live", "vset/capabilities", "vset/meta", "vset/lists", "vset/shots", "worldkit/assets", "worldkit/capabilities", "worldkit/looks", "worldkit/meshes", "worldkit/characters", "train/info", "train/datasets", "train/jobs", "train/loras",
+              "feature-pages", "all-graphs", "edits/catalogue", "pipelines", "3d/models", "motion", "music/models", "music/kit", "song-lock", "packlab/pool51", "voices/models", "tryon/methods", "lorashow/loras", "loras", "packlab/picks",
               "director/status", "doctor/example", "project/runs", "rotation/status", "schedules/week", "live", "families/downloads/state", "models/download", "anatomy", "sampling/walk", "moe/load",
               # feature pages that open on one of these and otherwise showed only "no saved answer" in the demo
               "campath", "clipsound/clips", "clipsound/models", "commercials/genres", "commercials/proof", "dub/audio", "dub/clips", "dub/models", "finish", "finish/clips", "words",
-              "prompt-kits", "presets/library", "voices/personas", "sampling/graph", "oneclick", "packlab/pool51"): save(p)
+              "prompt-kits", "presets/library", "voices/personas", "sampling/graph", "oneclick"): save(p)
     # every graph the Apps, API and Pro pages can open, the renders Prove It can open, and the Hardware Fit table for each card size it offers
     for r in ((save("all-graphs") or {}).get("rows") or []):
         if (r.get("graph_url") or "").startswith("/api/"): save(r["graph_url"][5:])
@@ -49,6 +52,11 @@ def main():
     try: ph = get(a.base, "/api/phone")
     except Exception: ph = {}
     save("phone", {"tailscale": {"installed": False, "connected": False, "https_url": None, "serving": False}, "serve_command": ph.get("serve_command", ""), "lan_enabled": False, "lan_command": ph.get("lan_command", ""), "url": None})
+    # Game Builder: its kits and the games made here, with this machine's readiness replaced by the demo's (no GPU, no Godot), so the page says what it needs instead of "no saved answer"
+    try: gb = get(a.base, "/api/gamebuilder/status")
+    except Exception: gb = {}
+    rd = gb.get("readiness") or {}; why = "The read-only demo has no GPU or models. Install Parametric Studio to build games on your own machine."
+    save("gamebuilder/status", {"kits": gb.get("kits", []), "samples": gb.get("samples", []), "games": [], "demo": True, "readiness": {**{k: (False if isinstance(v, bool) else v) for k, v in rd.items() if k != "models"}, "models": [{**m, "ready": False, "why": why} for m in rd.get("models") or []]}})
     for e in ((save("sampling/atlas") or {}).get("entries") or []): save("sampling/entry/" + e["id"])
     for m in ((save("anatomy") or {}).get("models") or []):      # Model Anatomy: every file the header was read for
         if m.get("read"): save("anatomy/model/" + m["id"])
@@ -60,7 +68,7 @@ def main():
     for r in ((save("recipes") or {}).get("recipes") or []): save("recipes/" + r["id"])
     save("health", {"comfy": True, "comfy_url": "read-only demo", "edition": "demo", "backend": {"backend": "local", "target": "local", "spends_credits": False}})
     show = json.load(open(os.path.join(ROOT, "studio", "web", "showcase", "showcase.json")))
-    save("history", [{"job": x["id"], "goal": x["goal"], "prompt": x["prompt"], "options": x.get("options", {}), "seed": 11, "files": [{"filename": os.path.basename(x["src"]), "kind": x["kind"], "url": x["src"]}]} for x in show])
+    save("history", [{"job": x["id"], "goal": x["goal"], "prompt": x["prompt"], "options": x.get("options", {}), "seed": 11, "files": [{"filename": os.path.basename(x["src"]), "kind": x["kind"], "url": x["src"], **({"poster": x["poster"]} if x.get("poster") else {})}]} for x in show])
     for g in (save("graphs") or []): save("graphs/" + g["goal"])
     for g in (save("family-graphs") or {}).get("graphs", []): save(f"family-graphs/{g['slug']}/{g['name']}")
     for r in ((save("recipes") or {}).get("recipes") or []): save("recipe-graphs/" + r["id"])
@@ -80,6 +88,6 @@ def main():
     from studio.glb import knot_glb
     open(os.path.join(d, "sample.glb.json"), "wb").write(knot_glb())
     json.dump(sorted(f[:-5] for f in os.listdir(d) if f.endswith(".json")), open(os.path.join(d, "_index.json"), "w"))
-    p = os.path.join(a.out, "index.html"); h = open(p).read(); h = h.replace('<script type="importmap">', SHIM + '\n<script type="importmap">', 1); h = re.sub(r'<script>if \("serviceWorker".*?</script>', "", h, flags=re.S); h = h.replace("</body>", (BANNER % a.repo) + "\n</body>", 1); open(p, "w").write(h)
+    p = os.path.join(a.out, "index.html"); h = open(p).read(); h = h.replace('<script type="importmap">', SHIM + '\n<script type="importmap">', 1); h = re.sub(r'<script>if \("serviceWorker".*?</script>', "", h, flags=re.S); h = h.replace("</body>", (BANNER % (a.repo, json.dumps(a.repo))) + "\n</body>", 1); open(p, "w").write(h)
     size = sum(os.path.getsize(os.path.join(r, f)) for r, _, fs in os.walk(a.out) for f in fs); print(f"site: {saved} saved answers, {size >> 20} MB at {a.out}")
 main()

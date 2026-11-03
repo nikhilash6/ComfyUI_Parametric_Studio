@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parent; WF = ROOT.parent / "workflows"
 #: The graphs this page can queue. Each one says what it needs beyond ComfyUI's own nodes.
 PACK = "ComfyUI_RyanOnTheInside"
 RUNNABLE = {
-    "music3_api.json": {"needs": None}, "music_ace15_turbo_api.json": {"needs": None}, "music_ace15_xl_turbo_api.json": {"needs": None}, "music_ace15_xl_base_api.json": {"needs": None},
+    "music3_api.json": {"needs": None}, "music_music3_kit_api.json": {"needs": None}, "music_ace15_turbo_api.json": {"needs": None}, "music_ace15_xl_turbo_api.json": {"needs": None}, "music_ace15_xl_base_api.json": {"needs": None},
     "music_yue2_int8_api.json": {"needs": None}, "music_yue2_bf16_api.json": {"needs": None}, "music_stable_open_api.json": {"needs": None}, "music_yue2_cover_api.json": {"needs": None},
     "music_roti_ace_cover_api.json": {"needs": PACK}, "music_roti_ace_edit_api.json": {"needs": PACK}, "music_roti_ace_extract_api.json": {"needs": PACK}, "music_roti_features_api.json": {"needs": PACK}, "music_roti_visualizer_api.json": {"needs": PACK},
 }
@@ -30,6 +30,7 @@ def _read(name):
 
 
 def catalogue(): return _read("music_models.json")
+def kit(): return _read("music3_kit.json")
 def proof(): return _read("music_proof.json")
 
 
@@ -80,6 +81,14 @@ def listing():
 def models(): return listing()
 
 
+@router.get("/kit")
+def kit_get():
+    """The Music 3 style kit: sliders, turbo, their sources and what they can and can't do, and what has been rendered with them."""
+    k = kit()
+    if not k: raise HTTPException(503, "the style kit is not installed")
+    return k
+
+
 def graph_file(name):
     if name not in RUNNABLE or not (WF / name).is_file(): raise HTTPException(404, "no such music graph")
     return json.loads((WF / name).read_text(encoding="utf-8"))
@@ -107,6 +116,17 @@ def build(name, b):
             sv = os.path.basename(str(b.get("source") or ""))
             if not sv: raise HTTPException(400, "this graph needs a source audio file: upload one first")
             vals[k] = sv
+        elif k == "slider":      # the kit: one ntc-ai slider by id, or none (strength 0 on a real file leaves the text encoder untouched)
+            sl = {x["id"]: x for x in kit().get("sliders") or []}; sv = str(b.get("slider") or "none")
+            if sv != "none" and sv not in sl: raise HTTPException(400, "no such style slider")
+            vals[k] = sl[sv]["file"] if sv != "none" else next(iter(sl.values()), {}).get("file", "")
+            if not vals[k]: raise HTTPException(503, "the style kit is not installed")
+        elif k == "slider_strength":
+            lim = kit().get("strength") or {"min": 0.0, "max": 1.5, "default": 1.0}
+            try: sv = float(b.get("slider_strength") if b.get("slider_strength") is not None else lim["default"])
+            except (TypeError, ValueError): raise HTTPException(400, "slider strength must be a number") from None
+            vals[k] = 0.0 if str(b.get("slider") or "none") == "none" else max(lim["min"], min(lim["max"], sv))
+        elif k == "turbo": vals[k] = b.get("turbo") is True
         elif k in LIMITS: vals[k] = _clean(b.get(k) if b.get(k) else (b.get("style") if k == "caption" else ""), LIMITS[k])
         else: raise HTTPException(400, f"this graph asks for {k}, which this page doesn't know")
     if "style" in want and not vals["style"] or "caption" in want and not vals["caption"]: raise HTTPException(400, "write a style first")

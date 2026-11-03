@@ -1045,7 +1045,7 @@
     "Original lyrics only. Write enough of them: Music 3 stops when the words run out.",
     "Every tag on its own line, no numbers on the tags, identical choruses: the owner's rules from his music video maker.",
     "Every shot renders from the same character frame, never from the last frame before it: identity falls with each chained segment.",
-    "These are story shots. Lip-synced singing shots (H3 with the song locked into its audio) are in the owner's earlier studio and not in this chain yet."
+    "These are story shots. For lip-synced singing shots to a song you bring, with the song kept bit-exact, use the Song Lock recipe."
    ],
    "steps": [
     {

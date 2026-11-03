@@ -1,20 +1,20 @@
 {
  "as_of": "2026-11-03",
  "node_classes": {
-  "value": 6303,
-  "all_loaded": 6635,
+  "value": 6322,
+  "all_loaded": 6654,
   "partner_api_nodes": 332,
   "how": "GET /object_info on our ComfyUI 0.43.0 (read-only). value leaves out the partner API nodes (python_module comfy_api_nodes), which the open edition hides; all_loaded counts them too."
  },
  "families_with_render": {
-  "value": 76,
+  "value": 80,
   "listed": 95,
-  "with_media_shipped": 80,
+  "with_media_shipped": 81,
   "how": "studio/family_status.json: families whose test level is render, the figure the Families page shows as rendered by the author. with_media_shipped counts the families with any media file in studio/web, some from a template's own example run."
  },
  "graphs": {
-  "value": 1093,
-  "rows": 1134,
+  "value": 1098,
+  "rows": 1139,
   "by_source": {
    "goal": 20,
    "model3d": 11,
@@ -23,7 +23,7 @@
    "voices": 25,
    "gamebuilder": 5,
    "workflow": 27,
-   "family": 343,
+   "family": 348,
    "recipe": 693
   },
   "how": "GET /api/all-graphs on a studio of this checkout: counts.graph, the rows that open as a ComfyUI graph (goals, family templates, recipes, workflows, motion, voices, 3D). rows also counts the tools that run without a graph."
@@ -49,7 +49,7 @@
   "how": "The TABS list in studio/web/app.js plus GET /api/feature-pages (one page per studio/feature_*.py that has a PAGE)."
  },
  "rendered_media": {
-  "value": 2034,
+  "value": 2041,
   "by_folder": {
    "blepping_renders": 77,
    "campath": 10,
@@ -59,7 +59,7 @@
    "designer_art": 210,
    "dub": 6,
    "edit_art": 15,
-   "families": 279,
+   "families": 286,
    "finish": 16,
    "mesh_art": 4,
    "motion": 10,
@@ -78,11 +78,11 @@
   "how": "Files in studio/web: every video, sound and 3D file, and every picture that is not a still of one of those (poster frames, contact sheets, thumbnails, guides, and a commercial's shot frames are left out). Folders left out: icons, vendor, mesh_tools, site_examples, pack_lab_demos."
  },
  "crew_notes": {
-  "value": 189,
+  "value": 221,
   "how": "Markdown notes in studio/crew_notes/ (model family dossiers, studio topics), README.md not counted."
  },
  "tests": {
-  "value": 7423,
+  "value": 7462,
   "how": "python -m pytest --collect-only -q in this checkout: the tests collected."
  }
 }

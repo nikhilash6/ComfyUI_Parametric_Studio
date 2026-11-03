@@ -4,9 +4,9 @@ Where this file and older notes in this folder disagree, this file and STATE.md 
 
 ## New recorded runs
 
-Z-Image int8 (ComfyUI template image_z_image_int8) has one recorded run: 40.4 s, peak 21.7 GiB, seed 153952292. The record names z_image_bf16.safetensors as its model file, which was not checked further. [run: studio/family_status.json:12480-12494] [claim: studio commit 0abfba0e, 2026-11-02]
+Z-Image int8 (ComfyUI template image_z_image_int8) has one recorded run: 40.4 s, peak 21.7 GiB, seed 153952292. The record names z_image_bf16.safetensors as its model file, which was not checked further. [run: studio/family_status.json] [claim: studio commit 0abfba0e, 2026-11-02]
 
-Lumina 2 with the plain Gemma 2 2B encoder (template lumina2_gemma2_fp16_t2i) is the core Lumina 2 graph with gemma2-2b-fp16 in place of the usual Gemma 2 file. One run: 35.4 s, peak 12.3 GiB, seed 1383721100. It shows that encoder file loads; it is not a quality comparison. [code: studio/family_templates/index.json:2769] [run: studio/family_status.json:5808-5822] [claim: studio commit 2792c70f, 2026-11-02]
+Lumina 2 with the plain Gemma 2 2B encoder (template lumina2_gemma2_fp16_t2i) is the core Lumina 2 graph with gemma2-2b-fp16 in place of the usual Gemma 2 file. One run: 35.4 s, peak 12.3 GiB, seed 1383721100. It shows that encoder file loads; it is not a quality comparison. [code: studio/family_templates/index.json] [run: studio/family_status.json] [claim: studio commit 2792c70f, 2026-11-02]
 
 ## Training
 

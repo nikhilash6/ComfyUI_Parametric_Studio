@@ -1,6 +1,7 @@
 """The Sampling Lab: what samplers, schedulers, guidance, noise and latent maths really do, read from the source of ComfyUI and the node packs, with what can run here and proof for each.
 Data is built by scripts/build_sampling_lab.py from the Sampling Atlas and kept in studio/sampling_lab/: atlas.json (facts in our own words, no pack code), measures.json (numbers from core's own code on the CPU), renders.json with the JPEGs in web/sampling_lab (fixed-seed proof renders).
-GET /api/sampling/summary, /atlas, /entry/{id}, /measures, /renders, /walk, /graph. POST /api/sampling/run queues one core-only graph, the same builder as the proof sweep."""
+live.json (every sampler and scheduler name this machine's ComfyUI offered, with pack, licence, entry and render; built by scripts/add_pool51_atlas.py).
+GET /api/sampling/summary, /atlas, /entry/{id}, /measures, /renders, /live, /walk, /graph. POST /api/sampling/run queues one core-only graph, the same builder as the proof sweep."""
 import json, os, sys, time, hashlib
 from pathlib import Path
 from fastapi import APIRouter, HTTPException, Request
@@ -22,6 +23,7 @@ def atlas(): return _load("atlas.json", {"entries": [], "counts": {}, "credits":
 def measures(): return _load("measures.json", {})
 def renders(): return _load("renders.json", {"renders": [], "models": {}})
 def walk(): return _load("walk.json", {})
+def live(): return _load("live.json", {"samplers": [], "schedulers": [], "guidance": []})
 
 LIST_FIELDS = ("id", "name", "family", "subfamily", "in_core", "live", "needs_pack", "label", "plain", "rendered", "providers_n", "licences", "verdicts", "core_ref", "rendered_ids")
 @router.get("/api/sampling/summary")
@@ -41,6 +43,10 @@ def entry(eid: str):
 def measures_route(): return measures()
 @router.get("/api/sampling/renders")
 def renders_route(): return renders()
+@router.get("/api/sampling/live")
+def live_route():
+    """Every sampler and scheduler name this machine's ComfyUI offered when the page was built, and the guidance that runs here, each with its pack, licence, atlas entry and render."""
+    return live()
 @router.get("/api/sampling/walk")
 def walk_route():
     """The latent walk: two seeds slerped, two prompts lerped, every sampler step, rendered on a lane of its own by scripts/latent_walk_renders.py."""

@@ -1,0 +1,234 @@
+{
+ "voice": "Kokoro 82M, am_michael (Apache-2.0), on the CPU",
+ "music": "Music: one instrumental brief (warm cello and soft piano), made in the studio with MiniMax-Music3 (MiniMax-Music3 Community License) and ACE-Step 1.5 XL Base (MIT).",
+ "lufs": -16.2,
+ "true_peak_db": -1.9,
+ "lra": 2.7,
+ "seconds": 99.775,
+ "whisper": {
+  "model": "faster-distil-whisper large-v3, CPU, int8, one sentence at a time",
+  "wer": 0.0,
+  "repeats": 0
+ },
+ "shots": [
+  {
+   "section": "Cinematic Studio",
+   "shot": "tab:shots",
+   "start": 0.0,
+   "end": 7.933,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "Cinematic Studio",
+   "shot": "clip:showcase/director_wide.mp4",
+   "start": 7.933,
+   "end": 15.867,
+   "label": "MiniMax H3",
+   "record": "studio/web/showcase/showcase.json director_wide (goal director)"
+  },
+  {
+   "section": "Cinematic Studio",
+   "shot": "clip:docs/media/shotboard_demo.mp4@90.5",
+   "start": 15.867,
+   "end": 23.767,
+   "label": "Screen recording of one real Shot Board run",
+   "record": "README.md Demo"
+  },
+  {
+   "section": "Re-shoot a video",
+   "shot": "clip:showcase/reshoot_orbit_take.mp4",
+   "start": 23.767,
+   "end": 31.033,
+   "label": "MiniMax H3 Ref2VA",
+   "record": "studio/web/showcase/showcase.json reshoot_orbit_take (goal reshoot)"
+  },
+  {
+   "section": "Openjutsu: swap a character in a video",
+   "shot": "clip:showcase/recipes/recast_character.mp4",
+   "start": 31.033,
+   "end": 37.733,
+   "label": "FLUX.2 Klein 4B → MiniMax H3",
+   "record": "studio/recipes.json recipes.recast_character"
+  },
+  {
+   "section": "Openjutsu: swap a character in a video",
+   "shot": "tab:swap",
+   "start": 37.733,
+   "end": 44.467,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "VFX built with LTX",
+   "shot": "clip:showcase/vfx_same_water.mp4",
+   "start": 44.467,
+   "end": 49.867,
+   "label": "LTX-2.5 with IC-LoRAs",
+   "record": "studio/web/showcase/showcase.json vfx_same_water (goal vfx_ltx)"
+  },
+  {
+   "section": "VFX built with LTX",
+   "shot": "clip:showcase/vfx_same_night.mp4",
+   "start": 49.867,
+   "end": 55.3,
+   "label": "LTX-2.5 with IC-LoRAs",
+   "record": "studio/web/showcase/showcase.json vfx_same_night (goal vfx_ltx)"
+  },
+  {
+   "section": "VFX built with LTX",
+   "shot": "tab:finish",
+   "start": 55.3,
+   "end": 60.7,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "How it's built",
+   "shot": "tab:pro",
+   "start": 60.7,
+   "end": 69.067,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "How it's built",
+   "shot": "card:built",
+   "start": 69.067,
+   "end": 77.4,
+   "label": "card",
+   "record": "this script"
+  },
+  {
+   "section": "How it's built",
+   "shot": "tab:packlab",
+   "start": 77.4,
+   "end": 85.733,
+   "label": "screen capture",
+   "record": "tour"
+  },
+  {
+   "section": "In your pocket, and next",
+   "shot": "phone",
+   "start": 85.733,
+   "end": 92.767,
+   "label": "screen capture, phone",
+   "record": "phone tour"
+  },
+  {
+   "section": "In your pocket, and next",
+   "shot": "card:end",
+   "start": 92.767,
+   "end": 99.767,
+   "label": "card",
+   "record": "this script"
+  }
+ ],
+ "captions": [
+  {
+   "text": "This is Parametric Studio, on your own GPU.",
+   "start": 0.6,
+   "end": 4.375
+  },
+  {
+   "text": "What's new: one clip becomes a whole shoot in a single queue,",
+   "start": 4.575,
+   "end": 8.634
+  },
+  {
+   "text": "and every result keeps the exact ComfyUI graph and seed that made it.",
+   "start": 8.634,
+   "end": 13.225
+  },
+  {
+   "text": "For Cinematic Studio, direct a shot like a film set, or queue a whole shoot on the Shot Board.",
+   "start": 13.425,
+   "end": 19.425
+  },
+  {
+   "text": "Seven jobs on one clip took about thirteen minutes.",
+   "start": 19.625,
+   "end": 23.225
+  },
+  {
+   "text": "Re-shoot a video: Reshoot makes a new take of your clip with a new camera move, on MiniMax H3.",
+   "start": 23.775,
+   "end": 30.475
+  },
+  {
+   "text": "Openjutsu, swap a character in a video: Recast keeps the performance, camera and sound,",
+   "start": 31.025,
+   "end": 36.898
+  },
+  {
+   "text": "and changes the person.",
+   "start": 36.898,
+   "end": 38.45
+  },
+  {
+   "text": "The Swap page lists every swap graph in the repo, with its render and licence.",
+   "start": 38.65,
+   "end": 43.9
+  },
+  {
+   "text": "In the VFX workflow, LTX-2.5 is the core video model.",
+   "start": 44.45,
+   "end": 49.925
+  },
+  {
+   "text": "Each effect adds one Lightricks IC-LoRA: water, a clean plate, day to night, a matte,",
+   "start": 50.125,
+   "end": 56.731
+  },
+  {
+   "text": "transitions, and LTX Finish for HDR masters.",
+   "start": 56.731,
+   "end": 60.15
+  },
+  {
+   "text": "How it's built: the apps run real ComfyUI graphs on your local ComfyUI server,",
+   "start": 60.7,
+   "end": 66.55
+  },
+  {
+   "text": "and the graph you open in 3D is the graph that runs.",
+   "start": 66.55,
+   "end": 70.45
+  },
+  {
+   "text": "The studio is FastAPI and Preact, with no build step.",
+   "start": 70.65,
+   "end": 74.9
+  },
+  {
+   "text": "We audited every one of our custom nodes,",
+   "start": 75.1,
+   "end": 77.861
+  },
+  {
+   "text": "and the Pool 51 node packs are pinned to checked commits.",
+   "start": 77.861,
+   "end": 81.7
+  },
+  {
+   "text": "Open weights, run locally, at zero credits.",
+   "start": 81.9,
+   "end": 85.2
+  },
+  {
+   "text": "It works on your phone too, with your GPU doing the work.",
+   "start": 85.75,
+   "end": 89.725
+  },
+  {
+   "text": "Next: swap one stage when a new model lands, and carry the proof inside every file.",
+   "start": 89.925,
+   "end": 95.8
+  },
+  {
+   "text": "Parametric Studio.",
+   "start": 96.0,
+   "end": 97.975
+  }
+ ]
+}

@@ -12,10 +12,11 @@
 "EternalShade3D__ComfyUI-ETERNAL-Nodes",
 "Nekodificador__ComfyUI-NKD-VFX-Tools",
 "PozzettiAndrea__ComfyUI-CameraPack",
+"PozzettiAndrea__ComfyUI-PanoPack",
 "T8mars__Comfyui-Qwen-Image-2.1-MultiAngle-T8"
 ],
 "also": [],
-"nodes": 55
+"nodes": 70
 },
 {
 "id": "02",
@@ -268,7 +269,6 @@
 "id": "19",
 "name": "Image colour, tone and grading",
 "packs": [
-"Comfy-Org__ComfyUI_Nvidia_VFX_Nodes",
 "EnragedAntelope__comfyui-relight",
 "jeremieLouvaert__ComfyUI-Darkroom",
 "SlavaSexton__ComfyUI-OCIO",
@@ -280,7 +280,7 @@
 "chflame163__ComfyUI_LayerStyle",
 "kantan-kanto__ComfyUI-PersonaPalette"
 ],
-"nodes": 83
+"nodes": 80
 },
 {
 "id": "20",
@@ -694,7 +694,6 @@
 "name": "Storyboard and shot planning",
 "packs": [
 "ankushgawande__comfyui-scene-framer",
-"cOkieeman__ComfyUI-Soda-Storyboard",
 "colorAi__comfyui-storyboard",
 "Smyshnikof__comfyui-storyboard-suite",
 "xinjian0101__continuity-director"
@@ -702,7 +701,7 @@
 "also": [
 "gitadmini__comfyui_extractstoryboards"
 ],
-"nodes": 38
+"nodes": 27
 },
 {
 "id": "44",
@@ -744,18 +743,18 @@
 "packs": [
 "Blakeem__ComfyUI-ContextAnchoredTileRefine",
 "ShmuelRonen__ComfyUI-VideoUpscale_WithModel",
+"ssitu__ComfyUI_UltimateSDUpscale",
 "tritant__ComfyUI_SuperScaler",
 "wildminder__ComfyUI-KEEP"
 ],
 "also": [
-"Comfy-Org__ComfyUI_Nvidia_VFX_Nodes",
 "ltdrdata__ComfyUI-Impact-Pack",
 "mirabarukaso__ComfyUI_MiraSubPack",
 "Steudio__ComfyUI_Steudio",
 "TTPlanetPig__Comfyui_TTP_Toolset",
 "ttulttul__ComfyUI-FlowMatching-Upscaler"
 ],
-"nodes": 14
+"nodes": 18
 },
 {
 "id": "47",
@@ -793,7 +792,6 @@
 "pizurny__ComfyUI-AV-Handles",
 "ProGamerGov__ComfyUI_pytorch360convert_video",
 "scofano__ComfyUI-Advanced-TextOverlay",
-"tritant__ComfyUI_NVIDIA_RTX_VSR_Long_Video",
 "yichengup__ComfyUI-VideoTransition"
 ],
 "also": [
@@ -801,7 +799,7 @@
 "Kosinkadink__ComfyUI-VideoHelperSuite",
 "trashkollector__TKNodes"
 ],
-"nodes": 26
+"nodes": 25
 },
 {
 "id": "50",
@@ -2246,38 +2244,6 @@
 "notes": []
 },
 {
-"pack": "cOkieeman__ComfyUI-Soda-Storyboard",
-"folder": "cOkieeman__ComfyUI-Soda-Storyboard",
-"repo": "cOkieeman/ComfyUI-Soda-Storyboard",
-"url": "https://github.com/cOkieeman/ComfyUI-Soda-Storyboard",
-"commit": "21c24c07fc9f16b5759b5026a0bce802b42c58f3",
-"sections": [
-"43"
-],
-"licence": "Apache-2.0",
-"adds": "Soda/MOSS storyboard bundle import",
-"nodes": [
-"SodaCharacterMask",
-"SodaCropPanel",
-"SodaCutQuads",
-"SodaExtractLayout",
-"SodaLetterPage",
-"SodaLoadMossJSON",
-"SodaLoadStoryboard",
-"SodaLoadStoryboardLoRA",
-"SodaLoadStoryboardPage",
-"SodaPastePanel",
-"SodaStoryboardPreview"
-],
-"node_count": 11,
-"pip": [
-"soda-storyboard==0.5.0"
-],
-"pip_no_deps": false,
-"patch": null,
-"notes": []
-},
-{
 "pack": "colorAi__comfyui-storyboard",
 "folder": "colorAi__comfyui-storyboard",
 "repo": "colorAi/comfyui-storyboard",
@@ -2299,31 +2265,6 @@
 "part of it works only with a browser tab open",
 "adds HTTP routes to ComfyUI's server"
 ]
-},
-{
-"pack": "Comfy-Org__ComfyUI_Nvidia_VFX_Nodes",
-"folder": "Comfy-Org__ComfyUI_Nvidia_VFX_Nodes",
-"repo": "Comfy-Org/ComfyUI_Nvidia_VFX_Nodes",
-"url": "https://github.com/Comfy-Org/ComfyUI_Nvidia_VFX_Nodes",
-"commit": "38d790ded00650681fa3645362efe28c8560cf40",
-"sections": [
-"19",
-"46"
-],
-"licence": "Apache-2.0",
-"adds": "RTX Video Super Resolution (upscale/denoise/deblur), RTX TrueHDR (SDR to HDR10/HLG), RTX frame generation",
-"nodes": [
-"RTXTrueHDR",
-"RTXVideoFrameGeneration",
-"RTXVideoSuperResolution"
-],
-"node_count": 3,
-"pip": [
-"nvidia-vfx==0.2.0.0"
-],
-"pip_no_deps": false,
-"patch": null,
-"notes": []
 },
 {
 "pack": "comfyuiattic-989__ComfyUI-Video-Frame-Extractor",
@@ -2966,8 +2907,10 @@
 "node_count": 2,
 "pip": [],
 "pip_no_deps": false,
-"patch": null,
-"notes": []
+"patch": "Extraltodeus__DistanceSampler.diff",
+"notes": [
+"the patch removes a reload of ComfyUI's k-diffusion module at load, which could undo other packs' changes to it; its samplers still register"
+]
 },
 {
 "pack": "facok__ComfyUI-DiversityBoost",
@@ -6104,6 +6047,47 @@
 "notes": []
 },
 {
+"pack": "PozzettiAndrea__ComfyUI-PanoPack",
+"folder": "PozzettiAndrea__ComfyUI-PanoPack",
+"repo": "PozzettiAndrea/ComfyUI-PanoPack",
+"url": "https://github.com/PozzettiAndrea/ComfyUI-PanoPack",
+"commit": "f03bdf7b7d7e1fdc0685c7fd615e299dcdd4ee5f",
+"sections": [
+"01"
+],
+"licence": "MIT",
+"adds": "360 panorama tools: equirect split/merge, panorama depth merge, point cloud and mesh from panoramas (heavy nodes run in an isolated env)",
+"nodes": [
+"PanoCrop",
+"PanoRenderGaussians",
+"PanoRenderMesh",
+"PanoRenderMeshDepth",
+"PanoramaBuildMesh",
+"PanoramaBuildPointCloud",
+"PanoramaDepthMerge",
+"PanoramaFacesPlaneSegment",
+"PanoramaInfo",
+"PanoramaShift",
+"PanoramaSplit",
+"PanoramaSplitAdaptive",
+"PanoramaUnwrap",
+"PanoramaViewer",
+"PanoramaWrap"
+],
+"node_count": 15,
+"pip": [
+"comfy-env==0.3.89",
+"comfy-3d-viewers==0.2.43"
+],
+"pip_no_deps": false,
+"patch": "PozzettiAndrea__ComfyUI-PanoPack.diff",
+"notes": [
+"the patch makes it build its isolated environment once, with `comfy-env install` in its folder, and reuse it: starting ComfyUI never downloads or installs anything, and the nodes that need that environment are skipped until it exists",
+"the patch also stops it cloning two other node packs on install and copying sample files into ComfyUI's input folder at every start",
+"the isolated environment is large (its own PyTorch, Open3D and VTK)"
+]
+},
+{
 "pack": "ProGamerGov__ComfyUI_preview360panorama",
 "folder": "ProGamerGov__ComfyUI_preview360panorama",
 "repo": "ProGamerGov/ComfyUI_preview360panorama",
@@ -6448,7 +6432,8 @@
 "pip_no_deps": false,
 "patch": null,
 "notes": [
-"adds HTTP routes to ComfyUI's server"
+"adds HTTP routes to ComfyUI's server",
+"its LoRA info panel can look a file up on Civitai when you ask it to"
 ]
 },
 {
@@ -7040,9 +7025,10 @@
 "patch": "spacepxl__ComfyUI-Depth-Pro.diff",
 "notes": [
 "the patch makes its loader use only Apple's official DepthPro weights (apple/DepthPro on Hugging Face) instead of a third-party copy",
-"the weights are under Apple's Machine Learning Research Model licence: scientific research only; read it before any other use",
+"weights: Apple ML Research licence, research use only",
 "last updated upstream in October 2024"
-]
+],
+"weights_licence": "Apple ML Research licence, research use only"
 },
 {
 "pack": "spacepxl__ComfyUI-HQ-Image-Save",
@@ -7180,6 +7166,33 @@
 "notes": [
 "copyleft licence (GPL)"
 ]
+},
+{
+"pack": "ssitu__ComfyUI_UltimateSDUpscale",
+"folder": "ssitu__ComfyUI_UltimateSDUpscale",
+"repo": "ssitu/ComfyUI_UltimateSDUpscale",
+"url": "https://github.com/ssitu/ComfyUI_UltimateSDUpscale",
+"commit": "a5547db9e1d07d3318bb21e9e9c474f4c1e9c8df",
+"sections": [
+"46"
+],
+"licence": "GPL-3.0",
+"adds": "Ultimate SD Upscale: tiled img2img upscaling with seam fixing",
+"nodes": [
+"UltimateSDUpscale",
+"UltimateSDUpscaleCustomSample",
+"UltimateSDUpscaleGuider",
+"UltimateSDUpscaleNoUpscale"
+],
+"node_count": 4,
+"pip": [],
+"pip_no_deps": false,
+"patch": null,
+"notes": [
+"copyleft licence (GPL)",
+"installed with its git submodule, so it never downloads code when it loads"
+],
+"submodules": true
 },
 {
 "pack": "Steudio__ComfyUI_Steudio",
@@ -7607,30 +7620,6 @@
 ]
 },
 {
-"pack": "tritant__ComfyUI_NVIDIA_RTX_VSR_Long_Video",
-"folder": "tritant__ComfyUI_NVIDIA_RTX_VSR_Long_Video",
-"repo": "tritant/ComfyUI_NVIDIA_RTX_VSR_Long_Video",
-"url": "https://github.com/tritant/ComfyUI_NVIDIA_RTX_VSR_Long_Video",
-"commit": "b20565455379998d3a22c07eb959d0a235034bde",
-"sections": [
-"49"
-],
-"licence": "Apache-2.0",
-"adds": "RTX VSR for long videos",
-"nodes": [
-"RTX_VSR_Long_Video"
-],
-"node_count": 1,
-"pip": [
-"nvidia-vfx==0.2.0.0"
-],
-"pip_no_deps": false,
-"patch": null,
-"notes": [
-"starts a helper program when a node runs"
-]
-},
-{
 "pack": "tritant__ComfyUI_Stem_Mixer",
 "folder": "tritant__ComfyUI_Stem_Mixer",
 "repo": "tritant/ComfyUI_Stem_Mixer",
@@ -8031,8 +8020,10 @@
 "node_count": 2,
 "pip": [],
 "pip_no_deps": false,
-"patch": null,
-"notes": []
+"patch": "xmarre__ComfyUI-AutoGuidance.diff",
+"notes": [
+"the patch makes its detailer hook's wrapper around ComfyUI's sampling function one-shot, so it never stays in place for other renders"
+]
 },
 {
 "pack": "xmarre__ComfyUI-ScaleLockedResidualDiffusion",
@@ -8239,6 +8230,93 @@
 "notes": [
 "the patch fixes the film pipeline node's preset list and seeds film grain from an input so re-runs match"
 ]
+}
+],
+"optional_about": "Not part of the open edition and not installed by --packs pool51: each needs something that is not open source. Install one yourself if you accept that.",
+"optional": [
+{
+"pack": "cOkieeman__ComfyUI-Soda-Storyboard",
+"folder": "cOkieeman__ComfyUI-Soda-Storyboard",
+"repo": "cOkieeman/ComfyUI-Soda-Storyboard",
+"url": "https://github.com/cOkieeman/ComfyUI-Soda-Storyboard",
+"commit": "21c24c07fc9f16b5759b5026a0bce802b42c58f3",
+"sections": [
+"43"
+],
+"licence": "Apache-2.0",
+"adds": "Soda/MOSS storyboard bundle import",
+"nodes": [
+"SodaCharacterMask",
+"SodaCropPanel",
+"SodaCutQuads",
+"SodaExtractLayout",
+"SodaLetterPage",
+"SodaLoadMossJSON",
+"SodaLoadStoryboard",
+"SodaLoadStoryboardLoRA",
+"SodaLoadStoryboardPage",
+"SodaPastePanel",
+"SodaStoryboardPreview"
+],
+"node_count": 11,
+"pip": [
+"soda-storyboard==0.5.0"
+],
+"pip_no_deps": false,
+"patch": null,
+"notes": [],
+"why": "its pip package (soda-storyboard) states no licence"
+},
+{
+"pack": "Comfy-Org__ComfyUI_Nvidia_VFX_Nodes",
+"folder": "Comfy-Org__ComfyUI_Nvidia_VFX_Nodes",
+"repo": "Comfy-Org/ComfyUI_Nvidia_VFX_Nodes",
+"url": "https://github.com/Comfy-Org/ComfyUI_Nvidia_VFX_Nodes",
+"commit": "38d790ded00650681fa3645362efe28c8560cf40",
+"sections": [
+"19",
+"46"
+],
+"licence": "Apache-2.0",
+"adds": "RTX Video Super Resolution (upscale/denoise/deblur), RTX TrueHDR (SDR to HDR10/HLG), RTX frame generation",
+"nodes": [
+"RTXTrueHDR",
+"RTXVideoFrameGeneration",
+"RTXVideoSuperResolution"
+],
+"node_count": 3,
+"pip": [
+"nvidia-vfx==0.2.0.0"
+],
+"pip_no_deps": false,
+"patch": null,
+"notes": [],
+"why": "needs nvidia-vfx, NVIDIA's closed-source Video Effects SDK"
+},
+{
+"pack": "tritant__ComfyUI_NVIDIA_RTX_VSR_Long_Video",
+"folder": "tritant__ComfyUI_NVIDIA_RTX_VSR_Long_Video",
+"repo": "tritant/ComfyUI_NVIDIA_RTX_VSR_Long_Video",
+"url": "https://github.com/tritant/ComfyUI_NVIDIA_RTX_VSR_Long_Video",
+"commit": "b20565455379998d3a22c07eb959d0a235034bde",
+"sections": [
+"49"
+],
+"licence": "Apache-2.0",
+"adds": "RTX VSR for long videos",
+"nodes": [
+"RTX_VSR_Long_Video"
+],
+"node_count": 1,
+"pip": [
+"nvidia-vfx==0.2.0.0"
+],
+"pip_no_deps": false,
+"patch": null,
+"notes": [
+"starts a helper program when a node runs"
+],
+"why": "needs nvidia-vfx, NVIDIA's closed-source Video Effects SDK"
 }
 ]
 }

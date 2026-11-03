@@ -4,7 +4,7 @@ Where this file and older notes in this folder disagree, this file and STATE.md 
 
 ## What the records show
 
-Krea 2 has two recorded renders, both from 2026-11-01 and unchanged since: Turbo (template krea2_turbo_t2i: bf16 loaded as fp8, 8 steps, CFG 1, euler, Qwen3-VL 4B encoder) at 25.3 s, seed 1477558560; and RAW (template krea2_raw_t2i: 52 steps, CFG 3.5, euler, with a real negative) at 60.4 s, seed 1649154201. No peak is recorded for either. [code: studio/family_templates/index.json:1756-1758, studio/family_templates/index.json:1787-1789] [run: studio/family_status.json:4463-4490]
+Krea 2 has two recorded renders, both from 2026-11-01 and unchanged since: Turbo (template krea2_turbo_t2i: bf16 loaded as fp8, 8 steps, CFG 1, euler, Qwen3-VL 4B encoder) at 25.3 s, seed 1477558560; and RAW (template krea2_raw_t2i: 52 steps, CFG 3.5, euler, with a real negative) at 60.4 s, seed 1649154201. No peak is recorded for either. [code: studio/family_templates/index.json] [run: studio/family_status.json]
 
 ## Training fails out of memory
 

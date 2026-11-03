@@ -8,7 +8,7 @@ import build_demo_numbers as N      # noqa: E402
 import build_demo_videos as V      # noqa: E402
 
 NUMS = json.loads((DEMOS / "numbers.json").read_text(encoding="utf-8"))
-WEB_FILES = {"demo_reel.mp4": 10e6, "demo_wall.mp4": 6e6, "demo_tour.mp4": 9e6, "demo_tour_phone.mp4": 4e6, "demo_reel.webp": 400e3, "demo_wall.webp": 400e3, "demo_tour.webp": 400e3}
+WEB_FILES = {"demo_reel.mp4": 10e6, "demo_wall.mp4": 6e6, "demo_tour.mp4": 9e6, "demo_tour_phone.mp4": 4e6, "demo_reel.webp": 400e3, "demo_wall.webp": 400e3, "demo_tour.webp": 400e3, "walkthrough_short.mp4": 9e6, "walkthrough_short.webp": 400e3, "walkthrough.webp": 400e3}
 
 
 def test_every_figure_says_how_it_was_counted():
@@ -76,3 +76,18 @@ def test_web_copies_are_small_and_the_readme_shows_them():
         p = MEDIA / name; assert p.is_file() and p.stat().st_size < cap, (name, p.stat().st_size if p.is_file() else None)
         assert f"docs/media/{name}" in readme, name
     assert "See how big it is" in readme and readme.index("See how big it is") < readme.index("## For the judges")
+
+
+def test_the_narrated_walkthrough_says_what_the_script_says():
+    """Both cuts: the voice reads docs/demos/walkthrough_script.md, captions cover every spoken sentence, Whisper heard it back, and the contest cut stays under two minutes."""
+    import build_walkthrough as B
+    for cut, lo, hi in (("full", 360, 600), ("short", 60, 119.5)):
+        e = json.loads((DEMOS / f"walkthrough_{cut}_edl.json").read_text(encoding="utf-8")); assert lo <= e["seconds"] <= hi, (cut, e["seconds"])
+        assert abs(e["lufs"] + 16) <= 0.5 and e["true_peak_db"] <= -1.5 and e["whisper"]["wer"] <= 0.1 and "am_michael" in e["voice"], cut
+        spoken = " ".join(s for sec in B.parse(cut) for p in sec["paras"] for s in p); assert " ".join(c["text"] for c in e["captions"]).split() == spoken.split(), cut
+        for s in e["shots"]:
+            kind, src, _ = B.shot_ref(s["shot"])
+            if kind == "clip": assert (WEB / src).is_file() or (ROOT / src).is_file(), src
+    short = " ".join(s for sec in B.parse("short") for p in sec["paras"] for s in p)
+    for name in ("Cinematic Studio", "Re-shoot a video", "Openjutsu", "LTX-2.5 is the core video model", "How it's built", "What's new"):
+        assert name in short, name

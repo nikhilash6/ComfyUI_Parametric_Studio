@@ -93,7 +93,14 @@ The open edition, which is the contest entry, uses local open-weights models onl
 2. **Plans.** For each goal you ask for, it compares the measured peak VRAM with your usable VRAM (2 GiB is held back), then chooses `gpu`, `offload` (adds `--lowvram` or `--novram`) or `unavailable`, and says why. Models that cannot work on the machine are not downloaded. The H3 goals need a card that can use NVFP4; on others they show as unavailable.
 3. **Prints the plan and asks.** `--dry-run` stops after printing every step. `--yes` skips the question. It refuses to run as root without `--yes`.
 4. **Installs** into `--dir` (default: a `parametric-studio-runtime` folder beside the repository): a venv, PyTorch for the backend, ComfyUI at the ref in `channels.json`, ComfyUI's requirements, the studio's packages, and a link to this repository in `ComfyUI/custom_nodes`. LTX goals also clone the Lightricks ComfyUI-LTXVideo pack, because the LTX graphs use its `LTXFloatToInt` node.
-   With `--packs pool51` it also installs the reviewed node-pack set that Pack Lab lists under "The installed set, in 51 sections" (`studio/pool51_catalogue.json`). That is 215 packs, about 1.8 GB. Each one is fetched at its pinned commit with git hooks off, and the four with a small patch get it from `studio/pool51_patches/`. Then a short list of pip packages is installed. Some of those pip packages are NVIDIA-only or Linux and Windows only. Several packs download model weights the first time one of their nodes runs. Licences are as each repository states them, and some are copyleft: GPL, and AGPL for two packs. DepthPro's weights are for research use only.
+   With `--packs pool51` it also installs the reviewed node-pack set that Pack Lab lists under "The installed set, in 51 sections" (`studio/pool51_catalogue.json`). That is 214 packs, about 1.9 GB.
+   - Each pack is fetched at its pinned commit with git hooks off. One also gets its git submodule.
+   - The five with a small patch get it from `studio/pool51_patches/`. Then a short list of pip packages is installed.
+   - Several packs download model weights the first time one of their nodes runs.
+   - PanoPack's heavy nodes need a one-time build of their own environment, as its README describes. It is several GB and sits beside ComfyUI; until it exists those nodes are skipped.
+   - Licences are as each repository states them, and some are copyleft: GPL, and AGPL for two packs.
+   - DepthPro's weights are under the Apple ML Research licence, research use only.
+   - Three packs that need something closed or unlicensed (NVIDIA's Video Effects SDK, or a pip package with no licence) are listed apart as optional, and are not installed.
 5. **Downloads models** from Hugging Face into `ComfyUI/models`, with a SHA-256 check against `studio/models_manifest.json`. A stalled or dropped connection waits and carries on from the bytes on disk, and a stopped run leaves a `.part` file that the next run continues. A file that fails the check is deleted.
 6. **Writes a launcher**, `run_studio.sh` or `run_studio.bat`, which starts ComfyUI on port 8200 and the studio on port 8310 with the right paths and flags.
 

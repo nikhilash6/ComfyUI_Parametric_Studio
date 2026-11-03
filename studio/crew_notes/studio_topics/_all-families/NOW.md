@@ -22,17 +22,17 @@ Shot Board time estimates: the board sums measured render seconds from the showc
 
 Camera Paths canyon path: a drawn rising orbit to the right, rendered by Wan 2.2 Fun Camera 14B (fp8) from a FLUX.2 Klein 4B still. The checker said MATCH: the picture slid right 35% of the width, grew 45%, and the centre stayed put while the edges moved. 252.8 s, 44.9 GiB peak. Looked at: smooth, no warping. [run: studio/camera_proof.json]
 
-Camera Paths cathedral path: a drawn level orbit to the left around a stone font. The checker said INCONCLUSIVE, never a pass: the picture slid left 28% but the centre moved with it, which reads like a pan. By eye Wan orbited a point behind the font. 216.9 s, 44.9 GiB. [run: studio/camera_proof.json:464] [run: studio/camera_proof.json:3-8]
+Camera Paths cathedral path: a drawn level orbit to the left around a stone font. The checker said INCONCLUSIVE, never a pass: the picture slid left 28% but the centre moved with it, which reads like a pan. By eye Wan orbited a point behind the font. 216.9 s, 44.9 GiB. [run: studio/camera_proof.json] [run: studio/camera_proof.json]
 
-Camera Paths paper boat line: LTX-2.5 with the LTX-2.3 Motion-Track-Control IC-LoRA moved a red paper boat along a drawn line in 31.8 s at 39.2 GiB. Followed by colour, the boat stayed a mean 24.9 px (max 40.1 px) from the line over 121 frames, and was never lost. The render needs both sides in multiples of 64 (960x576). [run: studio/camera_proof.json:300] [code: studio/feature_camera.py:19]
+Camera Paths paper boat line: LTX-2.5 with the LTX-2.3 Motion-Track-Control IC-LoRA moved a red paper boat along a drawn line in 31.8 s at 39.2 GiB. Followed by colour, the boat stayed a mean 24.9 px (max 40.1 px) from the line over 121 frames, and was never lost. The render needs both sides in multiples of 64 (960x576). [run: studio/camera_proof.json] [code: studio/feature_camera.py:19]
 
-Camera Paths object follower: the first follower, Lucas-Kanade on points around the start, stayed on the pebbles while the boat moved away and reported 274 px. Template matching replaced it; the render was not repeated. [run: studio/camera_proof.json:6] [code: studio/feature_camera.py:171]
+Camera Paths object follower: the first follower, Lucas-Kanade on points around the start, stayed on the pebbles while the boat moved away and reported 274 px. Template matching replaced it; the render was not repeated. [run: studio/camera_proof.json] [code: studio/feature_camera.py:171]
 
 Camera Paths rooftop checks: three MiniMax H3 Director clips (dolly in, pan left, tilt up, 53 to 62 s each at 39.4 GiB) all came out MATCH, 3 of 3. [run: studio/camera_proof.json]
 
-Camera Paths take picker: three H3 lighthouse takes asked to dolly in all matched, and the picker chose take 2 (grew 53%, centre still), which matched the eye. The checker overstates take 3's growth at 44% because breaking waves add to the measured growth. [run: studio/camera_proof.json:509] [run: studio/camera_proof.json:3-8]
+Camera Paths take picker: three H3 lighthouse takes asked to dolly in all matched, and the picker chose take 2 (grew 53%, centre still), which matched the eye. The checker overstates take 3's growth at 44% because breaking waves add to the measured growth. [run: studio/camera_proof.json] [run: studio/camera_proof.json]
 
-Camera Paths checker caution: on the older showcase test clips three of four came out INCONCLUSIVE, including the poppy clip that is a plain mismatch by eye. The thresholds were written before measuring. [run: studio/camera_proof.json:3-8] [code: studio/camera_verify.py]
+Camera Paths checker caution: on the older showcase test clips three of four came out INCONCLUSIVE, including the poppy clip that is a plain mismatch by eye. The thresholds were written before measuring. [run: studio/camera_proof.json] [code: studio/camera_verify.py]
 
 ## LTX Finish (P1) and one-click edits
 
@@ -64,9 +64,9 @@ Commercials library: 24 genre templates, each with beats, shots, camera moves, s
 
 Commercials hard rules, enforced in code on the brief, the script and any language-model rewrite: invented brands, products and people only, with a list and a near-miss check against real names; no celebrities, politicians or parties; adults only, fully clothed and family-friendly, no alcohol or tobacco; pharma parodies claim nothing. Every word on screen is drawn by ffmpeg, never by an image model, and every spot carries an AI-generated label. [code: studio/commercial_safety.py:1-3, studio/feature_commercials.py:12-13, studio/commercials.py:3]
 
-Commercials political parody: a parody genre gets a PARODY card and a PARODY badge (for the political one, "PARODY · FICTIONAL CANDIDATE") beside the AI-generated label for the whole spot. The 15 s proof shows an invented candidate, party and town, satirises only the format, and is recorded as flawed on its second take (Whisper heard 82.1%). [code: studio/commercials.py:39-41] [run: studio/commercial_proof.json:705]
+Commercials political parody: a parody genre gets a PARODY card and a PARODY badge (for the political one, "PARODY · FICTIONAL CANDIDATE") beside the AI-generated label for the whole spot. The 15 s proof shows an invented candidate, party and town, satirises only the format, and is recorded as flawed on its second take (Whisper heard 82.1%). [code: studio/commercials.py:39-41] [run: studio/commercial_proof.json]
 
-Commercials proofs: 15 genres have a recorded spot in the proof file. Two passed (fashion and bank, 15 s each), twelve are complete but flawed with their flaws labelled (pharma, big-game and perfume at 30 s; mattress, pet food, airline, political parody, cleaner, energy drink, real estate, game trailer and travel at 15 s), and one failed: the car spot showed a real maker's badge and is not published. A person looked at first, middle and last frames; nobody listened. [run: studio/commercial_proof.json:3]
+Commercials proofs: 15 genres have a recorded spot in the proof file. Two passed (fashion and bank, 15 s each), twelve are complete but flawed with their flaws labelled (pharma, big-game and perfume at 30 s; mattress, pet food, airline, political parody, cleaner, energy drink, real estate, game trailer and travel at 15 s), and one failed: the car spot showed a real maker's badge and is not published. A person looked at first, middle and last frames; nobody listened. [run: studio/commercial_proof.json]
 
 ## Pages that explain models
 
@@ -102,11 +102,11 @@ Pack Lab picks: 131 reviewed picks, read from each pack's text without running p
 
 ## Gate and render lessons
 
-Honest peaks: declare each job's real peak. The VOID object remover measured 54.6 GiB against 38 declared, and the declaration was raised to about 58. Wan Fun Camera peaked 0.9 GiB over its declared 44 and now declares 48 for the proof and 46 on the page. One-click tools declare the measured peak plus a tenth. [claim: studio test run 2026-11-02] [run: studio/camera_proof.json:3-4] [code: studio/feature_oneclick.py:83-84]
+Honest peaks: declare each job's real peak. The VOID object remover measured 54.6 GiB against 38 declared, and the declaration was raised to about 58. Wan Fun Camera peaked 0.9 GiB over its declared 44 and now declares 48 for the proof and 46 on the page. One-click tools declare the measured peak plus a tenth. [claim: studio test run 2026-11-02] [run: studio/camera_proof.json] [code: studio/feature_oneclick.py:83-84]
 
 Half-precision VAE and LTX audio: when ComfyUI forces the VAE to half precision, LTX's audio encoder stops with a bf16/float mismatch, so DubIt cannot encode the speaker's voice. A ComfyUI started with an fp32 VAE runs it, and the Dub page refuses DubIt with a plain message instead of failing mid-render. [code: studio/feature_dub.py:52-64] [run: studio/dub_proof.json:169] [test: tests/test_feature_dub.py]
 
-H3 garbled voices, corrected: the half-precision VAE was first suspected of garbling H3's speech. The repo records the real cause: talking templates gave H3 no words, so it voiced fluent babble (80 to 371% WER), while clips that used exact words inside the d tag measured 0 to 6% on the same half-precision lanes. Templates now send each line word for word. A greeting re-rendered with the same seed and only the prompt changed went from 133% to 0% WER, measured by Whisper, not listened to. [code: studio/recipe_library/video_templates.json:61] [run: studio/recipe_renders.json:14761-14781] [claim: commits b60c9e34 and ca01c901, 2026-11-02]
+H3 garbled voices, corrected: the half-precision VAE was first suspected of garbling H3's speech. The repo records the real cause: talking templates gave H3 no words, so it voiced fluent babble (80 to 371% WER), while clips that used exact words inside the d tag measured 0 to 6% on the same half-precision lanes. Templates now send each line word for word. A greeting re-rendered with the same seed and only the prompt changed went from 133% to 0% WER, measured by Whisper, not listened to. [code: studio/recipe_library/video_templates.json] [run: studio/recipe_renders.json] [claim: commits b60c9e34 and ca01c901, 2026-11-02]
 
 One reservation per job: each job takes its own GPU reservation at its own peak, so a small job can backfill and nothing holds more than it uses. A short sequence may run under one reservation at the largest of its peaks to avoid re-queuing. A long batch held under one 48 GiB reservation for about 89 minutes kept 19 other jobs waiting. [code: scripts/prove_camera.py:30-31] [claim: studio test run 2026-11-02]
 
@@ -136,8 +136,8 @@ Pool 51 packs needed 16 new Python packages, installed against the studio's cons
 
 ## Families rendered in the last hours
 
-Ideogram4 and Ming-Image each rendered once on 2026-11-03 on their own family servers, from ComfyUI's own templates, and were looked at full size. Ideogram4: 28.6 s, 33.2 GiB, with the 8B Qwen3-VL text encoder in bf16 in place of the template's fp8 file; its licence is non-commercial. Ming-Image: 21.4 s, 23.6 GiB, with the prompt expander bypassed; MIT. [run: studio/family_status.json:3909, studio/family_status.json:5942]
+Ideogram4 and Ming-Image each rendered once on 2026-11-03 on their own family servers, from ComfyUI's own templates, and were looked at full size. Ideogram4: 28.6 s, 33.2 GiB, with the 8B Qwen3-VL text encoder in bf16 in place of the template's fp8 file; its licence is non-commercial. Ming-Image: 21.4 s, 23.6 GiB, with the prompt expander bypassed; MIT. [run: studio/family_status.json]
 
-MOVA was tried on 2026-11-03 and still gives all-black frames through core Wan nodes (832 x 480, 49 frames, 20 steps, peak 42 GiB), even with its own VAEs. It needs MOVA's own pipeline, and the only ComfyUI node for it is its author's unfinished alpha. [run: studio/family_status.json:6966]
+MOVA was tried on 2026-11-03 and still gives all-black frames through core Wan nodes (832 x 480, 49 frames, 20 steps, peak 42 GiB), even with its own VAEs. It needs MOVA's own pipeline, and the only ComfyUI node for it is its author's unfinished alpha. [run: studio/family_status.json]
 
 LongCat-Avatar 1.5, HunyuanVideo 1.5, InstantMesh, SAM 3 and the rife family also gained their first renders on 2026-11-03; their own specialists' NOW.md files have the numbers. [run: studio/family_status.json] [inference]

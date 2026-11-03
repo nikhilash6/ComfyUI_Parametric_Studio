@@ -263,9 +263,9 @@ def tool_recipe_examples(args, ctx):
 
 
 def tool_goal_list(args, ctx):
-    """{} -> the goals a recipe step may use: what each needs and which options it offers."""
+    """{} -> the goals a recipe step may use: what each needs (only the needs that are true are listed) and which options it offers."""
     from studio.goals import GOALS
-    return {"goals": {k: {x: g.get(x) for x in ("needs_image", "needs_video", "needs_last_image", "prompt_optional", "options")} for k, g in GOALS.items()}}
+    return {"goals": {k: {x: g.get(x) for x in ("needs_image", "needs_video", "needs_last_image", "needs_audio", "prompt_optional", "options") if g.get(x)} for k, g in GOALS.items()}}
 
 
 def recipe_problems(rec, ctx):

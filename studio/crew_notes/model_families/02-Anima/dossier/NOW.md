@@ -4,9 +4,9 @@ Where this file and older notes in this folder disagree, this file and STATE.md 
 
 ## What the records show
 
-Anima has no new render since 2026-11-01. Its family record holds ten runs: the studio's Base (er_sde, 30 steps, CFG 4.5), Aesthetic (euler, 30 steps, CFG 3.0) and Turbo (euler, 10 steps, CFG 1.0) templates, all with the Qwen 3 0.6B encoder and the Qwen Image VAE, plus ComfyUI's preview, base v1 and two Lllite control templates, and three runs of the core graph. Times run from 8.6 s to 40.0 s. Where the family's own server recorded a peak, it was 6.4 to 7.1 GiB. [code: studio/family_templates/index.json:1187-1189, studio/family_templates/index.json:1218-1220, studio/family_templates/index.json:1249-1251] [run: studio/family_status.json:398-539]
+Anima has no new render since 2026-11-01. Its family record holds ten runs: the studio's Base (er_sde, 30 steps, CFG 4.5), Aesthetic (euler, 30 steps, CFG 3.0) and Turbo (euler, 10 steps, CFG 1.0) templates, all with the Qwen 3 0.6B encoder and the Qwen Image VAE, plus ComfyUI's preview, base v1 and two Lllite control templates, and three runs of the core graph. Times run from 8.6 s to 40.0 s. Where the family's own server recorded a peak, it was 6.4 to 7.1 GiB. [code: studio/family_templates/index.json] [run: studio/family_status.json]
 
-Anima's Lllite inpainting template is listed on the family and has no recorded run. [run: studio/family_status.json:373-726]
+Anima's Lllite inpainting template is listed on the family and has no recorded run. [run: studio/family_status.json]
 
 ## Training does not work yet
 

@@ -8,7 +8,7 @@ Pony, Illustrious and NoobAI still have no studio family record, no studio templ
 
 LoRA files whose names contain pony or illustrious are grouped under SDXL by the studio's LoRA sorter. [code: studio/loras.py:106, studio/loras.py:122]
 
-SDXL tools that did run in the final session (the xinsir depth, scribble and tile ControlNets and the SDXL IP-Adapters) were run on the SDXL 1.0 base only. Whether they behave the same on a Pony, Illustrious or NoobAI checkpoint has not been tested here. [run: studio/family_status.json:9518-9637] [inference]
+SDXL tools that did run in the final session (the xinsir depth, scribble and tile ControlNets and the SDXL IP-Adapters) were run on the SDXL 1.0 base only. Whether they behave the same on a Pony, Illustrious or NoobAI checkpoint has not been tested here. [run: studio/family_status.json] [inference]
 
 Illustrious LoRA tools, a node pack with a crop, tag and review step before SDXL training, was looked at in Pack Lab and marked borrow-the-idea only. Its own README says it has not been validated on a full GPU run. [code: studio/pack_lab_picks.json:808-818]
 

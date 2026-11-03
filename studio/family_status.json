@@ -1845,9 +1845,6 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors"
 }
-],
-"needs": [
-"weights flux1-dev.safetensors: not on this machine"
 ]
 },
 {
@@ -1882,9 +1879,6 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors"
 }
-],
-"needs": [
-"weights flux1-dev.safetensors: not on this machine"
 ]
 },
 {
@@ -1997,9 +1991,6 @@
 "dir": "clip_vision",
 "url": "https://huggingface.co/Comfy-Org/sigclip_vision_384/resolve/main/sigclip_vision_patch14_384.safetensors?download=true"
 }
-],
-"needs": [
-"weights flux1-dev.safetensors: not on this machine"
 ]
 },
 {
@@ -3698,6 +3689,19 @@
 "seed": 20261103,
 "note": "5 s at 720p and 24 fps from ComfyUI's own template (20 steps, cfg 6): a steady tracking shot with mist on the river, a small flock of birds and warm low light, and no flicker. Faults: the balloon casts no shadow on the fields, and its basket is tiny for the envelope. Heavy: 14.5 minutes and a 65.2 GiB peak. Tencent Hunyuan Community License: it does not apply in the EU, the UK or South Korea.",
 "peak_vram_gib": 65.2
+},
+{
+"id": "lib_hunyuanvideo",
+"kind": "image",
+"src": "families/lib_hunyuanvideo.webp",
+"poster": "families/lib_hunyuanvideo.webp",
+"w": 350,
+"h": 350,
+"prompt": "Hunyuan Video Text to Video: sample from ComfyUI's template library",
+"tpl": "hunyuan_video_text_to_video",
+"own": false,
+"library": true,
+"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
 }
 ],
 "templates": [
@@ -3832,9 +3836,6 @@
 "dir": "latent_upscale_models",
 "url": "https://huggingface.co/Comfy-Org/HunyuanVideo_1.5_repackaged/resolve/main/split_files/latent_upscale_models/hunyuanvideo15_latent_upsampler_1080p.safetensors"
 }
-],
-"needs": [
-"weights hunyuanvideo1.5_720p_t2v_fp16.safetensors: not on this machine"
 ]
 }
 ]
@@ -3959,6 +3960,19 @@
 "seed": 20261103,
 "note": "A convincing photograph: lit lantern, surf on the rocks, gulls, real dusk colour, and no lettering anywhere. Faults: the lighthouse sits on a tidy paved platform the caption never asked for, and the cliff grass is over-green for dusk. ComfyUI's own template (Default preset, 20 steps), with Qwen3-VL-8B in bf16 because its fp8 copy is not on disk. Ideogram 4 Non-Commercial licence (ComfyUI repackage of ideogram-ai/ideogram-4-fp8; text gated).",
 "peak_vram_gib": 33.2
+},
+{
+"id": "lib_ideogram4",
+"kind": "image",
+"src": "families/lib_ideogram4.webp",
+"poster": "families/lib_ideogram4.webp",
+"w": 400,
+"h": 400,
+"prompt": "Ideogram v4: Text to Image: sample from ComfyUI's template library",
+"tpl": "image_ideogram4_t2i",
+"own": false,
+"library": true,
+"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
 }
 ],
 "templates": [
@@ -5038,9 +5052,6 @@
 "dir": "loras",
 "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/loras/gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors"
 }
-],
-"needs": [
-"weights ltx-2.3-22b-distilled-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -5071,9 +5082,6 @@
 "dir": "loras",
 "url": "https://huggingface.co/valiantcat/LTX-2.3-Transition-LORA/resolve/main/ltx2.3-transition.safetensors"
 }
-],
-"needs": [
-"weights ltx-2.3-22b-distilled-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -5098,9 +5106,6 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
 }
-],
-"needs": [
-"weights ltx-2.3-22b-distilled-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -5225,9 +5230,6 @@
 "dir": "geometry_estimation",
 "url": "https://huggingface.co/Comfy-Org/MoGe/resolve/main/geometry_estimation/moge_2_vitl_normal_fp16.safetensors"
 }
-],
-"needs": [
-"weights ltx-2.3-22b-distilled-fp8.safetensors: not on this machine"
 ]
 },
 {
@@ -6007,6 +6009,19 @@
 "seed": 20261103,
 "note": "Clean, well-balanced flat design that follows every listed element, and no stray lettering. Faults: the reflections are wrong (a sun shows in the water though the sun is behind a peak, and the boat floats above its own jetty). ComfyUI's own template, 12 steps, with its optional Qwen3.8 27B prompt expander bypassed because that file is not on disk; the caption was written by hand. MIT (ComfyUI repackage).",
 "peak_vram_gib": 23.6
+},
+{
+"id": "lib_ming-image",
+"kind": "image",
+"src": "families/lib_ming-image.webp",
+"poster": "families/lib_ming-image.webp",
+"w": 400,
+"h": 400,
+"prompt": "Ming Image 0.1 Design: Image Edit: sample from ComfyUI's template library",
+"tpl": "image_ming_image_01_design_image_edit",
+"own": false,
+"library": true,
+"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
 }
 ],
 "templates": [
@@ -7285,6 +7300,19 @@
 "seed": 20261106,
 "note": "A textured teapot that matches the picture from the front: glaze streaks, knob and handle all there. Faults: a loose blob, part of the hidden spout, floats free beside the body in the side views, and the unseen back is smeared and paler. MIT (ComfyUI repackage).",
 "peak_vram_gib": 17.6
+},
+{
+"id": "lib_pixal3d",
+"kind": "image",
+"src": "families/lib_pixal3d.webp",
+"poster": "families/lib_pixal3d.webp",
+"w": 350,
+"h": 350,
+"prompt": "Pixal3D: Multi Views to 3D: sample from ComfyUI's template library",
+"tpl": "3d_pixal3d_multi_views",
+"own": false,
+"library": true,
+"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
 }
 ],
 "templates": [
@@ -7326,9 +7354,6 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/Pixal3D/resolve/main/diffusion_models/pixal3d_multiview_int8_convrot.safetensors"
 }
-],
-"needs": [
-"weights pixal3d_multiview_int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -7901,6 +7926,21 @@
 "seed": null,
 "note": "One step, no noise: sharp edges on the jug's handle, every peach separate, and the table falling away cleanly. Fault: the window bars barely stand apart from the glass behind them. Apache-2.0 (Marigold v2) on Qwen-Image-Edit 2509.",
 "peak_vram_gib": 17.8
+},
+{
+"id": "fam_qwen-image-2-1_23",
+"prompt": "Outfit swap: Qwen Image 2.1 Turbo, 8 steps",
+"seconds": 22.9,
+"tpl": "qwen21_outfit_turbo",
+"own": true,
+"kind": "image",
+"src": "families/qwen-image-2-1_23.webp",
+"poster": "families/qwen-image-2-1_23.webp",
+"w": 753,
+"h": 640,
+"model": "qwen_image_2.1_turbo_bf16.safetensors",
+"seed": 4242,
+"peak_vram_gib": 34.8
 }
 ],
 "templates": [
@@ -8175,9 +8215,6 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors"
 }
-],
-"needs": [
-"weights qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -8246,9 +8283,6 @@
 "dir": "text_encoders",
 "url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/text_encoders/qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors"
 }
-],
-"needs": [
-"weights qwen3.5_9b_qwen_image_2.1_pe_t2i.int8_convrot.safetensors: not on this machine"
 ]
 },
 {
@@ -8802,6 +8836,19 @@
 "seed": null,
 "note": "The in-between frames are clean: the turtle, sand ripples and caustics move smoothly with no ghost edges. Fault: the fast fish at the frame's edge smears a little in the made-up frames. The studio template lives under frame_interpolation; this run was on the rife family's own instance. MIT (RIFE) and Apache-2.0 (ComfyUI repackage).",
 "peak_vram_gib": 0.9
+},
+{
+"id": "lib_rife",
+"kind": "image",
+"src": "families/lib_rife.webp",
+"poster": "families/lib_rife.webp",
+"w": 350,
+"h": 350,
+"prompt": "Frame Interpolation: FILM or RIFE: sample from ComfyUI's template library",
+"tpl": "utility_video_frame_interpolation",
+"own": false,
+"library": true,
+"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
 }
 ],
 "templates": [
@@ -8863,6 +8910,19 @@
 "seed": 42,
 "note": "Reused from the 3D page's proof run (2026-11-01, studio/model3d_proof.json): a good overall shape with fur detail, from one picture. Fault: the colour is uneven, pale on one side and brown on the other. SAM licence (commercial use allowed, with use rules).",
 "peak_vram_gib": 21.7
+},
+{
+"id": "lib_sam-3d-objects",
+"kind": "image",
+"src": "families/lib_sam-3d-objects.webp",
+"poster": "families/lib_sam-3d-objects.webp",
+"w": 350,
+"h": 350,
+"prompt": "SAM 3D Body: 3D Human Mesh Extraction From Video: sample from ComfyUI's template library",
+"tpl": "utility_sam3d_body",
+"own": false,
+"library": true,
+"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
 }
 ],
 "templates": []
@@ -8906,6 +8966,19 @@
 "seed": null,
 "note": "One clean mask of the jug from two words, handle and spout included, with the peaches in front of it correctly cut out. Fault: the mask edge is a little soft along the jug's right side. ComfyUI's own template (threshold 0.5, two refine passes). SAM licence (Meta).",
 "peak_vram_gib": 2.4
+},
+{
+"id": "lib_sam3",
+"kind": "image",
+"src": "families/lib_sam3.webp",
+"poster": "families/lib_sam3.webp",
+"w": 350,
+"h": 350,
+"prompt": "Image Segmentation: SAM3: sample from ComfyUI's template library",
+"tpl": "utility_image_segment_sam3",
+"own": false,
+"library": true,
+"note": "From ComfyUI's template library (MIT). Not rendered on this machine yet."
 }
 ],
 "templates": [
@@ -9925,9 +9998,6 @@
 "dir": "diffusion_models",
 "url": "https://huggingface.co/Comfy-Org/SeedVR2/resolve/main/diffusion_models/seedvr2_7b_int8_convrot.safetensors"
 }
-],
-"needs": [
-"weights seedvr2_7b_int8_convrot.safetensors: not on this machine"
 ]
 }
 ]
@@ -12278,10 +12348,6 @@
 "dir": "vae",
 "url": "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors"
 }
-],
-"needs": [
-"weights wan2.2_dancer_14b_global_fp8_scaled.safetensors: not on this machine",
-"weights wan2.2_dancer_14b_local_fp8_scaled.safetensors: not on this machine"
 ]
 }
 ]

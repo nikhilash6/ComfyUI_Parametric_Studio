@@ -92,7 +92,7 @@ Open Weights Only forbids partner nodes and closed-source APIs. A node counts as
 | `psn_nodes/gen/psn_gemini_prompt_crafter.py` | Prepares requests for a closed API. Not registered as a node in the open edition |
 | Language model for the crew | Local by default. Subagents talk only to loopback servers in the Open edition. `STUDIO_LLM_URL` can point the crew at a server you choose |
 | `psn/`, `psn_nodes/`, `studio/`, `install.py` | A test (`tests/test_open_edition_no_paid_apis.py`) fails the build if a paid model host or SDK appears in that code. Since 2026-11-02 it reads `studio/` and the installer too, not only `psn/` and `psn_nodes/`. The node `psn_gemini_prompt_crafter` only builds and parses payloads and makes no call; it is still worth removing from an Open Weights entry |
-| Every graph in the repository | The same test checks every graph file in the repo (743 files that hold nodes, in `workflows/`, `studio/family_templates/`, the University, Pipelines, Sampling Lab, RES4LYF, blepping and Pack Lab pages) against the 312 partner nodes ComfyUI 0.43.0 flags `api_node`, kept in `tests/fixtures/partner_nodes.json`. None is used |
+| Every graph in the repository | The same test checks every graph file in the repo (746 files that hold nodes, in `workflows/`, `studio/family_templates/`, the University, Pipelines, Sampling Lab, RES4LYF, blepping and Pack Lab pages) against 334 partner node ids: the 312 ComfyUI 0.43.0 flags `api_node`, kept in `tests/fixtures/partner_nodes.json`, plus its partner-node source list in `tests/partner_node_ids.txt` (322 ids; the two lists differ by a few). None is used |
 | Comfy Cloud | `STUDIO_BACKEND=sdk` sends the same open-weights graphs to Comfy Cloud and spends your credits. It is off by default, and the test checks that the default backend is the local ComfyUI |
 | Model browser | Catalogue lookups to Civitai and Hugging Face. No generation goes through them |
 | `psn/connectors/registry.py` | Remote generation connectors are marked planned, and off in the Open edition |
@@ -828,7 +828,7 @@ Used by: family templates `image_ming_image_01_design_image_edit`, `image_ming_i
 
 ### Mini-Max-Music3
 
-Used by: goals `music`; workflows `music3_api`; studio templates `music3_dav_full`, `music3_turbo8`; family templates `audio_minimax_music_3`, `music3_dav_full`, `music3_turbo8`; 4 pipeline graphs; University graphs `studio/university/graphs/wf_music3`; Music page `music3`.
+Used by: goals `music`; workflows `music3_api`, `music_music3_kit_api`; studio templates `music3_dav_full`, `music3_turbo8`; family templates `audio_minimax_music_3`, `music3_dav_full`, `music3_turbo8`; 4 pipeline graphs; University graphs `studio/university/graphs/wf_music3`; Music page `music3`.
 
 | File | Put it in | GiB | Licence | Download |
 |---|---|---|---|---|
@@ -843,7 +843,7 @@ Used by: goals `music`; workflows `music3_api`; studio templates `music3_dav_ful
 
 ### MiniMax-H3
 
-Used by: goals `director`, `director_keyframes`, `h3_animate`, `h3_video`, `orbit360`, `recast`, `reshoot`; workflows `h3_fl2v_api`, `h3_i2v_api`, `h3_orbit360_api`, `h3_recast_api`, `h3_reshoot_api`, `h3_t2v_api`, `vset_h3_motion_api`, `vset_h3_union_api`; 11 family templates; 32 recipes and pipelines; 8 pipeline graphs; University graphs `studio/university/graphs/wf_h3_t2v`; 75 LoRA recipes; features `recipes_family`, `train_bases`, `worldkit/capabilities`.
+Used by: goals `director`, `director_keyframes`, `h3_animate`, `h3_video`, `orbit360`, `recast`, `reshoot`; workflows `h3_fl2v_api`, `h3_i2v_api`, `h3_orbit360_api`, `h3_recast_api`, `h3_reshoot_api`, `h3_song_lock_api`, `h3_t2v_api`, `vset_h3_motion_api` ...; 11 family templates; 32 recipes and pipelines; 8 pipeline graphs; University graphs `studio/university/graphs/wf_h3_t2v`; 75 LoRA recipes; features `recipes_family`, `train_bases`, `worldkit/capabilities`.
 
 | File | Put it in | GiB | Licence | Download |
 |---|---|---|---|---|
@@ -1538,7 +1538,7 @@ Used by: studio templates `motion_wan_dancer`; family templates `motion_wan_danc
 
 ### World Kit tools
 
-Used by: workflows `h3_fl2v_api`, `h3_i2v_api`, `h3_orbit360_api`, `h3_recast_api`, `h3_reshoot_api`, `h3_t2v_api`, `vset_h3_motion_api`, `vset_h3_union_api`; 8 pipeline graphs; University graphs `studio/university/graphs/wf_h3_t2v`; features `worldkit/capabilities`.
+Used by: workflows `h3_fl2v_api`, `h3_i2v_api`, `h3_orbit360_api`, `h3_recast_api`, `h3_reshoot_api`, `h3_song_lock_api`, `h3_t2v_api`, `vset_h3_motion_api` ...; 8 pipeline graphs; University graphs `studio/university/graphs/wf_h3_t2v`; features `worldkit/capabilities`.
 
 | File | Put it in | GiB | Licence | Download |
 |---|---|---|---|---|

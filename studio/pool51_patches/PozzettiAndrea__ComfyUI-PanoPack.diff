@@ -1,0 +1,76 @@
+diff --git a/comfy-env-root.toml b/comfy-env-root.toml
+index 2bcf7a3..8320349 100644
+--- a/comfy-env-root.toml
++++ b/comfy-env-root.toml
+@@ -1,3 +1,2 @@
+-[node_reqs]
+-ComfyUI-MoGe2 = "PozzettiAndrea/ComfyUI-MoGe2"
+-ComfyUI-GeometryPack = "PozzettiAndrea/ComfyUI-GeometryPack"
+\ No newline at end of file
++# Parametric Studio patch: [node_reqs] removed. Upstream lists ComfyUI-MoGe2 and ComfyUI-GeometryPack here, and
++# `comfy-env install` would clone and install both into custom_nodes. Neither is part of this install.
+diff --git a/nodes/comfy-env.toml b/nodes/comfy-env.toml
+index 28cb689..e92cf02 100644
+--- a/nodes/comfy-env.toml
++++ b/nodes/comfy-env.toml
+@@ -38,4 +38,8 @@ utils3d = { git = "https://github.com/EasternJournalist/utils3d.git", rev = "3fa
+ pyyaml = "*"
+ transformers = "*"
+ sqlalchemy = "*"
+-pydantic = "*"
+\ No newline at end of file
++pydantic = "*"
++# Parametric Studio patch: the isolated worker runs pixi's own Python, which (unlike a venv) reads the user's
++# ~/.local site-packages; an old package there (e.g. av) would shadow the environment's own. Keep it out.
++[env_vars]
++PYTHONNOUSERSITE = "1"
+diff --git a/prestartup_script.py b/prestartup_script.py
+index e0c22f2..e00fcca 100644
+--- a/prestartup_script.py
++++ b/prestartup_script.py
+@@ -1,28 +1,27 @@
++# Parametric Studio patch: build-once, reuse-always.
++# - The isolated environment is built once, ahead of time (`comfy-env install` in this folder). It lives beside ComfyUI in
++#   `<ComfyUI's parent>/comfy-env` unless COMFY_ENV_ROOT is set. Starting ComfyUI never downloads or installs anything:
++#   comfy-env only reports whether that environment exists, and skips the nodes that need it if it does not.
++# - The bundled test images are no longer copied into ComfyUI/input at every start.
++# - ComfyUI's folder comes from main.py, not from this file's resolved path (the pack is often a symlink).
++import os
++import sys
+ from pathlib import Path
+ 
+-from comfy_env import copy_files, setup_env
+-from comfy_3d_viewers import copy_viewer
++SCRIPT_DIR = Path(__file__).resolve().parent
++_main = getattr(sys.modules.get("__main__"), "__file__", None)
++COMFYUI_DIR = Path(_main).resolve().parent if _main else Path(__file__).absolute().parent.parent.parent
++os.environ.setdefault("COMFY_ENV_ROOT", str(COMFYUI_DIR.parent / "comfy-env"))
+ 
+-setup_env()
++from comfy_env import setup_env  # noqa: E402
++from comfy_3d_viewers import copy_viewer  # noqa: E402
+ 
+-SCRIPT_DIR = Path(__file__).resolve().parent
+-COMFYUI_DIR = SCRIPT_DIR.parent.parent
++setup_env(str(SCRIPT_DIR))
+ 
+-# Copy shared viewers from comfy-3d-viewers
+-viewers = [
+-    "text_report",
+-]
+-for viewer in viewers:
++# Copy the shared viewer into this pack's own web folder
++for viewer in ["text_report"]:
+     try:
+         copy_viewer(viewer, SCRIPT_DIR / "web")
+     except Exception as e:
+         import logging
+         logging.getLogger("panopack").warning("Failed to copy viewer %s: %s", viewer, e)
+-
+-# Copy bundled test images into ComfyUI/input/
+-copy_files(SCRIPT_DIR / "assets", COMFYUI_DIR / "input", "**/*.png")
+-copy_files(SCRIPT_DIR / "assets", COMFYUI_DIR / "input", "**/*.jpg")
+-
+-# Copy 3D assets (.ply, .vtp) into ComfyUI/input/3d/
+-copy_files(SCRIPT_DIR / "assets", COMFYUI_DIR / "input" / "3d", "**/*.ply")
+-copy_files(SCRIPT_DIR / "assets", COMFYUI_DIR / "input" / "3d", "**/*.vtp")

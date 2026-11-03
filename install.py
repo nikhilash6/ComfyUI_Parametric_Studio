@@ -58,7 +58,7 @@ BACKENDS.update({g: ["cuda"] for g in ("recast", "vfx_ltx", "director", "reshoot
 NEEDS.update({g: ["nvfp4"] for g in ("recast", "director", "reshoot", "director_keyframes", "orbit360")})
 # Optional node-pack sets (--packs). pool51: the reviewed, load-tested set listed in studio/pool51_catalogue.json, each at a pinned commit (Pack Lab shows it).
 PACK_SETS = {"pool51": REPO / "studio" / "pool51_catalogue.json"}
-PACK_SET_GB = {"pool51": 1.8}        # the packs' files at their pinned commits, measured; pip packages and first-use model downloads are on top
+PACK_SET_GB = {"pool51": 1.9}        # the packs' files at their pinned commits, measured; pip packages and first-use model downloads are on top
 GOAL_PACKS.update({"vfx_ltx": ["https://github.com/Lightricks/ComfyUI-LTXVideo.git"], "recast": ["https://github.com/kijai/ComfyUI-KJNodes.git"]})
 def load_json(path):
     with open(path, encoding="utf-8") as f:
@@ -115,7 +115,7 @@ def pack_commands(catalogue, comfy_dir, python):
     comfy_dir = Path(comfy_dir); cmds = []; deps, nodeps = [], []
     for p in catalogue["packs"]:
         patch = str(REPO / "studio" / "pool51_patches" / p["patch"]) if p.get("patch") else ""
-        cmds.append(["pack", p["url"] + ".git", p["commit"], str(comfy_dir / "custom_nodes" / p["folder"]), patch])
+        cmds.append(["pack", p["url"] + ".git", p["commit"], str(comfy_dir / "custom_nodes" / p["folder"]), patch, bool(p.get("submodules"))])
         target = nodeps if p.get("pip_no_deps") else deps
         target += [x for x in p.get("pip") or [] if x not in target]
     if deps: cmds.append([python, "-m", "pip", "install", *deps])
@@ -248,7 +248,7 @@ def step_label(cmd):
     if cmd[0] == "link":
         return "Linking the studio's custom nodes into ComfyUI"
     if cmd[0] == "pack":
-        return f"Node pack {Path(cmd[3]).name} at {cmd[2][:10]}" + (", patched" if cmd[4] else "")
+        return f"Node pack {Path(cmd[3]).name} at {cmd[2][:10]}" + (", patched" if cmd[4] else "") + (", with submodules" if len(cmd) > 5 and cmd[5] else "")
     if cmd[1:3] == ["-m", "venv"]:
         return "Creating the Python environment"
     if cmd[:2] == ["git", "clone"]:
@@ -284,16 +284,18 @@ def run_step(cmd, tries=NETWORK_TRIES, sleep=time.sleep):
     return False
 
 
-def install_pack(url, commit, dest, patch="", step=None):
-    """Clone one pack at exactly its pinned commit (no hooks, no submodules), then apply its patch. A checkout already there is kept."""
+def install_pack(url, commit, dest, patch="", submodules=False, step=None):
+    """Clone one pack at exactly its pinned commit (hooks off; submodules only where the catalogue says the pack needs them), then apply its patch. A checkout already there is kept."""
     step = step or run_step
     if already_cloned(dest):
         print(f"  already there, keeping it: {dest}")
         return True
     git = ["git", "-c", "core.hooksPath=" + os.devnull]
     steps = [git + ["init", "-q", str(dest)], git + ["-C", str(dest), "fetch", "--depth", "1", url, commit], git + ["-C", str(dest), "checkout", "-q", "FETCH_HEAD"]]
+    if submodules:
+        steps.append(git + ["-c", "protocol.file.allow=never", "-C", str(dest), "submodule", "update", "--init", "--recursive", "--depth", "1"])
     if patch:
-        steps.append(git + ["-C", str(dest), "apply", patch])
+        steps.append(git + ["-C", str(dest), "apply", "--ignore-whitespace", patch])      # tolerant of line endings a checkout may have changed
     return all(step(c) for c in steps)
 
 
@@ -378,7 +380,7 @@ def parse_args(argv=None):
                    help="comma-separated goals to fetch models for, or 'all' (default: image). See --list")
     p.add_argument("--include-gated", action="store_true", help="also fetch gated models; needs HF_TOKEN and an accepted licence")
     p.add_argument("--no-models", action="store_true", help="install the software only")
-    p.add_argument("--packs", choices=["none", *PACK_SETS], default="none", help="also install a node-pack set at pinned commits: pool51 is the reviewed, load-tested set Pack Lab lists (about 1.8 GB plus pip packages)")
+    p.add_argument("--packs", choices=["none", *PACK_SETS], default="none", help="also install a node-pack set at pinned commits: pool51 is the reviewed, load-tested set Pack Lab lists (about 1.9 GB plus pip packages)")
     p.add_argument("--yes", action="store_true", help="do not ask for confirmation; also allows running as root")
     p.add_argument("--dry-run", action="store_true", help="print the plan and every step, change nothing")
     p.add_argument("--profile-json", help="use a simulated hardware profile from this JSON file")
@@ -464,6 +466,10 @@ def main(argv=None):
     if not args.no_models and any("minimax" in str(f).lower() and "h3" in str(f).lower() for f in files):
         print(H3_NOTICE)
 
+    if args.packs != "none":
+        for p in load_json(PACK_SETS[args.packs])["packs"]:
+            if p.get("weights_licence"):
+                print(f"Note: {p['repo']} uses model weights under the {p['weights_licence']}. Read that licence before using its output.")
     cmds = build_commands(result, plan_manifest, channels, args.channel, args.dir, profile.get("backend", "cpu"),
                           args.include_gated, not args.no_models, [] if args.packs == "none" else [args.packs])
     if args.dry_run:

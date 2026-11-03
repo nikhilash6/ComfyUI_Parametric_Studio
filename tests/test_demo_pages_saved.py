@@ -6,7 +6,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 NOT_SAVED = {
     "fit/detect": "this machine's GPU: the demo would show the author's card as the visitor's",
-    "gamebuilder/status": "this machine's Godot and model readiness",
     "models/attach": "this machine's ComfyUI address",
     "printify": "a print-on-demand account; not part of the demo",
     "probe": "needs an uploaded file",

@@ -184,14 +184,14 @@ def counts_card(nums, k=1.0, foot="", title="See how big it is", top="PARAMETRIC
 
 
 # ---------- audio ----------
-def level(src_wav, out, start, dur, fade_in=0.0, fade_out=1.5, extra=None):
+def level(src_wav, out, start, dur, fade_in=0.0, fade_out=1.5, extra=None, limit=0.6):
     """Trim, fade, then two-pass loudnorm to -16 LUFS integrated, -1.5 dBTP. extra: a ready filter chain instead of trim, for joined tracks."""
     pre = extra or f"atrim={start}:{start + dur},asetpts=PTS-STARTPTS"
     pre += (f",afade=t=in:d={fade_in}" if fade_in else "") + f",afade=t=out:st={dur - fade_out}:d={fade_out}"
     r = run(["ffmpeg", "-hide_banner", "-i", src_wav, "-af", pre + ",loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json", "-f", "null", "-"])
     m = json.loads(r.stderr[r.stderr.rindex("{"):r.stderr.rindex("}") + 1])
     ln = f"loudnorm=I=-16:TP=-1.5:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true"
-    run(["ffmpeg", "-y", "-hide_banner", "-i", src_wav, "-af", pre + "," + ln + ",aresample=48000,alimiter=limit=0.6:level=false:attack=1:release=50", "-ar", "48000", "-c:a", "pcm_s16le", out])      # the limiter leaves headroom: AAC overshoots the peaks a little
+    run(["ffmpeg", "-y", "-hide_banner", "-i", src_wav, "-af", pre + "," + ln + f",aresample=48000,alimiter=limit={limit}:level=false:attack=1:release=50", "-ar", "48000", "-c:a", "pcm_s16le", out])      # the limiter leaves headroom: AAC overshoots the peaks a little
     return measure(out)
 
 
@@ -200,8 +200,8 @@ def measure(p):
     return {"lufs": float(re.search(r"I:\s+(-?[\d.]+) LUFS", t).group(1)), "true_peak_db": float(re.search(r"Peak:\s+(-?[\d.]+) dBFS", t).group(1)), "lra": float(re.search(r"LRA:\s+(-?[\d.]+) LU", t).group(1))}
 
 
-def mux(video, audio, master, web=None, web_w=1280, web_crf=28, web_abr="128k", web_kbps=None):
-    run(["ffmpeg", "-y", "-hide_banner", "-i", video, "-i", audio, "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "slow", "-crf", "17", "-pix_fmt", "yuv420p", "-profile:v", "high", "-c:a", "aac", "-b:a", "256k",
+def mux(video, audio, master, web=None, web_w=1280, web_crf=28, web_abr="128k", web_kbps=None, master_crf=17):
+    run(["ffmpeg", "-y", "-hide_banner", "-i", video, "-i", audio, "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "slow", "-crf", str(master_crf), "-pix_fmt", "yuv420p", "-profile:v", "high", "-c:a", "aac", "-b:a", "256k",
          "-shortest", "-map_metadata", "-1", "-metadata", "title=Parametric Studio demo", "-movflags", "+faststart", master])
     if web and web_kbps:      # two passes at a fixed rate, 24 fps: a screen recording is mostly still, so the budget goes to the scrolls
         log = str(Path(web).with_suffix("")) + "_2pass"; vf = ["-vf", f"scale={web_w}:-2:flags=lanczos,fps=24", "-c:v", "libx264", "-preset", "slower", "-b:v", f"{web_kbps}k"]

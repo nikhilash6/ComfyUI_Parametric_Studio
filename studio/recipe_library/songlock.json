@@ -1,0 +1,203 @@
+{
+ "version": 1,
+ "kind": "video",
+ "note": "H3 song lock: a performer lip-syncs to a song you bring, and the song stays bit-exact. Measured proof: studio/song_lock_proof.json (GET /api/song-lock).",
+ "recipes": [
+  {
+   "id": "song_lock_video",
+   "kind": "video",
+   "group": "Music: song lock",
+   "rating": "sfw",
+   "title": "Song Lock: bring your song",
+   "pitch": "Your finished song and one performer: MiniMax H3 makes them sing it in three shots, and your song comes out of the edit bit-exact. Lip-sync is still weak.",
+   "why": "The song is never regenerated. Each shot hands H3 its stretch of the song as a locked audio latent (noise mask 0) plus an audio keyframe, so H3 only draws a picture that sings what is already there. Then the studio cuts that stretch from your original file sample by sample, joins the pictures without re-encoding them and muxes the stretch as FLAC. The cut step hashes the decoded samples of the result against the original stretch and refuses to finish if they differ.",
+   "tags": [
+    "film",
+    "music"
+   ],
+   "fields": [
+    {
+     "key": "performer",
+     "label": "Who sings: an invented adult, described plainly",
+     "default": "a woman in her thirties with short dark curly hair, a mustard yellow knit sweater and small silver earrings"
+    },
+    {
+     "key": "place",
+     "label": "Where they sing",
+     "default": "stands by a window in a warm wooden cabin at dusk"
+    },
+    {
+     "key": "start",
+     "label": "Start at, in seconds into the song ('auto' picks the loudest stretch, usually a chorus)",
+     "default": "auto"
+    },
+    {
+     "key": "lyrics",
+     "label": "Lyrics for the song this recipe writes when you don't bring one",
+     "default": "[Verse]\nMorning on the harbour wall\nGulls are calling, light is small\nI kept the lantern burning low\nWaiting for the tide to go\n\n[Chorus]\nCarry me home on the evening tide\nOpen the door and the window wide\nCarry me home where the lamps are lit\nI know the way, I remember it\n\n[Verse]\nSalt is drying on my coat\nEvery rope and every boat\nThe harbour hums an easy tune\nUnder a pale and early moon\n\n[Chorus]\nCarry me home on the evening tide\nOpen the door and the window wide\nCarry me home where the lamps are lit\nI know the way, I remember it",
+     "multiline": true
+    }
+   ],
+   "models": [
+    {
+     "name": "MiniMax H3",
+     "licence": "MiniMax H3 Community License",
+     "licence_class": "community",
+     "note": "Show the name in commercial products. Read the licence's territory terms before you rely on it."
+    },
+    {
+     "name": "MiniMax Music 3",
+     "licence": "MiniMax-Music3 Community License",
+     "licence_class": "community",
+     "note": "Only when you don't bring a song. Commercial use must show the name MiniMax-Music3."
+    },
+    {
+     "name": "FLUX.2 Klein 4B",
+     "licence": "Apache-2.0",
+     "licence_class": "open",
+     "note": "Only when you don't bring a performer picture."
+    },
+    {
+     "name": "faster-distil-whisper-large-v3",
+     "licence": "MIT",
+     "licence_class": "open",
+     "note": "Hears which words fall in each shot, on the CPU."
+    },
+    {
+     "name": "ffmpeg",
+     "licence": "LGPL/GPL, runs as a separate tool",
+     "licence_class": "open"
+    }
+   ],
+   "tips": [
+    "Bring your own song on the first step and your performer on the second. Only songs you own or control, and only a performer who is invented or who has agreed in writing.",
+    "A lossless song (WAV or FLAC) comes out bit-exact. An MP3 or M4A is decoded once, so the result matches the decoded song, which is all a lossy file can promise.",
+    "Pick a stretch with singing in it. With 'auto' the studio takes the loudest stretch, which is usually a chorus.",
+    "Slow camera moves keep the face, and so the mouth, in frame."
+   ],
+   "steps": [
+    {
+     "id": "song",
+     "type": "goal",
+     "goal": "music",
+     "label": "Your song",
+     "model": "MiniMax Music 3",
+     "peak_gib": 27,
+     "seed": 71,
+     "prompt": "Global Metadata\nBasic Attributes: bpm is 92. key is A, and scale is major. Warm indie folk pop.\nGlobal Emotional Progression: A close, quiet verse grows into a bright, open chorus and settles again at the end.\nSonics & Production Profile: Warm and intimate, the lead vocal close and clear in the middle of the mix.\nVocal Details\nVocal Gender & Timbre: Singer A (Female), warm and clear.\nVocal Style: Plain, unhurried, every word sung clearly and in order.\nArrangement\nPrimary: Fingerpicked acoustic guitar and a soft kick.\nSecondary: Upright bass and a light string pad in the chorus.",
+     "lyrics": "{lyrics}",
+     "options": {
+      "seconds": 60
+     },
+     "swappable": true,
+     "accepts": "audio"
+    },
+    {
+     "id": "performer",
+     "type": "goal",
+     "goal": "image",
+     "label": "Your performer",
+     "model": "FLUX.2 Klein 4B",
+     "peak_gib": 23,
+     "seed": 72,
+     "prompt": "Waist-up portrait photo of {performer}, facing the camera with a calm, open expression, mouth closed, soft window light, plain warm background. An invented person. No text, no logos.",
+     "options": {
+      "aspect": "2:3",
+      "mode": "quality"
+     },
+     "swappable": true,
+     "accepts": "image"
+    },
+    {
+     "id": "window",
+     "type": "songlock_window",
+     "label": "The stretch to sing",
+     "model": "ffmpeg and Whisper, on the CPU",
+     "audio": "@song",
+     "args": {
+      "shots": 3,
+      "seconds": 5,
+      "start": "{start}"
+     }
+    },
+    {
+     "id": "lock1",
+     "type": "songlock_shot",
+     "label": "Singing shot 1",
+     "model": "MiniMax H3, song locked",
+     "peak_gib": 47,
+     "seed": 731,
+     "image": "@performer",
+     "audio": "@window",
+     "target": "{performer}",
+     "prompt": "{place}",
+     "options": {
+      "part": 1,
+      "seconds": 5,
+      "camera": "locked",
+      "aspect": "16:9",
+      "quality": "high",
+      "speed": "fast"
+     }
+    },
+    {
+     "id": "lock2",
+     "type": "songlock_shot",
+     "label": "Singing shot 2",
+     "model": "MiniMax H3, song locked",
+     "peak_gib": 47,
+     "seed": 732,
+     "image": "@performer",
+     "audio": "@window",
+     "target": "{performer}",
+     "prompt": "{place}",
+     "options": {
+      "part": 2,
+      "seconds": 5,
+      "camera": "push_in",
+      "aspect": "16:9",
+      "quality": "high",
+      "speed": "fast"
+     }
+    },
+    {
+     "id": "lock3",
+     "type": "songlock_shot",
+     "label": "Singing shot 3",
+     "model": "MiniMax H3, song locked",
+     "peak_gib": 47,
+     "seed": 733,
+     "image": "@performer",
+     "audio": "@window",
+     "target": "{performer}",
+     "prompt": "{place}",
+     "options": {
+      "part": 3,
+      "seconds": 5,
+      "camera": "arc",
+      "aspect": "16:9",
+      "quality": "high",
+      "speed": "fast"
+     }
+    },
+    {
+     "id": "cut",
+     "type": "songlock_cut",
+     "label": "The edit, song bit-exact",
+     "model": "ffmpeg, on the CPU",
+     "final": true,
+     "clips": [
+      "@lock1",
+      "@lock2",
+      "@lock3"
+     ],
+     "audio": "@window"
+    }
+   ],
+   "proof": {
+    "level": "recipe",
+    "note": "Status: audio exact, lip-sync weak, working to fix. Measured on 2026-11-03 on an AI song (Music 3) with an invented performer, by programs only (nobody has watched or listened): the song in the finished edit is bit-exact (the sha256 of its decoded samples equals the original stretch's). Lip-sync is weak: each shot's mouth follows its own stretch of the song with a mean best correlation of 0.25, against 0.18 for another stretch of the same song; the earlier studio called 0.35 good. Swapping the turbo LoRA did not change that."
+   }
+  }
+ ]
+}

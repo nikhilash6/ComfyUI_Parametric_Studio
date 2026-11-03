@@ -1,0 +1,16 @@
+diff --git a/nodes.py b/nodes.py
+index 452d3ab..2cc75c0 100644
+--- a/nodes.py
++++ b/nodes.py
+@@ -2406,6 +2406,11 @@ def _ag_try_patch_comfy_samplers_sample() -> bool:
+         seed=None,
+         **kwargs,
+     ):
++        # Parametric Studio patch: one-shot. Put core's comfy.samplers.sample back on the first call, so the wrapper only covers the
++        # detailer sampling that installed it (pre_ksample installs it again next time) and never stays on the server for other renders.
++        if getattr(comfy_samplers, "sample", None) is patched_sample:
++            comfy_samplers.sample = orig_fn
++            comfy_samplers._ag_autoguidance_patched = False
+         guider = getattr(model, "_ag_detailer_guider", None)
+         if guider is None or latent_image is None:
+             return orig_fn(

@@ -42,12 +42,12 @@ LTX-2.5 VRAM per VFX effect on a 96 GB card with every weight resident: 37.5 to 
 
 ## Camera Paths motion track
 
-LTX-2.5 with the LTX-2.3 Motion-Track-Control IC-LoRA draws an object along a line. It renders at 960x576, because the LoRA works on a half-size grid and both sides must be multiples of 64; 121 frames at 24 fps. A red paper boat on a stream took 31.8 s at 39.2 GiB and stayed within 24.9 px of the line on average (40.1 px at most) over 121 frames, followed by colour. Looked at frame by frame. [code: studio/feature_camera.py:19] [run: studio/camera_proof.json:259-310]
+LTX-2.5 with the LTX-2.3 Motion-Track-Control IC-LoRA draws an object along a line. It renders at 960x576, because the LoRA works on a half-size grid and both sides must be multiples of 64; 121 frames at 24 fps. A red paper boat on a stream took 31.8 s at 39.2 GiB and stayed within 24.9 px of the line on average (40.1 px at most) over 121 frames, followed by colour. Looked at frame by frame. [code: studio/feature_camera.py:19] [run: studio/camera_proof.json]
 
-The first object follower (Lucas-Kanade on points around the start) stayed on the pebbles and reported 274 px. It was replaced by template matching; the render was not repeated. [run: studio/camera_proof.json:6]
+The first object follower (Lucas-Kanade on points around the start) stayed on the pebbles and reported 274 px. It was replaced by template matching; the render was not repeated. [run: studio/camera_proof.json]
 
 ## Other LTX renders
 
-LTX-Video 13B 0.9.8 distilled fp8 rendered through ComfyUI's LTX-Video text-to-video graph, with transformer and VAE in one file: 8 steps at CFG 1, 97 frames at 768x512, 30.3 s and a 23.1 GiB peak, one run, viewed. [run: studio/family_status.json:4910-4922] [code: studio/family_templates/ltxv13b_098_distilled_t2v.json]
+LTX-Video 13B 0.9.8 distilled fp8 rendered through ComfyUI's LTX-Video text-to-video graph, with transformer and VAE in one file: 8 steps at CFG 1, 97 frames at 768x512, 30.3 s and a 23.1 GiB peak, one run, viewed. [run: studio/family_status.json] [code: studio/family_templates/ltxv13b_098_distilled_t2v.json]
 
 LTX-2.5 in one-click effects: Qwen-Image-Edit 2511 makes the edited still, then LTX-2.5 starts in place on the photo with a guide only on the last frame, so the photo swells into the edit; a guide on both ends cross-faded instead. Unloading Qwen before LTX loads cut the peak from 66.0 to 38.9 GiB. A 5 s still-plus-clip run took 69.4 s; the face drifts a little toward the edited still by the end. [run: studio/web/oneclick_art/index.json:53-80] [code: studio/feature_oneclick.py:84]

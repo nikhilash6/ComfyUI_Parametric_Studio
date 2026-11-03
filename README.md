@@ -28,12 +28,19 @@ Bring one clip and queue the shoot: a new camera, a frozen orbit, a recast lead,
 
 ### See how big it is
 
-| [![Highlight reel: 48 clips from 11 parts of the repo, each labelled with the model or graph that made it](docs/media/demo_reel.webp)](docs/media/demo_reel.mp4) | [![The wall: 100 different renders fill a 10 by 10 grid while a counter runs to 2,034](docs/media/demo_wall.webp)](docs/media/demo_wall.mp4) | [![Studio tour: every one of the 46 tabs, with a caption naming each](docs/media/demo_tour.webp)](docs/media/demo_tour.mp4) |
+| [![Highlight reel: 48 clips from 11 parts of the repo, each labelled with the model or graph that made it](docs/media/demo_reel.webp)](docs/media/demo_reel.mp4) | [![The wall: 100 different renders fill a 10 by 10 grid while a counter runs to 2,041](docs/media/demo_wall.webp)](docs/media/demo_wall.mp4) | [![Studio tour: every one of the 46 tabs, with a caption naming each](docs/media/demo_tour.webp)](docs/media/demo_tour.mp4) |
 |---|---|---|
-| **[▶ Highlight reel](docs/media/demo_reel.mp4)** (1:10). 48 clips from 11 parts of the repo: model families, recipes, pipelines, 3D, commercials, Shot Board, music, ComfyUniversity and the films. [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Demo_Reel.mp4) | **[▶ The wall](docs/media/demo_wall.mp4)** (0:25). 100 different renders fill in while the counter runs to the 2,034 rendered files in the repo. [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Demo_Wall.mp4) | **[▶ Studio tour](docs/media/demo_tour.mp4)** (1:49). All 46 tabs, recorded on a preview of this release with no GPU attached. Also on a [phone](docs/media/demo_tour_phone.mp4) (0:20). [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Demo_Tour.mp4) |
+| **[▶ Highlight reel](docs/media/demo_reel.mp4)** (1:10). 48 clips from 11 parts of the repo: model families, recipes, pipelines, 3D, commercials, Shot Board, music, ComfyUniversity and the films. [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Demo_Reel.mp4) | **[▶ The wall](docs/media/demo_wall.mp4)** (0:25). 100 different renders fill in while the counter runs to the 2,041 rendered files in the repo. [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Demo_Wall.mp4) | **[▶ Studio tour](docs/media/demo_tour.mp4)** (1:49). All 46 tabs, recorded on a preview of this release with no GPU attached. Also on a [phone](docs/media/demo_tour_phone.mp4) (0:20). [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Demo_Tour.mp4) |
 | <sub>Every label names the model or graph from that clip's own record: [`docs/demos/reel_edl.json`](docs/demos/reel_edl.json). The Wren Halloway clip was made before the studio and says so.</sub> | <sub>Each tile is a different render already in the repo: [`docs/demos/wall_tiles.json`](docs/demos/wall_tiles.json). Counted from this release, with how each figure was counted, in [`docs/demos/numbers.json`](docs/demos/numbers.json).</sub> | <sub>Pages, renders and figures are the repo's own; ComfyUI shows as offline because none was attached. Tabs and times: [`docs/demos/tour_edl.json`](docs/demos/tour_edl.json).</sub> |
 
-<sub>Counted from this release: 6,303 ComfyUI node classes loaded (partner API nodes left out), 1,093 graphs that open in the studio, 818 recipes, 76 model families rendered here, 24 pipelines, 163 lessons, 46 tabs, 2,034 rendered files, 189 crew notes, 7,423 tests. All AI-generated. Music: the studio's own renders of one song, "Paper Boats": MiniMax-Music3 (MiniMax-Music3 Community License) on the reel, ACE-Step 1.5 (MIT) and DiffSynth-Music (Apache-2.0) on the wall and the tour, levelled to -16 LUFS.</sub>
+<sub>Counted from this release: 6,322 ComfyUI node classes loaded (partner API nodes left out), 1,098 graphs that open in the studio, 818 recipes, 80 model families rendered here, 24 pipelines, 163 lessons, 46 tabs, 2,041 rendered files, 221 crew notes, 7,462 tests. All AI-generated. Music: the studio's own renders of one song, "Paper Boats": MiniMax-Music3 (MiniMax-Music3 Community License) on the reel, ACE-Step 1.5 (MIT) and DiffSynth-Music (Apache-2.0) on the wall and the tour, levelled to -16 LUFS.</sub>
+
+### Walkthrough, narrated
+
+| [![The two-minute walkthrough: Cinematic Studio, Re-shoot a video, Openjutsu, the LTX-2.5 VFX workflow and how it's built](docs/media/walkthrough_short.webp)](docs/media/walkthrough_short.mp4) | [![The full walkthrough: every section of the studio, explained](docs/media/walkthrough.webp)](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Walkthrough.mp4) |
+|---|---|
+| **[▶ The short walkthrough](docs/media/walkthrough_short.mp4)** (1:40). What's new, the contest's three prompts (Cinematic Studio, Re-shoot a video, Openjutsu), LTX-2.5 as the core of the VFX workflow, and how it's built. [1080p](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Walkthrough_Short.mp4) | **[▶ The full walkthrough](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_Walkthrough.mp4)** (9:39, 1080p). Every section of the studio, the bonus features, the phone, the checks behind every release, and what we want to build next |
+| <sub>Narrated by Kokoro 82M's built-in male voice `am_michael` (Apache-2.0) on the CPU, not a clone of anyone. Captions are burned in. Whisper (distil-large-v3) heard the narration back against [the script](docs/demos/walkthrough_script.md); shots, captions and word error rate are in [`docs/demos/walkthrough_short_edl.json`](docs/demos/walkthrough_short_edl.json).</sub> | <sub>Recorded on a preview of this release with no GPU attached, with real renders cut in where the narration talks about results. Music: one instrumental brief made in the studio with MiniMax-Music3 and ACE-Step 1.5, ducked under the voice. [`docs/demos/walkthrough_full_edl.json`](docs/demos/walkthrough_full_edl.json)</sub> |
 
 ## For the judges
 
@@ -42,7 +49,7 @@ Built for the Open Source Higgsfield contest. Entered in **Open Weights Only** a
 | | |
 |---|---|
 | **What's new** | One clip becomes a whole shoot in one queue: reshoot, frozen-time orbit, recast, then four LTX-2.5 effects, and every result keeps its exact graph and seed. Code: the queue in [`studio/web/shotboard.js`](studio/web/shotboard.js), job states in [`shotboard_logic.js`](studio/web/shotboard_logic.js), the board in [`shotboard_view.js`](studio/web/shotboard_view.js), the contact-video export in [`studio/shot_board.py`](studio/shot_board.py). Tests: [`tests/test_shot_board.py`](tests/test_shot_board.py) |
-| **Open Weights Only** | [`tests/test_open_edition_no_paid_apis.py`](tests/test_open_edition_no_paid_apis.py) checks every graph in [`workflows/`](workflows) and [`studio/family_templates/`](studio/family_templates) against the 322 partner node ids in ComfyUI 0.43.0 ([`tests/partner_node_ids.txt`](tests/partner_node_ids.txt)), and keeps paid API hosts and SDKs out of `psn/` and `psn_nodes/`. The open edition hides partner apps: [`tests/test_publication.py`](tests/test_publication.py) |
+| **Open Weights Only** | [`tests/test_open_edition_no_paid_apis.py`](tests/test_open_edition_no_paid_apis.py) checks every graph in [`workflows/`](workflows) and [`studio/family_templates/`](studio/family_templates) against 334 partner node ids from ComfyUI 0.43.0: the 312 its `/object_info` flags `api_node` ([`tests/fixtures/partner_nodes.json`](tests/fixtures/partner_nodes.json)) plus its partner-node source list ([`tests/partner_node_ids.txt`](tests/partner_node_ids.txt), 322 ids); the two lists differ by a few, and keeps paid API hosts and SDKs out of `psn/` and `psn_nodes/`. The open edition hides partner apps: [`tests/test_publication.py`](tests/test_publication.py) |
 | **LTX is the core** | [`workflows/ltx25_vfx_api.json`](workflows/ltx25_vfx_api.json): 30 nodes, LTX-2.5 with one of four Lightricks IC-LoRAs, picked per effect in `VFX_EFFECTS` in [`studio/goals.py`](studio/goals.py): water, clean plate, day to night, matte. A transition between two clips runs the LTX-2.3 transition LoRA on LTX-2.5 ([`workflows/ltx25_transition_api.json`](workflows/ltx25_transition_api.json)), rendered: [`studio/web/showcase/transition_proof.json`](studio/web/showcase/transition_proof.json) |
 | **Demo** | [1:49 screen recording of one real run](docs/media/shotboard_demo.mp4): waits sped up and labelled, captions, no sound |
 | **Made in Parametric Studio** | Two 90-second films made with the studio: [Film A "RUN"](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_FilmA_RUN_MiniMaxH3.mp4) on MiniMax H3 and [Film B "ONE CLIP"](https://github.com/parametricparadigm/ComfyUI_Parametric_Studio/releases/download/demo/ParametricStudio_FilmB_ONE_CLIP_LTX25.mp4) on LTX-2.5 with four IC-LoRAs. AI-generated, model licences [under the posters](#made-in-parametric-studio) |
@@ -68,7 +75,7 @@ Bring one clip and queue the lot: reshoot it with a new camera, orbit around the
 
 **Peak VRAM** for the same goals rendered on their own on our 96 GB card: reshoot 49.3 GiB, VFX water 47.3 GiB, VFX clean plate 44.8 GiB, recast 36.3 GiB (recorded in [`studio/web/showcase/showcase.json`](studio/web/showcase/showcase.json)). These are peaks on a card with room to spare, not minimums. No smaller card has been tried.
 
-![Shot Board: one source clip, reshot, orbited, recast and run through four LTX-2.5 effects](docs/img/shotboard.jpg)
+![The Shot Board page: one example source clip with its LTX-2.5 water, day to night, clean plate, matte and transition takes, and the queue of takes beside it](docs/img/shotboard.jpg)
 
 ## What's proven
 
@@ -235,12 +242,12 @@ Named after what you want to do, not which node to wire.
 Plus Image, Image HQ, Anime, Video, Animate, Video + Sound and Music as direct goals on FLUX.2 Klein, FLUX.3 Klein, Anima, Wan 2.2, LTX-2.5, MiniMax H3 and MiniMax Music 3.
 
 <table><tr>
-<td><a href="studio/web/showcase/v_h3_dragon.mp4"><img src="studio/web/showcase/v_h3_dragon.webp" alt="MiniMax H3: dragon" width="280"></a><br><sub><b>MiniMax H3</b>: dragon, with sound</sub></td>
+<td><a href="studio/web/showcase/v_h3_dragon.mp4"><img src="studio/web/showcase/v_h3_dragon.webp" alt="MiniMax H3: a dragon, with sound" width="280"></a><br><sub><b>MiniMax H3</b>: dragon, with sound</sub></td>
 <td><a href="studio/web/showcase/vfx_flood.mp4"><img src="studio/web/showcase/vfx_flood.webp" alt="LTX-2.5 VFX: flood the street" width="280"></a><br><sub><b>LTX-2.5 VFX</b>: flood the street</sub></td>
-<td><a href="studio/web/showcase/recast_chef.mp4"><img src="studio/web/showcase/recast_chef.webp" alt="Recast" width="280"></a><br><sub><b>Recast</b>: same scene, new character</sub></td>
+<td><a href="studio/web/showcase/recast_chef.mp4"><img src="studio/web/showcase/recast_chef.webp" alt="Recast: the same scene with a new character" width="280"></a><br><sub><b>Recast</b>: same scene, new character</sub></td>
 </tr><tr>
-<td><img src="studio/web/showcase/s_mecha.webp" alt="Anima: mecha" width="280"><br><sub><b>Anima</b>: mecha in the rain</sub></td>
-<td><img src="studio/web/showcase/s_foundry.webp" alt="FLUX.2 Klein: foundry" width="280"><br><sub><b>FLUX.2 Klein</b>: 10 seconds on one GPU</sub></td>
+<td><img src="studio/web/showcase/s_mecha.webp" alt="Anima: a mecha in the rain" width="280"><br><sub><b>Anima</b>: mecha in the rain</sub></td>
+<td><img src="studio/web/showcase/s_foundry.webp" alt="FLUX.2 Klein: a dark foundry with a river of molten gold" width="280"><br><sub><b>FLUX.2 Klein</b>: 10 seconds on one GPU</sub></td>
 <td><a href="studio/web/showcase/vfx_clean_plate.mp4"><img src="studio/web/showcase/vfx_clean_plate.webp" alt="LTX-2.5 VFX: clean plate" width="280"></a><br><sub><b>LTX-2.5 VFX</b>: the violinist painted out, no mask</sub></td>
 </tr></table>
 
@@ -255,24 +262,29 @@ Plus Image, Image HQ, Anime, Video, Animate, Video + Sound and Music as direct g
 </div>
 
 ### See inside every shot
+
 Open **Pro** and the exact ComfyUI graph appears in 3D, with data flowing along its wires. Click a node for a plain-language explanation. During a render it lights up node by node. The same graph runs when you press Generate, and you can copy it into ComfyUI.
 
-![The real graph in 3D](docs/img/pro.jpg)
+![The Pro page: the real ComfyUI graph in 3D, its wires lit in the direction data flows](docs/img/pro.jpg)
 
 ### A crew you can talk to
+
 **Comfy Prime** greets you, learns your name, and drives the studio for you, but never starts a render without your say. 46 specialists answer questions **only from notes, and show the quote**; this needs a local language model, and our tests stub it. Push to talk with local Whisper, hear replies in local Kokoro voices. Nothing leaves your machine.
 
 ![Comfy Prime and the crew](docs/img/crew.jpg)
 
 ### Model families, each with its own backend
+
 95 families are wired, and 80 have a render on record. They run from **Stable Diffusion 1.5, SDXL and SD3** through **FLUX, Wan, HunyuanVideo, Mochi, LTX and MiniMax H3**, plus 3D, audio and utility models. Each has its own isolated ComfyUI instance with its own custom nodes and model view, started on demand behind a VRAM check and stopped when idle. Each family shows its state: rendered, ready, or what to download. A family with no render on record is wired, not proven.
 
-![Model families](docs/img/families.jpg)
+![The Families page: the model families wired into the studio](docs/img/families.jpg)
 
 ### Designers
+
 Whole concept sheets from a few choices: **Character, Fashion, Vehicle**, plus setting, animal, plant, hair, nails, furniture, costume and print-on-demand products. Original designs only: no brands, logos or real makes.
 
 ### AI video editing
+
 Remove objects, upscale, slow motion, extend a clip, restyle with pose or depth, change the camera, fill and outpaint, edit by instruction, then cut it together on a timeline.
 
 ### Train: your pictures in, a LoRA out
@@ -286,34 +298,43 @@ The word check covers captions, file names, the LoRA name, the trigger and the t
 **Installing ai-toolkit (for FLUX.1 dev, Qwen-Image 2.1, HiDream-O1, LTX-2.5 and MiniMax H3) or SimpleTuner (for Music 3):** nothing is installed for you. Clone https://github.com/ostris/ai-toolkit, make a Python 3.12 venv, install a CUDA build of torch and then `requirements.txt`, and set `STUDIO_TRAINER_AI_TOOLKIT_DIR` and `STUDIO_TRAINER_AI_TOOLKIT_PYTHON` (for SimpleTuner, install it in its own venv and set `STUDIO_TRAINER_SIMPLETUNER_PYTHON`). The page shows these steps on any base that needs it. We write the job file from our own templates in `studio/train_configs` and give the trainer a folder of links, so it never writes into your model folders. It may fetch tokenizer and config files from Hugging Face. `STUDIO_TRAIN_WRAP` puts a command in front of the trainer, for a machine that shares its GPU through a queue. `STUDIO_TRAIN_PROVE=<base id>` lets one base have its first run without the page's tick.
 
 ### World Kit and Virtual Set
+
 **World Kit** keeps one library of `.glb` places, props and characters with real scale and colliders, and exports a Godot pack. The place maker, looks, library and export ran here on the CPU with Blender, and the prop maker ran from a mesh. Describe an invented person and the character maker makes a sheet, checks it, and builds a rigged body with motions: it ran here on real models. The figure wears the sheet's clothes, hair and colour; its back and sides are the model's guess. Word checks and a picture check run on every character; the page says what they cannot catch. Other steps that need a model are written and tested with fakes, but have not run on a real model.
 
 **Virtual Set** blocks a shot in a real-scale 3D place and steers a video model with what Blender renders. The passes ran on the CPU, and modes A, B, C and D have each rendered once on one street shot. Wan, a pose pass and Qwen keyframes have not run. World Kit and Virtual Set need extra downloads the installer does not fetch yet; the page says what is missing.
 
 ### Motion: words in, a body moving
+
 Make a character move from words with Kimodo and put the clip on a rigged World Kit character, make a person follow a performance, animate a portrait, lip-sync a clip, capture motion from video into a rig. Each route shows only what rendered here, with its seed, time, peak VRAM, licence and faults. Anything that shows a person asks you to confirm they are invented or gave permission, runs word and picture checks, and marks the result as AI-generated. Those checks can't tell a real person from an invented one: that part is your word, and it stays with the file.
 
 ### Sampling Lab and the RES4LYF page
+
 **Sampling Lab** explains samplers and schedulers in plain words, with 44 real renders on SDXL, SD 1.5 and SD 3.5 and measurements of ComfyUI's core code. The atlas entries for third-party packs are read from their source, not run. The SD 3.5 renders were decoded with a preview VAE, so they are not final quality.
 
 **RES4LYF** is a credit page for ClownsharkBatwing's pack, which we don't ship. Run separately, of 154 nodes checked, 92 rendered, 14 ran, 44 errored and 4 were skipped or refused. The rest of the pack was not tried.
 
 ### ComfyUniversity
+
 Learn ComfyUI by doing it, in tracks from your first wire to reading the sampler's source: graphs, samplers, noise and latents, guidance, conditioning, ControlNet and depth, LoRA training, video, audio, 3D, custom nodes, debugging, VRAM, and vetting node packs. Each lesson has a graph you can download and open, a lab that runs in the browser with no GPU, a Python lab you can run on your CPU from the page, a quiz, and a section on what commonly goes wrong. Each one lists what we checked against ComfyUI's source, a run or official docs, and what we could not check. Every graph passes ComfyUI's own validation, the ones that need no model were really executed, and the browser's schedulers and solvers are tested against ComfyUI's real functions. Each lesson carries a mark worked out from the data: *second reader checked* if an independent audit has tried to prove it wrong and fixed what it found, or *author-checked, second read pending* if not. Second reads found and fixed real errors, and they sample each lesson's riskiest claims rather than prove it, so a few mistakes may remain. The page counts both marks and the errors fixed. Most lessons have not been run against a real model on a GPU, and they say so. Progress stays in your browser.
 
 ### Atlas: the history of generative AI
+
 More than 130 models across 8 eras, from the first VAEs and GANs to today: what each was, why it mattered, its licence, whether it runs here, and a button to use it.
 
 ### Recipes and processes
+
 **Recipes** chain models into one click and pass each output along to the next model. All 10 flagships have been rendered. The library of 818 (657 prompt recipes and 161 LoRA settings) passes an offline format check. 701 of its recipes show a result we rendered here (487 pictures, 141 clips, 48 sounds, 25 3D models), each from one run. Without rendering, the page can also read each recipe against your ComfyUI's nodes and your model files. On our box 765 passed that; most of the other 53 are LoRA cards that still wait on a graph or a file. **Processes** lists 97 methods, most with guides. Many guides were written for the earlier studio and say so at the top. Most entries open a real tool or family page here today; the rest are marked Coming soon.
 
 ### Apps: every graph in one place
-The 18 studio graphs, the recipes, 53 family templates and ComfyUI's own app templates when that package is installed, searchable, each one click from its form. If a graph needs a model you don't have, its page says what to download.
+
+The 20 studio apps, the recipes, the graphs of 72 model families (345 in all) and ComfyUI's own app templates when that package is installed, searchable, each one click from its form. If a graph needs a model you don't have, its page says what to download.
 
 ### It reads your box
+
 The installer and planner look at your GPU, RAM and disk and offer what fits: GPU, offload, or not on this machine. **Calibrate** runs a small test render of seven goals, twice each, and shows the cold and warm seconds on this box. It does not measure VRAM, and the planner does not use the result yet. The crew's own LLM is picked by tier, from a 2B model on a CPU to a 27B model on a big card, with exact GGUF files and settings. Choose **stable or nightly** ComfyUI at install.
 
 ### Runs your way
+
 - **Press Download:** each app shows what it needs and fetches only that. No 500 GB surprise.
 - **Attach your ComfyUI:** already have one? Point the studio at it.
 - **Set and forget:** schedule creations with cron, on idle only.
@@ -321,6 +342,7 @@ The installer and planner look at your GPU, RAM and disk and offer what fits: GP
 - **Comfy SDK:** the default is your local ComfyUI. With the `sdk` extra installed, set `STUDIO_BACKEND=sdk` to send the same graphs through Comfy's official SDK, to Comfy Cloud, a deployment or your own proxy. Cloud and deployments spend Comfy credits. Uploads and the Create button still need a local ComfyUI. This path is tested against a stubbed SDK, not yet against a live server.
 
 ### 544 custom nodes, including a new V3 pack
+
 Audited by reading the code: 158 do real work on images, latents, audio or files, or call a service. 262 are honest utilities (maths, text, config) and 102 build a plan or a payload for something else; those load no model and render nothing. 22 do not work on real ComfyUI inputs yet ([list](docs/NODES.md#node-reference)). Node ids that changed are in [NODE_RENAMES](docs/NODE_RENAMES.md). The `PSN_` nodes load in about 0.07 s thanks to lazy imports. The new V3 flagship pack has seven nodes for your own graphs; the studio's built-in graphs don't use them yet. The main ones:
 
 | Node | What it does |

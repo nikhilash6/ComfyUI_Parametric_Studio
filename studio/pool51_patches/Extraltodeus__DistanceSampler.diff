@@ -1,0 +1,16 @@
+diff --git a/__init__.py b/__init__.py
+index c5de815..dbafaa0 100644
+--- a/__init__.py
++++ b/__init__.py
+@@ -14,9 +14,8 @@ def add_samplers():
+                 added += 1
+             except ValueError as _err:
+                 pass
+-    if added > 0:
+-        import importlib
+-        importlib.reload(k_diffusion_sampling)
++    # Parametric Studio patch: no importlib.reload(k_diffusion_sampling). The samplers are already set on the module above; reloading
++    # core's module re-ran it and undid any change another pack had made to its functions, for every render on the server.
+ 
+ add_samplers()
+ 

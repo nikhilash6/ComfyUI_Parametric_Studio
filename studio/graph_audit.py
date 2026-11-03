@@ -258,7 +258,7 @@ def goal_rows():
     rows = []
     for k, g in GOALS.items():
         try:
-            b = {"prompt": "a lighthouse at dawn", "seed": 7, "lyrics": "[Verse]\nla la", "video": "check.mp4", "video_b": "check.mp4", "last_image": "check.png"}
+            b = {"prompt": "a lighthouse at dawn", "seed": 7, "lyrics": "[Verse]\nla la", "video": "check.mp4", "video_b": "check.mp4", "last_image": "check.png", "audio": "check.flac"}
             vals, _ = values_for(k, b, "check.png"); graph = fill(json.load(open(os.path.join(WF, g["template"]))), vals); err = None
         except Exception as e: graph, err = None, f"its graph could not be filled: {str(e)[:200]}"
         rows.append(_row("goal:" + k, "goals", "workflows/" + g["template"], graph=graph, extra={"build_error": err}))

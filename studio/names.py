@@ -15,7 +15,8 @@ UPGRADE = {
     "wan2.2_s2v_14B_fp8_scaled.safetensors": "wan2.2_s2v_14B_bf16.safetensors", "qwen_image_fp8_e4m3fn.safetensors": "qwen_image_2512_fp8_e4m3fn.safetensors",
     "qwen_image_edit_fp8_e4m3fn.safetensors": "qwen-image/qwen_image_edit_2511_fp8mixed.safetensors", "hidream_e1_full_bf16.safetensors": "hidream_e1_1_bf16.safetensors",
     "boogu_image_edit_fp8_scaled.safetensors": "boogu_image_edit_turbo_hotfix_1k_20260708_int8_convrot.safetensors", "boogu_image_edit_int8_convrot.safetensors": "boogu_image_edit_turbo_hotfix_1k_20260708_int8_convrot.safetensors",
-    "boogu_image_turbo_fp8_scaled.safetensors": "boogu_image_turbo_hotfix_int8_convrot.safetensors", "wan_animate_2_int8_convrot.safetensors": "wan_animate_2_distill_int8_convrot.safetensors"}
+    "boogu_image_turbo_fp8_scaled.safetensors": "boogu_image_turbo_hotfix_int8_convrot.safetensors", "wan_animate_2_int8_convrot.safetensors": "wan_animate_2_distill_int8_convrot.safetensors",
+    "wan2.1_vace_14B_fp16.safetensors": "wan2.2/wan2.2_fun_vace_low_noise_14B_bf16.safetensors"}      # graph audit 2026-11-03: Wan 2.1 VACE 14B is not here; the Wan 2.2 VACE-Fun A14B low-noise expert (same 14B layout with VACE blocks) runs the three VACE edit templates alone. Rendered and viewed for the inpaint edit
 MODEL_FILE = re.compile(r"\.(safetensors|sft|ckpt|pt|pth|gguf|bin|onnx|pkl)$")
 QUANTIZED = {"int8", "convrot", "nvfp4", "awq"}                                                                  # the file needs ops of its own: not every loader reads these
 PRECISION = QUANTIZED | {"fp8", "fp16", "fp32", "bf16", "scaled", "e4m3fn", "e5m2", "fp8mixed", "pruned", "ema", "emaonly"}

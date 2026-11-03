@@ -130,7 +130,7 @@ def test_sampling_lab_has_ocs_and_skoogeer_and_points_here():
     ocs = [e for e in a["entries"] if any(p["pack"] == "comfyui_overly_complicated_sampling" for p in e["providers"])]
     sko = [e for e in a["entries"] if any(p["pack"] == "Skoogeer-Noise" for p in e["providers"])]
     assert len(ocs) >= 15 and len(sko) >= 12
-    assert all(p.get("blepping") for e in ocs for p in e["providers"]) and not any(e["rendered"] for e in ocs + sko)
+    assert all(p.get("blepping") for e in ocs for p in e["providers"] if p["pack"] == "comfyui_overly_complicated_sampling") and not any(e["rendered"] for e in ocs + sko)   # later passes may add other packs' providers
     assert '#blepping' in (WEB / "samplinglab_method.js").read_text() and '#blepping' in (WEB / "samplinglab.js").read_text()
 
 

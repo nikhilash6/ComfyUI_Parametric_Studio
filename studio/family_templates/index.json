@@ -391,10 +391,7 @@
     }
    ],
    "source": "family_window generic",
-   "note": "An earlier render with this graph passed (2026-10-30).",
-   "needs": [
-    "weights cosmos_predict2_14B_t2i.safetensors: not on this machine"
-   ]
+   "note": "An earlier render with this graph passed (2026-10-30)."
   },
   {
    "family": "Mochi",
@@ -428,10 +425,7 @@
     }
    ],
    "source": "family_window generic",
-   "note": "An earlier render with this graph passed (2026-10-30).",
-   "needs": [
-    "weights mochi_preview_bf16.safetensors: not on this machine"
-   ]
+   "note": "An earlier render with this graph passed (2026-10-30)."
   },
   {
    "family": "PixArt-Sigma",
@@ -2532,11 +2526,7 @@
      "dir": "vae"
     }
    ],
-   "source": "motion page",
-   "needs": [
-    "weights wan2.2_dancer_14b_global_fp8_scaled.safetensors: not on this machine",
-    "weights wan2.2_dancer_14b_local_fp8_scaled.safetensors: not on this machine"
-   ]
+   "source": "motion page"
   },
   {
    "family": "Wan2.1",
@@ -3830,7 +3820,7 @@
     }
    ],
    "source": "Comfy Copilot graph qwen21_outfit_turbo, with the Turbo transformer in place of the Turbo LoRA (the LoRA is not on this box)",
-   "note": "The LoRA's licence is rent-only on its source; read it before commercial use."
+   "note": "The LoRA's licence is rent-only on its source; read it before commercial use. Proof on this box: an invented ferry pilot in grey work clothes and a forest-green wool overcoat, 22.9 s, 34.8 GiB peak; face, hair, hands, pose and background stayed put and the collar and horn buttons carried over. Flaws seen: no shirt was drawn under the open coat, so bare skin shows at the neckline, and the wool looks smooth and flat; his own trousers and shoes stay."
   },
   {
    "family": "Krea2",

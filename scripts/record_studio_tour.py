@@ -28,14 +28,16 @@ def all_tabs(url):
     return shell_tabs() + [{"tab": p["tab"], "label": p["label"], "title": (p.get("title") or [p["label"]])[0], "sub": (p.get("title") or ["", ""])[1] if len(p.get("title") or []) > 1 else ""} for p in pages]
 
 
-async def record(url, out, phone=False, chrome=None, plain=2.6, rich=4.6):
+async def record(url, out, phone=False, chrome=None, plain=2.6, rich=4.6, plan=None, size=None):
+    """plan: {tab: seconds} records only those tabs, in that order, each held that long with a slow scroll (the narrated walkthrough cuts its shots from these)."""
     from playwright.async_api import async_playwright
     frames = out / "frames"; frames.mkdir(parents=True, exist_ok=True); stamps, marks = [], []
     tabs = all_tabs(url); tabs = [t for t in tabs if t["tab"] in PHONE] if phone else tabs
     if phone: tabs.sort(key=lambda t: PHONE.index(t["tab"]))
+    if plan: by = {t["tab"]: t for t in tabs}; tabs = [by[k] for k in plan]
     async with async_playwright() as p:
         b = await p.chromium.launch(executable_path=chrome) if chrome else await p.chromium.launch()
-        size = {"width": 390, "height": 844} if phone else {"width": 1440, "height": 900}
+        size = {"width": 390, "height": 844} if phone else (size or {"width": 1440, "height": 900})
         ctx = await b.new_context(viewport=size, device_scale_factor=2 if phone else 1, is_mobile=phone, has_touch=phone, reduced_motion="no-preference")
         await ctx.add_init_script("try { localStorage.setItem('tour', 'done'); } catch (e) {}")      # the guided tour would cover the pages
         pg = await ctx.new_page(); cdp = await ctx.new_cdp_session(pg)
@@ -53,8 +55,10 @@ async def record(url, out, phone=False, chrome=None, plain=2.6, rich=4.6):
             start = time.time() - wall0; await pg.wait_for_timeout(350)
             try: await pg.wait_for_load_state("networkidle", timeout=1500)
             except Exception: pass
-            hold = rich if t["tab"] in RICH and not phone else (3.0 if phone else plain); spent = time.time() - wall0 - start
-            if t["tab"] in RICH or phone:
+            hold = plan[t["tab"]] if plan else rich if t["tab"] in RICH and not phone else (3.0 if phone else plain); spent = time.time() - wall0 - start
+            if plan:      # a slow, even scroll through the page for the whole hold, after a second and a half at the top
+                await pg.wait_for_timeout(max(0, int(1500 - spent * 1000))); await pg.evaluate(SCROLL_JS, [int(110 * max(0, hold - 2.5)), int(1000 * max(0.5, hold - 2.5))])
+            elif t["tab"] in RICH or phone:
                 await pg.wait_for_timeout(max(0, int((1.3 if phone else 1.5) * 1000 - spent * 1000)))
                 await pg.evaluate(SCROLL_JS, [1500 if phone else SCROLL.get(t["tab"], 2400), 1100 if phone else 2400])
             left = hold - (time.time() - wall0 - start)
@@ -68,8 +72,10 @@ async def record(url, out, phone=False, chrome=None, plain=2.6, rich=4.6):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0]); ap.add_argument("--url", default="http://127.0.0.1:8310"); ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--phone", action="store_true", help="390 px wide, eight key tabs"); ap.add_argument("--chrome", help="a Chromium executable for Playwright"); a = ap.parse_args(argv)
-    n, marks = asyncio.run(record(a.url, a.out, a.phone, a.chrome)); print(f"{n} frames, {len(marks)} tabs, {marks[-1]['end']:.1f} s"); return 0
+    ap.add_argument("--phone", action="store_true", help="390 px wide, eight key tabs"); ap.add_argument("--chrome", help="a Chromium executable for Playwright")
+    ap.add_argument("--plan", type=Path, help="JSON {tab: seconds}: record only these tabs, each held that long"); ap.add_argument("--size", default="", help="WIDTHxHEIGHT, default 1440x900"); a = ap.parse_args(argv)
+    size = dict(zip(("width", "height"), map(int, a.size.split("x")))) if a.size else None
+    n, marks = asyncio.run(record(a.url, a.out, a.phone, a.chrome, plan=json.loads(a.plan.read_text()) if a.plan else None, size=size)); print(f"{n} frames, {len(marks)} tabs, {marks[-1]['end']:.1f} s"); return 0
 
 
 if __name__ == "__main__":

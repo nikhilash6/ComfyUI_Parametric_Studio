@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { buildModel, layoutGraph, explain, keyType, placeOrdered, fitView, cometsOn, pulseAge, focusSets, nodeStates, linkState, graphRequest, replayPlan, replayAt, executionOrder, walkOrder, panelSize, PLACEHOLDER, PREVIEW_SEED } from './graph3d_math.js';
+import { buildModel, layoutGraph, explain, keyType, placeOrdered, fitView, cometsOn, pulseAge, focusSets, nodeStates, linkState, graphRequest, replayPlan, replayAt, executionOrder, walkOrder, panelSize, PLACEHOLDER, PREVIEW_SEED, labelPriority, pxPerUnit, declutterLabels, zoomLimits, stepNode, overviewView, panelBoxes, hiddenTitles } from './graph3d_math.js';
 
 // a real shape: the FLUX.2 Klein graph the image goal uses
 const G = {
@@ -72,7 +72,37 @@ const r4 = graphRequest({ goal: 'recast', prompt: '', options: {}, video: 'real.
 assert.strictEqual(graphRequest(null, {}, ideas), null);
 // the walk skips the small value nodes and starts upstream
 const w = walkOrder(L); assert.ok(w.indexOf('11') < w.indexOf('13')); assert.ok(w.length <= 13);
+// no two panels intersect in 3D, on the real shape and on many random graphs (oriented boxes, separating axis test)
+const obb = (n) => ({ c: n.pos, axes: [n.axisX, [0, 1, 0], [Math.sin(n.yaw), 0, Math.cos(n.yaw)]], e: [n.size.w / 2, n.size.h / 2, 0.055] });
+const dot3 = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2], cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const intersects = (A, B) => { const d = [B.c[0] - A.c[0], B.c[1] - A.c[1], B.c[2] - A.c[2]], axes = [...A.axes, ...B.axes]; A.axes.forEach((a) => B.axes.forEach((b) => { const c = cross3(a, b), l = Math.hypot(...c); if (l > 1e-6) axes.push(c.map((x) => x / l)); }));
+  return axes.every((ax) => A.axes.reduce((s, a, i) => s + A.e[i] * Math.abs(dot3(a, ax)), 0) + B.axes.reduce((s, b, i) => s + B.e[i] * Math.abs(dot3(b, ax)), 0) - Math.abs(dot3(d, ax)) > 1e-6); };
+const noOverlap = (M) => { for (let i = 0; i < M.ids.length; i++) for (let j = i + 1; j < M.ids.length; j++) assert.ok(!intersects(obb(M.nodes[M.ids[i]]), obb(M.nodes[M.ids[j]])), `panels ${M.ids[i]} and ${M.ids[j]} overlap`); };
+noOverlap(L); noOverlap(LC);
+{ let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647, CLS = ['KSampler', 'CLIPTextEncode', 'VAEDecode', 'ImageScale', 'LoraLoader', 'SaveImage', 'PrimitiveInt', 'CheckpointLoaderSimple', 'EmptyLatentImage', 'ImageBlend'];
+  for (let t = 0; t < 60; t++) { const N = 2 + Math.floor(rnd() * 70), g = {}; for (let i = 0; i < N; i++) { const inputs = { w: 1 }, k = Math.floor(rnd() * 4); for (let j = 0; j < k && i > 0; j++) inputs['in' + j] = ['n' + Math.floor(rnd() * i), 0]; g['n' + i] = { class_type: CLS[Math.floor(rnd() * CLS.length)], inputs }; } noOverlap(layoutGraph(g)); } }
+// the overview hides no title behind a nearer panel, on a desktop and on a phone, for the real shape, a deep chain and dense random graphs
+const titlesClear = (M) => [[1308, 862], [356, 656]].forEach(([W, H]) => assert.deepStrictEqual(hiddenTitles(panelBoxes(M, overviewView(M, W, H), 30, W, H)), [], `hidden titles at ${W}x${H}`));
+titlesClear(L); titlesClear(LC);
+{ let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647; for (let t = 0; t < 12; t++) { const N = 20 + Math.floor(rnd() * 50), g = {}; for (let i = 0; i < N; i++) { const inputs = {}; if (i) inputs.a = ['n' + (i - 1 - Math.floor(rnd() * Math.min(i, 3))), 0]; if (i > 2 && rnd() < 0.5) inputs.b = ['n' + Math.floor(rnd() * i), 0]; g['n' + i] = { class_type: ['KSampler', 'CLIPTextEncode', 'VAEDecode', 'ImageScale', 'LoraLoader'][i % 5], inputs }; } titlesClear(layoutGraph(g)); } }
+// and the check itself sees a panel that sits in front of another one's title
+{ const M = layoutGraph(G), ids = M.ids, bx = panelBoxes(M, overviewView(M, 1308, 862), 30, 1308, 862); const a = bx[0], b = { ...bx[1], all: a.title.slice(), z: a.z - 1 }; assert.deepStrictEqual(hiddenTitles([a, b]), [a.id]); }
+// floating labels: the sampler outranks a value node; declutter keeps the best label, drops one that would touch it, drops labels off screen and stops at max
+assert.ok(labelPriority('sample') < labelPriority('save') && labelPriority('save') < labelPriority('value')); assert.strictEqual(labelPriority('nonsense'), labelPriority('other'));
+assert.ok(Math.abs(pxPerUnit(10, 30, 900) * 2 - pxPerUnit(5, 30, 900)) < 1e-9, 'twice as close, twice as big');
+const lab = (id, x, y, pri, z = 1) => ({ id, x, y, w: 100, h: 20, pri, z });
+assert.deepStrictEqual(declutterLabels([lab('v', 200, 100, 9), lab('s', 210, 105, 0), lab('far', 600, 300, 3)], { width: 800, height: 600 }), ['s', 'far']);
+assert.deepStrictEqual(declutterLabels([lab('off', 10, 100, 0), lab('top', 300, 5, 0), lab('ok', 300, 300, 5)], { width: 800, height: 600 }), ['ok'], 'labels must sit inside the view');
+assert.deepStrictEqual(declutterLabels([lab('a', 100, 100, 1, 9), lab('b', 120, 100, 1, 2)], { width: 800, height: 600 }), ['b'], 'same rank: the nearer one wins');
+const many = Array.from({ length: 40 }, (_, i) => lab('m' + i, 60 + (i % 6) * 120, 40 + Math.floor(i / 6) * 40, i % 4)); const kept = declutterLabels(many, { width: 800, height: 600, max: 9 });
+assert.strictEqual(kept.length, 9); const kb = kept.map((id) => many.find((c) => c.id === id)); kb.forEach((a, i) => kb.slice(i + 1).forEach((b) => assert.ok(Math.abs(a.x - b.x) >= 100 || Math.abs(a.y - b.y) >= 20, 'kept labels never touch')));
+// zoom limits bracket the fitted distance, for a tiny graph and a huge one
+[3, 20, 400].forEach((d) => { const z = zoomLimits(d); assert.ok(z.min < d && d < z.max && z.min >= 2); });
+// arrow keys step through the walk order and wrap
+assert.strictEqual(stepNode(['a', 'b', 'c'], null, 1), 'a'); assert.strictEqual(stepNode(['a', 'b', 'c'], null, -1), 'c'); assert.strictEqual(stepNode(['a', 'b', 'c'], 'c', 1), 'a'); assert.strictEqual(stepNode(['a', 'b', 'c'], 'a', -1), 'c'); assert.strictEqual(stepNode([], 'a', 1), null);
 // the page really uses three lazily, pauses off screen and disposes
 const src = readFileSync('./graph3d.js', 'utf8');
 for (const needle of ['import("three")', 'IntersectionObserver', 'ResizeObserver', 'renderer.dispose()', 'forceContextLoss', 'prefers-reduced-motion', 'webglcontextlost', 'cb.onFail']) assert.ok(src.includes(needle), needle);
+// ...renders on demand and sleeps when idle, follows a live change of the motion setting, declutters its labels, has a keyboard path and a live description, and never flips over the top
+for (const needle of ['IDLE_SLEEP', 'awakeUntil', 'rmq.addEventListener', 'declutterLabels(', 'stepNode(', 'aria-live', 'minPolarAngle', 'zoomLimits(', 'MIRROR_MAX', 'lastPick']) assert.ok(src.includes(needle), needle);
 console.log('ok');

@@ -50,8 +50,8 @@ def test_the_catalogue_names_no_private_folder_or_person():
 
 
 def test_patches_ship_for_exactly_the_patched_packs():
-    want = {p["patch"] for p in CAT["packs"] if p["patch"]}
-    assert want == {f.name for f in PATCHES.glob("*.diff")} and len(want) == 4
+    want = {p["patch"] for p in CAT["packs"] + CAT["optional"] if p["patch"]}
+    assert want == {f.name for f in PATCHES.glob("*.diff")} and len(want) >= 4
     for f in PATCHES.glob("*.diff"):
         t = f.read_text(encoding="utf-8")
         assert t.startswith("diff --git a/") and not re.search(r"/mnt/|/home/", t)
@@ -62,7 +62,19 @@ def test_patches_ship_for_exactly_the_patched_packs():
 
 def test_depth_pro_says_its_weights_are_research_only():
     p = next(p for p in CAT["packs"] if p["pack"] == "spacepxl__ComfyUI-Depth-Pro")
-    assert "research" in p["licence"] and any("research" in n for n in p["notes"])
+    assert p["weights_licence"] == "Apple ML Research licence, research use only" and "research" in p["licence"]
+    assert "p.weights_licence" in (Path(L.__file__).parent / "web" / "packlab.js").read_text() and 'p.get("weights_licence")' in (ROOT / "install.py").read_text()
+
+
+def test_closed_or_unlicensed_dependencies_stay_out_of_the_open_set():
+    opt = {o["pack"]: o for o in CAT["optional"]}; names = {p["pack"] for p in CAT["packs"]}
+    assert {"Comfy-Org__ComfyUI_Nvidia_VFX_Nodes", "tritant__ComfyUI_NVIDIA_RTX_VSR_Long_Video"} <= set(opt) and not set(opt) & names
+    assert all(o["why"] and re.fullmatch(r"[0-9a-f]{40}", o["commit"]) for o in opt.values())
+    assert not any(k in s["packs"] + s["also"] for s in CAT["sections"] for k in opt), "optional packs are not counted in any section"
+    assert not any(x.startswith("nvidia-vfx") for p in CAT["packs"] for x in p["pip"])
+    cmds = install.pack_commands(CAT, "/x/ComfyUI", "/x/venv/bin/python")
+    assert not any(c[0] == "pack" and Path(c[3]).name in opt for c in cmds) and "nvidia-vfx" not in " ".join(map(str, sum(cmds, [])))
+    assert "not part of the open edition" in CAT["optional_about"].lower() or "not part of the open edition" in (Path(L.__file__).parent / "web" / "packlab.js").read_text()
 
 
 def test_pip_lines_are_pinned_and_never_onnxruntime_or_torch():
@@ -125,9 +137,19 @@ def test_install_pack_fetches_the_commit_with_hooks_off_then_patches(tmp_path, m
     ran = []; monkeypatch.setattr(install, "already_cloned", lambda d: False)
     assert install.install_pack("https://github.com/o/r.git", "a" * 40, str(tmp_path / "r"), "/p.diff", step=lambda c: ran.append(c) or True)
     assert all(c[:3] == ["git", "-c", "core.hooksPath=" + install.os.devnull] for c in ran)
-    assert ["fetch", "--depth", "1", "https://github.com/o/r.git", "a" * 40] == ran[1][-5:] and ran[2][-2:] == ["-q", "FETCH_HEAD"] and ran[3][-2:] == ["apply", "/p.diff"]
+    assert ["fetch", "--depth", "1", "https://github.com/o/r.git", "a" * 40] == ran[1][-5:] and ran[2][-2:] == ["-q", "FETCH_HEAD"] and ran[3][-3:] == ["apply", "--ignore-whitespace", "/p.diff"]
     ran.clear(); monkeypatch.setattr(install, "already_cloned", lambda d: True)
     assert install.install_pack("u", "c", "d", "", step=lambda c: ran.append(c) or True) and ran == []
+
+
+def test_a_pack_that_needs_its_submodule_gets_it_and_others_do_not(monkeypatch):
+    usdu = next(p for p in CAT["packs"] if p["pack"] == "ssitu__ComfyUI_UltimateSDUpscale")
+    assert usdu.get("submodules") is True and sum(1 for p in CAT["packs"] if p.get("submodules")) == 1
+    c = next(c for c in install.pack_commands(CAT, "/x/ComfyUI", "py") if c[0] == "pack" and c[3].endswith(usdu["folder"])); assert c[5] is True
+    ran = []; monkeypatch.setattr(install, "already_cloned", lambda d: False)
+    assert install.install_pack("u", "c", "d", "", True, step=lambda x: ran.append(x) or True)
+    assert any("submodule" in x and "--recursive" in x for x in ran) and "protocol.file.allow=never" in ran[3]
+    ran.clear(); install.install_pack("u", "c", "d", "", False, step=lambda x: ran.append(x) or True); assert not any("submodule" in x for x in ran)
 
 
 def test_a_failed_fetch_stops_before_checkout(monkeypatch):

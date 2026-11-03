@@ -16,8 +16,8 @@ VOID's result, checked on 12 frames against the input: the chef is gone in every
 
 VOID's flaw: the towel and ladle the chef held are not "person", so they stay in the mask's gap and float in mid-air by the pan for the whole clip. Naming them in the detection prompt ("person, towel, ladle") should remove them too; that has not been tried. Name everything the person holds or wears that should go. [claim: studio graph audit 2026-11-02] [inference]
 
-VOID's repo record has not caught up. The family records file VOID under CogVideoX, with an older 240 s render and no peak; the 2026-11-02 run is not recorded in the repo yet. For CogVideoX itself, ask the older-video specialist. [run: studio/family_status.json:877-905] [inference]
+VOID's repo record has not caught up. The family records file VOID under CogVideoX, with an older 240 s render and no peak; the 2026-11-02 run is not recorded in the repo yet. For CogVideoX itself, ask the older-video specialist. [run: studio/family_status.json] [inference]
 
-Prism-Alpha still has no render. Checked on 2026-11-02: its four DiT files and the text encoder are on disk, but its video and audio VAEs (1.0 GB) are missing and no Prism node pack is in the library. [run: studio/family_status.json:7501-7518]
+Prism-Alpha still has no render. Checked on 2026-11-02: its four DiT files and the text encoder are on disk, but its video and audio VAEs (1.0 GB) are missing and no Prism node pack is in the library. [run: studio/family_status.json]
 
-JoyAI-Video-Edit and LongCat-Image gained no new run in the last session; their single recorded renders in STATE.md still stand. [run: studio/family_status.json:4166, studio/family_status.json:4696]
+JoyAI-Video-Edit and LongCat-Image gained no new run in the last session; their single recorded renders in STATE.md still stand. [run: studio/family_status.json]

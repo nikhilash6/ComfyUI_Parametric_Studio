@@ -36,6 +36,7 @@ WORKFLOWS.update({
     "music_yue2_int8_api.json": ("Music: YuE2 3B (int8)", "music", _music("music_yue2_int8_api.json", **_SONG)),
     "music_yue2_bf16_api.json": ("Music: YuE2 3B (bf16)", "music", _music("music_yue2_bf16_api.json", **_SONG)),
     "music_yue2_cover_api.json": ("Music: YuE2 cover of an uploaded song", "music", _music("music_yue2_cover_api.json", source="NAME_FROM_POST_/api/upload", **_SONG)),
+    "music_music3_kit_api.json": ("Music: MiniMax Music 3 with the style kit (one ntc-ai slider LoRA, optional 8-step turbo)", "music", _music("music_music3_kit_api.json", caption="Global Metadata: warm country ballad, 76 BPM, G major.", slider="country", slider_strength=1.0, turbo=True, **{k: v for k, v in _SONG.items() if k != "style"}, style="warm country ballad")),
     "music_stable_open_api.json": ("Music: Stable Audio Open 1.0", "music", _music("music_stable_open_api.json", style="warm instrumental ballad, felt piano", seconds=47, seed=7701)),
     "music_roti_ace_cover_api.json": ("Music: ACE-Step cover (pack: RyanOnTheInside)", "music", _music("music_roti_ace_cover_api.json", source="NAME_FROM_POST_/api/upload", **_SONG)),
     "music_roti_ace_edit_api.json": ("Music: ACE-Step extend and repaint (pack: RyanOnTheInside)", "music", _music("music_roti_ace_edit_api.json", source="NAME_FROM_POST_/api/upload", extend=15, repaint_start=30, repaint_end=40, **_SONG)),

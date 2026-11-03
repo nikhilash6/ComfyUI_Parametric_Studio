@@ -471,7 +471,7 @@ def _keep_graph(run, st, make):
     except Exception: pass
 def _run_goal(run, st, spec, ctx):
     S = _srv(); b = goal_body(spec, ctx["values"], ctx["seed_add"])
-    for k, kind in (("image", "image"), ("last_image", "image"), ("video", "video")):
+    for k, kind in (("image", "image"), ("last_image", "image"), ("video", "video"), ("audio", "audio")):
         if spec.get(k): b[k] = _input_name(run, ctx, spec[k], kind)
     try: j = asyncio.run(S.generate(_Req(b)))
     except Exception as e: raise StepError(_detail(e)) from None
@@ -613,7 +613,7 @@ def view(rec, d=None):
     d = d or load(); steps = [_step_view(s, d) for s in rec["steps"]]; t = rec.get("tested") or None; exp_s = sum(int(s["seconds"] or 0) for s in steps); gpu = [s["peak_gib"] for s in steps if s["peak_gib"]]
     return {**{k: rec.get(k) for k in ("id", "title", "pitch", "why", "tags", "fields", "models", "licence_summary", "tips", "variations", "kind", "group", "proof", "library", "reference", "why_not", "waiting", "text_note")}, "steps": steps, "status": "tested" if t else "untested", "tested": t, "render": renders().get(rec["id"]), "expected": {"seconds": exp_s, "peak_gib": max(gpu) if gpu else 0, "basis": "sum of each step's measured time on this box, with a cold start per step" if exp_s else "not measured"}}
 def validate(d=None):
-    from studio import pipelines, recipes3d, recipes_family  # they add step types to the engine
+    from studio import pipelines, recipes3d, recipes_family, song_lock  # they add step types to the engine
     """Problems in recipes.json or the library. A test keeps them clean; the page never has to guess."""
     from studio.goals import GOALS
     from studio import loras
@@ -638,6 +638,7 @@ def validate(d=None):
                 if g["needs_image"] and not s.get("image"): probs.append(f"{rid}/{sid}: {s['goal']} needs an image")
                 if g["needs_video"] and not s.get("video"): probs.append(f"{rid}/{sid}: {s['goal']} needs a video")
                 if g["needs_last_image"] and not s.get("last_image"): probs.append(f"{rid}/{sid}: {s['goal']} needs a last image")
+                if g.get("needs_audio") and not s.get("audio"): probs.append(f"{rid}/{sid}: {s['goal']} needs a song")
                 if not g["prompt_optional"] and not s.get("prompt"): probs.append(f"{rid}/{sid}: {s['goal']} needs a prompt")
                 if not s.get("peak_gib"): probs.append(f"{rid}/{sid}: no peak_gib for the VRAM gate")
                 if s.get("lora") and not (loras.by_id(s["lora"].get("id")) or {}).get("run"): probs.append(f"{rid}/{sid}: LoRA {s['lora'].get('id')} is not a runnable curated one")

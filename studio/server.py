@@ -131,7 +131,7 @@ def _generate(b):
     goal = _goal(b); g, vals, opts = _graph(goal, b, b.get("image"), running=True)
     if backends.use_sdk():
         meta = {"goal": goal, "prompt": vals["prompt"], "seed": vals["seed"], "options": opts, "graph_hash": hashlib.sha256(json.dumps(g, sort_keys=True).encode()).hexdigest()[:12]}
-        try: jid = backends.submit(g, [b.get("image"), b.get("video"), b.get("last_image")], paths.comfy_input(True), meta)
+        try: jid = backends.submit(g, [b.get("image"), b.get("video"), b.get("last_image"), b.get("audio")], paths.comfy_input(True), meta)
         except Exception as e: raise HTTPException(402 if type(e).__name__ == "InsufficientCredits" else 400, f"Comfy SDK: {type(e).__name__}: {str(e)[:300]}") from None
         return {"job": jid, "seed": vals["seed"], "options": opts, "graph_hash": meta["graph_hash"]}
     if not comfy_up(): raise HTTPException(503, f"ComfyUI is not reachable at {COMFY}")
@@ -356,7 +356,7 @@ def _browse_download(b):
 
 # ---------- lanes built in parallel: presets, website builder, crew, 3D
 OUTPUT = Path(paths.output_dir())
-for _mod in ("shot_board", "presets", "site_api", "crew_api", "voice", "packs", "apps", "edits", "prime", "schedule", "github_link", "calibrate", "attach", "models_api", "phone", "families_api", "model3d", "graph_registry", "recipes", "pipelines", "recipes3d", "recipes_family", "tryon", "loras", "live_api", "atlas", "processes", "rotation", "worldkit.api", "vset.api", "music_styles", "train", "sampling_lab"):
+for _mod in ("shot_board", "presets", "site_api", "crew_api", "voice", "packs", "apps", "edits", "prime", "schedule", "github_link", "calibrate", "attach", "models_api", "phone", "families_api", "model3d", "graph_registry", "recipes", "pipelines", "recipes3d", "recipes_family", "song_lock", "tryon", "loras", "live_api", "atlas", "processes", "rotation", "worldkit.api", "vset.api", "music_styles", "train", "sampling_lab"):
     try: app.include_router(__import__(f"studio.{_mod}", fromlist=["router"]).router)
     except Exception as e: print(f"[studio] {_mod} not loaded: {type(e).__name__}: {e}")
 
