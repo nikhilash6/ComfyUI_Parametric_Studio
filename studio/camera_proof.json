@@ -1,0 +1,587 @@
+{
+ "checked": "2026-11-02",
+ "faults": [
+  "Wan Fun Camera peaked at 44.9 GiB on both drawn paths, 0.9 GiB over the 44 GiB declared for the run; the declaration is now 48 (proof) and 46 (page).",
+  "The checker measured lighthouse take 3 as growing 44%, more than it looks: breaking waves add to the measured growth. The pick (take 2) still matches the eye.",
+  "The first object follower (Lucas-Kanade on points around the start) stayed on the pebbles while the boat moved away and reported 274 px. It was replaced by template matching; the render was not repeated.",
+  "The cathedral path was only partly followed: Wan orbited a point behind the font. The checker says not enough to tell, never a pass.",
+  "On the showcase test clips the checker is cautious: three of four came out not enough to tell, including one (the poppy clip) that by eye is a plain mismatch."
+ ],
+ "edits": [],
+ "confusion": {
+  "rows": [
+   {
+    "clip": "reshoot_orbit_take",
+    "requested": "orbit_right",
+    "verdict": "INCONCLUSIVE",
+    "why": "sideways motion under the bar: the picture slid right 7% of the width; up 5% of the height; grew 5%; turned 10 degrees clockwise.",
+    "said": "the picture slid right 7% of the width; up 5% of the height; grew 5%; turned 10 degrees clockwise.",
+    "measured": {
+     "x": 0.0671,
+     "y": -0.0468,
+     "scale": 0.0505,
+     "roll": 9.59,
+     "centre": [
+      0.0151,
+      -0.0751
+     ],
+     "edge": [
+      0.0152,
+      -0.0206
+     ],
+     "shake": 0.0001,
+     "inliers_mean": 0.882,
+     "points_median": 262,
+     "cuts": 0
+    },
+    "eye": "a mild arc to the right with the chef drifting in frame; a weak orbit at best."
+   },
+   {
+    "clip": "director_wide",
+    "requested": "crane_up",
+    "verdict": "MATCH",
+    "why": "down 20% of the height; grew 8%; the centre stayed put while the edges moved.",
+    "said": "down 20% of the height; grew 8%; the centre stayed put while the edges moved.",
+    "measured": {
+     "x": -0.0079,
+     "y": 0.1994,
+     "scale": 0.0797,
+     "roll": -1.46,
+     "centre": [
+      -0.0063,
+      0.0787
+     ],
+     "edge": [
+      -0.0059,
+      0.3004
+     ],
+     "shake": 0.00051,
+     "inliers_mean": 0.885,
+     "points_median": 74,
+     "cuts": 0
+    },
+    "eye": "the camera rises and looks down over the salt flat; a crane up."
+   },
+   {
+    "clip": "director_portrait",
+    "requested": "orbit_right",
+    "verdict": "INCONCLUSIVE",
+    "why": "2 frame pair(s) look like a cut or a flash",
+    "said": "the picture slid left 9% of the width; grew 5%; turned 2 degrees anticlockwise.",
+    "measured": {
+     "x": -0.0896,
+     "y": 0.0231,
+     "scale": 0.045,
+     "roll": -1.58,
+     "centre": [
+      0.6573,
+      0.4461
+     ],
+     "edge": [
+      -0.0693,
+      0.0242
+     ],
+     "shake": 0.0008,
+     "inliers_mean": 0.279,
+     "points_median": 270,
+     "cuts": 2
+    },
+    "eye": "the dancer spins and the camera barely moves; the scene's motion swamps the camera's."
+   },
+   {
+    "clip": "director_keyframes_bloom",
+    "requested": "pan_left",
+    "verdict": "INCONCLUSIVE",
+    "why": "some motion the right way, under the bar: down 6% of the height; grew 5%; turned 2 degrees anticlockwise.",
+    "said": "down 6% of the height; grew 5%; turned 2 degrees anticlockwise.",
+    "measured": {
+     "x": -0.0021,
+     "y": 0.0551,
+     "scale": 0.0495,
+     "roll": -2.08,
+     "centre": [
+      -0.0012,
+      0.0313
+     ],
+     "edge": [
+      0.0061,
+      0.038
+     ],
+     "shake": 0.00029,
+     "inliers_mean": 0.961,
+     "points_median": 45,
+     "cuts": 0
+    },
+    "eye": "no pan: the camera rises a little and pushes in on the pot. Called inconclusive, where by eye it is a mismatch."
+   },
+   {
+    "clip": "rooftop_dolly_in",
+    "requested": "dolly_in",
+    "verdict": "MATCH",
+    "why": "down 7% of the height; grew 100%; the centre stayed put while the edges moved.",
+    "said": "down 7% of the height; grew 100%; the centre stayed put while the edges moved.",
+    "measured": {
+     "x": -0.0112,
+     "y": 0.0736,
+     "scale": 0.6909,
+     "roll": 1.32,
+     "centre": [
+      -0.003,
+      0.0101
+     ],
+     "edge": [
+      -0.0643,
+      0.1045
+     ],
+     "shake": 4e-05,
+     "inliers_mean": 0.997,
+     "points_median": 400,
+     "cuts": 0
+    },
+    "eye": "a clear push forward between the water towers."
+   },
+   {
+    "clip": "rooftop_pan_left",
+    "requested": "pan_left",
+    "verdict": "MATCH",
+    "why": "the picture slid right 51% of the width.",
+    "said": "the picture slid right 51% of the width.",
+    "measured": {
+     "x": 0.5075,
+     "y": -0.0,
+     "scale": 0.0083,
+     "roll": 0.77,
+     "centre": [
+      0.4738,
+      -0.0011
+     ],
+     "edge": [
+      0.5147,
+      0.0032
+     ],
+     "shake": 0.00011,
+     "inliers_mean": 0.998,
+     "points_median": 197,
+     "cuts": 0
+    },
+    "eye": "a clear pan left along the rooftops."
+   },
+   {
+    "clip": "rooftop_tilt_up",
+    "requested": "tilt_up",
+    "verdict": "MATCH",
+    "why": "down 58% of the height.",
+    "said": "down 58% of the height.",
+    "measured": {
+     "x": 0.0005,
+     "y": 0.5783,
+     "scale": 0.0179,
+     "roll": -0.15,
+     "centre": [
+      0.0012,
+      0.5348
+     ],
+     "edge": [
+      0.0009,
+      0.5939
+     ],
+     "shake": 0.00013,
+     "inliers_mean": 1.0,
+     "points_median": 325,
+     "cuts": 0
+    },
+    "eye": "a clear tilt up from the terrace to the top of the tower."
+   },
+   {
+    "clip": "wan_canyon",
+    "requested": "orbit_right",
+    "verdict": "MATCH",
+    "why": "the picture slid right 35% of the width; up 15% of the height; grew 45%; turned 6 degrees anticlockwise; the centre stayed put while the edges moved.",
+    "said": "the picture slid right 35% of the width; up 15% of the height; grew 45%; turned 6 degrees anticlockwise; the centre stayed put while the edges moved.",
+    "measured": {
+     "x": 0.346,
+     "y": -0.1545,
+     "scale": 0.3685,
+     "roll": -6.34,
+     "centre": [
+      0.1055,
+      -0.1132
+     ],
+     "edge": [
+      0.332,
+      -0.1758
+     ],
+     "shake": 0.00077,
+     "inliers_mean": 0.783,
+     "points_median": 397,
+     "cuts": 0
+    },
+    "eye": "the camera rises and circles right around the rock pillar, which stays near the centre."
+   },
+   {
+    "clip": "wan_cathedral",
+    "requested": "orbit_left",
+    "verdict": "INCONCLUSIVE",
+    "why": "the picture slid but the centre moved with it, which reads like a pan: the picture slid left 28% of the width; grew 9%.",
+    "said": "the picture slid left 28% of the width; grew 9%.",
+    "measured": {
+     "x": -0.2801,
+     "y": -0.0113,
+     "scale": 0.087,
+     "roll": -1.09,
+     "centre": [
+      -0.3622,
+      -0.0171
+     ],
+     "edge": [
+      -0.207,
+      0.0081
+     ],
+     "shake": 0.00033,
+     "inliers_mean": 0.805,
+     "points_median": 236,
+     "cuts": 0
+    },
+    "eye": "the camera swings left, but around a point behind the font, so the font drifts right instead of staying centred: a partial follow."
+   }
+  ],
+  "unknown_request": {
+   "clip": "v_wan_camera",
+   "note": "its preset was not recorded (prompt: 'The camera slowly circles the subject'), so it is measured but not counted",
+   "said": "the picture slid left 9% of the width; turned 4 degrees anticlockwise.",
+   "as_orbit_right": "INCONCLUSIVE"
+  }
+ },
+ "verifier": {
+  "thresholds_written_before_measuring": true,
+  "source": "studio/camera_verify.py"
+ },
+ "track": {
+  "model": "LTX-2.5 22B distilled int8 + LTX-2.3 Motion-Track-Control IC-LoRA",
+  "lora": "ltx-2.3-22b-ic-lora-motion-track-control-ref0.5.safetensors (strength 1.0)",
+  "subject": "a red paper boat on a forest stream",
+  "prompt": "A small red paper boat drifts along a clear forest stream, carried by the current over smooth pebbles between mossy banks. The camera holds completely still. Soft morning light, realistic, sharp detail.",
+  "seed": 6201,
+  "seconds": 31.8,
+  "peak_vram_gib": 39.2,
+  "line": [
+   [
+    0.2588,
+    0.6813
+   ],
+   [
+    0.3788,
+    0.7383
+   ],
+   [
+    0.4988,
+    0.7166
+   ],
+   [
+    0.6188,
+    0.646
+   ],
+   [
+    0.7388,
+    0.6242
+   ],
+   [
+    0.8588,
+    0.6813
+   ]
+  ],
+  "follow": {
+   "frames": 121,
+   "mean_px": 44.9,
+   "max_px": 70.5,
+   "mean_of_diagonal": 0.0401,
+   "lost_at": null
+  },
+  "follow_by_colour": {
+   "frames": 121,
+   "mean_px": 24.9,
+   "max_px": 40.1,
+   "mean_of_diagonal": 0.0222,
+   "lost_at": null
+  },
+  "src": "campath/track_boat.mp4",
+  "poster": "campath/track_boat.webp",
+  "guide": "campath/track_boat_guide.mp4",
+  "looked": "Looked at frame by frame: the boat drifts left to right along the drawn curve and stays a paper boat; the water keeps flowing; nothing else moves oddly."
+ },
+ "wanpath": {
+  "canyon": {
+   "model": "Wan 2.2 Fun Camera 14B (fp8)",
+   "path": {
+    "keys": [
+     {
+      "t": 0.0,
+      "pos": [
+       0.0,
+       -0.0,
+       0.0
+      ]
+     },
+     {
+      "t": 0.25,
+      "pos": [
+       1.0313,
+       -0.3486,
+       0.151
+      ]
+     },
+     {
+      "t": 0.5,
+      "pos": [
+       1.9696,
+       -0.6946,
+       0.5885
+      ]
+     },
+     {
+      "t": 0.75,
+      "pos": [
+       2.7321,
+       -1.0353,
+       1.2679
+      ]
+     },
+     {
+      "t": 1.0,
+      "pos": [
+       3.2552,
+       -1.3681,
+       2.1206
+      ]
+     }
+    ],
+    "look_at": [
+     0,
+     0,
+     4.0
+    ]
+   },
+   "preset": "rise_and_circle",
+   "drawn_as": "dragged up and 60 degrees round to the right on the globe, rising 20 degrees, looking at the rock pillar",
+   "expect": "orbit_right",
+   "predicted": {
+    "subject": {
+     "dx": 0.0,
+     "dy": 0.0,
+     "scale": 1.0,
+     "behind": false
+    },
+    "background": {
+     "dx": 1.0782,
+     "dy": -0.2129,
+     "scale": 1.6601,
+     "behind": false
+    }
+   },
+   "prompt": "A deep red sandstone canyon with a lone rock pillar standing on the canyon floor beside a turquoise river. The camera rises and circles around the rock pillar. Warm late-afternoon light, realistic, sharp detail.",
+   "seed": 7201,
+   "seconds": 252.8,
+   "peak_vram_gib": 44.9,
+   "verdict": "MATCH",
+   "why": "the picture slid right 35% of the width; up 15% of the height; grew 45%; turned 6 degrees anticlockwise; the centre stayed put while the edges moved.",
+   "said": "the picture slid right 35% of the width; up 15% of the height; grew 45%; turned 6 degrees anticlockwise; the centre stayed put while the edges moved.",
+   "src": "campath/wan_canyon.mp4",
+   "poster": "campath/wan_canyon.webp",
+   "looked": "Looked at: a smooth rising orbit, rock layers stay solid, no warping."
+  },
+  "cathedral": {
+   "model": "Wan 2.2 Fun Camera 14B (fp8)",
+   "path": {
+    "keys": [
+     {
+      "t": 0.0,
+      "pos": [
+       0.0,
+       -0.0,
+       0.0
+      ]
+     },
+     {
+      "t": 0.25,
+      "pos": [
+       -0.6946,
+       -0.0,
+       0.0608
+      ]
+     },
+     {
+      "t": 0.5,
+      "pos": [
+       -1.3681,
+       -0.0,
+       0.2412
+      ]
+     },
+     {
+      "t": 0.75,
+      "pos": [
+       -2.0,
+       -0.0,
+       0.5359
+      ]
+     },
+     {
+      "t": 1.0,
+      "pos": [
+       -2.5712,
+       -0.0,
+       0.9358
+      ]
+     }
+    ],
+    "look_at": [
+     0,
+     0,
+     4.0
+    ]
+   },
+   "preset": "orbit_left",
+   "drawn_as": "dragged 40 degrees round to the left on the globe, level, looking at the stone font",
+   "expect": "orbit_left",
+   "predicted": {
+    "subject": {
+     "dx": -0.0,
+     "dy": 0.0,
+     "scale": 1.0,
+     "behind": false
+    },
+    "background": {
+     "dx": -0.5847,
+     "dy": 0.0,
+     "scale": 1.2128,
+     "behind": false
+    }
+   },
+   "prompt": "Inside a vast gothic cathedral nave, a carved stone baptismal font stands among tall columns, coloured light falls across the floor. The camera moves smoothly around the font. Realistic, sharp detail.",
+   "seed": 7202,
+   "seconds": 216.9,
+   "peak_vram_gib": 44.9,
+   "verdict": "INCONCLUSIVE",
+   "why": "the picture slid but the centre moved with it, which reads like a pan: the picture slid left 28% of the width; grew 9%.",
+   "said": "the picture slid left 28% of the width; grew 9%.",
+   "src": "campath/wan_cathedral.mp4",
+   "poster": "campath/wan_cathedral.webp",
+   "looked": "Looked at: clean architecture, no people, no lettering; the move is a left arc around a point beyond the font."
+  }
+ },
+ "director": {
+  "dolly_in": {
+   "model": "MiniMax H3 (Director goal, fast, high)",
+   "prompt": "A city rooftop at dusk with old wooden water towers, antennas and a small rooftop garden, the glowing skyline behind, no signs, no writing. The camera dollies in slowly and smoothly, from a wide framing to a close framing of the subject. One continuous shot, no cuts.",
+   "seed": 5201,
+   "seconds": 62.3,
+   "peak_vram_gib": 39.4,
+   "src": "campath/rooftop_dolly_in.mp4",
+   "poster": "campath/rooftop_dolly_in.webp",
+   "verdict": "MATCH",
+   "looked": "Looked at: no people, no readable signs."
+  },
+  "pan_left": {
+   "model": "MiniMax H3 (Director goal, fast, high)",
+   "prompt": "A long row of city rooftops at dusk with water towers, brick chimneys and air vents, the skyline glowing behind, no signs, no writing. The camera pans slowly to the left at a steady speed from a fixed position. One continuous shot, no cuts.",
+   "seed": 5202,
+   "seconds": 53.1,
+   "peak_vram_gib": 39.4,
+   "src": "campath/rooftop_pan_left.mp4",
+   "poster": "campath/rooftop_pan_left.webp",
+   "verdict": "MATCH",
+   "looked": "Looked at: no people, no readable signs."
+  },
+  "tilt_up": {
+   "model": "MiniMax H3 (Director goal, fast, high)",
+   "prompt": "A brick rooftop terrace with strings of warm lights, a tall glass skyscraper rising behind it into the dusk sky, no signs, no writing. The camera tilts up slowly from the ground to the top of the frame. One continuous shot, no cuts.",
+   "seed": 5203,
+   "seconds": 58.2,
+   "peak_vram_gib": 39.4,
+   "src": "campath/rooftop_tilt_up.mp4",
+   "poster": "campath/rooftop_tilt_up.webp",
+   "verdict": "MATCH",
+   "looked": "Looked at: no people, no readable signs."
+  }
+ },
+ "pick": {
+  "move": "dolly_in",
+  "picked": "take 2",
+  "why": "take 2 followed dolly in most clearly: down 8% of the height; grew 53%; the centre stayed put while the edges moved.",
+  "results": [
+   {
+    "take": "take 1",
+    "verdict": "MATCH",
+    "why": "down 11% of the height; grew 50%; the centre stayed put while the edges moved.",
+    "said": "down 11% of the height; grew 50%; the centre stayed put while the edges moved.",
+    "strength": 0.3273
+   },
+   {
+    "take": "take 2",
+    "verdict": "MATCH",
+    "why": "down 8% of the height; grew 53%; the centre stayed put while the edges moved.",
+    "said": "down 8% of the height; grew 53%; the centre stayed put while the edges moved.",
+    "strength": 0.3461
+   },
+   {
+    "take": "take 3",
+    "verdict": "MATCH",
+    "why": "down 5% of the height; grew 44%; turned 2 degrees anticlockwise; the centre stayed put while the edges moved.",
+    "said": "down 5% of the height; grew 44%; turned 2 degrees anticlockwise; the centre stayed put while the edges moved.",
+    "strength": 0.288
+   }
+  ],
+  "takes": [
+   {
+    "take": "take 1",
+    "seed": 5301,
+    "src": "campath/lighthouse_take1.mp4",
+    "poster": "campath/lighthouse_take1.webp",
+    "seconds": 29.7,
+    "peak_vram_gib": 39.3
+   },
+   {
+    "take": "take 2",
+    "seed": 5302,
+    "src": "campath/lighthouse_take2.mp4",
+    "poster": "campath/lighthouse_take2.webp",
+    "seconds": 34.1,
+    "peak_vram_gib": 39.3
+   },
+   {
+    "take": "take 3",
+    "seed": 5303,
+    "src": "campath/lighthouse_take3.mp4",
+    "poster": "campath/lighthouse_take3.webp",
+    "seconds": 36.2,
+    "peak_vram_gib": 39.3
+   }
+  ],
+  "prompt": "A white lighthouse on a rocky headland above a wild sea, waves breaking on the rocks below, golden hour, no people, no writing. The camera dollies in slowly and smoothly, from a wide framing to a close framing of the subject. One continuous shot, no cuts.",
+  "model": "MiniMax H3 (Director goal, fast, standard)",
+  "looked": "Looked at all three: take 2 pushes in most clearly, take 1 pushes in with some drift, take 3 pushes in least."
+ },
+ "stills": {
+  "canyon": {
+   "model": "FLUX.2 Klein 4B (Apache-2.0)",
+   "prompt": "A wide photograph of a deep red sandstone canyon with tall layered rock walls. A single weathered rock pillar stands in the middle of the canyon floor, in the centre of the frame, with a thin turquoise river winding past its foot. Warm late-afternoon light, long shadows, sharp detail, no people, no writing.",
+   "seed": 4201,
+   "seconds": 15.5,
+   "peak_vram_gib": 15.7
+  },
+  "cathedral": {
+   "model": "FLUX.2 Klein 4B (Apache-2.0)",
+   "prompt": "A wide photograph inside a vast gothic cathedral nave with tall stone columns and pointed arches. A carved stone baptismal font stands in the middle of the nave, in the centre of the frame. Shafts of coloured light from abstract stained glass windows fall across the stone floor. Sharp detail, no people, no writing, no letters.",
+   "seed": 4202,
+   "seconds": 4.2,
+   "peak_vram_gib": 15.2
+  },
+  "paper_boat": {
+   "model": "FLUX.2 Klein 4B (Apache-2.0)",
+   "prompt": "A wide photograph of a clear shallow forest stream flowing from left to right over smooth pebbles between mossy banks. A single small bright red folded paper boat floats on the water near the left edge of the frame, with open water to its right. Soft morning light, ferns, sharp detail, no people, no writing.",
+   "seed": 4203,
+   "seconds": 4.1,
+   "peak_vram_gib": 10.8
+  }
+ }
+}
