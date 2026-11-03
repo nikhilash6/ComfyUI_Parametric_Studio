@@ -195,6 +195,15 @@ def test_the_page_closes_components_the_house_way():
     t = (WEB / "clipsound.js").read_text(encoding="utf-8"); assert "<//>" in t and not re.search(r"</\$\{", t)
 
 
+def test_the_hero_keeps_its_controls_off_the_burned_captions():
+    """The native bar only shows on hover or focus; a 44 px play button below the frame is always there."""
+    js = (WEB / "clipsound.js").read_text(encoding="utf-8"); css = (WEB / "clipsound.css").read_text(encoding="utf-8")
+    hero = js[js.index("function HeroVideo"):js.index("function Hero(")]
+    assert "controls=${heroControls(hover, focus)}" in hero and not re.search(r"<video[^>]* controls[ >]", hero)
+    assert 'tabindex="0"' in hero and "onFocus=" in hero and "onBlur=" in hero and '<button type="button" class="cs-play"' in hero and "aria-pressed=" in hero
+    rule = re.search(r"\.cs-play\{([^}]*)\}", css).group(1); assert "min-height:44px" in rule and "min-width:44px" in rule
+
+
 @pytest.mark.skipif(not shutil.which("node"), reason="node not installed")
 def test_the_page_logic():
     code = r'''
@@ -208,6 +217,7 @@ const en = L.captionBody("output:a.mp4", { id: "whisper_ct2_distil", english_onl
 assert.equal(L.captionBody("output:a.mp4", { id: "x", english_only: false }, { language: " ES " }).language, "es");
 assert.equal(L.canCaption("", { ready: true }), false); assert.equal(L.canCaption("output:a.mp4", { ready: false }), false); assert.equal(L.canCaption("output:a.mp4", { ready: true }), true);
 assert.ok(L.viewUrl({ filename: "a b.mp4", subfolder: "v", type: "input" }).includes("a%20b.mp4")); assert.equal(L.secs(4.44), "4.4 s"); assert.equal(L.secs(null), "not measured");
+assert.equal(L.heroControls(false, false), false); assert.equal(L.heroControls(true, false), true); assert.equal(L.heroControls(false, true), true);
 console.log("ok");
 '''
     with tempfile.TemporaryDirectory() as t:
