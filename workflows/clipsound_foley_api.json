@@ -1,0 +1,52 @@
+{
+  "model": {
+    "class_type": "LoadControlFoleyModel",
+    "_meta": {"title": "ControlFoley model (weights CC BY-NC 4.0, non-commercial)"},
+    "inputs": {
+      "controlfoley_source_dir": "controlfoley",
+      "model_weights_dir": "${weights_dir}",
+      "variant": "large_44k",
+      "device": "cuda",
+      "precision": "bf16",
+      "low_vram": false,
+      "compile_encoders": false,
+      "auto_fetch_source": false
+    }
+  },
+  "video": {
+    "class_type": "LoadControlFoleyVideo",
+    "_meta": {"title": "The silent clip"},
+    "inputs": {"video_path": "${video_path}", "duration": "${duration}"}
+  },
+  "gen": {
+    "class_type": "ControlFoleyGenerate",
+    "_meta": {"title": "Sound from the picture"},
+    "inputs": {
+      "controlfoley_model": ["model", 0],
+      "video": ["video", 0],
+      "prompt": "${prompt}",
+      "negative_prompt": "${negative}",
+      "duration": "${duration}",
+      "seed": "${seed}",
+      "num_inference_steps": "${steps}",
+      "guidance_scale": "${cfg}",
+      "mask_away_clip": false,
+      "cache_video_features": false,
+      "staged_offload": true,
+      "clip_batch_size_multiplier": "8",
+      "sync_batch_size_multiplier": "8",
+      "reference_audio_path": "",
+      "image_fps": 24.0
+    }
+  },
+  "save": {
+    "class_type": "SaveControlFoleyAudio",
+    "_meta": {"title": "Save the sound"},
+    "inputs": {"audio": ["gen", 0], "filename_prefix": "${prefix}", "format": "wav"}
+  },
+  "unload": {
+    "class_type": "UnloadControlFoleyModel",
+    "_meta": {"title": "Give the VRAM back"},
+    "inputs": {"controlfoley_model": ["model", 0], "after": ["save", 0]}
+  }
+}

@@ -52,5 +52,126 @@
    "picture": "A MiniMax H3 clip of an invented adult, made in this studio",
    "fault": "H3's speech is unclear in places, and the captions say what Whisper heard there (\"So I have you on a wait moment here\"). There is no script to score it against."
   }
- ]
+ ],
+ "sound": [
+  {
+   "title": "Waves on rocks, sound from the picture alone",
+   "src": "clipsound/sound_waves.mp4",
+   "poster": "clipsound/sound_waves.webp",
+   "alt": "Waves break against dark rocks at sunset, throwing white spray up the cliff.",
+   "picture": "A Wan clip from this studio's showcase, silent",
+   "model": "controlfoley",
+   "prompt": "",
+   "seed": 42,
+   "steps": 25,
+   "wall_s": 42.5,
+   "peak_vram_gib": 13.6,
+   "lufs": -15.6,
+   "true_peak_db": -1.5,
+   "lra": 2.4,
+   "events_s": [
+    4.29,
+    4.63,
+    4.92
+   ],
+   "event_peaks": [
+    {
+     "picture_s": 4.29,
+     "strongest_sound_s": 4.09,
+     "offset_ms": -200,
+     "strength_x_median": 1.85
+    },
+    {
+     "picture_s": 4.63,
+     "strongest_sound_s": 4.68,
+     "offset_ms": 50,
+     "strength_x_median": 1.45
+    },
+    {
+     "picture_s": 4.92,
+     "strongest_sound_s": 4.9,
+     "offset_ms": -20,
+     "strength_x_median": 1.65
+    }
+   ],
+   "xcorr": {
+    "best_lag_ms": 480,
+    "r": 0.019,
+    "p_vs_shifted": 0.902,
+    "null_shifts": 2000
+   },
+   "picture_same": true,
+   "listened": false,
+   "measured": "The sound was measured by programs: loudness by ffmpeg's EBU R128 filter, onsets and motion by librosa and frame differences, sync by cross-correlation against 2000 randomly shifted copies. Nobody has listened to it.",
+   "fault": "No measurable sync. The sound is a steady surf wash: the strongest sound near each splash (4.29, 4.63 and 4.92 s) is only 1.5 to 1.9 times the clip's typical onset strength, at -200, +50 and -20 ms, and the whole-clip cross-correlation with the picture's motion (r 0.02) is what randomly shifted sound gets 90% of the time.",
+   "checked": "2026-11-02",
+   "raw_lufs": -20.4,
+   "raw_true_peak_db": -3.7,
+   "levelled": true
+  },
+  {
+   "title": "A flambé with the cook removed (VOID), given sound",
+   "src": "clipsound/sound_void.mp4",
+   "poster": "clipsound/sound_void.webp",
+   "alt": "A pan flames up on a stove in a dark restaurant kitchen; the cook who held it has been removed from the shot.",
+   "picture": "This studio's VOID removal example, silent",
+   "model": "controlfoley",
+   "prompt": "",
+   "seed": 42,
+   "steps": 25,
+   "wall_s": 55.2,
+   "peak_vram_gib": 13.6,
+   "lufs": -16.1,
+   "true_peak_db": -3.1,
+   "lra": 0.6,
+   "events_s": [
+    3.667,
+    4.083,
+    4.5,
+    4.792
+   ],
+   "event_peaks": [
+    {
+     "picture_s": 3.667,
+     "strongest_sound_s": 3.66,
+     "offset_ms": -7,
+     "strength_x_median": 3.71
+    },
+    {
+     "picture_s": 4.083,
+     "strongest_sound_s": 4.09,
+     "offset_ms": 7,
+     "strength_x_median": 3.35
+    },
+    {
+     "picture_s": 4.5,
+     "strongest_sound_s": 4.73,
+     "offset_ms": 230,
+     "strength_x_median": 3.18
+    },
+    {
+     "picture_s": 4.792,
+     "strongest_sound_s": 4.73,
+     "offset_ms": -62,
+     "strength_x_median": 3.18
+    }
+   ],
+   "xcorr": {
+    "best_lag_ms": -80,
+    "r": 0.041,
+    "p_vs_shifted": 0.7896,
+    "null_shifts": 2000
+   },
+   "picture_same": true,
+   "listened": false,
+   "measured": "The sound was measured by programs: loudness by ffmpeg's EBU R128 filter, onsets and motion by librosa and frame differences, sync by cross-correlation against 2000 randomly shifted copies. Nobody has listened to it.",
+   "fault": "As generated it was too loud and clipped (-12.4 LUFS, true peak +0.5 dBTP); the studio now levels it to -16.1 LUFS, -3.1 dBTP. Two flame flare-ups (3.67 and 4.08 s) have a strong sound within 7 ms, but over the whole clip the match with the picture's motion (r 0.04) is no better than randomly shifted sound (p 0.79).",
+   "checked": "2026-11-02",
+   "raw_lufs": -12.4,
+   "raw_true_peak_db": 0.5,
+   "levelled": true
+  }
+ ],
+ "sound_note": "ControlFoley ran on the author's machine on 2026-11-02 in its own ComfyUI process: bf16, 25 steps, seed 42, no words to steer it. Its weights are CC BY-NC 4.0 and its DFN5B encoder is Apple research-only: these samples are for non-commercial demonstration.",
+ "sound_honest": "Generated ambience for the whole clip. It doesn't place sounds on visible events (measured: no better than chance)."
 }

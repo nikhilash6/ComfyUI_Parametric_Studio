@@ -1,16 +1,18 @@
-"""Captions & Sound: speech captions for any clip, as SRT and WebVTT files and, if asked, drawn onto a copy of the clip.
+"""Captions & Sound: speech captions for any clip, as SRT and WebVTT files and, if asked, drawn onto a copy of the clip; and sound for a silent clip from ControlFoley.
 Whisper runs in its own process (studio/worldkit/runners/caption_listen.py), on the CPU unless STUDIO_CAPTION_DEVICE=cuda, so it never touches a running graph.
 The words on screen are set by ffmpeg and libass from a font, not painted by a model. Clips come only from the studio's input and output folders.
-What each model is and its licence come from voice_models.json, the Voices page's catalogue; what ran here is in clipsound_proof.json."""
-import json, os, re, shutil, subprocess, sys, tempfile, threading, time, urllib.parse, uuid
+What each model is and its licence come from voice_models.json, the Voices page's catalogue; what ran here is in clipsound_proof.json.
+Add sound runs ControlFoley as a ComfyUI graph (workflows/clipsound_foley_api.json). Its weights are non-commercial, so a run is refused unless the person says the result is for non-commercial use (studio/foley.py)."""
+import json, os, re, shutil, subprocess, sys, tempfile, threading, time, urllib.error, urllib.parse, urllib.request, uuid
 from pathlib import Path
 from fastapi import APIRouter, HTTPException
 from psn import paths
-from studio import captions as C
+from studio import captions as C, foley as FO
+from studio.graph_template import fill, placeholders
 
 router = APIRouter(prefix="/api/clipsound")
-PAGE = {"tab": "clipsound", "label": "Captions & Sound", "title": ["Captions & Sound", "Your clip. Its words on screen.", "Whisper writes down what is said, and ffmpeg sets it in a real font, so the letters are never a model's guess. Every result here was measured by a program. No person has listened yet."], "module": "clipsound.js", "export": "ClipSound", "css": "clipsound.css"}
-ROOT = Path(__file__).resolve().parent; RUNNER = ROOT / "worldkit" / "runners" / "caption_listen.py"
+PAGE = {"tab": "clipsound", "label": "Captions & Sound", "title": ["Captions & Sound", "Your clip. Its words on screen, and sound for a silent one.", "Whisper writes down what is said, and ffmpeg sets it in a real font, so the letters are never a model's guess. ControlFoley watches a silent clip and makes sound for it, for non-commercial use. Every result here was measured by a program. No person has listened yet."], "module": "clipsound.js", "export": "ClipSound", "css": "clipsound.css"}
+ROOT = Path(__file__).resolve().parent; WF = ROOT.parent / "workflows"; RUNNER = ROOT / "worldkit" / "runners" / "caption_listen.py"
 LISTENERS = ("whisper_ct2_distil", "whisper_ct2_large3", "whisper_ct2_tiny")
 VIDEO = re.compile(r"\.(mp4|webm|mov|mkv)$", re.I)
 MAX_SECONDS = 15 * 60; JOBS: dict = {}; _cache: dict = {}
@@ -125,8 +127,14 @@ def options(b):
     return {"model": model, "language": lang, "burn": bool(b.get("burn")), "style": style, "size": size, "place": place}
 
 
+def sounders(root=None, comfy=None, hub=None):
+    """The sound models, each with every licence it carries and what this machine lacks to run it."""
+    gone = FO.missing(root, comfy, hub)
+    return [{**m, "ready": not gone, "missing": gone, "steps": list(FO.STEPS), "max_seconds": FO.MAX_SECONDS} for m in FO.MODELS]
+
+
 @router.get("/models")
-def models_get(): return {"listeners": listeners(), "styles": list(C.STYLES), "sizes": list(C.SIZES), "places": list(C.PLACES), "proof": proof()}
+def models_get(): return {"listeners": listeners(), "sounders": sounders(), "styles": list(C.STYLES), "sizes": list(C.SIZES), "places": list(C.PLACES), "proof": proof()}
 
 
 @router.get("/clips")
@@ -161,3 +169,85 @@ def job_get(jid: str):
     r = JOBS.get(jid)
     if not r: raise HTTPException(404, "no such job")
     return r
+
+
+# ---------- add sound (ControlFoley)
+def comfy_url(): return os.environ.get("COMFYUI_URL", "http://127.0.0.1:8200").rstrip("/")
+
+
+def _comfy(path, payload=None, timeout=30):
+    req = urllib.request.Request(comfy_url() + path, data=json.dumps(payload).encode() if payload is not None else None, headers={"Content-Type": "application/json"} if payload is not None else {})
+    with urllib.request.urlopen(req, timeout=timeout) as r: return json.loads(r.read() or b"{}")
+
+
+def sound_graph(clip, seconds, opts, prefix, root=None):
+    tpl = json.loads((WF / FO.GRAPH).read_text(encoding="utf-8")); v = FO.graph_values(clip, seconds, opts, prefix, root)
+    miss = placeholders(tpl) - set(v)
+    if miss: raise RuntimeError(f"graph needs {sorted(miss)}")
+    return fill(tpl, v)
+
+
+def _wait(pid, comfy=None, sleep=time.sleep, limit=3600):
+    """Poll ComfyUI's history until the prompt is done. -> its history entry. Raises with ComfyUI's own message on failure."""
+    comfy = comfy or _comfy; t0 = time.time()
+    while time.time() - t0 < limit:
+        h = (comfy(f"/history/{urllib.parse.quote(pid)}") or {}).get(pid)
+        st = (h or {}).get("status") or {}
+        if st.get("status_str") == "error":
+            msg = next((i.get("exception_message", "") for k, i in st.get("messages", []) if k == "execution_error"), "")
+            raise RuntimeError("ControlFoley failed: " + (msg.strip()[:500] or "the graph stopped"))
+        if h and (st.get("completed") or st.get("status_str") == "success"): return h
+        sleep(2)
+    raise RuntimeError("ControlFoley took over an hour; the job was left in ComfyUI's queue")
+
+
+def saved_wav(hist):
+    """The WAV the save node wrote, as a path in the output folder."""
+    for it in ((hist.get("outputs") or {}).get("save") or {}).get("audio") or []:
+        if isinstance(it, dict) and it.get("filename", "").endswith(".wav") and it.get("type") == "output":
+            return Path(paths.output_dir(True)) / (it.get("subfolder") or "") / it["filename"]
+    raise RuntimeError("ControlFoley finished but saved no sound")
+
+
+def sound_job(rec, clip, opts, run=subprocess.run, comfy=None, sleep=time.sleep):
+    """Clip -> ControlFoley in ComfyUI -> WAV -> the clip with that sound, picture copied -> loudness. Fills rec; never raises."""
+    t0 = time.time(); comfy = comfy or _comfy
+    try:
+        stem = re.sub(r"[^\w-]+", "_", clip.stem)[:48] + "_" + rec["job"][-6:]; prefix = f"clipsound/{stem}_sound"
+        rec["step"] = "ControlFoley is loading and watching the clip"
+        try: res = comfy("/prompt", {"prompt": sound_graph(clip, rec["clip_info"]["seconds"], opts, prefix), "client_id": "studio-clipsound"})
+        except urllib.error.HTTPError as e:
+            try: why = json.loads(e.read() or b"{}").get("error", {}).get("message", "")
+            except Exception: why = ""
+            raise RuntimeError(f"ComfyUI rejected the graph: {why}"[:400]) from None
+        rec["prompt_id"] = res["prompt_id"]; hist = _wait(res["prompt_id"], comfy, sleep); wav = saved_wav(hist)
+        rec["step"] = "putting the sound on the clip"; out_dir = Path(paths.output_dir(True)) / "clipsound"; out_dir.mkdir(parents=True, exist_ok=True)
+        dest = out_dir / f"{stem}_with_sound.mp4"
+        secs_ = rec["clip_info"]["seconds"]
+        r = run(FO.level_measure_command(_ffmpeg(), wav, secs_), capture_output=True, text=True, timeout=600); level = FO.parse_level(r.stderr or "")
+        r = run(FO.mux_command(_ffmpeg(), clip, wav, dest, secs_, level), capture_output=True, text=True, timeout=600)
+        if r.returncode: raise RuntimeError("ffmpeg couldn't put the sound on the clip: " + (r.stderr or "")[-300:])
+        r = run(FO.loudness_command(_ffmpeg(), dest), capture_output=True, text=True, timeout=600); loud = FO.parse_loudness(r.stderr or "")      # what the clip plays, after levelling
+        raw = {"lufs": level["input_i"], "true_peak_db": level["input_tp"]} if level else None
+        FO.receipt(out_dir / f"{stem}_with_sound.licence.json", clip, opts)
+        rel = lambda p: Path(p).resolve().relative_to(Path(paths.output_dir(True)).resolve()).as_posix()
+        rec.update(status="done", step="", files={"video": _view(rel(dest)), "wav": _view(rel(wav)), "licence": _view(rel(out_dir / f"{stem}_with_sound.licence.json"))}, loudness=loud, raw_loudness=raw, honest=FO.HONEST,
+                   seconds=round(time.time() - t0, 1), label=FO.LABEL, terms=FO.STRICTEST, note="Levelled to about -16 LUFS with a -1.5 dBTP ceiling, then measured by ffmpeg (EBU R128). Nobody has listened to this sound.")
+    except Exception as e: rec.update(status="error", step="", error=f"{e}"[:700])
+
+
+@router.post("/sound")
+def sound_run(b: dict = None):
+    """Add sound to one clip with ControlFoley. Refused unless the person confirms non-commercial use. Runs in the background: poll /api/clipsound/jobs/{job}."""
+    b = b or {}
+    try: opts = FO.options(b)
+    except ValueError as e: raise HTTPException(400, str(e)) from None
+    clip = clip_path(b.get("clip"))
+    gone = FO.missing()
+    if gone: raise HTTPException(409, "ControlFoley needs files this machine doesn't have: " + "; ".join(gone[:4]) + ". The studio won't download them during a run.")
+    info = probe(clip)
+    if info["seconds"] and info["seconds"] > FO.MAX_SECONDS: raise HTTPException(400, f"{clip.name} is {info['seconds']:.0f} s long. ControlFoley takes up to {FO.MAX_SECONDS:.0f} s; cut it shorter first.")
+    if info["seconds"] and info["seconds"] < FO.MIN_SECONDS: raise HTTPException(400, f"{clip.name} is too short: ControlFoley needs at least {FO.MIN_SECONDS} s.")
+    jid = "snd-" + uuid.uuid4().hex[:10]
+    rec = {"job": jid, "kind": "sound", "status": "running", "step": "starting", "started": time.time(), "clip": clip.name, "clip_info": info, "options": opts, "replaces_sound": bool(info["audio"])}; JOBS[jid] = rec
+    threading.Thread(target=sound_job, args=(rec, clip, opts), daemon=True, name=jid).start(); return rec
