@@ -5,7 +5,7 @@
   "runs": "model",
   "needs": [
    "An SD 1.5 checkpoint in models/checkpoints (we used v1-5-pruned-emaonly). Any SD 1.5 file works; pick yours in the loader.",
-   "A folder of pictures with matching .txt captions in the input folder, named my_dataset."
+   "A folder of pictures with matching .txt captions in ComfyUI's input folder. We ship one: copy studio/datasets/university_astrolabe (six 512x512 pictures of an invented brass astrolabe that our own SD 1.5 lessons drew, each with a caption) into ComfyUI's input folder under the same name. For your own LoRA, put your pictures and captions in a folder there and pick it instead."
   ],
   "packs": [],
   "notes": {
@@ -25,7 +25,7 @@
   "2": {
    "class_type": "LoadImageTextDataSetFromFolder",
    "inputs": {
-    "folder": "my_dataset"
+    "folder": "university_astrolabe"
    }
   },
   "3": {

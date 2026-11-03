@@ -12,7 +12,7 @@ The stored proof note on a library recipe can look wrong next to a render. Many 
 
 Recipe levels verified and load-tested describe the earlier studio, not this one. Their notes say "Not re-rendered on this studio's graph" or "Not rendered through this recipe". Load-tested also means the output was not judged. [run: studio/lora_recipes.json] [code: studio/web/recipes.js:23]
 
-The 8 other flagship recipes are not tested: seamless_loop, seasons_shot, vfx_stack, product_ad, anime_opening, recast_character, multicam and open_lane. Their expected time comes from per-goal figures, not a run of the chain. [run: studio/recipes.json] [code: studio/recipes.py:564-565]
+All 10 flagships carry a tested record. A tested record is one run with one seed: the notes in it say what stayed weak (product_ad's second camera barely moves, open_lane's first move is gentle). [run: studio/recipes.json] [code: studio/recipes.py:564-565]
 
 ## Reading the render numbers
 

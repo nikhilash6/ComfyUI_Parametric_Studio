@@ -348,7 +348,7 @@
      "goal": "image",
      "label": "The still",
      "peak_gib": 23,
-     "seed": 21,
+     "seed": 212,
      "prompt": "Wide matte painting of {subject}, centred in the frame, cinematic light, highly detailed. No text, no logos.",
      "options": {
       "aspect": "16:9",
@@ -364,7 +364,7 @@
      "seed": 22,
      "image": "@still",
      "last_image": "@still",
-     "prompt": "Clouds drift slowly past the island and the waterfall flows without stopping. One smooth, even cycle that ends exactly where it began, a seamless loop",
+     "prompt": "Clouds drift slowly past the island and the waterfall flows without stopping. One smooth, even cycle that ends exactly where it began, a seamless loop. A soft steady rush of falling water and high wind",
      "options": {
       "camera": "locked",
       "aspect": "16:9",
@@ -384,13 +384,51 @@
       "crossfade": 0.5
      }
     }
-   ]
+   ],
+   "tested": {
+    "rendered": "2026-11-01",
+    "output": "recipes/seamless_loop_4c6d654050f3.mp4",
+    "media": "showcase/recipes/seamless_loop.mp4",
+    "poster": "showcase/recipes/seamless_loop.webp",
+    "seconds": 91.8,
+    "wall_seconds": 8009.6,
+    "peak_vram_gib": 41.0,
+    "peak_scope": "recipe",
+    "video_seconds": 4.67,
+    "model": "flux-2-klein-base-4b.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors, minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
+    "seeds": {
+     "still": 212,
+     "clip": 22
+    },
+    "steps": {
+     "still": {
+      "seconds": 25.1,
+      "peak_gib": 16.8
+     },
+     "clip": {
+      "seconds": 65.4,
+      "peak_gib": 41.0
+     },
+     "loop": {
+      "seconds": 1.3,
+      "facts": {
+       "seam_ssim_before": 0.8548,
+       "seam_ssim_after": 0.962,
+       "seconds": 4.67,
+       "crossfade": 0.5,
+       "audio_gain_db": 20.8
+      }
+     }
+    },
+    "run": "4c6d654050f3",
+    "note": "First and last frame of the loop: SSIM 0.962, PSNR 45.1 dB, against 48.2 dB between neighbouring frames. Before the seam step the same frames read SSIM 0.855, PSNR 31.0 dB. Sound measured at -16 LUFS, not judged by ear."
+   }
   },
   {
    "id": "seasons_shot",
    "title": "Storyboard to one continuous shot",
-   "pitch": "Three frames of one place, then one unbroken shot that travels through them.",
-   "why": "Same seed and the same words keep the layout of each board close, so first and last frame control can walk through time without a cut. Each clip starts on the frame the last one ended on, so the join is a hard cut you cannot see.",
+   "pitch": "Three boards of one place, then one unbroken shot that travels through them.",
+   "why": "Each later board is redrawn from the one before, so the cottage and the tree stay where they were. The second clip starts on the real last frame of the first, and a short dissolve hides what is left of the join; the number is measured.",
    "tags": [
     "film",
     "keyframes"
@@ -421,7 +459,7 @@
     }
    ],
    "tips": [
-    "Keep the words for the place identical in each board; change only the season or the time.",
+    "Change only the season or the time; the place stays in the boards by reference.",
     "Keep the camera locked: the change is the show."
    ],
    "steps": [
@@ -440,29 +478,65 @@
     },
     {
      "id": "spring",
-     "type": "goal",
-     "goal": "image",
+     "type": "template",
+     "template": "image_flux2_klein_image_edit_4b_distilled",
      "label": "Board 2: spring",
+     "model": "FLUX.2 Klein 4B, with the board before it as its reference",
      "peak_gib": 23,
-     "seed": 1234,
-     "prompt": "Wide landscape photograph of {place}, high spring, fresh green leaves and white blossom on the branches, soft morning light. No text, no logos.",
-     "options": {
-      "aspect": "16:9",
-      "mode": "quality"
-     }
+     "seed": 1235,
+     "seed_node": "75:73",
+     "seed_input": "noise_seed",
+     "values": {
+      "76|image": "@winter"
+     },
+     "swap": {
+      "flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+     },
+     "set": {
+      "75:74": {
+       "text": "The same photograph from the same camera position, same composition: {place}. Keep the cottage and the tree exactly where they are, the same size and shape. Now it is high spring: no snow, lush green grass, fresh green leaves and white blossom on every branch, soft morning light. No text, no logos."
+      },
+      "75:66": {
+       "width": 1344,
+       "height": 768
+      },
+      "75:62": {
+       "width": 1344,
+       "height": 768
+      }
+     },
+     "prompt_note": "The same photograph from the same camera position, same composition: {place}. Keep the cottage and the tree exactly where they are, the same size and shape. Now it is high spring: no snow, lush green "
     },
     {
      "id": "autumn",
-     "type": "goal",
-     "goal": "image",
+     "type": "template",
+     "template": "image_flux2_klein_image_edit_4b_distilled",
      "label": "Board 3: autumn",
+     "model": "FLUX.2 Klein 4B, with the board before it as its reference",
      "peak_gib": 23,
-     "seed": 1234,
-     "prompt": "Wide landscape photograph of {place}, late autumn, burning gold and red leaves, low golden evening light. No text, no logos.",
-     "options": {
-      "aspect": "16:9",
-      "mode": "quality"
-     }
+     "seed": 1236,
+     "seed_node": "75:73",
+     "seed_input": "noise_seed",
+     "values": {
+      "76|image": "@spring"
+     },
+     "swap": {
+      "flux-2-klein-4b-fp8.safetensors": "flux-2-klein-4b.safetensors"
+     },
+     "set": {
+      "75:74": {
+       "text": "The same photograph from the same camera position, same composition: {place}. Keep the cottage and the tree exactly where they are, the same size and shape. Now it is late autumn: burning gold and red leaves on every branch, golden grass, low golden evening light. No text, no logos."
+      },
+      "75:66": {
+       "width": 1344,
+       "height": 768
+      },
+      "75:62": {
+       "width": 1344,
+       "height": 768
+      }
+     },
+     "prompt_note": "The same photograph from the same camera position, same composition: {place}. Keep the cottage and the tree exactly where they are, the same size and shape. Now it is late autumn: burning gold and red"
     },
     {
      "id": "a",
@@ -483,13 +557,23 @@
      }
     },
     {
+     "id": "mid",
+     "type": "cpu",
+     "op": "frame",
+     "label": "The frame they share",
+     "clip": "@a",
+     "args": {
+      "which": "last"
+     }
+    },
+    {
      "id": "b",
      "type": "goal",
      "goal": "director_keyframes",
      "label": "Spring to autumn",
      "peak_gib": 46,
      "seed": 32,
-     "image": "@spring",
+     "image": "@mid",
      "last_image": "@autumn",
      "prompt": "Time passes in one shot: the green leaves turn gold and red, the light drops low and warm, the first leaves fall. Wind in the branches",
      "options": {
@@ -509,9 +593,66 @@
      "clips": [
       "@a",
       "@b"
-     ]
+     ],
+     "args": {
+      "crossfade": 0.25
+     }
     }
-   ]
+   ],
+   "tested": {
+    "rendered": "2026-11-02",
+    "output": "recipes/seasons_shot_c5d55b55485f.mp4",
+    "media": "showcase/recipes/seasons_shot.mp4",
+    "poster": "showcase/recipes/seasons_shot.webp",
+    "seconds": 227.5,
+    "wall_seconds": 242.9,
+    "peak_vram_gib": 41.2,
+    "peak_scope": "recipe",
+    "video_seconds": 10.08,
+    "model": "flux-2-klein-base-4b.safetensors, flux-2-klein-4b.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors, minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
+    "seeds": {
+     "winter": 1234,
+     "spring": 1235,
+     "autumn": 1236,
+     "a": 31,
+     "b": 32
+    },
+    "steps": {
+     "winter": {
+      "seconds": 22.0,
+      "peak_gib": 16.9
+     },
+     "spring": {
+      "seconds": 8.4,
+      "peak_gib": 16.5
+     },
+     "autumn": {
+      "seconds": 6.0,
+      "peak_gib": 17.0
+     },
+     "a": {
+      "seconds": 86.9,
+      "peak_gib": 41.2
+     },
+     "mid": {
+      "seconds": 0.3
+     },
+     "b": {
+      "seconds": 99.3,
+      "peak_gib": 41.1
+     },
+     "join": {
+      "seconds": 4.6,
+      "facts": {
+       "seconds": 10.08,
+       "crossfade": 0.25,
+       "audio_gain_db": 10.6
+      }
+     }
+    },
+    "run": "c5d55b55485f",
+    "note": "Winter to spring to autumn in one locked shot. The join at 5 s is measured: frame-to-frame change there stays under the clip's own 95th percentile (1.40 against 1.78 mean absolute difference), and frames checked at 2.5 per second show the cottage and the tree holding still. Sound measured at -16 LUFS, not judged by ear."
+   }
   },
   {
    "id": "vfx_stack",
@@ -627,7 +768,52 @@
       "audio_from": 3
      }
     }
-   ]
+   ],
+   "tested": {
+    "rendered": "2026-11-02",
+    "output": "recipes/vfx_stack_86d0fd2956fe.mp4",
+    "media": "showcase/recipes/vfx_stack.mp4",
+    "poster": "showcase/recipes/vfx_stack.webp",
+    "seconds": 126.4,
+    "wall_seconds": 1975.4,
+    "peak_vram_gib": 38.3,
+    "peak_scope": "recipe",
+    "video_seconds": 4.04,
+    "model": "ltx-2.5-22b-distilled-transformer-comfy-int8-convrot.safetensors, ltx-2.5-22b-ic-lora-clean-plate-1.0.safetensors, ltx-2.5-22b-ic-lora-day-to-night-0.9.safetensors, ltx-2.5-22b-ic-lora-water-simulation-0.9.safetensors",
+    "seeds": {
+     "plate": 41,
+     "clean": 42,
+     "night": 43,
+     "flood": 44
+    },
+    "steps": {
+     "plate": {
+      "seconds": 25.3,
+      "peak_gib": 36.4
+     },
+     "clean": {
+      "seconds": 37.0,
+      "peak_gib": 38.2
+     },
+     "night": {
+      "seconds": 25.4,
+      "peak_gib": 38.2
+     },
+     "flood": {
+      "seconds": 36.6,
+      "peak_gib": 38.3
+     },
+     "grid": {
+      "seconds": 2.1,
+      "facts": {
+       "seconds": 4.04,
+       "audio_gain_db": 7.7
+      }
+     }
+    },
+    "run": "86d0fd2956fe",
+    "note": "Plate, clean plate, day to night and flood in one grid. Weak: the flood reads as a shallow wet sheen on the stones, not a surge, even at the water LoRA's strongest setting. Sound measured at -16 LUFS, not judged by ear."
+   }
   },
   {
    "id": "product_ad",
@@ -671,6 +857,7 @@
    ],
    "tips": [
     "Plain surfaces with no print: blank products invent logos when they are told nothing.",
+    "Name the product's shape and colours in the second camera's words too, and keep the move small: a wide orbit invents the far side of the bottle.",
     "Reshoot is the slow step, about 8 minutes here."
    ],
    "steps": [
@@ -680,7 +867,7 @@
      "goal": "flux3",
      "label": "Hero still",
      "peak_gib": 24,
-     "seed": 51,
+     "seed": 551,
      "prompt": "Luxury advertising photograph of {product} standing on wet black obsidian, thin emerald rim light, gold dust suspended in the air, shallow depth of field, dark studio background. No text, no logos.",
      "options": {
       "aspect": "16:9"
@@ -694,7 +881,7 @@
      "peak_gib": 46,
      "seed": 52,
      "image": "@still",
-     "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Product advertising film, cinematic. The product stands still on the wet black stone while gold dust drifts slowly through the light and a thin line of water runs across the stone. The camera pushes in with small amplitude at slow speed toward the product. One continuous shot, no cuts.\n\noverall_soundscape: A low soft hum, tiny water drips.\n\nnon_diegetic_music: N/A",
+     "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Product advertising film, cinematic. The faceted smoked-glass perfume bottle with its gold cap stands still on the wet black stone, unchanged from first frame to last. Gold dust drifts slowly through the light, a thin line of water runs across the stone, and the thin straight emerald line of light behind it stays where it is. The camera pushes in with small amplitude at slow speed toward the product. One continuous shot, no cuts.\n\noverall_soundscape: A low soft hum, tiny water drips.\n\nnon_diegetic_music: N/A",
      "options": {
       "aspect": "16:9",
       "quality": "high",
@@ -711,10 +898,11 @@
      "seed": 53,
      "video": "@hero",
      "options": {
-      "camera": "orbit_right",
+      "camera": "dolly_out",
       "aspect": "auto",
       "seconds": 5
-     }
+     },
+     "prompt": "The same faceted smoked-glass perfume bottle with the same gold cap stands still on the wet black stone, its shape and colours unchanged, gold dust drifting through the light"
     },
     {
      "id": "score",
@@ -744,7 +932,61 @@
       "clip_audio_db": -14
      }
     }
-   ]
+   ],
+   "tested": {
+    "rendered": "2026-11-02",
+    "output": "recipes/product_ad_f6ad7a9123b8.mp4",
+    "media": "showcase/recipes/product_ad.mp4",
+    "poster": "showcase/recipes/product_ad.webp",
+    "seconds": 260.0,
+    "wall_seconds": 1392.4,
+    "peak_vram_gib": 41.2,
+    "peak_scope": "recipe",
+    "video_seconds": 9.29,
+    "model": "flux3-image-klein-bf16.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors, minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors, minimax_music3_dit_fp16.safetensors",
+    "seeds": {
+     "still": 551,
+     "hero": 52,
+     "angle": 53,
+     "score": 54
+    },
+    "steps": {
+     "still": {
+      "seconds": 13.3,
+      "peak_gib": 18.1
+     },
+     "hero": {
+      "seconds": 99.3,
+      "peak_gib": 41.1
+     },
+     "angle": {
+      "seconds": 96.1,
+      "peak_gib": 41.2
+     },
+     "score": {
+      "seconds": 48.2,
+      "peak_gib": 21.3
+     },
+     "cut": {
+      "seconds": 3.1,
+      "facts": {
+       "bpm": 78.2,
+       "cuts_at": [
+        0.0,
+        4.644
+       ],
+       "beats_per_shot": [
+        6,
+        6
+       ],
+       "song_from": 12.54,
+       "seconds": 9.29
+      }
+     }
+    },
+    "run": "f6ad7a9123b8",
+    "note": "A smoked-glass bottle with a gold cap on wet black stone, then the reshoot's second camera on the same moment, cut on the beat. Frames checked at 3 per second: the bottle keeps its shape, cap and colours across both shots, and there is no text or logo anywhere. The second camera's dolly back barely shows, so the two shots read as one slow hero shot. Sound measured at -14.7 LUFS, not judged by ear."
+   }
   },
   {
    "id": "music_video",
@@ -1311,9 +1553,19 @@
    ],
    "fields": [
     {
-     "key": "story",
-     "label": "The story",
-     "default": "a young pilot and a towering black and gold mecha in a rain-soaked neon city"
+     "key": "machine",
+     "label": "The machine",
+     "default": "a towering black and gold mecha"
+    },
+    {
+     "key": "pilot",
+     "label": "The pilot",
+     "default": "one adult woman pilot, mature face, short dark hair, black and gold high-collar flight suit"
+    },
+    {
+     "key": "place",
+     "label": "The place",
+     "default": "a rain-soaked night city"
     }
    ],
    "models": [
@@ -1343,6 +1595,7 @@
    ],
    "tips": [
     "Keep realism words out of the prompts (photo, 35mm, film grain): the owner's anime rule.",
+    "Ask for blank towers and put signs in the negative: a drawn city invents gibberish lettering otherwise.",
     "Anima is non-commercial."
    ],
    "steps": [
@@ -1352,13 +1605,14 @@
      "goal": "anime",
      "label": "Key visual 1",
      "peak_gib": 14,
-     "seed": 71,
-     "prompt": "{story}, wide shot, the city below, rain, glowing green visor",
+     "seed": 671,
+     "prompt": "wide shot, {machine} stands among plain blank skyscrapers in {place}, glowing green visor, the city lights far below, heavy rain, teal and magenta glow",
      "options": {
       "aspect": "16:9",
       "style": "mecha",
       "mode": "quality"
-     }
+     },
+     "negative": "worst quality, low quality, blurry, jpeg artifacts, artist name, chromatic aberration, text, letters, kanji, signs, signboards, billboards, logo, watermark, signature, speech bubble, split screen, multiple views, panels, multiple girls, extra fingers, bad hands"
     },
     {
      "id": "k2",
@@ -1366,13 +1620,14 @@
      "goal": "anime",
      "label": "Key visual 2",
      "peak_gib": 14,
-     "seed": 72,
-     "prompt": "close-up of the young pilot looking up in the rain, neon reflected in her eyes, from {story}",
+     "seed": 787,
+     "prompt": "close-up portrait of {pilot}, looking up in the rain, soft teal and magenta light on her face, wet hair, {place} blurred far behind her",
      "options": {
       "aspect": "16:9",
       "style": "mecha",
       "mode": "quality"
-     }
+     },
+     "negative": "worst quality, low quality, blurry, jpeg artifacts, artist name, chromatic aberration, text, letters, kanji, signs, signboards, billboards, logo, watermark, signature, speech bubble, split screen, multiple views, panels, multiple girls, extra fingers, bad hands"
     },
     {
      "id": "k3",
@@ -1380,13 +1635,14 @@
      "goal": "anime",
      "label": "Key visual 3",
      "peak_gib": 14,
-     "seed": 73,
-     "prompt": "the mecha rises to full height over the city, gold light bursting behind it, from {story}",
+     "seed": 673,
+     "prompt": "low angle, {machine} rises to full height over {place}, gold light bursting behind it, plain blank towers, dramatic sky",
      "options": {
       "aspect": "16:9",
       "style": "mecha",
       "mode": "quality"
-     }
+     },
+     "negative": "worst quality, low quality, blurry, jpeg artifacts, artist name, chromatic aberration, text, letters, kanji, signs, signboards, billboards, logo, watermark, signature, speech bubble, split screen, multiple views, panels, multiple girls, extra fingers, bad hands"
     },
     {
      "id": "v1",
@@ -1462,7 +1718,78 @@
      ],
      "audio": "@song"
     }
-   ]
+   ],
+   "tested": {
+    "rendered": "2026-11-02",
+    "output": "recipes/anime_opening_8481ce0b30d8.mp4",
+    "media": "showcase/recipes/anime_opening.mp4",
+    "poster": "showcase/recipes/anime_opening.webp",
+    "seconds": 248.2,
+    "wall_seconds": 2361.3,
+    "peak_vram_gib": 41.1,
+    "peak_scope": "recipe",
+    "video_seconds": 12.0,
+    "model": "anima-aesthetic-v1.1.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors, minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors, minimax_music3_dit_fp16.safetensors",
+    "seeds": {
+     "k1": 671,
+     "k2": 787,
+     "k3": 673,
+     "v1": 74,
+     "v2": 75,
+     "v3": 76,
+     "song": 77
+    },
+    "steps": {
+     "k1": {
+      "seconds": 10.6,
+      "peak_gib": 6.4
+     },
+     "k2": {
+      "seconds": 8.7,
+      "peak_gib": 6.5
+     },
+     "k3": {
+      "seconds": 10.8,
+      "peak_gib": 6.4
+     },
+     "v1": {
+      "seconds": 57.2,
+      "peak_gib": 41.1
+     },
+     "v2": {
+      "seconds": 59.5,
+      "peak_gib": 41.1
+     },
+     "v3": {
+      "seconds": 58.7,
+      "peak_gib": 41.1
+     },
+     "song": {
+      "seconds": 40.8,
+      "peak_gib": 21.2
+     },
+     "cut": {
+      "seconds": 1.9,
+      "facts": {
+       "bpm": 183.2,
+       "cuts_at": [
+        0.0,
+        3.971,
+        7.918
+       ],
+       "beats_per_shot": [
+        12,
+        12,
+        12
+       ],
+       "song_from": 2.95,
+       "seconds": 12.0
+      }
+     }
+    },
+    "run": "8481ce0b30d8",
+    "note": "Three Anima key visuals moved by H3 and cut on the measured beat of the Music 3 track (the beat tracker read 183 BPM against the 138 asked for). Frames checked at 2 per second: no hands in frame, no drawn text. Sound measured at -14.8 LUFS, not judged by ear."
+   }
   },
   {
    "id": "recast_character",
@@ -1508,7 +1835,7 @@
      "goal": "image",
      "label": "Character",
      "peak_gib": 23,
-     "seed": 81,
+     "seed": 381,
      "prompt": "Full body photograph of {character}, standing, facing the camera, plain light grey studio background, soft even light. No text, no logos.",
      "options": {
       "aspect": "2:3",
@@ -1524,7 +1851,7 @@
      "label": "The scene",
      "peak_gib": 46,
      "seed": 82,
-     "prompt": "A chef in a white jacket in a dark kitchen flambes a pan, a tall column of golden fire lights her focused face, the camera pushes in slowly, sizzling sounds and a low flame roar, cinematic shallow depth of field.",
+     "prompt": "An adult woman chef in a white jacket in a dark kitchen flambes a pan, a tall column of golden fire lights her focused face, the camera pushes in slowly, sizzling sounds and a low flame roar, cinematic shallow depth of field.",
      "options": {
       "aspect": "16:9",
       "quality": "high",
@@ -1567,7 +1894,47 @@
       "audio_from": 1
      }
     }
-   ]
+   ],
+   "tested": {
+    "rendered": "2026-11-02",
+    "output": "recipes/recast_character_152a1f219173.mp4",
+    "media": "showcase/recipes/recast_character.mp4",
+    "poster": "showcase/recipes/recast_character.webp",
+    "seconds": 558.2,
+    "wall_seconds": 1556.9,
+    "peak_vram_gib": 39.7,
+    "peak_scope": "recipe",
+    "video_seconds": 5.17,
+    "model": "flux-2-klein-base-4b.safetensors, minimax_h3_fl2va_pruned_int8_convrot.safetensors, minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors, minimax_h3_ref2va_pruned_int8_convrot.safetensors, h3_character_swap_pro4500_1000.safetensors",
+    "seeds": {
+     "hero": 381,
+     "take": 82,
+     "swap": 83
+    },
+    "steps": {
+     "hero": {
+      "seconds": 13.6,
+      "peak_gib": 16.8
+     },
+     "take": {
+      "seconds": 75.1,
+      "peak_gib": 39.7
+     },
+     "swap": {
+      "seconds": 468.3,
+      "peak_gib": 30.1
+     },
+     "side": {
+      "seconds": 1.2,
+      "facts": {
+       "seconds": 5.17,
+       "audio_gain_db": 13.9
+      }
+     }
+    },
+    "run": "152a1f219173",
+    "note": "Source and recast side by side. The invented chef is replaced by the invented red-bearded sailor; camera, flame and timing are kept. Frames checked at 3 per second, hands included. Sound measured at -16 LUFS, not judged by ear."
+   }
   },
   {
    "id": "multicam",
@@ -1581,7 +1948,7 @@
     {
      "key": "action",
      "label": "The action",
-     "default": "A street food cook tosses noodles over a roaring flame at night, steam drifting through neon light"
+     "default": "An adult street food cook in a dark apron tosses noodles in a wok over a roaring flame at night, under a plain red canvas awning lit by bare warm bulbs, steam drifting through the light"
     }
    ],
    "models": [
@@ -1599,6 +1966,7 @@
    ],
    "tips": [
     "One clear action reads best from a second angle.",
+    "Keep camera B's move small, like a push in: a wide orbit has to invent the far side of the set, and it shows.",
     "Reshoot takes about 8 minutes per angle here."
    ],
    "steps": [
@@ -1613,7 +1981,7 @@
      "options": {
       "camera": "locked",
       "shot": "medium",
-      "lighting": "neon",
+      "lighting": "volumetric",
       "aspect": "16:9",
       "quality": "high",
       "seconds": 5,
@@ -1631,10 +1999,11 @@
      "seed": 92,
      "video": "@take",
      "options": {
-      "camera": "orbit_left",
+      "camera": "dolly_in",
       "aspect": "auto",
       "seconds": 5
-     }
+     },
+     "prompt": "The same adult cook in the same dark apron keeps tossing noodles in the wok over the flame, under the same red awning and warm bulbs, steam drifting through the light"
     },
     {
      "id": "cut",
@@ -1650,7 +2019,46 @@
       "pieces": 4
      }
     }
-   ]
+   ],
+   "tested": {
+    "rendered": "2026-11-02",
+    "output": "recipes/multicam_78763261535a.mp4",
+    "media": "showcase/recipes/multicam.mp4",
+    "poster": "showcase/recipes/multicam.webp",
+    "seconds": 221.8,
+    "wall_seconds": 4201.3,
+    "peak_vram_gib": 41.2,
+    "peak_scope": "recipe",
+    "video_seconds": 5.2,
+    "model": "minimax_h3_fl2va_pruned_int8_convrot.safetensors, minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors",
+    "seeds": {
+     "take": 91,
+     "low": 92
+    },
+    "steps": {
+     "take": {
+      "seconds": 96.0,
+      "peak_gib": 39.7
+     },
+     "low": {
+      "seconds": 124.9,
+      "peak_gib": 41.2
+     },
+     "cut": {
+      "seconds": 0.9,
+      "facts": {
+       "seconds": 5.2,
+       "cuts_at": [
+        1.292,
+        2.583,
+        3.875
+       ]
+      }
+     }
+    },
+    "run": "78763261535a",
+    "note": "A cook tossing noodles under a red awning, filmed once locked off and again by the reshoot pushing in, cut four times on one sound track. Frames checked at 4 per second and at full size: the same face, apron, awning and bulbs in both cameras, hands whole on the wok, no text. Camera B ends close on the cook with the wok below the frame. Sound measured at -14.1 LUFS, not judged by ear."
+   }
   },
   {
    "id": "open_lane",
@@ -1670,18 +2078,18 @@
    ],
    "models": [
     {
-     "name": "FLUX.2 Klein 4B",
-     "licence": "Apache-2.0",
+     "name": "FLUX.2 Klein 4B Base (flux-2-klein-base-4b, qwen_3_4b text encoder, flux2-vae)",
+     "licence": "Apache-2.0: Black Forest Labs' FLUX.2 repository says \"4B models are Apache 2.0\" and \"The autoencoder is released under Apache 2.0\"; Comfy-Org/Flux-2-Klein-4B, the download, is tagged apache-2.0; Qwen/Qwen3-4B is tagged apache-2.0. Checked 2026-11-01.",
      "licence_class": "open"
     },
     {
-     "name": "Wan 2.2 TI2V-5B",
-     "licence": "Apache-2.0",
+     "name": "Wan 2.2 TI2V-5B (wan2.2_ti2v_5B_fp16, umt5_xxl text encoder, wan2.2_vae)",
+     "licence": "Apache-2.0: Wan-AI/Wan2.2-TI2V-5B says \"The models in this repository are licensed under the Apache 2.0 License\"; Comfy-Org/Wan_2.2_ComfyUI_Repackaged is tagged apache-2.0. Checked 2026-11-01.",
      "licence_class": "open"
     },
     {
-     "name": "ACE-Step 1.5",
-     "licence": "MIT (checked on the ACE-Step/Ace-Step1.5 model page)",
+     "name": "ACE-Step 1.5 XL turbo (acestep_v1.5_xl_turbo_bf16, qwen_0.6b_ace15, qwen_4b_ace15, ace_1.5_vae)",
+     "licence": "MIT: ACE-Step/acestep-v15-xl-turbo and ACE-Step/Ace-Step1.5 are tagged mit; Comfy-Org/ace_step_1.5_ComfyUI_files, the download, is tagged apache-2.0. Both are permissive. Checked 2026-11-01.",
      "licence_class": "open"
     },
     {
@@ -1691,7 +2099,8 @@
     }
    ],
    "tips": [
-    "Wan 2.2 5B runs in less memory than H3 or LTX."
+    "Wan 2.2 5B runs in less memory than H3 or LTX.",
+    "Klein's 9B models are not open: this chain stays on 4B on purpose."
    ],
    "steps": [
     {
@@ -1721,17 +2130,30 @@
      }
     },
     {
+     "id": "k3",
+     "type": "goal",
+     "goal": "image",
+     "label": "Still 3",
+     "peak_gib": 23,
+     "seed": 107,
+     "prompt": "Wide cinematic still of the highest terrace of {world}, a great stone archway open to the rising sun above a sea of jungle canopy. No text, no logos.",
+     "options": {
+      "aspect": "16:9",
+      "mode": "quality"
+     }
+    },
+    {
      "id": "v1",
      "type": "goal",
      "goal": "animate",
      "label": "Move 1",
      "peak_gib": 35,
-     "seed": 103,
+     "seed": 113,
      "image": "@k1",
-     "prompt": "Mist drifts across the stairs and the camera glides forward slowly.",
+     "prompt": "Mist drifts slowly across the empty stone stairs and the camera glides forward. Nobody is there, only the stone, the leaves and the light.",
      "options": {
       "aspect": "16:9",
-      "quality": "480p",
+      "quality": "720p",
       "seconds": 5
      }
     },
@@ -1746,7 +2168,22 @@
      "prompt": "Light slides across the stone and leaves fall slowly.",
      "options": {
       "aspect": "16:9",
-      "quality": "480p",
+      "quality": "720p",
+      "seconds": 5
+     }
+    },
+    {
+     "id": "v3",
+     "type": "goal",
+     "goal": "animate",
+     "label": "Move 3",
+     "peak_gib": 35,
+     "seed": 108,
+     "image": "@k3",
+     "prompt": "Sunlight widens through the archway, mist rolls slowly over the canopy far below and birds cross the distance.",
+     "options": {
+      "aspect": "16:9",
+      "quality": "720p",
       "seconds": 5
      }
     },
@@ -1779,11 +2216,83 @@
      "final": true,
      "clips": [
       "@v1",
-      "@v2"
+      "@v2",
+      "@v3"
      ],
      "audio": "@song"
     }
-   ]
+   ],
+   "tested": {
+    "rendered": "2026-11-02",
+    "output": "recipes/open_lane_60158e912f59.mp4",
+    "media": "showcase/recipes/open_lane.mp4",
+    "poster": "showcase/recipes/open_lane.webp",
+    "seconds": 471.5,
+    "wall_seconds": 4106.3,
+    "peak_vram_gib": 29.3,
+    "peak_scope": "recipe",
+    "video_seconds": 12.75,
+    "model": "flux-2-klein-base-4b.safetensors, wan2.2_ti2v_5B_fp16.safetensors, acestep_v1.5_xl_turbo_bf16.safetensors",
+    "seeds": {
+     "k1": 101,
+     "k2": 102,
+     "k3": 107,
+     "v1": 113,
+     "v2": 104,
+     "v3": 108,
+     "song": 105
+    },
+    "steps": {
+     "k1": {
+      "seconds": 34.7,
+      "peak_gib": 16.9
+     },
+     "k2": {
+      "seconds": 18.1,
+      "peak_gib": 16.9
+     },
+     "k3": {
+      "seconds": 17.1,
+      "peak_gib": 16.8
+     },
+     "v1": {
+      "seconds": 131.0,
+      "peak_gib": 29.3
+     },
+     "v2": {
+      "seconds": 91.1,
+      "peak_gib": 29.2
+     },
+     "v3": {
+      "seconds": 146.4,
+      "peak_gib": 29.3
+     },
+     "song": {
+      "seconds": 31.4,
+      "peak_gib": 21.7
+     },
+     "cut": {
+      "seconds": 1.7,
+      "facts": {
+       "bpm": 100.4,
+       "cuts_at": [
+        0.0,
+        4.226,
+        8.429
+       ],
+       "beats_per_shot": [
+        7,
+        7,
+        7
+       ],
+       "song_from": 9.59,
+       "seconds": 12.75
+      }
+     }
+    },
+    "run": "60158e912f59",
+    "note": "Klein 4B stills, Wan 2.2 5B moves and an ACE-Step score, every weight Apache-2.0 or MIT. Frames checked at 3 per second: stairs in mist, a carved stone face, a stone arch over the canopy at sunrise, no people, no text. The first move is gentle; the camera glide is small. Sound measured at -13.3 LUFS, not judged by ear."
+   }
   }
  ]
 }

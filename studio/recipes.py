@@ -54,6 +54,16 @@ def lora_recipe(row):
         fields = ([{"key": "source", "label": "The picture to change", "default": fr["source"]}] if fr.get("edit") else []) + [{"key": "prompt", "label": "The prompt", "default": fr["prompt"], "multiline": True}]
         step = {"id": "shot", "type": "family_lora", "label": row["title"], "peak_gib": fr.get("peak_gib", 24), "seed": sum(map(ord, row["id"])) * 7, "template": fr["template"], "prompt": "{prompt}", "loras": fr["loras"], "size": fr.get("size"), "set": fr.get("set") or {}, "replace_lora": fr.get("replace_lora"), "final": True, **({"image": "@pic"} if fr.get("edit") else {})}
         return {**base, "why": "A third-party LoRA on its family's own graph. Its notes gave no one-click settings, so these are our own starting point. The weights are not part of this project.", "models": [{"name": fr["model"], "licence": fr["licence"], "licence_class": fr["licence_class"]}, lic], "fields": fields, "steps": pics + [step], "tips": fr.get("tips") or []}
+    tr = row.get("tpl_run")
+    if tr:   # the LoRA's own family template, which already loads it: our picture (when it takes one), our prompt, our seed
+        seed = sum(map(ord, row["id"])) * 7; fields, steps = [], []
+        if tr.get("source"):
+            fields.append({"key": "source", "label": "The picture to start from", "default": tr["source"]})
+            steps.append({"id": "pic", "type": "goal", "goal": "image", "label": "The picture to start from", "peak_gib": 23, "seed": seed + 1, "prompt": "{source}. No text, no logos.", "options": {"aspect": tr.get("aspect", "1:1"), "mode": "quality"}, "swappable": True, "accepts": "image"})
+        fields.append({"key": "prompt", "label": tr.get("prompt_label") or "The prompt", "default": tr["prompt"], "multiline": True})
+        steps.append({"id": "shot", "type": "template", "template": tr["template"], "label": row["title"], "model": tr["model"] + ", in its own ComfyUI template with this LoRA", "peak_gib": tr.get("peak_gib", 24), "seed": seed, "seed_node": tr["seed_node"], "seed_input": tr.get("seed_input", "seed"), "values": {k: v for k, v in (tr.get("values") or {}).items()}, "set": {tr["prompt_node"]: {tr.get("prompt_input", "text"): "{prompt}"}, **(tr.get("set") or {})}, "prompt_note": "{prompt}", "final": True, **({"insert": tr["insert"]} if tr.get("insert") else {})})
+        models = [{"name": tr["model"], "licence": tr["licence"], "licence_class": tr["licence_class"]}, lic] + ([{"name": "FLUX.2 Klein 4B", "licence": "Apache-2.0", "licence_class": "open"}] if tr.get("source") else [])
+        return {**base, "why": f"A LoRA in its family's own ComfyUI template ({tr['template']}), which already loads it; the picture, prompt and seed are ours. The weights are not part of this project.", "models": models, "fields": fields, "steps": steps, "tips": tr.get("tips") or []}
     rr = row.get("ref_run")
     if rr:
         kl = {"type": "goal", "goal": "image", "peak_gib": 23, "options": {"aspect": rr.get("aspect", "1:1"), "mode": "quality"}, "swappable": True, "accepts": "image"}; pre = []; fields = [{"key": "scene", "label": "The shot", "default": row.get("scene") or rr.get("scene") or "", "multiline": True}]; seed = sum(map(ord, row["id"])) * 7
@@ -107,6 +117,13 @@ def frame(clip, out, which="last"):
     else: _ff(["-sseof", "-0.25", "-i", str(clip), "-update", "1", str(out)])
     if not Path(out).exists(): raise StepError("could not read a frame from the clip")
     return {"file": str(out), "kind": "image", "note": f"{which} frame"}
+def level(path, lufs=-16.0, ceiling=-1.5):
+    """A clip's sound at a listenable level with one fixed gain, so a loop stays a loop and a dissolve stays even. H3's ambient tracks come out near -37 LUFS. Silence is left alone; the gain stops where the true peak reaches the ceiling. -> the gain in dB, or None."""
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(path), "-af", "ebur128=peak=true", "-f", "null", "-"], capture_output=True, text=True, timeout=FF_TIMEOUT).stderr; m = re.search(r"Integrated loudness:\s+I:\s+(-?[\d.]+)", r); t = re.search(r"True peak:\s+Peak:\s+(-?[\d.]+)", r)
+    if not m or not t or float(m.group(1)) < -60: return None
+    gain = round(min(lufs - float(m.group(1)), ceiling - float(t.group(1))), 2)
+    if abs(gain) < 0.5: return 0.0
+    tmp = Path(path).with_name(Path(path).stem + "_lv.mp4"); _ff(["-i", str(path), "-map", "0", "-c:v", "copy", "-af", f"volume={gain}dB"] + AENC + ["-movflags", "+faststart", str(tmp)]); os.replace(tmp, path); return gain
 def join(clips, out, crossfade=0.0, keep_audio=True):
     """Clips one after another, in the first clip's size. crossfade 0 is a hard cut, which is invisible when a clip starts on the frame the last one ended on."""
     infos = [probe(c) for c in clips]; w, h = _even(infos[0]["width"]), _even(infos[0]["height"]); keep_audio = keep_audio and any(i["audio"] for i in infos); args = []
@@ -125,7 +142,7 @@ def join(clips, out, crossfade=0.0, keep_audio=True):
     else:
         ins = "".join(f"[v{i}]" + (f"[a{i}]" if keep_audio else "") for i in range(n)); parts.append(ins + f"concat=n={n}:v=1:a={1 if keep_audio else 0}[vc]" + ("[ac]" if keep_audio else "")); vout, aout = "[vc]", "[ac]"
     _ff(args + ["-filter_complex", ";".join(parts), "-map", vout] + (["-map", aout] if keep_audio else []) + ENC + (AENC if keep_audio else []) + [str(out)])
-    p = probe(out); return {"file": str(out), "kind": "video", "note": f"{n} clips joined, {p['duration']:.1f} s", "facts": {"seconds": round(p["duration"], 2), "crossfade": crossfade}}
+    gain = level(out) if keep_audio else None; p = probe(out); return {"file": str(out), "kind": "video", "note": f"{n} clips joined, {p['duration']:.1f} s", "facts": {"seconds": round(p["duration"], 2), "crossfade": crossfade, "audio_gain_db": gain}}
 def decode_mono(path, sr=22050):
     import numpy as np
     r = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-f", "f32le", "-ac", "1", "-ar", str(sr), "-"], capture_output=True, timeout=120)
@@ -221,9 +238,9 @@ def loop_seam(clip, out, crossfade=0.5):
     parts = [f"[0:v]fps={FPS},format=yuv420p,split[a][b];[a]trim=start={X},setpts=PTS-STARTPTS[body];[b]trim=end={X},setpts=PTS-STARTPTS[head];[body][head]xfade=transition=fade:duration={X}:offset={D - 2 * X:.3f}[vo]"]
     if inf["audio"]: parts.append(f"[0:a]asplit[x][y];[x]atrim=start={X},asetpts=PTS-STARTPTS[bodya];[y]atrim=end={X},asetpts=PTS-STARTPTS[heada];[bodya][heada]acrossfade=d={X}[ao]")
     _ff(["-i", str(clip), "-filter_complex", ";".join(parts), "-map", "[vo]"] + (["-map", "[ao]"] if inf["audio"] else []) + ENC + (AENC if inf["audio"] else []) + [str(out)])
-    a2, b2 = tmp / (Path(out).stem + "_c.png"), tmp / (Path(out).stem + "_d.png"); frame(out, a2, "first"); frame(out, b2, "last"); after = _ssim(a2, b2)
+    gain = level(out) if inf["audio"] else None; a2, b2 = tmp / (Path(out).stem + "_c.png"), tmp / (Path(out).stem + "_d.png"); frame(out, a2, "first"); frame(out, b2, "last"); after = _ssim(a2, b2)
     for f in (first, last, a2, b2): Path(f).unlink(missing_ok=True)
-    p = probe(out); facts = {"seam_ssim_before": round(raw, 4) if raw is not None else None, "seam_ssim_after": round(after, 4) if after is not None else None, "seconds": round(p["duration"], 2), "crossfade": X}
+    p = probe(out); facts = {"seam_ssim_before": round(raw, 4) if raw is not None else None, "seam_ssim_after": round(after, 4) if after is not None else None, "seconds": round(p["duration"], 2), "crossfade": X, "audio_gain_db": gain}
     return {"file": str(out), "kind": "video", "note": f"loop of {p['duration']:.1f} s; seam SSIM {facts['seam_ssim_before']} before, {facts['seam_ssim_after']} after", "facts": facts}
 def _label(text):
     t = re.sub(r"[^A-Za-z0-9 +.,()/-]", "", str(text))[:40]; return t.replace(":", " ").replace("'", "")
@@ -249,7 +266,7 @@ def compare(clips, out, labels=None, audio_from=None, height=None, mode="grid"):
         return ["-filter_complex", ";".join(parts), "-map", "[vo]"] + (["-map", "[ao]"] if ai is not None else []) + ENC + (AENC if ai is not None else []) + [str(out)]
     try: _ff(args + build(True))
     except StepError: _ff(args + build(False))
-    p = probe(out); return {"file": str(out), "kind": "video", "note": f"{n} versions side by side, {p['duration']:.1f} s", "facts": {"seconds": round(p["duration"], 2)}}
+    gain = level(out) if audio_from is not None and infos[audio_from]["audio"] else None; p = probe(out); return {"file": str(out), "kind": "video", "note": f"{n} versions side by side, {p['duration']:.1f} s", "facts": {"seconds": round(p["duration"], 2), "audio_gain_db": gain}}
 def mux(video, audio, out, loudness=True):
     """Lay a sound file under a clip, trimmed to the clip, faded and normalized."""
     d = probe(video)["duration"]; flt = master_filter(d) if loudness else f"afade=t=out:st={max(0, d - 1):.3f}:d=1"
@@ -466,6 +483,13 @@ def template_graph(spec, values_in, oi, path):
     for nid, kv in (spec.get("set") or {}).items():
         if nid not in g: raise StepError(f"template {spec['template']} has no node {nid}")
         g[nid]["inputs"].update(kv)
+    for i, add in enumerate(spec.get("insert") or []):   # one more LoRA right after a model node, on the path the template already runs
+        nid, src = f"recipe_insert_{i}", [add["after"], 0]
+        if add["after"] not in g: raise StepError(f"template {spec['template']} has no node {add['after']}")
+        for n in g.values():
+            for k, v in n["inputs"].items():
+                if v == src: n["inputs"][k] = [nid, 0]
+        g[nid] = {"class_type": "LoraLoaderModelOnly", "inputs": {"model": src, "lora_name": add["lora"], "strength_model": float(add.get("strength", 1.0))}}
     swap = spec.get("swap") or {}
     if swap:
         known = {x for n in oi.values() for sec in ("required", "optional") for sp in ((n.get("input") or {}).get(sec) or {}).values() if isinstance(sp, list) and sp and isinstance(sp[0], list) for x in sp[0] if isinstance(x, str)}

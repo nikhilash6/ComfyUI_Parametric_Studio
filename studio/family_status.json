@@ -341,14 +341,33 @@
 ],
 "what": null,
 "what_source": null,
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:40:00",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "runner:allegro_t2v",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 1569.3,
+"note": "Allegro text to video ran on this box 2026-11-02 (seed 20261102, 1569 s, peak 35.6 GiB for the process, 25.0 GiB allocated by torch) and every second of the clip was looked at.",
+"peak_gib": 35.6
 },
-"media": [],
+"media": [
+{
+"id": "fam_allegro_0",
+"prompt": "A sea turtle glides slowly over a bright coral reef in clear blue water, sunlight ripples across the sand below, small fish drift past (inside Allegro's own quality template)",
+"seconds": 1569.3,
+"tpl": "runner:allegro_t2v",
+"own": true,
+"kind": "video",
+"src": "families/allegro_0.mp4",
+"poster": "families/allegro_0.webp",
+"model": "rhymes-ai/Allegro transformer + VAE, T5 v1.1 XXL",
+"seed": 20261102,
+"note": "88 frames at 1280x720, 15 fps, 100 steps, cfg 7.5, through diffusers' AllegroPipeline (scripts/family_allegro_t2v.py). Clean water, caustics and moving fish; the turtle holds its shape. Faults: no coral reef at all, and the turtle crawls along the sand rather than gliding. Slow: 26 minutes for 6 seconds. T5 encoder from text_encoders/t5xxl_fp16 (the repo's fp32 shards are not on disk; same tensors). Apache-2.0.",
+"peak_vram_gib": 35.6
+}
+],
 "templates": []
 },
 "Anima": {
@@ -901,14 +920,33 @@
 "repos": [],
 "what": null,
 "what_source": null,
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:46:21",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "ltxfin_colorize",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 22.0,
+"note": "LTX-2.5 with IC-LoRA Colorization ran on this box 2026-11-02 19:25 (seed 42, 22.0 s, peak 38.4 GiB) in the LTX Finish graph (workflows/ltxfin_repair_api.json on feat/gap-p1); the clip was watched and measured against the colour original. Reused for this family.",
+"peak_gib": 38.4
 },
-"media": [],
+"media": [
+{
+"id": "fam_colorization_0",
+"prompt": "Left: an AI-generated jungle temple clip (Wan) with every colour taken out. Right: LTX-2.5 22B distilled with Lightricks' IC-LoRA Colorization, steered by the words: lush deep greens, grey stone, warm golden sun rays, orange light, brown vines.",
+"seconds": 22.0,
+"tpl": "ltxfin_colorize",
+"own": true,
+"kind": "video",
+"src": "families/colorization_0.mp4",
+"poster": "families/colorization_0.webp",
+"model": "ltx-2.5-22b-ic-lora-colorization-0.9.safetensors",
+"seed": 42,
+"note": "Reused from the LTX Finish proof (feat/gap-p1, 823bee46), 97 frames at 960x544. Greens, grey stone and the falling orange leaves come back; mean chroma 15 against the original's 21 and colour distance to the original falls from 13.9 to 8.2 (CIEDE2000). Fault: the original's warm golden sun rays come out neutral white; the colours are the model's guess. LTX-2.x Community License, free under US$10M revenue.",
+"peak_vram_gib": 38.4
+}
+],
 "templates": []
 },
 "Cosmos": {
@@ -980,8 +1018,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:40:45",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): the creator and refiner weights (38.7 GB) are on disk, but the UMT5 encoder, Wan 2.2 VAE, audio VAE and light VAE are missing and no DreamX node pack is in the library."
 },
 "media": [],
 "templates": []
@@ -1166,14 +1204,33 @@
 "repos": [],
 "what": null,
 "what_source": null,
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:46:27",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "runner:insightface_buffalo_l",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 0.8,
+"note": "InsightFace buffalo_l detection and 106-point landmarks ran on this box 2026-11-02 on the CPU (0.8 s, no GPU) and the marks were looked at; restore and identity weights are missing."
 },
-"media": [],
+"media": [
+{
+"id": "fam_face_0",
+"prompt": "InsightFace buffalo_l on the CPU: face box (det_10g) and 106 landmarks (2d106det) on an invented adult from World Kit's character library (made from words)",
+"seconds": 0.8,
+"tpl": "runner:insightface_buffalo_l",
+"own": true,
+"kind": "image",
+"src": "families/face_0.webp",
+"poster": "families/face_0.webp",
+"w": 492,
+"h": 640,
+"model": "buffalo_l det_10g.onnx + 2d106det.onnx",
+"seed": null,
+"note": "One face found at score 0.80; the 106 points sit on the jaw, brows, eyes, nose and lips. Detection and landmarks only: the restore, swap and identity models this family also covers (GFPGAN, CodeFormer, inswapper, PuLID, the w600k recogniser) are not on disk. InsightFace model zoo: non-commercial research use only."
+}
+],
 "templates": []
 },
 "Fibo-2.0": {
@@ -1352,8 +1409,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:40:45",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): both FitDiT transformers, the VAE, DWPose and the parsers are on disk; the pose guider, the repo's config files and the two CLIP vision towers (ViT-L/14, ViT-bigG/14) the pack loads are missing. CC BY-NC-SA 4.0."
 },
 "media": [],
 "templates": []
@@ -3024,8 +3081,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:46:38",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): its only file, final_colorization_model.safetensors, was deleted 2026-10-30 with no known source or node (MODEL_SOURCES_RECOVERED: still unknown). Colourising is shown under the colorization family."
 },
 "media": [],
 "templates": []
@@ -3756,14 +3813,35 @@
 ],
 "what": null,
 "what_source": null,
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:41:44",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "hunyuanworld_pano_t2i",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 40.7,
+"note": "hunyuanworld_pano_t2i rendered on this box 2026-11-02 on the family's own instance (seed 20261102, 40.7 s, peak 35.6 GiB); the panorama and its wrap seam were looked at. This is HunyuanWorld's panorama stage only.",
+"peak_gib": 35.6
 },
-"media": [],
+"media": [
+{
+"id": "fam_hunyuanworld_0",
+"prompt": "A 360 degree equirectangular panorama of a quiet alpine valley at sunrise, a clear turquoise lake in the middle, pine forests on the slopes, snowy peaks all around, soft golden light, thin mist over the water",
+"seconds": 40.7,
+"tpl": "hunyuanworld_pano_t2i",
+"own": true,
+"kind": "image",
+"src": "families/hunyuanworld_0.webp",
+"poster": "families/hunyuanworld_0.webp",
+"w": 1280,
+"h": 640,
+"model": "HunyuanWorld-PanoDiT-Text_lora.safetensors on flux1-dev.safetensors",
+"seed": 20261102,
+"note": "A full 360: lake, peaks and a sunrise glow that wrap around with the horizon level and the grass bending as an equirectangular floor should. Panorama stage only; the 3D world steps are not on this box. Faults: the mist never appears, the look is more illustration than photo, and a faint vertical line shows where the edges meet (mean edge difference 3.8 against 1.5 between neighbouring columns). Tencent HunyuanWorld licence (not the EU, UK or South Korea) on FLUX.1-dev (non-commercial).",
+"peak_vram_gib": 35.6
+}
+],
 "templates": []
 },
 "HY-Motion": {
@@ -3905,8 +3983,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:46:40",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): the InstantCharacter adapter, SigLIP and FLUX.1-dev are on disk; DINOv2-giant (facebook/dinov2-giant, 4.55 GB) is missing, and the InstantCharacter pack still needs a read."
 },
 "media": [],
 "templates": []
@@ -3926,8 +4004,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:41:57",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): InstantMesh's own UNet and LRM checkpoint are on disk, but the Zero123++ v1.2 pipeline it builds on (sudo-ai/zero123plus-v1.2, 5.6 GB) is not."
 },
 "media": [],
 "templates": []
@@ -3943,14 +4021,35 @@
 ],
 "what": "Uses a reference image as a prompt, for style or subject.",
 "what_source": "notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:41:48",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "ipa_ip_adapter_plus_sdxl_vit_h",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 20.2,
+"note": "ipa_ip_adapter_plus_sdxl_vit_h rendered on this box 2026-11-02 by the model-build agent (seed 77039694, sd_xl_base_1.0 with ip-adapter-plus_sdxl_vit-h), reused for this family; the template lives under SDXL.",
+"peak_gib": 10.8
 },
-"media": [],
+"media": [
+{
+"id": "fam_ip-adapter_0",
+"prompt": "Reference (left) through IP-Adapter Plus on SDXL base, with the words: a product photo on a wooden kitchen table, soft daylight. Result on the right.",
+"seconds": 20.2,
+"tpl": "ipa_ip_adapter_plus_sdxl_vit_h",
+"own": true,
+"kind": "image",
+"src": "families/ip-adapter_0.webp",
+"poster": "families/ip-adapter_0.webp",
+"w": 968,
+"h": 480,
+"model": "ip-adapter-plus_sdxl_vit-h.safetensors",
+"seed": 77039694,
+"note": "Reused from the model-build run of the SDXL template (feat/model-build, 71a0526f). At weight 0.8 the reference wins over the words: the mug, gold rim and dark glass carry over and the wooden table never appears. Apache-2.0 adapter on the SDXL base (CreativeML Open RAIL++-M).",
+"peak_vram_gib": 10.8
+}
+],
 "templates": []
 },
 "Iris-3B": {
@@ -3964,14 +4063,35 @@
 ],
 "what": null,
 "what_source": null,
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:42:01",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "iris3b_t2i",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 50.1,
+"note": "iris3b_t2i rendered on this box 2026-11-02 on the family's own instance (seed 20261102, 50.1 s, peak 8.5 GiB, iris-3b bf16 with the Qwen3-VL-4B encoder).",
+"peak_gib": 8.5
 },
-"media": [],
+"media": [
+{
+"id": "fam_iris-3b_0",
+"prompt": "a red fox curled up asleep in fresh snow at the edge of a pine forest, golden hour light, soft breath vapour, shallow depth of field, nature photograph",
+"seconds": 50.1,
+"tpl": "iris3b_t2i",
+"own": true,
+"kind": "image",
+"src": "families/iris-3b_0.webp",
+"poster": "families/iris-3b_0.webp",
+"w": 640,
+"h": 640,
+"model": "iris-3b.safetensors",
+"seed": 20261102,
+"note": "Sharp fur, snow and low sun; a believable fox. Fault: the 'breath vapour' is a large smoke curl hanging in the air above the fox, not at its nose. Apache-2.0. 50 steps, cfg 3, bf16.",
+"peak_vram_gib": 8.5
+}
+],
 "templates": []
 },
 "JoyAI-Video-Edit": {
@@ -4242,8 +4362,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:42:17",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): the UNet and VAE weights are gone (only their .sha256-ok markers are left); the ChatGLM3 text encoder and both IP-Adapters are on disk. Needs Kwai-Kolors/Kolors unet fp16 (5.16 GB) and vae fp16 (0.17 GB), then a Kolors pack (kijai KwaiKolorsWrapper or MZ-Kolors) read and added."
 },
 "media": [],
 "templates": []
@@ -4458,8 +4578,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:42:48",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): the 31.7 GB LongCat-Avatar-15 DiT and its DMD LoRA are missing (Kijai/WanVideo_comfy LongCat/); the Whisper audio encoders are on disk."
 },
 "media": [],
 "templates": []
@@ -5619,8 +5739,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "07:04:56",
-"note": "Earlier test ran Wan 2.2 5B text to video, which reads none of Matrix-3D's own weights, so that proved nothing about this model. No runner for Matrix-3D's panorama video and LRM checkpoints exists here yet."
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): the panorama-video LoRAs and the LRM checkpoint are on disk, but no runner for Matrix-3D's pipeline exists here, and its text-to-panorama LoRA is missing."
 },
 "media": [],
 "templates": [
@@ -5670,8 +5790,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:43:14",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): base_distill.safetensors is on disk; its Wan 2.1 VAE and open-CLIP encoder are missing and no runner for its keyboard and mouse conditioning exists here."
 },
 "media": [],
 "templates": []
@@ -5691,8 +5811,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:43:01",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): only the two image encoders are on disk; the transformer (3.36 GB) and VAE (0.49 GB) from VAST-AI/MIDI-3D are missing, and no MIDI-3D runner exists here yet."
 },
 "media": [],
 "templates": []
@@ -5853,6 +5973,30 @@
 "src": "families/mini-max-music3_2.mp3",
 "model": "minimax_music3_dit_fp16.safetensors",
 "seed": 1492752567
+},
+{
+"id": "fam_mini-max-music3_3",
+"prompt": "Music 3 with the full DAV",
+"seconds": 55.6,
+"tpl": "music3_dav_full",
+"own": true,
+"kind": "audio",
+"src": "families/mini-max-music3_3.mp3",
+"model": "minimax_music3_dit_fp16.safetensors",
+"seed": 1450167393,
+"peak_vram_gib": 14.7
+},
+{
+"id": "fam_mini-max-music3_4",
+"prompt": "Music 3 turbo, 8 steps",
+"seconds": 61.0,
+"tpl": "music3_turbo8",
+"own": true,
+"kind": "audio",
+"src": "families/mini-max-music3_4.mp3",
+"model": "minimax_music3_dit_fp16.safetensors",
+"seed": 238203647,
+"peak_vram_gib": 15.9
 }
 ],
 "templates": [
@@ -6705,10 +6849,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tpl": "generic:MOVA",
-"render": "error",
-"tested": "08:49:50",
-"note": "the output was blank"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): the 720p DiTs and bridge are on disk, but MOVA's own video and audio VAEs are missing (rzgar/MOVA-720p-360p-ComfyUI, 1.0 GB). The studio's core-Wan template gave blank frames; the repack's author marks his MOVA node unfinished."
 },
 "media": [],
 "templates": []
@@ -6940,8 +7082,8 @@
 "import_failed": [
 "tungthedev__ComfyUI-TripoSG"
 ],
-"tested": "06:43:53",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): the VAE (wgsxm/PartCrafter vae, 0.49 GB) is missing and the ComfyUI-TripoSG pack that carries PartCrafter fails to import on this venv."
 },
 "media": [],
 "templates": []
@@ -7233,8 +7375,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:44:18",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): the four DiT files and the text encoder are on disk, but the video and audio VAEs (t8star/Prism-Comfy, 1.0 GB) are missing and no Prism node pack is in the library."
 },
 "media": [],
 "templates": []
@@ -8589,8 +8731,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:44:31",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): SANA_Video_2.0_5B_720p.pth (17.9 GB) and its LTX video VAE are missing, and core ComfyUI has no SANA-Video model, so it also needs a runner."
 },
 "media": [],
 "templates": []
@@ -8748,6 +8890,96 @@
 "model": "sd15_diffusers_unet_fp16.safetensors",
 "seed": 1371561927,
 "peak_vram_gib": 0.5
+},
+{
+"id": "fam_sd15_9",
+"prompt": "SD15 picture prompt: ip-adapter-plus_sd15",
+"seconds": 25.3,
+"tpl": "ipa_ip_adapter_plus_sd15",
+"own": true,
+"kind": "image",
+"src": "families/sd15_9.webp",
+"poster": "families/sd15_9.webp",
+"w": 512,
+"h": 512,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 1594487670,
+"peak_vram_gib": 4.4
+},
+{
+"id": "fam_sd15_10",
+"prompt": "SD15 picture prompt: ip-adapter_sd15",
+"seconds": 20.3,
+"tpl": "ipa_ip_adapter_sd15",
+"own": true,
+"kind": "image",
+"src": "families/sd15_10.webp",
+"poster": "families/sd15_10.webp",
+"w": 512,
+"h": 512,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 439194401,
+"peak_vram_gib": 3.2
+},
+{
+"id": "fam_sd15_11",
+"prompt": "SD15 picture prompt: ip-adapter_sd15_light",
+"seconds": 25.3,
+"tpl": "ipa_ip_adapter_sd15_light",
+"own": true,
+"kind": "image",
+"src": "families/sd15_11.webp",
+"poster": "families/sd15_11.webp",
+"w": 512,
+"h": 512,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 1130342543,
+"peak_vram_gib": 4.4
+},
+{
+"id": "fam_sd15_12",
+"prompt": "SD15 picture prompt: ip-adapter_sd15_vit-G",
+"seconds": 25.3,
+"tpl": "ipa_ip_adapter_sd15_vit_g",
+"own": true,
+"kind": "image",
+"src": "families/sd15_12.webp",
+"poster": "families/sd15_12.webp",
+"w": 512,
+"h": 512,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 665748561,
+"peak_vram_gib": 6.6
+},
+{
+"id": "fam_sd15_13",
+"prompt": "SD15 face reference: ip-adapter-full-face_sd15",
+"seconds": 25.3,
+"tpl": "ipa_ip_adapter_full_face_sd15",
+"own": true,
+"kind": "image",
+"src": "families/sd15_13.webp",
+"poster": "families/sd15_13.webp",
+"w": 512,
+"h": 512,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 1092103864,
+"peak_vram_gib": 4.0
+},
+{
+"id": "fam_sd15_14",
+"prompt": "SD15 face reference: ip-adapter-plus-face_sd15",
+"seconds": 30.4,
+"tpl": "ipa_ip_adapter_plus_face_sd15",
+"own": true,
+"kind": "image",
+"src": "families/sd15_14.webp",
+"poster": "families/sd15_14.webp",
+"w": 512,
+"h": 512,
+"model": "DreamShaper_8_pruned.safetensors",
+"seed": 1224690114,
+"peak_vram_gib": 4.4
 }
 ],
 "templates": []
@@ -8814,6 +9046,21 @@
 "model": "sd3_medium.safetensors",
 "seed": 11965092,
 "peak_vram_gib": 9.2
+},
+{
+"id": "fam_sd3-sd3-5_3",
+"prompt": "SD 3.5 Large picture prompt: InstantX IP-Adapter",
+"seconds": 47.0,
+"tpl": "ipa_sd35_large_instantx",
+"own": true,
+"kind": "image",
+"src": "families/sd3-sd3-5_3.webp",
+"poster": "families/sd3-sd3-5_3.webp",
+"w": 640,
+"h": 640,
+"model": "sd3.5_large.safetensors",
+"seed": 735200289,
+"peak_vram_gib": 27.7
 }
 ],
 "templates": [
@@ -9080,6 +9327,66 @@
 "model": "sd_xl_base_1.0.safetensors",
 "seed": 2047517777,
 "peak_vram_gib": 7.3
+},
+{
+"id": "fam_sdxl_9",
+"prompt": "SDXL picture prompt: ip-adapter-plus_sdxl_vit-h",
+"seconds": 20.2,
+"tpl": "ipa_ip_adapter_plus_sdxl_vit_h",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_9.webp",
+"poster": "families/sdxl_9.webp",
+"w": 640,
+"h": 640,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 77039694,
+"peak_vram_gib": 10.8
+},
+{
+"id": "fam_sdxl_10",
+"prompt": "SDXL picture prompt: ip-adapter_sdxl",
+"seconds": 35.4,
+"tpl": "ipa_ip_adapter_sdxl",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_10.webp",
+"poster": "families/sdxl_10.webp",
+"w": 640,
+"h": 640,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 903606225,
+"peak_vram_gib": 13.1
+},
+{
+"id": "fam_sdxl_11",
+"prompt": "SDXL picture prompt: ip-adapter_sdxl_vit-h",
+"seconds": 35.4,
+"tpl": "ipa_ip_adapter_sdxl_vit_h",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_11.webp",
+"poster": "families/sdxl_11.webp",
+"w": 640,
+"h": 640,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 1704688307,
+"peak_vram_gib": 10.8
+},
+{
+"id": "fam_sdxl_12",
+"prompt": "SDXL face reference: ip-adapter-plus-face_sdxl_vit-h",
+"seconds": 40.7,
+"tpl": "ipa_ip_adapter_plus_face_sdxl_vit_h",
+"own": true,
+"kind": "image",
+"src": "families/sdxl_12.webp",
+"poster": "families/sdxl_12.webp",
+"w": 640,
+"h": 640,
+"model": "sd_xl_base_1.0.safetensors",
+"seed": 790251397,
+"peak_vram_gib": 11.0
 }
 ],
 "templates": [
@@ -9364,8 +9671,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:44:53",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): transformer shard 3 of 3, the Qwen3-VL-2B encoder and the VAE are missing (4.9 GB in all from SeFi-Image/SeFi-Image-2B-turbo). The SeFi pack also fetches upstream code from GitHub main on first run, so it needs a pinned copy before it runs here."
 },
 "media": [],
 "templates": []
@@ -9494,8 +9801,8 @@
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:45:07",
-"note": "no template validates: no candidate whose models are on disk"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): model.safetensors is on disk, but the sf3d inference package (with its compiled texture baker and UV unwrapper) is not installed, and installing it means a pip change to the studio venv."
 },
 "media": [],
 "templates": []
@@ -9712,12 +10019,8 @@
 "test": {
 "nodes": 2007,
 "psn": 578,
-"tpl": "generic:TurboWan2.2-I2V",
-"render": "error",
-"secs": 8.0,
-"peak_gib": 14.7,
-"tested": "08:34:41",
-"note": "UNETLoader: KeyError: 'blocks.0.ffn.0.weight'\n"
+"tested": "2026-11-02",
+"note": "Not rendered (checked 2026-11-02): both 14.5 GB quantised experts are missing. The copies this box had failed in core UNETLoader (KeyError blocks.0.ffn.0.weight): TurboDiffusion's int8 checkpoints need its own runner."
 },
 "media": [],
 "templates": []
@@ -9733,14 +10036,35 @@
 ],
 "what": "A model for generating skeletons and skin weights for 3D meshes.",
 "what_source": "knowledge base",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"tested": "06:45:22",
-"note": "no template validates: no candidate whose models are on disk"
+"tpl": "tool:unirig",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 195.9,
+"note": "UniRig (worker/tools/unirig) rigged TRELLIS.2's bear mesh on this box 2026-11-02 (seed 12345, 195.9 s, peak 5.9 GiB); the rig was bent in Blender and looked at in a turntable.",
+"peak_gib": 5.9
 },
-"media": [],
+"media": [
+{
+"id": "fam_unirig_turn",
+"prompt": "Turntable, Blender, CPU: TRELLIS.2's textured bear mesh rigged by UniRig; top row at rest, bottom row with four leg chains bent through UniRig's own skin weights",
+"seconds": 195.9,
+"tpl": "tool:unirig",
+"own": true,
+"kind": "image",
+"src": "families/unirig_turn.webp",
+"poster": "families/unirig_turn.webp",
+"w": 1280,
+"h": 430,
+"model": "skeleton articulation-xl_quantization_256 + skin articulation-xl",
+"seed": 12345,
+"note": "36 bones on a 555,011-vertex mesh; bending the four lowest chains moved 405,190 vertices. The legs swing cleanly; fur stretches and smears at the hips and the belly lifts with the front legs. MIT. Rigged with worker/tools/unirig (its own venv), posed and turned in Blender.",
+"peak_vram_gib": 5.9
+}
+],
 "templates": []
 },
 "upscale_models": {
@@ -9849,15 +10173,35 @@
 ],
 "what": "Vision and language models: captions, tags, and text from a prompt inside a graph.",
 "what_source": "notes",
-"level": "nodes",
+"level": "render",
 "test": {
 "nodes": 1860,
 "psn": 578,
-"render": "not run",
-"tested": "06:49:31",
-"note": "start/validate pass only"
+"tpl": "vlm_qwen3vl_caption",
+"render": "ok",
+"tested": "2026-11-02",
+"secs": 9.5,
+"note": "vlm_qwen3vl_caption ran on this box 2026-11-02 on the family's own instance (seed 20261102, 9.5 s, peak 6.0 GiB) on the Iris-3B fox render; the answer was read against the picture.",
+"peak_gib": 6.0
 },
-"media": [],
+"media": [
+{
+"id": "fam_vlm_0",
+"prompt": "Describe this picture in three sentences: the subject, the setting and the light. Then list anything in it that looks physically wrong. (Picture: this box's Iris-3B fox render.)",
+"seconds": 9.5,
+"tpl": "vlm_qwen3vl_caption",
+"own": true,
+"kind": "image",
+"src": "families/vlm_0.webp",
+"poster": "families/vlm_0.webp",
+"w": 1280,
+"h": 640,
+"model": "qwen3vl_4b_fp8_scaled.safetensors",
+"seed": 20261102,
+"note": "An accurate description, and it caught the Iris render's real fault (the stylised steam plume). Faults: it puts the steam at the fox's nose, when it floats well above, and its claim that breath only shows below -20 C is wrong; the list was cut at 400 tokens. The answer is set in type on the card. Apache-2.0.",
+"peak_vram_gib": 6.0
+}
+],
 "templates": [
 {
 "name": "llm_gemma4_text_gen",
@@ -10994,6 +11338,19 @@
 "model": "wan2.2_fun_control_high_noise_14B_fp8_scaled.safetensors",
 "seed": 170486043,
 "peak_vram_gib": 42.9
+},
+{
+"id": "fam_wan2-2_8",
+"prompt": "Wan 2.2 14B text to video (Kijai fp8 scaled)",
+"seconds": 258.3,
+"tpl": "wan22_14b_t2v_kj",
+"own": true,
+"kind": "video",
+"src": "families/wan2-2_8.mp4",
+"poster": "families/wan2-2_8.webp",
+"model": "Wan2_2-T2V-A14B-LOW_fp8_e4m3fn_scaled_KJ.safetensors",
+"seed": 533252730,
+"peak_vram_gib": 41.2
 }
 ],
 "templates": [

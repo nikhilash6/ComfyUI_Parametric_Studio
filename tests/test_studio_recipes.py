@@ -181,3 +181,46 @@ def test_the_api_lists_recipes_and_refuses_what_it_should(rig):
     assert client.get("/api/recipes/files/" + "a" * 12 + "/run.json").status_code == 404 and client.get("/api/recipes/files/" + "a" * 12 + "/..%2F..%2Fsecret").status_code in (400, 404)
 def test_finished_films_reach_the_library(rig, tmp_path):
     run = client.post("/api/recipes/t/run", json={}).json()["run"]; wait(client, "t", run); rows = R.library_rows(); assert rows and rows[0]["recipe"]["run"] == run and rows[0]["goal"] == "recipe" and rows[0]["files"][0]["url"]
+
+# ---------- the flagship renders on the page
+TESTED = [r for r in json.load(open(R.DATA))["recipes"] if r.get("tested")]
+WEB = R.HERE / "web"
+@pytest.mark.parametrize("r", [r for r in TESTED if r["tested"].get("seeds")], ids=lambda r: r["id"])
+def test_a_flagship_render_is_small_clean_and_keeps_what_the_run_recorded(r):
+    from PIL import Image
+    t = r["tested"]; m, p = WEB / t["media"], WEB / t["poster"]; assert m.read_bytes()[4:8] == b"ftyp" and 1024 < m.stat().st_size <= 3.3e6
+    with Image.open(p) as im: assert im.format == "WEBP" and im.size[0] <= 1280 and "exif" not in im.info
+    ids = {s["id"] for s in r["steps"]}; assert set(t["seeds"]) <= ids and set(t["steps"]) == ids and t["model"] and t["peak_vram_gib"] > 0 and t["seconds"] > 0 and t["peak_scope"] == "recipe" and t["video_seconds"] > 0 and len(t["run"]) == 12
+    txt = json.dumps(t); assert "/" + "mnt/" not in txt and "/" + "home/" not in txt
+def test_the_page_shows_a_flagship_renders_model_and_seeds():
+    js = (WEB / "recipes.js").read_text(); assert "t.model" in js and "t.seeds" in js
+def test_a_published_loop_closes_its_seam():
+    r = next((x for x in TESTED if x["id"] == "seamless_loop"), None)
+    if r: f = r["tested"]["steps"]["loop"]["facts"]; assert f["seam_ssim_after"] > f["seam_ssim_before"] and f["seam_ssim_after"] > 0.9
+def test_the_open_short_stays_on_open_licences_and_keeps_them_on_record():
+    from studio.goals import GOALS
+    r = R.find("open_lane"); assert all(m["licence_class"] == "open" and m["licence"] for m in r["models"])
+    goals = [GOALS[s["goal"]] for s in r["steps"] if s["type"] == "goal"]; assert goals and all(g["license_class"] == "open" for g in goals)
+    t = json.dumps(r["models"]); assert "Apache-2.0" in t and "MIT" in t and "Checked" in t
+    if r.get("tested"):
+        for bad in ("h3", "ltx", "music3", "flux3", "krea", "anima", "9b"): assert bad not in r["tested"]["model"].lower(), bad
+def test_flagship_people_are_adults_and_the_anime_city_has_no_signs():
+    txt = " ".join(json.dumps(r["fields"]) + json.dumps([s.get("prompt", "") for s in r["steps"]]) for r in R.load()["recipes"] if r["id"] in ("anime_opening", "recast_character", "multicam")); assert "young" not in txt.lower() and "adult" in txt.lower()
+    assert all("signs" in s["negative"] and "text" in s["negative"] for s in R.find("anime_opening")["steps"] if s.get("goal") == "anime")
+def test_the_storyboard_keeps_one_place_and_one_frame_across_the_join():
+    st = {s["id"]: s for s in R.find("seasons_shot")["steps"]}; assert st["spring"]["values"]["76|image"] == "@winter" and st["autumn"]["values"]["76|image"] == "@spring" and st["b"]["image"] == "@mid" and st["mid"]["clip"] == "@a" and st["a"]["last_image"] == "@spring"
+def test_the_readme_counts_the_rendered_flagships():
+    import re
+    from pathlib import Path
+    m = re.search(r"(\d+) of (\d+) flagships rendered", (Path(__file__).resolve().parent.parent / "README.md").read_text(encoding="utf-8")); d = R.load()["recipes"]; assert m and int(m.group(1)) == sum(1 for r in d if r.get("tested")) and int(m.group(2)) == len(d)
+@ffmpeg
+def test_level_lifts_a_quiet_clip_with_one_gain_and_leaves_silence_alone(tmp_path):
+    a = tmp_path / "q.mp4"; subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=red:s=160x90:r=24:d=4", "-f", "lavfi", "-i", "sine=frequency=440:duration=4", "-af", "volume=-25dB", "-pix_fmt", "yuv420p", "-c:v", "libx264", "-shortest", str(a)], check=True)
+    g = R.level(a); assert g and g > 15 and R.probe(a)["audio"] and abs(R.level(a)) < 1.0
+    b = clip(tmp_path / "s.mp4", "blue", 2.0, audio=False); assert R.level(b) is None
+
+
+def test_multicam_camera_b_keeps_a_small_move_and_names_the_subject_again():
+    # The orbit_left take swung behind the cook and invented a blown-out lamp; a push in keeps the set it can see.
+    r = R.find("multicam"); b = next(s for s in r["steps"] if s["id"] == "low")
+    assert b["options"]["camera"] in ("dolly_in", "dolly_out", "handheld", "locked") and "cook" in b.get("prompt", "")

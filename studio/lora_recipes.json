@@ -3739,7 +3739,7 @@ null
 "settings": {
 "steps": 20,
 "sampler": "er_sde",
-"scheduler": "beta57",
+"scheduler": "simple",
 "cfg": 1.0,
 "width": 2560,
 "height": 1440,
@@ -3797,7 +3797,7 @@ null
 "strength": 1.0,
 "steps": 20,
 "sampler": "er_sde",
-"scheduler": "beta",
+"scheduler": "simple",
 "megapixels": 1.032,
 "options": {
 "aspect": "16:9",
@@ -3806,7 +3806,7 @@ null
 "speed": "quality"
 }
 },
-"run_note": "Its notes ask for the beta57 scheduler from a pack this studio does not install, so it runs on beta here, at about one megapixel rather than 2560x1440."
+"run_note": "Its notes ask for beta57, from a pack this studio does not install; on beta it laid a dotted mesh over faces, so it runs on simple."
 },
 {
 "id": "lora_243d7bbcbd",
@@ -3830,7 +3830,7 @@ null
 "settings": {
 "steps": 20,
 "sampler": "er_sde",
-"scheduler": "beta57",
+"scheduler": "simple",
 "cfg": 1.0,
 "width": 2560,
 "height": 1440,
@@ -3888,7 +3888,7 @@ null
 "strength": 1.0,
 "steps": 20,
 "sampler": "er_sde",
-"scheduler": "beta",
+"scheduler": "simple",
 "megapixels": 1.032,
 "options": {
 "aspect": "16:9",
@@ -3897,7 +3897,7 @@ null
 "speed": "quality"
 }
 },
-"run_note": "Its notes ask for the beta57 scheduler from a pack this studio does not install, so it runs on beta here, at about one megapixel rather than 2560x1440."
+"run_note": "Its notes ask for beta57, from a pack this studio does not install; on beta it laid a dotted mesh over faces, so it runs on simple."
 },
 {
 "id": "lora_5233f8a0ff",
@@ -4808,7 +4808,7 @@ null
 "class": "C",
 "mode": "distill",
 "settings": {
-"steps": 3,
+"steps": 8,
 "sampler": "euler",
 "scheduler": "simple",
 "shift_video": 12,
@@ -4867,7 +4867,7 @@ null
 "base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
 "loader": "LoraLoaderModelOnly",
 "strength": 1.0,
-"steps": 3,
+"steps": 8,
 "sampler": "euler",
 "scheduler": "simple",
 "megapixels": 1.032,
@@ -4877,7 +4877,8 @@ null
 "seconds": 5,
 "speed": "quality"
 }
-}
+},
+"run_note": "Its file name says 8 steps; an earlier run on 3 steps came out as noise, so this runs 8."
 },
 {
 "id": "lora_65551e8486",
@@ -5532,7 +5533,10 @@ null,
 null
 ],
 "loader": "bypass",
-"other": "strength unverified, start 1.0 and lower if image breaks (page)."
+"other": "strength unverified, start 1.0 and lower if image breaks (page).",
+"sampler": "euler",
+"steps": 25,
+"scheduler": "simple"
 },
 "trigger": {
 "words": [],
@@ -5615,8 +5619,8 @@ null
 "base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
 "loader": "LoraLoaderBypassModelOnly",
 "strength": 1.0,
-"steps": 20,
-"sampler": "res_multistep",
+"steps": 25,
+"sampler": "euler",
 "scheduler": "simple",
 "megapixels": 0.399,
 "options": {
@@ -5626,7 +5630,8 @@ null
 "speed": "quality"
 }
 },
-"why_not": ""
+"why_not": "",
+"run_note": "Euler, 25 steps, as the other H3 LoRAs here: res_multistep smeared it into mush."
 },
 {
 "id": "lora_2703a7a4e4",
@@ -6635,7 +6640,10 @@ null,
 null
 ],
 "loader": "bypass",
-"other": "strength unverified."
+"other": "strength unverified.",
+"sampler": "euler",
+"steps": 25,
+"scheduler": "simple"
 },
 "trigger": {
 "words": [],
@@ -6690,8 +6698,8 @@ null
 "base": "MiniMax_H3_FL2VA_pruned_nvfp4.safetensors",
 "loader": "LoraLoaderBypassModelOnly",
 "strength": 1.0,
-"steps": 20,
-"sampler": "res_multistep",
+"steps": 25,
+"sampler": "euler",
 "scheduler": "simple",
 "megapixels": 0.399,
 "options": {
@@ -6701,7 +6709,8 @@ null
 "speed": "quality"
 }
 },
-"why_not": ""
+"why_not": "",
+"run_note": "Euler, 25 steps, as the other H3 LoRAs here: res_multistep smeared it into mush."
 },
 {
 "id": "lora_7c2836e70f",
@@ -6960,7 +6969,32 @@ null
 "expert": "high",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a stone footbridge over a mountain stream in a pine forest",
+"prompt": "Water rushes under the bridge, branches sway, mist rises, slow camera push in.",
+"insert": [
+{
+"after": "129:101",
+"lora": "wan/2.2-i2v/high/SVI_v2_PRO_Wan2.2-I2V-A14B_HIGH_lora_rank_128_fp16.safetensors",
+"strength": 1.0
+}
+],
+"tips": [
+"Stable Video Infinity is made for long chained clips; here it runs one clip on top of the template's 4-step LoRAs."
+]
+}
 },
 {
 "id": "lora_988fdd60f8",
@@ -7032,7 +7066,32 @@ null
 "expert": "low",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a red vintage car parked on a quiet coastal road at golden hour",
+"prompt": "Sunlight glints on the car, sea waves roll in behind, the camera slowly circles.",
+"insert": [
+{
+"after": "129:102",
+"lora": "wan/2.2-i2v/low/SVI_v2_PRO_Wan2.2-I2V-A14B_LOW_lora_rank_128_fp16.safetensors",
+"strength": 1.0
+}
+],
+"tips": [
+"Stable Video Infinity is made for long chained clips; here it runs one clip on top of the template's 4-step LoRAs."
+]
+}
 },
 {
 "id": "lora_7814fb5290",
@@ -7234,7 +7293,30 @@ null
 "expert": "high",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a stone footbridge over a mountain stream in a pine forest",
+"prompt": "Water rushes under the bridge, branches sway, mist rises, slow camera push in.",
+"set": {
+"129:101": {
+"lora_name": "wan/accel/Wan_2_2_I2V_A14B_HIGH_lightx2v_4step_lora_v1030_rank_64_bf16.safetensors"
+}
+},
+"tips": [
+"This speed LoRA takes the place of the template's own 4-step LoRA on the same expert."
+]
+}
 },
 {
 "id": "lora_7661d9d8b7",
@@ -7300,7 +7382,26 @@ null
 "expert": "high",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_t2v",
+"prompt_node": "128:89",
+"seed_node": "128:81",
+"seed_input": "noise_seed",
+"prompt": "A wind turbine field on rolling hills at sunset, blades turning, slow aerial move forward.",
+"set": {
+"128:83": {
+"lora_name": "wan/accel/wan2.2_t2v_lightx2v_4steps_lora_250928_high_noise.safetensors"
+}
+},
+"tips": [
+"This speed LoRA takes the place of the template's own 4-step LoRA on the same expert."
+]
+}
 },
 {
 "id": "lora_7015b9df3a",
@@ -7366,7 +7467,26 @@ null
 "expert": "low",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_t2v",
+"prompt_node": "128:89",
+"seed_node": "128:81",
+"seed_input": "noise_seed",
+"prompt": "Fog drifts over a still mountain lake at dawn, a heron lifts off the water, the camera holds still.",
+"set": {
+"128:85": {
+"lora_name": "wan/accel/wan2.2_t2v_lightx2v_4steps_lora_250928_low_noise.safetensors"
+}
+},
+"tips": [
+"This speed LoRA takes the place of the template's own 4-step LoRA on the same expert."
+]
+}
 },
 {
 "id": "lora_d24535d40e",
@@ -7854,7 +7974,30 @@ null
 "expert": "high",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a red vintage car parked on a quiet coastal road at golden hour",
+"prompt": "Sunlight glints on the car, sea waves roll in behind, the camera slowly circles.",
+"set": {
+"129:101": {
+"lora_name": "wan/accel/Wan_2_2_I2V_A14B_HIGH_lightx2v_MoE_distill_lora_rank_64_bf16.safetensors"
+}
+},
+"tips": [
+"This speed LoRA takes the place of the template's own 4-step LoRA on the same expert."
+]
+}
 },
 {
 "id": "lora_07b85c2564",
@@ -8403,7 +8546,25 @@ null
 "expert": "high",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a snowy cabin in a winter forest at dusk with warm windows",
+"prompt": "Snow falls softly, smoke rises from the chimney, slow camera move forward.",
+"tips": [
+"The template already loads this 4-step LoRA with its pair."
+]
+}
 },
 {
 "id": "lora_4fbf59622f",
@@ -8472,7 +8633,25 @@ null
 "expert": "low",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a hot air balloon over green hills at sunrise",
+"prompt": "The balloon rises slowly, morning light spreads across the hills, gentle camera tilt up.",
+"tips": [
+"The template already loads this 4-step LoRA with its pair."
+]
+}
 },
 {
 "id": "lora_9e6e563530",
@@ -8946,7 +9125,32 @@ null
 "expert": "high",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a field of sunflowers under a blue sky with white clouds",
+"prompt": "The sunflowers sway in the wind, clouds drift, slow camera pan to the left.",
+"insert": [
+{
+"after": "129:101",
+"lora": "wan/2.2-i2v/high/SVI_Wan2.2-I2V-A14B_lora_HIGH_v2.0_rank_128_fp16.safetensors",
+"strength": 1.0
+}
+],
+"tips": [
+"Stable Video Infinity is made for long chained clips; here it runs one clip on top of the template's 4-step LoRAs."
+]
+}
 },
 {
 "id": "lora_66186647dc",
@@ -9012,7 +9216,32 @@ null
 "expert": "low",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a steaming cup of coffee on a cafe table by a rainy window",
+"prompt": "Steam curls from the cup, raindrops run down the window, the camera holds still.",
+"insert": [
+{
+"after": "129:102",
+"lora": "wan/2.2-i2v/low/SVI_Wan2.2-I2V-A14B_lora_LOW_v2.0_rank_128_fp16.safetensors",
+"strength": 1.0
+}
+],
+"tips": [
+"Stable Video Infinity is made for long chained clips; here it runs one clip on top of the template's 4-step LoRAs."
+]
+}
 },
 {
 "id": "lora_fc2494fcfe",
@@ -9339,7 +9568,30 @@ null
 "expert": "high",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a field of sunflowers under a blue sky with white clouds",
+"prompt": "The sunflowers sway in the wind, clouds drift, slow camera pan to the left.",
+"set": {
+"129:101": {
+"lora_name": "wan/accel/Wan_2_2_I2V_A14B_HIGH_lightx2v_4step_lora_260412_rank_256_fp16.safetensors"
+}
+},
+"tips": [
+"This speed LoRA takes the place of the template's own 4-step LoRA on the same expert."
+]
+}
 },
 {
 "id": "lora_bef1faea5d",
@@ -9403,7 +9655,30 @@ null
 "expert": "low",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_i2v",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"source": "A photograph of a steaming cup of coffee on a cafe table by a rainy window",
+"prompt": "Steam curls from the cup, raindrops run down the window, the camera holds still.",
+"set": {
+"129:102": {
+"lora_name": "wan/accel/Wan_2_2_I2V_A14B_LOW_lightx2v_4step_lora_260412_rank_256_fp16.safetensors"
+}
+},
+"tips": [
+"This speed LoRA takes the place of the template's own 4-step LoRA on the same expert."
+]
+}
 },
 {
 "id": "lora_a2e2eb72e9",
@@ -9464,7 +9739,26 @@ null
 "expert": "high",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_t2v",
+"prompt_node": "128:89",
+"seed_node": "128:81",
+"seed_input": "noise_seed",
+"prompt": "A paper boat floats down a narrow stream between mossy stones, slow camera follows it.",
+"set": {
+"128:83": {
+"lora_name": "wan/accel/wan2.2_t2v_A14B_high_noise_lora_rank64_lightx2v_4step_1217.safetensors"
+}
+},
+"tips": [
+"This speed LoRA takes the place of the template's own 4-step LoRA on the same expert."
+]
+}
 },
 {
 "id": "lora_7f964c495f",
@@ -9525,7 +9819,26 @@ null
 "expert": "low",
 "run": null,
 "why_not": "This edition has no Wan 2.2 14B LoRA graph yet, and the LoRA and base files are not on disk.",
-"waiting": "download"
+"waiting": "download",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 40,
+"template": "video_wan2_2_14B_t2v",
+"prompt_node": "128:89",
+"seed_node": "128:81",
+"seed_input": "noise_seed",
+"prompt": "Waves roll onto a white sand beach at noon, palm shadows move, slow camera pan.",
+"set": {
+"128:85": {
+"lora_name": "wan/accel/wan2.2_t2v_A14B_low_noise_lora_rank64_lightx2v_4step_1217.safetensors"
+}
+},
+"tips": [
+"This speed LoRA takes the place of the template's own 4-step LoRA on the same expert."
+]
+}
 },
 {
 "id": "lora_6d216375e9",
@@ -10183,7 +10496,24 @@ null
 "mode": "reference",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader.",
+"tpl_run": {
+"template": "flux_depth_lora_example",
+"model": "FLUX.1 dev",
+"licence": "FLUX.1 [dev] Non-Commercial License",
+"licence_class": "non-commercial",
+"peak_gib": 28,
+"source": "A photograph of a white ceramic teapot and two cups on a wooden table beside a window",
+"prompt": "A teapot and two cups made of glossy blue glass on a wooden table, soft window light, product photograph.",
+"values": {
+"17|image": "@pic"
+},
+"prompt_node": "150:23",
+"seed_node": "150:3",
+"tips": [
+"The template turns the picture into a depth map first (Lotus depth), then FLUX.1 dev follows that depth with this LoRA."
+]
+}
 },
 {
 "id": "lora_c67311bc7c",
@@ -10529,7 +10859,23 @@ null
 "mode": "reference",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader.",
+"tpl_run": {
+"template": "image_moss_image_edit",
+"model": "MOSS-Image",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 20,
+"source": "A photograph of a plain wooden chair in an empty white room",
+"prompt": "Change only the chair's colour to bright yellow paint; keep the room, light and framing the same.",
+"prompt_label": "The change",
+"prompt_input": "prompt",
+"values": {
+"8|image": "@pic"
+},
+"prompt_node": "39",
+"seed_node": "37"
+}
 },
 {
 "id": "lora_982b704f6a",
@@ -10679,7 +11025,21 @@ null
 "mode": "reference",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader.",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "video_wan2_2_14B_t2v",
+"peak_gib": 40,
+"prompt": "A small sailboat glides across a calm turquoise bay at sunset, gentle waves, slow camera pan to the right.",
+"prompt_node": "128:89",
+"seed_node": "128:81",
+"seed_input": "noise_seed",
+"tips": [
+"The template loads this high-noise LoRA together with its low-noise pair, as Wan 2.2's two experts need both."
+]
+}
 },
 {
 "id": "lora_84ccf18e15",
@@ -10702,7 +11062,21 @@ null
 "mode": "reference",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader.",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "video_wan2_2_14B_t2v",
+"peak_gib": 40,
+"prompt": "Autumn leaves drift down in a quiet forest, sunbeams through the trees, slow camera move forward along a path.",
+"prompt_node": "128:89",
+"seed_node": "128:81",
+"seed_input": "noise_seed",
+"tips": [
+"The template loads this low-noise LoRA together with its high-noise pair, as Wan 2.2's two experts need both."
+]
+}
 },
 {
 "id": "lora_709489d23e",
@@ -10725,7 +11099,20 @@ null
 "mode": "reference",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader.",
+"tpl_run": {
+"template": "video_wan2.1_alpha_t2v_14B",
+"model": "Wan 2.1 T2V 14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 36,
+"prompt": "Medium shot. A single red balloon on a string floats upward and sways gently in a light breeze.",
+"prompt_node": "6",
+"seed_node": "3",
+"tips": [
+"Wan Alpha renders a clip with a transparent background (RGBA)."
+]
+}
 },
 {
 "id": "lora_fe78853867",
@@ -11000,7 +11387,24 @@ null
 "mode": "reference",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader.",
+"tpl_run": {
+"template": "image_qwen_image_union_control_lora",
+"model": "Qwen-Image 2512",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"peak_gib": 30,
+"source": "A photograph of a red bicycle leaning against a plain white wall in afternoon sun",
+"prompt": "A watercolour painting of a bicycle leaning against a wall, soft washes of colour, warm afternoon light.",
+"values": {
+"73|image": "@pic"
+},
+"prompt_node": "84:6",
+"seed_node": "84:3",
+"tips": [
+"The template draws Canny edges from the picture; the LoRA makes Qwen-Image follow them."
+]
+}
 },
 {
 "id": "lora_bea7f6548a",
@@ -11046,7 +11450,25 @@ null
 "mode": "reference",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader.",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "video_wan2_2_14B_i2v",
+"peak_gib": 40,
+"source": "A photograph of a white lighthouse on a rocky coast at golden hour",
+"prompt": "Waves break on the rocks below the lighthouse, clouds drift slowly, gentle camera push in.",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"tips": [
+"The template loads this high-noise LoRA together with its low-noise pair."
+]
+}
 },
 {
 "id": "lora_d6eb728063",
@@ -11069,7 +11491,25 @@ null
 "mode": "reference",
 "settings": {},
 "run": null,
-"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader."
+"why_not": "A reference card: no tuned settings yet, so this LoRA has no one-click run. Add it in a family's graph with a LoRA loader.",
+"tpl_run": {
+"model": "Wan 2.2 A14B",
+"licence": "Apache-2.0",
+"licence_class": "open",
+"template": "video_wan2_2_14B_i2v",
+"peak_gib": 40,
+"source": "A photograph of a small wooden fishing boat moored in a quiet harbour at dawn",
+"prompt": "The boat rocks gently on the water, ripples spread, mist drifts over the harbour, the camera holds still.",
+"values": {
+"97|image": "@pic"
+},
+"prompt_node": "129:93",
+"seed_node": "129:86",
+"seed_input": "noise_seed",
+"tips": [
+"The template loads this low-noise LoRA together with its high-noise pair."
+]
+}
 },
 {
 "id": "lora_97e43cfdda",

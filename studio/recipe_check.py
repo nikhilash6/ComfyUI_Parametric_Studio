@@ -73,7 +73,7 @@ def _step_key(s):
     if s["type"] == "h3_reference": return ("h3_reference", s["lora"], s.get("sampler"), s.get("scheduler"))
     if s["type"] == "family_lora": return ("family_lora", s["template"], json.dumps(s.get("loras")))
     if s["type"] == "goal": return ("goal", s["goal"], json.dumps(s.get("options") or {}, sort_keys=True), json.dumps(s.get("lora") or {}, sort_keys=True))
-    if s["type"] == "template": return ("template", s["template"], json.dumps(s.get("swap") or {}, sort_keys=True))
+    if s["type"] == "template": return ("template", s["template"], json.dumps(s.get("swap") or {}, sort_keys=True), json.dumps(s.get("insert") or [], sort_keys=True), json.dumps({n: {k: v for k, v in kv.items() if k == "lora_name"} for n, kv in (s.get("set") or {}).items()}, sort_keys=True))
     return (s["type"], s.get("op"), s.get("model"), ((s.get("asset") or {}).get("recipe") or {}).get("mesh_model"))
 def _world_problems(s):
     """A World Kit asset or a 3D model has no graph to check here: what it needs on this machine is what its own page checks."""

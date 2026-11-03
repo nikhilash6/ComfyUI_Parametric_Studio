@@ -1,10 +1,10 @@
 {
  "meta": {
-  "title": "Embedded guidance: FLUX.1 dev",
+  "title": "Embedded guidance: FLUX.1 Kontext dev",
   "about": "One prediction per step. The guidance number travels inside the conditioning.",
   "runs": "model",
   "needs": [
-   "FLUX.1 dev weights, clip_l, a T5-XXL text encoder and the FLUX.1 VAE."
+   "A guidance-distilled FLUX.1 model: we use FLUX.1 Kontext dev (fp8, flux1-dev-kontext_fp8_scaled), which takes the guidance number the same way FLUX.1 dev does and also draws from text alone; plain FLUX.1 dev works too. Plus clip_l, a T5-XXL text encoder and the FLUX.1 VAE. FLUX.1 schnell will not do: it has no guidance input, so the number would change nothing."
   ],
   "packs": [],
   "notes": {
@@ -16,7 +16,7 @@
   "1": {
    "class_type": "UNETLoader",
    "inputs": {
-    "unet_name": "flux1-dev.safetensors",
+    "unet_name": "flux1-dev-kontext_fp8_scaled.safetensors",
     "weight_dtype": "default"
    }
   },

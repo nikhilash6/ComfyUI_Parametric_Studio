@@ -42,7 +42,7 @@ def test_every_indexed_template_has_a_graph_real_fields_and_no_partner_node():
     assert INDEX
     for t in INDEX:
         g = json.load(open(D / (t["name"] + ".json")))
-        assert A.is_api_graph(g) and t["family"] and t["title"] and t["media"] in ("image", "video", "3d") and isinstance(t["models"], list)
+        assert A.is_api_graph(g) and t["family"] and t["title"] and t["media"] in ("image", "video", "audio", "3d") and isinstance(t["models"], list)
         assert not [n for n in g.values() if n["class_type"].startswith(("Bria", "Kling", "Runway", "Luma", "Veo", "OpenAI", "Stability", "Gemini"))]
         for m in t["models"]: assert m["name"] and m["dir"]
 

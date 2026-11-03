@@ -4,7 +4,7 @@
   "about": "The picture becomes extra tokens on the end of the text.",
   "runs": "model",
   "needs": [
-   "FLUX.1 dev weights and encoders, a SigCLIP vision model and the Redux style model."
+   "FLUX.1 schnell (or dev) weights, clip_l, a T5-XXL text encoder, the FLUX.1 VAE, a SigCLIP vision model and the Redux style model. Redux works with both; we use schnell at 4 steps, which takes no guidance number, so this graph has no FluxGuidance node (add one at 3.5 if you load dev)."
   ],
   "packs": [],
   "notes": {
@@ -15,7 +15,7 @@
   "1": {
    "class_type": "UNETLoader",
    "inputs": {
-    "unet_name": "flux1-dev.safetensors",
+    "unet_name": "flux1-schnell.safetensors",
     "weight_dtype": "default"
    }
   },
@@ -95,16 +95,6 @@
     "strength_type": "multiply"
    }
   },
-  "10": {
-   "class_type": "FluxGuidance",
-   "inputs": {
-    "conditioning": [
-     "9",
-     0
-    ],
-    "guidance": 3.5
-   }
-  },
   "11": {
    "class_type": "BasicGuider",
    "inputs": {
@@ -113,7 +103,7 @@
      0
     ],
     "conditioning": [
-     "10",
+     "9",
      0
     ]
    }
@@ -146,7 +136,7 @@
      0
     ],
     "scheduler": "simple",
-    "steps": 20,
+    "steps": 4,
     "denoise": 1.0
    }
   },

@@ -18,9 +18,11 @@ The beat_cut step measures tempo and beats in the song, picks its loudest sectio
 
 ## The 10 flagship recipes
 
-The file recipes.json holds 10 flagship recipes: short_film, seamless_loop, seasons_shot, vfx_stack, product_ad, music_video, anime_opening, recast_character, multicam and open_lane. Only short_film and music_video carry a tested record. [run: studio/recipes.json]
+The file recipes.json holds 10 flagship recipes: short_film, seamless_loop, seasons_shot, vfx_stack, product_ad, music_video, anime_opening, recast_character, multicam and open_lane. All 10 carry a tested record. [run: studio/recipes.json]
 
 The short_film recipe rendered on 2026-10-30: 690 s of step time, 1226 s of wall time, 76.2 GiB peak, 22.7 s of video, cut at 160.1 BPM, with a local language model writing the shot list. The music_video recipe took 781 s and 68.6 GiB the same day. One run each, in windows shared with other jobs, so those peaks are whole-card figures, not what a recipe needs alone. [run: studio/recipes.json]
+
+The other flagships rendered on 2026-11-01 and 2026-11-02 through the real recipe route on a dev studio and a private ComfyUI lane, one at a time through the shared GPU gate: seamless_loop 91.8 s of step time, 8009.6 s wall, 41 GiB, 4.67 s of video; seasons_shot 227.5 s of step time, 242.9 s wall, 41.2 GiB, 10.08 s of video; vfx_stack 126.4 s of step time, 1975.4 s wall, 38.3 GiB, 4.04 s of video; product_ad 260 s of step time, 1392.4 s wall, 41.2 GiB, 9.29 s of video; anime_opening 248.2 s of step time, 2361.3 s wall, 41.1 GiB, 12 s of video; recast_character 558.2 s of step time, 1556.9 s wall, 39.7 GiB, 5.17 s of video; open_lane 471.5 s of step time, 4106.3 s wall, 29.3 GiB, 12.75 s of video; multicam 221.8 s of step time, 4201.3 s wall, 41.2 GiB, 5.2 s of video. Wall time includes waiting for the gate. Their peaks are the lane's own ComfyUI memory, not the whole card. Each note in the tested record says what was checked frame by frame and what stays weak. [run: studio/recipes.json]
 
 The measured table in recipes.json holds seconds and peak GiB per goal from real renders on one 96 GB card with a cold load, for example image 10 s and 23 GiB, h3_video 112 s and 46 GiB, music 19 s and 27 GiB. A recipe's expected time is the sum of its steps' rows. [run: studio/recipes.json] [code: studio/recipes.py:564-565]
 
@@ -42,7 +44,7 @@ Recipe render numbers for video chains: 6 video templates took 190.9 to 552.4 s,
 
 ## Proof levels
 
-Recipe "tested" means a row in recipes.json has a tested record with media and numbers from a real run. Only rows in recipes.json hold one today, and 2 of the 10 do. The page words it "Tested by the author". [code: studio/recipes.py:565, studio/recipes.py:609-614, studio/web/recipes.js:24] [test: tests/test_studio_recipes.py]
+Recipe "tested" means a row in recipes.json has a tested record with media and numbers from a real run. Only rows in recipes.json hold one today, and all 10 do. The page words it "Tested by the author". [code: studio/recipes.py:565, studio/recipes.py:609-614, studio/web/recipes.js:24] [test: tests/test_studio_recipes.py]
 
 Recipe "Our own render" means the recipe has a row in recipe_renders.json: one run in this studio, made once and reviewed. It does not make the recipe tested: its status stays "untested". [code: studio/recipes.py:19-23, studio/web/recipes.js:24, studio/web/recipes.js:125] [test: tests/test_recipe_renders.py]
 

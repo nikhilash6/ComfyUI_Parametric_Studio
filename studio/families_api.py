@@ -114,9 +114,11 @@ def free_gb():
 _keys = {"id": None, "d": {}}
 def _have(files, name, folder=None):
     """The installed file that answers for a template's model name: the same base name, or the same model in a precision its loader handles. A close name is another model, and the run step's resolver gives the same answer."""
-    from studio.names import have, model_key
+    from studio.names import SUBSTITUTE, UPGRADE, have, model_key
     b = os.path.basename(name)
     if b in files: return b
+    for alt in (SUBSTITUTE.get(b), UPGRADE.get(b)):                                 # another model on purpose (UPGRADE) has another key, so the key bucket below would never offer it; the run step's resolver takes it
+        if alt and os.path.basename(alt) in files: return os.path.basename(alt)
     if _keys["id"] != id(files):
         d = {}
         for x in files: d.setdefault(model_key(x), []).append(x)

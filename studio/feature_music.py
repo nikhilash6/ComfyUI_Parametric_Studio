@@ -73,7 +73,7 @@ def listing():
     c = catalogue(); roots = _roots(); out = []
     for m in c.get("models") or []:
         out.append({**m, **state(m, roots), "render": (proof().get("renders") or {}).get(m["id"])})
-    return {"models": out, "not_music": c.get("not_music") or [], "roti": c.get("roti") or {}, "brief": proof().get("brief") or {}, "extras": proof().get("extras") or {}, "note": proof().get("note") or "", "measured_with": proof().get("measured_with") or {}}
+    return {"models": out, "not_music": c.get("not_music") or [], "roti": c.get("roti") or {}, "film": c.get("film"), "brief": proof().get("brief") or {}, "extras": proof().get("extras") or {}, "note": proof().get("note") or "", "measured_with": proof().get("measured_with") or {}}
 
 
 @router.get("/models")

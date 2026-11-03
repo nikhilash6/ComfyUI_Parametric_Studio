@@ -1,6 +1,7 @@
 """Check every graph the studio ships against a live ComfyUI's /object_info and the model files on disk, and write a table: graph, status, detail, proof.
 Read-only: it GETs /object_info and never queues anything.
-  python scripts/graph_audit.py --out GRAPH_AUDIT.tsv [--comfy http://127.0.0.1:8200] [--oi extra_object_info.json ...] [--snapshot tests/fixtures/graph_audit_object_info.json.gz]
+  python scripts/graph_audit.py --out GRAPH_AUDIT.tsv [--comfy http://127.0.0.1:8200] [--oi extra_object_info.json ...] [--lane lane_object_info.json] [--snapshot tests/fixtures/graph_audit_object_info.json.gz]
+--lane: a graph whose "needs" names a pack is checked against this server's node list; passing there gives status ok-on-lane (it still fails on the main ComfyUI, and its page says how to install the pack).
 --oi adds the node lists of other running servers (a family instance), so a family template is checked against the packs its own instance loads.
 --snapshot writes the trimmed node list the CI test reads. PSN_NODE_INDEX and PSN_WORKER_DIR point at the pack library's node index and the worker folder, when this machine has them."""
 import argparse, csv, gzip, json, os, re, sys, urllib.request
@@ -91,10 +92,13 @@ def main():
     for p in a.oi: union.update({k: v for k, v in json.load(open(p)).items() if k not in union})
     from studio import recipe_check as C, families_api as F
     files = C.model_files(); fscan = F.scan(True); packs = pack_index(); texts = proof_text()
+    lane_oi = json.load(open(a.lane)) if a.lane else None
     rows = GA.collect(oi); out = []; used = set(); views = {}
     for r in rows:
         fam = r.get("family"); target = r["target"]; fixes = []
         use = GA.server_oi(union, GA.family_packs(fam)) if target == "family" and fam else oi
+        on_lane = target != "family" and lane_oi is not None and any(x.startswith("pack ") for x in GA.needs(r.get("graph"), r.get("meta")))
+        if on_lane: use = lane_oi        # a graph that says it needs a pack the main ComfyUI does not load is checked where that pack is loaded, as the CI test does
         api, conv, fmt = GA.to_api(r, use)
         probs = [("bad-input", "convert: " + c) for c in conv]
         if r.get("build_error"): probs.append(("bad-input", r["build_error"]))
@@ -105,6 +109,7 @@ def main():
             extra = views.setdefault(fam, GA.family_view(fam)) if target == "family" and fam else set()
             fixes = []; notes = []; probs += GA.check(api, use, ffiles, extra_names=extra, fixes=fixes, resolves=r.get("resolves", True), notes=notes)
         st = GA.status(probs, "api" if api is not None else fmt)
+        if on_lane and st == "ok": st = "ok-on-lane"      # passes on the lane with the pack; on the main ComfyUI its node types are missing, and its page says how to install the pack
         if fmt == "other": st = "not-api-format"
         detail = []
         for k, t in probs:
@@ -113,7 +118,10 @@ def main():
                 loaded = {GA.module_pack(v) for kk, v in union.items() if kk == cls}
                 t += f" (pack: {loaded.pop()}, not loaded on this server)" if loaded else (f" (pack: {src[0]})" if src else " (no known pack)")
             detail.append(t)
-        if api is not None and notes: detail += ["swapped: " + "; ".join(dict.fromkeys(notes))]
+        swaps = [n for n in notes if not n.startswith("folder ")] if api is not None else []; other = [n for n in notes if n.startswith("folder ")] if api is not None else []
+        if swaps: detail += ["swapped: " + "; ".join(dict.fromkeys(swaps))]
+        if other: detail += other
+        if st == "ok-on-lane": detail.append("checked against a lane that loads the pack; the main ComfyUI (127.0.0.1:8200) does not load it")
         nd = GA.needs(r.get("graph"), r.get("meta"))
         if nd: detail.insert(0, "needs: " + "; ".join(nd))
         if r.get("used_by"): detail.append("used by " + ", ".join(r["used_by"][:4]) + (f" +{len(r['used_by']) - 4}" if len(r["used_by"]) > 4 else ""))

@@ -17,7 +17,9 @@ COMMON_PACKS = ["comfyui_parametric_studio", "kijai__ComfyUI-KJNodes"]
 REPO_LIB = paths.setting("PSN_REPO_LIB", default=paths.home("nodepack_library", "repos"))
 #: Packs whose code imports its own folder name, so the link must carry that name.
 PACK_LINK_AS = {"kijai__ComfyUI-CCSR": "ComfyUI-CCSR"}
-FAMILY_PACKS = {"IC-Light": ["kijai__ComfyUI-IC-Light"], "CCSR": ["kijai__ComfyUI-CCSR"], "AnimateDiff": ["Kosinkadink__ComfyUI-AnimateDiff-Evolved"], "PartCrafter": ["tungthedev__ComfyUI-TripoSG"], "LTX-2.5": ["Lightricks__ComfyUI-LTXVideo"], "Wan2.1": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2-Animate": ["kijai__ComfyUI-WanVideoWrapper"],
+#: Packs that list a folder through folder_paths but open the file from `models_dir/<kind>` (the instance's own models folder), so those files need links there too.
+MODELS_DIR_READERS = {"Slickytail__ComfyUI-InstantX-IPAdapter-SD3": ["ipadapter"]}
+FAMILY_PACKS = {"SD3-SD3.5": ["Slickytail__ComfyUI-InstantX-IPAdapter-SD3"], "SD15": ["pamparamm__ComfyUI_IPAdapter_plus"], "SDXL": ["pamparamm__ComfyUI_IPAdapter_plus"], "IC-Light": ["kijai__ComfyUI-IC-Light"], "CCSR": ["kijai__ComfyUI-CCSR"], "AnimateDiff": ["Kosinkadink__ComfyUI-AnimateDiff-Evolved"], "PartCrafter": ["tungthedev__ComfyUI-TripoSG"], "LTX-2.5": ["Lightricks__ComfyUI-LTXVideo"], "Wan2.1": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2": ["kijai__ComfyUI-WanVideoWrapper"], "Wan2.2-Animate": ["kijai__ComfyUI-WanVideoWrapper"],
                 "Wan2.2-Dancer": ["kijai__ComfyUI-WanVideoWrapper"], "TurboWan2.2-I2V": ["kijai__ComfyUI-WanVideoWrapper"], "Wan-SCAIL-2": ["kijai__ComfyUI-WanVideoWrapper"], "LivePortrait": ["kijai__ComfyUI-LivePortraitKJ"],
                 "MiniMax-H3": ["Larryvrh__ComfyUI-MiniMax-H3-Turbo", "TripleHeadedMonkey__ComfyUI-MiniMaxH3_LatentUpscaler", "T8mars__comfyui-minimax-h3-audio-T8", "vizart-vj__ComfyUI-MiniMax-H3-LongMedia", "YJX-Research__comfyui-controlfoley-official"],
                 "SeedVR2": ["bbaudio-2025__Comfyui-MMH3-UltimateUpscale"], "dwpose": ["kijai__ComfyUI-WanVideoWrapper"]}                                      # a pack is its directory name, owner__Repo: a bare repo name never resolves (MiniMax-H3 once got no packs that way)
@@ -51,6 +53,13 @@ WRAPS = {
  "Stable-Fast-3D": {"loader": "needs-pack", "files": [("checkpoints", "stable-fast-3d_model.safetensors", "_complete_pipelines/Stable-Fast-3D/pipeline/model.safetensors")],
                     "note": "core ComfyUI cannot detect this model; it needs the Stable-Fast-3D inference code wrapped as nodes"},
 }
+# Families first rendered 2026-11-02 (the 26 that had no render). Kept apart from the dicts above so each can ship on its own.
+FAMILY_PACKS.update({"Iris-3B": ["bani4kaskashka__Iris-3B-Comfy-Nodes"]})
+WRAPS.update({
+ "Iris-3B": {"loader": "pack", "files": [("diffusion_models", "iris-3b.safetensors", "_complete_pipelines/Iris-3B/diffusion_models/model.safetensors"),
+             ("text_encoders", "Qwen3-VL-4B-Instruct", "_complete_pipelines/Iris-3B/text_encoders/Qwen3-VL-4B-Instruct")],
+             "note": "the pack lists Iris weights by an 'iris' file name and wants Qwen3-VL-4B-Instruct as a Hugging Face folder; that folder is the repo's config and tokenizer with Comfy-Org's qwen3vl_4b_bf16.safetensors, which holds the same 713 tensors under the same names"},
+})
 
 def slug(family): return re.sub(r"[^a-z0-9]+", "-", family.lower()).strip("-")
 def families(models=None):
@@ -108,6 +117,8 @@ def _write(path, text):
     """Replace a generated file atomically: a start that reads instance.env while it is being regenerated sees the old file or the new one, never half of it."""
     tmp = path + ".tmp"; open(tmp, "w").write(text); os.replace(tmp, path)
 
+def spec_kinds(spec): return {t for t, _, _ in spec["files"]}
+
 def generate(family, models=None, root=None, ps_nodes=None, ports=None):
     """Write (or refresh) one instance directory. Returns its instance.json dict. Existing output/input/user folders are kept."""
     root, ps_nodes = root or INSTANCES, ps_nodes or PS_NODES; s = slug(family); d = os.path.join(root, s); md = model_dirs(family, models)
@@ -129,6 +140,16 @@ def generate(family, models=None, root=None, ps_nodes=None, ports=None):
             src = os.path.join(models or MODELS, rel)
             if os.path.exists(src): os.makedirs(os.path.join(vroot, t), exist_ok=True); os.symlink(os.path.realpath(src), os.path.join(vroot, t, name)); views.setdefault(t, os.path.join(vroot, t)); wrapped.append(f"{t}/{name}")
             else: missing_w.append(rel)
+    for kind in dict.fromkeys(k for p in linked for k in MODELS_DIR_READERS.get(p, [])):
+        if spec and kind in spec_kinds(spec): continue
+        vd = os.path.join(d, "models", kind)
+        if os.path.isdir(vd):
+            for e in os.listdir(vd):
+                if os.path.islink(os.path.join(vd, e)): os.unlink(os.path.join(vd, e))
+        for rel in md.get(kind, []):
+            src_dir = os.path.join(models or MODELS, rel)
+            for f in sorted(os.listdir(src_dir)) if os.path.isdir(src_dir) else []:
+                if os.path.isfile(os.path.join(src_dir, f)) and not os.path.lexists(os.path.join(vd, f)): os.makedirs(vd, exist_ok=True); os.symlink(os.path.realpath(os.path.join(src_dir, f)), os.path.join(vd, f))
     lines = [f"# generated by psn.instances for {family}: this instance sees only this family's models", f"{s}:", f"    base_path: {models or MODELS}"]
     for t in dict.fromkeys(list(md) + list(views)): lines += [f"    {t}: |"] + [f"        {x}" for x in md.get(t, []) + ([views[t]] if t in views else [])]
     _write(os.path.join(d, "extra_model_paths.yaml"), "\n".join(lines) + "\n")

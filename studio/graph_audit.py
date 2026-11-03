@@ -10,6 +10,11 @@ PH = re.compile(r"\$\{[A-Za-z_][A-Za-z0-9_]*\}")
 UPLOAD_LOADERS = {"LoadImage", "LoadImageMask", "LoadVideo", "LoadAudio", "LoadImageOutput", "Load3D", "Load3DAnimation", "VHS_LoadVideo", "VHS_LoadAudioUpload", "LoadImageSetFromFolderNode"}
 ANY = {"*", "COMFY_MATCHTYPE_V3", "COMFY_AUTOGROW_V3", "ANY", "any", "any_type", "AnyType"}
 SELF_VALIDATING = {("CustomCombo", "choice")}       # a node whose validate_inputs takes the input: ComfyUI skips its choice list
+#: Folder pickers whose value is a folder of ComfyUI's input directory. A folder this tree ships (studio/datasets/<name>) is installed by copying it there, as the graph's "needs" note says, so it is not a broken value.
+FOLDER_LOADERS = {"LoadImageTextDataSetFromFolder", "LoadImageDataSetFromFolder"}
+def shipped_datasets():
+    d = Path(__file__).resolve().parent / "datasets"
+    return {p.name for p in d.iterdir() if p.is_dir()} if d.is_dir() else set()
 CORE_MODULES = ("nodes", "comfy_extras", "comfy_api_nodes", "comfy_api")
 COMMON_PACKS = ("comfyui_parametric_studio", "kijai__ComfyUI-KJNodes")
 
@@ -109,6 +114,8 @@ def check(graph, oi, files=None, model_opts=True, upload_ok=True, extra_names=()
                     elif model_opts: out.append(("missing-model", f"{nid}:{cls}.{k} {x} is not on disk"))
                 elif cls in UPLOAD_LOADERS or (isinstance(x, str) and re.search(r"\.(png|jpe?g|webp|mp4|webm|mov|wav|mp3|flac|glb|obj)$", x, re.I)):
                     if not upload_ok: out.append(("bad-input", f"{nid}:{cls}.{k} {x!r} is not in the input folder"))
+                elif cls in FOLDER_LOADERS and x in shipped_datasets():
+                    if notes is not None: notes.append(f"folder {x} ships in studio/datasets: copy it into ComfyUI's input folder")
                 elif model_opts or not _model_list(opts): out.append(("bad-input", f"{nid}:{cls}.{k}={x!r} is not one of its {len(opts)} choices" + (f" ({', '.join(map(str, opts[:6]))})" if len(opts) <= 6 else "")))
     if not outputs and not any(k == "missing-node" for k, _ in out): out.append(("bad-input", "no output node: ComfyUI refuses a graph with nothing to save or show"))
     return out

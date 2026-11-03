@@ -672,5 +672,43 @@
 "Its Open-Unmix node runs torch.hub.load, which downloads and runs code and weights from GitHub the first time. That node wasn't run for this page.",
 "The extend and repaint guiders download silence_latent.pt from ACE-Step's Hugging Face page the first time, loaded with weights_only=True."
 ]
+},
+"film": {
+"id": "wren_light_the_wreckage",
+"title": "Wren Halloway, “Light the Wreckage”",
+"label": "Made before this studio",
+"made": "2026-10-06",
+"seconds": 175,
+"video": "music/wren_light_the_wreckage.mp4",
+"poster": "music/wren_light_the_wreckage.webp",
+"bytes": 19193696,
+"pitch": "A whole song, filmed. Wren Halloway is a singer we invented: an original song with our own lyrics, sung by Music 3, then 28 lip-synced shots of her made with LTX-2.5 with the song locked into the video's audio.",
+"credits": [
+{
+"part": "Song and vocals",
+"model": "MiniMax Music 3, seed 9140, 175 s, mastered to -14 LUFS",
+"licence": "MiniMax-Music3 Community License",
+"url": "https://huggingface.co/MiniMaxAI/MiniMax-Music3"
+},
+{
+"part": "Video",
+"model": "LTX-2.5 distilled, two-stage image to video, 1344x768, with the song locked into its audio",
+"licence": "LTX-2.x Community License",
+"url": "https://huggingface.co/Lightricks/LTX-2.5"
+},
+{
+"part": "Stills of Wren and the four sets",
+"model": "CyberRealistic Flux v2.5, a FLUX.1 dev fine-tune",
+"licence": "FLUX.1 [dev] Non-Commercial License",
+"url": "https://huggingface.co/black-forest-labs/FLUX.1-dev"
+}
+],
+"honest": [
+"Made on 2026-10-06 on this machine with our earlier scripts, before this studio existed. No page or graph in the studio made it.",
+"A first cut: the first take of all 28 shots. Retakes of the 13 shots that failed our lip-sync check stopped after 7, so in some shots her mouth drifts from the words.",
+"Checked by machine: Whisper (distil-large-v3) made out 240 of the 260 lyric words in the finished mix, so the vocals are clear words, not garble.",
+"Wren is invented. We checked every shot for real people, brands and broken lettering; the only words on screen are the title and end cards. The crowd in the club is generated too.",
+"This copy is scaled down to 720p (18 MiB) from the 1080p cut."
+]
 }
 }

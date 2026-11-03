@@ -144,3 +144,9 @@ def test_video_shots_keep_one_person_and_name_nothing_unwanted():
             p = str(s.get("prompt", "")); assert "gloves" not in p and "shop front" not in p and "captions" not in p, (r["id"], s["id"])
         refs = [s for s in r["steps"] if s["type"] == "h3_reference"]
         if refs: assert r["steps"][0]["id"] == "face" and all(s["pictures"] == ["@face"] and "<Picture 1>" in s["prompt"] for s in refs), r["id"]
+def test_a_render_made_by_a_family_graph_says_so_and_carries_the_cards_lora():
+    via = {i: r for i, r in ROWS.items() if r.get("via")}; lib = {r["id"]: r for r in R.library()}
+    assert via
+    for rid, r in via.items():
+        assert "family graph" in r["via"] and lib[rid].get("reference") and r["lora"] == lib[rid]["lora_path"].rsplit("/", 1)[-1], rid
+    js = JS.read_text(encoding="utf-8"); assert "<dt>Made by</dt>" in js and '${!x.via && html`<a class="btn small" href=${"#prove/recipe/"' in js

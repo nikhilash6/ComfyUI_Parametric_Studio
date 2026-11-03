@@ -52,7 +52,7 @@ The second graph below is the Base setup, with cfg 5 and 20 steps and a real neg
 
 {{graph:wf_flux2_klein}}
 
-And here is a FLUX.1 dev graph. `BasicGuider` takes one conditioning and has no cfg input at all, which makes the point: there's no second branch to run.
+And here is a FLUX.1 Kontext dev graph. Kontext dev has the same `guidance_in` layer as FLUX.1 dev (we read it in the file's header), and it draws from text alone too, so it stands in for FLUX.1 dev here. `BasicGuider` takes one conditioning and has no cfg input at all, which makes the point: there's no second branch to run.
 
 {{graph:c_flux_guidance}}
 

@@ -94,6 +94,8 @@ def shared(monkeypatch):
     ("flux-2-klein-4b.safetensors", "diffusion_models", "flux-2-klein-9b.safetensors", False), ("flux-2-klein-4b.safetensors", "diffusion_models", "flux-2-klein-4b-fp8.safetensors", True),
     ("z_image_int8_convrot.safetensors", "diffusion_models", "z_image_bf16.safetensors", True), ("x_bf16.safetensors", "text_encoders", "x_int8_convrot.safetensors", False), ("x_bf16.safetensors", "controlnet", "x_fp16.safetensors", False),
     ("x_fp8.safetensors", "diffusion_models", "x.gguf", False), ("minimax_h3_video_vae_int8_convrot.safetensors", "vae", "minimax_h3_video_vae_fp16.safetensors", True), ("exact.safetensors", "controlnet", "exact.safetensors", True),
+    ("wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors", "diffusion_models", "Wan2_2-T2V-A14B-HIGH_fp8_e4m3fn_scaled_KJ.safetensors", True),        # an UPGRADE has another model key: readiness takes it, as the run's resolver does
+    ("wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors", "diffusion_models", "Wan2_2-T2V-A14B-LOW_fp8_e4m3fn_scaled_KJ.safetensors", False),
 ])
 def test_template_readiness_matches_what_the_run_would_load(shared, want, folder, have, ready):
     s = F.tpl_state({"models": [{"name": want, "dir": folder}]}, {have: 1000})

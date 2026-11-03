@@ -218,3 +218,13 @@ def test_every_page_script_parses():
     for f in WEB.glob("*.js"):
         p = subprocess.run(["node", "--check", "--input-type=module"], input=f.read_text(encoding="utf-8"), capture_output=True, text=True, timeout=60)
         assert p.returncode == 0, (f.name, p.stderr[-300:])
+
+
+def test_the_wren_film_is_small_labelled_and_credited(client):
+    f = CAT["film"]; v = WEB / f["video"]; poster = WEB / f["poster"]
+    assert v.exists() and v.stat().st_size == f["bytes"] and f["bytes"] < 20 * 1024 * 1024 and poster.exists() and poster.stat().st_size < 200_000
+    assert f["made"] == "2026-10-06" and "before this studio" in f["label"].lower() and any("before this studio existed" in h for h in f["honest"])
+    assert {c["licence"] for c in f["credits"]} >= {"MiniMax-Music3 Community License", "LTX-2.x Community License"} and all(c["url"].startswith("https://") for c in f["credits"])
+    assert any("lip-sync" in h for h in f["honest"]) and any("invented" in h for h in f["honest"])
+    assert client.get("/api/music/models").json()["film"]["video"] == f["video"]
+    page = (WEB / "music.js").read_text(encoding="utf-8"); assert 'id="mu-film"' in page and "d.film" in page

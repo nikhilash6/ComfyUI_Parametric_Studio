@@ -92,3 +92,12 @@ def test_idle_start_gate_uses_the_idle_footprint_not_the_working_set(lib, monkey
     calls = []; monkeypatch.setattr(I, "free_vram_gb", lambda: 10.0); monkeypatch.setattr(I, "is_up", lambda p: False)
     assert I.start("Flux.3-Klein", lib["root"], systemctl=lambda *a: calls.append(a), wait=0)["status"] == "refused" and not calls                              # default gate still uses the estimate
     assert I.start("Flux.3-Klein", lib["root"], systemctl=lambda *a: calls.append(a), wait=0, need_gb=I.IDLE_GB)["status"] == "timeout" and calls == [("start", "comfy-family@flux-3-klein.service")]
+
+def test_pack_that_opens_models_dir_gets_links_there(lib, monkeypatch):
+    """The InstantX SD3 IP-Adapter pack lists `ipadapter` through folder_paths but opens `models_dir/ipadapter/<name>`: the instance links the family's files there, and drops stale ones on regenerate."""
+    cp = os.path.join(lib["models"], "_complete_pipelines", "SD3-SD3.5", "ipadapter"); os.makedirs(cp); open(os.path.join(cp, "ip.bin"), "wb").write(b"x")
+    os.makedirs(os.path.join(lib["nodes"], "Slickytail__ComfyUI-InstantX-IPAdapter-SD3"))
+    I.generate("SD3-SD3.5", lib["models"], lib["root"], lib["nodes"]); vd = os.path.join(lib["root"], "sd3-sd3-5", "models", "ipadapter")
+    assert os.listdir(vd) == ["ip.bin"] and os.path.realpath(os.path.join(vd, "ip.bin")) == os.path.realpath(os.path.join(cp, "ip.bin"))
+    os.symlink("/nonexistent", os.path.join(vd, "old.bin")); I.generate("SD3-SD3.5", lib["models"], lib["root"], lib["nodes"]); assert os.listdir(vd) == ["ip.bin"]
+    I.generate("Wan2.2", lib["models"], lib["root"], lib["nodes"]); assert not os.path.exists(os.path.join(lib["root"], "wan2-2", "models"))

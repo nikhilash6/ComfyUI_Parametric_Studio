@@ -2,6 +2,104 @@
  "built": "2026-10-31",
  "templates": [
   {
+   "family": "HunyuanWorld",
+   "name": "hunyuanworld_pano_t2i",
+   "title": "HunyuanWorld: Words to 360 Panorama",
+   "desc": "The first stage of HunyuanWorld 1.0: its PanoDiT-Text LoRA on FLUX.1-dev makes a 1920x960 equirectangular panorama, through core nodes. The 3D world stages are not here.",
+   "media": "image",
+   "cat": "3D",
+   "gb": 32.3,
+   "tags": [
+    "Studio template",
+    "Panorama"
+   ],
+   "models": [
+    {
+     "name": "flux1-dev.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/Comfy-Org/flux1-dev/resolve/main/flux1-dev.safetensors",
+     "gb": 22.17
+    },
+    {
+     "name": "HunyuanWorld-PanoDiT-Text_lora.safetensors",
+     "dir": "loras",
+     "url": "https://huggingface.co/tencent/HunyuanWorld-1/resolve/main/HunyuanWorld-PanoDiT-Text/lora.safetensors",
+     "gb": 0.45
+    },
+    {
+     "name": "clip_l.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors",
+     "gb": 0.25
+    },
+    {
+     "name": "t5xxl_fp16.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors",
+     "gb": 9.1
+    },
+    {
+     "name": "ae.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors",
+     "gb": 0.34
+    }
+   ],
+   "source": "Studio template, core nodes; settings from HunyuanWorld's demo (guidance 30, 50 steps, 1920x960)",
+   "note": "ComfyUI's sampler has no circular padding, which HunyuanWorld's own pipeline adds, so a faint line can show where the panorama wraps. FLUX.1-dev is non-commercial; the LoRA is under Tencent's HunyuanWorld licence (not the EU, UK or South Korea)."
+  },
+  {
+   "family": "VLM",
+   "name": "vlm_qwen3vl_caption",
+   "title": "Qwen3-VL: Describe a Picture",
+   "desc": "Qwen3-VL 4B (fp8) reads a picture through ComfyUI's core TextGenerate node and says what it sees and what looks physically wrong.",
+   "media": "image",
+   "cat": "Text",
+   "gb": 4.9,
+   "tags": [
+    "Studio template",
+    "Picture to text"
+   ],
+   "models": [
+    {
+     "name": "qwen3vl_4b_fp8_scaled.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/Comfy-Org/Qwen3-VL/resolve/main/text_encoders/qwen3vl_4b_fp8_scaled.safetensors",
+     "gb": 4.88
+    }
+   ],
+   "source": "Studio template, core nodes (after ComfyUI's llm_qwen3vl_text_gen)",
+   "note": "The answer comes back as text (PreviewAny); 400 tokens can cut a long list short."
+  },
+  {
+   "family": "Iris-3B",
+   "name": "iris3b_t2i",
+   "title": "Iris-3B: Text to Image",
+   "desc": "Sperid Labs' 3B pixel-space model (no VAE) through bani4kaskashka's Iris-3B nodes, 50 steps at cfg 3, 1024x1024.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 19.4,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "iris-3b.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/speridlabs/iris-3b/resolve/main/model.safetensors",
+     "gb": 11.13
+    },
+    {
+     "name": "qwen3vl_4b_bf16.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy/resolve/main/text_encoders/qwen3vl_4b_bf16.safetensors",
+     "gb": 8.27
+    }
+   ],
+   "source": "Studio template; bani4kaskashka/Iris-3B-Comfy-Nodes (Apache-2.0, Pack Lab shortlist, loaded ok in the sandbox)",
+   "note": "The pack wants Qwen/Qwen3-VL-4B-Instruct as a folder; psn.instances builds one from the repo's config and tokenizer and the single bf16 file (same 713 tensors, same names)."
+  },
+  {
    "family": "SD15",
    "name": "sd15_core_t2i",
    "title": "SD 1.5: Text to Image",
@@ -2804,6 +2902,472 @@
     }
    ],
    "source": "variant of fibo2_dev_t2i",
+   "note": ""
+  },
+  {
+   "family": "SD15",
+   "name": "ipa_ip_adapter_sd15",
+   "title": "SD15 picture prompt: ip-adapter_sd15",
+   "desc": "A reference picture steers the result through IP-Adapter, with words. Object references only here.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter_sd15.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "CLIP-ViT-H-fp16.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SD15",
+   "name": "ipa_ip_adapter_sd15_light",
+   "title": "SD15 picture prompt: ip-adapter_sd15_light",
+   "desc": "A reference picture steers the result through IP-Adapter, with words. Object references only here.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter_sd15_light.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "CLIP-ViT-H-fp16.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SD15",
+   "name": "ipa_ip_adapter_plus_sd15",
+   "title": "SD15 picture prompt: ip-adapter-plus_sd15",
+   "desc": "A reference picture steers the result through IP-Adapter, with words. Object references only here.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter-plus_sd15.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "CLIP-ViT-H-fp16.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SD15",
+   "name": "ipa_ip_adapter_sd15_vit_g",
+   "title": "SD15 picture prompt: ip-adapter_sd15_vit-G",
+   "desc": "A reference picture steers the result through IP-Adapter, with words. Object references only here.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter_sd15_vit-G.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "clip_vision_g.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "ipa_ip_adapter_sdxl",
+   "title": "SDXL picture prompt: ip-adapter_sdxl",
+   "desc": "A reference picture steers the result through IP-Adapter, with words. Object references only here.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter_sdxl.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "clip_vision_g.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "ipa_ip_adapter_sdxl_vit_h",
+   "title": "SDXL picture prompt: ip-adapter_sdxl_vit-h",
+   "desc": "A reference picture steers the result through IP-Adapter, with words. Object references only here.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter_sdxl_vit-h.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "CLIP-VIT-H-LAION.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "ipa_ip_adapter_plus_sdxl_vit_h",
+   "title": "SDXL picture prompt: ip-adapter-plus_sdxl_vit-h",
+   "desc": "A reference picture steers the result through IP-Adapter, with words. Object references only here.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter-plus_sdxl_vit-h.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "CLIP-VIT-H-LAION.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SD3-SD3.5",
+   "name": "ipa_sd35_large_instantx",
+   "title": "SD 3.5 Large picture prompt: InstantX IP-Adapter",
+   "desc": "A reference picture steers SD 3.5 Large through InstantX's IP-Adapter and SigLIP. Object references only here.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 17.5,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "sd3.5_large.safetensors",
+     "dir": "checkpoints",
+     "gb": 15.3
+    },
+    {
+     "name": "ip-adapter_sd35_large.bin",
+     "dir": "ipadapter",
+     "gb": 1.4
+    },
+    {
+     "name": "sigclip_vision_patch14_384.safetensors",
+     "dir": "clip_vision",
+     "gb": 0.8
+    }
+   ],
+   "source": "Studio template; Slickytail's InstantX IP-Adapter SD3 nodes, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SD15",
+   "name": "ipa_ip_adapter_plus_face_sd15",
+   "title": "SD15 face reference: ip-adapter-plus-face_sd15",
+   "desc": "A face picture steers the person in the result through IP-Adapter, with words. Use only invented people or yourself, never a real person without consent.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter-plus-face_sd15.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "CLIP-ViT-H-fp16.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SD15",
+   "name": "ipa_ip_adapter_full_face_sd15",
+   "title": "SD15 face reference: ip-adapter-full-face_sd15",
+   "desc": "A face picture steers the person in the result through IP-Adapter, with words. Use only invented people or yourself, never a real person without consent.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "DreamShaper_8_pruned.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter-full-face_sd15.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "CLIP-ViT-H-fp16.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "SDXL",
+   "name": "ipa_ip_adapter_plus_face_sdxl_vit_h",
+   "title": "SDXL face reference: ip-adapter-plus-face_sdxl_vit-h",
+   "desc": "A face picture steers the person in the result through IP-Adapter, with words. Use only invented people or yourself, never a real person without consent.",
+   "media": "image",
+   "cat": "Image",
+   "gb": 3.3,
+   "tags": [
+    "Studio template",
+    "Picture prompt"
+   ],
+   "models": [
+    {
+     "name": "sd_xl_base_1.0.safetensors",
+     "dir": "checkpoints",
+     "gb": 2.0
+    },
+    {
+     "name": "ip-adapter-plus-face_sdxl_vit-h.safetensors",
+     "dir": "ipadapter",
+     "gb": 0.1
+    },
+    {
+     "name": "CLIP-VIT-H-LAION.safetensors",
+     "dir": "clip_vision",
+     "gb": 1.2
+    }
+   ],
+   "source": "Studio template; pamparamm's IPAdapter_plus, which passed Pack Lab",
+   "note": ""
+  },
+  {
+   "family": "Wan2.2",
+   "name": "wan22_14b_t2v_kj",
+   "title": "Wan 2.2 14B text to video (Kijai fp8 scaled)",
+   "desc": "ComfyUI's Wan 2.2 14B text-to-video graph on Kijai's fp8-scaled high and low noise models, with the 4-step Lightning LoRAs.",
+   "media": "video",
+   "cat": "Video",
+   "gb": 36.9,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "Wan2_2-T2V-A14B-HIGH_fp8_e4m3fn_scaled_KJ.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.0
+    },
+    {
+     "name": "Wan2_2-T2V-A14B-LOW_fp8_e4m3fn_scaled_KJ.safetensors",
+     "dir": "diffusion_models",
+     "gb": 14.0
+    },
+    {
+     "name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+     "dir": "text_encoders",
+     "gb": 6.3
+    },
+    {
+     "name": "wan_2.1_vae.safetensors",
+     "dir": "vae",
+     "gb": 0.2
+    },
+    {
+     "name": "wan2.2_t2v_lightx2v_4steps_lora_v1.1_high_noise.safetensors",
+     "dir": "loras",
+     "gb": 1.2
+    },
+    {
+     "name": "wan2.2_t2v_lightx2v_4steps_lora_v1.1_low_noise.safetensors",
+     "dir": "loras",
+     "gb": 1.2
+    }
+   ],
+   "source": "variant of video_wan2_2_14B_t2v",
+   "note": ""
+  },
+  {
+   "family": "Mini-Max-Music3",
+   "name": "music3_dav_full",
+   "title": "Music 3 with the full DAV",
+   "desc": "ComfyUI's Music 3 graph decoding with minimax_music3_dav_full (292 MB, origin not identified on the box) in place of the 207 MB DAV decoder.",
+   "media": "audio",
+   "cat": "Audio",
+   "gb": 0.3,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "minimax_music3_dit_fp16.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/Comfy-Org/MiniMax-Music-3/resolve/main/diffusion_models/minimax_music3_dit_fp16.safetensors"
+    },
+    {
+     "name": "minimax_music3_text_encoder_pruned_int8_convrot.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/Comfy-Org/MiniMax-Music-3/resolve/main/text_encoders/minimax_music3_text_encoder_pruned_int8_convrot.safetensors"
+    },
+    {
+     "name": "minimax_music3_dav_full.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/MiniMax-Music-3/resolve/main/vae/minimax_music3_dav.safetensors",
+     "gb": 0.3
+    }
+   ],
+   "source": "variant of audio_minimax_music_3",
+   "note": ""
+  },
+  {
+   "family": "Mini-Max-Music3",
+   "name": "music3_turbo8",
+   "title": "Music 3 turbo, 8 steps",
+   "desc": "ComfyUI's Music 3 graph with guillaume127's 8-step turbo LoRA on the DiT (strength 1.0, 8 steps, cfg 1.6, from its card).",
+   "media": "audio",
+   "cat": "Audio",
+   "gb": 0.2,
+   "tags": [
+    "Studio template"
+   ],
+   "models": [
+    {
+     "name": "minimax_music3_dit_fp16.safetensors",
+     "dir": "diffusion_models",
+     "url": "https://huggingface.co/Comfy-Org/MiniMax-Music-3/resolve/main/diffusion_models/minimax_music3_dit_fp16.safetensors"
+    },
+    {
+     "name": "minimax_music3_text_encoder_pruned_int8_convrot.safetensors",
+     "dir": "text_encoders",
+     "url": "https://huggingface.co/Comfy-Org/MiniMax-Music-3/resolve/main/text_encoders/minimax_music3_text_encoder_pruned_int8_convrot.safetensors"
+    },
+    {
+     "name": "minimax_music3_dav.safetensors",
+     "dir": "vae",
+     "url": "https://huggingface.co/Comfy-Org/MiniMax-Music-3/resolve/main/vae/minimax_music3_dav.safetensors"
+    },
+    {
+     "name": "minimax_music3_turbo_lora_8step.safetensors",
+     "dir": "loras",
+     "gb": 0.2
+    }
+   ],
+   "source": "variant of audio_minimax_music_3",
    "note": ""
   }
  ]
